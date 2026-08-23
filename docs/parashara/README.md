@@ -122,6 +122,7 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 | 3 | Conditional dashas — Ashtottari + Yogini + the shared nakshatra-dasha framework | ✅ `5a64a97` |
 | 4 | Enrichment — rasi drishti, functional-by-lagna, maraka, Gulika, richer verdict, allied grids (Saravali ch.30/45), chara karakas + Karakamsa; ch.11:16b antidote fix; Mahapurusha to BPHS-root (ch.75) | ✅ |
 | 5 | Deepening — Karakamsa effects (ch.33), Nisargayu COMPLETE (haranas + ascendant, ch.43), 2- & 3-planet conjunctions (ch.15/16), upagrahas + effects (ch.3/25), Shodasavarga table (ch.6-7), Sudarshana Chakra (ch.74) | ✅ |
+| 6 | Jaimini padas + closing — varga use-domains (ch.7), Arudha padas + Arudha Lagna + Upapada (ch.29-30), pada-finance (ch.29:8-15), spouse-from-Upapada (ch.30:7-12), Drekkana decanates (ch.6); report-completeness guard | ✅ |
 
 ## Doctrine encoded so far (all cited to BPHS's own slokas)
 
@@ -260,9 +261,21 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 - **Shodasavarga** (ch.6-7) — every body's sign in all sixteen divisional charts (D1 Rasi … D60
   Shashtiamsa), surfaced as a full table (the engine computed these internally for Vimsopaka/Sthana
   but never showed them). Self-checked: D1==Rasi, D9==navamsa, the tag set == the vimsopaka scheme's.
+  Paired with the **varga use-domains** (ch.7 sl.1-8): the cited D1→D60 life-matter map (D2 wealth,
+  D3 siblings, D9 spouse, D10 career, D7 progeny …) so the table says which chart is read for what.
 - **Sudarshana Chakra** (ch.74) — the three-lagna house view: every body's house from the Ascendant,
   the Moon (Chandra Lagna) and the Sun (Surya Lagna) at once, with the all-three-agree consensus.
   Parashara's three-fold confirmation, surfaced as a table.
+- **Arudha padas** (ch.29-30) — the twelve bhava arudhas incl. the **Arudha Lagna** (the "perceived
+  self") and the **Upapada** (marriage). Pada = as far from the lord as the lord is from the house,
+  with the special exceptions reconciled against ALL of the chapter's worked examples (lord in
+  1st→10th, 7th→4th, 4th→the 4th; 10th→the 10th inferred) so no pada lands on the house or its 7th.
+  Two arudha-based readings ride on it: **pada & finance** (ch.29 sl.8-15 — wealth from the planets
+  on/aspecting the 11th-from-AL, benefic=virtuous / malefic=questionable, quantum by count) and
+  **spouse from the Upapada** (ch.30 sl.7-12 — the 2nd-from-UL: benefic→good spouse, debilitated/
+  malefic→loss). Each cited; the base and exception rules pinned by BPHS's own worked nativities.
+- **Drekkana** (ch.6 sl.7-8) — each body's decanate: part (1/2/3), decanate sign (1st/5th/9th from
+  the rasi), its lord, and the sage-deity (Narada/Agasthya/Doorvasa). Read for co-born.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Vimshottari dasha** (ch.46 sl.12-15) — the PRIMARY 120-year system, encoded from Parashara's own

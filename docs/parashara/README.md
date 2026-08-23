@@ -46,6 +46,26 @@ all 15. It is **textbook fidelity to Parashara's arithmetic — NOT validated pr
 lives** (the same caveat the Raman engine's Measured-Truth verdict carries). The ledger is a floor,
 ratcheted so a regression cannot pass silently, and every row's citation must resolve.
 
+### The verdict-scale number — cross-engine agreement
+
+For a figure on the *same 293-verdict scale* as Raman's, `tools/parashara/cross_engine_agreement.py`
+runs the parashara ch.11 bhava judge on the **same** Raman goldens and scores it against Raman's own
+published verdicts (ordinal afflicted<mixed<favourable; parashara flourishing/ordinary/annihilated
+maps onto it):
+
+```
+Raman engine   vs golden : exact=259/293  within-1=283/293   (the engine tuned to Raman)
+Parashara      vs golden : exact=123/293  within-1=198/293   (BPHS ch.11, untuned)
+divergences: 94 inversion + 75 boundary + 1 off-axis
+```
+
+**Read this as overlap, not accuracy.** It is NOT "BPHS is 123/293 accurate." Raman deliberately
+revised and *elaborated* Parashara across many chapters plus his own refinements; the parashara
+number is bare **ch.11 prosperity/annihilation** — a single, coarse method — so where they differ the
+divergence is a real BPHS-vs-Raman doctrinal difference (each attributed), not a bug. The gap between
+259 and 123 IS the measure of how much Raman's system is more than ch.11 alone. Guarded by
+`test_cross_engine_agreement.py`, which re-derives Raman's 259/293 to prove the comparison is valid.
+
 ## Layout
 
 ```

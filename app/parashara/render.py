@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import Final
 
 from app.parashara.doctrine.vargottama import SOURCE as _VARGOTTAMA_SOURCE
+from app.parashara.primitives.yogini_dasha import YOGINI_BY_LORD as _YOGINI_BY_LORD
 from app.parashara.reading import ParasharaReading
 
 SOURCE_VARGOTTAMA: Final[str] = f"{_VARGOTTAMA_SOURCE.work}:{_VARGOTTAMA_SOURCE.line}"
@@ -143,11 +144,11 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append("## Pancha Mahapurusha yogas (Saravali ch.37)")
     out.append("")
     if reading.mahapurusha:
-        out.append("| Yoga | Graha | Dignity | Kendra | Source |")
-        out.append("|---|---|---|---|---|")
+        out.append("| Yoga | Graha | Dignity | Kendra | Definition | Effect |")
+        out.append("|---|---|---|---|---|---|")
         for y in reading.mahapurusha:
             out.append(f"| {y.name} | {y.planet} | {y.dignity} | {y.house} | "
-                       f"{y.source.work}:{y.source.line} |")
+                       f"{y.source.work}:{y.source.line} | {y.effect.work}:{y.effect.line} |")
     else:
         out.append("_No Pancha Mahapurusha yoga (no non-luminary in own/exaltation in a kendra)._")
     out.append("")
@@ -179,13 +180,22 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append("")
     out.append("Shodasavarga scheme (16 divisions), 0–20. Each score cites its scheme sloka.")
     out.append("")
-    out.append("| Graha | Score | Band | Source |")
-    out.append("|---|---|---|---|")
+    out.append("| Graha | Score | Band | Parashara's phrasing | Source |")
+    out.append("|---|---|---|---|---|")
     for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
         s = reading.vimsopaka.get(g)
         if s is None:
             continue
-        out.append(f"| {g} | {s.score:.2f} | {s.band} | {s.source.work}:{s.source.line} |")
+        out.append(f"| {g} | {s.score:.2f} | {s.band} | {s.verdict} | {s.source.work}:{s.source.line} |")
+    out.append("")
+    out.append("Per-division Varga Viswa (which of the 16 divisions hold each graha's dignity):")
+    out.append("")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        s = reading.vimsopaka.get(g)
+        if s is None or not s.per_varga:
+            continue
+        parts = ", ".join(f"{tag} {val:.2f}" for tag, val in s.per_varga.items())
+        out.append(f"- **{g}**: {parts}")
     out.append("")
 
     # --- Shadbala (ch.27) — COMPLETE, all six balas ---
@@ -203,6 +213,18 @@ def to_markdown(reading: ParasharaReading) -> str:
             continue
         out.append(f"| {g} | {s.sthana.total:.1f} | {s.dig:.1f} | {s.naisargika:.1f} | "
                    f"{s.cheshta:.1f} | {s.drik:.1f} | {s.kala.total:.1f} | {s.rupas:.2f} |")
+    out.append("")
+    out.append("### Sthana bala — the five positional sub-components (virupas)")
+    out.append("")
+    out.append("| Graha | Uchcha | Saptavargaja | Ojhayugma | Kendradi | Drekkana |")
+    out.append("|---|---|---|---|---|---|")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        s = reading.shadbala.get(g)
+        if s is None:
+            continue
+        st = s.sthana
+        out.append(f"| {g} | {st.uchcha:.1f} | {st.saptavargaja:.1f} | {st.ojhayugmarasiamsa:.1f} | "
+                   f"{st.kendradi:.1f} | {st.drekkana:.1f} |")
     out.append("")
     out.append("### Kala bala — the eight temporal sub-components (virupas)")
     out.append("")
@@ -243,16 +265,18 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append("")
     out.append("Baladi = age-state by degree (bala/kumara/yuva/vriddha/mrita); "
                "Jagradadi = awake/dreaming/sleeping by dignity; "
-               "Deeptadi = dignity/placement state (+Vikala if with a malefic, +Kopa if combust).")
+               "Deeptadi = dignity/placement state (+Vikala if with a malefic, +Kopa if combust). "
+               "Grades are Parashara's result-strength (1.0 full / 0.5 half / 0.0 nil).")
     out.append("")
-    out.append("| Graha | Baladi | Jagradadi | Deeptadi |")
+    out.append("| Graha | Baladi (grade) | Jagradadi (grade) | Deeptadi |")
     out.append("|---|---|---|---|")
     for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
         a = reading.avasthas.get(g)
         if a is None:
             continue
         deept = a.deeptadi + (" +Vikala" if a.deeptadi_vikala else "") + (" +Kopa" if a.deeptadi_kopa else "")
-        out.append(f"| {g} | {a.baladi} | {a.jagradadi} | {deept} |")
+        out.append(f"| {g} | {a.baladi} ({a.baladi_grade:.2f}) | "
+                   f"{a.jagradadi} ({a.jagradadi_grade:.2f}) | {deept} |")
     out.append("")
 
     # --- Dashas (ch.46) ---
@@ -269,10 +293,16 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"_{d.reason}._")
         out.append("")
         if d.applicable and d.timeline:
-            out.append("| Lord | Starts (yrs) | Length (yrs) |")
-            out.append("|---|---|---|")
+            is_yogini = d.system == "yogini"
+            out.append(("| Yogini | Lord | Starts (yrs) | Length (yrs) |" if is_yogini
+                        else "| Lord | Starts (yrs) | Length (yrs) |"))
+            out.append("|---|---|---|---|" if is_yogini else "|---|---|---|")
             for p in d.timeline:
-                out.append(f"| {p.lord} | {p.start_year:.2f} | {p.years:.0f} |")
+                if is_yogini:
+                    out.append(f"| {_YOGINI_BY_LORD.get(p.lord, '?')} | {p.lord} | "
+                               f"{p.start_year:.2f} | {p.years:.0f} |")
+                else:
+                    out.append(f"| {p.lord} | {p.start_year:.2f} | {p.years:.0f} |")
             out.append("")
         if d.applicable and d.bhuktis:
             out.append("Antardashas (bhuktis) within each mahadasha (BPHS-46:110):")

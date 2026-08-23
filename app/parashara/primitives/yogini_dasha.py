@@ -32,6 +32,8 @@ YOGINIS: Final[tuple[tuple[str, str, int], ...]] = (
 
 #: (lord, years) cycle for the generic framework.
 CYCLE: Final[tuple[tuple[str, int], ...]] = tuple((graha, yrs) for _, graha, yrs in YOGINIS)
+#: graha -> its Yogini name (1:1 — each of the 8 grahas rules exactly one yogini).
+YOGINI_BY_LORD: Final[dict[str, str]] = {graha: name for name, graha, _ in YOGINIS}
 
 SOURCE: Final[Citation] = Citation("BPHS-46", 5789)
 TOTAL_YEARS: Final[int] = 36

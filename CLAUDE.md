@@ -37,13 +37,24 @@ engine *more faithful to B. V. Raman*.
 The directive was carried out in full, and then honored to its last clause ("measure honestly;
 report both"). The results are settled and MUST NOT be re-litigated by re-running what is closed:
 
-- **Textbook fidelity: ACHIEVED and at its proven ceiling — 259/293 = 88.4% exact and
-  283/293 = 96.6% within one ordinal step** against Raman's own printed verdicts, externally
-  verified casting (96.7% ascendant agreement with AstroDatabank's published placements). Five
-  independent methods proved the ceiling cannot be faithfully exceeded (placement harvest
-  exhausted, karaka frames over-fire, tuner null on 5x data, no clean cited-fix patterns, ML on
-  the same features loses to the hand-tuned judge). **Do not chase accuracy further; it is not
-  there without overfitting.**
+- **Textbook fidelity — the "88.4% ceiling" was a CEILING ON A SELECTED POOL. Corrected
+  2026-08-23, user-signed; read this before quoting any fidelity figure.** The 259/293 = 88.4%
+  below was measured honestly *within its pool*, and the five ceiling proofs still stand *for
+  that pool* — but the pool itself could only ever admit verdicts the engine already agreed
+  with, because old playbook rule 7 confirmed engine-MATCHES from the DRAFT queue and left
+  mismatches parked. Once that gate was removed and an engine-blind reviewer began confirming
+  what Raman actually concluded, the figure moved to **263/306 = 85.9% exact, 291/306 = 95.1%
+  within-1, inversions 15**, and **it is expected to fall further toward ~70-75% as the
+  remaining ~109 DRAFT rows are adjudicated.** Nothing regressed in the engine; the measurement
+  stopped being one-sided. Full record: DOCTRINE_BACKLOG "AUDIT + CONFIRMATION-RULE AMENDMENT".
+  - Historic (selected-pool) figure, retained because the ceiling analysis references it:
+    259/293 = 88.4% exact, 283/293 = 96.6% within-1, externally verified casting (96.7%
+    ascendant agreement with AstroDatabank). Five independent methods proved that pool's ceiling
+    could not be faithfully exceeded (placement harvest exhausted, karaka frames over-fire,
+    tuner null on 5x data, no clean cited-fix patterns, ML on the same features loses to the
+    hand-tuned judge). **Those findings are about the JUDGE and remain binding: do not chase
+    accuracy by tuning; it is not there without overfitting.** What changed is the DENOMINATOR,
+    not the judge.
   - **Read the two fidelity axes side by side, never just the strict one.** The strict figure
     moved DOWN 261→259 on 2026-08-03 — deliberately, user-signed-off — when the B1 dominant-factor
     guard was enabled (`house_template.B1_DOMINANT_FACTOR_GUARD`). It bought within-1 281→283 and

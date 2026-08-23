@@ -29,6 +29,23 @@ Shared deliberately: the **fidelity apparatus** — `Citation(work, line)` into 
 `verify`/`passage`, and (per stream) its own registry. Re-derived per stream would be waste; the
 authority assigned to a text is what differs, not the machinery.
 
+## The engine's number — the BPHS fidelity ratchet
+
+**`[bphs-fidelity] reproduced=15/15 of Parashara's own worked results`** (`test_fidelity_ledger.py`,
+built from `tools/parashara/fidelity_ledger.py`).
+
+This is the BPHS analog of the Raman engine's `259/293`, and it is honestly **different in kind**.
+The Raman figure is *verdict accuracy* against Raman's published **chart-verdict gallery** — he
+printed hundreds of nativities with his judgment of each. BPHS gives no such gallery; it is a
+systematic treatise, so the faithful analog scores the engine's reproduction of the concrete worked
+**results Parashara actually printed**: the Ahargana year/month lords (1 Jun 1984 → Jupiter/Venus),
+the Vimshottari seed (Revati → Mercury), the Uchcha value (152°15′ → 50.75), the Sun's Trikona
+reduction (BPHS-67), every Bhinnashtakavarga total + SAV 337, the full 144-cell ch.24 catalogue, and
+the argala of his hypothetical chart. Each row is a number or lookup he stated; the engine reproduces
+all 15. It is **textbook fidelity to Parashara's arithmetic — NOT validated prediction of real
+lives** (the same caveat the Raman engine's Measured-Truth verdict carries). The ledger is a floor,
+ratcheted so a regression cannot pass silently, and every row's citation must resolve.
+
 ## Layout
 
 ```

@@ -61,11 +61,24 @@ class TestRefusals:
         birth, why = ex._parse_birth("Born 24-3-7883 at 6 a.m. (L.M.T) at 13 N 0, 77 E 35.")
         assert birth is None and "year" in why[0]
 
-    def test_missing_zone_marker_is_refused(self):
-        """A 30-minute zone error moves the Moon far enough to shift the dasha balance by
-        months, so an unreadable zone can never be assumed."""
-        birth, why = ex._parse_birth("Born 3-8-1942 at 7-23 a.m. at 13 N 0, 77 E 35.")
-        assert birth is None and "zone" in why[0]
+    def test_missing_zone_is_hypothesised_and_loudly_flagged(self):
+        """A zone the printing omits is HYPOTHESISED as L.M.T. rather than refused — but the
+        hypothesis is never silent, and it is never trusted on its own. It carries a flag, and
+        the dasha gate adjudicates it: a wrong zone moves the Moon, the printed balance fails to
+        reproduce, and the record is dropped. Only `verified` candidates are ever emitted, so a
+        hypothesised zone cannot reach the corpus unchecked."""
+        birth, notes = ex._parse_birth("Born 3-8-1942 at 7-23 a.m. at 13 N 0, 77 E 35.")
+        assert birth is not None
+        assert any("ZONE ABSENT" in n for n in notes)
+
+    def test_a_hypothesised_zone_still_has_to_pass_the_gate(self):
+        """The safety of hypothesising rests entirely on the gate being independent, so pin it:
+        an unverifiable candidate never reaches 'verified'."""
+        c = ex.Candidate(book="HTJAH-II", chart_no=999, line=1)
+        c.birth, _ = ex._parse_birth("Born 3-8-1942 at 7-23 a.m. at 13 N 0, 77 E 35.")
+        c.printed_lord, c.printed_years = "Saturn", 5.0      # deliberately not this chart's
+        ex.gate(c, tolerance_days=30.0)
+        assert c.status == "gate-failed"
 
     def test_truncated_longitude_is_refused(self):
         birth, why = ex._parse_birth("Born 3-8-1942 at 7-23 a.m. (I.S.T.) at 13 N 0.")

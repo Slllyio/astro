@@ -79,7 +79,14 @@ _BORN_RE = re.compile(
     r"[^\n]{0,18}?at\s*(?:about\s*)?(\d{1,2})\s*(?:[-.:]\s*(\d{1,2}))?\s*"    # time
     r"([ap])\.?\s*m",                                                          # meridiem
     re.IGNORECASE)
-_ZONE_RE = re.compile(r"\(\s*([ILG])\.?\s*[MS]?\.?\s*[TM]?\.?\s*\)", re.IGNORECASE)
+#: Zone marker. Parentheses are optional and the separator is a dot OR a hyphen, because all of
+#: "(I.S.T.)", "(L.M.T)", "L.T." (bare) and "(L-T.)" occur. The leading letter is what matters:
+#: I -> Indian Standard Time, L -> Local (mean) Time, G -> Greenwich.
+_ZONE_RE = re.compile(r"\(?\s*\b([ILG])[.\-]\s?(?:[MS][.\-]\s?)?T\.?\s*\)?", re.IGNORECASE)
+#: Longitude printed as TIME rather than arc: "Long. 5h. 10m. 20s. E" == 5h10m20s x 15 deg.
+_LON_TIME_RE = re.compile(
+    r"Long\.?\s*(\d{1,2})\s*h\.?\s*(?:(\d{1,2})\s*m\.?)?\s*(?:(\d{1,2})\s*s\.?)?\s*([EW])",
+    re.IGNORECASE)
 #: Raman prints coordinates as ``DD <dir> MM`` — the hemisphere letter sits BETWEEN the degrees
 #: and the minutes (``13 N 10, 76 E 10``; ``13° N. \n 77 E35.``; ``51 N 30, 0 W 05``), and the
 #: pair is routinely split across a line break by the scan. Minutes are optional and, when the
@@ -104,9 +111,18 @@ _COORD_MIN_LAST = re.compile(
     _DEG + r"[.,]?\s*" + _HEMI + r"[.,]?\s*(\d{1,2})(?!\d)(?!\s*(?:°|\*|º|[NSEW]))\s*[’']?",
     re.IGNORECASE)
 _COORD_BARE = re.compile(_DEG + r"[.,]?\s*" + _HEMI, re.IGNORECASE)
-_BAL_RE = re.compile(
-    r"Balance of\s*([A-Z][a-z]+)(?:'s|’s)?\s*Dasa at birth\s*[:\-—]?\s*"
+#: Two printings phrase the balance differently and BOTH are accepted:
+#:   scanned Bangalore ed. — "Balance of Ketu Dasa at birth : 6 years, 4 months and 4 days."
+#:   Motilal 12th ed.      — "Balance of Ketu Dasha at birth: Years 5-0-24."  (Y-M-D, compact)
+#: The compact form is the more trustworthy of the two: it cannot be truncated mid-phrase the
+#: way "6 years, 4 months and..." is when a line breaks.
+_BAL_PROSE_RE = re.compile(
+    r"Balance of\s*([A-Z][a-z]+)(?:'s|’s)?\s*Das?h?a at birth\s*[:\-—]?\s*"
     r"(?:(\d+)\s*years?)?[,\s]*(?:(\d+)\s*months?)?[,\s]*(?:and)?\s*(?:(\d+)\s*days?)?",
+    re.IGNORECASE)
+_BAL_COMPACT_RE = re.compile(
+    r"Balance of\s*([A-Z][a-z]+)(?:'s|’s)?\s*Das?h?a at birth\s*[:\-—]?\s*"
+    r"(?:years?\s*)?(\d{1,3})\s*-\s*(\d{1,2})\s*-\s*(\d{1,2})",
     re.IGNORECASE)
 
 _LORDS = {"Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"}
@@ -118,6 +134,7 @@ class Candidate:
     book: str
     chart_no: int
     line: int
+    origin: str = "corpus"
     birth: Optional[dict[str, Any]] = None
     printed_lord: Optional[str] = None
     printed_years: Optional[float] = None
@@ -188,13 +205,21 @@ def _parse_birth(block: str) -> tuple[Optional[dict[str, Any]], list[str]]:
 
     zm = _ZONE_RE.search(block[:m.end() + 40])
     zone = zm.group(1).upper() if zm else None
-    if zone is None:
-        return None, ["no zone marker (I.S.T./L.M.T./G.M.T.)"]
 
     # The coordinate pair frequently straddles a line break, so scan a generous tail and take
     # the FIRST latitude token and the FIRST longitude token found.
     tail = block[m.end(): m.end() + 160]
     lat = lon = None
+    # Longitude stated as TIME ("Long. 5h. 10m. 20s. E") is read first: its digits would
+    # otherwise be picked up as a spurious arc longitude by the generic scanner.
+    lt = _LON_TIME_RE.search(tail)
+    if lt:
+        h, mi, se = int(lt.group(1)), int(lt.group(2) or 0), int(lt.group(3) or 0)
+        lon = (h + mi / 60.0 + se / 3600.0) * 15.0
+        if lt.group(4).upper() == "W":
+            lon = -lon
+        tail = tail[:lt.start()] + " " + tail[lt.end():]
+        notes.append("longitude printed as time (h/m/s), converted at 15°/h")
     for deg_s, hemi, minute in _scan_coords(tail):
         deg = int(deg_s)
         val = _dms(deg_s, minute)
@@ -218,15 +243,31 @@ def _parse_birth(block: str) -> tuple[Optional[dict[str, Any]], list[str]]:
     elif zone == "L":
         tz = round(lon / 15.0, 4)
         notes.append("L.M.T. — zone derived from longitude")
-    else:                                    # G.M.T.
+    elif zone == "G":
         tz = 0.0
+    else:
+        # Zone omitted by the printing (it happens: "Born on 12-3-1863 at 2-3 a.m. (Lat. 22°
+        # 20' N., Long. 4h. 53m. E.)"). We do NOT assume — we HYPOTHESISE Local Mean Time, the
+        # convention for Raman's older nativities, and flag it. The dasha gate then adjudicates:
+        # a wrong zone moves the Moon and the printed balance will not reproduce, so the record
+        # is rejected. Hypothesise-then-verify is only safe because the gate is independent.
+        tz = round(lon / 15.0, 4)
+        notes.append("ZONE ABSENT — hypothesised L.M.T., accepted only if the dasha gate passes")
     return {"dt": f"{year:04d}-{month:02d}-{day:02d}T{hour24:02d}:{mm:02d}:00",
             "tz": tz, "lat": round(lat, 4), "lon": round(lon, 4)}, notes
 
 
 def _parse_balance(block: str) -> tuple[Optional[str], Optional[float]]:
-    """(lord, years) from Raman's printed 'Balance of X Dasa at birth'."""
-    m = _BAL_RE.search(block)
+    """(lord, years) from Raman's printed 'Balance of X Das(h)a at birth'.
+
+    The compact Y-M-D form is tried FIRST: where both could match, it is the unambiguous one."""
+    m = _BAL_COMPACT_RE.search(block)
+    if m:
+        lord, y, mo, d = m.groups()
+        lord = lord.capitalize()
+        if lord in _LORDS and int(mo) < 12 and int(d) <= 31:
+            return lord, int(y) + int(mo) / 12.0 + int(d) / 365.2425
+    m = _BAL_PROSE_RE.search(block)
     if not m:
         return None, None
     lord, y, mo, d = m.groups()
@@ -244,9 +285,13 @@ def _conclusion(block: str) -> Optional[str]:
     return " ".join(m.group(1).split()) if m else None
 
 
-def collect(book: str, path: Path) -> list[Candidate]:
-    """Every chart presentation in one book, with birth/balance/conclusion parsed."""
-    lines = path.read_text(encoding="utf-8", errors="ignore").splitlines()
+def collect_text(book: str, text: str, *, origin: str = "corpus") -> list[Candidate]:
+    """Every chart presentation in a book's text, with birth/balance/conclusion parsed.
+
+    Works on any source that yields the book's prose — the vendored (OCR'd) markdown or a
+    digitally-typeset PDF — because both print the same sentences. `origin` is recorded on each
+    candidate so a record's provenance says which printing it came from."""
+    lines = text.splitlines()
     starts: list[tuple[int, int]] = []
     for i, line in enumerate(lines):
         m = _CHART_RE.search(line)
@@ -258,7 +303,7 @@ def collect(book: str, path: Path) -> list[Candidate]:
         block = "\n".join(lines[i:min(end, i + 120)])
         if not re.search(r"\bBorn\b", block[:400], re.IGNORECASE):
             continue                                    # a cross-reference, not a presentation
-        c = Candidate(book=book, chart_no=no, line=i + 1)
+        c = Candidate(book=book, chart_no=no, line=i + 1, origin=origin)
         c.birth, notes = _parse_birth(block)
         c.notes.extend(notes)
         c.printed_lord, c.printed_years = _parse_balance(block)
@@ -266,6 +311,37 @@ def collect(book: str, path: Path) -> list[Candidate]:
         if c.birth is None:
             c.status, c.reason = "unparsed", "; ".join(notes)
         out.append(c)
+    return out
+
+
+def collect(book: str, path: Path) -> list[Candidate]:
+    """Chart presentations from a vendored corpus markdown file."""
+    return collect_text(book, path.read_text(encoding="utf-8", errors="ignore"))
+
+
+def collect_pdf(path: Path) -> list[Candidate]:
+    """Chart presentations from a digitally-typeset PDF of both volumes.
+
+    The Motilal printing carries a real text layer rather than OCR, so the birth lines survive
+    intact ("Lat. 12° 20' N., Long. 76° 38' E." instead of the scan's truncated "at 13° N. \\n77
+    E35."). It is used as an EXTRACTION source only: citations continue to resolve against the
+    hash-locked vendored corpus, because this is a different edition and its line numbers would
+    not match the anchors already written throughout the engine.
+
+    Volume One runs houses I-VI and Volume Two VII-XII, so the chart-number series restarts;
+    candidates are tagged by which volume their page falls in."""
+    import fitz                                          # PyMuPDF; optional, tool-time only
+
+    doc = fitz.open(path)
+    pages = [p.get_text() for p in doc]
+    # "Volume Two" begins at the page whose text announces it after the contents pages.
+    vol2_page = next((i for i, t in enumerate(pages)
+                      if i > 20 and re.search(r"^\s*Volume Two\s*$", t, re.M)), len(pages))
+    out: list[Candidate] = []
+    for tag, lo, hi in (("HTJAH-I", 0, vol2_page), ("HTJAH-II", vol2_page, len(pages))):
+        text = "\n".join(pages[lo:hi])
+        for c in collect_text(tag, text, origin=f"motilal-pdf:{path.name}"):
+            out.append(c)
     return out
 
 
@@ -328,6 +404,26 @@ def existing_chart_numbers() -> set[tuple[str, int]]:
     return have
 
 
+def existing_birth_keys() -> set[str]:
+    """Birth moments already in the golden corpus, to the minute.
+
+    Deduplication is by NATIVITY, not by chart number: the two printings number their charts
+    differently (the Motilal edition restarts the series at Volume Two), so the same nativity
+    carries different numbers in different sources. The birth moment is the edition-independent
+    identity."""
+    have: set[str] = set()
+    if not _GOLDENS.is_file():
+        return have
+    for raw in _GOLDENS.read_text(encoding="utf-8").splitlines():
+        s = raw.strip()
+        if not s or s.startswith("#"):
+            continue
+        b = json.loads(s).get("birth")
+        if b and b.get("dt"):
+            have.add(str(b["dt"])[:16])
+    return have
+
+
 def to_record(c: Candidate) -> dict[str, Any]:
     """A DRAFT golden record. The verdict is deliberately left unset — this tool extracts
     CHARTS, and the verdict is a doctrine judgment a reviewer makes by reading Raman."""
@@ -350,6 +446,7 @@ def to_record(c: Candidate) -> dict[str, Any]:
         "_extraction": {
             "tool": "extract_htjah_goldens",
             "gate": "raman_printed_dasha_balance",
+            "origin": c.origin,
             "printed_balance": {"lord": c.printed_lord, "years": c.printed_years},
             "cast_balance": {"lord": c.cast_lord, "years": c.cast_years},
             "notes": c.notes,
@@ -368,17 +465,29 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--tolerance-days", type=float, default=30.0,
                     help="max disagreement with Raman's printed dasha balance (default 30)")
     ap.add_argument("--book", choices=sorted(_BOOKS), help="limit to one book")
+    ap.add_argument("--pdf", type=Path,
+                    help="a digitally-typeset PDF of both volumes, used INSTEAD of the vendored "
+                         "OCR markdown (citations still resolve against the locked corpus)")
     a = ap.parse_args(argv)
 
     have = existing_chart_numbers()
-    books = {a.book: _BOOKS[a.book]} if a.book else _BOOKS
     all_c: list[Candidate] = []
-    for tag, path in books.items():
-        if not path.is_file():
-            print(f"[skip] {tag}: corpus file absent", file=sys.stderr)
-            continue
-        for c in collect(tag, path):
+    if a.pdf:
+        if not a.pdf.is_file():
+            print(f"[error] no such PDF: {a.pdf}", file=sys.stderr)
+            return 2
+        for c in collect_pdf(a.pdf):
+            if a.book and c.book != a.book:
+                continue
             all_c.append(gate(c, a.tolerance_days))
+    else:
+        books = {a.book: _BOOKS[a.book]} if a.book else _BOOKS
+        for tag, path in books.items():
+            if not path.is_file():
+                print(f"[skip] {tag}: corpus file absent", file=sys.stderr)
+                continue
+            for c in collect(tag, path):
+                all_c.append(gate(c, a.tolerance_days))
 
     new = [c for c in all_c if (c.book, c.chart_no) not in have]
     verified_new = [c for c in new if c.status == "verified"]

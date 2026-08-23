@@ -2020,3 +2020,55 @@ recover a large share. (c) The 57 shipped charts + the 136 known Conclusion para
 REVIEW queue: each verdict promoted DRAFT → CONFIRMED grows the ratchet's denominator honestly.
 **That review is the only path that moves 261/294, and it must stay per-record against Raman's
 text — never confirm to pad.**
+
+## Raman's chart preparation vs a modern ephemeris — MEASURED (2026-08-23)
+
+Raised by the owner mid-extraction: *"raman chart preparation is different from ephemeris."*
+Correct, and it invalidated the gate the HTJAH extractor had been using. Now quantified.
+
+**The instrument.** Two digitally-typeset PDFs of HTJAH Vol I and Vol II (Motilal, 12th ed.)
+were supplied — real text layers, not the OCR'd scans in the vendored corpus. That made Raman's
+PRINTED chart grids machine-readable for the first time: the planet names are text spans with
+page coordinates and the grid rules are vector rectangles, so a South Indian 4x4 square can be
+reconstructed geometrically and read cell by cell (`tools/raman_saab/htjah_grid.py`).
+
+**Validation of the reading itself** (against Raman's prose, never the engine). Vol I Chart
+No. 2 reconstructs to Lagna in Leo with Mercury, Jupiter and Mars; Sun and Ketu in Cancer; Venus
+in Gemini; Saturn in Scorpio; Rahu in Capricorn. Raman writes of that chart: *"the combination
+of Mars and Jupiter in the ascendant has produced a Raja yoga… Mars by himself is a yoga Karaka
+as he is lord of the 4th and 9th."* From Leo, Mars (owning Aries and Scorpio) is lord of the 9th
+and the 4th exactly. Both claims confirm the geometry independently.
+
+**The finding, in two parts.**
+
+1. **At SIGN level the modern cast reproduces Raman exactly.** For Chart No. 2, casting his
+   printed birth line agrees with his printed grid on **8 of 8 grahas AND the Lagna**, under
+   either plausible zone reading. This matters more than it sounds: the entire doctrine layer is
+   whole-sign — drishti fires by sign membership, lordship is by sign, bhava is by sign — so the
+   divergence does **not** reach the verdict logic. Fresh-cast golden records are sound as
+   verdict inputs.
+
+2. **Below sign level the Moon diverges, per chart, with no systematic bias.** Raman's printed
+   Vimshottari balance implies a Moon longitude; comparing it against the cast Moon across
+   **227 charts**: median **-0.010°**, mean **+0.161°**, stdev **1.248°**. 57% agree within 0.1°,
+   68% within 0.25°, but **18% differ by more than a full degree**. A near-zero median across 227
+   charts rules out an ayanamsa or ephemeris offset — there is nothing to calibrate. The scatter
+   is per-chart: era table interpolation, rounded birth times, and occasional printed typos.
+
+**Consequence — the dasha-balance gate was the wrong primary gate.** It was rejecting charts for
+a Moon disagreement that is Raman-vs-modern-ephemeris noise rather than a parse error, which is
+why it failed 74 of 108 gated PDF charts while the median |offset| was a hundredth of a degree.
+It remains useful as a COARSE check (a wrong parse throws the balance by years, not months), but
+the correct primary gate is **sign-level agreement with the printed grid** — which is also what
+the golden schema always preferred: `printed_degree` / `sign_midpoint` positions are the primary
+Track-B input and `fresh_cast` the fallback, and the corpus's strongest records already use
+Raman's own printed figures.
+
+**Where this leaves the extraction backlog.** The grid reader is committed EXPERIMENTAL: correct
+where it locates a square, but it locates only 3 of 65 chart-bearing pages in the first 120,
+because it refuses to extrapolate a missing rule (extrapolating shifts the cells and puts one
+graha in two signs — a usable self-check, since that is astronomically impossible). Finishing it
+is the highest-value next step on this thread: it would supply Raman's printed placements for
+~600 charts across both volumes, gate them at sign level, and make the fresh-cast fallback
+unnecessary. Until then the 57 already-ingested fresh-cast charts stand — they carry no verdicts,
+so they cannot affect fidelity, and their sign-level placements are sound per finding (1).

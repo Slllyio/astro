@@ -126,6 +126,21 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("> " + _ksign.text)
         out.append("")
 
+    # --- Two-planet conjunctions (Saravali ch.15) ---
+    if reading.conjunctions:
+        out.append("## Two-planet conjunctions (Saravali ch.15)")
+        out.append("")
+        out.append("Grahas sharing a sign, with Saravali's effect for that pair (the 21-pair grid "
+                   "BPHS lacks).")
+        out.append("")
+        out.append("| Pair | Effect | Source |")
+        out.append("|---|---|---|")
+        for pair, s in reading.conjunctions:
+            name = " + ".join(sorted(pair))
+            text = s.text if len(s.text) <= 300 else s.text[:297] + "…"
+            out.append(f"| {name} | {text} | {s.source.work}:{s.source.line} |")
+        out.append("")
+
     # --- Dignity concentrations (Saravali ch.45) ---
     if reading.dignity_concentrations:
         out.append("## Dignity concentrations (Saravali ch.45)")

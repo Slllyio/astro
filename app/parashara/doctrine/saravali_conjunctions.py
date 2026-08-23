@@ -1,10 +1,11 @@
-"""Two-planet conjunction (yoga) effects — Saravali ch.15, the 21-pair grid.
+"""Multi-planet conjunction (yoga) effects — Saravali ch.15 (pairs) and ch.16 (triples).
 
-For every pair of the seven grahas sharing a house, Saravali gives an effect ("Sun and Moon together
--> ...", 21 = C(7,2) pairs). BPHS has no such clean two-graha grid, so this is allied doctrine
-(citable where the root is silent). Each pair is read verbatim from its "{P1}-{P2} YOGA" header and
-cited to that line; the headers are parsed directly (not via the numbered-sloka index) because one
-sloka's number was OCR-mangled to "II." — the header itself is clean, so keying on it recovers all 21.
+For every pair (ch.15, 21 = C(7,2)) and every triple (ch.16, 35 = C(7,3)) of the grahas sharing a
+house, Saravali gives an effect. BPHS has no such clean multi-graha grid, so this is allied doctrine
+(citable where the root is silent). Each cell is read verbatim and cited to its line; the corpus is
+parsed by the grahas NAMED (not the numbered-sloka index), because OCR mangled several sloka numbers
+(ch.15's Moon-Venus scanned as roman "II."; five ch.16 triples carry no "YOGA" keyword) — keying on
+the graha names recovers all 21 pairs and all 35 triples.
 
 Conjunction = sharing a sign, the project's locked whole-sign convention.
 """
@@ -58,6 +59,66 @@ def conjunction_effect(planet_a: str, planet_b: str) -> Optional[Sloka]:
 def all_conjunctions() -> Mapping[frozenset, Sloka]:
     """The whole 21-pair conjunction grid (SARAVALI-15)."""
     return dict(_grid())
+
+
+@lru_cache(maxsize=1)
+def _triple_grid() -> dict[frozenset, Sloka]:
+    """{frozenset of 3 grahas: Sloka} from ch.16. Blocks are grouped by the graha-triple each line
+    names (a header line and/or the effect sentence), since five triples lack the 'YOGA' keyword."""
+    path = resolve_file("SARAVALI-16")
+    if path is None:
+        return {}
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+
+    def triple_of(ln: str) -> Optional[frozenset]:
+        u = re.sub(r"\s+", " ", ln).upper()
+        named = frozenset(g for g in _GRAHAS if _PAT[g].search(u))
+        return named if len(named) == 3 else None
+
+    out: dict[frozenset, Sloka] = {}
+    cur: Optional[frozenset] = None
+    start = 0
+    for i, ln in enumerate(lines):
+        t = triple_of(ln)
+        if t is not None and t != cur and t not in out:
+            if cur is not None:
+                out[cur] = _slice_sloka("SARAVALI-16", lines, start, i, cur)
+            cur, start = t, i
+    if cur is not None:
+        out[cur] = _slice_sloka("SARAVALI-16", lines, start, len(lines), cur)
+    return out
+
+
+def _slice_sloka(work: str, lines: list[str], start: int, end: int, key: frozenset) -> Sloka:
+    text = re.sub(r"\s+", " ", " ".join(lines[start:end])).strip()
+    return Sloka(work=work, number=start + 1, topic="-".join(sorted(key)),
+                 text=text, source=Citation(work, start + 1))
+
+
+def triple_conjunction_effect(a: str, b: str, c: str) -> Optional[Sloka]:
+    """Saravali's effect for three grahas conjunct (order-independent), or None (SARAVALI-16)."""
+    trio = {a, b, c}
+    if len(trio) != 3 or not trio <= set(_GRAHAS):
+        raise ValueError("need three distinct grahas Sun..Saturn")
+    return _triple_grid().get(frozenset(trio))
+
+
+def all_triple_conjunctions() -> Mapping[frozenset, Sloka]:
+    """The whole 35-triple conjunction grid (SARAVALI-16)."""
+    return dict(_triple_grid())
+
+
+def active_triple_conjunctions(longitudes: Mapping[str, float]) -> list[tuple[frozenset, Sloka]]:
+    """Every three-graha conjunction present — triples of the seven sharing one sign — with its
+    Saravali effect. Four grahas in a sign yield each of their four triples."""
+    signs = {g: int(longitudes[g] % 360.0 // 30) + 1 for g in _GRAHAS if g in longitudes}
+    out: list[tuple[frozenset, Sloka]] = []
+    for a, b, c in combinations(_GRAHAS, 3):
+        if all(p in signs for p in (a, b, c)) and signs[a] == signs[b] == signs[c]:
+            eff = _triple_grid().get(frozenset({a, b, c}))
+            if eff is not None:
+                out.append((frozenset({a, b, c}), eff))
+    return out
 
 
 def active_conjunctions(longitudes: Mapping[str, float]) -> list[tuple[frozenset, Sloka]]:

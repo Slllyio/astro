@@ -140,6 +140,16 @@ def to_markdown(reading: ParasharaReading) -> str:
             text = s.text if len(s.text) <= 300 else s.text[:297] + "…"
             out.append(f"| {name} | {text} | {s.source.work}:{s.source.line} |")
         out.append("")
+        if reading.triple_conjunctions:
+            out.append("Three grahas sharing a sign (Saravali ch.16):")
+            out.append("")
+            out.append("| Triple | Effect | Source |")
+            out.append("|---|---|---|")
+            for trio, s in reading.triple_conjunctions:
+                name = " + ".join(sorted(trio))
+                text = s.text if len(s.text) <= 300 else s.text[:297] + "…"
+                out.append(f"| {name} | {text} | {s.source.work}:{s.source.line} |")
+            out.append("")
 
     # --- Dignity concentrations (Saravali ch.45) ---
     if reading.dignity_concentrations:

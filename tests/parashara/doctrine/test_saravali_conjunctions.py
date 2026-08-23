@@ -12,8 +12,11 @@ import pytest
 
 from app.parashara.doctrine.saravali_conjunctions import (
     active_conjunctions,
+    active_triple_conjunctions,
     all_conjunctions,
+    all_triple_conjunctions,
     conjunction_effect,
+    triple_conjunction_effect,
 )
 from app.parashara.doctrine.sources import verify
 
@@ -63,3 +66,34 @@ class TestChartDetector:
         pairs = {p for p, _ in active_conjunctions(lons)}
         assert pairs == {frozenset({"Sun", "Moon"}), frozenset({"Sun", "Mars"}),
                          frozenset({"Moon", "Mars"})}
+
+
+class TestTripleGrid:
+    def test_all_35_triples_present(self):
+        g = all_triple_conjunctions()
+        assert len(g) == 35
+        for a, b, c in combinations(_GRAHAS, 3):
+            assert frozenset({a, b, c}) in g, (a, b, c)
+
+    def test_every_citation_resolves(self):
+        for s in all_triple_conjunctions().values():
+            assert verify(s.source) and s.source.work == "SARAVALI-16"
+
+    def test_headerless_triples_recovered(self):
+        # five triples carry no "YOGA" keyword; block-by-named-grahas recovers them
+        for trio in (("Jupiter", "Venus", "Saturn"), ("Mars", "Moon", "Saturn"),
+                     ("Mercury", "Saturn", "Venus")):
+            assert triple_conjunction_effect(*trio) is not None
+
+    def test_lookup_order_independent(self):
+        assert triple_conjunction_effect("Sun", "Moon", "Mars") is \
+            triple_conjunction_effect("Mars", "Sun", "Moon")
+
+    def test_bad_args_raise(self):
+        with pytest.raises(ValueError):
+            triple_conjunction_effect("Sun", "Moon", "Moon")
+
+    def test_four_in_a_sign_yields_all_four_triples(self):
+        lons = {"Sun": 5.0, "Moon": 8.0, "Mars": 12.0, "Mercury": 15.0,
+                "Jupiter": 200.0, "Venus": 250.0, "Saturn": 300.0}
+        assert len(active_triple_conjunctions(lons)) == 4      # C(4,3)

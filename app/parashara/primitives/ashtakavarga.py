@@ -73,6 +73,36 @@ _BENEFIC: Final[Mapping[str, Mapping[str, tuple[int, ...]]]] = {
 }
 
 
+#: The four equilateral trikona groups (BPHS-66:1703): 1/5/9, 2/6/10, 3/7/11, 4/8/12.
+TRIKONA_GROUPS: Final[tuple[tuple[int, int, int], ...]] = (
+    (1, 5, 9), (2, 6, 10), (3, 7, 11), (4, 8, 12))
+TRIKONA_SOURCE: Final[Citation] = Citation("BPHS-66", 1720)   # sl.3-5, "Trikona shodhana"
+
+
+def trikona_shodhana(bav: Mapping[int, int]) -> dict[int, int]:
+    """Trikona (trine) reduction of a Bhinnashtakavarga (BPHS-66 sl.3-5): within each trikona group,
+    subtract the least of the three signs' rekhas from all three.
+
+    Verified against Parashara's own worked example (BPHS-67): the Sun's trine (5,3,2) -> (3,1,0),
+    (3,4,3) -> (0,1,0), (2,6,6) -> (0,4,4), (4,5,5) -> (0,1,1). Both stated exceptions — "no
+    shodhana if any trine rasi has no rekha" (subtracting a zero minimum changes nothing) and "if
+    all three are equal, write zero against all" (subtracting the common value) — are exactly what
+    subtract-the-minimum yields, so the one rule covers them.
+
+    NOTE: the SECOND reduction, Ekadhipatya shodhana (BPHS-68), and Pinda Sadhana (BPHS-69) that
+    depends on it are NOT encoded — this scan's ch.68 worked examples are internally inconsistent
+    (the both-planetless-different case gives (2,0) for Taurus/Libra {2,1} but (0,1) for
+    Sagittarius/Pisces {1,2}, and rule (1)'s text contradicts both), so a faithful deterministic
+    encoding is not possible from this source. Deferred, not faked — like the Shastihayani dasha.
+    """
+    out = dict(bav)
+    for group in TRIKONA_GROUPS:
+        m = min(out.get(s, 0) for s in group)
+        for s in group:
+            out[s] = out.get(s, 0) - m
+    return out
+
+
 def _ref_sign(ref: str, planet_signs: Mapping[str, int], asc_sign: int) -> Optional[int]:
     return asc_sign if ref == "Lagna" else planet_signs.get(ref)
 

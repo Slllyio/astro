@@ -58,6 +58,31 @@ class TestBindusInHouse:
         assert 0 <= AV.bindus_in_house(1, signs, asc_sign=asc, planet="Jupiter") <= 8
 
 
+class TestTrikonaShodhana:
+    def test_reproduces_parashara_worked_example(self):
+        """BPHS-67's own worked reduction of the Sun's BAV (total 48) -> the reduced table."""
+        sun = {1: 4, 2: 3, 3: 4, 4: 6, 5: 5, 6: 2, 7: 3, 8: 6, 9: 5, 10: 5, 11: 3, 12: 2}
+        assert sum(sun.values()) == 48
+        reduced = AV.trikona_shodhana(sun)
+        assert reduced == {1: 0, 2: 1, 3: 1, 4: 4, 5: 1, 6: 0, 7: 0, 8: 4, 9: 1, 10: 3, 11: 0, 12: 0}
+
+    def test_all_equal_trine_goes_to_zero(self):
+        # BPHS-66 exception: three equal trine rasis -> all zero (subtracting the common minimum).
+        bav = {s: 0 for s in range(1, 13)}
+        bav[1] = bav[5] = bav[9] = 3
+        assert all(AV.trikona_shodhana(bav)[s] == 0 for s in (1, 5, 9))
+
+    def test_zero_in_trine_leaves_group_unchanged(self):
+        # BPHS-66 exception: any trine rasi with no rekha -> no reduction (min is 0).
+        bav = {s: 0 for s in range(1, 13)}
+        bav[1], bav[5], bav[9] = 5, 3, 0
+        r = AV.trikona_shodhana(bav)
+        assert (r[1], r[5], r[9]) == (5, 3, 0)
+
+    def test_source_resolves(self):
+        assert verify(AV.TRIKONA_SOURCE)
+
+
 class TestCitation:
     def test_source_resolves(self):
         assert verify(AV.SOURCE)

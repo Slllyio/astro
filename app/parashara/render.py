@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import Final
 
 from app.parashara.doctrine.vargottama import SOURCE as _VARGOTTAMA_SOURCE
+from app.parashara.doctrine.saravali_grids import normalize_house_phrase
 from app.parashara.primitives.ashtakavarga import sav_band as _sav_band
 from app.parashara.primitives.yogini_dasha import YOGINI_BY_LORD as _YOGINI_BY_LORD
 from app.parashara.reading import ParasharaReading
@@ -75,6 +76,24 @@ def to_markdown(reading: ParasharaReading) -> str:
         for m in reading.maraka_planets:
             out.append(f"| {m.planet} | {m.reason} | {m.source.work}:{m.source.line} |")
         out.append("")
+
+    # --- Planet-in-house effects (Saravali ch.30) ---
+    out.append("## Planet-in-house effects (Saravali ch.30)")
+    out.append("")
+    out.append("Each graha's effect in the house it occupies — the allied planet grid BPHS lacks "
+               "(BPHS gives only lords-in-houses, ch.24). Each cell cites its Saravali sloka.")
+    out.append("")
+    out.append("| Graha | House | Effect | Source |")
+    out.append("|---|---|---|---|")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        pe = reading.planet_house_effects.get(g)
+        if pe is None:
+            continue
+        house, s = pe
+        text = normalize_house_phrase(s.text, house)
+        text = text if len(text) <= 300 else text[:297] + "…"
+        out.append(f"| {g} | {house} | {text} | {s.source.work}:{s.source.line} |")
+    out.append("")
 
     # --- Gulika (ch.3 / ch.25) ---
     out.append("## Gulika (Mandi) — the chief non-luminous point (BPHS ch.3, ch.25)")

@@ -39,6 +39,8 @@ from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
 from app.parashara.doctrine import functional_by_lagna as fbl
 from app.parashara.doctrine.gulika import GulikaEffect, effect_in_house as gulika_effect_in_house
 from app.parashara.doctrine.maraka import Maraka, maraka_planets
+from app.parashara.doctrine.saravali_grids import planet_in_house
+from app.parashara.doctrine.corpus_index import Sloka
 from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
 from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
 from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
@@ -117,6 +119,7 @@ class ParasharaReading:
     yogakarakas: tuple[str, ...]         # ch.34 — grahas owning both a kendra and a trikona
     marakas: tuple[str, ...]             # ch.34 — grahas lording a maraka (2nd/7th) house
     maraka_planets: tuple[Maraka, ...]   # ch.44 — the fuller maraka set (lords + malefics in/with)
+    planet_house_effects: Mapping[str, tuple[int, Sloka]]  # Saravali ch.30 — graha in its house
     gulika_sign: int                     # Gulika/Mandi's sign (1..12), BPHS ch.3
     gulika_house: int                    # Gulika's house from the lagna (1..12)
     gulika_effect: GulikaEffect | None   # ch.25 — Gulika's effect in that house
@@ -235,6 +238,20 @@ def _argala(chart: ParasharaChart) -> dict[int, tuple[Argala, ...]]:
     """The argalas (ch.31) acting on each of the twelve houses (keyed by house 1..12)."""
     signs = {g: int(lon % 360.0 // 30) + 1 for g, lon in chart.longitudes.items()}
     return {h: argala_for(((chart.asc_sign - 1 + h - 1) % 12) + 1, signs) for h in range(1, 13)}
+
+
+def _planet_house_effects(chart: ParasharaChart) -> dict[str, tuple[int, Sloka]]:
+    """For each graha, its house from the lagna and Saravali's effect for that placement (ch.30)."""
+    out: dict[str, tuple[int, Sloka]] = {}
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        lon = chart.longitudes.get(g)
+        if lon is None:
+            continue
+        house = ((int(lon % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1
+        eff = planet_in_house(g, house)
+        if eff is not None:
+            out[g] = (house, eff)
+    return out
 
 
 def _graha_signs_with_nodes(chart: ParasharaChart) -> dict[str, int]:
@@ -379,6 +396,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         marakas=tuple(p for p in fbl.classify_all(chart.asc_sign)
                       if fbl.is_maraka(p, chart.asc_sign)),
         maraka_planets=maraka_planets(_graha_signs_with_nodes(chart), asc_sign=chart.asc_sign),
+        planet_house_effects=_planet_house_effects(chart),
         gulika_sign=int(chart.gulika % 360.0 // 30) + 1,
         gulika_house=((int(chart.gulika % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1,
         gulika_effect=gulika_effect_in_house(

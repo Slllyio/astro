@@ -70,8 +70,9 @@ from app.parashara.primitives.deeptadi_avastha import deeptadi
 from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
 from app.parashara.primitives.longevity import (
     HaranaReducedSpan,
+    NisargayuFull,
     NisargayuSpan,
-    nisargayu_after_haranas,
+    nisargayu_full,
     nisargayu_span,
 )
 from app.parashara.primitives.nakshatra_dasha import DashaPeriod, bhukti_timeline
@@ -157,6 +158,7 @@ class ParasharaReading:
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
     nisargayu_haranas: HaranaReducedSpan
+    nisargayu_full: NisargayuFull       # BPHS ch.43 — planetary (post-harana) + ascendant contribution
     balance_adjusted: bool               # True: timelines use the Moon's-arc birth balance
 
 
@@ -412,6 +414,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
                                     moon_waxing=chart.moon_waxing,
                                     speeds=chart.speeds, ayanamsa=chart.ayanamsa,
                                     kala_ctx=chart.kala)
+    _nisargayu_full = nisargayu_full(chart)
     return ParasharaReading(
         chart=chart,
         bhavas=judge_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
@@ -458,7 +461,8 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),
-        nisargayu_haranas=nisargayu_after_haranas(chart),
+        nisargayu_haranas=_nisargayu_full.haranas,
+        nisargayu_full=_nisargayu_full,
         balance_adjusted=True,
     )
 

@@ -564,4 +564,15 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append(f"| **Total** | **{reading.nisargayu.natural_years:.2f}** | | | "
                f"**{hs.planetary_years:.2f}** |")
     out.append("")
+
+    # --- Complete Nisargayu: planetary + ascendant contribution (ch.43 sl.411) ---
+    nf = reading.nisargayu_full
+    out.append("### Complete span — with the Ascendant's contribution (BPHS-43:411)")
+    out.append("")
+    method = ("ascendant lord stronger" if nf.ascendant_method == "rasi"
+              else "navamsa-lagna lord stronger")
+    out.append(f"- Planetary (after haranas): **{nf.planetary_years:.2f}** yrs")
+    out.append(f"- Ascendant's own contribution ({method}): **{nf.ascendant_years:.2f}** yrs")
+    out.append(f"- **Complete Nisargayu: {nf.total_years:.2f} years**")
+    out.append("")
     return "\n".join(out)

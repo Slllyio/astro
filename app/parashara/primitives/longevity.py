@@ -102,6 +102,25 @@ def nisargayu_span(longitudes: Mapping[str, float]) -> NisargayuSpan:
                          reductions_applied=False)
 
 
+_ONE_NAVAMSA: Final[float] = 10.0 / 3.0        # 3 deg 20'
+
+ASCENDANT_SOURCE: Final[Citation] = Citation("BPHS-43", 411)   # "years granted by the ascendant"
+
+
+def _ascendant_years_rasi(asc_sign: int, asc_deg_in_rasi: float) -> float:
+    """Ascendant-lord-stronger case (BPHS-43:411): signs from Aries to the sign before the
+    ascendant + the ascendant degrees as year-fraction (30 deg = 1 year)."""
+    return (asc_sign - 1) + (asc_deg_in_rasi / 30.0)
+
+
+def _ascendant_years_navamsa(navamsa_lagna_sign: int, asc_deg_in_rasi: float) -> float:
+    """Navamsa-lagna-lord-stronger case (BPHS-43:420): signs to the one before the Navamsa Lagna +
+    the fraction of the current navamsa traversed (one navamsa = 3 deg 20' = 1 year). Verified
+    against Parashara's worked nativity: Navamsa Lagna Cancer, asc 0-48-34 -> 3.2428 years."""
+    frac = (asc_deg_in_rasi % _ONE_NAVAMSA) / _ONE_NAVAMSA
+    return (navamsa_lagna_sign - 1) + frac
+
+
 @dataclass(frozen=True)
 class HaranaReducedSpan:
     per_planet: Mapping[str, "hr.HaranaResult"]
@@ -180,3 +199,47 @@ def nisargayu_after_haranas(chart) -> HaranaReducedSpan:
         total += contribs[p].years * (1.0 - net)
     return HaranaReducedSpan(per_planet=results, contributions=contribs,
                              planetary_years=total, ascendant_added=False)
+
+
+@dataclass(frozen=True)
+class NisargayuFull:
+    planetary_years: float       # harana-reduced planetary contributions
+    ascendant_years: float       # the Ascendant's own contribution (BPHS-43:411)
+    ascendant_method: str        # "rasi" (asc lord stronger) | "navamsa" (navamsa-lagna lord stronger)
+    total_years: float           # the complete Nisargayu span
+    haranas: HaranaReducedSpan
+
+
+def ascendant_contribution(chart) -> tuple[float, str]:
+    """The Ascendant's Nisargayu years and which method applied, by the stronger of the ascendant
+    lord vs the navamsa-lagna lord (BPHS-43:411-431). Undergoes no harana check."""
+    from app.raman_saab.chart import varga as _v
+    from app.parashara.primitives.relationships import SIGN_LORDS
+    from app.parashara.primitives.shadbala.total import partial_shadbala
+
+    asc_deg_in_rasi = chart.asc_longitude % 30.0
+    navamsa_lagna = _v.navamsa_sign(chart.asc_longitude % 360.0)
+    asc_lord = SIGN_LORDS[chart.asc_sign]
+    nav_lord = SIGN_LORDS[navamsa_lagna]
+
+    def strength(p: str) -> float:
+        if p not in chart.longitudes:
+            return 0.0
+        return partial_shadbala(
+            p, chart.longitudes, asc_sign=chart.asc_sign, asc_longitude=chart.asc_longitude,
+            moon_waxing=chart.moon_waxing, speed=chart.speeds.get(p, 0.0),
+            ayanamsa=chart.ayanamsa, kala_ctx=chart.kala).virupas
+
+    if strength(nav_lord) > strength(asc_lord):
+        return _ascendant_years_navamsa(navamsa_lagna, asc_deg_in_rasi), "navamsa"
+    return _ascendant_years_rasi(chart.asc_sign, asc_deg_in_rasi), "rasi"
+
+
+def nisargayu_full(chart) -> NisargayuFull:
+    """The complete Nisargayu span: harana-reduced planetary contributions + the Ascendant's own
+    contribution (BPHS-43). This is the final figure the pre-reduction `nisargayu_span` deferred."""
+    hs = nisargayu_after_haranas(chart)
+    asc_years, method = ascendant_contribution(chart)
+    return NisargayuFull(planetary_years=hs.planetary_years, ascendant_years=asc_years,
+                         ascendant_method=method, total_years=hs.planetary_years + asc_years,
+                         haranas=hs)

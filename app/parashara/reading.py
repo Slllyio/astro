@@ -47,6 +47,7 @@ from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
 from app.parashara.judges.richer_bhava import RicherBhavaVerdict, richer_all_bhavas
 from app.parashara.primitives import ashtottari_dasha as ash
+from app.parashara.primitives import conditional_dasha_systems as cds
 from app.parashara.primitives import vimshottari_dasha as vim
 from app.parashara.primitives import yogini_dasha as yog
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
@@ -142,6 +143,35 @@ def _birth_balance(chart: ParasharaChart) -> float:
     return (chart.longitudes["Moon"] % nak_span) / nak_span
 
 
+def _count_dasha_applicability(chart: ParasharaChart) -> dict[str, bool]:
+    """Evaluate the adoption condition of each of the seven count-from-anchor dashas (ch.46), from
+    primitives the chart already carries (the lagna's Hora/Navamsa/Dwadasamsa, lord placements,
+    Vargottama, day/night)."""
+    from app.parashara.doctrine.vargottama import is_vargottama
+    from app.raman_saab.chart import varga as _varga         # substrate: pure division arithmetic
+
+    asc = chart.asc_longitude % 360.0
+    hora_lord = "Sun" if _varga.varga_sign(asc, 2) == 5 else "Moon"   # Leo=Sun's hora, Cancer=Moon's
+    d9 = _varga.varga_sign(asc, 9)
+    d12 = _varga.varga_sign(asc, 12)
+
+    def lord_house(house: int) -> int | None:
+        lord = SIGN_LORDS[((chart.asc_sign - 1 + house - 1) % 12) + 1]
+        lon = chart.longitudes.get(lord)
+        return None if lon is None else ((int(lon % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1
+
+    return {
+        "shodasottari": (hora_lord == "Moon" and not chart.moon_waxing)
+                        or (hora_lord == "Sun" and chart.moon_waxing),
+        "dwadasottari": d9 in (2, 7),                        # lagna in a Venus navamsa
+        "panchottari": chart.asc_sign == 4 and d12 == 4,     # Cancer lagna in Cancer dwadasamsa
+        "shatabdika": is_vargottama(chart.asc_longitude),
+        "chaturashiti_sama": lord_house(10) == 10,
+        "dwisaptati_sama": lord_house(1) in (1, 7),
+        "shattrimsat_sama": chart.kala.is_day and hora_lord == "Sun",
+    }
+
+
 def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
     nak = chart.janma_nakshatra
     elapsed = _birth_balance(chart)
@@ -175,7 +205,18 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
         reason=("Rahu not in Lagna/Kendra or a trikona from the lagna lord"
                 if ash_ok else "Rahu in Lagna/Kendra or a trikona from the lagna lord"),
         timeline=ash.timeline(nak, elapsed_fraction=elapsed) if ash_ok else ())
-    return (vimshottari, yogini, ashtottari)
+
+    # The seven count-from-anchor conditional systems (ch.46), each reported with its adoption
+    # condition met-or-not (like Ashtottari).
+    applic = _count_dasha_applicability(chart)
+    count_systems = []
+    for name, sysdef in cds.SYSTEMS.items():
+        ok = applic.get(name, False)
+        count_systems.append(DashaReading(
+            system=name, applicable=ok,
+            reason=f"{sysdef.applicability} — {'met' if ok else 'not met'}",
+            timeline=sysdef.timeline(nak, elapsed_fraction=elapsed) if ok else ()))
+    return (vimshottari, yogini, ashtottari, *count_systems)
 
 
 def _graha_signs(chart: ParasharaChart) -> dict[str, int]:

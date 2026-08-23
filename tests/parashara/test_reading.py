@@ -52,6 +52,18 @@ class TestReadingStructure:
         for score in reading.vimsopaka.values():
             assert 5.0 - 1e-9 <= score.score <= 20.0 + 1e-9
 
+    def test_all_ten_dasha_systems_reported(self, reading):
+        """Vimshottari + Yogini + Ashtottari + the 7 count-from-anchor systems, each with a real
+        applicability boolean and its adoption condition as the reason."""
+        systems = {d.system: d for d in reading.dashas}
+        for name in ("shodasottari", "dwadasottari", "panchottari", "shatabdika",
+                     "chaturashiti_sama", "dwisaptati_sama", "shattrimsat_sama"):
+            assert name in systems, name
+            assert isinstance(systems[name].applicable, bool)
+            assert systems[name].reason
+            # applicable -> a timeline; not applicable -> empty (like Ashtottari)
+            assert bool(systems[name].timeline) == systems[name].applicable
+
     def test_dashas_reported_with_applicability(self, reading):
         systems = {d.system: d for d in reading.dashas}
         assert "vimshottari" in systems and "yogini" in systems and "ashtottari" in systems

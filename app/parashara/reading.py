@@ -46,7 +46,12 @@ from app.parashara.primitives.upagrahas import upagrahas as _upagrahas
 from app.parashara.doctrine.upagraha_effects import house_effect as _upagraha_house_effect
 from app.parashara.chart.shodasavarga import shodasavarga_all as _shodasavarga_all
 from app.parashara.chart.sudarshana import SudarshanaPosition, sudarshana_positions as _sudarshana
-from app.parashara.doctrine.arudha import bhava_arudhas as _bhava_arudhas, PADA_NAMES
+from app.parashara.doctrine.arudha import (
+    bhava_arudhas as _bhava_arudhas,
+    pada_finance as _pada_finance,
+    PadaFinance,
+    PADA_NAMES,
+)
 from app.parashara.doctrine.saravali_conjunctions import (
     active_conjunctions,
     active_triple_conjunctions,
@@ -147,6 +152,7 @@ class ParasharaReading:
     shodasavarga: Mapping[str, Mapping[str, int]]  # BPHS ch.6-7 — each body's 16 divisional signs
     sudarshana: Mapping[str, SudarshanaPosition]   # BPHS ch.74 — each body's house from Lagna/Moon/Sun
     arudhas: Mapping[int, int]           # BPHS ch.29-30 — each house's Arudha pada sign (1=Arudha Lagna)
+    pada_finance: PadaFinance            # BPHS ch.29 sl.8-15 — wealth from the 11th-from-Arudha-Lagna
     gulika_sign: int                     # Gulika/Mandi's sign (1..12), BPHS ch.3
     gulika_house: int                    # Gulika's house from the lagna (1..12)
     gulika_effect: GulikaEffect | None   # ch.25 — Gulika's effect in that house
@@ -451,6 +457,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         shodasavarga=_shodasavarga_all(chart.longitudes),
         sudarshana=_sudarshana(chart),
         arudhas=_bhava_arudhas(chart),
+        pada_finance=_pada_finance(chart),
         gulika_sign=int(chart.gulika % 360.0 // 30) + 1,
         gulika_house=((int(chart.gulika % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1,
         gulika_effect=gulika_effect_in_house(

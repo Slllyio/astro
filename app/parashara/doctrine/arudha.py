@@ -20,10 +20,11 @@ the text lands on, and this code lands there by the house-relative rule above.)
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Final, Mapping
 
 from app.parashara.doctrine.sources import Citation
-from app.parashara.primitives.relationships import SIGN_LORDS
+from app.parashara.primitives.relationships import EXALTATION, SIGN_LORDS
 
 RULE_SOURCE: Final[Citation] = Citation("BPHS-29", 36)         # the counting rule
 EXCEPTION_SOURCE: Final[Citation] = Citation("BPHS-29", 241)   # sl.4-5, the 1st/7th exceptions
@@ -75,3 +76,54 @@ def arudha_lagna(chart) -> int:
 def upapada(chart) -> int:
     """The Upapada Lagna (UL) — the pada of the 12th house (BPHS ch.30), read for marriage."""
     return bhava_arudhas(chart)[12]
+
+
+# --------------------------------------------------------------------------- #
+# Pada and finance — BPHS ch.29 sl.8-15                                        #
+# --------------------------------------------------------------------------- #
+
+FINANCE_SOURCE: Final[Citation] = Citation("BPHS-29", 329)         # sl.8-11, 11th from Lagna Pada
+UNINTERRUPTED_SOURCE: Final[Citation] = Citation("BPHS-29", 344)   # sl.12, 12th unaspected
+QUANTUM_SOURCE: Final[Citation] = Citation("BPHS-29", 357)         # sl.13-15, quantum by count
+
+#: For the wealth verdict, benefics confer virtuous means, malefics questionable (BPHS-29:334).
+_DHANA_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
+
+
+@dataclass(frozen=True)
+class PadaFinance:
+    arudha_lagna: int            # AL sign
+    eleventh_sign: int           # the 11th from AL — the wealth house
+    related: tuple[str, ...]     # planets occupying OR aspecting the 11th from AL
+    nature: str                  # "virtuous" | "questionable" | "both" | "none"
+    quantum: int                 # number of planets related to the 11th (the gain magnitude)
+    amplified: bool              # a related planet is exalted or in own sign (plenty of gains)
+    uninterrupted: bool          # 11th related AND the 12th from AL is neither occupied nor aspected
+
+
+def pada_finance(chart) -> PadaFinance:
+    """BPHS ch.29 sl.8-15: wealth from the planets occupying or aspecting the 11th from the Arudha
+    Lagna. Benefics -> virtuous means, malefics -> questionable; the count sets the quantum; an
+    exalted/own planet there means plenty; the 12th-from-AL being unaspected makes gains uninterrupted."""
+    from app.parashara.primitives import graha_drishti as gd
+
+    al = arudha_lagna(chart)
+    eleventh = _nth_from(al, 11)
+    twelfth = _nth_from(al, 12)
+    signs = {p: int(chart.longitudes[p] % 360.0 // 30) + 1 for p in chart.longitudes}
+
+    def related_to(target: int) -> list[str]:
+        occ = [p for p, s in signs.items() if s == target]
+        asp = list(gd.planets_aspecting_sign(target, signs))
+        return sorted(set(occ) | set(asp))
+
+    r11 = related_to(eleventh)
+    benefic = any(p in _DHANA_BENEFICS for p in r11)
+    malefic = any(p not in _DHANA_BENEFICS for p in r11)
+    nature = ("both" if benefic and malefic else "virtuous" if benefic
+              else "questionable" if malefic else "none")
+    amplified = any(signs[p] == EXALTATION.get(p) or SIGN_LORDS[signs[p]] == p for p in r11)
+    uninterrupted = bool(r11) and not related_to(twelfth)
+    return PadaFinance(arudha_lagna=al, eleventh_sign=eleventh, related=tuple(r11),
+                       nature=nature, quantum=len(r11), amplified=amplified,
+                       uninterrupted=uninterrupted)

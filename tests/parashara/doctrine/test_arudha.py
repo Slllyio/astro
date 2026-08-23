@@ -8,11 +8,15 @@ from __future__ import annotations
 from app.parashara.chart.cast import cast
 from app.parashara.doctrine.arudha import (
     EXCEPTION_SOURCE,
+    FINANCE_SOURCE,
     PADA_NAMES,
+    QUANTUM_SOURCE,
     RULE_SOURCE,
+    UNINTERRUPTED_SOURCE,
     arudha_lagna,
     arudha_pada,
     bhava_arudhas,
+    pada_finance,
     upapada,
 )
 from app.parashara.doctrine.sources import verify
@@ -67,6 +71,38 @@ class TestChart:
 
     def test_pada_names_cover_all_houses(self):
         assert set(PADA_NAMES) == set(range(1, 13))
+
+
+class TestPadaFinance:
+    def _chart(self):
+        return cast(year=1990, month=7, day=15, hour=12, minute=0,
+                    tz_offset=5.5, latitude=12.97, longitude=77.59)
+
+    def test_eleventh_is_eleventh_from_al(self):
+        pf = pada_finance(self._chart())
+        assert pf.eleventh_sign == ((pf.arudha_lagna - 1 + 10) % 12) + 1
+
+    def test_nature_matches_related_planets(self):
+        pf = pada_finance(self._chart())
+        benefics = {"Jupiter", "Venus", "Mercury", "Moon"}
+        has_b = any(p in benefics for p in pf.related)
+        has_m = any(p not in benefics for p in pf.related)
+        expected = ("both" if has_b and has_m else "virtuous" if has_b
+                    else "questionable" if has_m else "none")
+        assert pf.nature == expected
+
+    def test_quantum_is_related_count(self):
+        pf = pada_finance(self._chart())
+        assert pf.quantum == len(pf.related)
+
+    def test_no_relation_gives_none_nature(self):
+        pf = pada_finance(self._chart())
+        if not pf.related:
+            assert pf.nature == "none" and not pf.uninterrupted
+
+    def test_finance_sources_resolve(self):
+        for c in (FINANCE_SOURCE, UNINTERRUPTED_SOURCE, QUANTUM_SOURCE):
+            assert verify(c) and c.work == "BPHS-29"
 
 
 class TestCitations:

@@ -95,6 +95,16 @@ def to_markdown(reading: ParasharaReading) -> str:
             continue
         out.append(f"| {house} | {_PADA[house]} | {_SIGN_NAMES[sign - 1]} |")
     out.append("")
+    pf = reading.pada_finance
+    _nature = {"virtuous": "through virtuous means", "questionable": "through questionable means",
+               "both": "through both virtuous and questionable means", "none": "no planet relates to it"}
+    out.append(f"**Pada & finance (BPHS-29:8-15):** the 11th from the Arudha Lagna is "
+               f"{_SIGN_NAMES[pf.eleventh_sign - 1]}; "
+               + (f"{', '.join(pf.related)} occupy/aspect it → wealth {_nature[pf.nature]}"
+                  f"{' (plenty — an exalted/own planet there)' if pf.amplified else ''}"
+                  f"{'; gains uninterrupted' if pf.uninterrupted else ''}."
+                  if pf.related else "no planet occupies or aspects it."))
+    out.append("")
 
     # --- Sudarshana Chakra (BPHS ch.74) ---
     out.append("## Sudarshana Chakra — the three-lagna view (BPHS ch.74)")

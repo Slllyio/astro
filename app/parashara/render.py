@@ -79,6 +79,25 @@ def to_markdown(reading: ParasharaReading) -> str:
             out.append(f"| {m.planet} | {m.reason} | {m.source.work}:{m.source.line} |")
         out.append("")
 
+    # --- Shodasavarga (BPHS ch.6-7) ---
+    _SIGN_ABBR = ("Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi")
+    from app.parashara.chart.shodasavarga import VARGAS as _VARGAS, DIVISIONS_SOURCE as _VSRC
+    out.append("## Shodasavarga — the sixteen divisional charts (BPHS ch.6–7)")
+    out.append("")
+    out.append(f"Each body's sign in all sixteen vargas (BPHS-6:{_VSRC.line}). D1=Rasi, D9=Navamsa "
+               "(dharma/marriage), D10=Dasamsa (career), D60=Shashtiamsa.")
+    out.append("")
+    header = "| Body | " + " | ".join(f"{t}·{name[:4]}" for t, _, name in _VARGAS) + " |"
+    out.append(header)
+    out.append("|" + "---|" * (len(_VARGAS) + 1))
+    for body in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"):
+        row = reading.shodasavarga.get(body)
+        if row is None:
+            continue
+        cells = " | ".join(_SIGN_ABBR[row[t] - 1] for t, _, _ in _VARGAS)
+        out.append(f"| {body} | {cells} |")
+    out.append("")
+
     # --- Upagrahas (BPHS ch.3 sl.61-64) ---
     out.append("## Upagrahas — Sun-derived sub-planets (BPHS ch.3)")
     out.append("")

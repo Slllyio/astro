@@ -93,6 +93,19 @@ def to_markdown(reading: ParasharaReading) -> str:
             continue
         out.append(f"| {name} | {lon:.2f}° | {_SIGN_NAMES[int(lon // 30)]} |")
     out.append("")
+    if reading.upagraha_house_effects:
+        out.append("Effect of each upagraha in the house it occupies (BPHS ch.25):")
+        out.append("")
+        out.append("| Upagraha | House | Effect | Source |")
+        out.append("|---|---|---|---|")
+        for name in ("Dhuma", "Vyatipata", "Parivesha", "Indrachapa", "Upaketu"):
+            ue = reading.upagraha_house_effects.get(name)
+            if ue is None:
+                continue
+            house, s = ue
+            text = s.text if len(s.text) <= 300 else s.text[:297] + "…"
+            out.append(f"| {name} | {house} | {text} | {s.source.work}:{s.source.line} |")
+        out.append("")
 
     # --- Planet-in-house effects (Saravali ch.30) ---
     out.append("## Planet-in-house effects (Saravali ch.30)")

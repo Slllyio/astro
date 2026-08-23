@@ -43,6 +43,7 @@ from app.parashara.doctrine.saravali_grids import planet_in_house
 from app.parashara.doctrine.saravali_dignity import active_concentrations
 from app.parashara.doctrine.chara_karaka import chara_karakas, karakamsa, ROLE_NAMES
 from app.parashara.primitives.upagrahas import upagrahas as _upagrahas
+from app.parashara.doctrine.upagraha_effects import house_effect as _upagraha_house_effect
 from app.parashara.doctrine.saravali_conjunctions import (
     active_conjunctions,
     active_triple_conjunctions,
@@ -138,6 +139,7 @@ class ParasharaReading:
     conjunctions: tuple[tuple[frozenset, Sloka], ...]  # Saravali ch.15 — active two-graha yogas
     triple_conjunctions: tuple[tuple[frozenset, Sloka], ...]  # Saravali ch.16 — active three-graha yogas
     upagrahas: Mapping[str, float]       # BPHS ch.3 — the five Sun-derived sub-planet longitudes
+    upagraha_house_effects: Mapping[str, tuple[int, Sloka]]  # BPHS ch.25 — each upagraha in its house
     gulika_sign: int                     # Gulika/Mandi's sign (1..12), BPHS ch.3
     gulika_house: int                    # Gulika's house from the lagna (1..12)
     gulika_effect: GulikaEffect | None   # ch.25 — Gulika's effect in that house
@@ -270,6 +272,17 @@ def _planet_house_effects(chart: ParasharaChart) -> dict[str, tuple[int, Sloka]]
         eff = planet_in_house(g, house)
         if eff is not None:
             out[g] = (house, eff)
+    return out
+
+
+def _upagraha_house_effects(chart: ParasharaChart) -> dict[str, tuple[int, Sloka]]:
+    """Each Sun-derived upagraha's house from the lagna and Parashara's effect for it (BPHS ch.25)."""
+    out: dict[str, tuple[int, Sloka]] = {}
+    for name, lon in _upagrahas(chart.longitudes["Sun"]).items():
+        house = ((int(lon % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1
+        eff = _upagraha_house_effect(name, house)
+        if eff is not None:
+            out[name] = (house, eff)
     return out
 
 
@@ -425,6 +438,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         conjunctions=tuple(active_conjunctions(chart.longitudes)),
         triple_conjunctions=tuple(active_triple_conjunctions(chart.longitudes)),
         upagrahas=_upagrahas(chart.longitudes["Sun"]),
+        upagraha_house_effects=_upagraha_house_effects(chart),
         gulika_sign=int(chart.gulika % 360.0 // 30) + 1,
         gulika_house=((int(chart.gulika % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1,
         gulika_effect=gulika_effect_in_house(

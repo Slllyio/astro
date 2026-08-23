@@ -1970,3 +1970,53 @@ reader_facing_note` green); (5) `update_baseline --confirm` → mapping_version 
 metrics (supporting tier never enters the ratchet), `test_astrobank_ratchet` green. FAILURE_
 ATLAS.md carries the dated addendum. No verdict, threshold, or rule was touched — this is the
 disclosure layer telling readers the truth at proper power, exactly what Workstream D was for.
+
+## Golden corpus growth: the HTJAH extraction backlog, measured and opened (2026-08-23)
+
+Prompted by the owner's question — "can't we increase the golden ratchet number, I think we
+missed many examples." He was right, and the gap is now measured rather than estimated.
+
+**The audit.** The two HTJAH volumes contain **502 worked-chart presentations** (a "Chart No. N"
+followed by birth data); the golden corpus held **174** of them. That leaves **328 unextracted**,
+and 136 "Conclusion" paragraphs — Raman's own graded judgments — sit on chart numbers the corpus
+had never seen (81 in Vol I, 55 in Vol II). Corpus growth being the declared remaining accuracy
+lever (playbook rule 7), this is the largest single piece of fidelity work still open.
+
+**Why it was not simply automated before.** HTJAH prints birth DATA, not the printed longitudes
+Notable Horoscopes gives, so records must be FRESH CAST out of OCR-damaged text. Observed
+corruption in these very scans: `Born 24-3-7883` (mangled year), coordinates truncated by a line
+break, `3/4-12-1953` (midnight-straddling date), unreadable zone markers. A mis-parsed birth line
+produces a WRONG chart, and a wrong chart scored against Raman's verdict silently corrupts the
+fidelity measurement.
+
+**The gate that makes extraction safe.** Vol II prints, for most charts, *"Balance of <Lord> Dasa
+at birth: N years, M months and D days"* — fixed by the Moon's longitude, therefore an independent
+function of date, time and place. `tools/raman_saab/extract_htjah_goldens.py` parses the birth
+line, casts, computes the Vimshottari balance, and emits ONLY when lord and duration reproduce
+Raman's printed figure within tolerance. Worked proof: Chart No. 20 (HTJAH-II:2002) prints
+"20 N 56, 75 E 55" and a Ketu balance of 6y 4m 4d; the parse lands the coordinates exactly and the
+cast balance agrees to **3 days**. Failures are reported and skipped, never repaired by guesswork —
+the 42 gate failures are scattered in magnitude (120d to 2289d) and direction, i.e. genuine OCR
+damage rather than a systematic casting error.
+
+**Batch 1 shipped: 57 charts.** Golden records 225 → 282. `expected_verdicts` deliberately EMPTY —
+the tool extracts CHARTS; a verdict remains a doctrine judgment a reviewer makes by reading Raman,
+and only CONFIRMED verdicts score. **The accuracy ratchet is therefore untouched at 261/294 by
+construction**, which is the point: extraction can never inflate fidelity.
+
+**The measured gain is liveness.** Dormant rules **85 → 71** — fourteen woke on the new nativities
+(H11.C.22, H12.C.D5, H12.C.I5, H2.C.52, H2.C.63, H5.C.26, H5.C.29, H5.C.3, H6.C.16, H7.C.30,
+H8.D.1, H8.K.28, H9.A.6, H9.B.27), plus one yoga (49 → 50). This is the empirical answer to "why
+are rules dormant": for these fourteen it was CORPUS SIZE, not impossibility — including H5.C.3,
+which the all-houses sweep shipped as a deliberate reviewer-validated dormant rule and which now
+fires. It also retro-justifies that sweep decision: the honest hold was correct, and the corpus
+caught up.
+
+**What remains, in priority order.** (a) 105 charts parse cleanly but Vol I prints no dasha balance
+to verify against — they need a different gate (Raman's stated Lagna sign, where the grid OCR
+permits) before they can be trusted. (b) 118 fail to parse at all, dominated by line-break-truncated
+longitudes and unreadable zone markers; a targeted OCR repair pass over the birth lines would
+recover a large share. (c) The 57 shipped charts + the 136 known Conclusion paragraphs are now a
+REVIEW queue: each verdict promoted DRAFT → CONFIRMED grows the ratchet's denominator honestly.
+**That review is the only path that moves 261/294, and it must stay per-record against Raman's
+text — never confirm to pad.**

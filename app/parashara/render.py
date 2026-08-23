@@ -79,6 +79,21 @@ def to_markdown(reading: ParasharaReading) -> str:
             out.append(f"| {m.planet} | {m.reason} | {m.source.work}:{m.source.line} |")
         out.append("")
 
+    # --- Upagrahas (BPHS ch.3 sl.61-64) ---
+    out.append("## Upagrahas — Sun-derived sub-planets (BPHS ch.3)")
+    out.append("")
+    out.append("The five Aprakasa grahas computed from the Sun's longitude (BPHS-3:1173); malefic by "
+               "nature. Gulika/Mandi (the Saturn-based upagraha) is shown separately below.")
+    out.append("")
+    out.append("| Upagraha | Longitude | Sign |")
+    out.append("|---|---|---|")
+    for name in ("Dhuma", "Vyatipata", "Parivesha", "Indrachapa", "Upaketu"):
+        lon = reading.upagrahas.get(name)
+        if lon is None:
+            continue
+        out.append(f"| {name} | {lon:.2f}° | {_SIGN_NAMES[int(lon // 30)]} |")
+    out.append("")
+
     # --- Planet-in-house effects (Saravali ch.30) ---
     out.append("## Planet-in-house effects (Saravali ch.30)")
     out.append("")
@@ -98,8 +113,6 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append("")
 
     # --- Chara karakas + Karakamsa (BPHS ch.32-33) ---
-    _SIGN_NAMES = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra",
-                   "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
     out.append("## Chara karakas & Karakamsa (BPHS ch.32–33)")
     out.append("")
     out.append("Parashara's 7 movable karakas — the visible planets ranked by degree within their "

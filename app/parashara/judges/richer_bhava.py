@@ -137,9 +137,9 @@ def richer_all_bhavas(longitudes: Mapping[str, float], *, asc_sign: int, moon_wa
         bindus = sav.get(house_sign)
         if bindus is not None:
             if bindus > 30:
-                p += 1; factors.append(f"+ {bindus} SAV bindus, above the 28 average (BPHS-66)")
+                p += 1; factors.append(f"+ {bindus} SAV bindus, a favourable band (BPHS-72)")
             elif bindus < 25:
-                a += 1; factors.append(f"- {bindus} SAV bindus, below the 28 average (BPHS-66)")
+                a += 1; factors.append(f"- {bindus} SAV bindus, an adverse band (BPHS-72)")
 
         if lord in maha_planets or karaka in maha_planets:
             p += 1; factors.append("+ a Pancha Mahapurusha yoga strengthens the lord/karaka (SARAVALI-37)")

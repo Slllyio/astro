@@ -21,6 +21,17 @@ from typing import Final, Mapping, Optional
 from app.parashara.doctrine.sources import Citation
 
 SOURCE: Final[Citation] = Citation("BPHS-66", 199)   # "Ashtakavarga of the Sun" — the tables' chapter
+#: Samudaya (aggregational) SAV strength bands (BPHS-72:53): >30 favourable, 25-30 medium, <25 adverse.
+SAV_BAND_SOURCE: Final[Citation] = Citation("BPHS-72", 53)
+
+
+def sav_band(bindus: int) -> str:
+    """The Sarvashtakavarga strength band of a sign's bindu count (BPHS-72:53)."""
+    if bindus > 30:
+        return "favourable"
+    if bindus < 25:
+        return "adverse"
+    return "medium"
 
 _REFS: Final[tuple[str, ...]] = (
     "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Lagna")

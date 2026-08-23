@@ -83,6 +83,16 @@ class TestTrikonaShodhana:
         assert verify(AV.TRIKONA_SOURCE)
 
 
+class TestSavBands:
+    def test_bands_match_parashara_thresholds(self):
+        assert AV.sav_band(31) == "favourable"       # >30
+        assert AV.sav_band(30) == "medium" and AV.sav_band(25) == "medium"   # 25..30
+        assert AV.sav_band(24) == "adverse"          # <25
+
+    def test_band_source_resolves(self):
+        assert verify(AV.SAV_BAND_SOURCE)
+
+
 class TestCitation:
     def test_source_resolves(self):
         assert verify(AV.SOURCE)

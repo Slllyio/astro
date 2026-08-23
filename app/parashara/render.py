@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import Final
 
 from app.parashara.doctrine.vargottama import SOURCE as _VARGOTTAMA_SOURCE
+from app.parashara.primitives.ashtakavarga import sav_band as _sav_band
 from app.parashara.primitives.yogini_dasha import YOGINI_BY_LORD as _YOGINI_BY_LORD
 from app.parashara.reading import ParasharaReading
 
@@ -279,12 +280,15 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append("Sarvashtakavarga (SAV) bindus per house from the lagna (the total across all signs is "
                "always 337), then each graha's Bhinnashtakavarga.")
     out.append("")
-    out.append("| House | Sign | SAV bindus |")
-    out.append("|---|---|---|")
+    out.append("SAV bands (BPHS-72): >30 favourable, 25-30 medium, <25 adverse.")
+    out.append("")
+    out.append("| House | Sign | SAV bindus | Band |")
+    out.append("|---|---|---|---|")
     for h in range(1, 13):
         hsign = (c.asc_sign - 1 + h - 1) % 12 + 1
-        out.append(f"| {h} | {_sign(hsign)} | {reading.sav.get(hsign, 0)} |")
-    out.append(f"| **Total** | | **{sum(reading.sav.values())}** |")
+        b = reading.sav.get(hsign, 0)
+        out.append(f"| {h} | {_sign(hsign)} | {b} | {_sav_band(b)} |")
+    out.append(f"| **Total** | | **{sum(reading.sav.values())}** | |")
     out.append("")
     out.append("| Graha | " + " | ".join(_sign(s) for s in range(1, 13)) + " | Total |")
     out.append("|---|" + "---|" * 13)

@@ -121,6 +121,7 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 | 2 | Verdict layer — bhava prosperity (ch.11); benefic/avastha/drishti; cross-engine agreement | ✅ `006bd7e` |
 | 3 | Conditional dashas — Ashtottari + Yogini + the shared nakshatra-dasha framework | ✅ `5a64a97` |
 | 4 | Enrichment — rasi drishti, functional-by-lagna, maraka, Gulika, richer verdict, allied grids (Saravali ch.30/45), chara karakas + Karakamsa; ch.11:16b antidote fix; Mahapurusha to BPHS-root (ch.75) | ✅ |
+| 5 | Deepening — Karakamsa effects (ch.33), Nisargayu COMPLETE (haranas + ascendant, ch.43), 2- & 3-planet conjunctions (ch.15/16), upagrahas + effects (ch.3/25), Shodasavarga table (ch.6-7), Sudarshana Chakra (ch.74) | ✅ |
 
 ## Doctrine encoded so far (all cited to BPHS's own slokas)
 
@@ -138,8 +139,14 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   negative), and Kala (8 sub-components: Nathonnata, Paksha, Tribhaga, the four calendar-lords
   Varsha/Masa/Vara/Hora, and Ayana). The Kala calendar-lords are resolved from the birth's sunrise
   and the Ahargana, pinned to Parashara's own worked example (1 Jun 1984 → Jupiter year, Venus month).
-- **Nisargayu** (ch.43 sl.16-17 + ch.3 sl.49-50) — natural longevity, the 120-year allotment scaled
-  by deep-exaltation (the third method, which the Raman engine lacks). Pre-reduction core.
+- **Nisargayu** (ch.43) — natural longevity, the third method the Raman engine lacks, now **end-to-end**:
+  the 120-year allotment scaled by deep-exaltation (sl.16-17 + ch.3 sl.49-50), then the **four haranas**
+  — Astangata (combust ×½), Satru Kshetra (enemy sign ×⅓, retrograde exempt), Vyayadi (12th–7th
+  ladder, benefic half, strongest-of-a-bhava loses), Kroorodaya (malefic in lagna) — with only the
+  highest per graha (sl.392), then the **Ascendant's own contribution** (sl.411, by the stronger of
+  the lagna vs navamsa-lagna lord). The ascendant step is verified against Parashara's own worked
+  nativity (navamsa-lagna Cancer, asc 0°48′34″ → 3.2428 yrs). `nisargayu_span` (pre-reduction),
+  `nisargayu_after_haranas`, `nisargayu_full`; all three surfaced in the reading.
 - **Bhava prosperity/annihilation** (ch.11 sl.14-16) — the verdict spine, with antidote clauses.
 - **Richer bhava verdict** (`richer_bhava.py`) — ch.11's net-vote method EXTENDED with Parashara's own
   strength and yoga signals: the lord's Vimsopaka band (ch.7), the karaka's dignity (ch.32), the
@@ -235,6 +242,27 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   Atmakaraka). The 7-vs-8 fork is settled **from the root text**: BPHS-32:31 states the 7-planet
   scheme as primary, the Rahu-added 8th only as "some say" (BPHS-32:152), so the engine uses 7 and the
   Atmakaraka is never a node. `chara_karakas` / `atmakaraka` / `karakamsa`; surfaced per-nativity.
+- **Karakamsa effects** (ch.33) — the effects read from the Karakamsa lagna, indexed as the chapter's
+  17 cited CAPS sections (Karakamsa-in-signs, planets-in-Karakamsa, each house from it). A queryable
+  catalogue, NOT a forced per-sign grid — the prose does not segment cleanly (mixed effect-before/
+  after-name, OCR "etc." boundaries), so it is kept faithful rather than misattributed. The
+  Karakamsa-in-signs passage is surfaced beside the chart's computed Karakamsa.
+- **Two- and three-planet conjunctions** (Saravali ch.15 & ch.16 — allied) — the 21-pair and
+  35-triple effect grids BPHS lacks. Parsed by the grahas each block NAMES (not the sloka number),
+  recovering the OCR-mangled cells (ch.15's Moon-Venus scanned "II."; five ch.16 triples carry no
+  "YOGA" header). `conjunction_effect` / `triple_conjunction_effect` + chart detectors for grahas
+  sharing a sign (three-in-a-sign yields all three pairs + the triple).
+- **Upagrahas** (the five Sun-derived Aprakasa grahas, ch.3 sl.61-64) — Dhuma, Vyatipata, Parivesha,
+  Indrachapa, Upaketu by the fixed arithmetic chain on the Sun; self-proving via Parashara's own
+  closing identity (Upaketu + 1 sign = Sun). Their **house-effects** (ch.25, the 5×12 grid, synonyms
+  Paridhi/Kodanda/Dhwaja mapped, the OCR-number-lost Vyatipata-2nd recovered) are surfaced per house.
+  With Gulika/Mandi (Saturn-based) this completes the sub-planet set.
+- **Shodasavarga** (ch.6-7) — every body's sign in all sixteen divisional charts (D1 Rasi … D60
+  Shashtiamsa), surfaced as a full table (the engine computed these internally for Vimsopaka/Sthana
+  but never showed them). Self-checked: D1==Rasi, D9==navamsa, the tag set == the vimsopaka scheme's.
+- **Sudarshana Chakra** (ch.74) — the three-lagna house view: every body's house from the Ascendant,
+  the Moon (Chandra Lagna) and the Sun (Surya Lagna) at once, with the all-three-agree consensus.
+  Parashara's three-fold confirmation, surfaced as a table.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Vimshottari dasha** (ch.46 sl.12-15) — the PRIMARY 120-year system, encoded from Parashara's own
@@ -257,8 +285,21 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 
 - Rasi dashas: Kalachakra (ch.46 sl.100+), Chara — the remaining rasi-based framework.
 - Shastihayani — once a clean source resolves the 69-vs-60 inconsistency.
-- The Jagradadi/Sayanadi avasthas (Sayanadi needs the name-Anka); Nisargayu's four haranas.
+- The Sayanadi avastha (needs the name-Anka).
 - A full chart adapter + report surface; BPHS goldens from worked nativities where the text gives
   them.
-- The 6 Vol II chapters (54, 65, 75, 81, 83, 94) whose title lines the scan lost — recover via a
-  TOC-page-number anchor when a citation needs one (see `BPHS_CORPUS_COVERAGE.md`).
+- The 5 Vol II chapters (54, 65, 81, 83, 94) whose title lines the scan lost — recover via a
+  TOC-page-number anchor when a citation needs one (ch.75 already recovered; see
+  `BPHS_CORPUS_COVERAGE.md`).
+
+### Honestly deferred (present in the corpus, NOT faked — the reason is recorded)
+
+- **Ishta/Kashta phala** (ch.28) — Parashara's own Rasmi method is stated, but its "+1 rasi,
+  degrees×2" encoding is ambiguous in this OCR and the chapter carries no worked example to fix an
+  interpretation. Encoding it would be a guess, so it waits for a cleaner source.
+- **Planet-in-sign effects** (Saravali ch.22-29) — base slokas are interleaved with co-owned-sign
+  aspect sections (Sun-Scorpio, Mercury-Virgo appear only in combined phrasings), so a clean 84-cell
+  base grid cannot be extracted faithfully.
+- **Single-planet dignity effects** (Saravali ch.45 sl.1-18) — the per-graha sentences are split by
+  OCR-inserted spaces inside the names ("J upiter"); the concentration ladders (which key on the
+  count word) were shipped, the single-planet half was not.

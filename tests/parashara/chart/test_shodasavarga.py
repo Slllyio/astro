@@ -8,7 +8,9 @@ from __future__ import annotations
 from app.parashara.chart.cast import cast
 from app.parashara.chart.shodasavarga import (
     DIVISIONS_SOURCE,
+    DOMAINS_SOURCE,
     SOURCE,
+    VARGA_DOMAINS,
     VARGAS,
     shodasavarga,
     shodasavarga_all,
@@ -51,6 +53,19 @@ class TestChart:
         sv = shodasavarga_all(_chart().longitudes)
         for body in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"):
             assert body in sv and len(sv[body]) == 16
+
+
+class TestDomains:
+    def test_every_varga_has_a_domain(self):
+        assert set(VARGA_DOMAINS) == {t for t, _, _ in VARGAS}
+
+    def test_key_domains(self):
+        assert VARGA_DOMAINS["D2"] == "wealth"
+        assert "spouse" in VARGA_DOMAINS["D9"]
+        assert "career" in VARGA_DOMAINS["D10"]
+
+    def test_domains_source_resolves(self):
+        assert verify(DOMAINS_SOURCE) and DOMAINS_SOURCE.work == "BPHS-7"
 
 
 class TestCitations:

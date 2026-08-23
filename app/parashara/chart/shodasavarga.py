@@ -20,6 +20,16 @@ from app.parashara.primitives.vimsopaka import SCHEME_SOURCE, SHODASAVARGA
 
 SOURCE: Final[Citation] = SCHEME_SOURCE["shodasavarga"]      # BPHS-7:265, the shodasavarga set
 DIVISIONS_SOURCE: Final[Citation] = Citation("BPHS-6", 44)   # ch.6 sl.2-4, "NAMES OF THE 16 VARGAS"
+DOMAINS_SOURCE: Final[Citation] = Citation("BPHS-7", 48)     # ch.7 sl.1-8, "USE OF THE 16 DIVISIONS"
+
+#: tag -> the life-matter that varga is read for (BPHS-7:1-8). What each division is FOR.
+VARGA_DOMAINS: Final[Mapping[str, str]] = {
+    "D1": "physique / body", "D2": "wealth", "D3": "siblings (co-born)", "D4": "fortunes",
+    "D7": "progeny", "D9": "spouse", "D10": "power & position (career)", "D12": "parents",
+    "D16": "conveyances", "D20": "worship / devotion", "D24": "learning", "D27": "strength & weakness",
+    "D30": "evils / misfortune", "D40": "auspicious & inauspicious effects",
+    "D45": "all indications", "D60": "all indications",
+}
 
 #: tag -> (division number, classical name), in the canonical shodasavarga order.
 VARGAS: Final[tuple[tuple[str, int, str], ...]] = (
@@ -32,6 +42,7 @@ VARGAS: Final[tuple[tuple[str, int, str], ...]] = (
 
 # The set of tags must be exactly the shodasavarga scheme's — a guard against drift.
 assert {t for t, _, _ in VARGAS} == set(SHODASAVARGA), "shodasavarga tag set mismatch"
+assert set(VARGA_DOMAINS) == set(SHODASAVARGA), "varga-domain map must cover every varga"
 
 
 def shodasavarga(longitude: float) -> dict[str, int]:

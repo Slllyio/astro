@@ -97,7 +97,8 @@ def to_markdown(reading: ParasharaReading) -> str:
 
     # --- Shodasavarga (BPHS ch.6-7) ---
     _SIGN_ABBR = ("Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi")
-    from app.parashara.chart.shodasavarga import VARGAS as _VARGAS, DIVISIONS_SOURCE as _VSRC
+    from app.parashara.chart.shodasavarga import (VARGAS as _VARGAS, DIVISIONS_SOURCE as _VSRC,
+                                                  VARGA_DOMAINS as _VDOM, DOMAINS_SOURCE as _VDSRC)
     out.append("## Shodasavarga — the sixteen divisional charts (BPHS ch.6–7)")
     out.append("")
     out.append(f"Each body's sign in all sixteen vargas (BPHS-6:{_VSRC.line}). D1=Rasi, D9=Navamsa "
@@ -112,6 +113,11 @@ def to_markdown(reading: ParasharaReading) -> str:
             continue
         cells = " | ".join(_SIGN_ABBR[row[t] - 1] for t, _, _ in _VARGAS)
         out.append(f"| {body} | {cells} |")
+    out.append("")
+    out.append(f"What each varga is read for (BPHS-7:{_VDSRC.line}):")
+    out.append("")
+    for tag, _, name in _VARGAS:
+        out.append(f"- **{tag} {name}** — {_VDOM[tag]}")
     out.append("")
 
     # --- Upagrahas (BPHS ch.3 sl.61-64) ---

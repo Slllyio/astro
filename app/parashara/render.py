@@ -79,6 +79,23 @@ def to_markdown(reading: ParasharaReading) -> str:
             out.append(f"| {m.planet} | {m.reason} | {m.source.work}:{m.source.line} |")
         out.append("")
 
+    # --- Arudha padas (BPHS ch.29-30) ---
+    from app.parashara.doctrine.arudha import PADA_NAMES as _PADA
+    out.append("## Arudha padas (BPHS ch.29–30)")
+    out.append("")
+    out.append("The 'perceived' image of each house — as far from its lord as the lord is from the "
+               "house (BPHS-29:36). The Arudha Lagna (AL) is the perceived self; the Upapada (UL) is "
+               "read for marriage.")
+    out.append("")
+    out.append("| House | Pada | Sign |")
+    out.append("|---|---|---|")
+    for house in range(1, 13):
+        sign = reading.arudhas.get(house)
+        if sign is None:
+            continue
+        out.append(f"| {house} | {_PADA[house]} | {_SIGN_NAMES[sign - 1]} |")
+    out.append("")
+
     # --- Sudarshana Chakra (BPHS ch.74) ---
     out.append("## Sudarshana Chakra — the three-lagna view (BPHS ch.74)")
     out.append("")

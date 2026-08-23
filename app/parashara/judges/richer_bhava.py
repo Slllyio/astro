@@ -28,6 +28,7 @@ from app.parashara.doctrine.sources import Citation
 
 from app.parashara.chart.bhava_chart import judge_bhava
 from app.parashara.doctrine import mahapurusha
+from app.parashara.primitives.deeptadi_avastha import deeptadi
 from app.parashara.doctrine.bhava_karaka import karaka_of
 from app.parashara.judges.bhava_prosperity import BhavaVerdict, Verdict
 from app.parashara.primitives import ashtakavarga as _av
@@ -126,6 +127,18 @@ def richer_all_bhavas(longitudes: Mapping[str, float], *, asc_sign: int, moon_wa
 
         if lord in maha_planets or karaka in maha_planets:
             p += 1; factors.append("+ a Pancha Mahapurusha yoga strengthens the lord/karaka (SARAVALI-37)")
+
+        # An occupant's Deeptadi colours the house it sits in (BPHS-45:118): a bright state
+        # (Deepta/Swastha) strengthens the bhava, a spoiled one (Khala, or Vikala/Kopa) weakens it.
+        for occ, osign in planet_signs.items():
+            if occ not in _av.PLANETS or ((osign - asc_sign) % 12) + 1 != house:
+                continue
+            d = deeptadi(occ, longitudes)
+            if d.state in ("Deepta", "Swastha"):
+                p += 1; factors.append(f"+ {occ} occupies in {d.state}avastha (BPHS-45)")
+            elif d.state == "Khala" or d.vikala or d.kopa:
+                a += 1; spoil = "Khala" if d.state == "Khala" else ("Vikala" if d.vikala else "Kopa")
+                factors.append(f"- {occ} occupies in {spoil}avastha (BPHS-45)")
 
         if shadbala_rupas is not None and lord in shadbala_rupas and lord in REQUIRED_SHADBALA:
             rupas = shadbala_rupas[lord]

@@ -52,6 +52,17 @@ class TestReadingStructure:
         for score in reading.vimsopaka.values():
             assert 5.0 - 1e-9 <= score.score <= 20.0 + 1e-9
 
+    def test_argala_surfaced_for_all_houses(self, reading):
+        assert set(reading.argala) == set(range(1, 13))
+
+    def test_transits_on_and_running_dasha_convenience(self, reading):
+        from app.parashara.reading import transits_on, running_dasha
+        t = transits_on(reading.chart, year=2026, month=8, day=23)
+        assert t and all(j.quality in ("favourable", "mixed", "unfavourable") for j in t.values())
+        md, bhukti, prat = running_dasha(reading.chart)
+        assert md == "Mercury"                    # canonical Revati -> Mercury MD at birth
+        assert all(isinstance(x, str) for x in (md, bhukti, prat))
+
     def test_all_ten_dasha_systems_reported(self, reading):
         """Vimshottari + Yogini + Ashtottari + the 7 count-from-anchor systems, each with a real
         applicability boolean and its adoption condition as the reason."""

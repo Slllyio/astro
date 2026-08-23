@@ -103,6 +103,26 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {h} | {p.lord} | {p.in_house} | {text} | {src} |")
     out.append("")
 
+    # --- Argala (ch.31) ---
+    out.append("## Argala — planetary intervention on each house (BPHS ch.31)")
+    out.append("")
+    out.append("Planets in the 2nd/4th/11th/5th from a house cause argala; those in the 12th/10th/"
+               "3rd/9th obstruct it. A prevailing argala (unobstructed or out-numbering) is shown.")
+    out.append("")
+    out.append("| House | Sign | Prevailing argalas |")
+    out.append("|---|---|---|")
+    for h in range(1, 13):
+        hsign = (c.asc_sign - 1 + h - 1) % 12 + 1
+        prevailing = [a for a in reading.argala.get(h, ()) if a.prevails]
+        if prevailing:
+            desc = "; ".join(
+                f"{'Vipareeta ' if a.vipareeta else ''}{a.argala_house}th "
+                f"({', '.join(a.argala_planets)})" for a in prevailing)
+        else:
+            desc = "— (none prevail)"
+        out.append(f"| {h} | {_sign(hsign)} | {desc} |")
+    out.append("")
+
     # --- Nabhasa yogas (ch.35) ---
     out.append("## Nabhasa yogas — planetary distribution (BPHS ch.35)")
     out.append("")

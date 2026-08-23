@@ -34,6 +34,7 @@ from app.parashara.chart.bhava_chart import judge_all_bhavas
 from app.parashara.chart.brahma_graha import BrahmaGraha, brahma_graha
 from app.parashara.chart.cast import ParasharaChart
 from app.parashara.chart.vimsopaka_chart import vimsopaka_all
+from app.parashara.doctrine.argala import Argala, argala_for
 from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
 from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
 from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
@@ -108,6 +109,7 @@ class ParasharaReading:
     shadbala: Mapping[str, PartialShadbala]   # the complete six-fold Shadbala (Sthana..Kala)
     avasthas: Mapping[str, GrahaAvastha]
     bhava_lord_effects: Mapping[int, BhavaLordPlacement]  # ch.24 — each house's lord's placement
+    argala: Mapping[int, tuple[Argala, ...]]  # ch.31 — the argalas acting on each house
     nabhasa: tuple[NabhasaYoga, ...]     # ch.35 — detected Asraya/Sankhya distribution yogas
     chandra_yogas: tuple[ChandraYoga, ...]  # ch.37 — lunar yogas (Sunapha..Kemadruma, Adhi)
     solar_yogas: tuple[SolarYoga, ...]   # ch.38 — Vesi/Vasi/Ubhayachari (from the Sun)
@@ -219,6 +221,12 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
     return (vimshottari, yogini, ashtottari, *count_systems)
 
 
+def _argala(chart: ParasharaChart) -> dict[int, tuple[Argala, ...]]:
+    """The argalas (ch.31) acting on each of the twelve houses (keyed by house 1..12)."""
+    signs = {g: int(lon % 360.0 // 30) + 1 for g, lon in chart.longitudes.items()}
+    return {h: argala_for(((chart.asc_sign - 1 + h - 1) % 12) + 1, signs) for h in range(1, 13)}
+
+
 def _graha_signs(chart: ParasharaChart) -> dict[str, int]:
     """The seven grahas' signs (1..12) — the input Ashtakavarga's references need."""
     return {g: int(chart.longitudes[g] % 360.0 // 30) + 1
@@ -300,6 +308,37 @@ def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
     return out
 
 
+def transits_on(chart: ParasharaChart, *, year: int, month: int, day: int,
+                hour: int = 12, minute: int = 0, tz_offset: float = 0.0):
+    """Gochara (ch.70) for a transit date: each graha's transit judged by its NATAL ashtakavarga.
+
+    A capability offered separately from the natal `read` (a transit needs a date, which the
+    deterministic natal reading has no business carrying). Returns {graha: TransitJudgment}.
+    """
+    from app.parashara.chart.ephemeris import transit_signs
+    from app.parashara.doctrine.gochara import all_transits
+    ts = transit_signs(year=year, month=month, day=day, hour=hour, minute=minute, tz_offset=tz_offset)
+    return all_transits(_graha_signs(chart), ts, asc_sign=chart.asc_sign)
+
+
+def running_dasha(chart: ParasharaChart) -> tuple[str, str, str]:
+    """The Vimshottari (mahadasha, bhukti, pratyantar) lords running AT BIRTH (BPHS ch.46).
+
+    Uses the Moon's-arc balance to place birth within the mahadasha, then within the bhukti, then the
+    pratyantar — the "where are we" query, and the natural home for pratyantar depth."""
+    from app.parashara.primitives.nakshatra_dasha import pratyantar_timeline
+    elapsed = _birth_balance(chart)
+    md_index = vim.seed(chart.janma_nakshatra).index
+    md_years = vim.CYCLE[md_index][1]
+    into_md = elapsed * md_years
+    bhuktis = bhukti_timeline(vim.CYCLE, md_index)
+    bi = next(i for i, b in enumerate(bhuktis) if b.start_year <= into_md < b.end_year)
+    into_bhukti = into_md - bhuktis[bi].start_year
+    prats = pratyantar_timeline(vim.CYCLE, md_index, bi)
+    pr = next(p for p in prats if p.start_year <= into_bhukti < p.end_year)
+    return vim.CYCLE[md_index][0], bhuktis[bi].lord, pr.lord
+
+
 def read(chart: ParasharaChart) -> ParasharaReading:
     """Assemble the full Parashara reading for a cast chart."""
     shadbala = partial_shadbala_all(chart.longitudes, asc_sign=chart.asc_sign,
@@ -319,6 +358,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         shadbala=shadbala,
         avasthas=_avasthas(chart),
         bhava_lord_effects=_bhava_lord_effects(chart),
+        argala=_argala(chart),
         nabhasa=_nabhasa(chart),
         chandra_yogas=_chandra_yogas(chart),
         solar_yogas=_solar_yogas(chart),

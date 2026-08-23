@@ -120,6 +120,7 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 | 1 | Scaffold — root-authority registry, sources, isolation guards; Vimsopaka + relationships | ✅ `84a5cac` |
 | 2 | Verdict layer — bhava prosperity (ch.11); benefic/avastha/drishti; cross-engine agreement | ✅ `006bd7e` |
 | 3 | Conditional dashas — Ashtottari + Yogini + the shared nakshatra-dasha framework | ✅ `5a64a97` |
+| 4 | Enrichment — rasi drishti, functional-by-lagna, maraka, Gulika, richer verdict, allied grids (Saravali ch.30/45), chara karakas + Karakamsa; ch.11:16b antidote fix; Mahapurusha to BPHS-root (ch.75) | ✅ |
 
 ## Doctrine encoded so far (all cited to BPHS's own slokas)
 
@@ -198,9 +199,12 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   as a queryable catalogue (`catalogue`, `find`) rather than synthesized into misattributed detectors.
 - **Solar (Ravi) yogas** (ch.38) — Vesi / Vasi / Ubhayachari: a tara-graha (barring the Moon) in the
   2nd / 12th / both from the Sun. The Sun-analogue of the lunar yogas; cited, surfaced per-nativity.
-- **Pancha Mahapurusha yogas** (Saravali ch.37 — allied) — Ruchaka/Bhadra/Hamsa/Malavya/Sasa, each
-  formed by its non-luminary in own or exaltation sign in a kendra. Cited to the allied text (BPHS is
-  silent — exactly the allied tier's job); surfaced per-nativity. Detector + effect citations.
+- **Pancha Mahapurusha yogas** (BPHS ch.75 — **root**) — Ruchaka/Bhadra/Hamsa/Malavya/Sasa, each
+  formed by its non-luminary in own or exaltation sign in a kendra. Cited to BPHS's own definition
+  (BPHS-75:34) and its five effect descriptions; Saravali-37:27 kept as allied corroboration. BPHS is
+  NOT silent here — the OCR had stranded ch.75 inside the ch.74 file with its title lost; it was split
+  out (`tools/parashara/repair_corpus_ch75.py`, run once after provisioning) so the root resolves.
+  Detector + effect citations; surfaced per-nativity.
 - **Combustion / Astangata** (ch.7) — a planet within its Sun-orb loses its rays; the BPHS
   combustion table (Moon 12°, Mars 17/8, Mercury 14/12, Jupiter 11, Venus 10/8, Saturn 16°, direct/
   retrograde), Sun and nodes never combust. A reusable primitive (`is_combust`, `combust_planets`).
@@ -208,6 +212,29 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   from the Moon" his own Notes criticise): Jupiter in a kendra from lagna OR Moon, conjunct/aspected
   by a benefic, and free of debilitation, combustion and an enemy's sign. Uses the combustion
   primitive + ch.3 relationships; surfaced per-nativity.
+- **Rasi drishti** (ch.8) — sign-aspects: movable signs aspect the three fixed (bar the adjacent),
+  fixed the three movable, dual the other three dual. `rasi_aspects` / `planets_aspecting_sign`, the
+  Jaimini-side complement to graha drishti; cited to Parashara's own rule.
+- **Functional nature by lagna** (ch.34) — per-ascendant yogakaraka (a graha owning both a kendra
+  4/7/10 and a trikona 5/9), benefic/malefic/neutral functional class, kendradhipatya dosha, and the
+  maraka flag; verified against Parashara's twelve-lagna key. `classify_all` / `yogakaraka`.
+- **Maraka** (ch.44) — the killers: lords of the 2nd and 7th, plus malefics occupying or joining
+  them. `maraka_planets`; surfaced per-nativity and folded into the maraka-dasha flags.
+- **Gulika / Mandi** (ch.3 calc, ch.25 effects) — the sub-planet's longitude cast at Saturn's eighth
+  of the day/night (sidereal ascendant at that instant, calibrated to the birth ascendant), its sign
+  and house, and Parashara's house-effect (with the two OCR-repaired slokas). Carried on the chart.
+- **Planet-in-house grid** (Saravali ch.30 — allied) — the 7-graha × 12-house effect grid BPHS
+  itself lacks (BPHS gives only lords-in-houses, ch.24). All 84 cells read verbatim and cited to
+  their Saravali line by block arithmetic; each graha's own house-effect surfaced per-nativity. A
+  render-time repair fixes the 7 OCR-corrupted house digits without touching the stored quote.
+- **Dignity concentrations** (Saravali ch.45 — allied) — the "N grahas share a dignity" verdicts BPHS
+  omits: two exalted → rich and famous … all seven → "an emperor", across five ladders (exaltation,
+  moolatrikona, own, friendly, fall). `active_concentrations`; surfaced when ≥2 grahas share a bucket.
+- **Chara karakas + Karakamsa** (ch.32-33) — Parashara's 7 movable karakas (the visible planets
+  ranked by degree-within-sign: AK/AmK/BK/MK/PiK/GK/DK) and the Karakamsa (navamsa sign of the
+  Atmakaraka). The 7-vs-8 fork is settled **from the root text**: BPHS-32:31 states the 7-planet
+  scheme as primary, the Rahu-added 8th only as "some say" (BPHS-32:152), so the engine uses 7 and the
+  Atmakaraka is never a node. `chara_karakas` / `atmakaraka` / `karakamsa`; surfaced per-nativity.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Vimshottari dasha** (ch.46 sl.12-15) — the PRIMARY 120-year system, encoded from Parashara's own

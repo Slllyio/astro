@@ -21,6 +21,7 @@ from app.api.horary_routes import horary_router
 from app.api.interpret_routes import interpret_router
 from app.api.knowledge_routes import knowledge_router
 from app.api.medini_routes import medini_router
+from app.api.parashara_routes import parashara_router
 from app.api.reading_routes import reading_router
 from app.api.rectification_routes import rectification_router
 from app.api.routes import chart_router, profile_router
@@ -115,6 +116,7 @@ app.include_router(rectification_router)  # Birth-time rectification / discovery
 app.include_router(varga_router)  # Shodasavarga 16-divisional-chart reading (/vargas/*)
 app.include_router(report_router)  # Full detailed reading (/report/*)
 app.include_router(soul_router)  # EXPERIMENT: soul-destiny reading (/soul/*) — Jaimini firewall lifted
+app.include_router(parashara_router)  # Engine #2: BPHS/Parashara reading (/parashara/*)
 app.include_router(electional_router)  # WALLED: Muhurtha elections (/electional/*)
 app.include_router(horary_router)  # WALLED: Prasna horary (/horary/*)
 

@@ -27,10 +27,12 @@ existing one.
 ## What IS shared, deliberately
 
 The **fidelity apparatus** — `Citation(work, line)` into real corpus lines, a source-lock freezing
-each cited file's sha256, and an exhaustive citation enumeration. That machinery is stream-agnostic
-and is the single most valuable thing the Raman engine built; re-deriving it per stream would be
-waste. This package has its OWN registry (`doctrine.book_registry`) with its own root authority,
-but the same shape.
+each cited file's sha256 (`doctrine.source_lock`, pinned by
+``tests/parashara/doctrine/test_source_lock.py``), and an exhaustive citation enumeration
+(``tests/parashara/test_all_citations_resolve.py``). That machinery is stream-agnostic and is the
+single most valuable thing the Raman engine built; re-deriving it per stream would be waste. This
+package has its OWN registry (`doctrine.book_registry`) with its own root authority, but the same
+shape.
 
 ## Layout
 

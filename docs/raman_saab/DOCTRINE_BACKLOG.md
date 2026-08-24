@@ -2569,3 +2569,54 @@ lets a debilitation stand, and the corpus bears that out. Anything that moves th
 come from somewhere else — most plausibly a genuine three-valued strength band ("moderate in
 strength" recurs at HTJAH-I:1868, :2198, :2202), which an `Optional[bool]` pillar cannot express
 and which is a design change with its own doctrine review, not a threshold tweak.
+
+## The pillar-threshold sweep, RE-DERIVED on the corrected corpus (2026-08-24)
+
+The old sweep table was marked STALE by the full adjudication, with the instruction to re-derive
+before acting on it. Done. Also profiled the 26 errors on charts that have COMPLETE data — the
+ones where the engine misjudges with everything available, and therefore the purest signal.
+
+### The 26 full-cast errors
+
+| origin | n |
+|---|---|
+| clause 2 — pillar-preponderance contradiction | 14 |
+| clauses 4-8 — only one polarity fired | 12 |
+
+Direction: **15 favourable where Raman says afflicted**, 10 the reverse, 1 abstain-vs-graded.
+By house: H1 6, H2 5, H5 5, H4 3, H9 2, then singletons. Concentration in H1/H2/H5 is unchanged
+from the old profile.
+
+**This partly rehabilitates the old "one mechanism" finding.** It described clause 2, and clause 2
+is 14 of these 26 — so it was roughly right *about full-cast charts*, which is all its pool
+contained. What it could not see was sparse charts, which the adjudication added and where the
+mechanism is entirely different (clause 3, 17 errors). Both statements are now on the record.
+
+### The sweep, re-run over all 381 scored verdicts
+
+| AFFLICT | FAVOUR | exact | within-1 | real errors |
+|---|---|---|---|---|
+| 2 | 2 | 266 | 328 | 53 |
+| 2 | 3 | 261 | 331 | 50 |
+| 2 | 4 | 247 | 334 | 47 |
+| **3** | **2** | **269** | **329** | **52** ← current |
+| 3 | 3 | 264 | 332 | 49 |
+| 3 | 4 | 250 | 335 | 46 |
+
+**The current setting is still the exact-accuracy maximum.** But the TRADE has changed, and the
+old conclusion should not be quoted as it stands. It recorded that raising FAVOUR "trades strict
+accuracy for real errors at a poor rate: 2→3 costs 4 exact to save 1". On the corrected corpus
+2→3 costs **5 exact to save 3 real errors** (and buys +3 within-1) — roughly 1.7:1, against the
+old 4:1. That is still worse than the B1 guard which DID ship at 1:1, but it is no longer the
+lopsided trade the old table described. The difference is not that the engine changed; it is that
+the old ratio was measured on a pool selected for engine agreement.
+
+**No change made, and deliberately so.** Moving CONTRA_PILLAR_FAVOUR from 2 to 3 because it
+scores better here would be corpus-tuning — the precise thing `astrobank/METHODOLOGY.md` forbids
+and the thing that produced two refuted arms in this same session. The knob means "how many of
+Raman's three factors must be strong before a contradicted matter reads favourable", and 2-of-3
+versus 3-of-3 is a **doctrinal** question about the three-factors method, answerable only from his
+text. **Re-open path:** find whether Raman requires all three factors strong for a favourable
+reading of a contradicted bhava, or accepts a majority. If the text says all three, FAVOUR=3
+ships on that basis and the numbers are a consequence, not a justification. If it says majority,
+the current setting is confirmed and this closes for good.

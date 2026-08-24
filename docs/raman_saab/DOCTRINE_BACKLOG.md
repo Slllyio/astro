@@ -2505,3 +2505,67 @@ None — the sound half of the old contract, kept.
   pillars known. Needs its own measurement and review.
 - **BHAVA-RESCUE is structurally dead on Track-B** (`bhava_bala_strong is True` never holds
   without bhava madhyas, while the adjacent `bhava_ok` already treats None as permissive).
+
+## Two HOLDS on the sparse-chart thread (2026-08-24) — both would have been inventions
+
+Continuing the error re-profile. Both remaining candidate fixes were measured, and both are held.
+Recording the evidence so neither is re-proposed on intuition.
+
+### HOLD 1 — the clause-2 symmetry fix is UNSATISFIABLE on this corpus
+
+The review filed it as a real asymmetry, and it is one: a sparse chart has at most two knowable
+pillars while `CONTRA_PILLAR_AFFLICT = 3`, so the afflicted arm cannot be reached while the
+favourable arm (threshold 2) can. Raman calls exaltation and debilitation "equally important",
+so an engine that can promote but never demote does contradict him. Proposed fix:
+`weak >= min(CONTRA_PILLAR_AFFLICT, len(known))`.
+
+**Measured before encoding, and it could never fire.** Across all 98 sparse scored rows:
+
+| knowable pillars | rows |
+|---|---|
+| 0 | 63 |
+| 1 | 29 |
+| 2 | 6 |
+
+and rows carrying **≥1 weak pillar: 1. Rows carrying ≥2 weak pillars: 0.** No sparse row reaching
+clause 2 has a single weak pillar. Shipping the fix would add an unexercised code path for zero
+measured effect — the H11.C.6/C.7 precedent (an evaluable rule that cannot fire fakes coverage)
+applies directly. **Held.** Re-open if the weak side ever becomes populated — which requires
+HOLD 2 to change, and it should not.
+
+### HOLD 2 — neecha_bhanga cancels 83% of debilitations, and that is NOT a defect
+
+Chasing why the weak side is empty: `_qualitative_strong` returns True 51 times and False 3
+times across every graha on sparse charts. The cause is upstream — of 18 debilitated grahas,
+**15 are cancelled by `neecha_bhanga`**. The rate is 83% on sparse charts and **83% on full-cast
+charts too (85 of 103)**, so it is a global property, not a sparse artifact.
+
+83% looked far too high: Neecha Bhanga Raja Yoga is classically a notable condition, and the
+implementation ORs four conditions of which two accept a kendra **from Lagna OR from Moon** —
+up to eight of twelve houses, tested against two different planets. Cancellation is close to the
+default by construction. The module docstring also concedes the conditions are imported
+Parashari/Phaladeepika doctrine, since "Raman references neecha-bhanga at HPA-33:308 but does not
+enumerate the conditions".
+
+**Then I read what Raman actually does, and he cancels freely.** HTJAH-I:1822: *"The Sun, lord of
+11, is in Lagna in neecha or debility. Because the Sun gets neechabhanga or cancellation of
+debility, Raja-Yoga is caused."* Fourteen lines later, in the SAME chart: *"Lord of Lagna Venus is
+in the 12th in debilitation but there is cancellation of debility. Venus is with exalted Mercury
+and hence good."* Two cancellations in one nativity — and the reason given for the second,
+conjunction with an EXALTED planet, is not even among the four implemented conditions, i.e.
+Raman's working set is *wider* than the engine's, not narrower. Again at HTJAH-I:1984 for a third
+chart.
+
+**So there is no doctrinal basis to tighten it, and tightening would be my invention.** This is
+the same shape as the dusthana arm refuted hours earlier: a plausible-sounding structural
+intuition ("that fires too often") with Raman's own text running the other way. **Held.**
+Re-open only on a citation where Raman DECLINES a cancellation the engine grants.
+
+### What these two holds establish about the sparse-chart error surface
+
+The 26 dist-2 errors on sparse charts are **not** reachable by threshold or cancellation work.
+The weak side of the pillar reading is structurally near-empty because Raman himself rarely
+lets a debilitation stand, and the corpus bears that out. Anything that moves these rows has to
+come from somewhere else — most plausibly a genuine three-valued strength band ("moderate in
+strength" recurs at HTJAH-I:1868, :2198, :2202), which an `Optional[bool]` pillar cannot express
+and which is a design change with its own doctrine review, not a threshold tweak.

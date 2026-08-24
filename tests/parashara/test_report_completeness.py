@@ -30,6 +30,7 @@ _REQUIRED_MARKERS = (
     "**Pada & finance (BPHS-29:8-15):**",              # ch.29 gains
     "**Spouse from the Upapada (BPHS-30:7-12):**",     # ch.30 marriage
     "## Wealth (Dhana) yogas (BPHS ch.41)",            # ch.41 wealth yogas
+    "## Penury (Daridra) yogas (BPHS ch.42)",          # ch.42 penury yogas
     "## Drekkana",                                     # ch.6 decanates
     "### After the four haranas (BPHS-43:567)",        # Nisargayu reductions
     "### Complete span",                               # Nisargayu + ascendant

@@ -475,6 +475,18 @@ def to_markdown(reading: ParasharaReading) -> str:
                    "are not fired here)._")
     out.append("")
 
+    # --- Daridra (penury) yogas (ch.42) ---
+    out.append("## Penury (Daridra) yogas (BPHS ch.42)")
+    out.append("")
+    if reading.daridra_yogas:
+        out.append("| Yoga | Why | Source |")
+        out.append("|---|---|---|")
+        for y in reading.daridra_yogas:
+            out.append(f"| {y.name} | {y.reason} | {y.source.work}:{y.source.line} |")
+    else:
+        out.append("_No ch.42 crisp Daridra yoga detected._")
+    out.append("")
+
     # --- Vargottama (Saravali ch.3) ---
     out.append("## Vargottama — same sign in Rasi and Navamsa (Saravali ch.3)")
     out.append("")

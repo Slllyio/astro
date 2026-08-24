@@ -24,6 +24,7 @@ _REQUIRED_MARKERS = (
     "Effect of each upagraha in the house",            # ch.25 house-effects
     "## Shodasavarga",                                 # ch.6-7 divisional table
     "What each varga is read for (BPHS-7:",            # ch.7 use-domains
+    "## Special ascendants (BPHS ch.5)",               # ch.5 Bhava/Hora/Ghati lagna
     "## Sudarshana Chakra",                            # ch.74 three-lagna
     "## Arudha padas (BPHS ch.29",                     # ch.29-30 padas
     "**Pada & finance (BPHS-29:8-15):**",              # ch.29 gains

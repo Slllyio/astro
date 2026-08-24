@@ -125,6 +125,23 @@ def transit_signs(*, year: int, month: int, day: int, hour: int = 12, minute: in
     return out
 
 
+def special_lagnas(*, year: int, month: int, day: int, hour: int, minute: int,
+                   tz_offset: float, latitude: float, longitude: float) -> dict[str, float]:
+    """Bhava / Hora / Ghatika Lagna longitudes (BPHS ch.5) — the Sun's sunrise longitude advanced
+    by the ghatis elapsed since sunrise (1 day = 60 ghatis). Pure formula in
+    `doctrine.special_lagnas`; this supplies the two ephemeris inputs."""
+    from app.parashara.doctrine.special_lagnas import special_lagna_longitudes
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    jd = calculate_jd(year, month, day, to_decimal_hours(hour, minute), tz_offset)
+    geopos = (longitude, latitude, 0.0)
+    sunrise = _sunrise(jd - 1.0, geopos, rise=True)
+    if sunrise > jd:
+        sunrise = _sunrise(jd - 2.0, geopos, rise=True)
+    sun_at_sunrise = swe.calc_ut(sunrise, swe.SUN, _FLAGS)[0][0] % 360.0
+    ghatis = (jd - sunrise) * 60.0                       # 1 day = 60 ghatis
+    return special_lagna_longitudes(sun_at_sunrise, ghatis)
+
+
 def gulika_longitude(*, year: int, month: int, day: int, hour: int, minute: int,
                      tz_offset: float, latitude: float, longitude: float) -> float:
     """Gulika's (Mandi's) sidereal longitude — the ascendant rising at the start of SATURN's eighth

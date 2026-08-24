@@ -140,6 +140,24 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {body} | {d.index} | {_SIGN_NAMES[d.sign - 1]} | {d.lord} | {d.deity} |")
     out.append("")
 
+    # --- Special ascendants (BPHS ch.5) ---
+    sl = reading.chart.special_lagnas
+    if sl:
+        out.append("## Special ascendants (BPHS ch.5)")
+        out.append("")
+        out.append("Time-based lagnas advancing from the Sun's sunrise longitude (BPHS-5:2-8) — each "
+                   "read as its own ascendant. Bhava (1 sign per 5 ghatis), Hora (per 2.5 ghatis), "
+                   "Ghatika (per 1 ghati).")
+        out.append("")
+        out.append("| Special lagna | Sign | Degree |")
+        out.append("|---|---|---|")
+        for name in ("Bhava", "Hora", "Ghati"):
+            lon = sl.get(name)
+            if lon is None:
+                continue
+            out.append(f"| {name} Lagna | {_SIGN_NAMES[int(lon // 30)]} | {lon % 30:.2f}° |")
+        out.append("")
+
     # --- Sudarshana Chakra (BPHS ch.74) ---
     out.append("## Sudarshana Chakra — the three-lagna view (BPHS ch.74)")
     out.append("")

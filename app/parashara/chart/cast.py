@@ -10,12 +10,17 @@ Ayanamsa is the repo default (Lahiri sidereal), consistent across the platform.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Final, Mapping
 
 import app.core.ephemeris_engine as _eph   # pure-astronomy substrate (swisseph); named in full so
                                            # the isolation guard sees the exact module, not the pkg
-from app.parashara.chart.ephemeris import gulika_longitude, kala_context, speeds_and_ayanamsa
+from app.parashara.chart.ephemeris import (
+    gulika_longitude,
+    kala_context,
+    special_lagnas,
+    speeds_and_ayanamsa,
+)
 from app.parashara.primitives.shadbala.kala import KalaContext
 
 _NAK_SPAN: Final[float] = 360.0 / 27.0
@@ -33,6 +38,9 @@ class ParasharaChart:
     ayanamsa: float                     # Lahiri ayanamsa (deg) at birth — for Ayana bala
     kala: KalaContext                   # birth's time facts — for Kala bala's time sub-components
     gulika: float                       # Gulika/Mandi sidereal longitude (deg) — BPHS ch.3/25
+    # Bhava/Hora/Ghati Lagna longitudes (deg) — BPHS ch.5. Derived; defaults empty for hand-built
+    # test charts (cast() always populates it).
+    special_lagnas: Mapping[str, float] = field(default_factory=dict)
 
 
 def _nakshatra_number(longitude: float) -> int:
@@ -61,6 +69,8 @@ def cast(*, year: int, month: int, day: int, hour: int, minute: int,
                         tz_offset=tz_offset, latitude=latitude, longitude=longitude)
     gulika = gulika_longitude(year=year, month=month, day=day, hour=hour, minute=minute,
                               tz_offset=tz_offset, latitude=latitude, longitude=longitude)
+    slagnas = special_lagnas(year=year, month=month, day=day, hour=hour, minute=minute,
+                             tz_offset=tz_offset, latitude=latitude, longitude=longitude)
     return ParasharaChart(
         longitudes=longitudes,
         asc_sign=asc["sign"],
@@ -71,4 +81,5 @@ def cast(*, year: int, month: int, day: int, hour: int, minute: int,
         ayanamsa=ayanamsa,
         kala=kala,
         gulika=gulika,
+        special_lagnas=slagnas,
     )

@@ -50,6 +50,31 @@ BHAVA_BALA_MIN_SH: float = 300.0
 # over-commitments on borderline charts. A pillar count of 1 is too aggressive (a single
 # weak factor amid contradicting evidence should not condemn a matter), so do NOT hand-set
 # AFFLICT below 2 without a golden that earns the change.
+#
+# DOCTRINAL AUTHORITY FOUND 2026-08-24 (bphs-doctrine-reviewer, engine-blind): FAVOUR=2 is no
+# longer justified by the sweep alone — it is Raman's own operative threshold for the
+# house/lord/karaka triad. The prescriptive statement is HTJAH-I:5729-5730 (Chart No. 96):
+# "Since the house and the lord are considerably afflicted, the Karaka's moderately benefic
+# disposition SHOULD BE IGNORED." Two pillars against one, both testimonies present, and Raman
+# orders the dissenting third discarded — unanimity cannot survive that sentence. Applied in
+# the favourable direction on worked charts: HTJAH-I:4856-4858 (Chart 80: karaka considerably
+# afflicted, house+lord strong -> "very high official position"), HTJAH-I:4619-4621 (Chart 71),
+# HTJAH-I:8493-8518 (Chart 1). Ten negative cases consistent, zero usable counterexamples.
+# NOTE: HTJAH-I:2113 ("at least two of the three factors") is NOT the citation for this knob —
+# its triad is the Lagna/Sun/Moon body-mind-soul trinity (HTJAH-I:1870-1873) and its consequent
+# is whole-life fortune, not a bhava verdict. Recorded because it was nearly cited in error.
+#
+# AFFLICT=3 vs HTJAH-I:5729 — INVESTIGATED AND RESOLVED 2026-08-25: the tension is in the
+# PREDICATE, not the threshold. 5729 condemns at TWO afflicted pillars, which looks like
+# AFFLICT should be 2 — but measured per-row, lowering it flips exactly 3 scored verdicts and
+# ALL THREE move AWAY from Raman (h11_08 becomes a new favourable->afflicted inversion).
+# Meanwhile the condemnations Raman actually makes at two afflicted pillars (e.g. HTJAH-I
+# Chart 73: "the lord and Karaka are moderately blemished" -> mother lost) sit on pillars this
+# apparatus reads as bala-STRONG — no threshold value can reach them. Raman's "considerably/
+# moderately afflicted" is CONTACT-BLEMISH severity; these booleans are BALA-weakness. Two
+# different predicates. The knob stays 3 because at 2 the bala-boolean misfires; the real fix
+# is the graded strength band (DOCTRINE_BACKLOG, three-valued-band design ticket), which would
+# let a bala-strong-but-blemished pillar count toward condemnation the way Raman counts it.
 CONTRA_PILLAR_AFFLICT: int = 3
 CONTRA_PILLAR_FAVOUR: int = 2
 

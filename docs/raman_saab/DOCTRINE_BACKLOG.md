@@ -2687,3 +2687,48 @@ halves of the error surface (sparse: no bala at all; full-cast: bala contradicte
 is the single remaining mechanism-shaped lever. It requires a design session with its own
 doctrine review — per-band definitions must come from Raman's grading vocabulary, not from
 fitting these four charts.
+
+## The pillar thresholds, doctrinally re-cited — FAVOUR confirmed, AFFLICT resolved (2026-08-24/25)
+
+The re-derived sweep left one doctrinal question: does a contradicted bhava need ALL THREE of
+Raman's factors strong to read favourable, or a majority? Settled from the text, engine-blind.
+
+**FAVOUR=2 (majority) is VALIDATED — but on a different citation than proposed.** My candidate,
+HTJAH-I:2113 ("at least two of the three factors"), was REJECTED by the reviewer as the proof:
+its triad is Lagna/Sun/Moon — the body-mind-soul trinity (HTJAH-I:1870-1873) — and its consequent
+is whole-life fortune, not a bhava verdict. The suspected over-generalisation was real. The true
+authority is **HTJAH-I:5729-5730** (Chart No. 96, verified verbatim): *"Since the house and the
+lord are considerably afflicted, the Karaka's moderately benefic disposition SHOULD BE IGNORED."*
+Two pillars against one, both testimonies present, the dissenting third ordered discarded —
+unanimity cannot survive that sentence. Applied favourably on worked charts across houses:
+HTJAH-I:4856-4858 (Chart 80: karaka considerably afflicted, house+lord strong → "very high
+official position"), :4619-4621, :8493-8518. Ten consistent negative cases; the one candidate
+counterexample (Chart 68) is OCR-self-contradictory and unusable either way. All eight "all the
+three factors" recurrences checked: every one descriptive sufficiency, none prescriptive
+necessity. The knob is re-cited in `shadbala/total.py`; it no longer stands on the sweep.
+
+**AFFLICT=3 vs the same passage — investigated, and the tension dissolves into the predicate.**
+5729 condemns at TWO afflicted pillars, which reads like AFFLICT should be 2. Measured per-row:
+lowering it flips exactly **3 scored verdicts, all three AWAY from Raman** (HTJAH-II.h11_08
+favourable→afflicted where Raman says favourable — a new inversion; NH.chart_45 and NH.chart_47
+mixed→afflicted where Raman says mixed). Meanwhile the condemnations Raman actually issues at two
+afflicted pillars are UNREACHABLE by any threshold: on HTJAH-I Chart 73 ("the lord and Karaka are
+moderately blemished" → mother lost) both condemned pillars read **bala-strong**. Raman's
+"considerably/moderately afflicted" is contact-blemish severity; the pillar booleans are
+bala-weakness. **Two different predicates wearing one word.** The knob stays 3 — not because the
+text supports unanimity, but because at 2 the bala-boolean misfires on everything it can reach
+while still missing everything Raman means.
+
+**This is the third independent derivation of the same conclusion in two days.** The sparse-chart
+profile (no bala at all), the nothing-fired diagnosis (bala strong, contact ignored), and now the
+AFFLICT investigation (bala-weak ≠ Raman-afflicted) all terminate at the identical design gap:
+**the engine needs a graded strength band that folds contact-blemish into the pillar reading**,
+with band definitions taken from Raman's own vocabulary (feebly / moderately / fairly /
+considerably / quite — the reviewer counted the grades). That design session is now the
+single next piece of mechanism work, and nothing smaller will move the remaining error surface.
+
+Two rendering notes from the review, filed for the report surfaces (no verdict impact): a 2-of-3
+favourable verdict arguably owes the reader the dissenting pillar's specific denial (Raman always
+confines it to its own signification — Chart 80 gets high office AND denied schooling); and the
+knob docstring previously described both thresholds as pure sweep calibration, which is no longer
+true of FAVOUR.

@@ -462,6 +462,19 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("_No ch.36 special yoga (e.g. Gaja-Kesari) detected._")
     out.append("")
 
+    # --- Dhana (wealth) yogas (ch.41) ---
+    out.append("## Wealth (Dhana) yogas (BPHS ch.41)")
+    out.append("")
+    if reading.dhana_yogas:
+        out.append("| Yoga | Why | Source |")
+        out.append("|---|---|---|")
+        for y in reading.dhana_yogas:
+            out.append(f"| {y.name} | {y.reason} | {y.source.work}:{y.source.line} |")
+    else:
+        out.append("_No ch.41 crisp Dhana yoga detected (the strength/varga-graded wealth verses "
+                   "are not fired here)._")
+    out.append("")
+
     # --- Vargottama (Saravali ch.3) ---
     out.append("## Vargottama — same sign in Rasi and Navamsa (Saravali ch.3)")
     out.append("")

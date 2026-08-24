@@ -26,9 +26,19 @@ import swisseph as swe
 from app.parashara.chart.cast import cast
 from app.parashara.chart.ephemeris import _WEEKDAY_LORD, _ahargana
 from app.parashara.doctrine import argala, bhava_lord_effects
+from app.parashara.doctrine.arudha import EXCEPTION_SOURCE, RULE_SOURCE, arudha_pada
+from app.parashara.doctrine.functional_by_lagna import YOGAKARAKA_SOURCE, yogakaraka
 from app.parashara.doctrine.sources import Citation, verify
 from app.parashara.primitives import ashtakavarga as av
+from app.parashara.primitives.longevity import (
+    ASCENDANT_SOURCE,
+    NISARGAYU_YEARS,
+    YEARS_SOURCE,
+    _ascendant_years_navamsa,
+    _ascendant_years_rasi,
+)
 from app.parashara.primitives.shadbala.sthana import uchcha_bala
+from app.parashara.primitives.upagrahas import SOURCE as UPAGRAHA_SOURCE, upagrahas
 from app.parashara.primitives.vimshottari_dasha import seed as vim_seed
 
 
@@ -92,6 +102,30 @@ def ledger() -> list[WorkedExample]:
                       Citation("BPHS-24", 25), 144, lambda: len(bhava_lord_effects.all_effects())),
         WorkedExample("Argala on the ascendant (BPHS-31 hypothetical chart)",
                       Citation("BPHS-31", 62), {2, 4, 11}, _argala_houses),
+        # Arudha padas — Parashara's four worked examples (ch.29).
+        WorkedExample("Arudha base (Scorpio asc, Mars in Cancer -> Pisces)",
+                      RULE_SOURCE, 12, lambda: arudha_pada(8, 4)),
+        WorkedExample("Arudha exception, lord in 1st (Jupiter in Sagittarius -> Virgo)",
+                      EXCEPTION_SOURCE, 6, lambda: arudha_pada(9, 9)),
+        WorkedExample("Arudha exception, lord in 7th (Saturn in Leo, Aquarius asc -> Taurus)",
+                      EXCEPTION_SOURCE, 2, lambda: arudha_pada(11, 5)),
+        WorkedExample("Arudha exception, lord in 4th (Sun in Scorpio, Leo asc -> the 4th)",
+                      EXCEPTION_SOURCE, 8, lambda: arudha_pada(5, 8)),
+        # Nisargayu — the ascendant contribution's two cases (ch.43).
+        WorkedExample("Nisargayu ascendant, navamsa case (Cancer navamsa, asc 0-48-34 -> 3.2428)",
+                      ASCENDANT_SOURCE, 3.2428,
+                      lambda: round(_ascendant_years_navamsa(4, 0 + 48 / 60 + 34 / 3600), 4)),
+        WorkedExample("Nisargayu ascendant, rasi case (Sagittarius asc -> 8 years)",
+                      ASCENDANT_SOURCE, 8.0, lambda: _ascendant_years_rasi(9, 0.0)),
+        WorkedExample("Nisargayu allotment sums to the 120-year lifespan",
+                      YEARS_SOURCE, 120, lambda: int(sum(NISARGAYU_YEARS.values()))),
+        # Upagrahas — Parashara's closing identity (ch.3): Upaketu + 1 sign == the Sun.
+        WorkedExample("Upagraha chain closes (Upaketu + 1 sign == Sun, at Sun 132 deg)",
+                      UPAGRAHA_SOURCE, 132.0,
+                      lambda: round((upagrahas(132.0)["Upaketu"] + 30.0) % 360.0, 4)),
+        # Functional nature — the 12-lagna yogakaraka key (ch.34): Mars for Cancer lagna.
+        WorkedExample("Yogakaraka for Cancer lagna -> Mars",
+                      YOGAKARAKA_SOURCE, ("Mars",), lambda: yogakaraka(4)),
     ]
     # Each planet's canonical Bhinnashtakavarga total (Sun 48 ... Saturn 39).
     for planet, total in av.BAV_TOTALS.items():

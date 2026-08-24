@@ -124,6 +124,7 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 | 5 | Deepening — Karakamsa effects (ch.33), Nisargayu COMPLETE (haranas + ascendant, ch.43), 2- & 3-planet conjunctions (ch.15/16), upagrahas + effects (ch.3/25), Shodasavarga table (ch.6-7), Sudarshana Chakra (ch.74) | ✅ |
 | 6 | Jaimini padas + closing — varga use-domains (ch.7), Arudha padas + Arudha Lagna + Upapada (ch.29-30), pada-finance (ch.29:8-15), spouse-from-Upapada (ch.30:7-12), Drekkana decanates (ch.6); report-completeness guard | ✅ |
 | 7 | Serving + integrity + closing doctrine — sha256 source-lock, HTTP endpoints (/parashara/reading{,/markdown,/html}) + JSON/HTML renders, fidelity ledger 15→24, Special Lagnas (ch.5), Lajjitadi avasthas (ch.45), registry-vs-disk guard | ✅ |
+| 8 | Firing yogas — the crisp named yogas (ch.36) and worldly yogas (Dhana ch.41, Daridra ch.42, royal-association ch.40) promoted from catalogue to cited detectors | ✅ |
 
 ## Doctrine encoded so far (all cited to BPHS's own slokas)
 
@@ -204,10 +205,18 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   Anapha / Durudhara (a graha in her 2nd / 12th / both), Kemadruma (the Moon bare, with the
   kendra-from-lagna cancellation), Adhi (benefics in her 6th/7th/8th) and the Moon-Dhana yoga. Each
   cites its ch.37 sloka; surfaced per-nativity in the reading.
-- **Yoga catalogue** (ch.35-42) — a cited index of every yoga chapter. The Raja yogas (ch.39,
-  Karakamsa-based), royal-association (ch.40), Dhana/wealth (ch.41) and penury (ch.42) yogas are
-  bespoke specific combinations with no single citable general rule, so they are preserved faithfully
-  as a queryable catalogue (`catalogue`, `find`) rather than synthesized into misattributed detectors.
+- **Yoga catalogue** (ch.35-42) — a cited index of every yoga chapter. It exists because these are
+  bespoke specific combinations with no single *general* rule; the crisp *individual* slokas are now
+  fired as their own cited detectors (below), while the fuzzy / "strong" / Arudha-framed verses and
+  the Jaimini-heavy Raja yogas (ch.39) remain catalogue-only (`catalogue`, `find`) — never synthesized
+  into a misattributed general rule.
+- **Named + worldly yogas as firing detectors** — the crisp, chart-computable combinations, each
+  citing its OWN sloka (the maraka/conjunction pattern): **ch.36** Subha/Asubha/Amala/Parvata/
+  Chamara/Srinatha (+ Gaja-Kesari), **ch.41 Dhana** (a planet in own-sign 5th with named planets in
+  the 11th; a planet in own-sign lagna aspected by two named planets), **ch.42 Daridra** (lagna-lord
+  exchanges with a maraka; Ketu on lagna/Moon with the lord in the 8th; lord with an evil lord and no
+  benefic aspect), and **ch.40 royal-association** (built on the Amatyakaraka/Atmakaraka). The
+  "endowed with strength" and Arudha/navamsa-framed verses in each are deferred, not faked.
 - **Solar (Ravi) yogas** (ch.38) — Vesi / Vasi / Ubhayachari: a tara-graha (barring the Moon) in the
   2nd / 12th / both from the Sun. The Sun-analogue of the lunar yogas; cited, surfaced per-nativity.
 - **Pancha Mahapurusha yogas** (BPHS ch.75 — **root**) — Ruchaka/Bhadra/Hamsa/Malavya/Sasa, each

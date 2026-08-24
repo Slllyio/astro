@@ -565,18 +565,22 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append("")
     out.append("Baladi = age-state by degree (bala/kumara/yuva/vriddha/mrita); "
                "Jagradadi = awake/dreaming/sleeping by dignity; "
-               "Deeptadi = dignity/placement state (+Vikala if with a malefic, +Kopa if combust). "
+               "Deeptadi = dignity/placement state (+Vikala if with a malefic, +Kopa if combust); "
+               "Lajjitadi = the six 'shame etc.' states (sl.11-18), several may apply. "
                "Grades are Parashara's result-strength (1.0 full / 0.5 half / 0.0 nil).")
     out.append("")
-    out.append("| Graha | Baladi (grade) | Jagradadi (grade) | Deeptadi |")
-    out.append("|---|---|---|---|")
+    out.append("| Graha | Baladi (grade) | Jagradadi (grade) | Deeptadi | Lajjitadi |")
+    out.append("|---|---|---|---|---|")
     for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
         a = reading.avasthas.get(g)
         if a is None:
             continue
         deept = a.deeptadi + (" +Vikala" if a.deeptadi_vikala else "") + (" +Kopa" if a.deeptadi_kopa else "")
+        lajj = ", ".join(a.lajjitadi) if a.lajjitadi else "—"
+        if a.lajjitadi_destroys_house:
+            lajj += " (house destroyed)"
         out.append(f"| {g} | {a.baladi} ({a.baladi_grade:.2f}) | "
-                   f"{a.jagradadi} ({a.jagradadi_grade:.2f}) | {deept} |")
+                   f"{a.jagradadi} ({a.jagradadi_grade:.2f}) | {deept} | {lajj} |")
     out.append("")
 
     # --- Dashas (ch.46) ---

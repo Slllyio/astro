@@ -78,6 +78,11 @@ from app.parashara.primitives import yogini_dasha as yog
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
 from app.parashara.primitives.deeptadi_avastha import deeptadi
 from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
+from app.parashara.primitives.lajjitadi_avastha import (
+    AVASTHAS as _LAJJITADI_ORDER,
+    destroys_its_house,
+    lajjitadi,
+)
 from app.parashara.primitives.longevity import (
     HaranaReducedSpan,
     NisargayuFull,
@@ -112,6 +117,8 @@ class GrahaAvastha:
     deeptadi: str        # Deepta | Swastha | Pramudita | Santa | Deena | Khala (dignity/placement)
     deeptadi_vikala: bool  # also shares its sign with a malefic
     deeptadi_kopa: bool    # also combust
+    lajjitadi: tuple[str, ...]  # any of Lajjita/Garvita/Kshudita/Trushita/Mudita/Kshobhita (ch.45)
+    lajjitadi_destroys_house: bool  # holds Kshudita or Kshobhita -> its house is destroyed
 
 
 @dataclass(frozen=True)
@@ -385,9 +392,12 @@ def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
         b = baladi_from_longitude(lon)
         j = jagradadi_avastha(g, int(lon % 360.0 // 30) + 1)
         d = deeptadi(g, chart.longitudes, speeds=chart.speeds)
+        lj = lajjitadi(g, chart.longitudes, asc_sign=chart.asc_sign)
         out[g] = GrahaAvastha(baladi=b.state, baladi_grade=b.grade,
                               jagradadi=j.state, jagradadi_grade=j.grade,
-                              deeptadi=d.state, deeptadi_vikala=d.vikala, deeptadi_kopa=d.kopa)
+                              deeptadi=d.state, deeptadi_vikala=d.vikala, deeptadi_kopa=d.kopa,
+                              lajjitadi=tuple(a for a in _LAJJITADI_ORDER if a in lj),
+                              lajjitadi_destroys_house=destroys_its_house(lj))
     return out
 
 

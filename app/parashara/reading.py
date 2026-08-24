@@ -67,6 +67,7 @@ from app.parashara.doctrine.solar_yogas import SolarYoga, detect as detect_solar
 from app.parashara.doctrine.special_yogas import SpecialYoga, detect as detect_special_yogas
 from app.parashara.doctrine.dhana_yogas import DhanaYoga, detect as detect_dhana_yogas
 from app.parashara.doctrine.daridra_yogas import DaridraYoga, detect as detect_daridra_yogas
+from app.parashara.doctrine.royal_association import RoyalYoga, detect as detect_royal_yogas
 from app.parashara.doctrine.vargottama import vargottama_bodies
 from app.parashara.primitives import ashtakavarga as _av
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
@@ -177,6 +178,7 @@ class ParasharaReading:
     special_yogas: tuple[SpecialYoga, ...]    # ch.36 "many other yogas" — Gaja-Kesari (strict)
     dhana_yogas: tuple[DhanaYoga, ...]        # ch.41 — crisp wealth combinations
     daridra_yogas: tuple[DaridraYoga, ...]    # ch.42 — crisp penury combinations
+    royal_yogas: tuple[RoyalYoga, ...]        # ch.40 — royal-association (chara-karaka) combinations
     vargottama: tuple[str, ...]          # bodies in the same sign in D1 and D9 (Saravali ch.3)
     sav: Mapping[int, int]               # Sarvashtakavarga bindus per sign 1..12 (ch.66; total 337)
     bav: Mapping[str, Mapping[int, int]]  # each graha's Bhinnashtakavarga per sign (ch.66)
@@ -488,6 +490,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         solar_yogas=_solar_yogas(chart),
         dhana_yogas=detect_dhana_yogas(chart.longitudes, asc_sign=chart.asc_sign),
         daridra_yogas=detect_daridra_yogas(chart.longitudes, asc_sign=chart.asc_sign),
+        royal_yogas=detect_royal_yogas(chart.longitudes, asc_sign=chart.asc_sign),
         mahapurusha=_mahapurusha(chart),
         special_yogas=_special_yogas(chart),
         vargottama=vargottama_bodies(chart.longitudes, asc_longitude=chart.asc_longitude),

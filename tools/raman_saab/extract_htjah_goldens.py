@@ -36,15 +36,17 @@ self-assertion (CLAUDE.md, "Verify against Raman, never against engine self-outp
 What it emits
 -------------
 DRAFT records only (``verdict_review="DRAFT"``). A DRAFT is NOT scored by the accuracy ratchet —
-only ``verdict_review == "CONFIRMED"`` verdicts are. So extraction can never inflate 261/294 by
-itself; it grows the cast corpus (rule-liveness coverage, differential astronomy) and builds a
-reviewable queue. Promoting a DRAFT to CONFIRMED remains a per-record doctrine review against
+only ``verdict_review == "CONFIRMED"`` verdicts are. So extraction can never inflate the accuracy
+figure by itself (the live value lives in tests/fixtures/golden_accuracy_baseline.json — do not
+restate it here, it moves); it grows the cast corpus (rule-liveness coverage, differential
+astronomy) and builds a reviewable queue. Promoting a DRAFT to CONFIRMED remains a per-record doctrine review against
 Raman's text, and the never-confirm-to-pad rule stands.
 
 Usage:
     py -3.12 -m tools.raman_saab.extract_htjah_goldens                # dry-run report
     py -3.12 -m tools.raman_saab.extract_htjah_goldens --emit         # JSONL to stdout
-    py -3.12 -m tools.raman_saab.extract_htjah_goldens --tolerance-days 45
+    py -3.12 -m tools.raman_saab.extract_htjah_goldens --pdf VolI.pdf --pdf VolII.pdf
+    py -3.12 -m tools.raman_saab.extract_htjah_goldens --tolerance-deg 2.5
 """
 from __future__ import annotations
 

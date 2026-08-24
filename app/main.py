@@ -183,9 +183,13 @@ async def landing() -> HTMLResponse:
     surface, so the no-CDN rule that protects the report page does not apply here. It does
     reuse the app's own manuscript palette so the pitch and the product look like one thing.
 
-    Its copy is bound by the Measured-Truth directive: the page states the 88.4% fidelity
+    Its copy is bound by the Measured-Truth directive: the page states the CURRENT fidelity
     figure AND the null real-outcome result, and never presents the engine as a validated
-    predictor of lives."""
+    predictor of lives. The fidelity number is 70.6% exact / 86.4% within one ordinal step
+    (269 of 381) as of 2026-08-24 — it read 88.4% until an audit found the scored pool could
+    only admit verdicts the engine already agreed with. **When the ratchet moves, this page
+    moves with it**; a marketing surface quoting a superseded figure is the exact failure the
+    directive exists to prevent. Source of truth: tests/fixtures/golden_accuracy_baseline.json."""
     html_path = _APP_TEMPLATES_DIR / "landing.html"
     if not html_path.exists():
         raise HTTPException(

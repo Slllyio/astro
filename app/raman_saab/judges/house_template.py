@@ -394,6 +394,10 @@ def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
 #: B1 comparative weighing (DOCTRINE_BACKLOG B1). ENABLED 2026-08-03 on an explicit user
 #: decision, knowing it trades strict exact accuracy for fewer catastrophic errors:
 #: strict 261/293 -> 259/293, within-1 ordinal 281/293 -> 283/293, real errors (dist>=2) 12 -> 10.
+#: Those figures are the LINEAGE of this decision and are left as they were recorded. The
+#: denominator has since changed: an engine-blind re-adjudication (2026-08-24) put the live
+#: ratchet at 269/381, so do not read 293 as the current corpus size. The trade this guard made
+#: stands on its own reasoning — an inversion is worse than a one-step miss — independent of it.
 #: Both golden baselines were re-based in the same commit, per the human-bump rule. This is the
 #: first DOWNWARD strict re-base in the project's lineage and it is deliberate: a favourable/
 #: afflicted inversion is a worse failure than a favourable/mixed boundary call, and HTJAH-I:3788

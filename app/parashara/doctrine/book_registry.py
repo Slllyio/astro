@@ -59,17 +59,19 @@ BOOKS: Final[tuple[BookEntry, ...]] = (
     # --- ROOT: Parashara's own text. The authority. ---
     BookEntry("BPHS", "bphs", True, ROOT,
               "Brihat Parashara Hora Shastra (R. Santhanam)",
-              note="91 of 97 chapters on disk; ch.1-45 complete, ch.46-97 has 46 of 52. "
+              note="92 of 97 chapters on disk; ch.1-45 complete, ch.46-97 has 47 of 52 "
+                   "(ch.75 split out of the ch.74 file, 2026-08-24). "
                    "Per-chapter record: docs/parashara/BPHS_CORPUS_COVERAGE.md"),
 
     # --- ALLIED: the classical Parashari lineage. Citable where BPHS is silent. ---
     BookEntry("PHALA", "phaladeepika", True, ALLIED,
               "Phaladeepika (Mantreswara, tr. V. Subrahmanya Sastri)",
-              note="Complete. The standard elaboration of Parashari technique. "
-                   "NUMBERING TRAP: the wisdomlib scrape counted front-matter, so the FILE index "
-                   "is offset from the PRINTED chapter — printed ch.3 'Divisions of the Zodiac' "
-                   "is chapter_05_*.md, i.e. cite it as PHALA-5, not PHALA-3. Always confirm the "
-                   "file a tag resolves to before pinning a line."),
+              note="INCOMPLETE — only ONE chapter is on disk: the printed ch.3 'Divisions of the "
+                   "Zodiac' (chapter_05_*.md). The rest was never scraped, so Phaladeepika is NOT "
+                   "generally citable through the engine and is not cited anywhere today. "
+                   "NUMBERING TRAP for the one file present: the wisdomlib scrape counted "
+                   "front-matter, so printed ch.3 is chapter_05_*.md — cite it as PHALA-5, not "
+                   "PHALA-3. Always confirm the file a tag resolves to before pinning a line."),
     BookEntry("SARAVALI", "saravali", True, ALLIED,
               "Saravali (Kalyana Varma, tr. R. Santhanam)",
               note="Complete, 55 chapters."),

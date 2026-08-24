@@ -2620,3 +2620,38 @@ text. **Re-open path:** find whether Raman requires all three factors strong for
 reading of a contradicted bhava, or accepts a majority. If the text says all three, FAVOUR=3
 ships on that basis and the numbers are a consequence, not a justification. If it says majority,
 the current setting is confirmed and this closes for good.
+
+## HOLD 3 — the bhava-rescue gate mismatch is real but unexercised (2026-08-24)
+
+Profiling the 12 no-contradiction full-cast errors surfaced a citation tension in the existing
+BHAVA-RESCUE clause. Raman's sentence (HTJAH-I:503-505) gates the rescue on *"the house itself
+has good conjunctions and aspects"* — which the code carries as `fired_benefic` — but the code
+ADDITIONALLY requires a strong numeric Bhava Bala (`bhava_bala_strong is True`), which appears
+nowhere in the sentence. The extra gate is also what makes the rescue structurally dead on
+Track-B charts (ticket filed 2026-08-23), since Bhava Bala is never computable there.
+
+**Prototyped the textual reading** (`is not False` instead of `is True`, i.e. the same permissive
+idiom the adjacent `bhava_ok` already uses) **and measured per-row: ZERO of 381 scored verdicts
+change.** The relaxed arm never fires differently anywhere on the corpus — the charts that would
+need it don't reach clause 6 with the required shape (`not lord_strong` + benefic-only firing).
+
+**Held, per the unexercised-change discipline** (H11.C.6/C.7, clause-2-symmetry precedents): an
+unexercised gate relaxation adds unproven behaviour for zero measured effect, and unlike the
+combustion fix it changes no stored data — only a branch that nothing takes. The citation tension
+stands recorded; re-open when a golden (or a family real-outcome case) actually routes through
+clause 6 with a weak lord, benefic testimony, and an unknown/weak Bhava Bala, so the change would
+be measurable rather than speculative.
+
+### The 12 no-contradiction errors, profiled
+
+| pattern | n | reading |
+|---|---|---|
+| nothing fired, 3 strong pillars → favourable; Raman afflicted | 4 | pure coverage gap: Raman's afflicting factor is not encoded as a rule at all |
+| benefic-only fired, 3 strong → favourable; Raman afflicted | 3 | same gap, one-sided testimony |
+| benefic-only fired, 2 strong/1 weak → afflicted; Raman favourable | 3 | clause-6 shape; the rescue tension above is adjacent but measured inert |
+| malefic-only fired → afflicted; Raman favourable | 2 | mirror coverage gap |
+
+**Seven of twelve are coverage gaps, not judgment defects** — the engine never heard the evidence
+Raman weighed. That folds them into the same programme as the 9 abstentions: per-chart source
+reading to identify which of Raman's stated factors is missing as a rule, i.e. golden-corpus /
+rule-encoding work, not judge work.

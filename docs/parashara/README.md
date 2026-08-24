@@ -123,6 +123,7 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 | 4 | Enrichment — rasi drishti, functional-by-lagna, maraka, Gulika, richer verdict, allied grids (Saravali ch.30/45), chara karakas + Karakamsa; ch.11:16b antidote fix; Mahapurusha to BPHS-root (ch.75) | ✅ |
 | 5 | Deepening — Karakamsa effects (ch.33), Nisargayu COMPLETE (haranas + ascendant, ch.43), 2- & 3-planet conjunctions (ch.15/16), upagrahas + effects (ch.3/25), Shodasavarga table (ch.6-7), Sudarshana Chakra (ch.74) | ✅ |
 | 6 | Jaimini padas + closing — varga use-domains (ch.7), Arudha padas + Arudha Lagna + Upapada (ch.29-30), pada-finance (ch.29:8-15), spouse-from-Upapada (ch.30:7-12), Drekkana decanates (ch.6); report-completeness guard | ✅ |
+| 7 | Serving + integrity + closing doctrine — sha256 source-lock, HTTP endpoints (/parashara/reading{,/markdown,/html}) + JSON/HTML renders, fidelity ledger 15→24, Special Lagnas (ch.5), Lajjitadi avasthas (ch.45), registry-vs-disk guard | ✅ |
 
 ## Doctrine encoded so far (all cited to BPHS's own slokas)
 
@@ -131,10 +132,12 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   checked against Parashara's own worked examples.
 - **Functional nature** (ch.3 sl.11) — with Mercury and Moon kept conditional (the documented
   point of divergence from Raman's engine).
-- **Avasthas** (ch.45) — the full triad: **Baladi** (age-state by degree), **Jagradadi** (awake/
-  dreaming/sleeping by dignity), and **Deeptadi** (dignity/placement state — Deepta/Swastha/Pramudita/
-  Santa/Deena/Khala, plus Vikala if sharing its sign with a malefic and Kopa if combust). **Graha
-  drishti** (ch.26).
+- **Avasthas** (ch.45) — the full **four families**: **Baladi** (age-state by degree), **Jagradadi**
+  (awake/dreaming/sleeping by dignity), **Deeptadi** (dignity/placement state — Deepta/Swastha/
+  Pramudita/Santa/Deena/Khala, +Vikala if sharing its sign with a malefic, +Kopa if combust), and
+  **Lajjitadi** (the six non-exclusive 'shame etc.' states, sl.11-18: Lajjita/Garvita/Kshudita/
+  Trushita/Mudita/Kshobhita, with the Kshudita/Kshobhita house-destroyed rule). **Graha drishti**
+  (ch.26).
 - **Shadbala** (ch.27) — the **complete six-fold** planetary strength in Parashara's virupas:
   Sthana (5 sub-components), Dig, Naisargika, Cheshta (from speed), Drik (aspectual, may be
   negative), and Kala (8 sub-components: Nathonnata, Paksha, Tribhaga, the four calendar-lords
@@ -274,6 +277,11 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   on/aspecting the 11th-from-AL, benefic=virtuous / malefic=questionable, quantum by count) and
   **spouse from the Upapada** (ch.30 sl.7-12 — the 2nd-from-UL: benefic→good spouse, debilitated/
   malefic→loss). Each cited; the base and exception rules pinned by BPHS's own worked nativities.
+- **Special ascendants** (ch.5) — **Bhava / Hora / Ghatika Lagna**, time-based lagnas advancing from
+  the Sun's sunrise longitude (1 sign per 5 / 2.5 / 1 ghatis), each read as its own ascendant.
+  Verified exactly against Parashara's worked example (Sun 132°, birth 12gh30vi → Bhava Libra 27°,
+  Hora Capricorn 12°, Ghatika Leo 27°). Pure arithmetic in `doctrine.special_lagnas`; the ephemeris
+  supplies Sun-at-sunrise + ghatis. Carried on the chart, surfaced per-nativity.
 - **Drekkana** (ch.6 sl.7-8) — each body's decanate: part (1/2/3), decanate sign (1st/5th/9th from
   the rasi), its lord, and the sage-deity (Narada/Agasthya/Doorvasa). Read for co-born.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of

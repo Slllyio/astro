@@ -2655,3 +2655,35 @@ be measurable rather than speculative.
 Raman weighed. That folds them into the same programme as the 9 abstentions: per-chart source
 reading to identify which of Raman's stated factors is missing as a rule, i.e. golden-corpus /
 rule-encoding work, not judge work.
+
+### The four nothing-fired charts, diagnosed — NH.chart_57 is the worked example (2026-08-24)
+
+All four "nothing fired, three strong pillars → favourable, Raman afflicted" errors share one
+mechanism, and chart_57 shows it exactly:
+
+- **Raman's sentence**: "The 5th house is equally afflicted as the lord Mars is with Rahu and
+  Saturn." His operative fact: the LORD is CONJUNCT two malefics.
+- **The engine HOLDS that fact**: Mars (5th lord for Cancer lagna) sits in the Lagna in the same
+  rasi as Rahu AND Saturn. Nothing is missing from the chart model.
+- **No rule shape matches it**: the five afflicted-5th-lord rules are all narrower compounds —
+  H5.C.9 needs papakartari, H5.C.10 needs the 5th house ALSO malefic-aspected (it is not, so
+  C.10 correctly declines per its own citation), H5.C.14 needs Saturn in the 5th, H5.L.4 is the
+  lord-in-4th table row. The bare fact has no rule.
+- **The pillar apparatus cannot carry it either**: pillars measure BALA, and Mars's Shadbala
+  reads strong. Contact-affliction and strength are different axes — the same finding the
+  majority-loci probe (2026-08-23) hit from the other side.
+
+The other three: h5_10 ("lord weak, Karaka powerless" — Raman grading pillars DOWN where
+Shadbala grades them up), chart_55 ("affliction of Lagna lord by three malefics"), x73 ("lord and
+Karaka moderately blemished"). Lord/karaka contact-affliction in every case.
+
+**What this does and does not license.** It does NOT revive the refuted majority-loci tally —
+that mechanism was measured non-differential across the corpus and stays dead. It sharpens the
+already-filed design ticket instead: Raman's strength reading is **three-valued and blended**
+("moderate in strength", "moderately blemished", "not sufficiently strong"), where contact
+degrades a strong-bala planet toward the middle band. An `Optional[bool]` pillar cannot express
+"strong bala, blemished by association". The three-valued band design is now motivated by BOTH
+halves of the error surface (sparse: no bala at all; full-cast: bala contradicted by contact) and
+is the single remaining mechanism-shaped lever. It requires a design session with its own
+doctrine review — per-band definitions must come from Raman's grading vocabulary, not from
+fitting these four charts.

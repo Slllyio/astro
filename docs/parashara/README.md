@@ -162,10 +162,11 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 - **Bhava-lord effects** (ch.24) — the full 144-statement catalogue (lord of each house in each
   house), indexed from the corpus in place so every effect cites Parashara's own sloka; surfaced
   per-nativity in the reading against the chart's actual house-lord placements.
-- **House effects** (ch.12-23) — a per-house cited index of Parashara's effect-slokas, with topic
-  headings where the OCR is clean. Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged;
-  `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
-  fire-on-chart rules layer.
+- **House significations** (ch.12-23) — a per-house cited index of Parashara's effect-slokas (117
+  across the 12 houses), **surfaced in the reading** as the general significations of each bhava
+  (`read().house_effects`); the chart-SPECIFIC house doctrine is the lord's placement (ch.24) and the
+  grahas tenanting each house (ch.30). Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged, 4-22
+  slokas/house) — a reference catalogue, not a fire-on-chart rules layer.
 - **Ashtakavarga** (ch.66) — Bhinnashtakavarga per graha and Sarvashtakavarga, the bhava-strength /
   transit backbone. The canonical benefic-place tables, guarded by a HARD checksum (each BAV total
   fixed — Sun 48…Saturn 39 — and SAV always 337), so an OCR/transcription error cannot pass silently;

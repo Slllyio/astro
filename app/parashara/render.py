@@ -273,9 +273,9 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("")
 
     # --- Two-planet conjunctions (Saravali ch.15) ---
+    out.append("## Two-planet conjunctions (Saravali ch.15)")
+    out.append("")
     if reading.conjunctions:
-        out.append("## Two-planet conjunctions (Saravali ch.15)")
-        out.append("")
         out.append("Grahas sharing a sign, with Saravali's effect for that pair (the 21-pair grid "
                    "BPHS lacks).")
         out.append("")
@@ -296,15 +296,18 @@ def to_markdown(reading: ParasharaReading) -> str:
                 text = s.text if len(s.text) <= 300 else s.text[:297] + "…"
                 out.append(f"| {name} | {text} | {s.source.work}:{s.source.line} |")
             out.append("")
+    else:
+        out.append("_No two grahas share a sign — no conjunction yoga._")
+        out.append("")
 
     # --- Dignity concentrations (Saravali ch.45) ---
+    out.append("## Dignity concentrations (Saravali ch.45)")
+    out.append("")
+    out.append("When two or more grahas simultaneously hold the same dignity, Saravali gives a "
+               "distinct verdict (two exalted → rich and famous; all seven → \"an emperor\"). "
+               "BPHS has the dignity tables but no such concentration rule.")
+    out.append("")
     if reading.dignity_concentrations:
-        out.append("## Dignity concentrations (Saravali ch.45)")
-        out.append("")
-        out.append("When two or more grahas simultaneously hold the same dignity, Saravali gives a "
-                   "distinct verdict (two exalted → rich and famous; all seven → \"an emperor\"). "
-                   "BPHS has the dignity tables but no such concentration rule.")
-        out.append("")
         out.append("| Dignity | Grahas | Verdict | Source |")
         out.append("|---|---|---|---|")
         for dignity in ("exalted", "moolatrikona", "own", "friendly", "debilitated"):
@@ -314,6 +317,9 @@ def to_markdown(reading: ParasharaReading) -> str:
             n, s = hit
             text = s.text if len(s.text) <= 300 else s.text[:297] + "…"
             out.append(f"| {dignity} | {n} | {text} | {s.source.work}:{s.source.line} |")
+        out.append("")
+    else:
+        out.append("_No dignity is shared by two or more grahas — no concentration verdict._")
         out.append("")
 
     # --- Gulika (ch.3 / ch.25) ---

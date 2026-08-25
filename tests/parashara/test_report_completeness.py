@@ -18,6 +18,7 @@ _REQUIRED_MARKERS = (
     "## Planet-in-house effects (Saravali ch.30)",
     "## Two-planet conjunctions (Saravali ch.15)",
     "Three grahas sharing a sign (Saravali ch.16)",   # canonical: Sun+Jupiter+Venus conjunct
+    "## Dignity concentrations (Saravali ch.45)",      # always shown now (else: 'none')
     "## Chara karakas & Karakamsa (BPHS ch.32",
     "Parashara's effects by the Karakamsa's sign",     # ch.33 sign passage
     "## Upagrahas",                                    # ch.3 sub-planets

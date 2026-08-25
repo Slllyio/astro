@@ -2732,3 +2732,62 @@ favourable verdict arguably owes the reader the dissenting pillar's specific den
 confines it to its own signification — Chart 80 gets high office AND denied schooling); and the
 knob docstring previously described both thresholds as pure sweep calibration, which is no longer
 true of FAVOUR.
+
+## ★★ THE GRADED STRENGTH BAND — design session run, countable form CLOSED-REFUTED (2026-08-25)
+
+The design session three independent investigations demanded. Its outcome is a refutation, and
+it is the most informative result of the whole error-surface programme. Binding on future work.
+
+### What the session established first: the vocabulary is real
+
+268 graded-state phrases harvested across HTJAH-I/II. They cluster into three operative bands
+with a graded rim — retained here as the durable asset for any future attempt:
+
+| band | Raman's words (with counts) |
+|---|---|
+| STRONG | well disposed (42), well fortified (29), very powerful (23), very strong (23), quite strong (19), considerably fortified, highly fortified |
+| MIDDLE | fairly strong (18), moderately strong (7), "moderate in strength" (recurring), feebly strong (3), not sufficiently strong (3), slightly/somewhat/moderately blemished |
+| AFFLICTED | considerably afflicted (26), heavily afflicted (24), badly afflicted (11), quite afflicted (6), very weak (4), powerless |
+
+### The make-or-break measurement, run BEFORE any design: the band cannot be computed from counts
+
+The band is only implementable if some countable contact measure on the pillar planets separates
+the rows Raman reads afflicted from those he reads favourable, among rows the engine currently
+reads favourable. Four pillar-blemish variants were measured (worst-of lord/karaka, net of
+benefic mitigation), completing the eight begun by the majority-loci probe:
+
+| variant | Raman-favourable (n=134) ≥+1 / ≥+2 | Raman-afflicted (n=27) ≥+1 / ≥+2 |
+|---|---|---|
+| natural nature, conj+aspect | 62% / 28% | 70% / 41% |
+| natural nature, conjunction-only | 46% / 2% | 59% / 7% |
+| functional nature (Raman's per-lagna printed table), conj+aspect | 43% / 8% | 52% / 15% |
+| functional nature, conjunction-only | 29% / 3% | 30% / 4% |
+
+**No variant separates.** The best relative differential (~1.5x) sits on base rates of 28-41%,
+useless as a discriminant; the most faithful variant (functional, conjunction-only — the exact
+shape of the error proses' "with Rahu and Saturn", counted with Raman's own printed per-lagna
+lists) shows NOTHING (29% vs 30%). With the earlier loci-tally probe this makes **eight contact
+measures refuted**: natural/functional x conjunction/aspect x pillar/loci.
+
+### What this means, stated plainly
+
+**Raman's per-chart strength grades are not a function of countable contact.** Blemished pillars
+are just as common on the charts he reads favourable. Whatever selects "considerably afflicted"
+on Chart 96 but "well fortified" on a chart with the same contact profile lives in information a
+count does not carry: which specific configuration, which signification the afflictor touches,
+the yoga context, the dasha story, and his own graded language per case. This is the MEASURED
+TRUTH mechanism — indications abundant and non-differential — now demonstrated INSIDE the golden
+corpus at pillar level, against Raman's own judgments.
+
+**Consequently the 52-row error surface is NOT mechanism-shaped.** There is no clause, band,
+threshold, or guard left to design; every countable form has been measured against the corpus and
+none discriminates. What remains is per-chart doctrine work: for each error chart, read Raman's
+stated reason, and where his sentence instantiates a general rule that exists in his text, encode
+THAT rule with its citation (the chart_57 diagnosis is the worked template: the fact is held, the
+rule shape is missing). Where his reasoning is irreducibly per-case, the chart goes to the
+documented-limits register. That is golden-corpus/rule-encoding work — slow, per-chart, honest —
+and it is the only path that remains open.
+
+The three-valued-band ticket is CLOSED in its computable form. Re-open ONLY with a proposal whose
+discriminant is measured to separate before any design begins — the burden of proof is now on the
+proposer, and eight dead variants say the bar is high.

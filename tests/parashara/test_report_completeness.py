@@ -15,6 +15,7 @@ from app.parashara.render import to_markdown
 
 # Section markers that MUST appear for any cast chart (the canonical baseline exercises them all).
 _REQUIRED_MARKERS = (
+    "## House significations — Parashara's effects of each house (BPHS ch.12–23)",
     "## Planet-in-house effects (Saravali ch.30)",
     "## Two-planet conjunctions (Saravali ch.15)",
     "Three grahas sharing a sign (Saravali ch.16)",   # canonical: Sun+Jupiter+Venus conjunct

@@ -227,6 +227,30 @@ def to_markdown(reading: ParasharaReading) -> str:
             out.append(f"| {name} | {house} | {text} | {s.source.work}:{s.source.line} |")
         out.append("")
 
+    # --- House significations (BPHS ch.12-23) ---
+    _HOUSE_NAMES = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th", 6: "6th", 7: "7th",
+                    8: "8th", 9: "9th", 10: "10th", 11: "11th", 12: "12th"}
+    out.append("## House significations — Parashara's effects of each house (BPHS ch.12–23)")
+    out.append("")
+    out.append("Parashara's stated effects for each bhava, cited to its own sloka. These are the "
+               "GENERAL significations of the houses (the same for any chart); the chart-SPECIFIC "
+               "house doctrine — the lord's placement (ch.24) and the grahas tenanting each house "
+               "(ch.30) — is in the sections above. This scan of ch.12–23 is OCR-partial, so a "
+               "house's list is what the corpus cleanly yields, not necessarily every printed sloka.")
+    out.append("")
+    for house in range(1, 13):
+        slokas = reading.house_effects.get(house, ())
+        out.append(f"### {_HOUSE_NAMES[house]} house ({len(slokas)} slokas)")
+        out.append("")
+        if not slokas:
+            out.append("_No cleanly-indexed sloka for this house in the current scan._")
+            out.append("")
+            continue
+        for s in slokas:
+            text = s.text if len(s.text) <= 400 else s.text[:397] + "…"
+            out.append(f"- {text} — {s.source.work}:{s.source.line}")
+        out.append("")
+
     # --- Planet-in-house effects (Saravali ch.30) ---
     out.append("## Planet-in-house effects (Saravali ch.30)")
     out.append("")

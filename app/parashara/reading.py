@@ -36,6 +36,7 @@ from app.parashara.chart.cast import ParasharaChart
 from app.parashara.chart.vimsopaka_chart import vimsopaka_all
 from app.parashara.doctrine.argala import Argala, argala_for
 from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
+from app.parashara.doctrine.bhava_effects import all_bhava_effects
 from app.parashara.doctrine import functional_by_lagna as fbl
 from app.parashara.doctrine.gulika import GulikaEffect, effect_in_house as gulika_effect_in_house
 from app.parashara.doctrine.maraka import Maraka, maraka_planets
@@ -155,6 +156,7 @@ class ParasharaReading:
     marakas: tuple[str, ...]             # ch.34 — grahas lording a maraka (2nd/7th) house
     maraka_planets: tuple[Maraka, ...]   # ch.44 — the fuller maraka set (lords + malefics in/with)
     planet_house_effects: Mapping[str, tuple[int, Sloka]]  # Saravali ch.30 — graha in its house
+    house_effects: Mapping[int, tuple[Sloka, ...]]  # BPHS ch.12-23 — Parashara's effects of each house
     dignity_concentrations: Mapping[str, tuple[int, Sloka]]  # Saravali ch.45 — N grahas share a dignity
     chara_karakas: Mapping[str, str]     # BPHS ch.32 — the 7 movable karakas (role -> planet)
     karakamsa_sign: int                  # BPHS ch.33 — navamsa sign of the Atmakaraka
@@ -465,6 +467,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
                       if fbl.is_maraka(p, chart.asc_sign)),
         maraka_planets=maraka_planets(_graha_signs_with_nodes(chart), asc_sign=chart.asc_sign),
         planet_house_effects=_planet_house_effects(chart),
+        house_effects=all_bhava_effects(),
         dignity_concentrations=active_concentrations(
             {g: int(chart.longitudes[g] % 360.0 // 30) + 1
              for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")

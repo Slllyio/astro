@@ -2944,3 +2944,25 @@ afflicting testimony from cited rules; never re-widen the tautology. This is als
 for the honesty ledger: the day's one fidelity "gain" (+1 golden, Marx) cost one real-outcome
 row (Avika), which is exactly the two-axes trade-off the project promises to report and never
 average.
+
+### Fertility-gate recovery, step 1 MEASURED and insufficient (2026-08-29)
+
+The sequenced recovery's first step — encode Chandra-Lagna 5th-house testimony and let it carry
+the gate's rows — was probed before building, per the band-refutation discipline. Discriminant
+over all scored H5 rows (net malefic-minus-benefic testimony on the 5th-from-Moon, occupancy
+double-weighted):
+
+| group | n | net ≥ +2 |
+|---|---|---|
+| gate-carried (Raman afflicted) | 15 | **6 (40%)** |
+| other Raman-afflicted | 9 | 3 (33%) |
+| other Raman-favourable | 8 | 1 (13%) |
+
+Directionally right (h5_11's own mechanism is real) but far short of replacement: a demote-only
+Chandra-corroboration gate at net ≥ +2 would recover ≤6 of the ~15 carried rows and clip a
+favourable. **No single mechanism replaces the refuted gate** — its carrying capacity is
+heterogeneous, one printed reason per chart. The recovery path is amended accordingly: the gate
+stays (refuted-but-load-bearing, as recorded) until per-chart rule coverage accumulates through
+the ordinary programme; the Chandra-Lagna testimony remains a real, citable factor (HTJAH-I:7093
+"as from Moon, which cannot be ignored ... as he is strong" — note Raman gates it on the Moon's
+own strength) for encoding as individual cited rules where charts name it, not as a blanket gate.

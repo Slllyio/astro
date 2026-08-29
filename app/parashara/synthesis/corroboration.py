@@ -26,11 +26,41 @@ BPHS-root layer. Reopen if a BPHS per-house arudha rule is located.
 """
 from __future__ import annotations
 
+from typing import Final
+
 from app.parashara.doctrine.arudha import FINANCE_SOURCE, UPAPADA_SPOUSE_SOURCE
 from app.parashara.doctrine.bhava_karaka import karaka_of
+from app.parashara.doctrine.sources import Citation
+from app.parashara.doctrine.vargottama import SOURCE as VARGOTTAMA_SOURCE
+from app.parashara.chart.sudarshana import SOURCE as SUDARSHANA_SOURCE
 from app.parashara.primitives.ashtakavarga import SAV_BAND_SOURCE
-from app.parashara.primitives.relationships import dignity_in_sign
+from app.parashara.primitives.relationships import SIGN_LORDS, dignity_in_sign
 from app.parashara.chart.shodasavarga import DOMAINS_SOURCE
+from app.parashara.synthesis.chart_facts import functioning_malefics, occupants, planet_signs
+
+#: "The bhava whose lord is in a malefic Shashtiamsa will diminish ... The bhava whose lord is in
+#: a benefic Shodasamsa (or Kalamsa) flourish." — BPHS's own per-bhava divisional rule, the
+#: strongest cited warrant for divisional corroboration in ch.7.
+VARGA_DECIDES_SOURCE: Final[Citation] = Citation("BPHS-7", 62)
+
+#: BPHS-7's own matter-varga table (sl.1-8, lines 49-62): the division each house's matter is read
+#: from, cited to the line the assignment lands on. D24 (learning) is skipped — no single house
+#: carries it cleanly. The universal D9 lens (above) remains practice-convention.
+_MATTER_VARGA: Final[dict[int, tuple[tuple[str, str, int], ...]]] = {
+    2: (("D2", "Hora — wealth", 50),),
+    4: (("D4", "Chaturthamsa — fortunes", 54), ("D12", "Dvadasamsa — parents", 56)),
+    5: (("D7", "Saptamsa — sons and grandsons", 54),),
+    6: (("D30", "Trimsamsa — evil effects", 59),),
+    8: (("D30", "Trimsamsa — evil effects", 59),),
+    9: (("D12", "Dvadasamsa — parents", 56),),
+    12: (("D30", "Trimsamsa — evil effects", 59),),
+}
+
+#: Sign-lord nature for the D16/D60 amsa rule — a labeled convention (benefic lords Jupiter/Venus/
+#: Mercury/Moon vs malefic lords Sun/Mars/Saturn).
+# ponytail: amsa nature by sign-lord; upgrade path = the ch.3 Shashtiamsa deity table (benevolent
+# vs cruel amsas by name) if a chart ever turns on the difference.
+_BENEFIC_LORDS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
 from app.parashara.reading import ParasharaReading
 from app.parashara.synthesis.chart_facts import house_lord, house_sign
 from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
@@ -61,6 +91,28 @@ def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence
             condition="sav_band", observed=f"{bindus} SAV bindus in the house sign",
             source=SAV_BAND_SOURCE))
 
+    # BPHS-7's own matter-vargas for this house (the table the chapter itself gives).
+    for tag, gloss, line in _MATTER_VARGA.get(house, ()):
+        for planet, role in _distinct((lord, "lord"), (karaka, "karaka")):
+            out += _varga_evidence(reading, house, planet, role, tag, gloss.split(" — ")[0],
+                                   source=Citation("BPHS-7", line))
+
+    # BPHS-7:62-66 — the per-bhava D60/D16 rule (the lord's amsa decides diminish/flourish).
+    out += _d60_d16_evidence(reading, house, lord)
+
+    # Vargottama lord/karaka — same sign in D1 and D9 (Saravali, allied — marked in the rule).
+    for planet, role in _distinct((lord, "lord"), (karaka, "karaka")):
+        if planet in reading.vargottama:
+            out.append(Evidence(
+                topic=house, tier=Tier.CORROBORATION, category="corroboration",
+                polarity=Polarity.SUPPORTS,
+                rule=f"the {role} {planet} is Vargottama (Saravali — allied source)",
+                condition="vargottama",
+                observed=f"{planet} holds the same sign in D1 and D9", source=VARGOTTAMA_SOURCE))
+
+    # Sudarshana — an occupant confirmed in the SAME house from Lagna, Moon and Sun (ch.74).
+    out += _sudarshana_evidence(reading, house)
+
     # Matter-specific BPHS corroborations.
     if house == 7:
         out += _upapada_evidence(reading)
@@ -69,8 +121,61 @@ def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence
     return out
 
 
+def _d60_d16_evidence(reading: ParasharaReading, house: int, lord: str) -> list[Evidence]:
+    """BPHS-7:62-66: lord in a malefic-lorded Shashtiamsa -> the bhava diminishes; in a
+    benefic-lorded Shodasamsa -> it flourishes. Asymmetric by the sloka's own wording."""
+    varga = reading.shodasavarga.get(lord)
+    if not varga:
+        return []
+    out: list[Evidence] = []
+    d16 = varga.get("D16")
+    if d16 is not None and SIGN_LORDS[d16] in _BENEFIC_LORDS:
+        out.append(Evidence(
+            topic=house, tier=Tier.CORROBORATION, category="corroboration",
+            polarity=Polarity.SUPPORTS,
+            rule=f"the lord {lord} sits in a benefic Shodasamsa — 'the bhava ... flourish' "
+                 "(amsa nature by sign-lord, a labeled convention)",
+            condition="d16_flourish",
+            observed=f"{lord} D16 sign {d16} (lord {SIGN_LORDS[d16]})",
+            source=VARGA_DECIDES_SOURCE))
+    d60 = varga.get("D60")
+    if d60 is not None and SIGN_LORDS[d60] not in _BENEFIC_LORDS:
+        out.append(Evidence(
+            topic=house, tier=Tier.CORROBORATION, category="corroboration",
+            polarity=Polarity.CONTRADICTS,
+            rule=f"the lord {lord} sits in a malefic Shashtiamsa — 'the bhava ... will diminish' "
+                 "(amsa nature by sign-lord, a labeled convention)",
+            condition="d60_diminish",
+            observed=f"{lord} D60 sign {d60} (lord {SIGN_LORDS[d60]})",
+            source=VARGA_DECIDES_SOURCE))
+    return out
+
+
+def _sudarshana_evidence(reading: ParasharaReading, house: int) -> list[Evidence]:
+    """One atom when occupants of `house` read as the SAME house from all three lagnas (ch.74):
+    benefic-majority confirmation supports, malefic-majority weighs against."""
+    chart = reading.chart
+    signs = planet_signs(chart)
+    confirmed = [b for b in occupants(chart, house, signs=signs)
+                 if (p := reading.sudarshana.get(b)) is not None
+                 and p.from_lagna == p.from_moon == p.from_sun == house]
+    if not confirmed:
+        return []
+    malefics = functioning_malefics(chart, signs=signs)
+    n_mal = sum(1 for b in confirmed if b in malefics)
+    n_ben = len(confirmed) - n_mal
+    polarity = (Polarity.SUPPORTS if n_ben > n_mal
+                else Polarity.CONTRADICTS if n_mal > n_ben else Polarity.NEUTRAL)
+    kind = "benefic" if n_ben > n_mal else "malefic" if n_mal > n_ben else "mixed"
+    return [Evidence(
+        topic=house, tier=Tier.CORROBORATION, category="corroboration", polarity=polarity,
+        rule=f"the Sudarshana confirms {kind} occupancy — the same house from Lagna, Moon and Sun",
+        condition="sudarshana_confirmed",
+        observed=", ".join(confirmed), source=SUDARSHANA_SOURCE)]
+
+
 def _varga_evidence(reading: ParasharaReading, house: int, planet: str, role: str,
-                    tag: str, name: str) -> list[Evidence]:
+                    tag: str, name: str, *, source: Citation = DOMAINS_SOURCE) -> list[Evidence]:
     varga = reading.shodasavarga.get(planet)
     if not varga or tag not in varga:
         return []
@@ -84,7 +189,7 @@ def _varga_evidence(reading: ParasharaReading, house: int, planet: str, role: st
         condition=f"{tag.lower()}_dignity",
         observed=f"{planet} in {tag} sign {varga[tag]} "
                  f"({'own/exalted' if dig > 0 else 'debilitated/enemy'})",
-        source=DOMAINS_SOURCE)]
+        source=source)]
 
 
 def _upapada_evidence(reading: ParasharaReading) -> list[Evidence]:

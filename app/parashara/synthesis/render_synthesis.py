@@ -50,12 +50,29 @@ def to_markdown(report: SynthesisReport) -> str:
     return "\n".join(out).rstrip() + "\n"
 
 
+#: Dusthana framing — presentation-only prose so a flourishing house of adversity never renders as
+#: good news for the native. The 8th's exception (longevity) is corpus-backed; the reversal cases
+#: are the vipareeta yogas, wired as evidence where their conditions actually hold.
+_DUSTHANA_NOTE = {
+    6: ("Framing (BPHS ch.17): the 6th's indications ARE adversities — enemies, disease, "
+        "obstacles. A flourishing 6th means those indications are prominent, not that they favour "
+        "the native; an afflicted 6th can even favour him (Harsha yoga, BPHS-48:124)."),
+    8: ("Framing (BPHS ch.19): the 8th is read for longevity — a strong 8th indicates LONG life "
+        "(BPHS-19:23); its other indications (upheaval) remain adversities."),
+    12: ("Framing (BPHS-11:138): the 12th's indications are loss and expense — prominence is not "
+         "favour; cf. Vimala yoga (BPHS-48:140) for the reversal case."),
+}
+
+
 def _judgment_md(j: Judgment) -> list[str]:
     out = [f"#### {j.topic} — {j.verdict.upper()}",
            f"*{j.meaning}*", "",
            f"**Confidence ({j.convergence.tier}):** {j.convergence.tally}."]
     if j.convergence.split_note:
         out.append(f"*{j.convergence.split_note}*")
+    note = _DUSTHANA_NOTE.get(j.houses[0]) if len(j.houses) == 1 else None
+    if note:
+        out.append(f"> {note}")
     if j.convergence.caveat:
         out.append(f"> {j.convergence.caveat}")
     if j.convergence.contradictions:
@@ -108,8 +125,10 @@ def _matter_dict(m: MatterView) -> dict:
 
 def _judgment_dict(j: Judgment) -> dict:
     c = j.convergence
+    framing = _DUSTHANA_NOTE.get(j.houses[0], "") if len(j.houses) == 1 else ""
     return {
         "topic": j.topic, "houses": list(j.houses), "verdict": j.verdict, "meaning": j.meaning,
+        "framing": framing,
         "confidence": {
             "tier": c.tier, "tally": c.tally, "supporting": c.supporting,
             "contradicting": c.contradicting, "cancelled": c.cancelled, "net": c.net,

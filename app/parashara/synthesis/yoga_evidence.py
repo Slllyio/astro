@@ -34,6 +34,8 @@ from __future__ import annotations
 from typing import Final
 
 from app.parashara.doctrine.sources import Citation
+from app.parashara.doctrine.vipareeta import PROVENANCE as VIPAREETA_PROVENANCE
+from app.parashara.doctrine.vipareeta import detect as detect_vipareeta
 from app.parashara.primitives.longevity import ASCENDANT_SOURCE
 from app.parashara.reading import ParasharaReading
 from app.parashara.synthesis.chart_facts import (
@@ -122,6 +124,20 @@ def gather_yogas(reading: ParasharaReading, house: int) -> list[Evidence]:
             out.append(_one_atom(house, Tier.CORROBORATION, Polarity.CONTRADICTS, "asubha",
                                  "Asubha — malefic presence around the ascendant (ch.36)",
                                  [y.reason for y in asubha], asubha[0].source))
+
+    # Vipareeta — the corpus's polarity-resolver FOR the dusthanas: adversity to the houses of
+    # adversity favours the native. Provenance carried on every atom (Mantreswara, allied).
+    if house in (6, 8, 12):
+        vip = [y for y in detect_vipareeta(reading.chart.longitudes,
+                                           asc_sign=reading.chart.asc_sign)
+               if y.house == house]
+        if vip:
+            y = vip[0]
+            out.append(Evidence(
+                topic=house, tier=Tier.CORROBORATION, category="corroboration",
+                polarity=Polarity.SUPPORTS,
+                rule=f"{y.name} yoga — {y.reason} ({VIPAREETA_PROVENANCE})",
+                condition="vipareeta", observed=y.name, source=y.source))
     return out
 
 

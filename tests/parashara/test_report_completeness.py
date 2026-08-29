@@ -37,6 +37,9 @@ _REQUIRED_MARKERS = (
     "## Drekkana",                                     # ch.6 decanates
     "### After the four haranas (BPHS-43:567)",        # Nisargayu reductions
     "### Complete span",                               # Nisargayu + ascendant
+    "## Deterministic synthesis — reasoning across the rules (BPHS)",  # the synthesis layer
+    "### Full reasoning, per topic",                   # every topic's cited audit trail
+    "**Audit trail (sloka",                            # the sloka->rule->condition->evidence trail
 )
 
 

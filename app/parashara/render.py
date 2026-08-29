@@ -747,4 +747,9 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append(f"- Ascendant's own contribution ({method}): **{nf.ascendant_years:.2f}** yrs")
     out.append(f"- **Complete Nisargayu: {nf.total_years:.2f} years**")
     out.append("")
+
+    # --- Deterministic synthesis — reasoning across all the rules above (BPHS) ---
+    from app.parashara.synthesis import synthesize
+    from app.parashara.synthesis.render_synthesis import to_markdown as _synthesis_md
+    out.append(_synthesis_md(synthesize(reading)))
     return "\n".join(out)

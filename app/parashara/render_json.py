@@ -50,8 +50,12 @@ def _jsonify(obj: Any) -> Any:
 
 
 def to_json_dict(reading: ParasharaReading) -> dict:
-    """The whole reading as a JSON-safe dict."""
-    return _jsonify(reading)
+    """The whole reading as a JSON-safe dict, plus the deterministic synthesis under `synthesis`."""
+    from app.parashara.synthesis import synthesize
+    from app.parashara.synthesis.render_synthesis import to_dict as _synthesis_dict
+    d = _jsonify(reading)
+    d["synthesis"] = _synthesis_dict(synthesize(reading))
+    return d
 
 
 def to_json(reading: ParasharaReading, *, indent: int | None = None) -> str:

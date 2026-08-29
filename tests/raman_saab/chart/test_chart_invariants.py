@@ -116,3 +116,24 @@ class TestVerdictTotality:
             assert pf.rollup in _VERDICTS, f"house {h} rollup {pf.rollup!r}"
             for sv in pf.significations:
                 assert sv.verdict in _VERDICTS, f"house {h} sig {sv.signification} -> {sv.verdict!r}"
+
+
+class TestBirthDataSex:
+    """The native's sex is a judgment input (HTJAH-I:486 factor 7) and the Beeja/Kshetra sphuta
+    selector (HTJAH-I:5517-5520); it must be tri-state and never guessable from anything."""
+
+    def test_sex_defaults_to_none_meaning_unknown(self):
+        """Most printed charts do not state the native's sex; the default is honest ignorance."""
+        b = BirthData(name="x", year=1990, month=7, day=15, hour=12, minute=0,
+                      tz_offset=5.5, latitude=12.97, longitude=77.59)
+        assert b.sex is None
+
+    def test_sex_accepts_only_m_f_or_none(self):
+        """A typo like 'male' must fail loudly at the boundary, not select the wrong sphuta."""
+        import pytest
+        for ok in ("M", "F", None):
+            BirthData(name="x", year=1990, month=7, day=15, hour=12, minute=0,
+                      tz_offset=5.5, latitude=12.97, longitude=77.59, sex=ok)
+        with pytest.raises(ValueError, match="sex"):
+            BirthData(name="x", year=1990, month=7, day=15, hour=12, minute=0,
+                      tz_offset=5.5, latitude=12.97, longitude=77.59, sex="male")

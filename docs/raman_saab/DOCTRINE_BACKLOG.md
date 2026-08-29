@@ -2966,3 +2966,39 @@ stays (refuted-but-load-bearing, as recorded) until per-chart rule coverage accu
 the ordinary programme; the Chandra-Lagna testimony remains a real, citable factor (HTJAH-I:7093
 "as from Moon, which cannot be ignored ... as he is strong" — note Raman gates it on the Moon's
 own strength) for encoding as individual cited rules where charts name it, not as a blanket gate.
+
+
+## WS2 CLOSE-OUT (2026-08-30) — the adjudication story is complete; the scored pool is now the whole corpus
+
+Every adjudicable DRAFT in the golden corpus is resolved. Final movement: **271/382 → 277/397
+exact (69.8%), 344/397 within-1 (86.6%), real errors 51 → 53.** Four moves, one commit:
+
+1. **Splice re-extractions (+2).** NH.chart_13 H1 and NH.chart_5 H1 confirmed favourable per the
+   prior engine-blind reviews that rejected their originals — a footnote splice had INVERTED both
+   (the printed text reads unafflicted/fortified). The three splice classes (footnote /
+   section-heading / two-passage) are now guarded in `extract_htjah_goldens._conclusion`, each
+   pinned by a test reproducing the row it corrupted. NH.chart_32 H1 deliberately NOT re-applied:
+   the reviewer's pointer ("sweet and gentle nature") states a trait, not a graded conclusion.
+2. **Leftover queue (+17, the final batch).** The 15 insufficient-evidence drafts + 2 invalid-sig
+   rows adjudicated engine-blind: 16 REVISE, 1 CONFIRM, 0 REJECT. Three matters moved to their
+   true significations (HTJAH-II.chart_01 + h9_11 gains→elder_siblings; x63 mother→education —
+   its source text sits in the HTJAH-I file despite the II id). Invalid-sig backlog 11 → 9
+   (NH.chart_39 death/maraka → death; NH.chart_42 career/leadership → career, mixed).
+3. **Duplicate collapse (−4).** The uniqueness guard caught four matters confirmed on two
+   chapter-presentation records of one nativity — the exact bug class it was built for after the
+   2026-08-23 audit. Each matter now scores once; shadow copies carry the new terminal-unscored
+   `DUPLICATE` status (schema: `_REVIEWS` now {DRAFT, CONFIRMED, DUPLICATE, CONTESTED}).
+4. **Tiebreak overturn (−1 exact, honest).** The 1937-08-16 nativity's H7 marital_happiness had
+   an existing favourable confirmation quoting only the positive half of a two-sided conclusion
+   (raman2:1041-1050: "temperamental clashes" AND "stable marriage with deep attachment", same
+   operative verb on both). Third blind reading → 2-of-3 MIXED, scored on HTJAH-II.h11_01. The
+   engine reads favourable there, so the resolution costs a point — recorded, not fudged.
+
+**What "complete" means:** the scored pool is now every conclusion Raman reached in the three
+books — hit or miss. Remaining DRAFTs are rejected observations, corrupt prose, or the
+engine-mismatch backlog (Workstream 1's per-chart queue). The denominator can still grow from
+NEW sources (Astrological Magazine, WS4) but no adjudication debt remains.
+
+**WS3 shipped alongside:** `BirthData.sex` ("M"/"F"/None, validated, never guessed) +
+golden-schema `birth.sex` support + paired tests. Pure capability — unlocks the sex-matched
+Beeja/Kshetra sphuta test (the fertility-gate reinstatement condition) and HTJAH-I:486 factor 7.

@@ -50,7 +50,12 @@ SNAPSHOT_DIR = _FIXTURES / "golden_snapshots"
 
 _CASE_TYPES = {"worked_example", "rule_level", "doctrine_statement", "self_test"}
 _VERDICTS = {"favourable", "mixed", "afflicted", "insufficient-evidence", "DRAFT"}
-_REVIEWS = {"DRAFT", "CONFIRMED"}
+# DUPLICATE: same nativity+matter is CONFIRMED on another record (one person appears under
+# several chapter-presentation ids; the matter scores exactly once, on the owner named in the
+# row's review_note). CONTESTED: blind readings disagree — unscored until a 2-of-3 tiebreak
+# resolves it (NH.chart_38 precedent). Both are terminal-unscored, distinct from DRAFT (which
+# means "awaiting adjudication").
+_REVIEWS = {"DRAFT", "CONFIRMED", "DUPLICATE", "CONTESTED"}
 _TRACKS = {"A", "B", "3"}
 _POSITION_SOURCES = {"printed_degree", "sign_midpoint", "synthetic_minimal", "fresh_cast"}
 _SANDHI_ORB_DEG = 2.0
@@ -192,12 +197,16 @@ def test_golden_line_conforms_to_schema(rec: dict[str, Any]) -> None:
     assert lagna is None or (isinstance(lagna, int) and 1 <= lagna <= 12), \
         f"{_id(rec)}: lagna_sign must be 1..12 or null"
 
-    # birth: null or a {dt,tz,lat,lon} object (fields nullable).
+    # birth: null or a {dt,tz,lat,lon} object (fields nullable). An optional "sex" ("M"/"F"/null)
+    # is allowed where Raman's prose states it — the judgment input of HTJAH-I:486 factor 7 and
+    # the selector for the sex-matched Beeja/Kshetra sphutas (HTJAH-I:5517-5520). Never guessed:
+    # absent and null both mean unknown, and a sex-gated technique simply does not run.
     b = rec["birth"]
     assert b is None or isinstance(b, dict), f"{_id(rec)}: birth must be object|null"
     if isinstance(b, dict):
         for k in ("dt", "tz", "lat", "lon"):
             assert k in b, f"{_id(rec)}: birth missing {k!r}"
+        assert b.get("sex") in (None, "M", "F"), f"{_id(rec)}: birth.sex must be M|F|null"
 
     # stated_positions: each entry has exactly one of lon/sign, a bhava, a source.
     for name, entry in rec["stated_positions"].items():

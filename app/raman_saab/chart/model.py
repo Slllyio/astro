@@ -10,6 +10,13 @@ class BirthData:
     name: str; year: int; month: int; day: int
     hour: int; minute: int; tz_offset: float
     latitude: float; longitude: float
+    #: Native's sex, where the source states it — Raman's factor 7 makes it a judgment input
+    #: ("The age, position, status and SEX of the subject", HTJAH-I:486), and the Beeja/Kshetra
+    #: sphutas are sex-assigned across the couple (Beeja for a male chart, Kshetra for a female
+    #: one, HTJAH-I:5517-5520; the fertility-gate REVERSAL record explains why this matters).
+    #: "M" / "F" / None. None is the honest default: most printed charts do not state it, and
+    #: nothing may guess it — a sex-gated technique simply does not run when it is unknown.
+    sex: Optional[Literal["M", "F"]] = None
 
     def __post_init__(self) -> None:
         """Validate at the boundary so a typo (lat 200, month 13) fails loudly with a clear message
@@ -22,6 +29,8 @@ class BirthData:
         for field, value, lo, hi in checks:
             if not (lo <= value <= hi):
                 raise ValueError(f"BirthData.{field} must be in [{lo}, {hi}], got {value!r}")
+        if self.sex not in (None, "M", "F"):
+            raise ValueError(f'BirthData.sex must be "M", "F" or None, got {self.sex!r}')
 
 @dataclass(frozen=True)
 class ShadbalaBreakdown:

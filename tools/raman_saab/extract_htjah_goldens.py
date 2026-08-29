@@ -299,20 +299,41 @@ def _parse_balance(block: str) -> tuple[Optional[str], Optional[float]]:
     return lord, years
 
 
+#: Section headings that follow a Conclusion inside its capture window. Swallowing one drove a
+#: SIGNIFICATION off the next section's title (HTJAH-I.x75 took "Education and Learning" while
+#: its conclusion judged the mother — reviewer-caught 2026-08-23).
+_SECTION_HEADING = re.compile(
+    r"\n\s*(?:Education and Learning|The (?:First|Second|Third|Fourth|Fifth|Sixth|Seventh|"
+    r"Eighth|Ninth|Tenth|Eleventh|Twelfth) (?:House|Lord)|Conclusion|Remarks|Special Features|"
+    r"Important Events|Balance of)\b")
+#: Footnote openers. A sentence spliced across one INVERTED Raman's meaning (NH.chart_5: the
+#: footnote "* A learned Indian scholar..." interrupted "the Lagna lord Moon ... is [rendered
+#: highly fortified]", and the stitched prose read as afflicted — reviewer-caught 2026-08-23).
+_FOOTNOTE = re.compile(r"\n\s*\*\s*[A-Z]")
+
+
 def _conclusion(block: str) -> Optional[str]:
     """Raman's summing-up paragraph for the chart, normalised to one line.
 
     The two printings punctuate the label differently ("Conclusion :" in the scans,
     "Conclusion.—" in the Motilal setting) and neither reliably ends the paragraph with a blank
-    line, so the capture runs to the first structural marker that DOES appear — the next chart,
-    a page footer, a following section heading, or a blank line — and otherwise simply stops at
-    a sane length rather than failing."""
+    line, so the capture runs to the first structural marker that DOES appear, and otherwise
+    stops at a sane length rather than failing.
+
+    Three splice classes are guarded, each observed corrupting a reviewed row (the full record
+    is DOCTRINE_BACKLOG "FULL ADJUDICATION"): a FOOTNOTE interleaving the sentence (NH.chart_5 —
+    polarity inverted), the NEXT SECTION'S HEADING swallowed into the text (HTJAH-I.x75 — the
+    signification was then read off the heading), and a SECOND PASSAGE concatenated across a
+    gap, dropping Raman's own hedge between them (NH.chart_41). The fix is one discipline: cut
+    at the FIRST structural boundary of any kind, never bridge across one."""
     m = re.search(r"Conclusion\s*[:.\-—]+\s*(.+)", block, re.S | re.I)
     if not m:
         return None
     tail = m.group(1)
     stops = [tail.find(mark) for mark in ("\n\n", "Chart No")]
     stops += [p.start() for p in re.finditer(r"\nPage \d+ of \d+|\n\s*[IVXL]+\.\s+[A-Z]", tail)]
+    stops += [p.start() for p in _SECTION_HEADING.finditer(tail)]
+    stops += [p.start() for p in _FOOTNOTE.finditer(tail)]
     cut = min([s for s in stops if s > 40] or [600])
     text = " ".join(tail[:min(cut, 600)].split())
     return text or None

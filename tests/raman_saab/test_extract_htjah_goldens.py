@@ -254,3 +254,38 @@ class TestReviewFoundDefects:
         for h in range(1, 13):
             sig = ex._signification_for(h, "the native prospered greatly")
             assert sig in {s.key for s in significations_of(h)}
+
+
+class TestConclusionSpliceGuards:
+    """Three splice classes, each observed corrupting a reviewed golden row. The discipline is
+    one rule: cut at the first structural boundary, never bridge across one."""
+
+    def test_a_footnote_never_bridges_the_sentence(self):
+        """NH.chart_5's stored prose stitched text across a footnote and INVERTED Raman — the
+        real sentence says the Lagna is unafflicted and fortified."""
+        block = ("Conclusion.—The Lagna lord Moon though occupying the 12th is\n"
+                 "* A learned Indian scholar holds a different view about this nativity\n"
+                 "rendered highly fortified by the combined aspects of Saturn and Jupiter.")
+        got = ex._conclusion(block)
+        assert "learned Indian scholar" not in got
+        assert "rendered highly fortified" not in got     # text past the footnote is unreachable
+
+    def test_the_next_sections_heading_is_never_swallowed(self):
+        """HTJAH-I.x75's prose absorbed the following 'Education and Learning' heading, and the
+        signification was then read off the heading while the conclusion judged the mother."""
+        block = ("Conclusion.—the fourth house is quite strong rendering the native enjoy the "
+                 "fortune of possessing his mother till his age of 52.\n"
+                 "Education and Learning\nThe fourth house also rules learning and knowledge.")
+        got = ex._conclusion(block)
+        assert "possessing his mother" in got
+        assert "Education and Learning" not in got
+
+    def test_a_second_passage_is_not_concatenated_across_a_heading(self):
+        """NH.chart_41's row joined two passages ~10 lines apart, dropping Raman's own hedge
+        between them. Any structural heading ends the capture."""
+        block = ("Conclusion.—Rahu's location there is always indicative of good work of a "
+                 "humanitarian nature done disinterestedly.\n"
+                 "The Tenth Lord\nSaturn as lord of the 10th shows service and self-abnegation.")
+        got = ex._conclusion(block)
+        assert "humanitarian" in got
+        assert "self-abnegation" not in got

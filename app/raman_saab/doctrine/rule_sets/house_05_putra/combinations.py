@@ -95,6 +95,29 @@ class _AspectedByClass(C.Condition):
                    for name in ctx.chart.planets)
 
 
+class _FifthFromMoonMaleficConvergence(C.Condition):
+    """>= 2 distinct natural malefics occupy or cast whole-sign drishti on the 5th sign
+    counted from the Moon (Chandra Lagna). Occupation and aspect count once per planet;
+    the drishti module supplies the project convention (nodes 7th-only in raman_saab).
+    H5.C.39's predicate — see the rule's comment block for the five citations, the >= 2
+    vocabulary gradient, and the Victoria documented limit."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return False
+        cl5_sign = ((moon.sign - 1 + 4) % 12) + 1
+        cl5_house = ((cl5_sign - chart.asc_sign) % 12) + 1
+        count = 0
+        for name in ("Sun", "Mars", "Saturn", "Rahu", "Ketu"):
+            p = chart.planets.get(name)
+            if p is None:
+                continue
+            if p.sign == cl5_sign or drishti.aspects_house(name, cl5_house, chart):
+                count += 1
+        return count >= 2
+
+
 class _LordHemmedBy(C.Condition):
     """The lord of `house` is hemmed (2nd & 12th from it hold a planet of `klass`)."""
     def __init__(self, house: int, klass: str) -> None:
@@ -448,4 +471,34 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the PutraKaraka Jupiter hemmed by papakartari and occupying a malefic rashi "
                   "→ the karaka of children is blemished; progeny is denied",
         frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5619)),
+
+    # #39 — CL-5th malefic convergence: >= 2 distinct natural malefics occupy or aspect the
+    # 5th FROM CHANDRA LAGNA -> the children matter is blemished. STRONG TESTIMONY, deliberately
+    # NOT decisive — the bphs-doctrine-reviewer's amendment (SHIP-WITH-AMENDMENTS, HIGH,
+    # 2026-08-30): Victoria (NH:6764-6770) is a PRINTED counterexample where Raman sees the
+    # three-malefic convergence and still rules "prolific motherhood" via a rescue stack he
+    # never reduces to rule, and even in the condemned charts the CL testimony never stands
+    # alone. FIVE explicit citations: Chart 101 HTJAH-I:5826-5829 ("occupied by the malefic
+    # Saturn and aspected by another malefic Mars ... strongly blemished"), Chart 98
+    # HTJAH-I:5750-5752, Chart 108 HTJAH-I:5956-5958 ("Saturn—Ketu association is a clear case
+    # of the spoiling of the 5th house"), Goethe NH:5494-5497 ("completely spoiled when viewed
+    # from Chandra Lagna"), Wadiyar IV NH:11061-11064 (Raman's second influence there is MANDI,
+    # which this predicate does not model — the engine's second is Saturn's aspect; recorded).
+    # The >= 2 bar is his own vocabulary gradient: one malefic aspect alone rates only
+    # "nominally or feebly strong" (Chart 100, HTJAH-I:5804-5806); two or more rate "strongly
+    # blemished" / "clear case of the spoiling" / "completely spoiled". Defeasibility clause
+    # HTJAH-I:5876-5878 ("in the absence of any relief from beneficial sources") — the
+    # benefic-relief guard FAILED enumeration (Jupiter aspects the CL 5th in condemned Charts
+    # 101/Shaw exactly as in Victoria), so there is NO encodable guard and Victoria stays a
+    # documented limit. NO Moon-strength gate: HTJAH-I:7094's "in this case as he is strong"
+    # is a per-chart weighting remark, and the gate would rescue nothing in the fire set.
+    # Fires (7th-only node drishti) on 8 afflicted + 2 mixed (h5_13/h5_14, already
+    # engine-afflicted) + Victoria across the 35 H5-children goldens.
+    RuleRecord(
+        id="H5.C.39", house=5, signification="children", group="combination", kind="evaluable",
+        condition=_FifthFromMoonMaleficConvergence(),
+        fortified=None,
+        afflicted="two or more natural malefics occupy or aspect the 5th from Chandra Lagna "
+                  "→ the house of children is strongly blemished from the Moon",
+        frame="CHANDRA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5826)),
 )

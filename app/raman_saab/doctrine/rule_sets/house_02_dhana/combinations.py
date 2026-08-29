@@ -229,6 +229,42 @@ class _SecondLordNeechaBhanga(C.Condition):
         return C.NeechaBhanga(_second_lord(ctx.chart)).evaluate(ctx)
 
 
+class _SecondLordIsNaturalMalefic(C.Condition):
+    """The 2nd lord is a natural malefic (Vakchalana leg 1, 3HC:5991 'a malefic happens
+    to own the 2nd'). Only Sun/Mars/Saturn can qualify — nodes own no signs."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return _second_lord(ctx.chart) in NATURAL_MALEFICS
+
+
+#: Signs owned by the cruel planets Sun/Mars/Saturn — Aries, Leo, Scorpio, Capricorn,
+#: Aquarius. The same set Raman derives for Sushka signs (HTJAH-I:1106-1107), reused
+#: here for the classical "cruel navamsa" idiom.
+_CRUEL_SIGNS: frozenset[int] = frozenset({1, 5, 8, 10, 11})
+
+
+class _SecondLordInCruelNavamsa(C.Condition):
+    """The 2nd lord's navamsa falls in a sign owned by a cruel planet (Vakchalana leg 2,
+    3HC:5992 'joins a cruel navamsa')."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_second_lord(ctx.chart))
+        return p is not None and p.navamsa_sign in _CRUEL_SIGNS
+
+
+class _SecondHouseDevoidOfBeneficInfluence(C.Condition):
+    """No natural benefic occupies OR casts whole-sign drishti on the 2nd house
+    (Vakchalana leg 3, 3HC:5993 'the 2nd is devoid of benefic aspect or association').
+    Uses the project NATURAL_BENEFICS (Jupiter/Venus/Mercury/Moon) — the wider relief
+    set only makes the yoga harder to form."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        for name in NATURAL_BENEFICS:
+            p = ctx.chart.planets.get(name)
+            if p is None:
+                continue
+            if p.rasi_house == 2 or _PlanetAspectsHouse(name, 2).evaluate(ctx):
+                return False
+        return True
+
+
 class _PlanetAspectsHouse(C.Condition):
     """A specific planet casts whole-sign drishti on house `house`."""
     def __init__(self, planet: str, house: int) -> None:
@@ -1083,4 +1119,26 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "acquired by hard labour",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 2937)),
+
+    # #71 — Vakchalana Yoga (3HC #175): a malefic owning the 2nd, cast into a cruel
+    #       navamsa, with the 2nd devoid of benefic aspect or association → stammerer.
+    #       All three legs are Raman's own definition; the relief leg uses the project's
+    #       NATURAL_BENEFICS (Moon included), which only makes the yoga HARDER to form.
+    #       His remark "we would like to lay stress on Jupiter rather than on the 2nd
+    #       lord" is a weighing note, not a definitional leg — Jupiter participates
+    #       through the relief leg (his aspect on the 2nd dissolves the yoga).
+    #       Found during the Avika H2-speech recovery (1b): her chart correctly ESCAPES
+    #       this yoga (Jupiter aspects her 2nd), which is part of why her miss is a
+    #       documented limit, not a coverage gap.
+    RuleRecord(
+        id="H2.C.71", house=2, signification="speech", group="combination",
+        kind="evaluable",
+        condition=C.And(_SecondLordIsNaturalMalefic(),
+                        _SecondLordInCruelNavamsa(),
+                        _SecondHouseDevoidOfBeneficInfluence()),
+        fortified=None,
+        afflicted="Vakchalana Yoga — malefic 2nd lord in a cruel navamsa with the 2nd "
+                  "devoid of benefic aspect/association → the native stammers",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("3HC", 5991)),
 )

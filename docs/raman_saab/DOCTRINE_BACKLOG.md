@@ -3002,3 +3002,57 @@ NEW sources (Astrological Magazine, WS4) but no adjudication debt remains.
 **WS3 shipped alongside:** `BirthData.sex` ("M"/"F"/None, validated, never guessed) +
 golden-schema `birth.sex` support + paired tests. Pure capability — unlocks the sex-matched
 Beeja/Kshetra sphuta test (the fertility-gate reinstatement condition) and HTJAH-I:486 factor 7.
+
+
+## WS1 PASS 1a (2026-08-30) — the Chandra-Lagna 5th rule ships; the fertility-gate ledger re-profiled
+
+**H5.C.39 SHIPPED** (bphs-doctrine-reviewer SHIP-WITH-AMENDMENTS, HIGH; amendments applied):
+>= 2 distinct natural malefics occupying or aspecting the 5th FROM CHANDRA LAGNA -> strong
+afflicted testimony for children — deliberately **NON-decisive**. The review's findings, all
+banked:
+- FIVE explicit printed citations (two of which this session had misfiled as "incidental
+  fires"): Chart 101 HTJAH-I:5826-5829, Chart 98 :5750-5752, **Chart 108 :5956-5958** ("a clear
+  case of the spoiling of the 5th house"), Goethe NH:5494-5497, **Wadiyar IV NH:11061-11064**
+  (Raman's second influence there is MANDI, unmodelled — the engine counts Saturn's aspect;
+  recorded in the rule comment).
+- The >= 2 bar is Raman's own vocabulary gradient: one malefic aspect rates "nominally or
+  feebly strong" (Chart 100, :5804-5806); two or more rate "strongly blemished" / "completely
+  spoiled".
+- DECISIVE was refused on three textual grounds (Victoria NH:6764-6770 is a printed
+  counterexample; the CL testimony never stands alone even in condemned charts; the two mixed
+  fires show restriction, not denial). The benefic-relief guard (HTJAH-I:5876-5878) FAILED
+  enumeration — Jupiter aspects the CL 5th in condemned Charts 101/Shaw exactly as in Victoria
+  — so the rule ships guardless and **Victoria is the documented limit**. Moon-strength gate
+  REJECTED (HTJAH-I:7094 is a per-chart weighting remark; the gate rescues nothing in the fire
+  set). Node drishti: 7th-only per the raman_saab lock (the design-time 5/9 scratch measurement
+  was caught and re-run; chart_16/x93 correctly dropped out of the fire set).
+- Movement: 277/397 -> 279/397 exact, 345 within-1, real errors 53 -> 52. Exactly two rows
+  moved, both toward Raman: Gaekwar/chart_37 favourable->afflicted (dist-2 resolved),
+  Bose/chart_68 mixed->afflicted. Zero regressions.
+- **Fertility-gate ledger re-profiled**: C.39 now carries h5_11 + h5_18 + chart_52 on their
+  cited mechanism (OUT of the gate's carry list — three fewer accidental-correctness rows).
+  Suspension re-measured: net −12 (13 carried, 1 healed). THE GATE STAYS, refuted-but-load-
+  bearing. Remaining carried rows and their printed drivers, for future passes: h5_04
+  (lord+house "considerably afflicted"), h5_05 (PK baneful — Arm B's own chart), h5_08
+  (Saturn-association on lord+karaka), h5_09 (PK + two first-rate malefics), h5_12 ("5th
+  spoilt" — Arm A's own chart), h5_02, chart_19 (5th lord with Saturn + Mars aspects the 5th),
+  chart_22 (Keetarasi lord + PK-in-5th with Rahu), chart_20/31/37/40/68 (gate-entangled via
+  the one-weak arms).
+
+**H2.C.71 Vakchalana Yoga SHIPPED** (bphs-doctrine-reviewer VALIDATED, HIGH, no amendments):
+malefic 2nd lord in a cruel navamsa with the 2nd devoid of benefic aspect/association ->
+stammerer (3HC:5991). Cruel-sign set {Ari, Leo, Sco, Cap, Aqu} anchored to Raman's own
+HTJAH-I:1105-1107 parenthetical; Moon kept in the relief set (the H7.C.82 three-benefic
+precedent was a judge-calibration decision, not doctrine — playbook rule 6). Fires 21/242,
+ZERO scored speech overlap today: corroboration-only, recorded per the no-silent-caps rule.
+**Re-open path**: if a confirmed speech verdict ever lands on a chart that escapes only
+through a WANING-Moon touch on the 2nd, revisit with a phase-conditional Moon.
+
+**1b — Avika H2 speech: DOCUMENTED LIMIT, floor stays 4.** Her chart correctly escapes both
+cited speech mechanisms: HTJAH-I:2469 (H2.C.25) needs the 2nd lord debilitated or in the
+2nd/8th with malefics — hers is EXALTED Mars in the 11th; Vakchalana needs the 2nd devoid of
+benefic influence — her 2nd holds the Moon and receives Jupiter's drishti. Her real afflictions
+(2nd lord with Ketu, vak-karaka Jupiter in the 8th, Mercury-Rahu in the 5th) match no rule
+Raman states generally — Mercury-with-Rahu in his text is a SPECULATION-loss indicator
+(HTJAH-I:4025), not speech. No mechanism invented; the miss stands recorded. Recovery
+re-opens only if a citable general rule surfaces (Astrological Magazine sweep, WS4).

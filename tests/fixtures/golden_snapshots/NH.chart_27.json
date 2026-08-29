@@ -45,10 +45,12 @@
       "HTJAH-I:5169",
       "HTJAH-I:5183",
       "HTJAH-I:5193",
-      "HTJAH-I:5265"
+      "HTJAH-I:5265",
+      "HTJAH-I:5826"
     ],
     "fired_rule_ids": [
       "H5.C.1",
+      "H5.C.39",
       "H5.C.9",
       "H5.L.12",
       "H5.P.Ketu"

@@ -2791,3 +2791,52 @@ and it is the only path that remains open.
 The three-valued-band ticket is CLOSED in its computable form. Re-open ONLY with a proposal whose
 discriminant is measured to separate before any design begins — the burden of proof is now on the
 proposer, and eight dead variants say the bar is high.
+
+## Per-chart error programme, pass 1 (2026-08-29) — 2 rules recovered, 4 documented limits
+
+First pass of the only remaining fidelity path (the graded-band refutation's conclusion): take
+each error chart, read Raman's stated reason, encode the general rule where his text states one,
+register the documented limit where it is irreducibly per-case. Processed: the four nothing-fired
+charts.
+
+**Recovered: H5.C.15 and H5.C.16 — two clauses of Raman's own printed list, never encoded.**
+Tracing NH.chart_57 back to the children-die-early list (HTJAH-I:5190-5209) exposed that the rule
+id sequence skips 15/16 and no rule anywhere carried these predicates, while every neighbouring
+clause of the same list shipped long ago:
+
+* **H5.C.15** (HTJAH-I:5200-5201): "when Rahu and lord of Lagna are associated with the 5th lord
+  or occupy the 5th" → children die early. Encoded as the COLLECTIVE parse (both planets joined
+  to the 5th lord, or both in the 5th) with "associated" = conjunction. Reviewer VALIDATED/HIGH,
+  and strengthened the precedent: H2.C.62 and H11.C.21 already encode Raman's identical
+  "associated with <lord>" as LordsConjunct, the wider conjunction-or-aspect reading being
+  reserved for where he writes "aspect or association" (H1 _LordsInContact) — and in this very
+  paragraph he writes "aspected by" four times when he means aspect. The mixed configuration
+  (Rahu with the 5th lord while the lagna lord sits in the 5th) is a recorded floor, not covered.
+* **H5.C.16** (HTJAH-I:5203-5204): "The family is extinguished when the lord of Lagna is in the
+  5th, and Lagna and the Moon have evil associations." Lagna's evil association = malefic
+  occupation (the sibling C.17 reads the same sentence-group's "the Lagna by a malefic"
+  identically); the Moon's = malefic conjunction over exactly NATURAL_MALEFICS. VALIDATED/HIGH.
+
+Hygiene from the review: C.11's descriptive text had bundled the Rahu+Lagna-lord fragment that is
+actually 5200's first disjunct — trimmed, with a pointer to C.15. Re-open path recorded on both:
+if a Raman worked nativity ever applies 5200/5203 through aspect-only contact, that is citable
+grounds to widen "association".
+
+Liveness 743 → 745, fired 685 → 687, never-fired stays 58 (C.15 fires on the wider 346-chart
+corpus, outside the scored subset). Ratchet byte-identical at 269/381 — these ship on citation,
+as always.
+
+**Documented limits: all four nothing-fired charts.** None yields an encodable rule:
+
+| chart | Raman's stated reason | why no rule can carry it |
+|---|---|---|
+| NH.chart_57 H5 | "lord Mars is with Rahu and Saturn" | his own list's nearest clause (5200) requires the LAGNA LORD joined too — Moon is in the 10th; the NH judgment is broader than his printed list |
+| NH.chart_55 H1 | "affliction of Lagna lord by three malefics" | facts verified exactly (Mars asp, Rahu asp, Ketu conj on Venus) but NO general lagna-lord-afflicted combination is stated anywhere in the doctrine region — blended judgment |
+| HTJAH-I.h5_10 H5 | "House feebly strong, lord weak, Karaka powerless" | pillar-grading language; the graded band that could carry it is CLOSED-REFUTED in countable form |
+| HTJAH-I.x73 H4 | "lord and Karaka moderately blemished" | the predicate-mismatch specimen (bala-strong, contact-blemished); same refutation |
+
+**Programme arithmetic, for planning.** Pass 1 processed 4 error charts: 0 fixed (the two
+recovered rules fire on neither — they ship because the TEXT states them), 4 documented limits,
+2 rules of pure doctrine-completion recovered as a by-product. The realistic value of the
+remaining ~48-chart queue is exactly this shape: fidelity moves rarely; corpus completeness and
+honest limit-registration are the steady yield.

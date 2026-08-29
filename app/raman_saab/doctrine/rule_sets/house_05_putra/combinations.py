@@ -242,6 +242,43 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="Saturn (aspected by the Moon) in the 5th AND the 5th lord joining Rahu → "
                   "children die early",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5199)),
+    # #15 — the un-numbered clause between C.14 and the extinction group, found 2026-08-29 by
+    #       the per-chart error programme (the NH.chart_57 trail led back to this list and two
+    #       of its clauses turned out never to have been encoded — the id sequence skips 15/16).
+    #       "children will die early ... when Rahu and lord of Lagna are associated with the
+    #       5th lord or occupy the 5th" (HTJAH-I:5200-5201). Two disjuncts as written: BOTH
+    #       Rahu and the lagna lord joined to the 5th lord, OR both occupying the 5th itself.
+    #       "Associated" is read as conjunction — the settled module idiom (H2.C.62 and H11.C.21
+    #       encode Raman's identical "associated with <lord>" as LordsConjunct; the wider
+    #       conjunction-OR-aspect reading is reserved for where he writes "aspect or association",
+    #       cf. H1 _LordsInContact, and in THIS paragraph he says "aspected by" four times when he
+    #       means aspect). The COLLECTIVE parse is deliberate: one compound subject governs both
+    #       verbs, so a mixed configuration (Rahu with the 5th lord while the lagna lord sits in
+    #       the 5th) is a documented floor, not covered — reviewer-confirmed 2026-08-29.
+    RuleRecord(
+        id="H5.C.15", house=5, signification="children", group="combination", kind="evaluable",
+        condition=C.Or(
+            C.And(_LordConjunctPlanet(5, "Rahu"), C.LordsConjunct(1, 5)),
+            C.And(C.InRashiHouse("Rahu", 5), C.LordIn(1, 5))),
+        fortified=None,
+        afflicted="Rahu and the Lagna lord associated with the 5th lord, or both occupying "
+                  "the 5th → children die early",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5200)),
+    # #16 — the first extinction clause, likewise never encoded: "The family is extinguished
+    #       when the lord of Lagna is in the 5th, and Lagna and the Moon have evil
+    #       associations" (HTJAH-I:5203-5204). Lagna's evil association is a malefic in the
+    #       Lagna (C.17's reading of the same phrase one sentence later); the Moon's is a
+    #       malefic sharing its rasi.
+    RuleRecord(
+        id="H5.C.16", house=5, signification="children", group="combination", kind="evaluable",
+        condition=C.And(C.LordIn(1, 5), C.CountInHouse(1, 1, "malefic"),
+                        C.Or(C.Conjunct("Moon", "Sun"), C.Conjunct("Moon", "Mars"),
+                             C.Conjunct("Moon", "Saturn"), C.Conjunct("Moon", "Rahu"),
+                             C.Conjunct("Moon", "Ketu"))),
+        fortified=None,
+        afflicted="Lagna lord in the 5th with Lagna and the Moon both under evil association "
+                  "→ family extinguished",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5203)),
     RuleRecord(
         id="H5.C.25", house=5, signification="children", group="combination", kind="evaluable",
         condition=C.And(C.InRashiHouse("Mars", 5),
@@ -254,8 +291,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=None,
         fortified=None,
         afflicted="5th lord in a cruel & debilitated Navamsa; the Drekkana/Navamsa-dispositor of "
-                  "the 5th lord joined by the 12th lord aspecting the 5th lord; or Rahu+Lagna-lord "
-                  "with the 5th lord → children die early. TODO(predicate: Navamsa/Drekkana overlay)",
+                  "the 5th lord joined by the 12th lord aspecting the 5th lord → children die "
+                  "early. TODO(predicate: Navamsa/Drekkana overlay). (The Rahu+Lagna-lord clause "
+                  "formerly bundled here is HTJAH-I:5200's first disjunct and is evaluably owned "
+                  "by H5.C.15 since 2026-08-29.)",
         frame="LAGNA", varga="D9", polarity="malefic", source=Citation("HTJAH-I", 5194)),
 
     # ===== C. Extinction of family / denial of issue (HTJAH-I:5203-5209) — children =====

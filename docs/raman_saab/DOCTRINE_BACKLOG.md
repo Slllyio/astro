@@ -2865,3 +2865,82 @@ read mixed, so the row lands exact — legitimately, via three blind readings.
 
 Running tally of the programme: 6 error charts processed, 6 documented limits, 2 recovered rules
 (C.15/C.16, firing on neither), 1 contested row honestly closed, fidelity +1 by tiebreak.
+
+## Per-chart programme pass 3 — two clusters, one guard shipped, one REVERSAL held (2026-08-29)
+
+Triage of the remaining 46-row queue found two same-direction clusters, and clusters beat
+chart-by-chart: three speech errors and four children errors, all engine-over-afflicted.
+
+### Speech cluster → B3 extension SHIPPED (+1 exact, −1 inversion; 271/382)
+
+Benefic rules fire for speech on all three charts, yet the verdicts were afflicted — because the
+2nd is a maraka sthana and `maraka_active` fires on set MEMBERSHIP of the matter's lord, while
+the 2nd lord is a maraka determinant BY DEFINITION (HTJAH-I:779). Every 2nd-house matter carried
+permanent maraka pressure by construction: the identical artifact B3 fixed for Venus/the 7th.
+Reviewer VALIDATED extending `MARAKA_NON_DEATH_GUARD` to speech/vision/family as ONE CLASS (the
+maraka chapter is death-determination doctrine, full stop; Laghu Parashari lists "Maraka effects"
+as a separate 2nd-house signification, severable from the quality matters; guarding speech alone
+would encode a distinction no source supports). `wealth` deliberately excluded — the poverty
+block (HTJAH-I:2526-2528) makes maraka association a wealth operator, and those are fired rules
+that keep force under the guard anyway. Row gained: NH.chart_26 (Marx — exalted yogakaraka Venus
+in the 2nd, Raman favourable). The two residual speech rows are navamsa-weakens modulations of a
+borderline mixed — legitimate machinery, left alone.
+
+### ★ Children cluster → the FERTILITY GATE is doctrinally REVERSED but empirically load-bearing: HELD
+
+The reviewer returned a full **REVERSAL** (HIGH) on the Beeja/Kshetra gate, every finding from
+the printed text:
+
+1. **The "O1" sign-off's premise is false.** The gate was justified by h5_08/h5_11 being read
+   afflicted "purely on barren sphutas". Raman computes NO sphuta in either chart: Chart 98's
+   printed drivers are lord/karaka Saturn-afflictions (HTJAH-I:5750-5768); Chart 101's are
+   Saturn occupying and Mars aspecting the 5th-from-CHANDRA-LAGNA (HTJAH-I:5826-5842) — and
+   that chart AFFIRMS birth while denying survival. The gate is a patch over un-scored
+   Chandra-Lagna 5th testimony, wearing a sphuta citation.
+2. **Parity-only denial inverts Raman's worked cases.** Both his strength examples FAIL parity
+   and are rescued (Chart 88 "though an even sign... These indicate the strength of the Beeja",
+   :5548-5551; Chart 89 "(though odd)... the Kshethra is fertile", :5574-5580). Parity alone
+   yields at worst reduced quantity. The one printed denial (Chart 90, :5602-5605) needs the
+   full stack — both-varga failure AND malefic sign AND malefic aspect AND afflicted sthana.
+3. **The sphutas are sex-assigned across the COUPLE.** Beeja for a male chart, Kshetra for a
+   female one (:5517-5520); every worked use is single-sphuta, sex-matched. Computing both from
+   one chart is textually meaningless — Queen Victoria (nine children) was denied partly on HER
+   chart's Beeja, the male seed belonging to Prince Albert's chart, while her sex-matched
+   Kshetra is fully strong.
+
+**Suspension was implemented and MEASURED: 270/382 → 259/382 exact, real errors 52 → 62.** The
+reviewer's predicted +3/−2 was wrong about reach — the gate carries ~13 correct afflicted
+verdicts across the H5 corpus. **HELD per the net-negative rule** (the same standard that held
+the clause-2 fix): reverted.
+
+**The honest state, recorded plainly: ~13 correct H5 verdicts currently rest on a mechanism
+whose doctrinal justification is refuted.** They are right for the wrong reasons. This is the
+corpus's largest known instance of the accidental-correctness class, and it must not be quietly
+forgotten because the ratchet looks fine.
+
+**The recovery path (sequenced, and the ONLY sanctioned route to suspension):**
+1. Encode Raman's ACTUAL printed drivers for these charts — above all **Chandra-Lagna 5th-house
+   occupancy/aspect testimony** (the stated mechanism of h5_11's "strongly blemished" and part
+   of h5_08), which the engine does not currently score for H5 children. A cited coverage gap
+   with a worked chart naming it: prime dead-rule-sweep-shape work.
+2. Re-measure the suspension once that testimony carries the rows. If the corpus then holds,
+   suspend the gate (reinstatement condition for any future sphuta work: sex-matched sphuta
+   only — requires native sex on the chart model — under the full Chart-90 pattern with the
+   :5548-5551 rescues checked).
+3. Until then the gate stands, flagged here as refuted-but-load-bearing. The "O1" user sign-off
+   should be considered void in principle (its factual premise failed), pending the recovery.
+
+### Addendum to pass 3: the B3 extension cost a private family row, and the floor was lowered honestly
+
+The pre-commit real-outcome guard blocked the commit: Avika's H2 speech (owner-confirmed
+AFFLICTED — a child in speech therapy) had been within-1, and the guard lifted it to favourable,
+dropping her static floor 5/5 → 4/5. Investigated before overriding: the previously-correct
+'afflicted' was DELIVERED BY THE MARAKA TAUTOLOGY the review refuted — the same right-for-the-
+wrong-reason class as the fertility gate, on one row instead of thirteen. Keeping a refuted
+mechanism to preserve one matching outcome is the trap the audit exists to close, so the floor
+was consciously lowered 5→4 in the same change, with the full note in `real_outcomes.json` and
+the miss recorded. The recovery is the same as for the goldens: encode the chart's actual
+afflicting testimony from cited rules; never re-widen the tautology. This is also a live datum
+for the honesty ledger: the day's one fidelity "gain" (+1 golden, Marx) cost one real-outcome
+row (Avika), which is exactly the two-axes trade-off the project promises to report and never
+average.

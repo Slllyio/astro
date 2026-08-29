@@ -1215,7 +1215,21 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # B3 (HTJAH-II:2579): marital HAPPINESS is a non-death matter — maraka pressure must
     # not drive its verdict (see the guard in _decide). The spouse/death matters are NOT
     # flagged: multiplicity/loss indications keep their maraka sensitivity.
-    if sig.key == "marital_happiness":
+    #
+    # Extended to the 2nd house's quality matters 2026-08-29 (reviewer VALIDATED/HIGH). The
+    # maraka chapter (HTJAH-I:776-814) is death-determination doctrine, full stop, and
+    # `maraka_active` fires on set MEMBERSHIP of the matter's lord — but the 2nd lord is a
+    # maraka determinant BY DEFINITION (HTJAH-I:779), so every 2nd-house matter carried
+    # permanent maraka pressure by construction: the identical artifact B3 fixed for
+    # Venus/the 7th, on the other maraka sthana. Raman's own worked verdicts run the other
+    # way (Marx's exalted Venus in the 2nd -> favourable speech, NH chart_26; Bose's Jupiter
+    # in the 2nd -> "clear, forceful and convincing speaker", NH:7628), and Laghu Parashari
+    # itself lists "Maraka effects" as a SEPARATE 2nd-house signification alongside
+    # vision/possessions — severable from the quality matters. `wealth` is deliberately NOT
+    # flagged: the poverty block (HTJAH-I:2526-2528, H2.C.41-43) makes maraka ASSOCIATION a
+    # poverty operator for that matter specifically (and those are fired rules, which keep
+    # force under the guard regardless).
+    if sig.key in ("marital_happiness", "speech", "vision", "family"):
         flags.append("MARAKA_NON_DEATH_GUARD")
     # AFFLICTION_MATTER (Stage-3 "B"): an inherently-malefic dusthana signification (6th
     # afflictions, 12th incarceration/left_eye). _decide clause-1.5 reads this to confirm the

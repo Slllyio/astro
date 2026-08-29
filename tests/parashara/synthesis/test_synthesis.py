@@ -25,16 +25,33 @@ def report():
 
 
 class TestTopics:
-    def test_spine_is_twelve_houses_plus_named_matters(self):
-        """The topic set is the twelve bhavas plus the cross-house named views."""
+    def test_spine_is_twelve_houses(self):
+        """The topic spine is exactly the twelve bhavas (cross-matters roll up in synthesis)."""
         topics = all_topics()
-        assert sum(1 for t in topics if t.is_house) == 12
-        assert any(not t.is_house for t in topics)
+        assert len(topics) == 12 and [t.houses for t in topics] == [(h,) for h in range(1, 13)]
 
     def test_seventh_house_karaka_is_venus(self):
         """The 7th (marriage) topic carries Venus as its karaka (BPHS ch.32)."""
         seventh = next(t for t in all_topics() if t.houses == (7,))
         assert "Venus" in seventh.karakas
+
+
+class TestMatterViews:
+    def test_matters_roll_up_component_verdicts(self, report):
+        """Each named matter reports every component house's own verdict — no pooling."""
+        for m in report.matters.values():
+            assert set(m.component_verdicts) == set(m.houses)
+            for h in m.houses:
+                assert m.component_verdicts[h] == report.houses[h].verdict
+
+    def test_disagreeing_components_are_mixed_with_split(self, report):
+        """A matter whose houses disagree says 'mixed' and spells the split; agreeing ones share."""
+        for m in report.matters.values():
+            distinct = set(m.component_verdicts.values())
+            if len(distinct) == 1:
+                assert m.verdict in distinct and m.note == ""
+            else:
+                assert m.verdict == "mixed" and "not averaged" in m.note
 
 
 class TestSynthesis:

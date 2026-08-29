@@ -29,6 +29,9 @@ from app.parashara.doctrine.sources import Citation
 from app.parashara.judges.richer_bhava import REQUIRED_SHADBALA, SHADBALA_SOURCE
 from app.parashara.primitives.functional_nature import SOURCE as MALEFIC_SOURCE
 from app.parashara.primitives.graha_drishti import SOURCE as DRISHTI_SOURCE
+from app.parashara.primitives.deeptadi_avastha import SOURCE as DEEPTADI_SOURCE
+from app.parashara.primitives.lajjitadi_avastha import DESTROYED_SOURCE
+from app.parashara.doctrine.functional_by_lagna import YOGAKARAKA_SOURCE
 from app.parashara.doctrine.bhava_karaka import karaka_of
 from app.parashara.reading import ParasharaReading
 from app.parashara.synthesis.chart_facts import (
@@ -83,9 +86,21 @@ def gather_affliction(reading: ParasharaReading, house: int) -> list[Evidence]:
     ordinal = _ORD[house]
     out: list[Evidence] = []
 
+    yogakarakas = frozenset(reading.yogakarakas)
+
     for m in occupants(chart, house, signs=signs):
         if m not in malefics or m == lord:
             continue                    # own lord occupying = ch.11 prosperity, never affliction
+        if m in yogakarakas:
+            # A yogakaraka (kendra + trikona lord, BPHS-34:90) does not afflict — disclosed, no vote.
+            out.append(Evidence(
+                topic=house, tier=Tier.STRENGTH, category="affliction", polarity=Polarity.NEUTRAL,
+                rule=f"{m}, though a natural malefic, is this lagna's yogakaraka — "
+                     "its presence is not counted as affliction",
+                condition="yogakaraka_exempt",
+                observed=f"{m} (yogakaraka) occupies the {ordinal} bhava",
+                source=YOGAKARAKA_SOURCE))
+            continue
         # A malefic thrives in an upachaya — disclose it, but do not count it against the promise.
         neutral = house in _UPACHAYA
         out.append(Evidence(
@@ -109,10 +124,67 @@ def gather_affliction(reading: ParasharaReading, house: int) -> list[Evidence]:
                 observed=f"{g} (lord of the {ordinal}) aspects its own bhava",
                 source=LORD_ANTIDOTE_SOURCE))
             continue
+        if g in yogakarakas:
+            out.append(Evidence(
+                topic=house, tier=Tier.STRENGTH, category="affliction", polarity=Polarity.NEUTRAL,
+                rule=f"{g}, though a natural malefic, is this lagna's yogakaraka — "
+                     "its aspect is not counted as affliction",
+                condition="yogakaraka_exempt",
+                observed=f"{g} (yogakaraka) aspects the {ordinal} bhava",
+                source=YOGAKARAKA_SOURCE))
+            continue
         out.append(Evidence(
             topic=house, tier=Tier.STRENGTH, category="affliction", polarity=Polarity.CONTRADICTS,
             rule=f"the malefic {g} aspects the house", condition="malefic_aspect",
             observed=f"{g} casts a full aspect on the {ordinal} bhava", source=DRISHTI_SOURCE))
+    return out
+
+
+def gather_avastha(reading: ParasharaReading, house: int) -> list[Evidence]:
+    """Occupant avastha testimony (ch.45): the destroyed-house clause and the Deeptadi state.
+
+    Two distinct doctrines about an occupant, so up to two atoms per occupant (the double-count
+    rule permits distinct doctrines; each FAMILY stays one atom per occupant):
+      * Kshudita/Kshobhita — "the houses occupied by a planet in Kshuditavastha or Kshobhitavastha
+        are destroyed" (BPHS-45:165). STRENGTH-tier by the same frequency guard that demoted
+        malefic drishti (Kshudita fires on any Saturn conjunction); the sloka's word is kept
+        verbatim in the rule text.
+      * Deeptadi — a bright occupant (Deepta/Swastha) strengthens the bhava it sits in; a spoiled
+        one (Khala, or Vikala/Kopa) weakens it (BPHS-45:113).
+    """
+    chart = reading.chart
+    signs = planet_signs(chart)
+    ordinal = _ORD[house]
+    out: list[Evidence] = []
+    for occ in occupants(chart, house, signs=signs):
+        av = reading.avasthas.get(occ)
+        if av is None:
+            continue
+        if av.lajjitadi_destroys_house:
+            states = [s for s in av.lajjitadi if s in ("Kshudita", "Kshobhita")]
+            out.append(Evidence(
+                topic=house, tier=Tier.STRENGTH, category="affliction",
+                polarity=Polarity.CONTRADICTS,
+                rule=f"{occ} occupies in {'/'.join(states)}avastha — 'the houses occupied ... "
+                     "are destroyed'",
+                condition="lajjitadi_destroys",
+                observed=f"{occ} in the {ordinal} bhava holds {', '.join(states)}",
+                source=DESTROYED_SOURCE))
+        if av.deeptadi in ("Deepta", "Swastha"):
+            out.append(Evidence(
+                topic=house, tier=Tier.STRENGTH, category="strength", polarity=Polarity.SUPPORTS,
+                rule=f"{occ} occupies in {av.deeptadi}avastha (a bright state)",
+                condition="deeptadi_state",
+                observed=f"{occ} {av.deeptadi} in the {ordinal} bhava", source=DEEPTADI_SOURCE))
+        elif av.deeptadi == "Khala" or av.deeptadi_vikala or av.deeptadi_kopa:
+            spoil = ("Khala" if av.deeptadi == "Khala"
+                     else "Vikala" if av.deeptadi_vikala else "Kopa")
+            out.append(Evidence(
+                topic=house, tier=Tier.STRENGTH, category="affliction",
+                polarity=Polarity.CONTRADICTS,
+                rule=f"{occ} occupies in {spoil}avastha (a spoiled state)",
+                condition="deeptadi_state",
+                observed=f"{occ} {spoil} in the {ordinal} bhava", source=DEEPTADI_SOURCE))
     return out
 
 

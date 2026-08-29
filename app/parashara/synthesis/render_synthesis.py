@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from app.parashara.synthesis.activation import ActiveWindow
 from app.parashara.synthesis.judgment import Judgment
-from app.parashara.synthesis.synthesis import SynthesisReport
+from app.parashara.synthesis.synthesis import MatterView, SynthesisReport
 
 _HEADER = "## Deterministic synthesis — reasoning across the rules (BPHS)"
 _FRAME = ("*A doctrinal-convergence reading: how strongly Parashara's own cited rules concur for this "
@@ -32,10 +32,14 @@ def to_markdown(report: SynthesisReport) -> str:
     out.append("")
 
     if report.matters:
-        out.append("### Named-matter views")
+        out.append("### Named-matter views (rolled up from the houses — parallel, never averaged)")
         out.append("")
-        for name, j in report.matters.items():
-            out.append(f"- **{name}** — *{j.verdict}*: {j.convergence.tier} — {j.convergence.tally}")
+        for name, m in report.matters.items():
+            parts = ", ".join(f"{h}th: {v}" for h, v in sorted(m.component_verdicts.items()))
+            line = f"- **{name}** — *{m.verdict}* ({parts})"
+            if m.note:
+                line += f" — {m.note}"
+            out.append(line)
         out.append("")
 
     out.append("### Full reasoning, per topic")
@@ -50,6 +54,8 @@ def _judgment_md(j: Judgment) -> list[str]:
     out = [f"#### {j.topic} — {j.verdict.upper()}",
            f"*{j.meaning}*", "",
            f"**Confidence ({j.convergence.tier}):** {j.convergence.tally}."]
+    if j.convergence.split_note:
+        out.append(f"*{j.convergence.split_note}*")
     if j.convergence.caveat:
         out.append(f"> {j.convergence.caveat}")
     if j.convergence.contradictions:
@@ -91,8 +97,13 @@ def to_dict(report: SynthesisReport) -> dict:
         "framing": ("A doctrinal-convergence reading — how strongly Parashara's cited rules concur "
                     "for this chart, an audit of rule-agreement, never a probability of an event."),
         "houses": {str(h): _judgment_dict(j) for h, j in sorted(report.houses.items())},
-        "matters": {name: _judgment_dict(j) for name, j in report.matters.items()},
+        "matters": {name: _matter_dict(m) for name, m in report.matters.items()},
     }
+
+
+def _matter_dict(m: MatterView) -> dict:
+    return {"name": m.name, "houses": list(m.houses), "verdict": m.verdict, "note": m.note,
+            "component_verdicts": {str(h): v for h, v in sorted(m.component_verdicts.items())}}
 
 
 def _judgment_dict(j: Judgment) -> dict:
@@ -102,7 +113,8 @@ def _judgment_dict(j: Judgment) -> dict:
         "confidence": {
             "tier": c.tier, "tally": c.tally, "supporting": c.supporting,
             "contradicting": c.contradicting, "cancelled": c.cancelled, "net": c.net,
-            "contradictions": list(c.contradictions), "caveat": c.caveat},
+            "contradictions": list(c.contradictions), "caveat": c.caveat,
+            "split_note": c.split_note},
         "evidence": [_evidence_dict(e) for e in j.evidence],
         "audit_trail": list(j.audit),
         "windows": [_window_dict(w) for w in j.windows],

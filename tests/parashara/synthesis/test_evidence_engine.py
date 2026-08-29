@@ -15,11 +15,12 @@ from app.parashara.synthesis.evidence import Polarity
 from app.parashara.synthesis.evidence_engine import gather_affliction
 
 
-def _reading(asc_sign: int, signs: dict[str, int], *, moon_waxing: bool = True) -> SimpleNamespace:
-    """A minimal duck-typed reading: gather_affliction reads only .chart (asc/longitudes/paksha)."""
+def _reading(asc_sign: int, signs: dict[str, int], *, moon_waxing: bool = True,
+             yogakarakas: tuple[str, ...] = ()) -> SimpleNamespace:
+    """A minimal duck-typed reading: gather_affliction reads .chart + .yogakarakas."""
     chart = SimpleNamespace(asc_sign=asc_sign, moon_waxing=moon_waxing,
                             longitudes={p: (s - 1) * 30 + 5.0 for p, s in signs.items()})
-    return SimpleNamespace(chart=chart)
+    return SimpleNamespace(chart=chart, yogakarakas=yogakarakas)
 
 
 class TestOwnLordExemption:
@@ -81,6 +82,22 @@ class TestConditionalMalefics:
         ev = gather_affliction(_reading(1, {"Mars": 3}), 3)
         occ = [e for e in ev if e.condition == "malefic_occupant"]
         assert occ and all(e.polarity is Polarity.NEUTRAL for e in occ)
+
+    def test_yogakaraka_exempt_from_affliction(self):
+        """A yogakaraka Saturn (Libra lagna) is disclosed NEUTRAL, never a CONTRADICTS vote
+        (BPHS-34:90) — occupancy and aspect alike."""
+        # Libra lagna (asc=7); Saturn in Cancer (sign 4) = the 10th house, aspecting e.g. the 4th
+        # (3rd-aspect on sign 6 = house 12? compute: Saturn in 4 aspects 6, 10, 13->1). Use the
+        # aspected house sign 10 -> house 4 (Capricorn from Libra).
+        r = _reading(7, {"Saturn": 4}, yogakarakas=("Saturn",))
+        for house in (10, 4):                      # occupied 10th; aspected 4th (sign 1... )
+            ev = gather_affliction(r, house)
+            assert not any("Saturn" in e.observed and e.polarity is Polarity.CONTRADICTS
+                           for e in ev)
+            if any(e.condition == "yogakaraka_exempt" for e in ev):
+                break
+        else:
+            raise AssertionError("expected at least one yogakaraka_exempt disclosure")
 
 
 class TestSharedDignity:

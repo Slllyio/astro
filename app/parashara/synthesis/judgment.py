@@ -31,8 +31,10 @@ from app.parashara.synthesis.convergence import Convergence, converge, tier_net
 from app.parashara.synthesis.corroboration import gather_corroboration
 from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
 from app.parashara.synthesis.evidence_engine import (
-    gather_affliction, gather_promise, gather_strength)
+    gather_affliction, gather_avastha, gather_promise, gather_strength)
 from app.parashara.synthesis.topics import Topic
+from app.parashara.synthesis.yoga_evidence import (
+    gather_argala, gather_eighth_extras, gather_yogas)
 
 #: verdict -> its one-line meaning (for rendering; the verdict itself is the machine-readable value).
 VERDICT_MEANING: Final[dict[str, str]] = {
@@ -75,8 +77,13 @@ def judge_topic(reading: ParasharaReading, topic: Topic) -> Judgment:
     for house in topic.houses:
         evidence += gather_promise(reading, house)
         evidence += gather_affliction(reading, house)
+        evidence += gather_avastha(reading, house)
         evidence += gather_strength(reading, house)
         evidence += gather_corroboration(reading, house)
+        evidence += gather_argala(reading, house)
+        evidence += gather_yogas(reading, house)
+        if house == 8:
+            evidence += gather_eighth_extras(reading)
     windows = active_windows(reading, topic.houses)
     evidence += activation_evidence(topic.houses, windows)
 

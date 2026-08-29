@@ -47,6 +47,7 @@ class Convergence:
     tier: str                            # par-excellence | strong | moderate | weak | divided | insufficient
     contradictions: tuple[str, ...]      # genuine conflicts, reported (never averaged away)
     caveat: str                          # coverage caveat, '' when evidence is adequate
+    split_note: str = ""                 # majority-vs-headline disclosure, '' when they agree
 
     @property
     def tally(self) -> str:
@@ -103,31 +104,47 @@ def converge(evidence: Sequence[Evidence], *, toward: int = 1) -> Convergence:
         # verbatim, and the tier states the division honestly instead of grading a margin.
         tier = "divided" if counting else "insufficient"
     else:
-        tier = _tier_label(supporting + contradicting, net, promise_mixed, corrob_agrees)
+        tier = _tier_label(supporting + contradicting, net, wc + wa, promise_mixed, corrob_agrees)
     caveat = _caveat(supporting + contradicting)
+    split_note = _split_note(toward, len(favour), len(adverse))
     return Convergence(supporting=supporting, contradicting=contradicting, cancelled=cancelled,
                        weighted_concur=wc, weighted_against=wa, net=net, tier=tier,
-                       contradictions=contradictions, caveat=caveat)
+                       contradictions=contradictions, caveat=caveat, split_note=split_note)
 
 
-def _tier_label(total: int, net: int, promise_mixed: bool, corrob_agrees: bool) -> str:
-    """The convergence tier from the margin toward the verdict and whether the lenses converge.
+def _tier_label(total: int, net: int, denom: int, promise_mixed: bool, corrob_agrees: bool) -> str:
+    """The convergence tier: the margin toward the verdict, NORMALIZED by the total weight in play.
 
-    `net` is the weighted concur-minus-against toward the verdict; a *negative* net means the verdict
-    was reached over the weight of the evidence (birth-chart precedence overruling the rest) — that is
-    genuinely low confidence, so it can never grade above 'weak'.
+    A negative-or-zero net means the verdict was reached over the weight of the evidence (birth-chart
+    precedence overruling the rest) — genuinely low confidence, never above 'weak'. The top tiers
+    require both an absolute margin AND a high agreement fraction (net/denom), so a topic cannot
+    grade par-excellence merely by accumulating a large but contested evidence volume.
     """
     if total == 0:
         return "insufficient"
     if net <= 0:
         return "weak"
-    if net >= 5 and corrob_agrees and not promise_mixed:
+    fraction = net / denom if denom else 0.0
+    if net >= 5 and fraction >= 0.75 and corrob_agrees and not promise_mixed:
         return "par-excellence"
-    if net >= 4:
+    if net >= 4 and fraction >= 0.5:
         return "strong"
     if net >= 2:
         return "moderate"
     return "weak"
+
+
+def _split_note(toward: int, n_favour: int, n_adverse: int) -> str:
+    """The majority-vs-headline disclosure: when the RAW testimony count leans against the verdict's
+    direction (which the precedence-driven verdict is allowed to do), say so beside the confidence —
+    the counterweight that keeps a verdict-oriented tally honest."""
+    if toward > 0 and n_adverse > n_favour:
+        return (f"note: the raw testimony majority leans the other way ({n_adverse} adverse vs "
+                f"{n_favour} favourable); the verdict follows the deciding tier, not the count")
+    if toward < 0 and n_favour > n_adverse:
+        return (f"note: the raw testimony majority leans the other way ({n_favour} favourable vs "
+                f"{n_adverse} adverse); the verdict follows the deciding tier, not the count")
+    return ""
 
 
 def _contradictions(promise_mixed: bool, promise_net: int, strength_net: int, corrob_net: int

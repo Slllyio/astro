@@ -2840,3 +2840,28 @@ recovered rules fire on neither — they ship because the TEXT states them), 4 d
 2 rules of pure doctrine-completion recovered as a by-product. The realistic value of the
 remaining ~48-chart queue is exactly this shape: fidelity moves rarely; corpus completeness and
 honest limit-registration are the steady yield.
+
+## Per-chart programme pass 2 + the contested row closed (2026-08-29)
+
+**NH.chart_38 H9 resolved by tiebreak: CONFIRMED mixed, ratchet 269/381 → 270/382.** The row was
+held because two engine-blind reviewers split afflicted-vs-mixed. A third blind reading went
+2-of-3 for mixed: the only father content in the whole Ford write-up (NH:8530-8532) is a
+double-hedged mild negative — "not *quite* conducive to *happy* relations" — whose confirming
+instance is vocational disagreement, with none of the loss/deprivation markers Raman uses when he
+means affliction. Direction negative, magnitude below the afflicted band. The engine happens to
+read mixed, so the row lands exact — legitimately, via three blind readings.
+
+**Pass 2 rule-checks: both resolve as documented limits.**
+
+* **HTJAH-II.h9_02** (papakartari to 9th house/lord/karaka overrode royal-father strength): the
+  ninth-house doctrine region states only the generic "If afflicted, the father may die early"
+  (HTJAH-II:310); no general hemmed-9th rule exists in the text, and H9.A.20a covers only the
+  Sun-in-dusthana variant (h9_02's Sun is in the 9th itself). Raman's conclusion is the blended
+  papakartari-on-all-three-loci judgment — the loci-tally that would carry it is CLOSED-REFUTED.
+* **HTJAH-I.h6_04** (myopia via 6th lord in the 2nd + 2nd lord in the 12th with Saturn): no
+  eye/vision rule is stated anywhere in the sixth-house doctrine region, and H6.L.2 (6th lord in
+  the 2nd) carries a different printed result entirely (loss of wife). The vision chain is a
+  per-chart signification-transfer reading. Documented limit.
+
+Running tally of the programme: 6 error charts processed, 6 documented limits, 2 recovered rules
+(C.15/C.16, firing on neither), 1 contested row honestly closed, fidelity +1 by tiebreak.

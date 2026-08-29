@@ -78,7 +78,7 @@ def judge_topic(reading: ParasharaReading, topic: Topic) -> Judgment:
         evidence += gather_strength(reading, house)
         evidence += gather_corroboration(reading, house)
     windows = active_windows(reading, topic.houses)
-    evidence += activation_evidence(reading, topic.houses, windows)
+    evidence += activation_evidence(topic.houses, windows)
 
     verdict, direction = _verdict(evidence)
     convergence = converge(evidence, toward=direction)

@@ -1,81 +1,142 @@
-"""Activation engine — the four-tier fructification, house-influence, and node-safe association.
+"""Activation v2 — BPHS-native window grading, targeting, and the honesty flags.
 
-Pins the timing logic that mirrors the locked "When Do Indications Fructify" method in pure BPHS.
+Pins the ch.52-60 antardasha rule (AD lord's position FROM the MD lord + its dignity), the ch.47
+MD-lord quality, node-safe targeting, and the maraka/beyond-span annotations.
 """
 from __future__ import annotations
 
-from types import SimpleNamespace
+import pytest
 
-from app.parashara.synthesis.activation import bhukti_tier, influences, lords_associated
+from app.parashara.chart.cast import cast
+from app.parashara.doctrine.sources import verify
+from app.parashara.reading import read
+from app.parashara.synthesis.activation import (
+    AD_ADVERSE_SOURCE, AD_DIGNITY_SOURCE, AD_QUALITY_SOURCE, MD_QUALITY_SOURCE,
+    QUALITY_RANK, TARGETING_SOURCE, active_windows, influences, md_quality, window_quality)
+
+from types import SimpleNamespace
 
 
 def _chart(asc_sign: int, signs: dict[str, int]) -> SimpleNamespace:
-    """A minimal duck-typed chart: the activation functions read only asc_sign + longitudes."""
+    """A minimal duck-typed chart: the grading functions read only asc_sign + longitudes."""
     return SimpleNamespace(asc_sign=asc_sign,
                            longitudes={p: (s - 1) * 30 + 5.0 for p, s in signs.items()})
 
 
-class TestBhuktiTier:
-    def test_both_influence_and_associated_is_par_excellence(self):
-        """Both period-lords time the house and are associated -> par excellence."""
-        assert bhukti_tier(True, True, True) == "par excellence"
+class TestWindowQuality:
+    def test_trikona_from_md_lord_is_auspicious(self):
+        """AD lord in the 5th from the MD lord -> auspicious (BPHS-53:364)."""
+        ch = _chart(1, {"Jupiter": 1, "Venus": 5})
+        quality, ad_from_md, _ = window_quality(ch, "Jupiter", "Venus")
+        assert ad_from_md == 5 and quality == "auspicious"
 
-    def test_both_influence_not_associated_is_ordinary(self):
-        """Both time the house but are not associated -> ordinary."""
-        assert bhukti_tier(True, True, False) == "ordinary"
+    def test_dusthana_from_md_lord_is_adverse(self):
+        """AD lord in the 8th from the MD lord -> adverse (BPHS-53:375)."""
+        ch = _chart(1, {"Jupiter": 1, "Mercury": 8})
+        quality, ad_from_md, _ = window_quality(ch, "Jupiter", "Mercury")
+        assert ad_from_md == 8 and quality == "adverse"
 
-    def test_only_bhukti_lord_is_limited(self):
-        """Only the antardasa lord times the house -> limited."""
-        assert bhukti_tier(False, True, False) == "limited"
+    def test_debilitation_drags_a_neutral_position_adverse(self):
+        """AD lord in the 3rd (no position vote) but debilitated -> adverse (BPHS-53:375)."""
+        # Sun debilitated in Libra (7); MD lord Venus in Taurus (2): 3rd-from is (7-2)%12+1 = 6...
+        # pick Mars in Capricorn? Mars EXALTS there. Use Jupiter debilitated in Capricorn (10),
+        # MD lord Saturn in Scorpio (8): ad_from_md = (10-8)%12+1 = 3 -> position 0, dignity -1.
+        ch = _chart(1, {"Saturn": 8, "Jupiter": 10})
+        quality, ad_from_md, dig = window_quality(ch, "Saturn", "Jupiter")
+        assert ad_from_md == 3 and dig == -1 and quality == "adverse"
 
-    def test_only_maha_lord_is_feeble(self):
-        """Only the mahadasa lord times the house -> feeble."""
-        assert bhukti_tier(True, False, False) == "feeble"
+    def test_opposed_votes_disclose_mixed(self):
+        """Adverse position but exalted AD lord -> 'mixed', not silently averaged away."""
+        # MD lord Sun in Virgo (6); Saturn exalted in Libra (7): ad_from_md = (7-6)%12+1 = 2...
+        # need 6/8/12-from. Sun in Pisces (12), Saturn in Libra (7): (7-12)%12+1 = 8 -> pos -1,
+        # dignity +1 (exalted) -> mixed.
+        ch = _chart(1, {"Sun": 12, "Saturn": 7})
+        quality, ad_from_md, dig = window_quality(ch, "Sun", "Saturn")
+        assert ad_from_md == 8 and dig == 1 and quality == "mixed"
 
-    def test_neither_is_no_window(self):
-        """Neither period-lord times the house -> not a window."""
-        assert bhukti_tier(False, False, False) is None
+    def test_own_dasha_bhukti_rides_on_dignity(self):
+        """The MD lord's own AD counts position 1 (kendra); own-sign dignity lifts it auspicious."""
+        ch = _chart(1, {"Mars": 1})                              # Mars in own Aries
+        quality, ad_from_md, dig = window_quality(ch, "Mars", "Mars")
+        assert ad_from_md == 1 and dig == 1 and quality == "auspicious"
+
+    def test_sources_resolve(self):
+        """Every activation citation points at a real corpus line."""
+        for src in (TARGETING_SOURCE, MD_QUALITY_SOURCE, AD_QUALITY_SOURCE,
+                    AD_ADVERSE_SOURCE, AD_DIGNITY_SOURCE):
+            assert verify(src), src
+
+
+class TestMdQuality:
+    def test_lagna_placement_is_favourable(self):
+        """MD lord in the Ascendant -> favourable (BPHS-47:76)."""
+        assert md_quality(_chart(2, {"Venus": 2}), "Venus") == "favourable"
+
+    def test_dusthana_placement_is_unfavourable(self):
+        """MD lord in the 8th house -> unfavourable (BPHS-47:76)."""
+        # Aries lagna; Venus in Scorpio (sign 8) = the 8th house.
+        assert md_quality(_chart(1, {"Venus": 8}), "Venus") == "unfavourable"
+
+    def test_friends_sign_is_favourable(self):
+        """MD lord in a friend's sign -> favourable (Moon in Leo, the Sun a natural friend);
+        Cancer lagna keeps Leo out of the dusthana houses so the dignity clause decides."""
+        assert md_quality(_chart(4, {"Moon": 5}), "Moon") == "favourable"
+
+    def test_node_grades_by_house_alone(self):
+        """A node has no ch.3 dignity: only a dusthana placement grades it."""
+        assert md_quality(_chart(1, {"Rahu": 12}), "Rahu") == "unfavourable"
+        assert md_quality(_chart(1, {"Rahu": 5}), "Rahu") == "neutral"
 
 
 class TestInfluences:
     def test_owner_influences_its_house(self):
-        """A graha lording a house influences it (Aries lagna: Mars lords the 1st)."""
-        signs = {"Mars": 8}
-        assert influences(_chart(1, signs), "Mars", 1, signs=signs)
+        """A graha lording a house targets it (Aries lagna: Mars lords the 1st)."""
+        assert influences(_chart(1, {"Mars": 8}), "Mars", 1)
 
     def test_occupant_influences_its_house(self):
-        """A graha occupying a house influences it."""
-        signs = {"Jupiter": 5}                                  # sign 5 = the 5th from Aries
-        assert influences(_chart(1, signs), "Jupiter", 5, signs=signs)
+        """A graha occupying a house targets it."""
+        assert influences(_chart(1, {"Jupiter": 5}), "Jupiter", 5)
 
     def test_seventh_aspect_influences(self):
-        """Every graha aspects the 7th from itself, so it influences that house."""
-        signs = {"Venus": 1}                                    # in Aries; aspects sign 7 (the 7th)
-        assert influences(_chart(1, signs), "Venus", 7, signs=signs)
+        """Every graha aspects the 7th from itself, so it targets that house."""
+        assert influences(_chart(1, {"Venus": 1}), "Venus", 7)
 
     def test_node_casts_no_aspect_influence(self):
-        """A node casts no drishti: Rahu in the 1st does not aspect-influence the 7th."""
-        signs = {"Rahu": 1}                                     # owns/occupies neither the 7th nor its lord
-        assert not influences(_chart(1, signs), "Rahu", 7, signs=signs)
+        """A node casts no drishti: Rahu in the 1st does not aspect-target the 7th."""
+        assert not influences(_chart(1, {"Rahu": 1}), "Rahu", 7)
 
 
-class TestLordsAssociated:
-    def test_conjunction_associates(self):
-        """Two grahas in the same rasi are associated."""
-        signs = {"Sun": 5, "Mercury": 5}
-        assert lords_associated(_chart(1, signs), "Sun", "Mercury", signs=signs)
+class TestActiveWindows:
+    @pytest.fixture(scope="class")
+    def reading(self):
+        return read(cast(year=1990, month=7, day=15, hour=12, minute=0,
+                         tz_offset=5.5, latitude=12.97, longitude=77.59))
 
-    def test_mutual_aspect_associates(self):
-        """Opposition (the 7th) is a mutual full aspect, so the pair is associated."""
-        signs = {"Sun": 1, "Saturn": 7}
-        assert lords_associated(_chart(1, signs), "Sun", "Saturn", signs=signs)
+    def test_windows_sorted_best_quality_then_age(self, reading):
+        """Windows come best-quality-first, chronological within a quality."""
+        ws = active_windows(reading, (7,))
+        assert ws, "the 7th should have activation windows"
+        ranks = [QUALITY_RANK[w.quality] for w in ws]
+        assert ranks == sorted(ranks)
+        for a, b in zip(ws, ws[1:]):
+            if a.quality == b.quality:
+                assert a.start_age <= b.start_age
 
-    def test_node_associates_by_being_aspected(self):
-        """A graha can aspect a node: Sun opposite Rahu associates them (Sun casts, Rahu receives)."""
-        signs = {"Rahu": 1, "Sun": 7}
-        assert lords_associated(_chart(1, signs), "Rahu", "Sun", signs=signs)
+    def test_no_pre_birth_windows(self, reading):
+        """Ages are clipped at birth."""
+        assert all(w.start_age >= 0 for w in active_windows(reading, (1,)))
 
-    def test_two_nodes_opposed_do_not_associate(self):
-        """Neither node casts drishti, so an opposition of the two nodes is not association."""
-        signs = {"Rahu": 1, "Ketu": 7}
-        assert not lords_associated(_chart(1, signs), "Rahu", "Ketu", signs=signs)
+    def test_maraka_windows_flagged(self, reading):
+        """Every window whose MD or AD lord is a maraka carries the flag (BPHS-44:51)."""
+        maraka_names = {m.planet for m in reading.maraka_planets}
+        for w in active_windows(reading, (8,)):
+            assert w.maraka == (w.maha_lord in maraka_names or w.antar_lord in maraka_names)
+
+    def test_beyond_span_annotated_not_clipped(self, reading):
+        """Windows past the Nisargayu span are kept, annotated (surfaces only ADD)."""
+        span = reading.nisargayu_full.total_years
+        ws = active_windows(reading, (1,))
+        late = [w for w in ws if w.start_age > span]
+        assert late, "the 120-year cycle should extend past the computed span"
+        assert all(w.beyond_span for w in late)
+        assert all("beyond the computed Nisargayu span" in w.label for w in late)

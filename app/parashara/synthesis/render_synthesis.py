@@ -64,16 +64,23 @@ def _judgment_md(j: Judgment) -> list[str]:
 
 
 def _windows_md(windows: tuple[ActiveWindow, ...]) -> list[str]:
+    """Every quality group accounted for — the favourable ones listed, the rest counted with a
+    sample line each, so no grade is ever silently dropped."""
     if not windows:
         return []
-    strong = [w for w in windows if w.tier in ("par excellence", "limited")]
-    rest = len(windows) - len(strong)
     out = ["", "**Activation windows (when it fructifies):**"]
-    out += [f"- {w.label}" for w in strong[:12]]
-    if len(strong) > 12:
-        out.append(f"- …and {len(strong) - 12} more par-excellence/limited windows")
-    if rest:
-        out.append(f"- ({rest} ordinary/feeble windows omitted)")
+    for quality in ("auspicious", "mixed", "neutral", "adverse"):
+        group = [w for w in windows if w.quality == quality]
+        if not group:
+            continue
+        if quality in ("auspicious", "mixed"):
+            out += [f"- {w.label}" for w in group[:12]]
+            if len(group) > 12:
+                out.append(f"- …and {len(group) - 12} more {quality} windows")
+        else:
+            sample = min(group, key=lambda w: w.start_age)
+            out.append(f"- ({len(group)} {quality} window{'s' if len(group) > 1 else ''}, "
+                       f"earliest: {sample.label})")
     return out
 
 
@@ -110,17 +117,19 @@ def _evidence_dict(e) -> dict:
 
 
 def _window_dict(w: ActiveWindow) -> dict:
-    return {"maha_lord": w.maha_lord, "antar_lord": w.antar_lord, "tier": w.tier,
+    return {"maha_lord": w.maha_lord, "antar_lord": w.antar_lord, "quality": w.quality,
+            "md_quality": w.md_quality, "ad_from_md": w.ad_from_md,
+            "maraka": w.maraka, "beyond_span": w.beyond_span,
             "start_age": round(w.start_age, 2), "end_age": round(w.end_age, 2), "label": w.label}
 
 
 def _earliest(windows: tuple[ActiveWindow, ...]) -> str:
-    """The earliest par-excellence window (else the earliest window), for the summary table."""
+    """The earliest auspicious window (else the earliest window), for the summary table."""
     if not windows:
         return "—"
-    par = [w for w in windows if w.tier == "par excellence"]
-    pool = par or list(windows)
+    ausp = [w for w in windows if w.quality == "auspicious"]
+    pool = ausp or list(windows)
     w = min(pool, key=lambda x: x.start_age)
     lo, hi = round(w.start_age), round(w.end_age)
-    age = f"age {lo}" if lo == hi else f"age {lo}-{hi}"
+    age = f"age {lo}" if lo == hi else f"ages {lo}-{hi}"
     return f"{w.maha_lord} dasha ({age})"

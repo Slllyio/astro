@@ -30,13 +30,18 @@ from typing import Final
 
 from app.parashara.doctrine.arudha import FINANCE_SOURCE, UPAPADA_SPOUSE_SOURCE
 from app.parashara.doctrine.bhava_karaka import karaka_of
+from app.parashara.doctrine.chara_karaka import ROLE_NAMES, ROLES_SOURCE
 from app.parashara.doctrine.sources import Citation
 from app.parashara.doctrine.vargottama import SOURCE as VARGOTTAMA_SOURCE
 from app.parashara.chart.sudarshana import SOURCE as SUDARSHANA_SOURCE
 from app.parashara.primitives.ashtakavarga import SAV_BAND_SOURCE
+from app.parashara.primitives.ashtakavarga import SOURCE as BAV_TABLES_SOURCE
 from app.parashara.primitives.relationships import SIGN_LORDS, dignity_in_sign
 from app.parashara.chart.shodasavarga import DOMAINS_SOURCE
-from app.parashara.synthesis.chart_facts import functioning_malefics, occupants, planet_signs
+from app.parashara.reading import ParasharaReading
+from app.parashara.synthesis.chart_facts import (
+    functioning_malefics, house_lord, house_sign, occupants, planet_signs)
+from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
 
 #: "The bhava whose lord is in a malefic Shashtiamsa will diminish ... The bhava whose lord is in
 #: a benefic Shodasamsa (or Kalamsa) flourish." — BPHS's own per-bhava divisional rule, the
@@ -61,9 +66,19 @@ _MATTER_VARGA: Final[dict[int, tuple[tuple[str, str, int], ...]]] = {
 # ponytail: amsa nature by sign-lord; upgrade path = the ch.3 Shashtiamsa deity table (benevolent
 # vs cruel amsas by name) if a chart ever turns on the difference.
 _BENEFIC_LORDS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
-from app.parashara.reading import ParasharaReading
-from app.parashara.synthesis.chart_facts import house_lord, house_sign
-from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
+
+#: Chara-karaka role -> the house whose matter its NAME signifies, where ch.11's own house list
+#: carries the same matter (self->1, brothers->3, mother->4, wife->7, father->9, minister/career
+#: ->10). GK (Gnati, kinsmen) is deliberately NOT mapped: ch.11 gives it no clean single house —
+#: reading kinsmen-as-rivals at the 6th is Jaimini idiom, outside this BPHS-root layer.
+_ROLE_HOUSE: Final[dict[str, int]] = {
+    "AK": 1, "BK": 3, "MK": 4, "DK": 7, "PiK": 9, "AmK": 10}
+_HOUSE_ROLE: Final[dict[int, str]] = {h: r for r, h in _ROLE_HOUSE.items()}
+
+#: The BAV midpoint — half of the 8 possible bindus. A CLASSICAL CONVENTION, labeled: BPHS's own
+#: cited bands are SAV-level (BPHS-72:53); its per-sign bindu judgments appear in transit (ch.70)
+#: and longevity (ch.71) contexts, never as a natal per-house band.
+_BAV_MIDPOINT: Final[int] = 4
 
 
 def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence]:
@@ -113,12 +128,64 @@ def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence
     # Sudarshana — an occupant confirmed in the SAME house from Lagna, Moon and Sun (ch.74).
     out += _sudarshana_evidence(reading, house)
 
+    # The house-lord's own Bhinnashtakavarga bindus in the house sign (band = labeled convention).
+    out += _bav_evidence(reading, house, lord)
+
+    # The chart's MOVABLE (chara) significator for this house's matter (BPHS-32).
+    out += _chara_evidence(reading, house, lord)
+
     # Matter-specific BPHS corroborations.
     if house == 7:
         out += _upapada_evidence(reading)
     if house in (2, 11):
         out += _finance_evidence(reading, house)
     return out
+
+
+def _bav_evidence(reading: ParasharaReading, house: int, lord: str) -> list[Evidence]:
+    """The lord's OWN bindus in its house's sign (BPHS-66 tables). The 4-of-8 midpoint band is a
+    classical convention, said so in the rule — BPHS cites bands only at SAV level (BPHS-72:53)."""
+    bindus = reading.bav.get(lord, {}).get(house_sign(reading.chart.asc_sign, house))
+    if bindus is None or bindus == _BAV_MIDPOINT:
+        return []
+    strong = bindus > _BAV_MIDPOINT
+    return [Evidence(
+        topic=house, tier=Tier.CORROBORATION, category="corroboration",
+        polarity=Polarity.SUPPORTS if strong else Polarity.CONTRADICTS,
+        rule=f"the lord {lord}'s own Ashtakavarga gives the house "
+             f"{'ample' if strong else 'scant'} bindus "
+             "(the 4-of-8 midpoint band is a classical convention, not a cited BPHS line)",
+        condition="bav_band",
+        observed=f"{bindus} of 8 bindus in {lord}'s own chart for the house sign",
+        source=BAV_TABLES_SOURCE)]
+
+
+def _chara_evidence(reading: ParasharaReading, house: int, lord: str) -> list[Evidence]:
+    """The chart's chara (movable) karaka whose NAME signifies this house's matter (BPHS-32:116) —
+    its D1 dignity corroborates. Skipped when that planet IS the house's lord: the lord's dignity
+    is already ch.11's own prosperity clause (the double-count guard)."""
+    role = _HOUSE_ROLE.get(house)
+    if role is None:
+        return []
+    planet = reading.chara_karakas.get(role)
+    if planet is None or planet == lord:
+        return []
+    sign = planet_signs(reading.chart).get(planet)
+    if sign is None:
+        return []
+    dig = dignity_in_sign(planet, sign)
+    if dig == 0:
+        return []
+    gloss = ROLE_NAMES.get(role, role)
+    return [Evidence(
+        topic=house, tier=Tier.CORROBORATION, category="corroboration",
+        polarity=Polarity.SUPPORTS if dig > 0 else Polarity.CONTRADICTS,
+        rule=f"the chart's {gloss} ({role}) is {'dignified' if dig > 0 else 'weak'} — the movable "
+             "significator of this house's matter",
+        condition="chara_karaka",
+        observed=f"{planet} as {role} in sign {sign} "
+                 f"({'own/exalted' if dig > 0 else 'debilitated/enemy'})",
+        source=ROLES_SOURCE)]
 
 
 def _d60_d16_evidence(reading: ParasharaReading, house: int, lord: str) -> list[Evidence]:

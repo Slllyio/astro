@@ -94,3 +94,58 @@ class TestDeepenedCorroboration:
         assert "the 6th's indications ARE adversities" in md
         assert "a strong 8th indicates LONG life" in md
         assert "prominence is not favour" in md
+
+
+class TestBavBand:
+    """The lord's own Bhinnashtakavarga bindus — observed value cited, band labeled convention."""
+
+    def _reading(self, asc_sign: int, bav: dict):
+        from types import SimpleNamespace
+        return SimpleNamespace(chart=SimpleNamespace(asc_sign=asc_sign, longitudes={}), bav=bav)
+
+    def test_ample_bindus_support_and_scant_contradict(self):
+        """>4 of 8 supports, <4 contradicts (Aries lagna: Mars lords the 1st, sign 1)."""
+        from app.parashara.synthesis.corroboration import _bav_evidence
+        sup = _bav_evidence(self._reading(1, {"Mars": {1: 6}}), 1, "Mars")
+        con = _bav_evidence(self._reading(1, {"Mars": {1: 2}}), 1, "Mars")
+        assert sup[0].polarity.name == "SUPPORTS" and con[0].polarity.name == "CONTRADICTS"
+
+    def test_midpoint_is_silent_and_band_is_labeled(self):
+        """Exactly 4 casts no vote; a fired atom SAYS its band is convention, not a cited line."""
+        from app.parashara.synthesis.corroboration import _bav_evidence
+        assert _bav_evidence(self._reading(1, {"Mars": {1: 4}}), 1, "Mars") == []
+        fired = _bav_evidence(self._reading(1, {"Mars": {1: 7}}), 1, "Mars")
+        assert "classical convention" in fired[0].rule
+        assert fired[0].source.work == "BPHS-66"      # the tables the NUMBER comes from
+
+
+class TestCharaKaraka:
+    """The movable significator lens — name-matched houses only, double-count guarded."""
+
+    def _reading(self, asc_sign: int, signs: dict, chara: dict):
+        from types import SimpleNamespace
+        return SimpleNamespace(
+            chart=SimpleNamespace(asc_sign=asc_sign,
+                                  longitudes={p: (s - 1) * 30 + 5.0 for p, s in signs.items()}),
+            chara_karakas=chara)
+
+    def test_dignified_darakaraka_supports_the_seventh(self):
+        """A dignified DK corroborates marriage (BPHS-32:116). Venus in Pisces = exalted."""
+        from app.parashara.synthesis.corroboration import _chara_evidence
+        r = self._reading(1, {"Venus": 12}, {"DK": "Venus"})
+        ev = _chara_evidence(r, 7, "Venus_is_not_lord_here")
+        assert len(ev) == 1 and ev[0].polarity.name == "SUPPORTS" and "Darakaraka" in ev[0].rule
+
+    def test_unmapped_house_and_gk_stay_silent(self):
+        """Houses with no clean ch.11 name-match (incl. GK's kinsmen) cast no chara atom."""
+        from app.parashara.synthesis.corroboration import _chara_evidence
+        r = self._reading(1, {"Saturn": 5}, {"GK": "Saturn"})
+        assert _chara_evidence(r, 6, "Mercury") == []      # GK deliberately unmapped
+        assert _chara_evidence(r, 2, "Venus") == []        # the 2nd has no chara role
+
+    def test_chara_equal_to_lord_is_guarded(self):
+        """When the chara karaka IS the house lord, its dignity is already ch.11's clause — no
+        second vote."""
+        from app.parashara.synthesis.corroboration import _chara_evidence
+        r = self._reading(1, {"Venus": 12}, {"DK": "Venus"})
+        assert _chara_evidence(r, 7, "Venus") == []

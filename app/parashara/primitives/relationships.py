@@ -145,6 +145,25 @@ def compound(of: str, towards: str, *, house_distance: int) -> str:
     return _COMPOUND[(nat, tmp)]
 
 
+def dignity_in_sign(planet: str, sign: int) -> int:
+    """+1 if `planet` is in own sign or exaltation, -1 if debilitated or in an enemy's sign, else 0.
+
+    The ch.3 dignity read used identically for D1 and divisional signs — the ONE shared answer to
+    "is this graha dignified in this sign" (richer_bhava and the synthesis corroboration previously
+    carried diverging private copies; unified 2026-08-29). Nodes (no exaltation in ch.3's scheme)
+    return 0.
+    """
+    if planet not in EXALTATION:
+        return 0
+    if sign == EXALTATION[planet] or SIGN_LORDS.get(sign) == planet:
+        return 1
+    if sign == ((EXALTATION[planet] - 1 + 6) % 12) + 1:          # debilitation = 7th from exaltation
+        return -1
+    if naisargika(planet, SIGN_LORDS[sign]) == "shatru":         # an enemy's sign
+        return -1
+    return 0
+
+
 def varga_viswa_key(planet: str, varga_sign: int, *,
                     compound_relation: str | None = None) -> str:
     """The Varga Viswa key for `planet` sitting in `varga_sign` within some division.

@@ -32,7 +32,7 @@ from app.parashara.primitives.deeptadi_avastha import deeptadi
 from app.parashara.doctrine.bhava_karaka import karaka_of
 from app.parashara.judges.bhava_prosperity import BhavaVerdict, Verdict
 from app.parashara.primitives import ashtakavarga as _av
-from app.parashara.primitives.relationships import EXALTATION, GRAHAS, SIGN_LORDS, naisargika
+from app.parashara.primitives.relationships import GRAHAS, SIGN_LORDS, dignity_in_sign
 from app.parashara.chart.vimsopaka_chart import vimsopaka_for
 
 
@@ -73,17 +73,8 @@ def _sign_of(lon: float) -> int:
     return int(lon % 360.0 // 30) + 1
 
 
-def _dignity(planet: str, sign: int) -> int:
-    """+1 if `planet` is in own/exaltation, -1 if debilitated or in an enemy's sign, else 0 (ch.3)."""
-    if planet not in EXALTATION:
-        return 0
-    if sign == EXALTATION[planet] or SIGN_LORDS.get(sign) == planet:
-        return 1
-    if sign == ((EXALTATION[planet] - 1 + 6) % 12) + 1:          # debilitation = 7th from exaltation
-        return -1
-    if naisargika(planet, SIGN_LORDS[sign]) == "shatru":         # an enemy's sign
-        return -1
-    return 0
+# The ch.3 dignity read, shared with the synthesis layer (one answer to "dignified in this sign?").
+_dignity = dignity_in_sign
 
 
 def richer_all_bhavas(longitudes: Mapping[str, float], *, asc_sign: int, moon_waxing: bool,

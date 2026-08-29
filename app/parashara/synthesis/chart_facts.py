@@ -10,11 +10,17 @@ from __future__ import annotations
 from typing import Mapping
 
 from app.parashara.chart.cast import ParasharaChart
+from app.parashara.primitives.functional_nature import (
+    FIXED_BENEFICS, FIXED_MALEFICS, natural_benefic)
 from app.parashara.primitives.graha_drishti import aspects_sign
 from app.parashara.primitives.relationships import SIGN_LORDS
 
-#: Grahas that cast graha-drishti in this BPHS-root engine — the seven visible planets; the nodes
-#: cast no aspect (BPHS ch.26), so they are excluded from aspect scans (they still OCCUPY signs).
+#: Grahas that cast graha-drishti in this BPHS-root engine — the seven visible planets. The nodes
+#: cast NO aspect: BPHS-26:47 assigns drishti to the seven planets only, and this engine encodes
+#: Parashara's text. This is a DELIBERATE, SCOPED exception to the platform-wide locked convention
+#: (Rahu/Ketu Jupiter-style 5/9, modern Sukra Nadi) — that lock governs the Raman engine; the
+#: parashara engine's charter is fidelity to BPHS itself (user decision 2026-08-29). Nodes still
+#: OCCUPY signs and can BE aspected.
 ASPECTING_GRAHAS: frozenset[str] = frozenset(
     {"Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"})
 
@@ -32,11 +38,6 @@ def planet_signs(chart: ParasharaChart) -> dict[str, int]:
 def house_sign(asc_sign: int, house: int) -> int:
     """The rasi (1..12) that is the `house`-th bhava for `asc_sign` (whole-sign)."""
     return ((asc_sign - 1 + house - 1) % 12) + 1
-
-
-def house_of_sign(asc_sign: int, sign: int) -> int:
-    """Which bhava (1..12) a given rasi is, for `asc_sign` (whole-sign)."""
-    return ((sign - asc_sign) % 12) + 1
 
 
 def house_lord(asc_sign: int, house: int) -> str:
@@ -59,3 +60,27 @@ def aspectors(chart: ParasharaChart, house: int, *, signs: Mapping[str, int] | N
     target = house_sign(chart.asc_sign, house)
     return tuple(g for g in ASPECTING_GRAHAS
                  if g in signs and aspects_sign(g, signs[g], target))
+
+
+def functioning_malefics(chart: ParasharaChart, *, signs: Mapping[str, int] | None = None
+                         ) -> frozenset[str]:
+    """The grahas acting as natural malefics IN THIS CHART (BPHS-3:187) — the affliction set.
+
+    BPHS-3 sl.11 makes two of the malefics conditional, so a fixed set under-afflicts: the
+    DECREASING Moon is a malefic (unless rescued by a benefic's company or aspect, BPHS-3:208 —
+    translator's note), and Mercury turns malefic when he joins one. Delegates the doctrine to
+    `functional_nature.natural_benefic`; this merely feeds it each graha's chart context
+    (paksha, same-sign companions, a benefic's aspect).
+    """
+    signs = signs or planet_signs(chart)
+    out = set(FIXED_MALEFICS)
+    for planet in ("Moon", "Mercury"):
+        if planet not in signs:
+            continue
+        companions = tuple(b for b, s in signs.items() if s == signs[planet] and b != planet)
+        aspected = any(b in ASPECTING_GRAHAS and aspects_sign(b, signs[b], signs[planet])
+                       for b in FIXED_BENEFICS if b in signs)
+        if not natural_benefic(planet, moon_waxing=chart.moon_waxing,
+                               companions=companions, aspected_by_benefic=aspected):
+            out.add(planet)
+    return frozenset(out)

@@ -44,7 +44,7 @@ class Convergence:
     weighted_concur: int
     weighted_against: int
     net: int                             # weighted_concur - weighted_against (the confidence margin)
-    tier: str                            # par-excellence | strong | moderate | weak | insufficient
+    tier: str                            # par-excellence | strong | moderate | weak | divided | insufficient
     contradictions: tuple[str, ...]      # genuine conflicts, reported (never averaged away)
     caveat: str                          # coverage caveat, '' when evidence is adequate
 
@@ -98,7 +98,12 @@ def converge(evidence: Sequence[Evidence], *, toward: int = 1) -> Convergence:
     corrob_agrees = (toward >= 0 and corrob_net > 0) or (toward < 0 and corrob_net < 0)
 
     contradictions = _contradictions(promise_mixed, promise_net, strength_net, corrob_net)
-    tier = _tier_label(supporting + contradicting, net, promise_mixed, corrob_agrees)
+    if toward == 0:
+        # A divided/absent verdict has no direction to concur with: the tally discloses both sides
+        # verbatim, and the tier states the division honestly instead of grading a margin.
+        tier = "divided" if counting else "insufficient"
+    else:
+        tier = _tier_label(supporting + contradicting, net, promise_mixed, corrob_agrees)
     caveat = _caveat(supporting + contradicting)
     return Convergence(supporting=supporting, contradicting=contradicting, cancelled=cancelled,
                        weighted_concur=wc, weighted_against=wa, net=net, tier=tier,

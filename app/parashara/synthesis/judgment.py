@@ -2,8 +2,9 @@
 
 `judge_topic` gathers every tier of evidence for a topic's bhava(s), converges it, and states a
 verdict on the axis Parashara's readings actually use — not a bare good/bad, but **granted / delayed /
-difficult / denied** (with `mixed` when the chart is genuinely divided, `indeterminate` when nothing
-decisive bears on it). The distinction is the whole point of reasoning between the rules:
+difficult / denied** (with `mixed` when the deciding tier is genuinely divided, `ordinary` — ch.11's
+own tie word — when it is simply silent, and `indeterminate` when nothing decisive bears on the
+matter at all). The distinction is the whole point of reasoning between the rules:
 
   * **granted** — promised, the significators deliver, the divisions corroborate.
   * **delayed** — promised, but a substantive affliction was CANCELLED by a BPHS antidote. Parashara's
@@ -31,21 +32,22 @@ from app.parashara.synthesis.corroboration import gather_corroboration
 from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
 from app.parashara.synthesis.evidence_engine import (
     gather_affliction, gather_promise, gather_strength)
-from app.parashara.synthesis.topics import Topic, house_topic
-
-#: verdict -> its direction for the verdict-oriented convergence (+1 favourable, -1 adverse, 0 split).
-_DIRECTION: Final[dict[str, int]] = {
-    "granted": 1, "delayed": 1, "difficult": 1, "denied": -1, "mixed": 0, "indeterminate": 0}
+from app.parashara.synthesis.topics import Topic
 
 #: verdict -> its one-line meaning (for rendering; the verdict itself is the machine-readable value).
 VERDICT_MEANING: Final[dict[str, str]] = {
     "granted": "promised, its significators deliver, and the divisions corroborate",
-    "delayed": "promised, but a substantive affliction was cancelled by an antidote — it comes, but "
-               "late; see the activated windows",
+    "delayed": "a substantive affliction was cancelled by an antidote — BPHS says the evil is "
+               "'minimised' with 'some relief' (BPHS-11:213-214, 219); reading that softening as "
+               "late delivery rather than loss is this layer's labeled convention — see the "
+               "activated windows",
     "difficult": "promised, but its significators are weak or the divisions weaken it — it comes "
                  "with struggle",
     "denied": "the birth chart's own affliction outweighs the promise (the birth chart decides)",
-    "mixed": "the birth chart is genuinely divided — reported side by side, not averaged",
+    "mixed": "the birth chart is genuinely divided — prosperity and annihilation testimony both "
+             "fired; reported side by side, not averaged",
+    "ordinary": "Parashara's ch.11 conditions are silent for this house — nothing decisive fired "
+                "either way; the lower tiers colour an otherwise unremarkable matter",
     "indeterminate": "no decisive testimony bears on this matter for this chart",
 }
 
@@ -60,11 +62,6 @@ class Judgment:
     convergence: Convergence
     evidence: tuple[Evidence, ...]
     windows: tuple[ActiveWindow, ...]
-
-    @property
-    def headline(self) -> str:
-        return (f"{self.topic}: {self.verdict} — {self.convergence.tally} "
-                f"[{self.convergence.tier}]")
 
     @property
     def audit(self) -> tuple[str, ...]:
@@ -83,34 +80,32 @@ def judge_topic(reading: ParasharaReading, topic: Topic) -> Judgment:
     windows = active_windows(reading, topic.houses)
     evidence += activation_evidence(reading, topic.houses, windows)
 
-    verdict = _verdict(evidence)
-    convergence = converge(evidence, toward=_DIRECTION[verdict])
+    verdict, direction = _verdict(evidence)
+    convergence = converge(evidence, toward=direction)
     return Judgment(topic=topic.name, houses=topic.houses, verdict=verdict,
                     meaning=VERDICT_MEANING[verdict], convergence=convergence,
                     evidence=tuple(evidence), windows=windows)
 
 
-def judge_house(reading: ParasharaReading, house: int) -> Judgment:
-    """Convenience: judge a single bhava (1..12) as a topic."""
-    return judge_topic(reading, house_topic(house))
+def _verdict(evidence: Sequence[Evidence]) -> tuple[str, int]:
+    """The classical axis, read by precedence, plus the verdict's direction for the convergence
+    (+1 favourable-leaning, -1 adverse, 0 divided/absent).
 
-
-def _verdict(evidence: Sequence[Evidence]) -> str:
-    """The granted/delayed/difficult/denied axis, read by precedence (see module docstring).
-
-    The PROMISE tier (ch.11) settles denied-vs-granted; the overall weighted balance separates a
-    genuine denial (affliction dominates throughout) from a *difficult* outcome (an afflicted promise
-    that strength/corroboration drag back into a struggling manifestation); cancellation and the
-    STRENGTH/CORROBORATION tiers separate delay and difficulty from a clean grant.
+    The PROMISE tier (ch.11) — and it alone — settles denied-vs-granted. A silent promise tier
+    (nothing fired either way) is 'ordinary' (ch.11's own tie word), NOT 'mixed': mixed is reserved
+    for a bhava whose prosperity and annihilation testimony BOTH fired. The overall weighted balance
+    separates a genuine denial from a *difficult* outcome; cancellation and the lower tiers separate
+    delay and difficulty from a clean grant.
     """
     counting = [e for e in evidence if e.counts]
     if not counting:
-        return "indeterminate"
+        return "indeterminate", 0
 
     promise_net = tier_net(evidence, Tier.PROMISE)
     strength_net = tier_net(evidence, Tier.STRENGTH)
     corrob_net = tier_net(evidence, Tier.CORROBORATION)
     overall = sum(int(e.polarity) * e.weight for e in counting)  # favourable-oriented weighted net
+    has_promise = any(e.tier is Tier.PROMISE and e.counts for e in evidence)
     # A substantive antidote: a promise-tier affliction that was cancelled — excluding ch.11's
     # always-mild "unaspected_by_lord", which is antidoted by definition and is not an obstruction.
     cancelled = any(e.tier is Tier.PROMISE and e.antidoted
@@ -119,13 +114,16 @@ def _verdict(evidence: Sequence[Evidence]) -> str:
                     for e in evidence)
 
     if promise_net < 0:
-        return "denied" if overall < 0 else "difficult"
+        return ("denied", -1) if overall < 0 else ("difficult", 1)
     if promise_net == 0:
         if cancelled:
-            return "delayed"
-        return "difficult" if overall < 0 else "mixed"   # neutral promise, but obstructed -> difficult
+            return "delayed", 1
+        if has_promise:
+            return "mixed", 0                       # genuinely divided at the deciding tier
+        # ch.11 silent: an unremarkable house, coloured (not decided) by the lower tiers.
+        return "ordinary", (1 if overall > 0 else -1 if overall < 0 else 0)
     if cancelled:
-        return "delayed"
+        return "delayed", 1
     if strength_net < 0 or corrob_net < 0 or overall < 0:
-        return "difficult"
-    return "granted"
+        return "difficult", 1
+    return "granted", 1

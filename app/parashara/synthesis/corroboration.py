@@ -1,15 +1,17 @@
 """Corroboration — does the birth-chart promise hold up in the divisions and the ashtakavarga?
 
-"The Rasi is the tree, the divisional charts its fruit." A promise read in D1 is corroborated (or
-weakened) by the finer lenses, which — per BPHS's precedence — CONFIRM, they never overturn. So every
-atom here is CORROBORATION-tier (weight 1): it nudges the convergence, it cannot outvote the birth
-chart.
+A promise read in D1 is corroborated (or weakened) by the finer lenses. That the divisions CONFIRM
+rather than overturn is this layer's architectural convention (see `evidence.py` — the commentarial
+"tree and its fruit" maxim is NOT in the BPHS corpus, and BPHS-7:62-66 in fact lets a lord's D60/D16
+placement diminish/flourish a bhava directly). So every atom here is CORROBORATION-tier (weight 1):
+it nudges the convergence, it cannot outvote the birth chart.
 
 The lenses, each cited to the sloka that assigns the division its use (BPHS-7:48, "use of the 16
 divisions"):
 
-  * **Navamsa (D9)** — the universal fruit/sustained lens: the house lord's and karaka's dignity in
-    their navamsa. Own/exaltation corroborates the promise; debilitation/enemy weakens it.
+  * **Navamsa (D9)** — the house lord's and karaka's dignity in their navamsa. Own/exaltation
+    corroborates the promise; debilitation/enemy weakens it. Reading D9 for EVERY house is
+    practice-convention, disclosed: BPHS-7's own table assigns the Navamsa to the spouse.
   * **Dasamsa (D10)** — the career lens, added for the 10th house: the karaka's D10 dignity.
   * **Sarvashtakavarga** — the house sign's bindus (BPHS-72:53 bands): a favourable band corroborates,
     an adverse band weakens.
@@ -27,7 +29,7 @@ from __future__ import annotations
 from app.parashara.doctrine.arudha import FINANCE_SOURCE, UPAPADA_SPOUSE_SOURCE
 from app.parashara.doctrine.bhava_karaka import karaka_of
 from app.parashara.primitives.ashtakavarga import SAV_BAND_SOURCE
-from app.parashara.primitives.relationships import EXALTATION, MOOLATRIKONA, SIGN_LORDS, naisargika
+from app.parashara.primitives.relationships import dignity_in_sign
 from app.parashara.chart.shodasavarga import DOMAINS_SOURCE
 from app.parashara.reading import ParasharaReading
 from app.parashara.synthesis.chart_facts import house_lord, house_sign
@@ -72,7 +74,7 @@ def _varga_evidence(reading: ParasharaReading, house: int, planet: str, role: st
     varga = reading.shodasavarga.get(planet)
     if not varga or tag not in varga:
         return []
-    dig = _varga_dignity(planet, varga[tag])
+    dig = dignity_in_sign(planet, varga[tag])
     if dig == 0:
         return []
     return [Evidence(
@@ -96,7 +98,7 @@ def _upapada_evidence(reading: ParasharaReading) -> list[Evidence]:
     return [Evidence(
         topic=7, tier=Tier.CORROBORATION, category="corroboration", polarity=pol,
         rule=f"the Upapada spouse-reading is {adj}", condition="upapada",
-        observed=str(getattr(s, "verdict", adj)), source=UPAPADA_SPOUSE_SOURCE)]
+        observed=s.verdict, source=UPAPADA_SPOUSE_SOURCE)]
 
 
 def _finance_evidence(reading: ParasharaReading, house: int) -> list[Evidence]:
@@ -108,7 +110,7 @@ def _finance_evidence(reading: ParasharaReading, house: int) -> list[Evidence]:
         rule="the Arudha-pada finance-reading is strong "
              f"({'amplified' if f.amplified else 'uninterrupted'})",
         condition="pada_finance",
-        observed=f"wealth {getattr(f, 'nature', '')} (quantum {getattr(f, 'quantum', '')})".strip(),
+        observed=f"wealth {f.nature} (quantum {f.quantum})",
         source=FINANCE_SOURCE)]
 
 
@@ -121,17 +123,3 @@ def _distinct(*pairs: tuple[str, str]) -> list[tuple[str, str]]:
             seen.add(planet)
             out.append((planet, role))
     return out
-
-
-def _varga_dignity(planet: str, sign: int) -> int:
-    """+1 own/exaltation, -1 debilitation/enemy's sign, else 0 — dignity within a division (ch.3)."""
-    if planet not in EXALTATION:
-        return 0
-    if sign == EXALTATION[planet] or SIGN_LORDS.get(sign) == planet:
-        return 1
-    if sign == ((EXALTATION[planet] - 1 + 6) % 12) + 1:            # debilitation = 7th from exaltation
-        return -1
-    lord = SIGN_LORDS[sign]
-    if planet in MOOLATRIKONA and lord in MOOLATRIKONA and naisargika(planet, lord) == "shatru":
-        return -1
-    return 0

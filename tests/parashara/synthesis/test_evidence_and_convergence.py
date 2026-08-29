@@ -1,15 +1,16 @@
-"""Evidence semantics and the verdict-oriented convergence — the voting and confidence core."""
+"""Evidence semantics, the verdict-oriented convergence, and the verdict axis (silent vs divided)."""
 from __future__ import annotations
 
 from app.parashara.doctrine.sources import Citation
 from app.parashara.synthesis.convergence import converge
 from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
+from app.parashara.synthesis.judgment import _verdict
 
 _C = Citation("BPHS-11", 147)
 
 
-def _ev(tier: Tier, pol: Polarity, *, antidoted: bool = False) -> Evidence:
-    return Evidence(topic=1, tier=tier, category="x", polarity=pol, rule="r", condition="c",
+def _ev(tier: Tier, pol: Polarity, *, antidoted: bool = False, condition: str = "c") -> Evidence:
+    return Evidence(topic=1, tier=tier, category="x", polarity=pol, rule="r", condition=condition,
                     observed="o", source=_C, antidoted=antidoted)
 
 
@@ -66,3 +67,47 @@ class TestConverge:
         """ACTIVATION-tier evidence times, it does not vote on whether (weight 0)."""
         c = converge([_ev(Tier.ACTIVATION, Polarity.SUPPORTS)], toward=1)
         assert c.net == 0
+
+    def test_toward_zero_with_evidence_is_divided(self):
+        """A directionless verdict over live testimony reads 'divided', never a graded margin."""
+        c = converge([_ev(Tier.PROMISE, Polarity.SUPPORTS),
+                      _ev(Tier.PROMISE, Polarity.CONTRADICTS)], toward=0)
+        assert c.tier == "divided"
+
+    def test_toward_zero_without_evidence_is_insufficient(self):
+        """A directionless verdict with nothing counting stays 'insufficient'."""
+        assert converge([_ev(Tier.ACTIVATION, Polarity.NEUTRAL)], toward=0).tier == "insufficient"
+
+
+class TestVerdictAxis:
+    """The silent-vs-divided distinction (BUG B) and the direction each verdict hands convergence."""
+
+    def test_silent_promise_is_ordinary_not_mixed(self):
+        """No ch.11 condition fired: 'ordinary' (ch.11's tie word), leaning with the lower tiers."""
+        verdict, direction = _verdict([_ev(Tier.STRENGTH, Polarity.SUPPORTS)])
+        assert verdict == "ordinary" and direction == 1
+
+    def test_divided_promise_is_mixed(self):
+        """Prosperity AND annihilation both fired at the deciding tier: genuinely 'mixed'."""
+        verdict, direction = _verdict([_ev(Tier.PROMISE, Polarity.SUPPORTS),
+                                       _ev(Tier.PROMISE, Polarity.CONTRADICTS)])
+        assert verdict == "mixed" and direction == 0
+
+    def test_silent_promise_leaning_adverse_stays_ordinary(self):
+        """Silent ch.11 with negative lower tiers is still 'ordinary' — coloured, not decided."""
+        verdict, direction = _verdict([_ev(Tier.STRENGTH, Polarity.CONTRADICTS)])
+        assert verdict == "ordinary" and direction == -1
+
+    def test_cancelled_affliction_gives_delayed(self):
+        """A substantive antidoted affliction converts to 'delayed' (the labeled convention)."""
+        verdict, _ = _verdict([_ev(Tier.PROMISE, Polarity.SUPPORTS),
+                               _ev(Tier.PROMISE, Polarity.CONTRADICTS, antidoted=True,
+                                   condition="lord_conjunct_malefic")])
+        assert verdict == "delayed"
+
+    def test_unaspected_by_lord_is_not_a_substantive_antidote(self):
+        """ch.11's always-mild clause never converts a clean grant into a delay."""
+        verdict, _ = _verdict([_ev(Tier.PROMISE, Polarity.SUPPORTS),
+                               _ev(Tier.PROMISE, Polarity.CONTRADICTS, antidoted=True,
+                                   condition="unaspected_by_lord")])
+        assert verdict == "granted"

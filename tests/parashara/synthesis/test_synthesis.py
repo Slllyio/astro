@@ -14,7 +14,7 @@ from app.parashara.synthesis import synthesize
 from app.parashara.synthesis.topics import all_topics
 from app.parashara.reading import read
 
-_VALID = {"granted", "delayed", "difficult", "denied", "mixed", "indeterminate"}
+_VALID = {"granted", "delayed", "difficult", "denied", "mixed", "ordinary", "indeterminate"}
 
 
 @pytest.fixture(scope="module")

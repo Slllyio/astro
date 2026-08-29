@@ -19,6 +19,10 @@ scheme BPHS ch.11 states in its own words, with the antidote clauses Parashara a
         in a favourable house, or the malefic is exalted.
     (c) the lord conjoins a lord of the 6th/8th/12th — but "if he himself is an evil lord, then
         some relief can be expected" (the bhava lord already being a dusthana lord).
+        NOTE on the evil-lord set: the printed sloka reads "lords of evil and such other houses
+        (i.e. 3rd, 6th, 8th, 11th and 12th)" (BPHS-11:152-153); the translator's notes narrow it
+        to the 6th/8th/12th (BPHS-11:218-219), and this module deliberately follows the notes —
+        the classical dusthana set. A doctrine-contested reading, labeled here (2026-08-29).
     (d) the lord is defeated in a planetary war (graha yuddha) — "its bhava's potence is void".
     (e) the lord is in Vriddhavastha or Mritavastha (Baladi avastha, ch.45).
 

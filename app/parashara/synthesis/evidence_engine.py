@@ -27,14 +27,17 @@ from typing import Final
 
 from app.parashara.doctrine.sources import Citation
 from app.parashara.judges.richer_bhava import REQUIRED_SHADBALA, SHADBALA_SOURCE
-from app.parashara.primitives.functional_nature import FIXED_MALEFICS
 from app.parashara.primitives.functional_nature import SOURCE as MALEFIC_SOURCE
 from app.parashara.primitives.graha_drishti import SOURCE as DRISHTI_SOURCE
 from app.parashara.doctrine.bhava_karaka import karaka_of
 from app.parashara.reading import ParasharaReading
 from app.parashara.synthesis.chart_facts import (
-    aspectors, house_lord, occupants, planet_signs)
+    aspectors, functioning_malefics, house_lord, occupants, planet_signs)
 from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
+
+#: BPHS-11 (notes to sl.16): "If a malefic relation is there for a bhava, its lord's aspect on it
+#: is an antidote." The lord's own aspect is PROTECTION — it must never vote as affliction.
+LORD_ANTIDOTE_SOURCE: Final[Citation] = Citation("BPHS-11", 208)
 
 #: Upachaya bhavas — malefics grow strong here rather than afflict (classical; a deliberate softening
 #: so a malefic in the 3rd/6th/10th/11th is disclosed but does not vote as an affliction).
@@ -66,15 +69,23 @@ def gather_promise(reading: ParasharaReading, house: int) -> list[Evidence]:
 
 
 def gather_affliction(reading: ParasharaReading, house: int) -> list[Evidence]:
-    """Plain affliction ch.11 does not enumerate: a natural malefic ON or ASPECTING the bhava."""
+    """Plain affliction ch.11 does not enumerate: a malefic ON or ASPECTING the bhava.
+
+    The malefic set is the CHART's (BPHS-3:187 makes the waning Moon and malefic-joined Mercury
+    malefic — `functioning_malefics`), and the bhava's OWN LORD is exempt: its occupancy is ch.11's
+    Prabuddha prosperity condition, and its aspect is ch.11's antidote (BPHS-11:208) — counting
+    either as affliction would contradict the very doctrine this layer cites.
+    """
     chart = reading.chart
     signs = planet_signs(chart)
+    malefics = functioning_malefics(chart, signs=signs)
+    lord = house_lord(chart.asc_sign, house)
     ordinal = _ORD[house]
     out: list[Evidence] = []
 
     for m in occupants(chart, house, signs=signs):
-        if m not in FIXED_MALEFICS:
-            continue
+        if m not in malefics or m == lord:
+            continue                    # own lord occupying = ch.11 prosperity, never affliction
         # A malefic thrives in an upachaya — disclose it, but do not count it against the promise.
         neutral = house in _UPACHAYA
         out.append(Evidence(
@@ -86,11 +97,22 @@ def gather_affliction(reading: ParasharaReading, house: int) -> list[Evidence]:
             observed=f"{m} occupies the {ordinal} bhava", source=MALEFIC_SOURCE))
 
     for g in aspectors(chart, house, signs=signs):
-        if g in FIXED_MALEFICS:                       # Sun / Mars / Saturn (nodes cast no drishti)
+        if g not in malefics:
+            continue
+        if g == lord:
+            # The lord's aspect on its own bhava is the ANTIDOTE (BPHS-11:208): disclosed, no vote.
             out.append(Evidence(
-                topic=house, tier=Tier.STRENGTH, category="affliction", polarity=Polarity.CONTRADICTS,
-                rule=f"the malefic {g} aspects the house", condition="malefic_aspect",
-                observed=f"{g} casts a full aspect on the {ordinal} bhava", source=DRISHTI_SOURCE))
+                topic=house, tier=Tier.STRENGTH, category="affliction", polarity=Polarity.NEUTRAL,
+                rule=f"{g}, though a malefic, is the house's own lord — "
+                     "its aspect is the antidote, not an affliction",
+                condition="own_lord_aspect",
+                observed=f"{g} (lord of the {ordinal}) aspects its own bhava",
+                source=LORD_ANTIDOTE_SOURCE))
+            continue
+        out.append(Evidence(
+            topic=house, tier=Tier.STRENGTH, category="affliction", polarity=Polarity.CONTRADICTS,
+            rule=f"the malefic {g} aspects the house", condition="malefic_aspect",
+            observed=f"{g} casts a full aspect on the {ordinal} bhava", source=DRISHTI_SOURCE))
     return out
 
 
@@ -126,11 +148,5 @@ def _strength_for(reading: ParasharaReading, house: int, planet: str, role: str)
             polarity=Polarity.SUPPORTS if supports else Polarity.CONTRADICTS,
             rule=f"the {role} {planet}'s Vimsopaka is {vs.band}", condition="vimsopaka_band",
             observed=f"{planet} Vimsopaka {vs.score:.1f}/20 ({vs.band})",
-            source=_cite(vs.source)))
+            source=vs.source))
     return out
-
-
-def _cite(source: object) -> Citation:
-    """A VimsopakaScore carries its own Citation; keep the type checker honest about it."""
-    assert isinstance(source, Citation)
-    return source

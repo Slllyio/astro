@@ -5,10 +5,15 @@ what the chart actually shows, its polarity toward the topic's promise, and the 
 Every conclusion the layer reaches is a function of a list of these, so the list IS the audit trail
 (sloka -> rule -> condition -> evidence) the reading shows behind each judgment.
 
-## The evidence hierarchy (BPHS's own precedence)
+## The evidence hierarchy (an architectural convention, disclosed)
 
-Not all testimony carries equal weight, and Parashara says which decides. The `Tier` encodes that
-precedence, and the convergence layer weights by it:
+Not all testimony carries equal weight here. The `Tier` encodes the layer's precedence and the
+convergence weights by it — but the ORDERING is this layer's discipline, not a BPHS statement:
+the corpus contains no sloka ranking ch.11 against the strengths, the divisions, or the dashas
+(no "the rasi decides, the divisions corroborate" exists in it; indeed BPHS-7:62-66 lets a lord's
+D60/D16 placement diminish or flourish a bhava directly — a known, disclosed deviation, wired as
+cited evidence). The convention is chosen so the birth-chart verdict can never be silently
+outvoted by auxiliary testimony; each tier's INGREDIENTS are individually cited:
 
   * **PROMISE** — the birth-chart result of the bhava itself (ch.11's prosperity/annihilation). This
     is what a matter fundamentally IS; it — and it alone — decides denied-vs-granted. A fired ch.11
@@ -27,10 +32,11 @@ precedence, and the convergence layer weights by it:
 
 `polarity` is the direction of a testimony toward the promise: it SUPPORTS it, CONTRADICTS it, or is
 NEUTRAL. `antidoted` marks a fired negative that a BPHS antidote cancels (ch.11's own mitigation
-clauses, neecha-bhanga, a benefic's rescue): such a negative is *shown* — the reading discloses its
-working — but it does not count against the promise. A cancelled affliction is the seed of the
-delay/difficulty axis (Parashara's antidotes soften a denial into a delay, they do not erase the
-adversity), handled in `judgment`.
+clauses, a benefic's rescue): such a negative is *shown* — the reading discloses its working — but it
+does not count against the promise. What a cancelled affliction MEANS is stated by BPHS as softening
+— "the evil is minimised" (BPHS-11:213-214), "some relief can be expected" (BPHS-11:219); reading
+that softening as *late delivery* (the `delayed` verdict) rather than diminished loss is `judgment`'s
+labeled interpretive convention, not Parashara's word.
 """
 from __future__ import annotations
 
@@ -55,11 +61,6 @@ class Tier(IntEnum):
     CORROBORATION = 1  # divisional / ashtakavarga / karaka / Arudha — confirms, never overturns
     ACTIVATION = 0     # dasha timing — WHEN, never WHETHER (carries no vote on the verdict)
 
-
-#: The categories the user's architecture names as separate "evidence engines" — a display facet,
-#: orthogonal to the precedence Tier (an affliction is PROMISE- or STRENGTH-tier, CONTRADICTS).
-CATEGORIES: Final[tuple[str, ...]] = (
-    "promise", "strength", "affliction", "corroboration", "activation")
 
 _SIGN: Final[Mapping[Polarity, str]] = {
     Polarity.SUPPORTS: "+", Polarity.NEUTRAL: "·", Polarity.CONTRADICTS: "-"}

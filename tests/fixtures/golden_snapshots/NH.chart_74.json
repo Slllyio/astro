@@ -53,13 +53,15 @@
   "H4": {
     "citations": [
       "HTJAH-I:4184",
+      "HTJAH-I:4550",
       "HTJAH-I:4717"
     ],
     "fired_rule_ids": [
       "H4.C.34",
+      "H4.C.48",
       "H4.L.11"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "education": {
         "degree": "mild",
@@ -77,9 +79,9 @@
         "verdict": "favourable"
       },
       "mother": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "property": {
         "degree": "strong",

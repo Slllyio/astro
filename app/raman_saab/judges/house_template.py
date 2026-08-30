@@ -519,8 +519,12 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # clause 2 (preserving the 'natural death' reading on a beneficially-disposed 8th). Applies
     # to `death` (manner) but NOT to the `longevity` SPAN, which is still guarded. The verdict
     # is decisive — _navamsa_modulate never shifts an 'afflicted'.
-    if ("AFFLICTION_MATTER" in L.flags and not guarded
-            and L.fired_malefic and not L.fired_benefic):
+    # Signification-precision (2026-08-30): the test is the AFFLICTION_OWN_EVIDENCE flag,
+    # computed at ledger build from rules of THE MATTER'S OWN signification only — a pooled
+    # sibling-signification rule (e.g. a benefic `longevity` rule inside the `death` bucket)
+    # neither confirms nor contradicts the matter. See the flag's comment in
+    # _build_frame_ledger for the Marie Antoinette case that forced this.
+    if ("AFFLICTION_OWN_EVIDENCE" in L.flags and not guarded):
         return _navamsa_modulate("afflicted", L)
     # 2. contradiction — weigh the PREPONDERANCE when benefic AND malefic both fire.
     # Faithful to Raman's THREE-FACTORS doctrine: instead of counting fired-rule surplus,
@@ -1234,8 +1238,29 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # AFFLICTION_MATTER (Stage-3 "B"): an inherently-malefic dusthana signification (6th
     # afflictions, 12th incarceration/left_eye). _decide clause-1.5 reads this to confirm the
     # affliction on lone-malefic evidence (a strong dusthana lord strengthens, never rescues).
+    #
+    # AFFLICTION_OWN_EVIDENCE (2026-08-30, span/manner separation fix): a BENEFIC rule of the
+    # `longevity` SPAN signification cannot CONTRADICT the affliction confirmation. The
+    # `death` sig pools `longevity` rules by design (shared 8th apparatus), and a benefic
+    # LONGEVITY rule (H8.L.8) was blocking the death-MANNER confirmation on Marie Antoinette's
+    # chart — a purna span vetoing a guillotine reading, exactly the span/manner confusion the
+    # H8-OPENED decision forbids ("longevity=favourable + death=afflicted is the correct dual
+    # reading", Lincoln/JFK). The favourable span has its own outlet: the separate `longevity`
+    # signification's verdict. The exclusion is deliberately ASYMMETRIC and NARROW — both
+    # wider forms were implemented and MEASURED first, per the honest-hold rule:
+    # (a) fully signification-precise (fr.rule.signification == sig.key) broke 11 correct
+    #     H6/H12/H8 rows — the dusthana keys' cross-signification pooling is load-bearing on
+    #     the malefic side (the 6th's afflictions cross-speak by design);
+    # (b) symmetric span-exclusion (malefic longevity rules also excluded) broke Lincoln and
+    #     Hitler, whose manner confirmations ride on malefic 8th-apparatus rules tagged
+    #     `longevity` — malefic 8th evidence speaks to death however tagged (chart_35's
+    #     record: "afflicted = the maraka apparatus FIRED").
+    # The flag is computed here, where `sig` is in scope; clause 1.5 consumes it.
     if sig.key in _DUSTHANA_AFFLICTION_KEYS:
         flags.append("AFFLICTION_MATTER")
+        manner_ben = [fr for fr in benefic if fr.rule.signification != "longevity"]
+        if malefic and not manner_ben:
+            flags.append("AFFLICTION_OWN_EVIDENCE")
     # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS
     # (possibly non-longevity) matter, so its maraka pressure is provisional until the
     # longevity engine confirms it. Kept for downstream reporting; not verdict-driving.

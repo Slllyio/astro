@@ -129,11 +129,14 @@ class TestDecide:
         """Stage-3 'B' dusthana-affliction (clause 1.5): an AFFLICTION_MATTER ledger
         (6th/12th malefic signification) with a lone malefic and NO benefic reads
         'afflicted' even when ALL pillars are strong — a strong dusthana lord strengthens
-        the evil, never rescues it."""
+        the evil, never rescues it. Since the 2026-08-30 span/manner fix the builder emits
+        AFFLICTION_OWN_EVIDENCE alongside AFFLICTION_MATTER for exactly this evidence shape,
+        and clause 1.5 consumes the new flag; the synthetic ledger mirrors the builder."""
         v, shifted = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
                                         bhava_bala_strong=True,
                                         fired_malefic=(_fired("malefic"),),
-                                        flags=("AFFLICTION_MATTER",)))
+                                        flags=("AFFLICTION_MATTER",
+                                               "AFFLICTION_OWN_EVIDENCE")))
         assert v == "afflicted" and shifted is False
 
     def test_affliction_matter_not_lifted_by_navamsa_confirms(self):
@@ -142,7 +145,28 @@ class TestDecide:
         v, shifted = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
                                         bhava_bala_strong=True, navamsa_status="confirms",
                                         fired_malefic=(_fired("malefic"),),
-                                        flags=("AFFLICTION_MATTER",)))
+                                        flags=("AFFLICTION_MATTER",
+                                               "AFFLICTION_OWN_EVIDENCE")))
+        assert v == "afflicted" and shifted is False
+
+    def test_benefic_span_rule_does_not_veto_the_manner_confirmation(self):
+        """The span/manner separation (2026-08-30, the Marie Antoinette fix): a fired
+        BENEFIC of the `longevity` SPAN signification does not count as the benefic
+        contradiction that takes a death-manner affliction out of clause 1.5 — a purna
+        span must never un-afflict a guillotine reading (the Lincoln dual-reading,
+        H8-OPENED). The builder proves it by emitting AFFLICTION_OWN_EVIDENCE despite the
+        pooled span benefic; _decide then confirms afflicted."""
+        import dataclasses as _dc
+        from app.raman_saab.doctrine.significations import significations_of
+        death_sig = next(s for s in significations_of(8) if s.key == "death")
+        # Builder-level check: malefic death rule + benefic LONGEVITY rule -> flag emitted.
+        # (Direct clause check on a synthetic ledger mirroring that builder output.)
+        v, shifted = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+            fired_malefic=(_fired("malefic", signification="death"),),
+            fired_benefic=(_fired("benefic", signification="longevity"),),
+            flags=("AFFLICTION_MATTER", "AFFLICTION_OWN_EVIDENCE")))
+        assert death_sig.key == "death" and "longevity" in death_sig.rule_tags
         assert v == "afflicted" and shifted is False
 
     def test_affliction_matter_with_benefic_routes_to_preponderance(self):

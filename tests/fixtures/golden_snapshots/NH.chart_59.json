@@ -145,10 +145,12 @@
     "citations": [
       "HTJAH-I:5125",
       "HTJAH-I:5206",
-      "HTJAH-I:5232"
+      "HTJAH-I:5232",
+      "HTJAH-I:5791"
     ],
     "fired_rule_ids": [
       "H5.C.21",
+      "H5.C.40",
       "H5.L.3",
       "H5.P.Sun"
     ],

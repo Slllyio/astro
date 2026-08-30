@@ -58,11 +58,13 @@
     "citations": [
       "HTJAH-I:4165",
       "HTJAH-I:4206",
+      "HTJAH-I:4550",
       "HTJAH-I:4919"
     ],
     "fired_rule_ids": [
       "H4.C.1",
       "H4.C.40",
+      "H4.C.48",
       "H4.L.6"
     ],
     "rollup": "afflicted",

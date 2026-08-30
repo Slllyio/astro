@@ -52,12 +52,14 @@
       "HTJAH-I:5206",
       "HTJAH-I:5232",
       "HTJAH-I:5236",
-      "HTJAH-I:5252"
+      "HTJAH-I:5252",
+      "HTJAH-I:5791"
     ],
     "fired_rule_ids": [
       "H5.C.1",
       "H5.C.10",
       "H5.C.19",
+      "H5.C.40",
       "H5.L.5",
       "H5.P.Moon",
       "H5.P.Sun",
@@ -142,12 +144,12 @@
       "H8.L.8",
       "H8.P.Saturn"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "death": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "legacies": {
         "degree": "moderate",

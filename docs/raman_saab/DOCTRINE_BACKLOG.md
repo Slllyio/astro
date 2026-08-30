@@ -3029,8 +3029,12 @@ banked:
 - Movement: 277/397 -> 279/397 exact, 345 within-1, real errors 53 -> 52. Exactly two rows
   moved, both toward Raman: Gaekwar/chart_37 favourable->afflicted (dist-2 resolved),
   Bose/chart_68 mixed->afflicted. Zero regressions.
-- **Fertility-gate ledger re-profiled**: C.39 now carries h5_11 + h5_18 + chart_52 on their
-  cited mechanism (OUT of the gate's carry list — three fewer accidental-correctness rows).
+- **Fertility-gate ledger re-profiled**: C.39 now carries h5_11 on its cited mechanism (OUT of
+  the gate's carry list). **CORRECTION 2026-08-30, same session**: this entry (and the d7bfaad
+  commit message + baseline note) originally claimed h5_18 and chart_52 also left the carry
+  list — FALSE. Neither was ever gate-carried; both were plain misses before and after C.39
+  (h5_18 was later fixed by H5.C.40; chart_52 remains a miss). Only h5_11 moved. The ratchet
+  numbers were correct throughout; the prose over-claimed.
   Suspension re-measured: net −12 (13 carried, 1 healed). THE GATE STAYS, refuted-but-load-
   bearing. Remaining carried rows and their printed drivers, for future passes: h5_04
   (lord+house "considerably afflicted"), h5_05 (PK baneful — Arm B's own chart), h5_08
@@ -3056,3 +3060,60 @@ benefic influence — her 2nd holds the Moon and receives Jupiter's drishti. Her
 Raman states generally — Mercury-with-Rahu in his text is a SPECULATION-loss indicator
 (HTJAH-I:4025), not speech. No mechanism invented; the miss stands recorded. Recovery
 re-opens only if a citable general rule surfaces (Astrological Magazine sweep, WS4).
+
+
+## WS1 PASS 2 (2026-08-30) — the contact-affliction twins + the span/manner separation; 282/397
+
+Three reviewer-approved changes, each moving exactly one row toward Raman, zero regressions.
+Cumulative from pass 1a: 277 -> 282 exact, real errors 53 -> 49.
+
+**H5.C.40** (SHIP-WITH-AMENDMENTS, HIGH): PutraKaraka under the COMBINED contact of >= 2
+first-rate malefics {Mars, Saturn, Rahu, Ketu} -> afflicted testimony, NON-decisive. Chart 99
+HTJAH-I:5795-5799 verbatim; second citation Chart 95 :5701-5713; corroborated Shaw NH:7320-7323
+(a genuine two-contact chart per :7302-7303), Marie Antoinette NH:5834-5836, Bose
+NH:14001-14003. Reviewer findings banked: (a) Raman's "first-rate malefic" idiom INCLUDES the
+Sun (HTJAH-I:5673, NH:10543, NH:18035) — the Sun's exclusion from the contact set is an
+EMPIRICAL DOCUMENTED LIMIT (no printed PK condemnation names the Sun), not his vocabulary;
+(b) no printed chart condemns on a single PK contact alone — the >= 2 gradient is his own
+("moderately blemished" / "feebly weak" at one, "sorrow" at two, "most baneful" at three);
+(c) chart_67's fire is directionally faithful but a MECHANISM MISMATCH (his stated driver is
+the 5th-lord Mars), never a validation chart. Fixed h5_18 (favourable->afflicted, dist-2).
+
+**H4.C.48** (SHIP-WITH-AMENDMENTS, HIGH): the exact H4 twin — Matru-Karaka Moon under >= 2
+first-rate contacts. Chart 68 HTJAH-I:4550-4560 ("combined aspect of two first-rate malefic
+... Matru-Karaka is considerably afflicted"; own-lordship does not sanitize, :4558-4559). The
+reviewer read the ENTIRE 64-75 mother series: condemned at >= 2 (x67 :4529-4539, x70
+:4595-4601, x71 :4616-4617), explicitly dismissed at one contact (x73 "moderately blemished",
+x75 "feeble" — even an EXALTED Saturn's single aspect), and the two apparent single-contact
+condemnations (x69, x72) carry printed independent drivers. **x74 is the printed
+COUNTERBALANCE case** (:4673-4678): exalted Moon + Ketu + Mars fires the rule, Raman registers
+the affliction then outweighs it (Jupiter aspect + navamsa) -> "feebly blemished" — exactly
+what non-decisive testimony models; if x74 is ever confirmed mixed/favourable the fire is
+expected. Thyagaraja (chart_23) upgraded: TWO of the engine's three contacts are in Raman's
+own text (MK-with-Ketu NH:6060-6063; Saturn-aspects-Cancer :6071-6072). Fixed chart_23
+(favourable->afflicted, dist-2).
+
+**Clause-1.5 span/manner separation** (SHIP, VALIDATED, HIGH): a fired BENEFIC of the
+`longevity` SPAN signification no longer vetoes the death-MANNER affliction confirmation.
+The bug: Marie Antoinette's guillotine reading (H8.C.1 fired, Saturn occupies + Mars aspects
+her 8th) was blocked by H8.L.8 ("8th lord in the 8th -> long life", HTJAH-II:3001) — a purna
+span vetoing a violent manner, the exact conflation the H8-OPENED decision forbids. The
+reviewer's proof text is her own chart: Raman counts the SAME Saturn-in-8th on the guillotine
+side ("by virtue of the influence both Saturn and Mars prevailing on the 8th house ... her
+graceful head fell", NH:5950-5952) — the asymmetry is doctrine, not corpus-fit. Process per
+playbook rule 3, all three faithful forms MEASURED before shipping: fully sig-precise broke
+11 correct H6/H12/H8 rows (malefic-side pooling is load-bearing — the 6th's afflictions
+cross-speak by design); symmetric span-exclusion broke Lincoln/Hitler (their manner
+confirmations ride malefic 8th-apparatus rules tagged longevity). Scope proven H8-only by
+enumeration (no H6/H12 key pools the longevity tag; all 21 longevity rules are house=8).
+**STANDING DEPENDENCY: the benefic-in-8th manner veto now routes exclusively through the
+death-tagged H8.C.2 — if H8.C.2 is ever re-tagged, this exclusion must be revisited.**
+Fixed chart_22 (favourable->afflicted, dist-2). New unit test pins the veto case.
+
+**H8 queue remainder** (for later passes): chart_41 Gandhi (benefic Jupiter in the 8th fires
+death-tagged H8.C.2, so clause 1.5 correctly defers — his fix needs the malefic-ASPECT-on-8th
+testimony and/or the drekkana leg), chart_72 Godse + chart_22's second leg (Ayudha/Nigala
+DREKKANA death-manner — H8.C.21 is a stale descriptive TODO; needs the named-drekkana
+primitive: planet degree-band -> Parasari drekkana name table), chart_39 Ashutosh (8th-lord
+maraka-timing conclusion; no aspect mechanism — may be a documented limit for the static
+verdict).

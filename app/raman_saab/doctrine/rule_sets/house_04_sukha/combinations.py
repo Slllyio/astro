@@ -107,6 +107,26 @@ class _FourthLordConjunctMoon(C.Condition):
         return p is not None and moon is not None and p.rasi_house == moon.rasi_house
 
 
+class _MatruKarakaDoublyAfflicted(C.Condition):
+    """>= 2 of the first-rate malefics {Mars, Saturn, Rahu, Ketu} contact the Matru-Karaka
+    Moon — conjunction (same sign) or whole-sign drishti (nodes 7th-only via the drishti
+    module). H4.C.48's predicate, the exact H4 twin of H5.C.40's _PutraKarakaDoublyAfflicted;
+    the Sun's exclusion is the same empirical documented limit (see the rule's comment)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return False
+        count = 0
+        for name in ("Mars", "Saturn", "Rahu", "Ketu"):
+            p = chart.planets.get(name)
+            if p is None:
+                continue
+            if p.sign == moon.sign or drishti.aspects_planet(name, "Moon", chart):
+                count += 1
+        return count >= 2
+
+
 class _LagnaInSignsLocal(C.Condition):
     """The ascendant sign is one of `signs` (1..12)."""
     def __init__(self, signs: frozenset[int]) -> None:
@@ -382,4 +402,45 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "TODO(predicate: strength gate, shashtiamsa/thrimsamsa varga, lords-in-kendra)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4950)),
+
+    # #48 — the Matru-Karaka Moon under the COMBINED contact of two first-rate malefics ->
+    # the mother's significator is considerably afflicted. The exact H4 twin of H5.C.40 —
+    # SAME idiom, SAME >= 2 gradient, stated on Chart 68 (HTJAH-I:4550-4560): "This benefice
+    # disposition is more than counterbalanced by the combined aspect of two first-rate
+    # malefic, viz., Saturn and Mars ... Consequently Matru-Karaka is considerably afflicted"
+    # -> Conclusion "the fourth house is considerably afflicted"; the mother died in the
+    # native's 16th year (:4572). The Conclusion also teaches the general lesson: Saturn's
+    # aspect "could have been construed as beneficial [he is the 4th lord there] but for the
+    # fact Saturn happens to be a natural malefic" (:4558-4559) — own-lordship does not
+    # sanitize a natural malefic's contact. Same-series corroborations (reviewer-verified):
+    # x67 :4529-4539 ("Mars and Saturn, two first-rate malefic"), x70 :4595-4601 ("aspected
+    # powerfully by Saturn and Mars ... considerably afflicted", mother died 18th year), x71
+    # :4616-4617 (Rahu conjunct + Saturn aspect -> "considerably afflicted"). Thyagaraja
+    # (chart_23) is Raman-supported TOO: "Matrukaraja or indicator of mother is with Ketu
+    # while ... Lord of the 4th is in the 11th with Saturn ... These combinations explain the
+    # fact of his parents having died early" (NH:6060-6063) + "Saturn aspects Cancer"
+    # (NH:6071-6072) — two of the engine's three contacts are in his printed text; only the
+    # Rahu 7th-aspect is engine-derived via the locked node convention.
+    # PRINTED COUNTERBALANCE CASE (record, not a reversal): Chart 74/x74 :4673-4678 — exalted
+    # Moon with Ketu AND Mars (two contacts, the rule fires) "counterbalanced by Jupiter's
+    # aspect" + benefic Navamsha -> "all the three elements are feebly blemished", mother died
+    # when the native was 46. Raman registers the double contact AS an affliction and then
+    # outweighs it — exactly what a NON-decisive testimony models. If x74 is ever confirmed
+    # mixed/favourable, the fire there is expected, not a surprise.
+    # CONTACT SET {Mars, Saturn, Rahu, Ketu}: same empirical-documented-limit reading as
+    # H5.C.40 (reviewer-corrected 2026-08-30 — "first-rate" in Raman's own idiom INCLUDES the
+    # Sun, HTJAH-I:5673, but no printed MK/PK condemnation names the Sun as the contact).
+    # NON-decisive testimony per the C.39/C.40 pattern. The >= 2 bar spares every favourable
+    # H4 twin (chart_42/54/57 and x75 each carry exactly ONE contact); no printed chart
+    # condemns the mother on a single MK contact alone — h4_01's single Saturn is CONJUNCT
+    # Moon-in-the-4th, which is the separate decisive H4.C.18a. Fires (engine drishti,
+    # nodes 7th-only) on x67, x68, chart_23 (afflicted) + x71 (mixed) across the 16 confirmed
+    # H4 mother goldens; zero favourable fires.
+    RuleRecord(
+        id="H4.C.48", house=4, signification="mother", group="combination", kind="evaluable",
+        condition=_MatruKarakaDoublyAfflicted(),
+        fortified=None,
+        afflicted="the Matru-Karaka Moon carries the combined contact of two or more "
+                  "first-rate malefics → the mother's significator is considerably afflicted",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4550)),
 )

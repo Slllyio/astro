@@ -118,6 +118,25 @@ class _FifthFromMoonMaleficConvergence(C.Condition):
         return count >= 2
 
 
+class _PutraKarakaDoublyAfflicted(C.Condition):
+    """>= 2 of the first-rate malefics {Mars, Saturn, Rahu, Ketu} contact the PutraKaraka
+    Jupiter — conjunction (same sign) or whole-sign drishti (nodes 7th-only via the drishti
+    module). H5.C.40's predicate; the Sun is deliberately excluded (see the rule's comment)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None:
+            return False
+        count = 0
+        for name in ("Mars", "Saturn", "Rahu", "Ketu"):
+            p = chart.planets.get(name)
+            if p is None:
+                continue
+            if p.sign == jup.sign or drishti.aspects_planet(name, "Jupiter", chart):
+                count += 1
+        return count >= 2
+
+
 class _LordHemmedBy(C.Condition):
     """The lord of `house` is hemmed (2nd & 12th from it hold a planet of `klass`)."""
     def __init__(self, house: int, klass: str) -> None:
@@ -501,4 +520,44 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="two or more natural malefics occupy or aspect the 5th from Chandra Lagna "
                   "→ the house of children is strongly blemished from the Moon",
         frame="CHANDRA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5826)),
+
+    # #40 — the PutraKaraka under the COMBINED influence of two first-rate malefics -> sorrow
+    # through children. Chart 99 verbatim (HTJAH-I:5795-5799): "as PutraKaraka has the combined
+    # influences of two first-rate malefic, Mars ... and Saturn, the Karaka for sorrow ...
+    # the native has to experience sorrow on account of the 5th house" — pronounced even though
+    # "the disposition of 5th house and the 5th lord indicates the birth of children" and the
+    # PK sits in his OWN sign (dignity does not relieve contact-affliction; the same lesson as
+    # H9.A.20a's dropped exalted-Sun guard). Second strong citation: Chart 95 HTJAH-I:5701-5713
+    # ("his association with Rahu and the combined aspects of Mars and Saturn ... rendered him
+    # highly malefic ... no issues born"). Corroborated by Shaw NH:7320-7323 ("Putrakaraka
+    # being associated with Rahu" — and per NH:7302-7303 Saturn also aspects it, a genuine
+    # two-contact chart), Marie Antoinette NH:5834-5836 (PK "further afflicted by Rahu"), Bose
+    # NH:14001-14003 (PK "plus the influence of Mars and Saturn").
+    # CONTACT SET = {Mars, Saturn, Rahu, Ketu}. The Sun's exclusion is an EMPIRICAL DOCUMENTED
+    # LIMIT of the printed PK-contact corpus (no PK condemnation ever names the Sun as the
+    # contact), NOT Raman's vocabulary — his "first-rate malefic" idiom explicitly includes
+    # the Sun elsewhere (HTJAH-I:5673 "three first-rate malefic, viz., the Sun, Saturn and
+    # Rahu"; NH:10543; NH:18035). Reviewer-corrected reading, 2026-08-30.
+    # NON-decisive testimony, same status and reasoning as C.39: Chart 99's own house/lord
+    # "indicate birth", so the PK blemish grades the outcome rather than overriding everything;
+    # the Dhana-Yoga chart (chart_67, NH:13766-13774) keeps a double-contact PK chart "fairly
+    # well disposed" with only an abortion warning — decisive would misread it. chart_67's fire
+    # is directionally faithful but a MECHANISM MISMATCH (Raman's stated driver there is the
+    # 5th-lord Mars aspected by Saturn, never the PK) — not a validation chart.
+    # Distinct from C.38 (papakartari + malefic rashi — a HEMMING predicate); this is CONTACT
+    # (conjunction / whole-sign drishti, nodes 7th-only per the raman_saab lock); fire sets are
+    # disjoint in the goldens, and Chart 97 (HTJAH-I:5733-5747) counts hemming and focussed
+    # evil as SEPARATE blemishes on the same Jupiter, so stacking would be faithful anyway.
+    # Fires on 9 afflicted + 1 mixed (chart_67) + 0 favourable across the 35 H5-children
+    # goldens — the h5_15/chart_74 favourable twins carry exactly ONE first-rate contact and
+    # are spared by the >= 2 bar; Raman's own gradient: one contact = "moderately blemished"
+    # (Chart 92 :5641-5644) / "feebly weak" (Chart 98 :5760-5762), two = sorrow, three =
+    # "most baneful" (Chart 95). No printed chart condemns on a single PK contact alone.
+    RuleRecord(
+        id="H5.C.40", house=5, signification="children", group="combination", kind="evaluable",
+        condition=_PutraKarakaDoublyAfflicted(),
+        fortified=None,
+        afflicted="the PutraKaraka Jupiter carries the combined influences of two or more "
+                  "first-rate malefics → sorrow on account of the house of children",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5791)),
 )

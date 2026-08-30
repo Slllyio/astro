@@ -3188,3 +3188,47 @@ errors. Zero regressions.
   death rows exist to counter-test a decisive form).
 - Pakshi/Chatushpada cells retained as SECONDARY data; no verdict rule may consume them
   without fresh review.
+
+
+## WS1 pass 4 (2026-08-30) — the 22nd-drekkana convention resolved; the Gandhi pair; 284/397
+
+**THE 22ND-DREKKANA COUNTING CONVENTION: INCLUSIVE (+21), settled by derivation** (equivalently:
+the same drekkana index in the 8th sign). Reviewer-VALIDATED after independently hand-recasting
+the ascendants. Anchors: Lincoln (cast Aqu-2 -> Virgo-2, exactly HTJAH-II:6752-6753), HTJAH-II
+Chart 69 (fresh-cast from its printed birth data, Leo-3 -> Pisces-3, exactly :6547), and Raman's
+own structural identity "rises in the 8th Bhava, i.e., the 22nd drekkana" (:3687) — which ONLY
+inclusive preserves for every lagna index. The Aquarius-27deg textbook example (+22, landing in
+the NINTH sign against Raman's own gloss two sentences earlier) is the recorded off-by-one slip.
+**Marie Antoinette reclassified ANOMALOUS**: the reviewer's recomputation supports her PRINTED
+74deg01 lagna, from which no convention yields Raman's "first of Capricorn" — possibly the JP
+first-of-8th shortcut; the derivation does not lean on her. JP's gloss corroborates 8th-house
+PLACEMENT only (its literal "first" is refuted by both worked charts).
+
+**Shipped on it** (all reviewer-approved): H8.C.21 EVALUABLE (the conjunctive suicide dictum
+HTJAH-II:3684-3688, verbatim two legs; 26% fire rate ruled DOCTRINAL — "rates never justify a
+change" — contained by corroboration tier, zero scored movement); H8.D.5 (the senior 22nd-class
+rule; four-class union KEPT — Chart 69's Sarpa 22nd reads "the end was violent" with NO
+captivity, refuting a triad/Ayudha prose split); D.4's re-review CLOSED (stands separate and
+ungated — Raman stacks freestanding planet-in-cell testimonies and never declines one because
+the 22nd is unnamed; its true evidence base honestly narrowed to ONE verbatim Ayushkaraka
+instance, with Charts 66/67 re-attributed to the cell label).
+
+**THE GANDHI PAIR** (chart_41 death favourable -> afflicted, the last NH batch-2 backlog miss
+of its kind): H8.C.2 GUARDED — a benefic in the 8th protects only when free of Mars/Saturn
+drishti; Gandhi's chart is the printed refutation of the bare form ("Jupiter is in the 8th
+aspected powerfully by Mars — a maraka ... a violent end", NH:9184-9191); "beneficially
+DISPOSED" (HTJAH-II:3880-3882) supports the holistic reading. Reviewer VALIDATED. H8.D.6 (the
+vitiated configuration -> violent end) was DOCTRINE-CONTESTED and amended **MARS-REQUIRED**:
+**Sankaracharya NH:2077-2087 is the pinned printed counter-instance** for a Saturn-alone arm
+(his Jupiter-in-8th under Saturn's lone 3rd drishti reads "sublimation of the sex energy and a
+spotless character", death analysis pure span) and Raman's own cause table reserves violence
+for Mars (:3886-3891, "Mars by weapons ... Saturn through starvation"). Saturn alone WITHHOLDS
+protection (C.2 guard) but ASSERTS nothing — the three-state design: protected -> C.2 benefic;
+Mars-vitiated -> D.6 malefic; Saturn-only -> silence. D.6 stays confirm-capable (tier demotion
+would undo the fix; his other manner testimony is corroboration-tier drekkana). Residual
+out-of-pool exposure recorded: a lone Mars-aspected benefic-in-8th confirming by itself;
+re-open on any printed chart with that configuration read as natural death.
+
+Movement this pass: +1 exact (Gandhi), real errors 47 -> 46. Zero regressions. The Victoria
+condition (no favourable death rows to counter-test) is permanent for this signification and
+stands recorded on every death-manner rule.

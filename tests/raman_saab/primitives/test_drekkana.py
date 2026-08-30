@@ -81,3 +81,39 @@ class TestMidpointSentinel:
     def test_absent_planet_is_none(self):
         chart = _chart_with("Mars", 164.0)
         assert drekkana.planet_drekkana_classes("Venus", chart) is None
+
+
+class TestTwentySecondDrekkana:
+    """The counting convention, pinned to the two clean worked derivations."""
+
+    def test_lincoln_aquarius_2nd_gives_virgo_2(self):
+        """Lincoln: lagna Aquarius ~17deg -> Aqu-2; the 22nd inclusive is 'the 2nd of Virgo'
+        (HTJAH-II:6752-6753)."""
+        chart = _chart_with("Mars", 40.0)
+        chart = dataclasses.replace(chart, asc_lon=317.43, asc_sign=11)
+        assert drekkana.drekkana_22nd(chart) == (6, 2)
+
+    def test_chart_69_leo_3rd_gives_pisces_3(self):
+        """HTJAH-II Chart 69: fresh-cast lagna Leo 22.7deg -> Leo-3; the 22nd is 'the 3rd
+        decanate of Pisces and is a Sarpa' (HTJAH-II:6547)."""
+        chart = _chart_with("Mars", 40.0)
+        chart = dataclasses.replace(chart, asc_lon=142.67, asc_sign=5)
+        assert drekkana.drekkana_22nd(chart) == (12, 3)
+        assert "sarpa" in drekkana.drekkana_22nd_classes(chart)
+
+    def test_exclusive_counting_would_get_both_wrong(self):
+        """The refuted convention: +22 gives Virgo-3 for Lincoln and Aries-1 for Chart 69 —
+        neither matches Raman's print. This test documents WHY inclusive was chosen."""
+        # inclusive identity: same drekkana index, 8th sign
+        chart = _chart_with("Mars", 40.0)
+        chart = dataclasses.replace(chart, asc_lon=317.43, asc_sign=11)
+        sign, idx = drekkana.drekkana_22nd(chart)
+        assert sign == ((11 - 1 + 7) % 12) + 1 and idx == 2
+
+    def test_sign_only_lagna_yields_none(self):
+        """Track-B records with lagna_sign only materialize the asc at exactly 5.0 deg —
+        the sentinel; no 22nd-drekkana knowledge may be manufactured from it."""
+        chart = _chart_with("Mars", 40.0)
+        chart = dataclasses.replace(chart, asc_lon=125.0, asc_sign=5)
+        assert drekkana.drekkana_22nd(chart) is None
+        assert drekkana.drekkana_22nd_classes(chart) is None

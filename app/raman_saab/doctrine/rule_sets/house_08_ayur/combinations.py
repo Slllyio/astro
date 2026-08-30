@@ -87,6 +87,75 @@ class _AyushkarakaSaturnInDrekkanaClass(C.Condition):
         return bool(got) and bool(got & self.classes)
 
 
+class _UnafflictedBeneficInEighth(C.Condition):
+    """A natural benefic occupies the 8th AND is free of Mars/Saturn drishti — the guarded
+    H8.C.2 (the Gandhi refutation: a vitiated protector does not protect). Mars/Saturn are
+    the aspecters Raman names ("aspected powerfully by Mars"; "martian and saturnine
+    influences", NH:9186-9191); the narrow set keeps the guard conservative."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        for name in ("Jupiter", "Venus", "Mercury", "Moon"):
+            p = chart.planets.get(name)
+            if p is None or p.rasi_house != 8:
+                continue
+            if not any(drishti.aspects_planet(m, name, chart) for m in ("Mars", "Saturn")):
+                return True
+        return False
+
+
+class _VitiatedBeneficInEighth(C.Condition):
+    """A natural benefic occupies the 8th UNDER MARS drishti — the defeated-protection
+    configuration itself (H8.D.6). MARS-REQUIRED by reviewer amendment (2026-08-30,
+    DOCTRINE-CONTESTED -> amended): Raman's cause table assigns violence to Mars
+    specifically ("Mars by weapons ... Saturn through starvation", HTJAH-II:3886-3891),
+    Gandhi's operative aspecter is Mars ("aspected powerfully by Mars — a maraka"), and
+    Sankaracharya (NH:2077-2087) is the PINNED PRINTED COUNTER-INSTANCE for a Saturn-only
+    arm: his Jupiter-in-8th under Saturn's lone 3rd drishti reads "sublimation of the sex
+    energy and a spotless character" with a pure-span death analysis — no violence. Saturn
+    alone withholds C.2's protection (the guard above) but asserts nothing violent."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        for name in ("Jupiter", "Venus", "Mercury", "Moon"):
+            p = chart.planets.get(name)
+            if p is None or p.rasi_house != 8:
+                continue
+            if drishti.aspects_planet("Mars", name, chart):
+                return True
+        return False
+
+
+class _TwentySecondDrekkanaInClass(C.Condition):
+    """The 22nd drekkana (inclusive count; primitives/drekkana.py) carries one of `classes`.
+    None-safe: silent when the lagna degree is unknown (asc sentinel)."""
+    def __init__(self, classes: frozenset[str]) -> None:
+        self.classes = classes
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        got = _drk.drekkana_22nd_classes(ctx.chart)
+        return bool(got) and bool(got & self.classes)
+
+
+class _MaleficInfluencesFifthOrNinthFromMoon(C.Condition):
+    """A natural malefic occupies or casts whole-sign drishti on the 5th OR 9th SIGN from
+    the Moon — the Moon-side leg of the HTJAH-II:3684-3687 dictum ("When the 5th or the 9th
+    sign from the Moon is aspected or occupied by a malefic planet")."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return False
+        for off in (4, 8):                          # 5th and 9th signs from the Moon
+            tgt_sign = ((moon.sign - 1 + off) % 12) + 1
+            tgt_house = ((tgt_sign - chart.asc_sign) % 12) + 1
+            for name in ("Sun", "Mars", "Saturn", "Rahu", "Ketu"):
+                p = chart.planets.get(name)
+                if p is None:
+                    continue
+                if p.sign == tgt_sign or drishti.aspects_house(name, tgt_house, chart):
+                    return True
+        return False
+
+
 class _LagnaInSign(C.Condition):
     """The Ascendant rashi IS `sign` (1..12)."""
     def __init__(self, sign: int) -> None:
@@ -223,10 +292,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified=None,
         afflicted="malefics in the 8th → unnatural death (suicide, murder or accident)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3084)),
+    # C.2 — GUARDED 2026-08-30 (the Gandhi refutation): the bare form "benefic in the 8th ->
+    # natural death" is refuted by a printed worked chart — Gandhi's Jupiter occupies the 8th
+    # and Raman rules a VIOLENT end precisely because the protector is vitiated: "Jupiter is
+    # in the 8th aspected powerfully by Mars — a maraka ... Gandhi, an apostle of
+    # non-violence, had a violent end" (NH:9186-9191). The natural-death protection therefore
+    # requires the occupying benefic to be FREE of a maraka-malefic's drishti; a protected
+    # benefic keeps the HTJAH-II:3085 reading, a vitiated one does not protect (its
+    # configuration instead fires the malefic H8.D.6 below). Same blemishless idiom as the
+    # H7 blemishless-Venus floor.
     RuleRecord(
         id="H8.C.2", house=8, signification="death", group="combination", kind="evaluable",
-        condition=C.CountInHouse(8, 1, "benefic"),
-        fortified="benefic influence on the 8th → natural death (disease or old age)",
+        condition=_UnafflictedBeneficInEighth(),
+        fortified="a benefic free of maraka-malefic aspect in the 8th → natural death "
+                  "(disease or old age)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 3085)),
     RuleRecord(
@@ -495,14 +574,21 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="Moon in Virgo hemmed between malefics → anaemia",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3726)),
 
-    # ===== Suicide by hanging / poison (22nd drekkana + Navamsa — descriptive) =====
+    # ===== Suicide by hanging / poison (22nd drekkana + Navamsa) =====
+    # EVALUABLE 2026-08-30 — the stale TODO fell when the named-drekkana primitive shipped
+    # and the 22nd-drekkana counting convention was RESOLVED by derivation (inclusive +21;
+    # see primitives/drekkana.py module docstring — Lincoln and HTJAH-II Chart 69 both derive
+    # it exactly; the abstract Aquarius-27deg example is the outvoted printing slip). The
+    # dictum is CONJUNCTIVE by Raman's own sentence (HTJAH-II:3684-3687): the Moon-side
+    # malefic leg AND the named 22nd. Silent when the lagna degree is unknown (asc sentinel).
+    # Corroboration-tier per the drekkana amendment (in _DREKKANA_MANNER_RULE_IDS).
     RuleRecord(
-        id="H8.C.21", house=8, signification="death", group="combination", kind="descriptive",
-        condition=None,
+        id="H8.C.21", house=8, signification="death", group="combination", kind="evaluable",
+        condition=C.And(_MaleficInfluencesFifthOrNinthFromMoon(),
+                        _TwentySecondDrekkanaInClass(_drk.VIOLENT_22ND_CLASSES)),
         fortified=None,
         afflicted="5th/9th from Moon afflicted by a malefic AND a Sarpa/Nigada/Pasa/Ayudha "
-                  "drekkana rises in the 8th Bhava (the 22nd drekkana) → suicide by hanging. "
-                  "TODO(predicate: 22nd-drekkana named-decanate)",
+                  "drekkana rises in the 8th Bhava (the 22nd drekkana) → suicide by hanging",
         frame="LAGNA", varga="D3", polarity="malefic", source=Citation("HTJAH-II", 3684)),
     RuleRecord(
         id="H8.C.22", house=8, signification="death", group="combination", kind="descriptive",
@@ -603,9 +689,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
 
     # ── DREKKANA death-manner rules (2026-08-30) — the named-drekkana primitive unblocked
     # the stale H8.C.21 territory. Table + per-cell evidence trail: primitives/drekkana.py
-    # and DOCTRINE_BACKLOG "WS1 pass 3". Both rules use PLANET-occupies-drekkana only (the
-    # 22nd-drekkana counting convention is unresolved and deliberately unshipped). Both are
-    # silent on charts without printed degrees (the midpoint sentinel returns None).
+    # and DOCTRINE_BACKLOG "WS1 pass 3". D.3/D.4 use PLANET-occupies-drekkana; the
+    # 22nd-drekkana counting convention was RESOLVED by derivation the same day (inclusive
+    # +21 — see the primitive's module docstring) and D.5/C.21 ship on it. All are silent
+    # on charts without printed degrees (midpoint/asc sentinels return None).
 
     # D.3 — the 8th LORD in an Ayudha (weapon) drekkana -> the manner of death is violent /
     # by instrument. Godse verbatim (NH:14735 with Saturn 9deg04 Aries printed at :14641):
@@ -637,14 +724,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # end by being guillotined" (+ "death occurred in captivity", HTJAH-II:6698). The triad
     # is applied JOINTLY in Raman's own doctrine sentence (HTJAH-II:6674-6676 "either Nigala,
     # Sarpa or Pasa ... death is brought about" in captivity), which is why the Scorpio-2
-    # Pasa-vs-Nigada label conflict is rule-neutral here. Charts 66/67 corroborate
-    # (HTJAH-II:6357-6358, 6416-6418). JUNIOR PARTNER (reviewer, MEDIUM): in both tellings
-    # of Marie Antoinette the Ayushkaraka clause is the "also" — the primary clause is the
-    # 22nd drekkana (unshipped, counting convention unresolved) and the classical dictum
-    # (HTJAH-II:6701-6705) is conjunctive with a malefic on the 5th/9th from the Moon. When
-    # the 22nd-drekkana convention is resolved, RE-REVIEW this rule as the junior partner of
-    # that pair. CORROBORATION-TIER like D.3 (never the sole confirming malefic); note the
-    # dual-tagged Scorpio-2 cell alone carries ~43% of D.4's fires.
+    # Pasa-vs-Nigada label conflict is rule-neutral here. Evidence-base honesty (reviewer,
+    # 2026-08-30): D.4's verbatim Ayushkaraka instance is ONE worked chart (Marie, in both
+    # books) — Charts 66/67 corroborate the Scorpio-2 Nigada CELL LABEL and the triad's
+    # joint treatment, NOT Ayushkaraka usage (66 is a 22nd/8th-house reading, 67 an 8th-lord
+    # one). RE-REVIEW CLOSED same day, D.5 now shipped as the senior clause: D.4 STANDS
+    # SEPARATE AND UNGATED per the review — Raman stacks freestanding planet-in-cell
+    # testimonies (8th lord, Ayushkaraka, even the Antara lord Venus at NH:5949) and never
+    # declines one because the 22nd is unnamed; an AND-gate would also silence D.4 exactly
+    # where Saturn's degree is printed but the lagna's is not. Junior status is expressed
+    # by CORROBORATION-TIER (never the sole confirming malefic); the dual-tagged Scorpio-2
+    # cell alone carries ~43% of D.4's fires.
     RuleRecord(
         id="H8.D.4", house=8, signification="death", group="combination", kind="evaluable",
         condition=_AyushkarakaSaturnInDrekkanaClass(_drk.CAPTIVITY_TRIAD),
@@ -652,4 +742,45 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the Ayushkaraka Saturn occupies a Sarpa/Nigala/Pasa drekkana → death in "
                   "captivity or by the noose",
         frame="KARAKA", varga="D1", polarity="malefic", source=Citation("NH", 5944)),
+
+    # D.5 — the 22ND DREKKANA itself in a named violent/captive class -> manner testimony.
+    # The SENIOR clause of the passages D.4 extracts from (Raman's "also" syntax): "Death
+    # takes place in captivity when the 22nd Drekkana happens to be either Nigala, Sarpa or
+    # Pasa" (HTJAH-II:6674-6676, general voice, stated as the rule) — worked on Marie
+    # Antoinette (22nd = Cap-1 Nigala, NH:5758, guillotined in captivity), Lincoln (22nd =
+    # Virgo-2 Ayudha, HTJAH-II:6752-6753, assassinated), Chart 69 (22nd = Pisces-3 Sarpa,
+    # HTJAH-II:6547, "the end was violent"). Shippable only NOW because the counting
+    # convention was resolved by derivation (primitives/drekkana.py). Ayudha included: the
+    # violent-end four-class form is Raman's own suicide dictum (HTJAH-II:3684-3687) and
+    # Lincoln's worked Ayudha reading. Corroboration-tier like D.3/D.4 (never the sole
+    # confirming malefic); silent when the lagna degree is unknown.
+    RuleRecord(
+        id="H8.D.5", house=8, signification="death", group="combination", kind="evaluable",
+        condition=_TwentySecondDrekkanaInClass(_drk.VIOLENT_22ND_CLASSES),
+        fortified=None,
+        afflicted="the 22nd drekkana is a Sarpa/Nigala/Pasa/Ayudha drekkana → the manner of "
+                  "death is violent or in captivity",
+        frame="LAGNA", varga="D3", polarity="malefic", source=Citation("HTJAH-II", 6674)),
+
+    # D.6 — a benefic occupying the 8th UNDER MARS drishti: the protector is vitiated and
+    # the configuration itself turns malefic. Gandhi verbatim (NH:9184-9191): "Jupiter is
+    # in the 8th aspected powerfully by Mars — a maraka ... Gandhi, an apostle of
+    # non-violence, had a violent end" — instantiating Raman's own general cause rule
+    # ("Planets occupying or aspecting the 8th house indicate the cause of death ... Mars
+    # by weapons", HTJAH-II:3886-3888). MARS-REQUIRED per the review (see the leaf's
+    # docstring: Sankaracharya NH:2077-2087 is the pinned counter-instance for Saturn-only;
+    # the cause table reserves violence for Mars). Confirm-capable (NOT drekkana-tier) —
+    # tier demotion would undo the Gandhi flip since his remaining manner testimony is
+    # corroboration-tier drekkana. Residual out-of-pool exposure recorded: a lone
+    # Mars-aspected benefic-in-8th confirming by itself; re-open on any printed chart with
+    # that configuration read as a natural death. Note the coupled swing with the C.2
+    # guard: one configuration never feeds both polarities (protected -> C.2 benefic;
+    # Mars-vitiated -> D.6 malefic; Saturn-only-vitiated -> NEITHER, silence).
+    RuleRecord(
+        id="H8.D.6", house=8, signification="death", group="combination", kind="evaluable",
+        condition=_VitiatedBeneficInEighth(),
+        fortified=None,
+        afflicted="a benefic in the 8th aspected by Mars → the natural-death protection "
+                  "fails; the end is violent",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 9186)),
 )

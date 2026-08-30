@@ -29,10 +29,28 @@ RECORDED CONFLICTS (encoded per the resolution, never averaged):
 * Capricorn-1: a garbled JP line reads "Pakshi"; Raman x3 + PD + HR + BJ say fetters ->
   Nigala stands.
 
-DELIBERATELY NOT SHIPPED: the 22nd-drekkana (rising-drekkana) lookup — Raman's own two
-worked examples imply different counting conventions (HTJAH-I:10164-10166 exclusive vs
-Marie Antoinette's derivation), so encoding it would guess doctrine. Planet-occupies-drekkana
-needs no convention and is what the shipped rules use.
+THE 22ND-DREKKANA COUNTING CONVENTION — RESOLVED 2026-08-30 by derivation, not assumption:
+INCLUSIVE (+21 steps from the rising drekkana; equivalently, the SAME drekkana index in the
+8th sign from the lagna-drekkana's sign). Three worked derivations agree:
+  * Lincoln (HTJAH-II Chart 73): cast lagna Aquarius 17.4deg -> Aqu-2; +21 -> Virgo-2 —
+    exactly "the 2nd of Virgo" (HTJAH-II:6752-6753); exclusive gives Virgo-3.
+  * HTJAH-II Chart 69: fresh-cast from its printed birth data (10-11-1897 1:15am LMT,
+    45N 93W) -> Leo 22.7deg -> Leo-3; +21 -> Pisces-3 — exactly "the 3rd decanate of
+    Pisces" (HTJAH-II:6547); exclusive gives Aries-1.
+  * Marie Antoinette is ANOMALOUS, not a third fit (reviewer recomputation, 2026-08-30):
+    her hand-recast lagna is consistent with the PRINTED 74deg01 (Gemini 14 -> Gem-2), from
+    which inclusive gives Cap-2 and exclusive Cap-3 — Raman's printed "first of Capricorn"
+    (NH:5758/5945) matches NEITHER; he may have used the JP translator's first-of-8th-house
+    shortcut there. Recorded as indeterminate; the derivation does not lean on her.
+Jataka Parijata's gloss (jataka_parijata ch045:453-457) corroborates the 8TH-HOUSE PLACEMENT
+of the 22nd only — its literal "FIRST drekkana in the 8th house" wording is refuted for the
+index by Lincoln's Virgo-2 and Chart 69's Pisces-3. Raman's own in-passage identity is the
+structural anchor: "drekkana rises in the 8th Bhava, i.e., the 22nd drekkana"
+(HTJAH-II:3687), which only inclusive counting preserves for every lagna index. The ONE
+contrary datum — the abstract Aquarius-27deg textbook example (HTJAH-I:10164-10166, "the
+22nd from this is the 1st drekkana of Libra", +22) — contradicts Raman's own gloss two
+sentences earlier by landing in the NINTH sign, is exactly one cell past the inclusive
+Virgo-3, and is recorded as the classic off-by-one printing slip.
 
 Pakshi and Chatushpada cells are retained for completeness but appear in NO death-manner
 worked chart; they are SECONDARY data (several are OCR-PROBABLE) and no verdict rule may
@@ -91,6 +109,39 @@ _MIDPOINT_DEG: Final[float] = 15.0
 def drekkana_index(lon: float) -> int:
     """1, 2 or 3 — which drekkana of its sign this longitude occupies (10-degree bands)."""
     return int((lon % 30.0) // 10.0) + 1
+
+
+#: The four classes of the suicide/violent-end dictum (HTJAH-II:3684-3687: "a Sarpa
+#: (serpent), Nigada (fetters), Pasa (noose) or Ayudha (weapon), drekkana rises in the
+#: 8th Bhava, i.e., the 22nd drekkana").
+VIOLENT_22ND_CLASSES: Final[frozenset[str]] = frozenset({"sarpa", "nigala", "pasa", "ayudha"})
+
+#: Track-B lagna materialization sentinel: records carrying only `lagna_sign` build the
+#: ascendant at exactly 5.0 deg into the sign (test_goldens.build_chart). Like the planet
+#: midpoint, it is an absence of degree knowledge; a genuine 5d00'00" lagna is forgone.
+_ASC_SENTINEL_DEG: Final[float] = 5.0
+
+
+def drekkana_22nd(chart: RamanChart) -> Optional[tuple[int, int]]:
+    """The (sign, index) cell of the 22nd drekkana, or None when the lagna degree is unknown.
+
+    INCLUSIVE counting (see the module docstring's derivation): 21 drekkanas past the rising
+    drekkana — equivalently the same drekkana index in the 8th sign from the lagna. None when
+    the ascendant longitude sits on the sign-only materialization sentinel (5.0 deg)."""
+    if (chart.asc_lon % 30.0) == _ASC_SENTINEL_DEG:
+        return None
+    k = drekkana_index(chart.asc_lon)
+    n = (chart.asc_sign - 1) * 3 + k + 21          # inclusive: rising drekkana is the 1st
+    n = ((n - 1) % 36) + 1
+    return (n - 1) // 3 + 1, (n - 1) % 3 + 1
+
+
+def drekkana_22nd_classes(chart: RamanChart) -> Optional[frozenset[str]]:
+    """Named classes of the 22nd drekkana; None when unknowable, empty when unnamed."""
+    cell = drekkana_22nd(chart)
+    if cell is None:
+        return None
+    return DREKKANA_CLASSES.get(cell, frozenset())
 
 
 def planet_drekkana_classes(planet: str, chart: RamanChart) -> Optional[frozenset[str]]:

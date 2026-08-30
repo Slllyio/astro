@@ -139,7 +139,8 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
 #: Drekkana death-MANNER rules — corroboration-tier by reviewer amendment (2026-08-30):
 #: they sharpen an affliction established by non-drekkana testimony and may never be the
 #: sole confirming malefic in clause 1.5 (see AFFLICTION_OWN_EVIDENCE in _build_frame_ledger).
-_DREKKANA_MANNER_RULE_IDS: Final[frozenset[str]] = frozenset({"H8.D.3", "H8.D.4"})
+_DREKKANA_MANNER_RULE_IDS: Final[frozenset[str]] = frozenset(
+    {"H8.D.3", "H8.D.4", "H8.D.5", "H8.C.21"})
 
 # CATASTROPHIC sub-significations — bodily/liberty ruin (imprisonment, blindness, grave
 # accident) that Raman pronounces ONLY on a MULTIPLY-afflicted configuration, never on a

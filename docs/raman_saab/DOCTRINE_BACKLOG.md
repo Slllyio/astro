@@ -3409,3 +3409,40 @@ the condemnation is the synthesis. The one candidate single form ("the mutual as
 debilitated planets ... suggest poverty") remains available for a future pass IF a second
 printed instance surfaces; encoding it from one synthesis-verdict chart would claim his
 mechanism where he stated a gestalt.
+
+
+## H10.C.64 + the abstention class CLOSED (2026-08-30); 287/397 exact, 363 within-1, 34 inversions
+
+Shaw's career — the last engine abstention — resolved by H10.C.64 (Mercury associated with a
+yogakaraka 10th lord -> gains and public favour through writing, NH:7296-7300 verbatim).
+Reviewer VALIDATED/SHIP; the generalization is licensed by Raman's own "a yogakaraka for this
+horoscope" phrasing plus Chengiz Khan (NH:3319-3325) as a second printed firing instance.
+**Recorded caveat (reviewer's): this gain is self-fulfilling by construction — the rule was
+extracted from the chart it resolves, so it proves COVERAGE, not correctness.** The reviewer
+also had to triangulate Shaw's Taurus lagna from four prose legs because his printed Birth
+Details block is OCR-lost in the vendored NH — a data-quality note for any future work on
+that chart.
+
+**THE ABSTENTION CLASS IS NOW FULLY CLOSED**: every row where the engine said nothing and
+Raman concluded carries its cited mechanism. Seven abstentions at the start of the day; zero
+now.
+
+## H1 LAGNA-AFFLICTION COUNT: REFUTED BY ENUMERATION (2026-08-30) — do not re-derive
+
+The Nizam (NH.chart_55, "the affliction of Lagna lord by three malefics") and Farouk
+(NH.chart_75, "the focussing of the influences of the three first-rate malefics on Lagna")
+share an idiom with the SHIPPED contact-affliction twins (H4.C.48 / H5.C.40), so both count
+forms were measured over all 34 confirmed H1 self/body/health rows:
+- **A — >= 3 first-rate malefics contacting the LAGNA LORD**: fires on chart_33 (afflicted),
+  chart_55 (the target), chart_18 (mixed) — and on **NH.chart_30, which Raman reads
+  FAVOURABLE**. A printed counter-instance.
+- **B — >= 3 first-rate malefics influencing the LAGNA**: fires on chart_75 (the target) —
+  and on **NH.chart_57 (Sivananda, favourable body) and NH.chart_69 (favourable self)**. Two
+  printed counter-instances, one of them a chart whose Lagna carries FOUR such influences
+  and which Raman still reads as conferring "a sturdy physical frame" (NH:11962).
+Neither count separates at any bar; raising the bar to 4 would fire on Sivananda alone among
+favourables and on neither target. **The contact-count idiom that works for the karakas
+(PutraKaraka, Matru-Karaka) does NOT transfer to the Lagna/Lagna-lord** — consistent with
+Raman's H1 practice of reading the self holistically (constitution, dignity, yogas) rather
+than by malefic tally. The five H1 rows stay documented limits; re-open only with a
+non-count discriminant read from the charts' own prose.

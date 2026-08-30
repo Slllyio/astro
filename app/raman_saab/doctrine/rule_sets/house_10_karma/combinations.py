@@ -70,6 +70,19 @@ class _SaturnInTenthAfflictedByMarsOrRahu(C.Condition):
         return False
 
 
+class _MercuryConjunctYogakarakaTenthLord(C.Condition):
+    """H10.C.64 (NH:7296-7300): Mercury shares a whole-sign house with the 10th lord, and
+    that lord is the chart's yogakaraka. Identity excluded (Mercury lording the 10th)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        l10 = _lord_of(10, chart)
+        if l10 == "Mercury" or l10 not in chart.planets or "Mercury" not in chart.planets:
+            return False
+        if chart.planets["Mercury"].sign != chart.planets[l10].sign:
+            return False
+        return C.IsYogaKaraka(l10).evaluate(ctx)
+
+
 class _BeneficsConvergeOnTenth(C.Condition):
     """H10.C.63: at least `n` natural benefics (Jupiter/Venus/Mercury/Moon) cast whole-sign
     drishti on the 10th (occupants excluded — Raman's Nehru sentence says 'aspecting'). The
@@ -423,4 +436,31 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "Karma is the centre of beneficial convergence; eminence in career",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("NH", 12473)),
+
+    # C.64 — Mercury CONJUNCT the 10th lord when that lord is the chart's YOGAKARAKA ->
+    # gains and public favour through writing/intellect. Shaw verbatim (NH:7296-7300):
+    # "Mercury is in the house of wealth elevated by Vargottama and his association with
+    # the 9th and 10th lord Saturn — a yogakaraka for this horoscope — is suggestive of his
+    # financial gains and public favour through writing; Mercury also gave him the power of
+    # searching analysis." The encoded legs are the association and the yogakaraka
+    # lordship (the load-bearing pair in his sentence); Mercury's own Vargottama is left in
+    # the prose, not the predicate (single-chart texture). Fires on Shaw alone across the
+    # confirmed career/status rows — his career row was the last unresolved abstention.
+    # SECOND PRINTED FIRING INSTANCE (reviewer sweep, recorded so it is not re-derived):
+    # Chengiz Khan NH:3319-3325 (Cancer lagna, Mercury same-sign with yogakaraka 10th-lord
+    # Mars) — read favourably ("a most powerful Rajayoga indicating power, wealth,
+    # conquests"), but entangled in his shadgraha cluster, so corroboration of DIRECTION
+    # only. Clean evidentiary base is n=1 (Shaw). HONEST CAVEAT, the reviewer's own words:
+    # the ratchet gain is self-fulfilling by construction — the rule was extracted from the
+    # very chart it resolves, so it proves COVERAGE, not correctness (playbook rule 4). No
+    # printed chart with this configuration and an afflicted career exists in NH; Shaw's
+    # Taurus lagna was verified by fourfold prose triangulation because his printed Birth
+    # Details block is OCR-lost in the vendored NH.
+    RuleRecord(
+        id="H10.C.64", house=10, signification="career", group="combination", kind="evaluable",
+        condition=_MercuryConjunctYogakarakaTenthLord(),
+        fortified="Mercury associated with a yogakaraka 10th lord → financial gains and "
+                  "public favour through writing and intellect",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("NH", 7296)),
 )

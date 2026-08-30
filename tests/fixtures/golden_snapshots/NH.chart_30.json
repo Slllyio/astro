@@ -177,11 +177,13 @@
       "HTJAH-II:7554",
       "HTJAH-II:7588",
       "HTJAH-II:8648",
-      "HTJAH-II:9416"
+      "HTJAH-II:9416",
+      "NH:5311"
     ],
     "fired_rule_ids": [
       "H9.A.15",
       "H9.A.20",
+      "H9.A.22",
       "H9.B.21",
       "H9.B.23",
       "H9.B.24",

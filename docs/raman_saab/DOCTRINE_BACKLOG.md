@@ -3232,3 +3232,61 @@ re-open on any printed chart with that configuration read as natural death.
 Movement this pass: +1 exact (Gandhi), real errors 47 -> 46. Zero regressions. The Victoria
 condition (no favourable death rows to counter-test) is permanent for this signification and
 stands recorded on every death-manner rule.
+
+
+## DESIGN TICKET (2026-08-30, accumulating) — cross-signification pooling + the sparse-chart navamsa lift
+
+The same verdict-routing shape has now been diagnosed on THREE independent error clusters, each
+time with the cited mechanism FIRING and the verdict unmoved:
+
+1. **Tennyson/Bose H2 speech** (engine afflicted, Raman favourable): wealth-tagged rules pool
+   into the speech frame; the driver measured as weak-pillar + navamsa-weakens routing (the
+   sig-precision probe changed nothing anywhere).
+2. **Hyder Ali chart_19 / h9_02 H9 father** (engine favourable, Raman afflicted): the father
+   frame holds 6 malefics vs 2 pooled FORTUNE benefics (zero father-own benefics), sparse
+   pillars route to mixed, and NAV-CONFIRMS lifts to favourable. The reverse polarity of #1.
+3. **Marie Antoinette H8 death** (fixed): a pooled longevity benefic vetoed the manner
+   confirmation — resolved narrowly (span/manner separation) because the H8-OPENED decision
+   documents that axis; measurement showed both wider forms break H6/H12/Lincoln/Hitler.
+
+The pattern: rule_tags pooling and the V2 navamsa machinery are LOAD-BEARING in some frames
+and inverting in others, and every narrow fix measured so far whipsaws when widened. Per the
+north-star playbook this is design work with a PRE-MEASURED DISCRIMINANT, not tuning: any
+future pass must (a) enumerate, over ALL confirmed rows, where pooled cross-sig evidence
+decides the verdict and in which direction; (b) enumerate where the navamsa lift/drop decides
+a sparse-chart contradiction; (c) propose per-axis separations only where a DOCUMENTED
+doctrinal axis exists (the span/manner precedent), with the three-form measurement discipline
+(sig-precise / asymmetric / status-quo) applied to each. Until then: the affected rows stay
+documented limits, and their cited mechanisms stay recorded as corroboration.
+
+
+## WS1 pass 5 (2026-08-30) — H9 father mechanisms + the Princess Beatrice basis correction
+
+**h9_02's BASIS CONVERTED fresh-cast -> stated_positions** (reviewer SHIP, HIGH — every position
+multiply corroborated in the prose). The modern ephemeris puts Mars at Aries 18.0, a FULL SIGN
+from Raman's printed chart (his prose thrice: Mars in the 10th with Venus, hemming the 9th
+"between malefics Rahu and Mars"). Raman's afflicted verdict is CONSTITUTED by the Taurus Mars;
+scoring the modern sky against it measures ephemeris divergence, not fidelity — the conversion
+follows the prime directive ("pin accuracy on his own published worked nativities"). The
+nativity is PRINCESS BEATRICE (b. 14-4-1857 London, Queen Victoria's youngest; her father
+Prince Albert historically died Dec 1861, Raman prints Feb 1861 — the print governs this axis).
+Caveat recorded: the sign-midpoint Moon lands Purvashadha where Raman states Moola.
+
+**H9.A.21 SHIPPED** (reviewer SHIP, HIGH): the Pitrukaraka Sun in the 9th CONJUNCT THE 8TH
+LORD with the 9th hemmed by papakartari -> father's longevity curtailed. Chart 86 verbatim
+(HTJAH-II:7965-7967 + :7984-7988 "together with"); ALL THREE legs proven load-bearing by
+enumeration (two-leg fires the mixed chart_38; sans-8th-lord fires the favourable h9_10).
+The June-deferred mechanism, closed.
+
+**H9.A.22 SHIPPED** (SHIP-WITH-AMENDMENTS, applied): Rahu in the 9th -> early death of the
+father, Hyder Ali verbatim — re-anchored to NH:5311-5312 (the anchor guard caught the golden's
+line number landing blank in the unsplit source). CONTRARY VOICE recorded in the rule:
+HTJAH-II:7843 reads the same placement favourably for father-FAME; re-open if a
+fortified-father golden with Rahu in the 9th appears.
+
+**Scored movement: NONE — and that is the honest result.** Both target rows (h9_02, chart_19)
+now carry their cited mechanism as fired testimony, but the verdicts are routed by the
+sparse-pillar mixed + navamsa-confirms lift over cross-signification-pooled benefics (chart_19:
+6 malefics vs 2 pooled FORTUNE benefics -> favourable). That routing is the subject of the
+consolidated DESIGN TICKET above — mechanism coverage first, routing design with a
+pre-measured discriminant later. 284/397 holds; zero regressions; suite 5723 green.

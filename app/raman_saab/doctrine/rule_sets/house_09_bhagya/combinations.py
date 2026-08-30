@@ -386,6 +386,30 @@ class _LordInHouseClassFromMoon(C.Condition):
         return (((p.rasi_house - moon.rasi_house) % 12) + 1) in self.from_houses
 
 
+class _SunInNinthWithEighthLordHemmed(C.Condition):
+    """H9.A.21's three legs (Chart 86, HTJAH-II:7945-7975): the Pitrukaraka Sun occupies the
+    9th sign, the 8th lord shares that sign, and the 9th is hemmed by papakartari (a natural
+    malefic in each adjacent sign). All three load-bearing — see the rule's comment."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        sun = chart.planets.get("Sun")
+        if sun is None:
+            return False
+        s9 = _sign_of_house(9, chart)
+        if sun.sign != s9:
+            return False
+        lord8 = _lord_of(8, chart)
+        l8p = chart.planets.get(lord8)
+        if lord8 == "Sun" or l8p is None or l8p.sign != s9:
+            return False
+        prev_s = ((s9 - 2) % 12) + 1
+        next_s = (s9 % 12) + 1
+        malefics = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
+        hem_prev = any(chart.planets[m].sign == prev_s for m in malefics if m in chart.planets)
+        hem_next = any(chart.planets[m].sign == next_s for m in malefics if m in chart.planets)
+        return hem_prev and hem_next
+
+
 class _SunPitrukarakaAfflicted(C.Condition):
     """The Sun (Pitru-karaka) cast into a dusthana {6,8,12} AND hemmed by papakartari (a
     natural malefic in BOTH the 2nd- and 12th-from-Sun), UNCANCELLED by neecha-bhanga ->
@@ -587,6 +611,49 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "papakartari (malefics flanking it), uncancelled by neecha-bhanga -> the "
                   "father's longevity is curtailed; early death of the father",
         frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7916)),
+
+    # A.21 — the h9_02 mechanism, deferred since the Layer-C pass and now encoded: the
+    # Pitrukaraka Sun OCCUPYING the 9th, CONJUNCT THE 8TH LORD, with the 9th hemmed by
+    # papakartari -> the father's longevity is curtailed. Chart 86 verbatim
+    # (HTJAH-II:7945-7975): "The presence of karaka Sun in the 9th house with 8th lord
+    # Jupiter is not conducive to longevity of father" + "the papakartari to the 9th house
+    # (from Rahu and Mars)"; the chapter's general voice backs the karaka leg ("Afflictions
+    # to the Sun or his occupation of malefic houses results in early death of father",
+    # :7921-7922). ALL THREE legs are load-bearing by enumeration: dropping the hemming leg
+    # fires NH.chart_38 (a tiebreak-resolved MIXED row — Sun+Mercury-as-8th-lord in his 9th,
+    # unhemmed); dropping the 8th-lord leg fires the favourable twin h9_10 (Sun in the 9th,
+    # clean). Exaltation is NOT a relief (Chart 86's Sun is exalted; the A.20a lesson).
+    # NOTE the record it fires on: h9_02's basis was converted fresh-cast -> stated the same
+    # day (the modern sky puts Mars a full sign away from Raman's printed chart; the
+    # fidelity axis judges the chart HE judged — note in the golden).
+    RuleRecord(
+        id="H9.A.21", house=9, signification="father", group="combination", kind="evaluable",
+        condition=_SunInNinthWithEighthLordHemmed(),
+        fortified=None,
+        afflicted="the Pitrukaraka Sun in the 9th conjunct the 8th lord, with the 9th hemmed "
+                  "by papakartari → not conducive to the longevity of the father",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7965)),
+
+    # A.22 — Rahu occupying the 9th -> early death of the father. Hyder Ali verbatim
+    # (NH:5311-5312): "The position of Rahu in the 9th indicates early death to his father."
+    # (The golden record's own cite line-number, 3902, follows a different rendering's
+    # numbering; the anchor guard caught the blank line and this rule's citation was
+    # re-anchored to the unsplit source. Reviewer confirmed 5311-5312 verbatim.)
+    # RECORDED CONTRARY VOICE (reviewer, 2026-08-30): HTJAH-II:7843 reads the identical
+    # placement favourably for a DIFFERENT father sub-matter — "If Rahu joins the 9th house
+    # the native's father becomes very famous in foreign lands" (fame, not longevity; the
+    # two are compatible — Hyder Ali's own father was a famed naik killed in battle). No
+    # printed chart grades Rahu-in-9th with a long-lived father, so the bare form ships;
+    # RE-OPEN with HTJAH-II:7843 if a fortified-father golden with Rahu in the 9th appears.
+    # Enumeration over the confirmed H9 rows: fires on Hyder Ali (afflicted) and on
+    # chart_30's 9th (whose father matter is unscored); fires on ZERO favourable-father
+    # goldens. The bare form is Raman's own sentence — no invented guard.
+    RuleRecord(
+        id="H9.A.22", house=9, signification="father", group="combination", kind="evaluable",
+        condition=C.InRashiHouse("Rahu", 9),
+        fortified=None,
+        afflicted="Rahu occupying the 9th → early death of the father is indicated",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 5311)),
 
     # ===== B. Fortune / raja-yoga-ish (HTJAH-II:7460-7484) — sig fortune =====
     RuleRecord(

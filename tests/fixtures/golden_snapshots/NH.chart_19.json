@@ -149,9 +149,9 @@
         "verdict": "insufficient-evidence"
       },
       "poorvapunya": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
@@ -194,32 +194,32 @@
       "H9.L.2",
       "H9.P.Rahu"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "dharma": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "father": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "fortune": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "higher_learning": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "long_journeys": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

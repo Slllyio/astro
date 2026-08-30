@@ -3290,3 +3290,48 @@ sparse-pillar mixed + navamsa-confirms lift over cross-signification-pooled bene
 6 malefics vs 2 pooled FORTUNE benefics -> favourable). That routing is the subject of the
 consolidated DESIGN TICKET above — mechanism coverage first, routing design with a
 pre-measured discriminant later. 284/397 holds; zero regressions; suite 5723 green.
+
+
+## DESIGN TICKET — ENUMERATION COMPLETE (2026-08-30). P1/P3 closed-refuted; P2 pending review + sign-off
+
+The prescribed measurement ran: three probes over all 397 confirmed rows, per-row diffs.
+
+**P1 — full signification-precise bucketing: CLOSED-REFUTED at scale.** 284 -> 252 exact
+(-32), real errors 46 -> 68. 46 rows move AWAY vs 14 toward. The cross-signification pooling
+is globally load-bearing: H12 incarceration/left_eye alone loses 12 rows, H6 loses 7, H8
+death loses Lincoln+Hitler, and the favourable side of H9 father loses 6. Even a
+father-scoped narrowing loses more than it gains (4-ish toward vs 8 away within the father
+sig). Re-open ONLY with a per-matter documented axis (the span/manner precedent) — never as
+a blanket, at any scope. **P3 (both probes): -34 exact, dominated by P1's damage — same
+verdict.**
+
+**P2 — the confirmation varga may not testify FIRST: THE SURVIVOR, pending.** Scope: pillars
+ALL unknown (sparse chart) AND both polarities fired (genuine contradiction) -> the D9 does
+not move the resulting mixed. Measured: 284 -> 280 exact, within-1 351 -> 356, dist>=2
+inversions 46 -> 41 — the exact B1-trade shape the MEASURED TRUTH lock blessed ("a strict
+miss one step out is a contestable boundary call; an inversion is the engine saying the
+opposite of Raman"). Five inversions dissolve (chart_46 education, chart_73 siblings,
+Hyder Ali father, chart_48 dharma, Guru Nanak self); four exact favourables become boundary
+calls (chart_38 + chart_56 wealth, chart_17 father, chart_14 body). Doctrinal axis claimed:
+D9 is the CONFIRMATION varga ("rasi = promise, varga = fruit") — with no measured promise and
+contradicted testimony, D9-first authority inverts its documented role. Engine-blind review
+dispatched (the four cost-rows' own passages are the critical check: if Raman himself credits
+the navamsa on any of them, that cost is real fidelity, not a boundary call). **Ships only
+with USER SIGN-OFF per the B1 precedent (strict down / within-1 up / inversions down).**
+
+
+## P2 SHIPPED, USER-SIGNED (2026-08-30) — the sparse-contradiction nav-neutral rule; 280/397 exact, 356/397 within-1, 41 inversions
+
+The design ticket's survivor is law. When ALL strength pillars are unknown AND both polarities
+fired, the D9 no longer converts the mixed to a pole verdict. Full record in the baseline
+lineage note; the review packet's two amendments were applied before sign-off (the chart_17
+row is the afflicted-side cost, and the doctrinal citation is the verbatim HTJAH-I:979-980 —
+the "rasi = promise, varga = fruit" phrasing was a project gloss, NOT Raman's sentence, and
+is retired from this rationale). The Guru Nanak disclosure stands verbatim in the code
+comment: his dissolved inversion was produced by a D9 proxy reading the OPPOSITE sign of
+Raman's actual navamsa sentence.
+
+Net effect of the WHOLE design-ticket arc (enumeration + P2): real errors 46 -> 41, within-1
+88.4% -> 89.7%, strict 71.5% -> 70.5% (deliberate, user-signed). P1/P3 are closed-refuted
+with per-row receipts (46-away vs 14-toward; the pooling is globally load-bearing). The
+remaining 41-row surface is the per-chart programme's steady queue.

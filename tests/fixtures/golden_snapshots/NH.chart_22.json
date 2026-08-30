@@ -10,7 +10,7 @@
       "H10.L.4",
       "H10.P.Ketu"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -30,7 +30,7 @@
       "profession_learned": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "profession_trade": {
         "degree": "mild",

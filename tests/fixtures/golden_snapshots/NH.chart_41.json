@@ -8,37 +8,37 @@
       "H10.L.11",
       "H10.P.Rahu"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "profession_authority": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "profession_labour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "profession_learned": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "profession_trade": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "status_honour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   },

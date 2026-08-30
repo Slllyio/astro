@@ -477,8 +477,29 @@ def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:
 # ---------------------------------------------------------------------------
 
 def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
-    """D9 only nudges a BORDERLINE 'mixed'; decisive favourable/afflicted never shift."""
+    """D9 only nudges a BORDERLINE 'mixed'; decisive favourable/afflicted never shift.
+
+    SPARSE-CONTRADICTION EXCEPTION (P2, USER-SIGNED 2026-08-30 — the B1-precedent trade,
+    strict 284->280 / within-1 351->356 / inversions 46->41): when ALL strength pillars are
+    unknown (sparse book-chart, no Shadbala) AND both polarities fired (a genuine
+    contradiction), the D9 does NOT move the mixed. Raman's method sentence is "Every
+    combination mentioned should be applied to the Rashi, Bhava and Navamsha charts and
+    then a conclusion drawn" (HTJAH-I:979-980) — the navamsa is co-testimony weighed WITH a
+    rasi reading ("equally important... the pivot", :975-978), never a substitute for one;
+    with no measured rasi strength and contradicted testimony there is nothing for it to
+    confirm or weaken. Engine-blind review verified all four cost rows (Ford/Srinivasan
+    wealth, Aurangzeb father, Chaitanya body) are rasi-decided in Raman's own text — the D9
+    was carrying those verdicts by coincidence — and that Guru Nanak's dissolved inversion
+    was produced by a D9 PROXY (lord's D9 debility) reading the OPPOSITE sign of Raman's
+    actual navamsa sentence ("even in the Navamsa, the Lagna is unafflicted"). Doctrine is
+    silent on this exact sparse situation (Raman always had the rasi chart): a
+    novel-but-consistent extrapolation, recorded as such. Measured charts and sparse
+    non-contradicted matters are untouched (the latter are D9-immune by construction —
+    clause 3 never emits 'mixed')."""
     if base in ("favourable", "afflicted"):
+        return base, False
+    if (L.lord_strong is None and L.karaka_strong is None
+            and L.fired_malefic and L.fired_benefic and base == "mixed"):
         return base, False
     if L.navamsa_status == "confirms" and base == "mixed":
         return "favourable", True

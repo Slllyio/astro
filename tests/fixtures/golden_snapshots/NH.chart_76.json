@@ -12,7 +12,7 @@
       "H10.L.7",
       "H10.P.Jupiter"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "moderate",
@@ -40,9 +40,9 @@
         "verdict": "favourable"
       },
       "status_honour": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   }

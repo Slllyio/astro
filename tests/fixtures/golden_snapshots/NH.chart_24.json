@@ -10,7 +10,7 @@
       "H10.L.9",
       "H10.P.Saturn"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -40,7 +40,7 @@
       "status_honour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },

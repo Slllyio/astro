@@ -16,22 +16,22 @@
       "H1.M.S05",
       "H1.N.66"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "body": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "health": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "self": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

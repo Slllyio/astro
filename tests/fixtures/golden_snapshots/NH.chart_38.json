@@ -65,27 +65,27 @@
       "H2.C.62",
       "H2.L.11"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "speech": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "wealth": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },

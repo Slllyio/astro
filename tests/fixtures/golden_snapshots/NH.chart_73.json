@@ -63,7 +63,7 @@
       "courage": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "ear_throat": {
         "degree": "mild",
@@ -73,12 +73,12 @@
       "short_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "siblings": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },

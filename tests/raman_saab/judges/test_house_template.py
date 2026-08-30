@@ -590,3 +590,28 @@ def test_positional_dignity_only_the_extremes_speak():
     # A dusthana placement on its own must NOT be read as weakness (HTJAH-I:2150).
     neutral_in_dusthana = _track_b({"Saturn": 220.0})
     assert ht._qualitative_strong("Saturn", neutral_in_dusthana) is None
+
+
+class TestSparseContradictionNavNeutral:
+    """P2 (user-signed 2026-08-30): the D9 may not alone decide a sparse-chart contradiction."""
+
+    def test_d9_does_not_decide_a_sparse_contradiction(self):
+        """All pillars unknown + both polarities fired -> the mixed stands; nav-confirms
+        must not lift it (the Hyder Ali inversion) and nav-weakens must not drop it (the
+        Tennyson-class inversion)."""
+        for status in ("confirms", "weakens"):
+            v, shifted = ht._decide(_ledger(
+                lord_strong=None, karaka_strong=None, bhava_bala_strong=None,
+                navamsa_status=status,
+                fired_malefic=(_fired("malefic"),), fired_benefic=(_fired("benefic"),)))
+            assert v == "mixed" and shifted is False, (status, v)
+
+    def test_measured_contradictions_still_modulate(self):
+        """The exception is sparse-only: with measured pillars, a borderline mixed keeps
+        its D9 modulation (Raman's own practice, NH:7431-7433 — a favourable Navamsa
+        softening a measured evil-rasi Moon)."""
+        v, shifted = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=False, bhava_bala_strong=False,
+            navamsa_status="weakens",
+            fired_malefic=(_fired("malefic"),), fired_benefic=(_fired("benefic"),)))
+        assert v == "afflicted" and shifted is True

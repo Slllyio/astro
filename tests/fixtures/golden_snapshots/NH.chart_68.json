@@ -18,7 +18,7 @@
       "H10.P.Rahu",
       "H10.P.Sun"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -43,7 +43,7 @@
       "profession_trade": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "status_honour": {
         "degree": "mild",

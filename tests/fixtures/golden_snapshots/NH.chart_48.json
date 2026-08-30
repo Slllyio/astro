@@ -105,32 +105,32 @@
       "H9.D.42",
       "H9.L.12"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "dharma": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "father": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "fortune": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "higher_learning": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "long_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   }

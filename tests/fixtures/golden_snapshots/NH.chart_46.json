@@ -70,9 +70,9 @@
     "rollup": "afflicted",
     "significations": {
       "education": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "happiness": {
         "degree": "moderate",
@@ -172,7 +172,7 @@
       "dharma": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "father": {
         "degree": "mild",
@@ -182,17 +182,17 @@
       "fortune": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "higher_learning": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "long_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

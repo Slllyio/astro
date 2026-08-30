@@ -1120,6 +1120,26 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 2937)),
 
+    # #72 — a natural full benefic OCCUPYING the 2nd -> quality of speech fortified. Raman
+    # states it per-chart on three printed nativities, same mechanism each time: J.C. Bose
+    # NH:5655 ("Jupiter in the 2nd house made Bose a clear, forceful and convincing
+    # speaker"), Tennyson NH:4777-4801 ("His poetic greatness is due to the position of
+    # Venus in the 2nd..."), Marx (exalted yogakaraka Venus in the 2nd -> favourable speech;
+    # the B3-extension record). Scoped to the FULL benefics {Jupiter, Venus, Mercury} — the
+    # conditional Moon is not the subject of any of the three citations (contrast the
+    # Vakchalana RELIEF leg, where the wider set is the conservative choice for a malefic
+    # yoga; here the wider set would WIDEN a benefic rule uncited).
+    RuleRecord(
+        id="H2.C.72", house=2, signification="speech", group="combination",
+        kind="evaluable",
+        condition=C.Or(C.InRashiHouse("Jupiter", 2), C.InRashiHouse("Venus", 2),
+                       C.InRashiHouse("Mercury", 2)),
+        fortified="a natural benefic occupying the 2nd → clear, forceful, refined speech "
+                  "(Jupiter: convincing speaker; Venus: poetic/artistic expression)",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic",
+        source=Citation("NH", 5655)),
+
     # #71 — Vakchalana Yoga (3HC #175): a malefic owning the 2nd, cast into a cruel
     #       navamsa, with the 2nd devoid of benefic aspect or association → stammerer.
     #       All three legs are Raman's own definition; the relief leg uses the project's

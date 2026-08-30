@@ -3117,3 +3117,22 @@ DREKKANA death-manner — H8.C.21 is a stale descriptive TODO; needs the named-d
 primitive: planet degree-band -> Parasari drekkana name table), chart_39 Ashutosh (8th-lord
 maraka-timing conclusion; no aspect mechanism — may be a documented limit for the static
 verdict).
+
+
+## WS1 pass 3 (2026-08-30, in progress) — H2 speech pair diagnosed; H2.C.72 ships as corroboration
+
+**H2.C.72 SHIPPED** (benefic occupying the 2nd -> speech fortified; NH:5655 Bose "Jupiter in
+the 2nd house made Bose a clear, forceful and convincing speaker", NH:4777-4801 Tennyson
+"poetic greatness ... Venus in the 2nd", + Marx per the B3 record). Zero scored movement —
+recorded corroboration, same class as Vakchalana.
+
+**Tennyson (chart_25) + J.C. Bose (chart_33) H2 speech: DOCUMENTED LIMITS, diagnosis precise
+and measured.** Both engine-afflicted where Raman says favourable. Two hypotheses were
+measured and REFUTED: (a) missing benefic speech testimony — C.72 now fires on both, no
+movement; (b) wealth-rule pooling (speech.rule_tags=('wealth','speech')) — an in-memory probe
+narrowing speech to its own tag changed NOTHING scored anywhere (282/397 identical; Tennyson
+had zero malefic evidence and still read afflicted). The actual driver on both charts is the
+weak-pillar + navamsa-weakens routing (Tennyson: karaka weak; Bose: lord weak; both
+nav=weakens) — V2-guard machinery at its measured local optimum, which the north-star playbook
+forbids tuning against two rows. Re-open path: a navamsa-authority design review for QUALITY
+matters (speech/education-class), only with a pre-measured discriminant across all houses.

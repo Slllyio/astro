@@ -3493,3 +3493,89 @@ general improvement that will help any future scan.
 3. **Expect a yoga-flavoured corpus.** Many readings confirm a yoga's manifestation rather
    than grading a house matter; those are worth ingesting for RULE LIVENESS even where they
    yield no scored verdict.
+
+
+## ★ FERTILITY GATE — THE RECOVERY PATH IS STRUCTURALLY BLOCKED (2026-08-30, measured)
+
+**This supersedes the recovery path recorded in "pass 3" and in the comprehensive plan's
+sub-item 1a. That path — "encode the charts' actual printed drivers, then re-measure the
+suspension" — CANNOT succeed, and the reason is architectural, not a shortfall of coverage.**
+
+The drivers WERE encoded. Across today's passes the gate-carried charts acquired their cited
+mechanisms: H5.C.39 (Chandra-Lagna malefic convergence, five citations), H5.C.40 (PutraKaraka
+double contact), and now H5.C.41 (5th-lord-from-the-Moon in a barren sign). These rules FIRE
+on the carried charts — chart_20, chart_31, chart_68, h5_02, h5_05, h5_09, h5_18, chart_37,
+chart_22 all carry one or more. **And the suspension economics did not move at all: still
+−13 exact / +1, net −12, identical to the measurement before any of them existed.**
+
+**Why.** Clause 2 of `_decide` resolves a benefic/malefic contradiction by counting STRENGTH
+PILLARS, never evidence. Measured on the carried charts with the gate off:
+- h5_04: **5 malefic rules vs 3 benefic, 3/3 pillars strong → favourable**
+- h5_12: 2 malefic vs 2 benefic, 3/3 strong → favourable
+- chart_31: **5 malefic vs 2 benefic, 2/2 strong → favourable**
+No quantity of cited malefic testimony can reach these rows, because the clause that decides
+them cannot hear testimony at all. The fertility gate works precisely and only because it is
+a DECISIVE override that bypasses clause 2.
+
+**So the honest re-characterisation of the debt** (an improvement on the "accidental
+correctness" framing, which over-stated it): the gate is not producing right-for-coincidental
+reasons. The RIGHT doctrine is now present and firing on these charts — it simply is not
+heard by the clause that decides them. The gate is compensating for a clause-2 blind spot,
+not for absent doctrine.
+
+**Both exits are already closed by measurement, so the gate STAYS:**
+1. *Make the H5 children rules decisive* — refused twice on printed counter-instances:
+   Queen Victoria for C.39 (multi-malefic CL convergence, "prolific motherhood") and the
+   Dhana-Yoga chart for C.40 (double-contact PK, "fairly well disposed"). Decisiveness would
+   invert Raman on his own charts.
+2. *Change clause 2* — the MEASURED TRUTH lock names the pillar-preponderance clause as the
+   one mechanism behind the dist-2 errors AND as a proven local optimum; the design-ticket
+   enumeration (2026-08-30) then whipsawed on both wider forms (P1 −32 exact, P3 −34).
+**Re-open condition (unchanged in kind, but now precise): a printed Raman passage that makes
+one of these H5 mechanisms decisive in his own voice — i.e. a chart where he condemns
+children on that mechanism alone against strong house/lord/karaka — or a clause-2 redesign
+carrying its own pre-measured discriminant. Neither exists today.**
+
+## H5.C.41 — the barren-sign mechanism (2026-08-30); ships GUARDED, scoring ZERO
+
+Wells's third leg, the one neither C.39 nor C.40 covered. TWO citations: the general
+definition is Raman's own — "Cancer, Scorpio and Pisces are fruitful and Gemini, Leo and
+Virgo are barren" (Hindu Predictive Astrology ch.5, a prime-directive natal source) — and the
+application to children is his own frame: "Mercury, the 5th lord FROM THE MOON, is in a
+barren sign" (H. G. Wells, NH:8937-8938). The LAGNA-frame variant was measured (10 fires, 8 afflicted / 2 favourable) and deliberately
+NOT encoded — Raman names the Moon frame, and the reviewer's corpus sweep confirmed "barren
+sign" occurs exactly ONCE in all of NH (Wells, Moon frame); HTJAH-II uses the classes only
+for the 11th and 12th houses, never the 5th.
+
+**★ THE REVIEW CAUGHT A TEXTUAL CONTRADICTION, AND THE FIX COST THE ENTIRE GAIN — banked
+anyway.** Unguarded, C.41 fired 9/35 (8 afflicted, 1 favourable) and resolved NH.chart_57 for
++1. The reviewer PROVED, without running anything, that the favourable fire was not an
+ordinary outweighed testimony: Raman states of chart 106/h5_16 both that Mercury is the 5th
+lord FROM CHANDRA LAGNA and that he occupies that same 5th — which forces the CL-5th sign
+into {Gemini, Virgo}, both barren — and then reads it the OPPOSITE way, "From Chandra Lagna,
+the 5th house is well fortified by the presence of Mercury, the 5th lord" (HTJAH-I:5933-5934),
+on the corpus's strongest fertility chart (13 children). The rule fired BY CONSTRUCTION on the
+placement Raman calls fortified.
+The cited fix — a lord occupying its own house fortifies it, so suppress when the CL-5th lord
+sits in the CL-5th sign — is Raman's general principle, not an h5_16 epicycle. Measured
+effect: fires drop 9 -> 6, now **6/6 all Raman-afflicted** (a clean separation), and the
++1 on chart_57 is GIVEN UP, because chart_57's CL-5th lord (Sun in Leo) is also in its own
+house — its affliction is real but comes from elsewhere, so the unguarded rule had it right
+by coincidence. **Net ratchet effect: ZERO. Shipped regardless**: cited coverage that fires
+6/6 correctly beats a +1 bought by a fire Raman's own text refutes (playbook rule 4 — a corpus
+gain is not evidence of fidelity; and the earlier defence "it's already a miss so this cannot
+worsen it" was struck as the named evidence-redundancy blindness).
+**KEETARASI deliberately not encoded — MY PREMISE WAS WRONG AND THE CORRECTION STRENGTHENS
+THE DECISION.** I recorded that no general definition existed; Raman defines it in his own
+hand: "Keeta Rasis.—These are insect signs. In the whole of the Zodiac, Vrischika (Scorpio) is
+the only Keeta Rasi" (Graha and Bhava Balas ch.9 §130; corroborated Prasna Marga vol.2 ch.32).
+So "both attested instances are Scorpio" is a NECESSITY, not a coincidence — and the
+definition is a bhava-bala insect-sign taxonomy with zero fertility content. Raman applies the
+class to three unrelated matters across two charts: children (Marie, NH:5835), physical
+APPEARANCE (Marie again, NH:5819, "her thick eyebrows and the light russet hair"), and
+IMPRISONMENT (Nehru, NH:12439-12441). Do not reopen on rediscovering the definition — the
+definition IS the reason not to encode.
+**Recorded at the constant**: HTJAH-II runs a WIDER fertile/barren scheme ("Libra, a fruitful
+sign" :14888; "the twelfth house is a barren sign Aries" :18217) for the 11th/12th houses. The
+encoded set is the strict HPA subset — right here, but any future 11th/12th reuse must adopt
+HTJAH-II's wider set or silently under-fire.

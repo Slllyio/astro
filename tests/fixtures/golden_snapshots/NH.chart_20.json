@@ -47,12 +47,14 @@
       "HTJAH-I:5183",
       "HTJAH-I:5206",
       "HTJAH-I:5236",
-      "HTJAH-I:5826"
+      "HTJAH-I:5826",
+      "NH:8937"
     ],
     "fired_rule_ids": [
       "H5.C.1",
       "H5.C.21",
       "H5.C.39",
+      "H5.C.41",
       "H5.L.1",
       "H5.P.Moon"
     ],

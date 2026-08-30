@@ -95,6 +95,52 @@ class _AspectedByClass(C.Condition):
                    for name in ctx.chart.planets)
 
 
+#: Raman's own barren signs, verbatim: "Cancer, Scorpio and Pisces are fruitful and Gemini,
+#: Leo and Virgo are barren" (HPA-5:52 — Hindu Predictive Astrology ch.5). HPA is a
+#: prime-directive natal source, so this is citable by natal verdict code. NOTE the
+#: paragraph closes "These details would be highly useful in the delineation of character
+#: and mental disposition" (:66-67) — HPA licenses only the CLASS, never "therefore children
+#: afflicted"; the direction comes from the applied citation (NH:8937).
+#: ★ DOCTRINE-CONTESTED, scoped (reviewer sweep 2026-08-30): HTJAH-II runs a WIDER scheme —
+#: "Libra, a fruitful sign" (:14888) and "The twelfth house is a barren sign Aries" (:18217),
+#: both outside HPA's six. HPA appears to give only the extremes. This set is deliberately
+#: the strict HPA subset (conservative: it cannot fire on Aries), which is right HERE because
+#: the applied citation is HPA-classed. But HTJAH-II uses these classes for the 11th and 12th
+#: houses, never the 5th — so ANY future 11th/12th reuse of this constant must adopt
+#: HTJAH-II's wider set instead, or it will silently under-fire.
+_BARREN_SIGNS: Final[frozenset[int]] = frozenset({3, 5, 6})       # Gemini, Leo, Virgo
+
+
+class _FifthFromMoonLordInBarrenSign(C.Condition):
+    """H5.C.41: the lord of the 5th sign FROM THE MOON occupies one of Raman's BARREN signs.
+
+    His definition is general and verbatim: "Cancer, Scorpio and Pisces are fruitful and
+    Gemini, Leo and Virgo are barren" (Hindu Predictive Astrology, ch.5 'Peculiarities of
+    the Zodiacal Signs'). The Chandra-Lagna frame is his own on the citing chart, not a
+    generalization: "Mercury, the 5th lord FROM THE MOON, is in a barren sign" (H. G. Wells,
+    NH:8937-8938)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return False
+        cl5_sign = ((moon.sign - 1 + 4) % 12) + 1
+        lord = SIGN_LORDS[cl5_sign]
+        p = chart.planets.get(lord)
+        if p is None or p.sign not in _BARREN_SIGNS:
+            return False
+        # OWN-HOUSE GUARD (cited, reviewer-required 2026-08-30). Chart 106/h5_16 is not an
+        # ordinary outweighed fire: Raman states BOTH that Mercury is the 5th lord from
+        # Chandra Lagna AND that he occupies that same 5th — which forces the CL-5th sign
+        # into {Gemini, Virgo}, both barren — and then reads it the OPPOSITE way: "From
+        # Chandra Lagna, the 5th house is well fortified by the presence of Mercury, the 5th
+        # lord" (HTJAH-I:5933-5934), on the 13-children chart. A lord occupying its own
+        # house FORTIFIES that house; the barrenness of the sign does not survive it. The
+        # guard is Raman's general principle, not an h5_16 epicycle, and it is why Wells
+        # still fires: his Mercury lords the CL-5th (Gemini) from OUTSIDE it (Virgo).
+        return p.sign != cl5_sign
+
+
 class _FifthFromMoonMaleficConvergence(C.Condition):
     """>= 2 distinct natural malefics occupy or cast whole-sign drishti on the 5th sign
     counted from the Moon (Chandra Lagna). Occupation and aspect count once per planet;
@@ -560,4 +606,41 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the PutraKaraka Jupiter carries the combined influences of two or more "
                   "first-rate malefics → sorrow on account of the house of children",
         frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5791)),
+
+    # #41 — the 5th lord FROM CHANDRA LAGNA in a BARREN sign. Two citations, one general and
+    # one applied: Raman defines the classes himself ("Cancer, Scorpio and Pisces are
+    # fruitful and Gemini, Leo and Virgo are barren", Hindu Predictive Astrology ch.5) and
+    # applies exactly this frame to the children matter on H. G. Wells (NH:8937-8938): "The
+    # house of children is not favourable. Mercury, the 5th lord from the Moon, is in a
+    # barren sign while Putrakaraka Jupiter is neecha and aspected by Mars, who also occupies
+    # the 5th from the Moon." The other two legs of his sentence are already encoded (C.40
+    # for the PK contact, C.39 for Mars on the CL 5th); this is the missing third.
+    # THE FRAME IS HIS, NOT A GENERALIZATION: the Lagna-frame variant was measured alongside
+    # (10 fires, 8 afflicted / 2 favourable) and is NOT encoded — he names the Moon frame.
+    # Fires 8/35 over the confirmed children rows, ALL Raman-afflicted, after the own-house
+    # guard removes h5_16 (see the leaf). The earlier defence of that fire — "it is already an
+    # engine miss in the afflicted direction, so this rule cannot worsen it" — was struck by
+    # the reviewer as exactly the evidence-redundancy blindness the playbook names (rule 4): a
+    # green ratchet proves no regression, not correctness, and entrenching a known miss with a
+    # second wrong testimony makes the eventual fix harder to find. NON-DECISIVE testimony,
+    # per the C.39/C.40 pattern: Raman's own sentence stacks it with two other factors.
+    # KEETARASI DELIBERATELY NOT ENCODED — reasoning corrected by the reviewer, who found the
+    # definition I had claimed did not exist: Raman defines it in his OWN hand, "Keeta
+    # Rasis.—These are insect signs. In the whole of the Zodiac, Vrischika (Scorpio) is the
+    # only Keeta Rasi" (Graha and Bhava Balas ch.9 §130; corroborated Prasna Marga vol.2
+    # ch.32). That STRENGTHENS the decision not to encode: the definition is a bhava-bala
+    # insect-sign taxonomy with ZERO fertility content, and "both attested instances are
+    # Scorpio" is now a necessity rather than a coincidence. Raman applies the class to three
+    # unrelated matters across two charts — children (Marie, NH:5835), physical APPEARANCE
+    # (Marie again, NH:5819, "her thick eyebrows and the light russet hair"), and
+    # IMPRISONMENT (Nehru, NH:12439-12441) — none of which the definition mentions. A
+    # context-dependent sign quality, not a children mechanism. Do not reopen on rediscovering
+    # the definition; the definition is the reason.
+    RuleRecord(
+        id="H5.C.41", house=5, signification="children", group="combination", kind="evaluable",
+        condition=_FifthFromMoonLordInBarrenSign(),
+        fortified=None,
+        afflicted="the lord of the 5th from Chandra Lagna occupies a barren sign (Gemini, "
+                  "Leo or Virgo) → the house of children is not favourable",
+        frame="CHANDRA", varga="D1", polarity="malefic", source=Citation("NH", 8937)),
 )

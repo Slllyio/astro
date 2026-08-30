@@ -38,6 +38,7 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives import drekkana as _drk
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
 
@@ -63,6 +64,28 @@ _MODALITY: Final[dict[str, frozenset[int]]] = {
 
 
 # ── local leaf predicates (conditions.py intentionally untouched) ─────────────
+
+class _EighthLordInDrekkanaClass(C.Condition):
+    """The lord of the 8th occupies a drekkana carrying one of `classes` (H8.D.3).
+    None-safe: silent when the lord's degree is unknown (midpoint sentinel) or absent."""
+    def __init__(self, classes: frozenset[str]) -> None:
+        self.classes = classes
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        got = _drk.planet_drekkana_classes(_lord_of(8, ctx.chart), ctx.chart)
+        return bool(got) and bool(got & self.classes)
+
+
+class _AyushkarakaSaturnInDrekkanaClass(C.Condition):
+    """The Ayushkaraka Saturn occupies a drekkana carrying one of `classes` (H8.D.4).
+    None-safe like the lord leaf."""
+    def __init__(self, classes: frozenset[str]) -> None:
+        self.classes = classes
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        got = _drk.planet_drekkana_classes("Saturn", ctx.chart)
+        return bool(got) and bool(got & self.classes)
+
 
 class _LagnaInSign(C.Condition):
     """The Ascendant rashi IS `sign` (1..12)."""
@@ -577,4 +600,56 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "occupied by Saturn → a disease that prevents the intake of food (minor: "
                   "colds/mumps; serious: cancer, by affliction-grade)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3584)),
+
+    # ── DREKKANA death-manner rules (2026-08-30) — the named-drekkana primitive unblocked
+    # the stale H8.C.21 territory. Table + per-cell evidence trail: primitives/drekkana.py
+    # and DOCTRINE_BACKLOG "WS1 pass 3". Both rules use PLANET-occupies-drekkana only (the
+    # 22nd-drekkana counting convention is unresolved and deliberately unshipped). Both are
+    # silent on charts without printed degrees (the midpoint sentinel returns None).
+
+    # D.3 — the 8th LORD in an Ayudha (weapon) drekkana -> the manner of death is violent /
+    # by instrument. Godse verbatim (NH:14735 with Saturn 9deg04 Aries printed at :14641):
+    # "The nature of the death, viz., by hanging is shown by Saturn lord of the 8th
+    # occupying Ayudha Drekkana." Corroborated by Tantri (NH:11490-11493 — Lagna lord Moon
+    # in Ayudha + Saturn lord of the SEVENTH in Ayudha + Ketu-in-8th in Sarpa; reviewer-
+    # corrected wording) and Lincoln's Ayudha 22nd-drekkana reading (HTJAH-II:6752-6753,
+    # assassination). Ayudha is the fully-recovered column: Phaladeepika III.13 matches
+    # Raman's printed table cell-for-cell, 5 of 9 cells worked-chart-anchored. Raman reads
+    # the CELL's meaning regardless of the occupying planet's nature (Moon/Jupiter/Venus all
+    # appear in his worked Ayudha instances). CORROBORATION-TIER (reviewer amendment): never
+    # the sole confirming malefic for the death affliction — Savarkar (NH:10563-10570) has
+    # Jupiter in Ayudha and Raman reads dasha-danger, not death (he died naturally); see
+    # _DREKKANA_MANNER_RULE_IDS in the judge. Known mechanism-mismatch fire, recorded per
+    # the chart_67 precedent: Ashutosh Mukerjee (NH.chart_39) — his death paragraph is
+    # timing/maraka-based (nh:8770-8773) and his death was natural; the fire lands the
+    # right ordinal for the wrong mechanism and confirms nothing on its own.
+    RuleRecord(
+        id="H8.D.3", house=8, signification="death", group="combination", kind="evaluable",
+        condition=_EighthLordInDrekkanaClass(frozenset({"ayudha"})),
+        fortified=None,
+        afflicted="the 8th lord occupies an Ayudha (weapon) drekkana → the manner of death "
+                  "is violent, by weapon or instrument",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 14735)),
+
+    # D.4 — the Ayushkaraka Saturn in a Sarpa / Nigala / Pasa drekkana -> death in captivity
+    # or by the noose. Marie Antoinette verbatim (NH:5944-5947, Saturn 4deg Capricorn ->
+    # Cap-1 Nigala): "as Ayushkaraka is also in a Nigala Drekkana, the queen had to meet her
+    # end by being guillotined" (+ "death occurred in captivity", HTJAH-II:6698). The triad
+    # is applied JOINTLY in Raman's own doctrine sentence (HTJAH-II:6674-6676 "either Nigala,
+    # Sarpa or Pasa ... death is brought about" in captivity), which is why the Scorpio-2
+    # Pasa-vs-Nigada label conflict is rule-neutral here. Charts 66/67 corroborate
+    # (HTJAH-II:6357-6358, 6416-6418). JUNIOR PARTNER (reviewer, MEDIUM): in both tellings
+    # of Marie Antoinette the Ayushkaraka clause is the "also" — the primary clause is the
+    # 22nd drekkana (unshipped, counting convention unresolved) and the classical dictum
+    # (HTJAH-II:6701-6705) is conjunctive with a malefic on the 5th/9th from the Moon. When
+    # the 22nd-drekkana convention is resolved, RE-REVIEW this rule as the junior partner of
+    # that pair. CORROBORATION-TIER like D.3 (never the sole confirming malefic); note the
+    # dual-tagged Scorpio-2 cell alone carries ~43% of D.4's fires.
+    RuleRecord(
+        id="H8.D.4", house=8, signification="death", group="combination", kind="evaluable",
+        condition=_AyushkarakaSaturnInDrekkanaClass(_drk.CAPTIVITY_TRIAD),
+        fortified=None,
+        afflicted="the Ayushkaraka Saturn occupies a Sarpa/Nigala/Pasa drekkana → death in "
+                  "captivity or by the noose",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("NH", 5944)),
 )

@@ -69,7 +69,8 @@
       "HTJAH-I:2710",
       "HTJAH-I:2800",
       "HTJAH-I:2879",
-      "HTJAH-I:2948"
+      "HTJAH-I:2948",
+      "NH:5655"
     ],
     "fired_rule_ids": [
       "H2.C.1",
@@ -89,6 +90,7 @@
       "H2.C.65",
       "H2.C.66",
       "H2.C.69",
+      "H2.C.72",
       "H2.L.2",
       "H2.P.Jupiter",
       "H2.P.Mars",

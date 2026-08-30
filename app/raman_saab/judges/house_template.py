@@ -136,6 +136,11 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
     "death",                                                                # H8 (manner/cause)
 })
 
+#: Drekkana death-MANNER rules — corroboration-tier by reviewer amendment (2026-08-30):
+#: they sharpen an affliction established by non-drekkana testimony and may never be the
+#: sole confirming malefic in clause 1.5 (see AFFLICTION_OWN_EVIDENCE in _build_frame_ledger).
+_DREKKANA_MANNER_RULE_IDS: Final[frozenset[str]] = frozenset({"H8.D.3", "H8.D.4"})
+
 # CATASTROPHIC sub-significations — bodily/liberty ruin (imprisonment, blindness, grave
 # accident) that Raman pronounces ONLY on a MULTIPLY-afflicted configuration, never on a
 # lone malefic. His own worked charts show it: h12_13 "the 2nd AND the 12th heavily
@@ -1259,7 +1264,17 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     if sig.key in _DUSTHANA_AFFLICTION_KEYS:
         flags.append("AFFLICTION_MATTER")
         manner_ben = [fr for fr in benefic if fr.rule.signification != "longevity"]
-        if malefic and not manner_ben:
+        # Drekkana manner rules cannot be the SOLE confirming malefic (reviewer amendment,
+        # 2026-08-30, HIGH): Raman's drekkana apparatus "gives the clue to the CAUSE of
+        # death" (HTJAH-II:3884-3886) — it names the manner of an affliction established by
+        # orthodox testimony, and in every worked instance it is the "also" clause. Savarkar
+        # is the printed counter-instance: Jupiter in Ayudha, and Raman reads dasha-danger,
+        # NOT death (NH:10563-10570; he died naturally). Letting a lone drekkana fire
+        # confirm the affliction would convert manner evidence into affliction evidence —
+        # something Raman never does.
+        confirming_mal = [fr for fr in malefic
+                          if getattr(fr.rule, "id", "") not in _DREKKANA_MANNER_RULE_IDS]
+        if confirming_mal and not manner_ben:
             flags.append("AFFLICTION_OWN_EVIDENCE")
     # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS
     # (possibly non-longevity) matter, so its maraka pressure is provisional until the

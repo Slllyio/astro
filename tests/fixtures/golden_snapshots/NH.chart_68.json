@@ -96,11 +96,13 @@
       "HTJAH-II:3084",
       "HTJAH-II:3550",
       "HTJAH-II:3625",
-      "HTJAH-II:3902"
+      "HTJAH-II:3902",
+      "NH:5944"
     ],
     "fired_rule_ids": [
       "H8.C.1",
       "H8.C.25",
+      "H8.D.4",
       "H8.K.3",
       "H8.L.2",
       "H8.P.Saturn"

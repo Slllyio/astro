@@ -3136,3 +3136,55 @@ weak-pillar + navamsa-weakens routing (Tennyson: karaka weak; Bose: lord weak; b
 nav=weakens) — V2-guard machinery at its measured local optimum, which the north-star playbook
 forbids tuning against two rows. Re-open path: a navamsa-authority design review for QUALITY
 matters (speech/education-class), only with a pre-measured discriminant across all houses.
+
+
+**NH.chart_13 (Guru Nanak) H1 self: DOCUMENTED LIMIT (sparse-input class).** Raman's verdict
+rests on "The Lagna is Vargottama and even in the Navamsa, the Lagna is unafflicted"
+(NH:3752-3755) — but NH prints NO ascendant degree for this chart ("Simha Lagna" only, from
+the Gyani birth-details footnote), so the record carries lagna_sign alone and the engine's
+materialized longitude cannot verify the Vargottama band (a fixed sign needs 13d20'-16d40').
+The engine's afflicted comes from the lord-Sun's D9 debilitation driving nav=weakens on a
+Track-B mixed — Raman reads the LAGNA'S OWN navamsa condition instead, which the stated
+positions cannot reproduce. Re-open path: a Vargottama-Lagna self-fortification rule (cited
+here + standard doctrine) becomes fireable only on charts whose asc DEGREE is printed; and/or
+a stated_flags extension to the golden schema if more Vargottama-stated-but-degree-unprinted
+rows accumulate (this is the first).
+
+
+## WS1 pass 3 close (2026-08-30) — the named-drekkana primitive ships; 283/397
+
+The stale H8.C.21 drekkana territory is unblocked. An evidence sweep reconstructed the
+death-manner drekkana table cell-by-cell (HTJAH-II's printed table :3845-3871 is OCR-garbled;
+Phaladeepika III.13 anchors it verbatim — reviewer verified the full Ayudha column
+cell-for-cell; five cells worked-chart-anchored by printed longitudes). All three targets
+reviewer-VALIDATED. Full per-cell evidence trail in `primitives/drekkana.py`.
+
+Shipped: the primitive (+9 tests, midpoint sentinel — sign-only charts return None, never
+phantom cells), H8.D.3 (8th lord in Ayudha -> violent manner; Godse NH:14735 verbatim),
+H8.D.4 (Ayushkaraka Saturn in the Sarpa/Nigala/Pasa triad -> captivity/noose; Marie
+NH:5944-5947). **Q5 amendment applied**: drekkana rules are CORROBORATION-TIER — Raman's
+apparatus "gives the clue to the CAUSE of death" (HTJAH-II:3884-3886); in every worked
+instance it is the "also" clause, and Savarkar (NH:10563-10570) is the printed
+counter-instance (Jupiter in Ayudha, dasha-danger read, natural death). Implemented as
+_DREKKANA_MANNER_RULE_IDS excluded from the clause-1.5 confirming set.
+
+Movement: Godse (chart_72) insufficient-evidence -> afflicted; Ashutosh (chart_39)
+favourable -> mixed (dist-2 -> dist-1; RECORDED mechanism-mismatch fire — his death
+paragraph is timing/maraka, his death natural). 283/397 exact, 350/397 within-1, 47 real
+errors. Zero regressions.
+
+**Open items from this pass:**
+- 22nd-drekkana counting convention UNRESOLVED (Raman's two worked examples disagree:
+  HTJAH-I:10164-10166 exclusive vs Marie's derivation) — the rising-drekkana rules (incl.
+  making H8.C.21 evaluable) wait on it; when resolved, RE-REVIEW D.4 as the junior partner
+  of its passage (Raman's "also" syntax).
+- Residual exposure, recorded: on a sparse benefic-free chart the Track-B malefic-only
+  fallback can still land afflicted from a lone drekkana fire (Godse — where it happens to
+  match Raman's own printed reasoning verbatim). Revisit with the 22nd-drekkana work.
+- Gandhi (chart_41) still favourable: fires BOTH drekkana rules but his benefic-in-8th
+  (H8.C.2) routes him out of confirmation. His own sentence ("Jupiter is in the 8th aspected
+  powerfully by Mars — a maraka ... violent end", NH:6870) is a DEFEATED-PROTECTION
+  statement — needs its own design + review, with the Victoria lesson in mind (no favourable
+  death rows exist to counter-test a decisive form).
+- Pakshi/Chatushpada cells retained as SECONDARY data; no verdict rule may consume them
+  without fresh review.

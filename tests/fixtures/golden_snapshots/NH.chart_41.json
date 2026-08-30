@@ -47,11 +47,15 @@
       "HTJAH-II:2902",
       "HTJAH-II:3085",
       "HTJAH-II:3531",
-      "HTJAH-II:3902"
+      "HTJAH-II:3902",
+      "NH:14735",
+      "NH:5944"
     ],
     "fired_rule_ids": [
       "H8.C.2",
       "H8.C.25",
+      "H8.D.3",
+      "H8.D.4",
       "H8.L.1",
       "H8.P.Jupiter"
     ],

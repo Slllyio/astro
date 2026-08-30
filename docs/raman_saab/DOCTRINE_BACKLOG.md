@@ -3369,3 +3369,43 @@ Remaining error surface: 35 rows, singleton-dominated (H5 7 incl. the gate class
 H7 5, H10 4, H4 4). The abstention class is EXHAUSTED except chart_31 H10 (Shaw career — his
 "Mercury, Saturn and Jupiter contributed to literary greatness" names planets without a
 configuration; documented limit pending a closer read).
+
+
+## WS4 CLOSED-MEASURED (2026-08-30) — the Astrological Magazine v75 seam is unusable as vendored
+
+The planned extractor was NOT built, on measurement: the vendored v75 extract (3 chapters,
+~50k lines) contains NO Raman-authored chart verdicts. Chapter 7 (the bulk) is reader
+correspondence and third-party articles (e.g. D. S. Rao and H. R. Shankar debating two
+charts at ch7:1650-1700); every "Dr. B. V. RAMAN" hit is a book ADVERTISEMENT or event
+notice (verified at ch7:4137, 5084, 7186, 9437, 19840, 25002, 28818, 30751); chapter 3 is a
+reprinted Western author's first-person epochal-horoscope text; references to "the
+editorial" exist but the editorials themselves are not in the extract. Under the amended
+confirmation rule (only what RAMAN concluded is confirmable) the seam's "489 printed
+degrees / 54 birth lines" belong to non-Raman voices, and the OCR is materially worse than
+the books (Cyrillic bleed-through, mangled planet names). RE-OPEN PATH: a fuller/cleaner
+v75 (or other volume) scan that contains Raman's own editorials or signed chart-analysis
+columns, ingested with PER-ARTICLE authorship attribution — the extractor design (NH
+prose-positions format) remains valid for that day.
+
+
+## CL-2nd wealth convergence: REFUTED BY ENUMERATION (2026-08-30) — the C.39 pattern does not generalize to wealth
+
+Probe: >= 2 (and every higher bar) natural malefics occupying/aspecting the 2nd from Chandra
+Lagna, over all 33 confirmed H2 wealth rows. Result: FAVOURABLE wealth charts routinely carry
+heavy CL-2nd convergence — chart_38 (4 malefics, favourable), chart_64 (4, favourable),
+chart_32 (3, favourable), chart_40/46/67 (2 each, favourable) — while the poverty example
+chart_73 sits at 5. A >= 5 bar would fire on one chart with two favourables one step below:
+naked overfit, refused. CONCLUSION, recorded as doctrine-shape knowledge: the Chandra-Lagna
+convergence idiom is REAL for children (H5.C.39, five citations) and does NOT transfer to
+wealth — wealth is yoga-driven (Dhana yogas and the maraka-association poverty operators
+override placement convergence), consistent with the existing poverty-block design.
+
+**NH.chart_73 (An Example for Poverty) H2 wealth: DOCUMENTED LIMIT (irreducibly
+comparative).** Raman's own summing-up is explicitly holistic: "Study the horoscope
+carefully and you will find the whole structure is rotten" — lord of Lagna strengthless,
+two debilitated planets in mutual aspect, 2nd lord with Rahu under evil aspects, lords of
+8/12/6/11 all contributing (NH:14846-14860). Each factor alone appears in favourable charts;
+the condemnation is the synthesis. The one candidate single form ("the mutual aspect of two
+debilitated planets ... suggest poverty") remains available for a future pass IF a second
+printed instance surfaces; encoding it from one synthesis-verdict chart would claim his
+mechanism where he stated a gestalt.

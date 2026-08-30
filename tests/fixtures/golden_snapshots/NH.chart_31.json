@@ -43,10 +43,16 @@
   "H4": {
     "citations": [
       "HTJAH-I:4156",
-      "HTJAH-I:4211"
+      "HTJAH-I:4211",
+      "NH:4961",
+      "NH:4963",
+      "NH:7305"
     ],
     "fired_rule_ids": [
+      "H4.C.49",
       "H4.C.5",
+      "H4.C.50",
+      "H4.C.51",
       "H4.L.3"
     ],
     "rollup": "afflicted",
@@ -54,7 +60,7 @@
       "education": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "happiness": {
         "degree": "mild",
@@ -67,9 +73,9 @@
         "verdict": "insufficient-evidence"
       },
       "mother": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "property": {
         "degree": "mild",

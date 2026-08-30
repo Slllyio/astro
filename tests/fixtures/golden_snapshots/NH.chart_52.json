@@ -78,11 +78,13 @@
     "citations": [
       "HTJAH-II:323",
       "HTJAH-II:487",
-      "HTJAH-II:929"
+      "HTJAH-II:929",
+      "NH:11140"
     ],
     "fired_rule_ids": [
       "H7.C.40",
       "H7.C.67",
+      "H7.C.88",
       "H7.L.11"
     ],
     "rollup": "afflicted",
@@ -95,7 +97,7 @@
       "marital_happiness": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "partnership": {
         "degree": "mild",
@@ -105,7 +107,7 @@
       "spouse": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "virility": {
         "degree": "mild",
@@ -134,7 +136,8 @@
       "HTJAH-II:8648",
       "HTJAH-II:9400",
       "HTJAH-II:9415",
-      "HTJAH-II:9416"
+      "HTJAH-II:9416",
+      "NH:6048"
     ],
     "fired_rule_ids": [
       "H9.A.1",
@@ -144,6 +147,7 @@
       "H9.B.23",
       "H9.B.24",
       "H9.C.35",
+      "H9.C.36",
       "H9.D.37",
       "H9.D.42",
       "H9.D.49",

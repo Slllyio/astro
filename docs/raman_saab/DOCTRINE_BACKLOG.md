@@ -3335,3 +3335,37 @@ Net effect of the WHOLE design-ticket arc (enumeration + P2): real errors 46 -> 
 88.4% -> 89.7%, strict 71.5% -> 70.5% (deliberate, user-signed). P1/P3 are closed-refuted
 with per-row receipts (46-away vs 14-toward; the pooling is globally load-bearing). The
 remaining 41-row surface is the per-chart programme's steady queue.
+
+
+## WS1 pass 7 (2026-08-30) — THE ABSTENTION SWEEP; 286/397 exact, 362/397 within-1 (91.2%), 35 inversions
+
+The 41-row surface's workable cluster was the seven ABSTENTIONS (nothing fired, Raman
+concluded). Seven single-citation rules shipped, six rows resolved exactly, zero regressions —
+the largest single-pass gain since the measured ceiling, banked only after the adversarial
+batch review returned 7/7 VALIDATED (5 SHIP + 2 documentation amendments, applied). Full
+per-rule record in the baseline lineage. Highlights that must not be lost:
+
+- **The Nanak save**: the first review run died on a session limit with one finding in hand —
+  Guru Nanak as a near-counter-instance to the Hitler dictum. Raman's own sentence resolves it
+  ("Mars, a yogakaraka — have become benefics by ownership", NH:3776-3790, split by a footnote
+  splice) and the YOGAKARAKA GUARD now encodes it: Nanak spared, Hitler (maraka Mars) fires.
+  Watch item: Raman's logic is "benefics BY OWNERSHIP" generally; the guard covers only
+  yogakaraka Mars (conservative; no printed lagna-lord-Mars instance exists).
+- **Shivaji lands mixed BY DESIGN**: his passage is two-sided in print, both testimonies are
+  encoded (C.49/C.50), and the user-signed sparse-contradiction rule holds the contradiction
+  at mixed — the first row RESOLVED BY the P2 machinery rather than despite it.
+- **C.88's enumeration proof**: the "general" mutual-enemy-lords form is extensionally
+  IDENTICAL to Wadiyar's own Cancer-lagna Sun-Saturn configuration (the only satisfiable
+  case) — generalization with zero over-reach, playbook rule 3d working as intended.
+- **Honesty amendments banked**: C.63's >= 3-benefic bar is a CONSTRUCTED BOUND (one printed
+  instance per side, Marx/Nehru; Marx's own affliction is lord-reasoned, NH:6561-6563 — the
+  bar is bounded, not derived); C.51's Vargottama leg is INFERRED (Raman prints it for a
+  Rajayoga effect), kept because it narrows firing.
+- Corroborations found by the sweep: Nero (Saturn-in-10th, NH:2739-2741), Prophet Mahamud
+  (hemmed 4th -> illiterate, NH:2818-2819). H9.C.36 carries a do-not-promote note (weak
+  second leg, fine for non-decisive testimony only).
+
+Remaining error surface: 35 rows, singleton-dominated (H5 7 incl. the gate class, H1 6, H2 5,
+H7 5, H10 4, H4 4). The abstention class is EXHAUSTED except chart_31 H10 (Shaw career — his
+"Mercury, Saturn and Jupiter contributed to literary greatness" names planets without a
+configuration; documented limit pending a closer read).

@@ -41,6 +41,52 @@ def _lord_of(house: int, chart: RamanChart) -> str:
 
 # ── local leaf predicates ─────────────────────────────────────────────────────
 
+class _SaturnInTenthAfflictedByMarsOrRahu(C.Condition):
+    """H10.C.62's dictum legs (NH:12303-12305): Saturn occupies the 10th, and Mars or Rahu
+    conjoins Saturn or casts whole-sign drishti on him.
+
+    YOGAKARAKA GUARD (cited on Guru Nanak's chart, the printed near-counter-instance the
+    adversarial review hunted down): Nanak has Saturn in the 10th under Mars's 7th drishti,
+    and Raman reads the configuration FAVOURABLY because "the Sun happening to be Lagna
+    lord, Saturn happening to be a Kendradhipati and Mars, a yogakaraka — have become
+    benefics by ownership" (NH:3775-3780). A yogakaraka Mars's aspect is not an
+    'affliction' in the dictum's sense; Hitler's Libra-lagna Mars (lord of the 2nd and 7th,
+    a maraka) keeps his fire."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        sat = chart.planets.get("Saturn")
+        if sat is None or sat.rasi_house != 10:
+            return False
+        mars = chart.planets.get("Mars")
+        if (mars is not None
+                and not C.IsYogaKaraka("Mars").evaluate(ctx)
+                and (mars.sign == sat.sign
+                     or drishti.aspects_planet("Mars", "Saturn", chart))):
+            return True
+        rahu = chart.planets.get("Rahu")
+        if rahu is not None and (rahu.sign == sat.sign
+                                 or drishti.aspects_planet("Rahu", "Saturn", chart)):
+            return True
+        return False
+
+
+class _BeneficsConvergeOnTenth(C.Condition):
+    """H10.C.63: at least `n` natural benefics (Jupiter/Venus/Mercury/Moon) cast whole-sign
+    drishti on the 10th (occupants excluded — Raman's Nehru sentence says 'aspecting'). The
+    bar n=3 is fixed by Marx's printed counter-example (two benefic rays, afflicted)."""
+    def __init__(self, n: int) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        count = 0
+        for name in ("Jupiter", "Venus", "Mercury", "Moon"):
+            p = chart.planets.get(name)
+            if p is not None and p.rasi_house != 10 and drishti.aspects_house(name, 10, chart):
+                count += 1
+        return count >= self.n
+
+
 class _AspectedByClass(C.Condition):
     """A natural planet of `klass` (other than `target`) casts a drishti on `target`."""
     def __init__(self, target: str, klass: str) -> None:
@@ -330,4 +376,51 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "prosperous career",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 10181)),
+
+    # C.62 — Raman's own GENERAL-VOICE dictum, stated on Hitler's chart (NH:12301-12305):
+    # "Hitler's horoscope is fully illustrative of the dictum that final fall is inevitable
+    # when Saturn occupies the 10th afflicted by Mars or Rahu." His per-chart sentence adds
+    # the mutual-aspect texture ("Saturn in the 10th ... and Mars in the 7th ... in mutual
+    # aspect without any relieving features"), but the dictum itself is the citable general
+    # form and is what this rule encodes: Saturn IN the 10th + Mars or Rahu conjunct or
+    # casting drishti on Saturn. Enumeration over the 22 confirmed career/status rows: fires
+    # on Hitler ALONE. (Abstention -> afflicted was his row's exact miss.) Independent
+    # corroboration found by the review: Nero — "Consistent with the dictum that Saturn's
+    # position in the 10th drags one from power suddenly ... Nero had an ignominious flight
+    # and death" (NH:2739-2741). WATCH ITEMS (recorded, no change): (a) the guard exempts
+    # only a YOGAKARAKA Mars while Nanak's sentence reasons from "benefics by ownership"
+    # generally — a lagna-lord Mars (Aries/Scorpio lagnas) would still fire; no printed
+    # instance exists, and the narrow guard is the conservative reading. (b) Prophet
+    # Mahamud's Saturn is in the 10th BHAVA but the 9th whole-sign — a bhava-vs-whole-sign
+    # frame divergence the rasi_house predicate correctly keeps out.
+    RuleRecord(
+        id="H10.C.62", house=10, signification="career", group="combination", kind="evaluable",
+        condition=_SaturnInTenthAfflictedByMarsOrRahu(),
+        fortified=None,
+        afflicted="Saturn occupies the 10th afflicted by Mars or Rahu → the final fall is "
+                  "inevitable; the career collapses",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 12303)),
+
+    # C.63 — benefic CONVERGENCE on the 10th. Nehru verbatim (NH:12473-12475): "five planets
+    # — Jupiter, the Sun, Mercury, Venus and Mars — aspecting the 10th were mainly
+    # responsible for making him the idol of India" (reinforced :12483-12484, "concentration
+    # of the aspectal influences of five planets on the 10th"). COUNTING BENEFICS where his
+    # sentence counts PLANETS is an interpretive NARROWING (owned as such per the review) —
+    # defensible via the beneficial-rays idiom (Thyagaraja NH:6048-6050, which is idiom
+    # PROVENANCE only: his own 10th carries exactly TWO benefic rays, so the count is not
+    # Raman's discriminator) and the conservative direction for a fortified-polarity rule.
+    # THE >= 3 BAR IS A CONSTRUCTED BOUND, one printed instance per side (reviewer-corrected
+    # wording): Marx (NH.chart_26 — THREE aspecters on his 10th: Mercury, Venus, Saturn; TWO
+    # benefics; profession AFFLICTED, though Raman's stated reason there is the neecha lord,
+    # NH:6561-6563) bounds it below; Nehru (three benefic rays, eminent) above. n=1 per side
+    # — fragile, recorded; NOT the refuted countable-band pattern (a printed-instance bound
+    # on non-decisive testimony, not a statistical measure reused out of context), but any
+    # future re-bar needs a new printed instance. Non-decisive benefic testimony.
+    RuleRecord(
+        id="H10.C.63", house=10, signification="career", group="combination", kind="evaluable",
+        condition=_BeneficsConvergeOnTenth(3),
+        fortified="three or more benefics casting their rays on the 10th → the house of "
+                  "Karma is the centre of beneficial convergence; eminence in career",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("NH", 12473)),
 )

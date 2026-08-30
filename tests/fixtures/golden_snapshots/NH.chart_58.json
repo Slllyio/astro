@@ -3,39 +3,41 @@
     "citations": [
       "HTJAH-II:14020",
       "HTJAH-II:9474",
-      "HTJAH-II:9881"
+      "HTJAH-II:9881",
+      "NH:12303"
     ],
     "fired_rule_ids": [
       "H10.C.36",
+      "H10.C.62",
       "H10.L.3",
       "H10.P.Saturn"
     ],
     "rollup": "afflicted",
     "significations": {
       "career": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "profession_authority": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "profession_labour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "profession_learned": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "profession_trade": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "status_honour": {
         "degree": "moderate",

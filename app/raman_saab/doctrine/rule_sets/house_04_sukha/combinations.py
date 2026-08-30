@@ -107,6 +107,39 @@ class _FourthLordConjunctMoon(C.Condition):
         return p is not None and moon is not None and p.rasi_house == moon.rasi_house
 
 
+class _FourthHouseHemmedByMalefics(C.Condition):
+    """H4.C.49: a natural malefic in each sign adjacent to the 4th sign (papakartari on the
+    bhava). Sign-level hemming, same form as H9.A.21's leg."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        s4 = ((chart.asc_sign - 1 + 3) % 12) + 1
+        prev_s = ((s4 - 2) % 12) + 1
+        next_s = (s4 % 12) + 1
+        malefics = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
+        hem_prev = any(chart.planets[m].sign == prev_s for m in malefics if m in chart.planets)
+        hem_next = any(chart.planets[m].sign == next_s for m in malefics if m in chart.planets)
+        return hem_prev and hem_next
+
+
+class _JupiterAspectsFourthLord(C.Condition):
+    """H4.C.50: the Gnanakaraka Jupiter casts whole-sign drishti on the 4th lord (identity
+    excluded — when Jupiter lords the 4th, 'aspects the lord' is not a configuration)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(4, ctx.chart)
+        if lord == "Jupiter":
+            return False
+        return drishti.aspects_planet("Jupiter", lord, ctx.chart)
+
+
+class _MoonInLagnaVargottama(C.Condition):
+    """H4.C.51: the Matru-Karaka Moon occupies the Lagna AND is Vargottama. Needs a degree
+    (vargottama is a navamsa fact); sign-midpoint materializations evaluate honestly off
+    their derived navamsa, and Shaw's chart is fresh-cast."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        moon = ctx.chart.planets.get("Moon")
+        return moon is not None and moon.rasi_house == 1 and moon.vargottama
+
+
 class _MatruKarakaDoublyAfflicted(C.Condition):
     """>= 2 of the first-rate malefics {Mars, Saturn, Rahu, Ketu} contact the Matru-Karaka
     Moon — conjunction (same sign) or whole-sign drishti (nodes 7th-only via the drishti
@@ -443,4 +476,53 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the Matru-Karaka Moon carries the combined contact of two or more "
                   "first-rate malefics → the mother's significator is considerably afflicted",
         frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4550)),
+
+    # C.49 — the 4th house hemmed by papakartari -> book-learning impaired. Shivaji verbatim
+    # (NH:4961-4963): "the 4th house is subjected to Papakarthari Yoga. Evidently Shivaji
+    # was unlettered." NON-decisive testimony: Raman's own next sentence supplies the
+    # compensation (C.50 below), and his conclusion for Shivaji is two-sided — under the
+    # sparse-contradiction rule the pair correctly lands MIXED there. Independent
+    # corroboration (review sweep): Prophet Mahamud, "The 4th house is highly afflicted
+    # indicating that he was illiterate" (NH:2818-2819). Counter-balance recorded: h4_03's
+    # education is favourable with a hemmed 4th (measured pillars outweigh, the x74 shape).
+    RuleRecord(
+        id="H4.C.49", house=4, signification="education", group="combination", kind="evaluable",
+        condition=_FourthHouseHemmedByMalefics(),
+        fortified=None,
+        afflicted="the 4th house subjected to Papakartari Yoga → book-learning is impaired",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 4961)),
+
+    # C.50 — the Gnanakaraka Jupiter aspecting the 4th LORD -> learning fortified. Shivaji
+    # verbatim (NH:4963-4966): "since Gnanakaraka Jupiter is strongly placed aspecting as he
+    # does the lord of the 4th, want of book-learning was more than compensated by his
+    # mastery of the great Hindu epics"; reinforced two sentences later ("the 4th lord in
+    # the intellectual sign of Gemini receiving the aspect of Jupiter did not leave his mind
+    # dull and sterile"). Benefic testimony; fires on the education rows h4_03/x80/h6_12
+    # without changing any (their verdicts already sit favourable-side).
+    RuleRecord(
+        id="H4.C.50", house=4, signification="education", group="combination", kind="evaluable",
+        condition=_JupiterAspectsFourthLord(),
+        fortified="the Gnanakaraka Jupiter aspecting the lord of the 4th → learning is "
+                  "fortified; the mind is not left dull",
+        afflicted=None,
+        frame="KARAKA", varga="D1", polarity="benefic", source=Citation("NH", 4963)),
+
+    # C.51 — the Matru-Karaka Moon in the LAGNA, Vargottama -> the mother is a powerful,
+    # favourable presence. Shaw verbatim (NH:7305-7307): "Shaw's mother was a powerful
+    # factor in his life and the Moon's presence in Lagna accounts for this. The benefic
+    # disposition of Matrukaraka gave good longevity to his mother". PROVENANCE, stated
+    # honestly (reviewer amendment): the "benefic disposition" is left UNNAMED in the
+    # mother sentence; the Vargottama leg is INFERRED from the adjacent sentence ("Lagna
+    # and the Moon being in Vargottama", NH:7307-7309), which Raman prints for a
+    # Rajayoga/career effect, not explicitly for the mother. The inference is reasonable —
+    # it is the only printed strength of Shaw's Moon, and something must outweigh the
+    # printed Mars aspect ("The Moon (mind) aspected by Mars") — and the leg strictly
+    # NARROWS firing, erring safe. Fires on Shaw alone across the confirmed H4 mother rows.
+    RuleRecord(
+        id="H4.C.51", house=4, signification="mother", group="combination", kind="evaluable",
+        condition=_MoonInLagnaVargottama(),
+        fortified="the Matru-Karaka Moon in the Lagna, Vargottama → the mother a powerful "
+                  "benefic presence; good longevity to the mother",
+        afflicted=None,
+        frame="KARAKA", varga="D1", polarity="benefic", source=Citation("NH", 7305)),
 )

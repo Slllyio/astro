@@ -106,20 +106,22 @@
       "HTJAH-II:7310",
       "HTJAH-II:7425",
       "HTJAH-II:7455",
-      "HTJAH-II:8648"
+      "HTJAH-II:8648",
+      "NH:6048"
     ],
     "fired_rule_ids": [
       "H9.A.20",
       "H9.A.5",
+      "H9.C.36",
       "H9.D.42",
       "H9.L.2"
     ],
     "rollup": "afflicted",
     "significations": {
       "dharma": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "father": {
         "degree": "moderate",

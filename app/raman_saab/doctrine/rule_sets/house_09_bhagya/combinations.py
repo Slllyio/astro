@@ -386,6 +386,22 @@ class _LordInHouseClassFromMoon(C.Condition):
         return (((p.rasi_house - moon.rasi_house) % 12) + 1) in self.from_houses
 
 
+class _JupiterOwnsNinthWithBeneficRays(C.Condition):
+    """H9.C.36's two legs (NH:6048-6050): Jupiter lords the 9th sign, and at least one full
+    benefic (Jupiter/Venus/Mercury) casts whole-sign drishti on the 9th or the 10th."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if _lord_of(9, chart) != "Jupiter":
+            return False
+        for name in ("Jupiter", "Venus", "Mercury"):
+            if name not in chart.planets:
+                continue
+            if (drishti.aspects_house(name, 9, chart)
+                    or drishti.aspects_house(name, 10, chart)):
+                return True
+        return False
+
+
 class _SunInNinthWithEighthLordHemmed(C.Condition):
     """H9.A.21's three legs (Chart 86, HTJAH-II:7945-7975): the Pitrukaraka Sun occupies the
     9th sign, the 8th lord shares that sign, and the 9th is hemmed by papakartari (a natural
@@ -654,6 +670,28 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified=None,
         afflicted="Rahu occupying the 9th → early death of the father is indicated",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 5311)),
+
+    # C.36 — the 9th (Dharma) OWNED BY JUPITER, the Dharma-karaka, with benefic rays on the
+    # dharma-karma axis. Thyagaraja verbatim (NH:6048-6050): "The 9th indicating Dharma is
+    # owned by Jupiter and the 10th ruling Karma has been the centre of the beneficial rays
+    # of Mercury and Jupiter" — the saint-composer's religiousness read off Jupiter's
+    # ownership of the 9th plus benefic convergence. Both legs encoded: Jupiter lords the
+    # 9th (Aries/Cancer lagnas) AND at least one full benefic casts drishti on the 9th or
+    # the 10th. Fires on Thyagaraja alone across the confirmed dharma rows (his row was an
+    # engine abstention). Review notes, recorded: no printed irreligious Jupiter-owned-9th
+    # exists in NH (Marx and Mussolini are out of the lagna class); Chengiz Khan (Cancer
+    # lagna) would fire, and Raman prints his irreligious indication as "fully neutralised
+    # by ... the other formidable Rajayogas" (NH:3305-3308) — not a contradiction, row
+    # unscored. The benefic-rays leg is weakly constraining (Jupiter in houses 1-6 satisfies
+    # it alone); acceptable for NON-DECISIVE testimony, a problem only if ever promoted —
+    # do not promote without re-review.
+    RuleRecord(
+        id="H9.C.36", house=9, signification="dharma", group="combination", kind="evaluable",
+        condition=_JupiterOwnsNinthWithBeneficRays(),
+        fortified="the 9th owned by the Dharma-karaka Jupiter with benefic rays on the "
+                  "dharma-karma axis → religiousness and dharma fortified",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("NH", 6048)),
 
     # ===== B. Fortune / raja-yoga-ish (HTJAH-II:7460-7484) — sig fortune =====
     RuleRecord(

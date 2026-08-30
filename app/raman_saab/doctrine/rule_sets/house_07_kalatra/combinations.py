@@ -71,6 +71,22 @@ def _seventh_sign(chart: RamanChart) -> int:
 
 # ── local leaf predicates (conditions.py intentionally untouched) ─────────────
 
+class _FamilyAndWifeLordsConjunctAsEnemies(C.Condition):
+    """H7.C.88 (NH:11140-11143): the lords of the 2nd and the 7th share a whole-sign house
+    AND are MUTUAL natural enemies per the naisargika table (Wadiyar's Sun-Saturn pair is
+    the worked instance; the predicate is his own general terms). Identity excluded."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives import relationships as _rel
+        chart = ctx.chart
+        l2, l7 = _lord_of(2, chart), _lord_of(7, chart)
+        if l2 == l7 or l2 not in chart.planets or l7 not in chart.planets:
+            return False
+        if chart.planets[l2].sign != chart.planets[l7].sign:
+            return False
+        return (l7 in _rel._ENEMIES.get(l2, frozenset())
+                and l2 in _rel._ENEMIES.get(l7, frozenset()))
+
+
 class _PlanetInSigns(C.Condition):
     """`planet` occupies one of `signs` (rashi 1..12)."""
     def __init__(self, planet: str, signs: frozenset[int]) -> None:
@@ -805,6 +821,29 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "shipped as a gate; this is the karaka-QUALITY testimony itself.",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 1474)),
+
+    # C.88 — the lords of the 2nd (family) and the 7th (wife) CONJUNCT while mutual natural
+    # BITTER ENEMIES -> domestic life miserable. Wadiyar IV verbatim (NH:11140-11143): "The
+    # Sun-Saturn conjunction in the 11th is doubtless a good combination, but the fact that
+    # the Sun and Saturn are bitter enemies, the Sun ruling the 2nd or house of family and
+    # Saturn ruling the 7th or house of wife, made his domestic life quite miserable."
+    # Encoded in his own general terms (lordships + mutual natural enmity via the
+    # relationships table), not as a Sun-Saturn special case. SATISFIABILITY BY ENUMERATION
+    # (review, playbook rule 3d): the only mutual naisargika enemy pairs are Sun-Saturn and
+    # Sun-Venus; walking all 12 lagnas' (2nd-lord, 7th-lord) pairs, CANCER (Sun, Saturn) is
+    # the SOLE satisfiable case — the general form is extensionally identical to Wadiyar's
+    # own configuration, zero over-generalization risk. Fires on Wadiyar alone across the
+    # confirmed marital rows (his row was an engine abstention). Note his sentence also
+    # teaches that the conjunction can simultaneously be "a good combination" for OTHER
+    # matters — this rule is scoped to marital_happiness only.
+    RuleRecord(
+        id="H7.C.88", house=7, signification="marital_happiness", group="combination",
+        kind="evaluable",
+        condition=_FamilyAndWifeLordsConjunctAsEnemies(),
+        fortified=None,
+        afflicted="the lords of the 2nd and the 7th conjoined while bitter natural enemies "
+                  "→ domestic life is miserable",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 11140)),
 )
 
 

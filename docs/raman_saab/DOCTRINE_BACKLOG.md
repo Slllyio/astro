@@ -3446,3 +3446,50 @@ favourables and on neither target. **The contact-count idiom that works for the 
 Raman's H1 practice of reading the self holistically (constitution, dignity, yogas) rather
 than by malefic tally. The five H1 rows stay documented limits; re-open only with a
 non-count discriminant read from the charts' own prose.
+
+
+## CORPUS GROWTH — the 3HC seam SURVEYED, registered, and handed off (2026-08-30)
+
+With WS4's magazine seam closed (no Raman-authored verdicts), the library was re-surveyed for
+un-mined Raman-authored sources carrying worked charts. **"Three Hundred Important
+Combinations" is the seam**: ~57-63 chart presentations, of which **28 birth dates are NEW to
+the corpus** (which stands at 262 nativities). Ashtakavarga-System has 25 chart refs; Hindu
+Predictive Astrology, Manual of Hindu Astrology, Graha-Bhava-Balas and Studies-in-Jaimini
+carry ZERO "Chart No." presentations and are rule-text only.
+
+**Scan choice, measured**: FOUR 3HC scans are vendored and they DISAGREE ON CONTENT, not just
+quality — `_complete` reads chart 2's time as "2-30 pm" where `_raman` reads "11-50", and its
+dates are visibly corrupt ("3l- Z- 19t0"). The `_raman` scan is registered. (The `_hocr` copy
+is a 3k-line fragment.)
+
+**The gate validates end to end.** 3HC prints "Balance of <lord> Dasa at birth" for most
+charts — which is exactly this project's existing extraction gate. Proof: Chart 1 is Raman's
+OWN nativity (8-8-1912, Bangalore; it is also HTJAH-I Chart 10/11) and a fresh cast gives a
+Mars balance of **6y 1m 5d** against his printed **6-1-6** — one day. The gate also works in
+the negative: chart 2's printed time yields a Venus balance of 4y4m18d against a printed
+6-7-15, correctly refusing an OCR-damaged time rather than ingesting it.
+
+**Shipped now** (both regression-checked; HTJAH-I still finds its 248 presentations / 72
+verified, and the extractor's 33 tests pass): 3HC registered in `_BOOKS`, and a
+**MERIDIEM-DESTROYED FALLBACK** — where OCR eats the a.m./p.m. marker ("7-35 fi.m.", "2-30
+j).m."), the parser now emits BOTH readings as sibling candidates and lets the printed dasha
+balance arbitrate. This is safe precisely here and nowhere else: a 12-hour error moves the
+Moon ~6.6 deg, far outside the 2.5 deg tolerance, so at most one branch can survive. It is a
+general improvement that will help any future scan.
+
+**HANDOFF — what remains for a dedicated session** (bounded, diagnosed, not speculative):
+1. **Multi-line birth assembly.** 3HC's scan breaks lines mid-datum far more aggressively than
+   HTJAH ("Chart No. 6 .—Born on" with the date on the NEXT line; latitude routinely one line
+   below the time). 25 of 63 candidates fail with "no parseable Born line" and 11 more with
+   "no latitude" purely from line-breaking. Fix: assemble the presentation window before
+   matching, rather than matching per-line.
+2. **A different verdict anchor.** 3HC has NO "Conclusion.—" paragraphs (0 found) — its
+   readings are "In Chart No. N ..." paragraphs placed with the YOGA, often far from the
+   chart's own presentation. They do carry confirmable conclusions with outcomes ("the native
+   was the ruler"; "a Joint Secretary in the Government of India and has been getting on very
+   well"; "there is an element of destructiveness"). The extractor's house-from-chapter
+   attribution also does not apply — 3HC is organised by YOGA, not by house, so the
+   signification must be read from the reading's own words.
+3. **Expect a yoga-flavoured corpus.** Many readings confirm a yoga's manifestation rather
+   than grading a house matter; those are worth ingesting for RULE LIVENESS even where they
+   yield no scored verdict.

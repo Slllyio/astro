@@ -66,6 +66,16 @@ _SOURCES = Path("data/knowledge_library/sources")
 _BOOKS: dict[str, Path] = {
     "HTJAH-I": _SOURCES / "how_to_judge_a_horoscope_raman" / "chapter_001_full-text-unsplit.md",
     "HTJAH-II": _SOURCES / "how_to_judge_horoscope_raman2" / "chapter_001_full-text-unsplit.md",
+    # 3HC added 2026-08-30 (corpus-growth survey): "Three Hundred Important Combinations"
+    # presents ~57 worked charts in exactly the same shape this tool already parses — a
+    # "Chart No. N.—Born on D-M-YYYY at H-MM a.m./p.m. ... Lat ... Long ..." line, chart
+    # grids that OCR into unusable fragments, and a printed "Balance of <lord> Dasa at
+    # birth" which IS this tool's gate. The `_raman` scan is used deliberately: the
+    # `_complete` scan of the same book carries materially worse OCR on exactly the birth
+    # lines ("3l- Z- 19t0" for a date, and a chart-2 time that disagrees with this scan).
+    # Feasibility validated before adding: Chart 1 (Raman's own nativity, 8-8-1912) casts
+    # to a Mars balance of 6y1m5d against his printed 6-1-6 — one day.
+    "3HC": _SOURCES / "three_hundred_combinations_raman" / "chapter_001_full-text-unsplit.md",
 }
 _GOLDENS = Path("tests/fixtures/raman_goldens.jsonl")
 
@@ -75,11 +85,24 @@ _GOLDENS = Path("tests/fixtures/raman_goldens.jsonl")
 _IST = 5.5
 
 _CHART_RE = re.compile(r"Chart\s*No\.?\s*(\d+)", re.IGNORECASE)
+#: Same Born line, but with the MERIDIEM OCR-DESTROYED ("7-35 fi.m.", "2-30 j).m.",
+#: "11-50 n.m."). Added 2026-08-30 for the 3HC scan, where this damage accounts for most
+#: unparsed presentations. Ambiguity is SAFE here and nowhere else: the printed dasha
+#: balance is a hard arbiter, so the parser may hand BOTH readings (a.m. and p.m.) to the
+#: gate and keep a chart only when EXACTLY ONE of them reproduces Raman's own printed
+#: balance. A 12-hour error moves the Moon ~6.6 deg — far outside the 2.5 deg tolerance —
+#: so the wrong branch cannot survive. If both branches somehow passed, the chart is
+#: dropped as genuinely ambiguous rather than guessed.
 # Born <d>-<m>-<yyyy> at <h>[-.:]<mm> a.m./p.m. (ZONE) at <lat> N/S[, ] <lon> E/W
 _BORN_RE = re.compile(
     r"Born\s*(?:on\s*)?(\d{1,2})\s*[-/]\s*(\d{1,2})\s*[-/]\s*(\d{3,4})"      # date
     r"[^\n]{0,18}?at\s*(?:about\s*)?(\d{1,2})\s*(?:[-.:]\s*(\d{1,2}))?\s*"    # time
     r"([ap])\.?\s*m",                                                          # meridiem
+    re.IGNORECASE)
+_BORN_LOOSE_RE = re.compile(
+    r"Born\s*(?:on\s*)?(\d{1,2})\s*[-/]\s*(\d{1,2})\s*[-/]\s*(\d{3,4})"      # date
+    r"[^\n]{0,20}?at\s*(?:about\s*)?(\d{1,2})\s*[-.:]\s*(\d{1,2})"             # time (mm required)
+    r"(?![-.:\d])",                                                             # not a longer run
     re.IGNORECASE)
 #: Zone marker. Parentheses are optional and the separator is a dot OR a hyphen, because all of
 #: "(I.S.T.)", "(L.M.T)", "L.T." (bare) and "(L-T.)" occur. The leading letter is what matters:
@@ -164,6 +187,9 @@ class Candidate:
     status: str = "unparsed"
     reason: str = ""
     notes: list[str] = field(default_factory=list)
+    #: "a"/"p" when this candidate is one of two meridiem branches submitted to the gate
+    #: (see the MERIDIEM-DESTROYED FALLBACK in collect_text); None for a printed meridiem.
+    meridiem_branch: Optional[str] = None
 
 
 def _dms(deg: str, minute: Optional[str]) -> float:
@@ -201,13 +227,26 @@ def _scan_coords(text: str) -> list[tuple[str, str, Optional[str]]]:
     return out
 
 
-def _parse_birth(block: str) -> tuple[Optional[dict[str, Any]], list[str]]:
-    """Birth dict from a chart block, or (None, reasons). Refuses anything ambiguous."""
+def _parse_birth(block: str, *, meridiem: Optional[str] = None,
+                 ) -> tuple[Optional[dict[str, Any]], list[str]]:
+    """Birth dict from a chart block, or (None, reasons). Refuses anything ambiguous.
+
+    `meridiem` ("a"/"p") forces the reading when the printed one is OCR-destroyed; the
+    caller then submits BOTH branches to the dasha gate and keeps the one Raman's printed
+    balance confirms (see _BORN_LOOSE_RE)."""
     notes: list[str] = []
     m = _BORN_RE.search(block)
-    if not m:
+    if m:
+        day, month, year, hh, mm, mer = m.groups()
+    elif meridiem is not None:
+        m = _BORN_LOOSE_RE.search(block)
+        if not m:
+            return None, ["no parseable Born line"]
+        day, month, year, hh, mm = m.groups()
+        mer = meridiem
+        notes.append(f"meridiem OCR-destroyed; read as {meridiem}.m. and gate-arbitrated")
+    else:
         return None, ["no parseable Born line"]
-    day, month, year, hh, mm, mer = m.groups()
     day, month, year, hh = int(day), int(month), int(year), int(hh)
     mm = int(mm) if mm else 0
 
@@ -414,6 +453,23 @@ def collect_text(book: str, text: str, *, origin: str = "corpus") -> list[Candid
         c.printed_lord, c.printed_years = _parse_balance(block)
         c.conclusion = _conclusion(block)
         if c.birth is None:
+            # MERIDIEM-DESTROYED FALLBACK (2026-08-30): emit BOTH readings as sibling
+            # candidates and let the dasha gate arbitrate — a 12-hour error moves the Moon
+            # ~6.6 deg, far outside tolerance, so at most one can verify. `verify()` marks
+            # the losers rejected in the normal way, and `_drop_ambiguous_siblings` below
+            # discards a chart where BOTH somehow passed rather than guessing.
+            alt = [(_parse_birth(block, meridiem=mer), mer) for mer in ("a", "p")]
+            alt = [((b, n), mer) for (b, n), mer in alt if b is not None]
+            if alt:
+                for (b, n), mer in alt:
+                    sib = Candidate(book=book, chart_no=no, line=i + 1, origin=origin)
+                    sib.house, sib.birth = c.house, b
+                    sib.notes = list(c.notes) + list(n)
+                    sib.printed_lord, sib.printed_years = c.printed_lord, c.printed_years
+                    sib.conclusion = c.conclusion
+                    sib.meridiem_branch = mer
+                    out.append(sib)
+                continue
             c.status, c.reason = "unparsed", "; ".join(notes)
         out.append(c)
     return out

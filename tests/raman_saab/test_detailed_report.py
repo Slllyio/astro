@@ -2464,3 +2464,34 @@ class TestWave2TimingDivisionalSoul:
         assert "the Karakamsa, is <b>" in html
         assert "CAREER: FAVOURABLE" in html or "CAREER: " in html   # verdict-first summary
         assert "&mdash; MD " in html                  # basis tooltip on a timeline chip
+
+
+class TestDissentingPillarDisclosure:
+    """The FAVOUR=2 review's owed item: a 2-of-3 favourable discloses the third pillar's
+    specific denial (Raman's Chart 80 device, HTJAH-I:4856-4858)."""
+
+    def test_two_of_three_favourable_discloses_the_dissenter(self, report):
+        """On the canonical chart, any house whose conclusion reads favourable with exactly
+        one weak known pillar must carry the dissenting-pillar clause; a favourable with no
+        weak pillar must not."""
+        from app.raman_saab.detailed_report import house_conclusion, _lagna_ledger
+        r = report
+        checked = disclosed = clean = 0
+        for pf in r.proformas:
+            text = house_conclusion(r, pf.house)
+            if not text or str(pf.rollup) != "favourable" or not pf.significations:
+                continue
+            led = _lagna_ledger(pf.significations[0])
+            if led is None:
+                continue
+            known = [v for v in (led.lord_strong, led.karaka_strong, led.bhava_bala_strong)
+                     if v is not None]
+            weak = sum(1 for v in known if v is False)
+            checked += 1
+            if len(known) >= 2 and weak == 1:
+                assert "dissenting pillar" in text, (pf.house, text)
+                disclosed += 1
+            elif weak == 0:
+                assert "dissenting pillar" not in text, (pf.house, text)
+                clean += 1
+        assert checked > 0, "no favourable houses on the canonical chart to check"

@@ -952,6 +952,33 @@ def house_conclusion(r: "DetailedReport", house: int) -> str:
         if pillar:
             bits.append("; ".join(pillar))
 
+    # DISSENTING-PILLAR DISCLOSURE (2026-08-30, add-only — the FAVOUR=2 review's owed
+    # honesty item): a favourable carried by the 2-of-3 pillar preponderance owes the reader
+    # the third pillar's SPECIFIC denial, because that is exactly how Raman writes such
+    # charts — Chart 80 grants "a very high official position" AND "very ordinary school
+    # education" in one conclusion (HTJAH-I:4856-4858): the dissenting factor's denial is
+    # confined to its own signification, never averaged away and never allowed to dilute
+    # the headline. Composed only from ledger facts already computed; discloses, never
+    # re-weighs.
+    if led is not None and verdict == "favourable":
+        known = [("lord", led.lord_strong), ("karaka", led.karaka_strong),
+                 ("bhava", led.bhava_bala_strong)]
+        known = [(n, v) for n, v in known if v is not None]
+        weak = [n for n, v in known if v is False]
+        if len(known) >= 2 and len(weak) == 1:
+            dissent = {
+                "lord": "the house-lord is the dissenting pillar — the matters resting "
+                        "specifically on the lord's own condition are not carried by this "
+                        "favourable and should be read separately",
+                "karaka": "the karaka is the dissenting pillar — the karaka's own natural "
+                          "significations are not carried by this favourable and should be "
+                          "read separately",
+                "bhava": "the Bhava Bala is the dissenting pillar — the favourable stands "
+                         "on lord and karaka, with the house's own magnitude lagging",
+            }[weak[0]]
+            bits.append(dissent + " (Raman's Chart 80 device: high office and denied "
+                        "schooling in one conclusion — each confined to its own indicator)")
+
     # Wave-2 D3 (2026-08-18, add-only): the moderating-factor clause — Raman's own
     # partial-affliction device ("the affliction is considerably reduced by..."),
     # composed ONLY from flags the judge's ledger already carries and disclosed

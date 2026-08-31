@@ -140,12 +140,14 @@
       "HTJAH-II:1773",
       "HTJAH-II:254",
       "HTJAH-II:353",
+      "HTJAH-II:364",
       "HTJAH-II:374",
       "HTJAH-II:376",
       "HTJAH-II:522"
     ],
     "fired_rule_ids": [
       "H7.C.1",
+      "H7.C.5",
       "H7.C.86",
       "H7.K.2",
       "H7.K.3",

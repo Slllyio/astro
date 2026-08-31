@@ -71,6 +71,82 @@ def _seventh_sign(chart: RamanChart) -> int:
 
 # ── local leaf predicates (conditions.py intentionally untouched) ─────────────
 
+class _LordParity(C.Condition):
+    """The lord of `house` occupies an odd / even rashi."""
+    def __init__(self, house: int, parity: str) -> None:
+        self.house, self.parity = house, parity
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_lord_of(self.house, ctx.chart))
+        if p is None:
+            return False
+        return (p.sign in _ODD_SIGNS) if self.parity == "odd" else (p.sign in _EVEN_SIGNS)
+
+
+class _LordNotCombustOrWeak(C.Condition):
+    """The lord of `house` is neither combust nor decisively weak — Raman's "not combust or
+    otherwise weak" (HTJAH-II:365-366). `effective_strength(...).decisively_weak` is the
+    shipped reading of "otherwise weak"; it is None-safe on a sparse chart, where an unknown
+    strength is NOT treated as weakness (the rule then rests on the combustion leg alone)."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        lord = _lord_of(self.house, ctx.chart)
+        if lord not in ctx.chart.planets:
+            return False
+        if C.Combust(lord).evaluate(ctx):
+            return False
+        try:
+            es = effective_strength(lord, ctx.chart)
+        except Exception:
+            return True                     # strength unknowable -> not asserted weak
+        return not getattr(es, "decisively_weak", False)
+
+
+class _SeventhSignIsBenefic(C.Condition):
+    """The sign on the 7th is owned by a natural benefic — Raman's "benefic sign"
+    (HTJAH-II:370-371). Jupiter/Venus/Mercury/Moon per the project's locked benefic set."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return SIGN_LORDS[_seventh_sign(ctx.chart)] in NATURAL_BENEFICS
+
+
+class _VenusAsSeventhLordAspectedByBenefic(C.Condition):
+    """Venus IS the 7th lord and a natural benefic aspects him (HTJAH-II:371-372). The
+    lordship leg is Raman's own ("Venus AS 7th lord"), not any Venus."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        if _lord_of(7, ctx.chart) != "Venus" or "Venus" not in ctx.chart.planets:
+            return False
+        return any(b != "Venus" and b in ctx.chart.planets
+                   and drishti.aspects_planet(b, "Venus", ctx.chart)
+                   for b in NATURAL_BENEFICS)
+
+
+class _PlanetInNavamsaOwnedBy(C.Condition):
+    """`planet` occupies a NAVAMSA sign owned by one of `owners` — the D9-lordship frame
+    Raman uses for the single-marriage indications (HTJAH-II:479-482). Reads PlanetPos's
+    already-computed `navamsa_sign`, so it needs no extra primitive."""
+    def __init__(self, planet: str, owners: frozenset[str]) -> None:
+        self.planet, self.owners = planet, owners
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(self.planet)
+        return p is not None and SIGN_LORDS[p.navamsa_sign] in self.owners
+
+
+class _BeneficsInKendrasOrTrikonas(C.Condition):
+    """At least `n` natural benefics occupy a kendra or a trikona (HTJAH-II:478)."""
+    def __init__(self, n: int = 1) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        good = {1, 4, 7, 10, 5, 9}
+        return sum(1 for b in NATURAL_BENEFICS
+                   if (q := ctx.chart.planets.get(b)) is not None
+                   and q.rasi_house in good) >= self.n
+
+
 class _FamilyAndWifeLordsConjunctAsEnemies(C.Condition):
     """H7.C.88 (NH:11140-11143): the lords of the 2nd and the 7th share a whole-sign house
     AND are MUTUAL natural enemies per the naisargika table (Wadiyar's Sun-Saturn pair is
@@ -432,17 +508,36 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="KARAKA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 368)),
     RuleRecord(
+        # UN-DEFERRED 2026-08-31 (stale-TODO audit): the "combust+weak gate" is C.Combust plus
+        # effective_strength(...).decisively_weak, both shipped. All four legs of
+        # HTJAH-II:364-366 are now encoded.
         id="H7.C.5", house=7, signification="marital_happiness", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(_PlanetParity("Venus", "even"),
+                        _SeventhSignIn(_EVEN_SIGNS),
+                        _LordParity(7, "even"),
+                        _LordNotCombustOrWeak(5), _LordNotCombustOrWeak(7)),
         fortified="7th lord & Venus in even signs, the 7th an even sign, and the 5th & 7th lords "
-                  "not combust/weak → good wife and children. TODO(predicate: combust+weak gate)",
+                  "neither combust nor otherwise weak → a good wife and children",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 364)),
     RuleRecord(
+        # BUILDABLE BUT HELD, MEASURED NET-NEGATIVE (2026-08-31). Both legs are one-liners over
+        # SIGN_LORDS / NATURAL_BENEFICS and drishti — the audit was right that nothing was
+        # missing, and `C.Or(_SeventhSignIsBenefic(), _VenusAsSeventhLordAspectedByBenefic())`
+        # is verbatim HTJAH-II:370-372. It was implemented and MEASURED: it fires 110/242
+        # (45%), because SEVEN of the twelve signs are benefic-owned, and it lifts h7_06's
+        # spouse reading mixed -> favourable against Raman (287 -> 286 exact). Held under the
+        # net-negative rule. The diagnosis is the same shape as H9.B.23's: a generic
+        # placement indication ("the 7th house be a benefic sign") carries Raman's vocabulary
+        # but not his weight — he offers it as one testimony among many, and as an
+        # unqualified benefic in a pooled bucket (spouse pools marital_happiness) it
+        # out-votes specific afflictions. Re-open only with a strength or
+        # blemishlessness qualifier attached, per the H7 blemishless-Venus floor precedent.
         id="H7.C.8", house=7, signification="marital_happiness", group="combination",
         kind="descriptive", condition=None,
         fortified="a benefic 7th sign, OR Venus-as-7th-lord aspected by a benefic → a devoted, "
-                  "charming spouse. TODO(predicate: benefic-sign + karaka-is-lord aspect)",
+                  "charming spouse",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 370)),
 
@@ -577,11 +672,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "kept in text)",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 488)),
     RuleRecord(
-        id="H7.C.35", house=7, signification="spouse", group="combination", kind="descriptive",
-        condition=None,
-        fortified="2nd & 7th lords in depression with benefics in kendras/trikonas → only ONE "
-                  "marriage; Jupiter & Mercury in Sun/Mars Navamsas, or Mercury-in-7th-in-Jupiter-"
-                  "Navamsa → marries once. TODO(predicate: multi-lord-depression, Navamsa lordship)",
+        # STAYS DESCRIPTIVE — and the reason is doctrinal, not technical (2026-08-31). The
+        # stale-TODO audit listed this as buildable and it IS: "multi-lord-depression" is
+        # C.LordHasDignity({"debil"}) twice and "Navamsa lordship" reads PlanetPos.navamsa_sign
+        # through SIGN_LORDS. All three of Raman's paths (HTJAH-II:477-482) were encoded and
+        # measured — they fire 28/242 and cost a row (h7_06 spouse mixed -> favourable against
+        # him). But the disqualification is prior to the measurement: "only one marriage is
+        # possible" / "the native will marry only once" is a marriage-COUNT statement, not a
+        # judgment of the spouse or of marital happiness. Marrying once is neither favourable
+        # nor afflicted — Raman himself reads single marriages both ways elsewhere. Encoding a
+        # count as a benefic that lifts spouse QUALITY is the category error the audit's own
+        # taxonomy defers (cf. H3.C.15-17, H11.C.40: "numeric count output, not a boolean
+        # gate"). Re-open only with a marriage-COUNT signification to route it to.
+        id="H7.C.35", house=7, signification="spouse", group="combination",
+        kind="descriptive", condition=None,
+        fortified="2nd & 7th lords in depression with benefics in kendras/trikonas; or Jupiter "
+                  "and Mercury in Navamsas owned by the Sun and Mars; or Mercury in the 7th in "
+                  "a Navamsa of Jupiter → the native marries only once",
         afflicted=None,
         frame="LAGNA", varga="D9", polarity="benefic", source=Citation("HTJAH-II", 477)),
 

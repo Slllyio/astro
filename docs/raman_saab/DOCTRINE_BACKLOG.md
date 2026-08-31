@@ -3677,3 +3677,43 @@ of what Raman wrote.
 `fortified` text. There was none — I had misread interleaved `sed` output that spliced two
 records. The anchored assertion caught it before the edit landed. Anchored patches earn their
 keep on exactly this class of confident-but-wrong edit.
+
+
+## H7 STALE-TODO BATCH (2026-08-31) — one shipped, two held; the audit is 3-for-7 on shipping
+
+Continuing the audit queue into H7 (5 dist-2 errors). All three parked rules WERE buildable
+exactly as the audit said — and only one survived measurement. Ratchet unchanged, 287/397.
+
+**H7.C.5 SHIPPED** (HTJAH-II:364-366) — 7th lord and Venus in even signs, the 7th an even
+sign, and the 5th and 7th lords neither combust nor otherwise weak -> a good wife and
+children. The "combust+weak gate" was `C.Combust` plus
+`effective_strength(...).decisively_weak`, both long shipped. Fires 17/242. The strength leg
+is None-safe: on a sparse chart an UNKNOWN strength is not treated as weakness, so the rule
+falls back to the combustion leg rather than silently asserting.
+
+**H7.C.8 HELD, measured net-negative.** `C.Or(_SeventhSignIsBenefic(),
+_VenusAsSeventhLordAspectedByBenefic())` is verbatim HTJAH-II:370-372 and compiles today —
+but it fires **110/242 (45%)**, because seven of the twelve signs are benefic-owned, and it
+lifts h7_06's spouse reading mixed -> favourable against Raman. Same shape as H9.B.23's hold:
+a generic placement indication carries his VOCABULARY but not his WEIGHT — he offers "the 7th
+house be a benefic sign" as one testimony among many, and as an unqualified benefic in a
+pooled bucket (`spouse` pools `marital_happiness`) it out-votes specific afflictions. Re-open
+only with a strength or blemishlessness qualifier, per the blemishless-Venus floor precedent.
+
+**H7.C.35 STAYS DESCRIPTIVE — on doctrinal grounds that PRECEDE the measurement.** It is
+buildable (two `LordHasDignity({"debil"})` plus navamsa lordship off `PlanetPos.navamsa_sign`)
+and was encoded and measured (28/242). But "only one marriage is possible" / "the native will
+marry only once" is a marriage-COUNT statement, not a judgment of the spouse or of marital
+happiness. **Marrying once is neither favourable nor afflicted** — Raman reads single
+marriages both ways elsewhere. Encoding a count as a benefic that lifts spouse QUALITY is the
+category error the audit's own taxonomy defers (H3.C.15-17, H11.C.40: "numeric count output,
+not a boolean gate"). Re-open only with a marriage-count signification to route it to.
+
+**Running tally on the audit's 46 buildable rules: 7 attempted, 3 shipped (H2.C.45, the H2
+C.13/C.15/C.33/C.34 four, H7.C.5), 3 held on measurement (H9.B.23 leg, H7.C.8), 1 refused on
+doctrine (H7.C.35).** The pattern is now clear enough to state as guidance for whoever
+continues: **the audit's "buildable" is a claim about the ALGEBRA, never about the DOCTRINE or
+the weight.** Broad single-placement indications (a benefic sign, a lord's varga debility) are
+the ones that fail — they are real sentences of Raman's that he weighs among many, and the
+judge has no way to weigh them. Narrow multi-leg conjunctions (C.5's four legs, C.45's three)
+are the ones that ship. Prefer the latter when picking the next batch.

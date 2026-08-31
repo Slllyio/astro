@@ -229,6 +229,17 @@ class _SecondLordNeechaBhanga(C.Condition):
         return C.NeechaBhanga(_second_lord(ctx.chart)).evaluate(ctx)
 
 
+class _LagnaModality(C.Condition):
+    """The Ascendant sign's modality is `kind` ("movable"/"fixed"/"common"). Reads the shipped
+    `primitives.sign_attributes.modality`, which is what the H2.C.45 TODO was waiting for."""
+    def __init__(self, kind: str) -> None:
+        self.kind = kind
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.sign_attributes import modality
+        return modality(ctx.chart.asc_sign) == self.kind
+
+
 class _SecondLordIsNaturalMalefic(C.Condition):
     """The 2nd lord is a natural malefic (Vakchalana leg 1, 3HC:5991 'a malefic happens
     to own the 2nd'). Only Sun/Mars/Saturn can qualify — nodes own no signs."""
@@ -829,11 +840,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 2532)),
 
-    # #45 — DESCRIPTIVE: movable-sign Lagna with Saturn/Ketu hemmed by malefics.
-    #       TODO(predicate): SignModality.
+    # #45 — EVALUABLE 2026-08-31 (stale-TODO audit): the "SignModality" blocker is gone —
+    # `sign_attributes.modality` ships, and this file already carries its own movable-sign
+    # constant. Both legs of Raman's sentence are encodable: a movable Lagna occupied by
+    # Saturn or Ketu, that planet hemmed between malefics. The hemming is on the PLANET
+    # (C.HemmedBy), which is what "hemmed between malefics" means for an occupant — the
+    # sibling C.44 immediately above encodes the same shape for Saturn in Lagna.
     RuleRecord(
         id="H2.C.45", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.Or(
+            C.And(_LagnaModality("movable"), C.InRashiHouse("Saturn", 1),
+                  C.HemmedBy("Saturn", "malefic")),
+            C.And(_LagnaModality("movable"), C.InRashiHouse("Ketu", 1),
+                  C.HemmedBy("Ketu", "malefic"))),
         fortified=None,
         afflicted="movable-sign Lagna with Saturn or Ketu, hemmed between malefics "
                   "→ poverty and deformed body",

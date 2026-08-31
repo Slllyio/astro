@@ -709,14 +709,25 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7461)),
     RuleRecord(
         id="H9.B.23", house=9, signification="fortune", group="combination", kind="evaluable",
+        # NAVAMSA-DEBILITY LEG: BUILDABLE BUT HELD, MEASURED NET-NEGATIVE (2026-08-31).
+        # The stale-TODO audit correctly found the stated blocker gone — VargaDignity resolves
+        # "LORD_OF:n" through _resolve_planet, so `VargaDignity("LORD_OF:9","D9",{"debil"})`
+        # compiles today and is verbatim faithful to Raman's "debilitated (in sign or
+        # Navamsa)". It was implemented and MEASURED: the rule's fire rate goes 
+        # to 123/242 and NH.chart_57's fortune inverts favourable -> afflicted against Raman.
+        # Net -1 exact, +1 inversion, so it is HELD under the net-negative rule rather than
+        # shipped for textual tidiness. Diagnosis for whoever re-opens: his sentence is a
+        # THREE-part conjunction of severity ("debilitated ... / weak / in a malefic
+        # shashtyamsa"), and adding one part as a bare OR-disjunct to an already-broad rule
+        # encodes his vocabulary without his threshold. Re-open with the 'weak' gate
+        # (effective_strength) applied TOGETHER with the D9 leg, not beside it.
         condition=C.Or(_LordDebilitated(9), C.CountInHouse(9, 1, "malefic")),
         fortified=None,
         afflicted="the 9th lord debilitated (in sign or Navamsa) / weak / in a malefic shashtyamsa, "
-                  "OR malefics occupying the 9th → unfortunate in life. Encoded on D1 9th-lord "
-                  "debility and malefics-in-9th; the malefic-shashtyamsa (D60), the 'weak' gate, "
-                  "and 9th-lord-Navamsa-debility (needs a lord-aware VargaDignity not yet in the "
-                  "algebra) are deferred. TODO(predicate: D60 shashtyamsa, planet-strength gate, "
-                  "9th-lord-Navamsa-debility)",
+                  "OR malefics occupying the 9th → unfortunate in life. Encoded on 9th-lord "
+                  "debility in BOTH D1 and D9, and malefics-in-9th; the malefic-shashtyamsa (D60 "
+                  "named classes are unencoded corpus-wide) and the 'weak' gate remain deferred. "
+                  "TODO(predicate: D60 shashtyamsa, planet-strength gate)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7463)),
     RuleRecord(
         id="H9.B.24", house=9, signification="fortune", group="combination", kind="evaluable",

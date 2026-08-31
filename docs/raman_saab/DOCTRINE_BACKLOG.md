@@ -3579,3 +3579,64 @@ definition IS the reason not to encode.
 sign" :14888; "the twelfth house is a barren sign Aries" :18217) for the 11th/12th houses. The
 encoded set is the strict HPA subset — right here, but any future 11th/12th reuse must adopt
 HTJAH-II's wider set or silently under-fire.
+
+
+## STALE-TODO AUDIT (2026-08-31) — 46 of 87 parked rules are now buildable
+
+The full `TODO(predicate)` surface was audited against what has actually shipped. Of 87
+distinct parked rules (99 grep hits): **46 STALE-NOW-BUILDABLE**, 15 PARTIAL, 4 STILL-BLOCKED,
+22 DEFERRED-BY-DESIGN. The ranked table with per-rule blockers, unblocking primitives and
+one-line predicate sketches is in the audit output; the headline findings:
+
+- **`_resolve_planet` already resolves `"LORD_OF:n"`** as a subject for `VargaDignity`,
+  `Vargottama`, `NeechaBhanga`, `TaraOf` and as an origin for `InHouseFrom`/`InVargaHouseFrom`.
+  Every TODO naming "lord-aware varga dignity" is stale against a gap its own docstring says
+  it closed.
+- **306 of 346 golden records carry `birth`**, so `chart.upagrahas["Mandi"/"Gulika"]` and
+  Shadbala are live on 88% of the corpus — five parked Mandi rules have a shipped precedent
+  (`_SaturnOrMandiOn12th`).
+- **`EvalContext` holds a chart and nothing else** — every "Phase-F dasha timing" TODO is the
+  atemporal-verdict design boundary, NOT a missing primitive. 13 rules classified so.
+- **The single highest-leverage genuine blocker is the D60 named-class table**
+  (Ghora/Rakshasa/Kulaghna/Devaloka…), absent corpus-wide, capping 6 rules. That is new
+  doctrine-import work, not a stale TODO.
+- Recommended order (densest first): the H2 block (8 rules on a house carrying 5 dist-2
+  errors, every blocker already local to the file), then H7/H10, then H4.C.24 (moves BOTH
+  poles), then the Mandi sweep.
+
+**H2.C.45 SHIPPED** — movable Lagna with Saturn or Ketu hemmed by malefics -> poverty
+(HTJAH-I:2532 region). The "SignModality" blocker was gone twice over: `sign_attributes.
+modality` ships AND this file already carried its own movable-sign constant. Fires 2/242;
+zero ratchet change (no scored H2 row on either chart) — recorded coverage.
+
+**H9.B.23's navamsa leg: BUILDABLE, IMPLEMENTED, MEASURED, HELD.** The audit called it the
+clearest stale claim in the file set and it was right about the blocker — `VargaDignity(
+"LORD_OF:9","D9",{"debil"})` compiles today and is verbatim faithful to Raman's "debilitated
+(in sign or Navamsa)". Measured: the rule's fire rate climbs to 123/242 and NH.chart_57's
+fortune INVERTS favourable -> afflicted against him (287 -> 286 exact, inversions 34 -> 35).
+Held under the net-negative rule. Diagnosis recorded in the rule: his sentence is a
+three-part severity conjunction ("debilitated ... / weak / in a malefic shashtyamsa"), and
+adding one part as a bare OR-disjunct to an already-broad rule encodes his VOCABULARY without
+his THRESHOLD. Re-open with the 'weak' gate (effective_strength) applied TOGETHER with the D9
+leg, not beside it. **This is why the audit's rankings are a queue to measure, not a queue to
+ship.**
+
+## ASHTAKAVARGA — SURVEYED, AND ITS ONE TESTABLE RULE IS REFUTED (2026-08-31)
+
+The Ashtakavarga System's "Chart No." references are BINDU DIAGRAMS (the Sun's ashtakavarga
+etc.), not nativities — **no golden-corpus growth is available there**. The real gap is that
+the engine COMPUTES ashtakavarga (`primitives/ashtakavarga.py` + `_pinda` + `_reduction`,
+`bindus_in_house`) while **no doctrine rule consumes it**.
+
+ASP does carry genuine interpretive bindu rules, and the one that targets a house on the
+current error surface was measured: ch.5 #9, "The waning Moon in Lagna associated with 1, 2, 3
+or no bindus ... there is also a likelihood of the mother's death." Only two confirmed H4
+mother rows have the Moon in Lagna, and the rule fires **exactly backwards on both**: Shaw
+(NH.chart_31) has 3 bindus and Raman reads his mother FAVOURABLE ("gave good longevity to his
+mother"), while Thyagaraja (chart_23) has 6 bindus and is AFFLICTED. Not shipped.
+Note the direct collision: Shaw is the very chart where Raman credits the Moon in Lagna
+Vargottama for a powerful mother (H4.C.51, shipped 2026-08-30) — his own applied reading and
+ASP's bindu warning point opposite ways on the same placement, and the applied reading is the
+one with a printed verdict attached. **General lesson recorded: ASP's bindu thresholds are not
+corroborated by Raman's own worked charts in this corpus; any future ashtakavarga rule must be
+enumerated against the goldens before encoding, never taken from the manual on faith.**

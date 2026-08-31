@@ -3717,3 +3717,49 @@ the weight.** Broad single-placement indications (a benefic sign, a lord's varga
 the ones that fail — they are real sentences of Raman's that he weighs among many, and the
 judge has no way to weigh them. Narrow multi-leg conjunctions (C.5's four legs, C.45's three)
 are the ones that ship. Prefer the latter when picking the next batch.
+
+
+## H10 SKIPPED WITH REASON + H4.C.24 SPLIT (2026-08-31)
+
+**H10's two "buildable" rules cannot move any verdict, and the audit's ranking missed it.**
+Both H10.C.15 and H10.C.44 carry `polarity="neutral"` and are CATALOGUES: C.15 maps
+Atmakaraka/Karakamsa configurations to KINDS of profession ("Sun-AK aspected by Jupiter ->
+temple, Saturn -> vile work, Rahu -> foreign concerns, Mercury -> judiciary"), and C.44 maps
+configurations to ascetic/Jeevanmukta/renunciate. Neither says a career is GOOD or BAD, which
+is the only thing a verdict is made of. The audit ranked them highly on error-surface
+relevance (H10 carries 4 dist-2 errors) — but a neutral rule can only rescue an ABSTENTION,
+and H10's three abstentions were already closed (C.62/C.63/C.64 on 2026-08-30). The three
+remaining H10 errors are all wrong-DIRECTION rows, which no neutral catalogue can touch.
+Skipped, not attempted. **Generalisable check for the next batch: read `polarity` before
+reading the TODO — a neutral rule is a classifier, not a verdict.**
+
+**H4.C.24 SPLIT into two scoped rules.** The record bundled SIX distinct sentences of Raman's
+under one neutral polarity — royal favours, mother's affection, an army commission, loss of
+lands, sinfulness, drowning — which is why it could never be made evaluable as a unit: the
+outcomes carry different significations AND opposite poles. Two were extracted:
+- **H4.C.52** (mother, benefic, fires 7/242): "He wins the affection of mother if lord of
+  Lagna and the fourth are friendly, and are otherwise beneficially disposed"
+  (HTJAH-I:4228-4229). Friendship reads `dignity.compound_relation` in BOTH directions —
+  "are friendly" is mutual — and "otherwise beneficially disposed" is read conservatively as
+  neither lord carrying a natural-malefic contact.
+- **H4.C.53** (property, malefic, fires 1/242): "The person loses lands by royal or
+  Government orders if the lord of the fourth is neecha with Sun" (HTJAH-I:4219-4220). Two
+  legs, both his. Scoped to `property`, the matter the sentence is about, not the bundle's
+  `happiness`.
+What remains in C.24 is honestly still blocked: the royalty/army sentences want a strength
+gate and have no status/career key on H4, and the sinner/drowning pair are life-event
+readings with no signification to route to.
+
+Zero ratchet movement from either (287/397 holds). **Tally: 9 of 46 attempted — 5 shipped,
+3 held on measurement, 1 refused on doctrine, plus 2 skipped unattempted on the neutral-
+polarity check.**
+
+**A near-miss worth recording**: while reading C.24 I nearly reported its drowning summary as
+a text bug ("weak Lagna-lord in a watery 4th" vs Raman's "the fourth lord is weak,
+debilitated and joined by evil planets and LAGNA is in a watery sign"). It is not a bug —
+HTJAH-I:4221-4223 contains TWO drowning sentences, and the record summarises the second one
+("The person will be drowned if the weak lord of the Lagna is in the fourth, which should be
+a watery sign"). This is the second time in two days that a confident "found a bug" reading
+of these records was wrong on a closer read. **When a record's summary looks wrong, read the
+FULL source paragraph before claiming it — Raman routinely states two near-identical
+variants in consecutive sentences.**

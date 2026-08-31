@@ -107,6 +107,52 @@ class _FourthLordConjunctMoon(C.Condition):
         return p is not None and moon is not None and p.rasi_house == moon.rasi_house
 
 
+class _LagnaAndFourthLordsFriendly(C.Condition):
+    """Lagna-lord and 4th-lord are mutual friends AND both are beneficially disposed —
+    Raman's "He wins the affection of mother if lord of Lagna and the fourth are friendly,
+    and are otherwise beneficially disposed" (HTJAH-I:4228-4229).
+
+    "Friendly" reads `dignity.compound_relation` in BOTH directions (his word is mutual).
+    "Otherwise beneficially disposed" is read as the conservative pair the corpus uses
+    elsewhere: neither lord carries a natural-malefic contact (conjunction or drishti).
+    Identity (one planet lording both) returns False: a planet is not "friendly with"
+    itself, and Raman's sentence is about two significators agreeing."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.dignity import compound_relation
+        chart = ctx.chart
+        l1, l4 = _lord_of(1, chart), _lord_of(4, chart)
+        if l1 == l4 or l1 not in chart.planets or l4 not in chart.planets:
+            return False
+        if compound_relation(l1, l4, chart) != "friend":
+            return False
+        if compound_relation(l4, l1, chart) != "friend":
+            return False
+        for lord in (l1, l4):
+            for m in NATURAL_MALEFICS:
+                if m == lord or m not in chart.planets:
+                    continue
+                if (chart.planets[m].rasi_house == chart.planets[lord].rasi_house
+                        or drishti.aspects_planet(m, lord, chart)):
+                    return False
+        return True
+
+
+class _FourthLordNeechaWithSun(C.Condition):
+    """The 4th lord is debilitated AND shares a house with the Sun — Raman's "The person
+    loses lands by royal or Government orders if the lord of the fourth is neecha with Sun"
+    (HTJAH-I:4219-4220). Both legs are his; the Sun's presence is what makes the loss
+    ROYAL/governmental, which is why this is scoped to `property` and not to happiness."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.dignity import dignity as _dig
+        chart = ctx.chart
+        l4 = _lord_of(4, chart)
+        p = chart.planets.get(l4)
+        sun = chart.planets.get("Sun")
+        if p is None or sun is None or l4 == "Sun":
+            return False
+        return _dig(l4, chart) == "debil" and p.rasi_house == sun.rasi_house
+
+
 class _FourthHouseHemmedByMalefics(C.Condition):
     """H4.C.49: a natural malefic in each sign adjacent to the 4th sign (papakartari on the
     bhava). Sign-level hemming, same form as H9.A.21's leg."""
@@ -301,13 +347,47 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H4.C.24", house=4, signification="happiness", group="combination", kind="descriptive",
         condition=None,
         fortified="strong 4th & 9th lords aspected by Jupiter in a kendra/kona → favours from "
-                  "royalty; lord-of-Lagna & 4th-lord friendly & beneficial → wins mother's "
-                  "affection; 4th lord with Mars favourably → army commission. "
-                  "TODO(predicate: strength gate, lord-friendship)",
-        afflicted="4th lord neecha with the Sun → loses lands by Government order; many evil "
-                  "planets in the 4th + 4th lord in an enemy's house → a great sinner; weak "
-                  "Lagna-lord in a watery 4th → drowning. TODO(predicate: weak/debil + lord gates)",
+                  "royalty; 4th lord with Mars favourably → army commission. "
+                  "TODO(predicate: strength gate)",
+        afflicted="many evil planets in the 4th + 4th lord in an enemy's house → a great "
+                  "sinner; weak Lagna-lord in a watery 4th → drowning. "
+                  "TODO(predicate: weak/debil + lord gates)",
+        # PARTIALLY SPLIT OUT 2026-08-31 (stale-TODO audit). This record bundled SIX distinct
+        # sentences of Raman's — royal favours, mother's affection, an army commission, loss
+        # of lands, sinfulness, drowning — under one neutral polarity, which is why it could
+        # never be made evaluable as a unit: the outcomes carry different significations AND
+        # opposite poles. The two whose signification maps cleanly and whose predicate is
+        # narrow are now C.52 (mother) and C.53 (property) below. What remains here is
+        # genuinely still blocked or genuinely unscoped: the royalty and army sentences want
+        # a strength gate and have no `status`/`career` key on H4, and the sinner/drowning
+        # pair are life-event readings with no signification to route to.
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4219)),
+
+    # #52 — the mother-affection sentence, split out of C.24's bundle. Raman verbatim
+    # (HTJAH-I:4228-4229): "He wins the affection of mother if lord of Lagna and the fourth
+    # are friendly, and are otherwise beneficially disposed." Both legs are his; the
+    # friendship reads the shipped `dignity.compound_relation` in BOTH directions, which is
+    # what "are friendly" means for a pair. Scoped to `mother`, where it belongs — the
+    # bundle had it under `happiness`.
+    RuleRecord(
+        id="H4.C.52", house=4, signification="mother", group="combination", kind="evaluable",
+        condition=_LagnaAndFourthLordsFriendly(),
+        fortified="the lords of the Lagna and the 4th mutually friendly and otherwise "
+                  "beneficially disposed → the native wins the affection of the mother",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4228)),
+
+    # #53 — the loss-of-lands sentence, split out of C.24's bundle. Raman verbatim
+    # (HTJAH-I:4219-4220): "The person loses lands by royal or Government orders if the lord
+    # of the fourth is neecha with Sun." Two legs, both his. Scoped to `property` — the
+    # matter the sentence is actually about — rather than the bundle's `happiness`.
+    RuleRecord(
+        id="H4.C.53", house=4, signification="property", group="combination", kind="evaluable",
+        condition=_FourthLordNeechaWithSun(),
+        fortified=None,
+        afflicted="the 4th lord debilitated and with the Sun → loss of lands by royal or "
+                  "Government order",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4219)),
 
     # ===== B. Mother — longevity & death timing (HTJAH-I:4394-4402) — sig mother =====
     RuleRecord(

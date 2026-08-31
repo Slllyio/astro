@@ -99,6 +99,19 @@ _BORN_RE = re.compile(
     r"[^\n]{0,18}?at\s*(?:about\s*)?(\d{1,2})\s*(?:[-.:]\s*(\d{1,2}))?\s*"    # time
     r"([ap])\.?\s*m",                                                          # meridiem
     re.IGNORECASE)
+#: TRADITIONAL TIME: "Born on 28-7-1896 at Gh. 10 after Sunrise" — ghatis (and vighatis)
+#: elapsed since sunrise, 1 ghati = 24 minutes, 1 vighati = 24 seconds. Raman prints this form
+#: throughout 3HC (and occasionally in HTJAH), and it accounts for the single largest block of
+#: otherwise-parseable presentations the tool used to drop. Resolving it needs the day's actual
+#: sunrise, which the engine already computes (chart/kala_context._sunrise_sunset); the result
+#: is then handed to the SAME dasha-balance gate as any clock time, so a mis-parsed ghati count
+#: cannot enter the corpus.
+_BORN_GHATI_RE = re.compile(
+    r"Born\s*(?:on\s*)?(\d{1,2})\s*[-/]\s*(\d{1,2})\s*[-/]\s*(\d{3,4})"        # date
+    r"[^\n]{0,24}?(?:at\s*)?(?:Gh|gha)[.a]?\s*(\d{1,2})"                          # ghatis
+    r"(?:\s*[-.]\s*(\d{1,2}))?"                                                     # vighatis
+    r"[^\n]{0,12}?after\s*Sunris",                                                   # anchor
+    re.IGNORECASE)
 _BORN_LOOSE_RE = re.compile(
     r"Born\s*(?:on\s*)?(\d{1,2})\s*[-/]\s*(\d{1,2})\s*[-/]\s*(\d{3,4})"      # date
     r"[^\n]{0,20}?at\s*(?:about\s*)?(\d{1,2})\s*[-.:]\s*(\d{1,2})"             # time (mm required)
@@ -107,10 +120,20 @@ _BORN_LOOSE_RE = re.compile(
 #: Zone marker. Parentheses are optional and the separator is a dot OR a hyphen, because all of
 #: "(I.S.T.)", "(L.M.T)", "L.T." (bare) and "(L-T.)" occur. The leading letter is what matters:
 #: I -> Indian Standard Time, L -> Local (mean) Time, G -> Greenwich.
-_ZONE_RE = re.compile(r"\(?\s*\b([ILG])[.\-]\s?(?:[MS][.\-]\s?)?T\.?\s*\)?", re.IGNORECASE)
+#: The leading letter is OCR-fragile: "I.S.T." prints as "(/. S. T.)" in the 3HC scan, and a
+#: bare "/" or "|" or "1" or "l" all stand in for I. Getting this wrong is NOT harmless — an
+#: unrecognised zone silently falls back to LMT, a ~20-minute error on an Indian chart — so the
+#: substitutes are accepted and normalised to I. The gate still arbitrates the result.
+_ZONE_RE = re.compile(
+    r"\(?\s*(?:\b([ILG])|([/|1l]))[.\-]\s?(?:[MS][.\-]\s?)?T\.?\s*\)?", re.IGNORECASE)
 #: Longitude printed as TIME rather than arc: "Long. 5h. 10m. 20s. E" == 5h10m20s x 15 deg.
+#: The minutes token is written ``m.`` but OCR renders it ``in.``/``rn.``/``n.`` often enough
+#: to strand whole presentations (3HC chart 1: "Long. 5 h. 10 in. 20 s. E"). Accepting those
+#: spellings costs nothing: the token sits between two digit runs inside an anchored
+#: ``Long. ... E/W`` frame, and a wrong reading cannot survive the dasha-balance gate.
 _LON_TIME_RE = re.compile(
-    r"Long\.?\s*(\d{1,2})\s*h\.?\s*(?:(\d{1,2})\s*m\.?)?\s*(?:(\d{1,2})\s*s\.?)?\s*([EW])",
+    r"Long\.?\s*(\d{1,2})\s*h\.?\s*(?:(\d{1,2})\s*(?:m|in|rn|n)\.?)?"
+    r"\s*(?:(\d{1,2})\s*s\.?)?\s*([EW])",
     re.IGNORECASE)
 #: Raman prints coordinates as ``DD <dir> MM`` — the hemisphere letter sits BETWEEN the degrees
 #: and the minutes (``13 N 10, 76 E 10``; ``13° N. \n 77 E35.``; ``51 N 30, 0 W 05``), and the
@@ -127,8 +150,16 @@ _LON_TIME_RE = re.compile(
 #: wrong longitude — the exact failure mode this whole tool exists to prevent.
 #: Hemisphere is guarded by (?![A-Za-z]) rather than \b: "77 E35" has no word boundary between
 #: "E" and "3", and requiring one loses the longitude entirely.
-_DEG = r"(\d{1,3})\s*(?:°|\*|o|º)?\s*"
-_HEMI = r"([NSEW])(?![A-Za-z])"
+#: The degree mark is OCR-rendered as a double-quote often enough to strand a whole
+#: presentation (3HC: 'Lat. 13" N.'). It is accepted here as a degree mark even though the
+#: double-prime conventionally means SECONDS: the group is optional and non-capturing, so
+#: this only lets the scanner step over the character on its way to the hemisphere letter,
+#: and a misread coordinate cannot survive the dasha-balance gate.
+_DEG = r"(\d{1,3})\s*(?:°|\*|o|º|\"|”|“)?\s*"
+#: The hemisphere letter is OCR-fragile: N prints as ".V", "V" or "IV" in the 3HC scan
+#: ("Lat. 9° .V ;", "hat. 17°/V."). Those are normalised to N by _hemi(); S/E/W show no
+#: comparable substitutes in the corpus, so none are invented for them.
+_HEMI = r"(?:\.?\s*)([NSEW]|IV|V)(?![A-Za-z])"
 _COORD_MIN_FIRST = re.compile(_DEG + r"(\d{1,2})(?!\d)\s*[’']\s*[.,]?\s*" + _HEMI, re.IGNORECASE)
 #: Minutes-after must not be the next coordinate's degrees, so it is refused when a degree mark
 #: or another hemisphere letter follows it.
@@ -141,13 +172,18 @@ _COORD_BARE = re.compile(_DEG + r"[.,]?\s*" + _HEMI, re.IGNORECASE)
 #:   Motilal 12th ed.      — "Balance of Ketu Dasha at birth: Years 5-0-24."  (Y-M-D, compact)
 #: The compact form is the more trustworthy of the two: it cannot be truncated mid-phrase the
 #: way "6 years, 4 months and..." is when a line breaks.
+#: The dasha word and the year/month/day words are both OCR-fragile in the 3HC scan
+#: ("Balance of Moon's Da->a at Birth, yens", "Balance of Mars Dasa at birth, \\ ear-. 5-10-7").
+#: `_DASA` accepts the mangled spellings; the numeric groups are unchanged, so a garbled
+#: NUMBER still fails to match rather than being guessed at.
+_DASA = r"Da[s\->]{1,3}h?a"
 _BAL_PROSE_RE = re.compile(
-    r"Balance of\s*([A-Z][a-z]+)(?:'s|’s)?\s*Das?h?a at birth\s*[:\-—]?\s*"
-    r"(?:(\d+)\s*years?)?[,\s]*(?:(\d+)\s*months?)?[,\s]*(?:and)?\s*(?:(\d+)\s*days?)?",
+    r"Balance of\s*([A-Z][a-z]+)(?:'s|’s)?\s*" + _DASA + r"\s*at\s*birth\s*[:\-—,]?\s*"
+    r"(?:(\d+)\s*y[ea]{1,3}rs?)?[,\s]*(?:(\d+)\s*months?)?[,\s]*(?:and)?\s*(?:(\d+)\s*days?)?",
     re.IGNORECASE)
 _BAL_COMPACT_RE = re.compile(
-    r"Balance of\s*([A-Z][a-z]+)(?:'s|’s)?\s*Das?h?a at birth\s*[:\-—]?\s*"
-    r"(?:years?\s*)?(\d{1,3})\s*-\s*(\d{1,2})\s*-\s*(\d{1,2})",
+    r"Balance of\s*([A-Z][a-z]+)(?:'s|’s)?\s*" + _DASA + r"\s*at\s*birth\s*[:\-—,]?\s*"
+    r"(?:y[ea]{1,3}rs?[.,\s]*)?(\d{1,3})\s*-\s*(\d{1,2})\s*-\s*(\d{1,2})",
     re.IGNORECASE)
 
 _LORDS = {"Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"}
@@ -218,13 +254,61 @@ def _scan_coords(text: str) -> list[tuple[str, str, Optional[str]]]:
             continue
         m, kind = best
         if kind is True:
-            out.append((m.group(1), m.group(3).upper(), m.group(2)))
+            out.append((m.group(1), _hemi(m.group(3)), m.group(2)))
         elif kind is False:
-            out.append((m.group(1), m.group(2).upper(), m.group(3)))
+            out.append((m.group(1), _hemi(m.group(2)), m.group(3)))
         else:
-            out.append((m.group(1), m.group(2).upper(), None))
+            out.append((m.group(1), _hemi(m.group(2)), None))
         pos = m.end()
     return out
+
+
+def _flatten_head(block: str, n_lines: int = 10) -> str:
+    """The block's first `n_lines` with newlines collapsed to spaces, then the remainder.
+
+    Every birth-line pattern here is deliberately newline-bounded (`[^\n]{0,18}?`) so a
+    match cannot wander across unrelated prose. That is right for HTJAH, whose presentations
+    sit on one or two lines — but the 3HC scan breaks the SAME datum across lines much more
+    aggressively ("Chart No. 6 .—Born on" with the date on the next line; the latitude
+    routinely a line below the time), which stranded 25 of 63 candidates on "no parseable
+    Born line" and 11 more on "no latitude". Flattening only the HEADER region keeps the
+    newline bound doing its job everywhere else: the presentation's own datum lines are
+    joined, the discussion prose below is not.
+    """
+    lines = block.splitlines()
+    head = " ".join(lines[:n_lines])
+    tail = "\n".join(lines[n_lines:])
+    return head + ("\n" + tail if tail else "")
+
+
+def _resolve_ghati(year: int, month: int, day: int, lat: float, lon: float,
+                   tz: float, ghatis: tuple[int, int]) -> Optional[tuple[int, int]]:
+    """Local clock (hour, minute) for `ghatis` elapsed since that day's sunrise.
+
+    1 ghati = 24 minutes, 1 vighati = 24 seconds (60 ghatis to the day). Sunrise comes from
+    the engine's own swisseph call rather than an almanac approximation, so the extraction
+    and the judge agree about the sky. Returns None where sunrise is not computable (polar
+    latitudes), rather than guessing."""
+    from app.raman_saab.chart.kala_context import _sunrise_sunset
+    from app.raman_saab.chart.model import BirthData
+    probe = BirthData(name="ghati-probe", year=year, month=month, day=day, hour=12, minute=0,
+                      tz_offset=tz, latitude=lat, longitude=lon)
+    try:
+        sunrise_jd, _sunset = _sunrise_sunset(probe, "raman")
+    except Exception:
+        return None
+    # sunrise_jd is UT; convert to local clock, then add the elapsed ghatis.
+    frac_ut = (sunrise_jd + 0.5) % 1.0                 # JD day starts at noon
+    local_hours = frac_ut * 24.0 + tz
+    total = local_hours + ghatis[0] * 0.4 + ghatis[1] * (0.4 / 60.0)
+    total %= 24.0
+    return int(total), int(round((total % 1.0) * 60)) % 60
+
+
+def _hemi(tok: str) -> str:
+    """Hemisphere letter, with the scan's OCR substitutes for N folded back."""
+    tok = tok.upper()
+    return "N" if tok in ("V", "IV") else tok
 
 
 def _parse_birth(block: str, *, meridiem: Optional[str] = None,
@@ -235,8 +319,20 @@ def _parse_birth(block: str, *, meridiem: Optional[str] = None,
     caller then submits BOTH branches to the dasha gate and keeps the one Raman's printed
     balance confirms (see _BORN_LOOSE_RE)."""
     notes: list[str] = []
+    ghatis: Optional[tuple[int, int]] = None      # (ghati, vighati) when time is traditional
     m = _BORN_RE.search(block)
-    if m:
+    g = None if m else _BORN_GHATI_RE.search(block)
+    if g is not None:
+        # Traditional reckoning: the clock time is UNKNOWN until the day's sunrise is
+        # computed, which needs the coordinates parsed further down — so record the offset
+        # and resolve it at the end.
+        day, month, year, gh, vig = g.groups()
+        ghatis = (int(gh), int(vig or 0))
+        hh, mm, mer = 12, 0, "p"                  # placeholders, overwritten after sunrise
+        m = g
+        notes.append(f"time given as {ghatis[0]}gh {ghatis[1]}vig after sunrise; "
+                     "resolved against the computed sunrise and gate-arbitrated")
+    elif m:
         day, month, year, hh, mm, mer = m.groups()
     elif meridiem is not None:
         m = _BORN_LOOSE_RE.search(block)
@@ -256,13 +352,16 @@ def _parse_birth(block: str, *, meridiem: Optional[str] = None,
         return None, [f"implausible year {year} (OCR)"]
     if not (1 <= month <= 12 and 1 <= day <= 31):
         return None, [f"implausible date {day}-{month}"]
-    if not (1 <= hh <= 12):
+    if ghatis is None and not (1 <= hh <= 12):
         return None, [f"implausible hour {hh}"]
+    if ghatis is not None and not (0 <= ghatis[0] <= 60 and 0 <= ghatis[1] <= 60):
+        return None, [f"implausible ghati {ghatis}"]
 
     hour24 = hh % 12 + (12 if mer.lower() == "p" else 0)
 
     zm = _ZONE_RE.search(block[:m.end() + 40])
-    zone = zm.group(1).upper() if zm else None
+    # group(2) is the OCR-substituted leading letter ("/", "|", "1", "l"); all stand for I.
+    zone = ((zm.group(1) or "I").upper() if zm else None)
 
     # The coordinate pair frequently straddles a line break, so scan a generous tail and take
     # the FIRST latitude token and the FIRST longitude token found.
@@ -311,6 +410,11 @@ def _parse_birth(block: str, *, meridiem: Optional[str] = None,
         # is rejected. Hypothesise-then-verify is only safe because the gate is independent.
         tz = round(lon / 15.0, 4)
         notes.append("ZONE ABSENT — hypothesised L.M.T., accepted only if the dasha gate passes")
+    if ghatis is not None:
+        resolved = _resolve_ghati(year, month, day, lat, lon, tz, ghatis)
+        if resolved is None:
+            return None, notes + ["sunrise not computable for this date/place"]
+        hour24, mm = resolved
     return {"dt": f"{year:04d}-{month:02d}-{day:02d}T{hour24:02d}:{mm:02d}:00",
             "tz": tz, "lat": round(lat, 4), "lon": round(lon, 4)}, notes
 
@@ -448,7 +552,7 @@ def collect_text(book: str, text: str, *, origin: str = "corpus") -> list[Candid
         c.house = house_of_chapter("\n".join(lines[prev:i + 1])) or (
             out[-1].house if out else None)
         prev = i
-        c.birth, notes = _parse_birth(block)
+        c.birth, notes = _parse_birth(_flatten_head(block))
         c.notes.extend(notes)
         c.printed_lord, c.printed_years = _parse_balance(block)
         c.conclusion = _conclusion(block)
@@ -458,7 +562,8 @@ def collect_text(book: str, text: str, *, origin: str = "corpus") -> list[Candid
             # ~6.6 deg, far outside tolerance, so at most one can verify. `verify()` marks
             # the losers rejected in the normal way, and `_drop_ambiguous_siblings` below
             # discards a chart where BOTH somehow passed rather than guessing.
-            alt = [(_parse_birth(block, meridiem=mer), mer) for mer in ("a", "p")]
+            alt = [(_parse_birth(_flatten_head(block), meridiem=mer), mer)
+                   for mer in ("a", "p")]
             alt = [((b, n), mer) for (b, n), mer in alt if b is not None]
             if alt:
                 for (b, n), mer in alt:

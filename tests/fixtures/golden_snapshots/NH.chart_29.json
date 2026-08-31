@@ -92,12 +92,14 @@
     "citations": [
       "HTJAH-I:2402",
       "HTJAH-I:2437",
+      "HTJAH-I:2452",
       "HTJAH-I:2466",
       "HTJAH-I:2567",
       "HTJAH-I:2879",
       "HTJAH-I:2937"
     ],
     "fired_rule_ids": [
+      "H2.C.13",
       "H2.C.2",
       "H2.C.23",
       "H2.C.65",

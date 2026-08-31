@@ -43,11 +43,13 @@
   "H2": {
     "citations": [
       "HTJAH-I:2395",
+      "HTJAH-I:2452",
       "HTJAH-I:2498",
       "HTJAH-I:2544",
       "HTJAH-I:2948"
     ],
     "fired_rule_ids": [
+      "H2.C.13",
       "H2.C.40",
       "H2.C.66",
       "H2.L.9",

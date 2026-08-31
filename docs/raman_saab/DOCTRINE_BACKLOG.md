@@ -3640,3 +3640,40 @@ ASP's bindu warning point opposite ways on the same placement, and the applied r
 one with a printed verdict attached. **General lesson recorded: ASP's bindu thresholds are not
 corroborated by Raman's own worked charts in this corpus; any future ashtakavarga rule must be
 enumerated against the goldens before encoding, never taken from the manual on faith.**
+
+
+## H2 STALE-TODO BATCH (2026-08-31) — four more rules un-deferred; zero scored movement
+
+Working the audit's #1 recommendation (the H2 block: densest buildable set, on a house
+carrying 5 dist-2 errors). Four rules moved descriptive -> evaluable, all firing, ratchet
+unchanged at 287/397:
+
+- **H2.C.13** family (HTJAH-I:2452-2453) — 2nd lord with benefics in a kendra, OR the 2nd
+  house wholly benefic in association and aspect. Blocker "LordInHouseClass + benefic
+  conjunction" was never real: a kendra test is `rasi_house in (1,4,7,10)` and the benefic set
+  is a module constant. Fires 67/242. The "wholly benefic" leg returns False on an UNTOUCHED
+  2nd rather than vacuously True — an untouched house is not "all good association", it is
+  none.
+- **H2.C.15** speech (HTJAH-I:2456-2458) — Jupiter in Lagna with Saturn in the 8th, or Jupiter
+  in a kendra with the Lagna-lord or Mercury exalted. `C.LordHasDignity` was the whole
+  blocker. Fires 7/242. These are Raman's 2nd and 3rd paths to the mathematician; C.14 was
+  already carrying only the first.
+- **H2.C.33 / H2.C.34** wealth (HTJAH-I:2482-2488) — the "NavamsaDispositor" pair.
+  `dispositor.navamsa_lord_of` IS the named primitive, and Raman spells the construction out
+  with his own worked example ("Aquarius is Lagna and Saturn occupies Taurus in Navamsha ...
+  aspected by Venus, who is the lord of the Navamsha occupied by lord ascendant"). Fires 3
+  and 13.
+
+**Zero rows moved, and that is the expected shape**: these are benefic wealth/family/speech
+rules, while H2's live errors need either benefic weight the routing cannot hear
+(chart_25/chart_33 speech — diagnosed 2026-08-30 as weak-pillar + navamsa-weakens at the
+measured local optimum) or malefic weight (chart_44), and chart_73 is the recorded gestalt
+limit. Banked as COVERAGE: the doctrine is now encoded and firing rather than parked, which
+is the point of the audit — not every un-deferral is a ratchet gain, and one that fires
+correctly on 90 chart-instances while moving no scored row is still the engine knowing more
+of what Raman wrote.
+
+**Process note worth keeping**: a patch of mine asserted a "copy-paste bug" in C.13's
+`fortified` text. There was none — I had misread interleaved `sed` output that spliced two
+records. The anchored assertion caught it before the edit landed. Anchored patches earn their
+keep on exactly this class of confident-but-wrong edit.

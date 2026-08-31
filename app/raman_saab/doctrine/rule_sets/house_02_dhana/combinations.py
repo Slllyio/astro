@@ -229,6 +229,65 @@ class _SecondLordNeechaBhanga(C.Condition):
         return C.NeechaBhanga(_second_lord(ctx.chart)).evaluate(ctx)
 
 
+class _SecondLordWithBeneficsInKendra(C.Condition):
+    """H2.C.13 leg 1 (HTJAH-I:2452): the 2nd lord occupies a kendra AND shares that house
+    with at least one natural benefic — Raman's "with good planets in a Kendra"."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _second_lord(ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None or p.rasi_house not in (1, 4, 7, 10):
+            return False
+        return any(n != lord and n in NATURAL_BENEFICS and q.rasi_house == p.rasi_house
+                   for n, q in ctx.chart.planets.items())
+
+
+class _SecondHouseWhollyBenefic(C.Condition):
+    """H2.C.13 leg 2 (HTJAH-I:2453): "the 2nd house has all the good association and
+    aspects" — every planet occupying OR aspecting the 2nd is a natural benefic, and at
+    least one does. An untouched 2nd is not "all good association"; it is none, so the
+    empty case is False rather than vacuously True."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        touching = [n for n, q in ctx.chart.planets.items()
+                    if q.rasi_house == 2 or drishti.aspects_house(n, 2, ctx.chart)]
+        return bool(touching) and all(n in NATURAL_BENEFICS for n in touching)
+
+
+class _LordAspectsLord(C.Condition):
+    """The lord of `a` casts whole-sign drishti on the lord of `b`. Identity excluded."""
+    def __init__(self, a: int, b: int) -> None:
+        self.a, self.b = a, b
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        la, lb = _lord_of(self.a, ctx.chart), _lord_of(self.b, ctx.chart)
+        if la == lb or la not in ctx.chart.planets or lb not in ctx.chart.planets:
+            return False
+        return drishti.aspects_planet(la, lb, ctx.chart)
+
+
+class _NavamsaLordOfLagnaLordAspects(C.Condition):
+    """The planet lording the NAVAMSA occupied by the Lagna-lord casts drishti on `target`.
+
+    Raman spells the construction out with his own worked example (HTJAH-I:2482-2485):
+    "Aquarius is Lagna and Saturn occupies Taurus in Navamsha. Then if Jupiter (lord of 2)
+    is with Mars (10th lord) and aspected by Venus (who is the lord of the Navamsha occupied
+    by lord ascendant)". `dispositor.navamsa_lord_of` is precisely that lookup — the
+    "NavamsaDispositor" the H2.C.33/34 TODOs were parked on. Identity excluded."""
+    def __init__(self, target: str) -> None:
+        self.target = target
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.dispositor import navamsa_lord_of
+        chart = ctx.chart
+        l1 = _lord_of(1, chart)
+        tgt = _lord_of(2, chart) if self.target == "LORD_OF:2" else self.target
+        if l1 not in chart.planets or tgt not in chart.planets:
+            return False
+        nav_lord = navamsa_lord_of(l1, chart)
+        if nav_lord == tgt or nav_lord not in chart.planets:
+            return False
+        return drishti.aspects_planet(nav_lord, tgt, chart)
+
+
 class _LagnaModality(C.Condition):
     """The Ascendant sign's modality is `kind` ("movable"/"fixed"/"common"). Reads the shipped
     `primitives.sign_attributes.modality`, which is what the H2.C.45 TODO was waiting for."""
@@ -456,10 +515,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
 
     # #13 — DESCRIPTIVE: 2nd lord with good planets in kendra, or 2nd house all
     #       benefic → good terms with relatives.
-    #       TODO(predicate): LordInHouseClass(2, "kendra") + benefic conjunction.
+    #       UN-DEFERRED 2026-08-31 (stale-TODO audit): a kendra test is rasi_house in
+    #       (1,4,7,10) and NATURAL_BENEFICS is a module constant. HTJAH-I:2452-2453.
     RuleRecord(
         id="H2.C.13", house=2, signification="family", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.Or(_SecondLordWithBeneficsInKendra(), _SecondHouseWhollyBenefic()),
         fortified="2nd lord with good planets in a kendra, or 2nd house has all good "
                   "association/aspects → good terms with relatives",
         afflicted=None,
@@ -480,10 +541,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
 
     # #15 — DESCRIPTIVE: Jupiter in asc + Saturn in 8th; or Jupiter in quadrant +
     #       Lagna-lord/Mercury exalted → good mathematician.
-    #       TODO(predicate): LagnaLordHasDignity + multi-path.
+    #       UN-DEFERRED 2026-08-31: C.LordHasDignity ships. HTJAH-I:2456-2458, the 2nd and
+    #       3rd of Raman's three paths to the mathematician (C.14 is the first).
     RuleRecord(
         id="H2.C.15", house=2, signification="speech", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.Or(
+            C.And(C.InRashiHouse("Jupiter", 1), C.InRashiHouse("Saturn", 8)),
+            C.And(C.Or(*[C.InRashiHouse("Jupiter", h) for h in (1, 4, 7, 10)]),
+                  C.Or(C.LordHasDignity(1, {"exalt"}), C.HasDignity("Mercury", {"exalt"})))),
         fortified="Jupiter in ascendant + Saturn in 8th; or Jupiter in quadrant + "
                   "Lagna-lord/Mercury exalted → good mathematician",
         afflicted=None,
@@ -695,10 +761,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         source=Citation("HTJAH-I", 2480)),
 
     # #33 — DESCRIPTIVE: navamsa-keyed dispositor check → rich in youth.
-    #       TODO(predicate): NavamsaDispositor.
+    #       UN-DEFERRED 2026-08-31: dispositor.navamsa_lord_of IS the named primitive;
+    #       Raman spells the construction out with a worked example at HTJAH-I:2482-2485.
     RuleRecord(
         id="H2.C.33", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordsConjunct(2, 10),
+                        _NavamsaLordOfLagnaLordAspects("LORD_OF:2")),
         fortified="2nd lord with 10th lord, aspected by navamsa-lord of Lagna-lord "
                   "→ rich in youth",
         afflicted=None,
@@ -706,10 +775,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         source=Citation("HTJAH-I", 2483)),
 
     # #34 — DESCRIPTIVE: 2nd lord in 10th aspected by Lagna-lord or navamsa Lagna-lord.
-    #       TODO(predicate): NavamsaDispositor.
+    #       UN-DEFERRED 2026-08-31: dispositor.navamsa_lord_of IS the named primitive;
+    #       Raman spells the construction out with a worked example at HTJAH-I:2482-2485.
     RuleRecord(
         id="H2.C.34", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(2, 10),
+                        C.Or(_LordAspectsLord(1, 2),
+                             _NavamsaLordOfLagnaLordAspects("LORD_OF:2"))),
         fortified="2nd lord in 10th aspected by Lagna-lord or navamsa Lagna-lord "
                   "→ earns well in youth",
         afflicted=None,

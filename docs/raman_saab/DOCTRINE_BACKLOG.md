@@ -4245,3 +4245,78 @@ Confirmed unsourced or misframed: **H10.L.1, H3.P.Sun, H6.P.Sun, H7.P.Mars, H12.
 the three H7.K `fortified` complements** — eight in total, all now removed. Miscitations
 corrected or annotated: H3.L.11, H4.C.24, H7.P.Jupiter, H7.P.Mars. The `combination` modules,
 named by the first audit as the likeliest remaining risk, came back clean on their first look.
+
+
+## H8 OVER-FIRING FIXED, AND WHAT IT EXPOSED (2026-09-01) — the first deliberate ratchet re-base since B1
+
+**The defect.** Raman conditions ELEVEN of the twelve H8 lord-in-house readings on the 8th lord
+being WITH that house's own lord, in his own words throughout HTJAH-II:2899-3069 — *"in
+conjunction with the 2nd lord in the 2nd house"* (2916), *"combines with the lord of the 3rd in
+the 3rd"* (2927), *"joins the 4th lord in the 4th house"* (2940), *"placed in the 7th house with
+the 7th lord"* (2993), *"combines with the 11th lord in the 11th house"* (3042). The encoded
+condition was the bare `LordIn(8, N)`.
+
+**Measured before changing anything.** Over the 346 golden charts the bare condition fires 345
+times; requiring the conjunction, 64. **81% of firings were on placements Raman's sentence does
+not cover.** The 8th entry is the exception and was left alone — *"if the lord of the 8th house
+occupies the 8th house IN STRENGTH"* is a strength condition, and `LordsConjunct(8,8)` is
+identity-false by design.
+
+**★ THE COST, AND WHY IT SHIPPED ANYWAY.** Narrowing changed exactly ONE scored row and fixed
+none: **HTJAH-II.chart_73 — LINCOLN, assassinated by shooting** — H8/death went favourable
+where Raman says afflicted. Exact 287 -> 286, within-1 363 -> 362, inversions 34 -> 35.
+
+The diagnosis is the whole point. The engine had been reaching Raman's verdict on Lincoln
+through **H8.L.1 firing on the bare placement** (Mercury, the 8th lord, in the 1st) while
+Saturn, the 1st lord, is **not** conjunct it. **Raman would not have applied that rule to that
+chart.** The old number was right for the wrong reason. Preserving it would have been exactly
+what the Prime Directive forbids — *"overfitting to worked examples is not accuracy"* — so the
+baseline was re-based DOWN deliberately, user-signed, with lineage in both fixtures. This is
+the first deliberate strict-down re-base since the B1 dominant-factor guard (2026-08-03), and
+unlike B1 it buys no measured improvement: it buys **predicate correctness**, which the ratchet
+does not measure at all. That asymmetry is worth remembering — a faithful fix can be invisible
+to, or negative on, every number the project tracks.
+
+**★ WHAT THE NARROWING EXPOSED — a real gap, now visible instead of masked.** Lincoln's
+H8/death ledger after the change: lord Sun **strong**, karaka Saturn **strong**, and the only
+malefic rules firing are **H8.C.21, H8.D.4 and H8.D.5 — all three `_DREKKANA_MANNER_RULE_IDS`**,
+which by the 2026-08-30 reviewer amendment name the MANNER of an affliction established by
+other testimony and may never be the sole confirming malefic (Savarkar is the printed
+counter-instance). The one other rule, H8.C.26, is neutral polarity. **So the H8 corpus holds
+no orthodox non-manner testimony for Lincoln's death at all.** The verdict is favourable
+because both pillars are strong and nothing that may confirm an affliction does.
+
+That is not a judge defect. The manner/span separation is correct doctrine. It is a **corpus**
+gap, and it was invisible while the over-firing rule was covering for it.
+
+**Raman's own reasoning is on record** in the golden's `verdict_prose` and at HTJAH-II:6741-6790:
+*"The 22nd Drekkana is an Ayudha Drekkana, being the 2nd of Virgo"* (the engine computes Virgo-2
+— it agrees with him), *"The 8th lord Mercury is in a constellation of Rahu who, in turn, is in
+association with the planet of violence, Mars"*, and a named combination he quotes and then
+demonstrates: *"A combination in **Goutama Samhita** says that if the lord of the 8th is in the
+Ascendant and the waning Moon is aspected by Mars, death will be due to a weapon. The 8th lord
+Mercury is in the Ascendant and the waning Moon in the 12th house is aspected by Mars."*
+(6757-6762).
+
+**Candidate rule, measured, and under engine-blind review at time of writing.** Predicate
+`And(LordIn(8,1), MoonPhase("waning"), Mars-aspects-Moon)`; all three primitives already ship.
+Fires on **5 of 346 goldens (1.4%)**. Only TWO of the five carry a scored H8/death expectation
+— and both are Abraham Lincoln, recorded independently in two books (HTJAH-II.chart_73 and
+NH.chart_24), both `afflicted`, which is what the rule predicts. So it cannot flip a scored row
+the wrong way. The open doctrinal question, put to the reviewer, is whether *"death will be due
+to a weapon"* is orthodox affliction testimony or MANNER evidence like the drekkana rules — if
+the latter, it must NOT be allowed to establish the affliction alone either, encoding it will
+not recover Lincoln's row, and the honest conclusion is that the gap is real and unfilled.
+
+**NOT proposed:** the Jataka Tatwa assassination combination Raman cites next (6766-6771,
+"Saturn, Sun and Mars in the 10th, 7th and 4th respectively"). His own chart does not satisfy
+its strict form — he has Mars *aspecting* the 4th and the Sun *aspecting* the 7th — so encoding
+it would mean encoding his loosened reading rather than the stated combination.
+
+**Rule-liveness floor 58 -> 59.** H8.L.3 now fires on no golden: no golden chart has the 8th
+lord conjunct the 3rd lord in the 3rd. An honest coverage gap is better than a rule firing on
+18 placements Raman's sentence does not cover.
+
+**Still open in H8:** Raman adds a SECOND condition to some entries that is not encoded — the
+9th wants the conjunction *"with malefics"* (3010), the 12th distinguishes benefics joining the
+8th lord (3053-3055). Each needs its own measured pass.

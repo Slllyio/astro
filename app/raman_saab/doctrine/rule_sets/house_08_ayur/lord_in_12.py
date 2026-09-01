@@ -30,52 +30,64 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H8.L.1", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 1),
         fortified="misfortune reduced when 8th lord is weak or placed in 6/8/12 of Navamsa-Lagna",
-        afflicted="penury, heavy debts, misfortune at every step; disease, disfiguration, "
-                  "weak body, trouble from government",
+        general="penury, heavy debts, misfortune at every step",
+        afflicted="the 8th lord severely afflicted - disease and disfiguration, weak "
+                  "constitution, no bodily comforts, the displeasure of superiors and "
+                  "trouble from Government",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2902)),
     RuleRecord(
         id="H8.L.2", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 2),
         fortified="evil reduced if 8th lord falls in 6/8/12 of Navamsa-Lagna",
-        afflicted="eye and tooth trouble, putrid food, domestic discontent; wife estrangement "
-                  "or separation; severe illness if longevity is otherwise good",
+        general="eye and tooth trouble, putrid food, domestic discontent; wife "
+                "estrangement or separation; severe illness if longevity is otherwise good",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2916)),
     RuleRecord(
         id="H8.L.3", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 3),
         fortified="conjunction with 6th/12th lords → monetary windfall via writing or a co-born",
-        afflicted="deafness or ear trouble, quarrels with siblings, fears, hallucinations, "
-                  "debts; unbearable if malefic-afflicted",
+        general="deafness or ear trouble, quarrels with siblings, fears, hallucinations, "
+                "debts",
+        afflicted="malefics afflicting - the troubles become unbearable",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2927)),
     RuleRecord(
         id="H8.L.4", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 4),
         fortified=None,
-        afflicted="mental peace shattered; domestic and financial trouble; mother's health "
-                  "endangered; loss of land and conveyance; pets die; native forced to seek "
-                  "fortune abroad",
+        general="mental peace shattered; domestic bickerings and financial problems; the "
+                "mother's health may suffer; problems regarding house, land and conveyance",
+        afflicted="the affliction heavy - land and immovable property slip from his hands, "
+                  "conveyances lost or destroyed, pets sicken and die; malefics furthering "
+                  "the affliction force him to seek his fortune abroad, where he meets "
+                  "troubles and losses",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2940)),
     RuleRecord(
         id="H8.L.5", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 5),
         fortified="mitigated if 8th lord is in 6/12/8 of Navamsa-Lagna; fortified in "
                   "kendra/trikona → evil intensified",
-        afflicted="children get into crime or sickness; child may die at birth or be "
-                  "retarded; nervous breakdown (5th = buddhisthana); 9th and 8th lords in "
-                  "5th with debilitated Lagna-lord → no knowledge or wealth, lustful, reviled",
+        general="children get into crime or sickness; nervous breakdown "
+                "(5th = buddhisthana)",
+        afflicted="the affliction heavy - a child may die at birth or be retarded; and the "
+                  "9th and 8th lords in the 5th with a debilitated Lagna-lord → no knowledge "
+                  "or wealth, lustful, reviled",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2957)),
     RuleRecord(
         id="H8.L.6", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 6),
         fortified="Rajayoga — affluence, fame, desired objects",
-        afflicted="ill-health (6th = disease); theft, court and police trouble; intensified "
-                  "in kendra/trikona; maternal uncle suffers",
+        general="ill-health (6th = disease); the maternal uncle suffers",
+        afflicted="the 8th lord afflicted - theft, court and police trouble, intensified "
+                  "when it falls in a kendra or trikona",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 2978)),
     RuleRecord(
         id="H8.L.7", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 7),
         fortified="if 7th and 8th lords both strong → diplomatic foreign missions, distinction",
-        afflicted="curtails longevity; wife's ill-health; native's disease; ill-health abroad",
+        general="curtails longevity; the wife's ill-health",
+        afflicted="the 8th lord afflicted - the native's own disease, and ill-health while "
+                  "abroad",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2993)),
     RuleRecord(
         id="H8.L.8", house=8, signification="longevity", group="lord_in_house",
@@ -95,15 +107,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H8.L.10", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 10),
         fortified="may confer unexpected gains via death of superiors or elders",
-        afflicted="slow career, superseded by subordinates, deceit, government or law wrath, "
-                  "poverty; with afflicted 2nd lord → reputation ruined by debts",
+        general="slow career, superseded by subordinates, deceit, the wrath of government "
+                "or the law, poverty",
+        afflicted="the 2nd lord also afflicted - reputation ruined by debts",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3027)),
     RuleRecord(
         id="H8.L.11", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(8, 11),
         fortified="benefic influence → friends and elder brother help overcome troubles",
-        afflicted="trouble to close friends; elder brother's hard time, strained relations or "
-                  "misconduct; business losses, debts",
+        general="trouble to close friends; elder brother's hard time, strained relations "
+                "or misconduct; business losses, debts",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3042)),
     RuleRecord(
         id="H8.L.12", house=8, signification="longevity", group="lord_in_house",

@@ -3763,3 +3763,133 @@ a watery sign"). This is the second time in two days that a confident "found a b
 of these records was wrong on a closer read. **When a record's summary looks wrong, read the
 FULL source paragraph before claiming it — Raman routinely states two near-identical
 variants in consecutive sentences.**
+
+
+## THE GENERAL-READING SLOT (2026-09-01) — Raman's base reading was being shown as an affliction
+
+Opened by the owner's question: *"why is it always good or bad? Can't we use whatever Raman
+has written — find out how."* The answer turned out to be an encoding defect, not a product
+gap, and it was found by asking what the corpus contains rather than what the judge computes.
+
+**The defect.** `RuleRecord` had exactly two result-text slots, `fortified` and `afflicted`.
+But Raman's "Results of Lord of the Nth House Occupying Different Houses" sections are written
+in TWO paragraphs of a different kind: a GENERAL, unconditioned reading, then one conditioned
+on FORTIFICATION. An engine-blind `bphs-doctrine-reviewer` counted the openers in House 1 --
+**nine fortification openers, zero affliction openers** (HTJAH-I:1000, 1012, 1019, 1026, 1035,
+1043, 1054, 1059, 1065). He gives no afflicted reading for those placements at all, and says so
+himself at HTJAH-I:1003-1007: *"the combination is of general application... The same rules
+apply to all Bhava."*
+
+With nowhere else to put it, the corpus had filed the general paragraph under `afflicted`.
+`rule_firing._branch` picks the slot by the house-lord's Shadbala, so **a weak-lord chart was
+shown Raman's BASE reading under an "afflicted" heading.** On H1.L.3 that is *"highly
+courageous, fortunate, respectable, two wives, intelligent, happy"*; on H1.L.9 *"generally
+fortunate, protector of others, religious... good orator... and rich"* — blessings presented
+to the reader as afflictions. The defect stayed invisible for years because on H1.L.5 and
+H1.L.7 the general reading happens to read grim (*"the first child does not survive"*, *"the
+wife does not live"*), so nine of twelve rows looked plausible.
+
+**The repair.** `RuleRecord.general` (optional, defaulted, read by NO judge code). The reviewer
+ranked a third slot most faithful over the two fallbacks: Raman's doctrine here is genuinely
+three-valued (base / modulated-up / modulated-down), and two slots cannot hold it without
+either fabricating an afflicted reading he never gave or discarding the base reading he
+insisted on. Surfaced by `house_general_readings()` in all four renderers.
+
+**SCOPE WAS SET BY REVIEW, NOT BY SWEEP — this is the load-bearing part.** Two engine-blind
+reviews classified all twelve source sections. A blanket application of the House-1 finding
+would have destroyed real doctrine in more than half of them:
+
+| Family | Houses | Action |
+|---|---|---|
+| general + fortified, NO afflicted branch | H1 | fixed (12 rules) |
+| MIXED — general + fortified, plus some genuine afflicted clauses | H2, H3, H8, H11, H12 | H8/H11/H12 fixed per-rule; **H2/H3 OPEN** |
+| general ONLY, encoder split one sentence by sentiment | H4 | **OPEN** (H4.L.1/2/4) |
+| EXPLICIT-AFFLICTED — Raman does give an afflicted reading | H5, H6, H7, H9, H10 | untouched, pinned by test |
+
+Shipped: **list A** (10 rules, whole slot relocated) H8.L.2, H8.L.11, H11.L.1, H11.L.12,
+H12.L.4/5/7/9/10/11; **list B** (12 rules, slot SPLIT so the genuine afflicted clause
+survives) H8.L.1/3/4/5/6/7/10, H10.L.12, H11.L.7/8, H12.L.2/3. 34 rules now carry a `general`
+slot. `[ratchet]` 287/397 unchanged throughout — text moved between presentation slots;
+`polarity` decides the verdict and `_branch` reads neither the new field nor any edited
+condition.
+
+**Caught by review, would have been damage:**
+- **H1.L.1's slot ENDED with a genuine afflicted clause** (HTJAH-I:1088-1089, *"If the ascendant
+  lord is posited in the Lagna subject to evil combinations, the native will not be physically
+  happy"*). A whole-slot move would have deleted it. Preserved and pinned.
+- **H11.L.8's `fortified` held "rich at birth"** — the opening subordinate clause of the single
+  sentence *"The native though rich at birth suffers many calamities"*, cut mid-sentence.
+- **H12.L.9's two slots split one sentence at its comma**: *"Honest, generous and large-hearted
+  he may not have any spiritual leanings."*
+
+### STILL OPEN — do not treat this arc as finished
+
+1. **H2 and H3** (first review, MIXED): relocate the general readings but PRESERVE the genuine
+   afflicted clauses at HTJAH-I:2360, 2373-2378, 2408, 2420-2421 (H2.L.6, H2.L.12) and
+   HTJAH-I:3376-3377, 3397 (H3.L.6, H3.L.9).
+2. **H4** (HTJAH-I:4145-4188) and **H9.L.12**: the *sentiment-split* variant — one unconditioned
+   sentence cut across both slots (H4.L.2 *"highly fortunate, courageous, happy"* / *"sarcastic
+   nature"*; H4.L.4 *"sensual"*). Same root cause, different shape.
+3. **★ H10.L.1 — UNSOURCED TEXT, INVESTIGATE BEFORE ANYTHING ELSE.** Its `afflicted` reads
+   *"weak Lagna and 10th lord → modest attainment; little distinction"*, and the reviewer could
+   not find that statement at HTJAH-II:9459-9465 or anywhere in the tenth-lord section, which
+   is wholly unconditioned and wholly favourable. It is neither Raman's general reading nor a
+   genuine afflicted one and appears **encoder-supplied**. Deliberately NOT relocated: moving
+   it would have laundered unsourced prose into the general slot. A test pins it untouched.
+   If confirmed unsourced it must be deleted, not moved — and the same provenance question
+   should then be asked of the rest of the corpus.
+4. **Misfiled but NOT general readings** — conditioned on a CONFIGURATION or a middling-strength
+   branch, so outside this defect and explicitly not to be swept up by it: H12.L.1 (Lagna/12th
+   exchange → miser, HTJAH-II:16135-16136), H12.L.3 (2nd-lord + Jupiter/9th-lord aspect → more
+   than one wife, 16157-16159), H10.L.10 (three planets conjoin → ascetic, 9552-9554), H6.L.9
+   (Raman's third *"If moderate"* branch, 6048). H12.L.1's *"This also indicates imprisonment
+   and living abroad"* (16134) is UNDETERMINED — the referent of "This" is ambiguous.
+5. **A different fidelity gap, noted in passing by the reviewer:** Raman conditions most H8
+   lord-in-house readings on the 8th lord *joining that house's own lord* (*"If the lord of the
+   8th house joins the 4th lord in the 4th house"*, HTJAH-II:2940), while the encoded condition
+   is the bare `C.LordIn(8, N)`. That is over-firing, and it is a CONDITION defect, not a slot
+   defect — it would move the ratchet, so it needs measurement before any change.
+
+## THE NON-GRADED LANE (2026-09-01) — what the corpus holds that a grade cannot carry
+
+Measured over all 871 `RuleRecord`s: **611 (70%) carry non-graded content** — a kind, count,
+attribute or circumstance rather than a verdict; ~175 are non-graded ONLY. Largest categories:
+character (210), profession (163), a named disease or body part (144), aptitude (85), place
+(80), counts (69), manner of death (45). Four independent chokepoints kept it off every
+surface, all now closed:
+
+1. **`SignificationVerdict.metadata` was computed and discarded.** The canonical chart produces
+   **165 pairs and rendered exactly ONE** (`catastrophic_gate`): `report_html` read none, and
+   `report_json._proforma_dict` dropped them before the interactive page could see them. Now
+   rendered by `house_indications()` in all four surfaces.
+2. **`house_longevity_pointer` made a promise the product did not keep** — it told the reader
+   the 22nd-decanate detail "is carried in the Longevity chapter below", where only the
+   drekkana LORD ever printed. `longevity_decanate_cause()` prints the class; the pointer is
+   reworded to what is now true.
+3. **97 `kind="descriptive"` rules never execute and reached no one.** `rules.fires()` and
+   `rule_firing.fire_rules` both skip a `condition=None` rule, and nothing else read them —
+   despite the class docstring promising each is "surfaced with its citation when a placement
+   holds". `descriptive_house_rules()` surfaces them, framed as doctrine ON RECORD and
+   explicitly *"not yet computed... listed, not applied to this chart"*, with a test pinning
+   that wording: an unevaluated rule shown as a finding would be a false claim about the
+   engine's own work.
+4. **The chief-combination cap.** `per_sig=3` with `fired_neutral` ordered last. MEASURED
+   before assuming: only **3 rows** are actually lost on the canonical chart, so the cap was
+   never the main loss — the 97 were. `house_further_combinations()` shows the remainder;
+   `house_chief_combinations` is deliberately NOT modified (3 call sites, 2 tests pin it).
+
+**Two latent defects the new surfaces exposed, both silent until the data was finally rendered:**
+- `EventWindow` labelled the birth Mahadasha from its NOMINAL start, which precedes birth by
+  the elapsed balance — *"Mercury(maraka) 1978-1995"* on a 1990 birth. Astronomically right,
+  but false as a reading. Clipped at the source in `significator_dasha_windows`. Note
+  `test_no_pre_birth_activation_windows` was written to catch exactly this and was PASSING —
+  the un-clipped window simply never reached the one surface it inspected. A vacuous pass is
+  indistinguishable from a real one in a test report.
+- Three logic glyphs in rule maintainer notes (`∧` in H11.C.34, `↔` in H12.L.1/H12.C.A18) had
+  no entry in `render._REPL` and printed as `?` mojibake the moment those rules first reached
+  a reader. `∨ ≠ ≤ ≥` added alongside them.
+
+**Explicit non-goals, held to** (from the approved plan): `polarity` was NOT re-modelled (it
+feeds `_bucket_fired` and the ratchet); NO rows were added to the significations table
+(`significations.py:61-71` records the measured failure — ungraded rows dropped cross-layer
+agreement 0.475 -> 0.439 and were reverted); `_decide` untouched.

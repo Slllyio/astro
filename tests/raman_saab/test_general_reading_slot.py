@@ -77,6 +77,61 @@ class TestCorrectlyEncodedHousesWereNotTouched:
         assert rule.general is None, f"{rule_id} was swept up by the House-1 fix"
 
 
+#: Whole `afflicted` slot was Raman's general reading (review list A).
+RELOCATED_WHOLE = ["H8.L.2", "H8.L.11", "H11.L.1", "H11.L.12",
+                   "H12.L.4", "H12.L.5", "H12.L.7", "H12.L.9", "H12.L.10", "H12.L.11"]
+#: Slot MIXED a general reading with a genuine afflicted clause; split, not moved (list B).
+SPLIT = ["H8.L.1", "H8.L.3", "H8.L.4", "H8.L.5", "H8.L.6", "H8.L.7", "H8.L.10",
+         "H10.L.12", "H11.L.7", "H11.L.8", "H12.L.2", "H12.L.3"]
+#: Raman really does give an afflicted reading here (list C). Untouched, by construction.
+LEFT_ALONE = ["H6.L.1", "H6.L.2", "H6.L.3", "H6.L.7", "H6.L.12",
+              "H8.L.8", "H8.L.9", "H8.L.12",
+              "H10.L.2", "H10.L.3", "H10.L.4", "H10.L.7", "H10.L.11",
+              "H11.L.2", "H11.L.3", "H11.L.5", "H11.L.6", "H11.L.10",
+              "H12.L.6", "H12.L.12"]
+
+
+class TestHouses8To12SlotMapping:
+    """A second engine-blind review classified Houses 6, 8, 10, 11 and 12, which the first
+    did not reach. House 6 came back EXPLICIT-AFFLICTED (ten fortification openers, twelve
+    affliction openers — correctly encoded throughout); Houses 8, 11 and 12 came back MIXED.
+    The lists below are that classification, and these tests pin that it was applied
+    exactly — the whole point being that a blanket sweep would have destroyed real
+    doctrine."""
+
+    @pytest.mark.parametrize("rule_id", RELOCATED_WHOLE)
+    def test_whole_slot_relocated(self, rule_id: str) -> None:
+        rule = _rule(rule_id)
+        assert rule.general, rule_id
+        assert rule.afflicted is None, rule_id
+        assert rule.fortified, f"{rule_id} must keep prose to render when it fires"
+
+    @pytest.mark.parametrize("rule_id", SPLIT)
+    def test_split_kept_both_halves(self, rule_id: str) -> None:
+        """The general half moved; the clause Raman really does condition on affliction
+        stayed. Losing either half would be a fidelity regression."""
+        rule = _rule(rule_id)
+        assert rule.general, f"{rule_id} lost Raman's general reading"
+        assert rule.afflicted, f"{rule_id} lost its genuine afflicted clause"
+        assert rule.general != rule.afflicted, rule_id
+
+    @pytest.mark.parametrize("rule_id", LEFT_ALONE)
+    def test_correctly_encoded_rules_were_not_swept_up(self, rule_id: str) -> None:
+        rule = _rule(rule_id)
+        assert rule.afflicted, f"{rule_id} lost its genuine afflicted reading"
+        assert rule.general is None, f"{rule_id} was wrongly relocated"
+
+    def test_undetermined_rules_were_left_untouched(self) -> None:
+        """H10.L.1's `afflicted` text does not appear at HTJAH-II:9459-9465 or anywhere in
+        the tenth-lord section — it is neither Raman's general reading nor a genuine
+        afflicted one, and looks encoder-supplied. Relocating it would have LAUNDERED
+        unsourced prose into the general slot, so it is deliberately untouched pending its
+        own investigation (DOCTRINE_BACKLOG)."""
+        rule = _rule("H10.L.1")
+        assert rule.general is None
+        assert rule.afflicted is not None
+
+
 class TestGeneralReadingReachesTheReader:
     @pytest.fixture(scope="class")
     def report(self):

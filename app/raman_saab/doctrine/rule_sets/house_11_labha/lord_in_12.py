@@ -15,7 +15,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H11.L.1", house=11, signification="gains", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(11, 1),
         fortified="born in a rich family (very rich to well-to-do per lord's strength); earns much wealth",
-        afflicted="loses an elder brother early in life",
+        general="loses an elder brother early in life",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-II", 14258)),
     RuleRecord(
@@ -63,16 +64,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="evaluable", condition=C.LordIn(11, 7),
         fortified="if fortified → marries only once, a rich and influential woman; "
                   "prospers in foreign countries",
-        afflicted="marries more than once; if afflicted → liaisons with women of ill-repute, "
-                  "trading in flesh, immoral activities",
+        general="marries more than once; prospers in foreign countries",
+        afflicted="the 11th lord afflicted → liaisons with women of ill-repute, trading in "
+                  "flesh, immoral activities",
         frame="LAGNA", varga="D1", polarity="neutral",
         source=Citation("HTJAH-II", 14302)),
     RuleRecord(
         id="H11.L.8", house=11, signification="gains", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(11, 8),
-        fortified="rich at birth",
-        afflicted="though rich at birth, suffers many calamities and loses much money; "
-                  "depredations of thieves, cheats and swindlers; if in malefic constellation → forced to beg",
+        general="though rich at birth, suffers many calamities and loses much of his "
+                "money; suffers from the depredations of thieves, cheats and swindlers",
+        fortified="though rich at birth, suffers many calamities and loses much of his "
+                  "money; suffers from the depredations of thieves, cheats and swindlers",
+        afflicted="the 11th lord in a malefic constellation → forced to eke out a living by "
+                  "begging",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 14309)),
     RuleRecord(
@@ -102,10 +107,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H11.L.12", house=11, signification="gains", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(11, 12),
-        fortified=None,
-        afflicted="losses in business; ailing elder brother and heavy expenditure on his illness, "
-                  "possibly death of elder brother; pays fines and penalties frequently; "
-                  "burdened with domestic responsibilities",
+        general="losses in business; ailing elder brother and heavy expenditure on his "
+                "illness, possibly death of elder brother; pays fines and penalties "
+                "frequently; burdened with domestic responsibilities",
+        fortified="losses in business; ailing elder brother and heavy expenditure on his "
+                  "illness, possibly death of elder brother; pays fines and penalties "
+                  "frequently; burdened with domestic responsibilities",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 14335)),
 

@@ -98,8 +98,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H10.L.12", house=10, signification="career", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(10, 12),
-        fortified="beneficial → spiritual seeker; works in a far-off place",
-        afflicted="lacks comforts, difficulties; malefics → separated from family, "
-                  "wanders, smuggling; Rahu → cheat / criminal, sorrow to family",
+        general="works in a far-off place, lacking comforts and facing many difficulties "
+                "in life",
+        fortified="beneficially disposed → a spiritual seeker; works in a far-off place",
+        afflicted="malefics afflicting the 10th lord → separated from family, wandering, "
+                  "smuggling; Rahu afflicting → a cheat or criminal, and sorrow to the "
+                  "family",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 9564)),
 )

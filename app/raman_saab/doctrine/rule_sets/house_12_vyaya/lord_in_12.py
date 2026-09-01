@@ -27,8 +27,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=C.LordIn(12, 2),
         fortified="if 12th lord benefic and dignified → evils greatly reduced, "
                   "financial stability, tactful speaker",
-        afflicted="financial losses, debts, nefarious activity, untimely meals, "
-                  "poor eyesight, disharmonious family; if ill-disposed → gossip and quarrelling",
+        general="financial losses, debts, nefarious activity, untimely meals, poor "
+                "eyesight, disharmonious family",
+        afflicted="the 12th lord ill-disposed → gossip and quarrelling",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16138)),
     RuleRecord(
@@ -36,10 +37,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         group="lord_in_house", kind="evaluable",
         condition=C.LordIn(12, 3),
         fortified=None,
-        afflicted="timid, quiet, loss of a brother, shabby dress; malefic affliction → "
-                  "ear-ailments; spends much on younger brothers; unsuccessful writer; "
-                  "commonplace job, low earnings; joins 2nd lord aspected by Jupiter/9th lord "
-                  "→ more than one wife (mitigated)",
+        general="timid and quiet; loss of a brother is shown; shabbily dressed; may have "
+                "to spend much money on younger brothers; unsuccessful as a writer; may work "
+                "in some commonplace job and earn very little",
+        afflicted="malefics afflicting → ear-ailments; and (a configuration, not an "
+                  "affliction) the 12th lord joining the 2nd lord in the 3rd aspected by "
+                  "Jupiter or the 9th lord → more than one wife",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16152)),
     RuleRecord(
@@ -48,17 +51,24 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=C.LordIn(12, 4),
         fortified="if 12th lord well-placed → adverse indications largely mitigated; "
                   "if Venus strong → may own a (troublesome) conveyance",
-        afflicted="early death of mother, mental restlessness, worry, enmity of relatives, "
-                  "living abroad, landlord harassment, ordinary residence",
+        general="early death of mother, mental restlessness, worry, enmity of relatives, "
+                "living abroad, landlord harassment, ordinary residence",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16161)),
     RuleRecord(
         id="H12.L.5", house=12, signification="loss_moksha",
         group="lord_in_house", kind="evaluable",
         condition=C.LordIn(12, 5),
-        fortified="religious-minded, may undertake pilgrimages",
-        afflicted="difficulty and unhappiness re progeny, weak-minded, mental aberrations, "
-                  "feels miserable, fails in agriculture (pests/disease)",
+        general="either difficulty to beget progeny or unhappiness from children; "
+                "religious-minded and may undertake pilgrimages; weak-minded and suffering "
+                "mental aberrations, he feels he is miserable; does not succeed in "
+                "agriculture, his crops suffering from pests and disease",
+        fortified="either difficulty to beget progeny or unhappiness from children; "
+                  "religious-minded and may undertake pilgrimages; weak-minded and suffering "
+                  "mental aberrations, he feels he is miserable; does not succeed in "
+                  "agriculture, his crops suffering from pests and disease",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16169)),
     RuleRecord(
@@ -75,10 +85,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.L.7", house=12, signification="loss_moksha",
         group="lord_in_house", kind="evaluable",
         condition=C.LordIn(12, 7),
-        fortified=None,
-        afflicted="wife from poor family, unhappy marriage may end in separation; "
-                  "weak health, phlegmatic troubles, without learning or property; "
-                  "later takes to asceticism",
+        general="the wife may come from a poor family; married life unhappy and may end "
+                "in separation; later takes to asceticism; weak in health and suffering "
+                "phlegmatic troubles, without learning or property",
+        fortified="the wife may come from a poor family; married life unhappy and may end "
+                  "in separation; later takes to asceticism; weak in health and suffering "
+                  "phlegmatic troubles, without learning or property",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16189)),
     RuleRecord(
@@ -94,28 +107,45 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.L.9", house=12, signification="loss_moksha",
         group="lord_in_house", kind="evaluable",
         condition=C.LordIn(12, 9),
-        fortified="residence abroad and prosperity, acquires foreign property; "
-                  "honest, generous, large-hearted",
-        afflicted="may lack spiritual leanings; dislikes wife, friends and preceptor; "
-                  "loses father early",
+        general="residence abroad and prosperity, and may acquire much property in "
+                "foreign lands; honest, generous and large-hearted, he may not have any "
+                "spiritual leanings; not liking his wife, friends and preceptor, and "
+                "interested in physical culture, he loses his father early in life",
+        fortified="residence abroad and prosperity, and may acquire much property in "
+                  "foreign lands; honest, generous and large-hearted, he may not have any "
+                  "spiritual leanings; not liking his wife, friends and preceptor, and "
+                  "interested in physical culture, he loses his father early in life",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral",
         source=Citation("HTJAH-II", 16201)),
     RuleRecord(
         id="H12.L.10", house=12, signification="loss_moksha",
         group="lord_in_house", kind="evaluable",
         condition=C.LordIn(12, 10),
-        fortified="spends on agriculture and makes profit",
-        afflicted="hard-working, tedious journeys; jailor/doctor/works in cemetery; "
-                  "no happiness or comfort from sons",
+        general="hard-working and undertaking tedious journeys for his occupation, he "
+                "will be a jailor, doctor, or work in the cemetery and such places; spends "
+                "money on agricultural pursuits, in which he makes profits; derives no "
+                "happiness or physical comfort from his sons",
+        fortified="hard-working and undertaking tedious journeys for his occupation, he "
+                  "will be a jailor, doctor, or work in the cemetery and such places; spends "
+                  "money on agricultural pursuits, in which he makes profits; derives no "
+                  "happiness or physical comfort from his sons",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16207)),
     RuleRecord(
         id="H12.L.11", house=12, signification="loss_moksha",
         group="lord_in_house", kind="evaluable",
         condition=C.LordIn(12, 11),
-        fortified="earns well trading in pearls, rubies and precious stones",
-        afflicted="business but little profit; few friends, many enemies; "
-                  "troubled by extravagant or invalid brothers; funds dwindle",
+        general="engages in business but does not make much profit; few friends but many "
+                "enemies; troubled by extravagant brothers, some of whom may be invalids, "
+                "his funds may dwindle on that account; earns well by trading in pearls, "
+                "rubies and other precious stones",
+        fortified="engages in business but does not make much profit; few friends but many "
+                  "enemies; troubled by extravagant brothers, some of whom may be invalids, "
+                  "his funds may dwindle on that account; earns well by trading in pearls, "
+                  "rubies and other precious stones",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16214)),
     RuleRecord(

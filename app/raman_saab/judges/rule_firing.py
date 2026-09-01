@@ -25,7 +25,7 @@ from app.raman_saab.primitives.shadbala import total as shadbala_total
 class FiredRule:
     """A rule that fired for a chart, with the branch (fortified/afflicted) chosen."""
     rule: RuleRecord
-    branch: str          # "fortified" | "afflicted"
+    branch: str          # "general" | "fortified" | "afflicted"
     text: str            # the chosen branch's reading
 
 
@@ -35,13 +35,25 @@ def _lord_of(house: int, chart: RamanChart) -> str:
 
 
 def _branch(rule: RuleRecord, chart: RamanChart) -> str:
-    """Pick the fortified vs afflicted branch by the bhava-lord's Shadbala (if available):
-    lord meets its min-required → fortified, else afflicted. Falls back to fortified when
-    Shadbala isn't computed (Track-B charts)."""
+    """Pick the reading by the bhava-lord's Shadbala: lord meets its min-required →
+    fortified, else afflicted.
+
+    WHEN STRENGTH IS UNKNOWN, PREFER `general` (2026-09-01). Shadbala is unavailable on 40 of
+    the 346 golden charts (12%) — Track-B records with no birth time. The old fallback
+    returned "fortified" there, which on 82 rules means showing Raman's STRENGTH-CONDITIONED
+    reading ("becomes famous in his own community and country") when his UNCONDITIONED one
+    ("lives by own exertion, independent spirit") is what actually applies and is sitting in
+    the `general` slot. That asserted a strength the chart cannot establish — the same defect
+    class the general-slot work removed from the data, surfacing at the judge instead.
+
+    The `general` slot only exists since that work, so this fallback was not previously
+    available. Where a rule has none, the old behaviour stands: there is nothing better to
+    show. Presentation only — `_bucket_fired` buckets by `rule.polarity`, so no branch choice
+    can move a verdict."""
     lord = _lord_of(rule.house, chart)
     p = chart.planets.get(lord)
     if p is None or p.shadbala_rupas is None:
-        return "fortified"
+        return "general" if rule.general else "fortified"
     strong = shadbala_total.is_powerful(lord, p.shadbala_rupas.total / 60.0)
     if strong:
         return "fortified"
@@ -59,7 +71,9 @@ def fire_rules(chart: RamanChart, rules=ALL_RULES) -> list[FiredRule]:
             pref = _branch(rule, chart)
             # Resolve to a branch that actually has text (some rules give only one side,
             # e.g. nodes with fortified=None) so `text` is never None.
-            if pref == "afflicted" and rule.afflicted:
+            if pref == "general" and rule.general:
+                text, branch = rule.general, "general"
+            elif pref == "afflicted" and rule.afflicted:
                 text, branch = rule.afflicted, "afflicted"
             elif rule.fortified:
                 text, branch = rule.fortified, "fortified"

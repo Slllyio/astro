@@ -4593,3 +4593,55 @@ of how many branch clauses carry their own predicate, and a rule for when one ea
 record — rather than fixed three at a time. All three currently name their real condition in
 their prose, which mitigates the reader-facing harm; the machine-facing harm (firing on the
 wrong evidence) remains.
+
+
+### `_branch` NOW FALLS BACK TO `general` WHEN STRENGTH IS UNKNOWN (2026-09-01)
+
+**The defect, measured.** `rule_firing._branch` picks `fortified` vs `afflicted` by the
+bhava-lord's Shadbala. On a Track-B chart there is no Shadbala — **40 of the 346 goldens
+(12%)** — and the old fallback returned "fortified" regardless.
+
+Census of what that showed:
+- **90 rules** where `general == fortified` → the fallback happened to show the right text;
+- **★ 82 rules where `general != fortified`** → the reader was shown Raman's
+  STRENGTH-CONDITIONED reading when his UNCONDITIONED one applies. H1.L.3 is the plain case:
+  "rise in life brought about by brothers; may become famous as musician or mathematician" was
+  displayed where "highly courageous, fortunate, respectable, two wives, intelligent, happy" is
+  what Raman states for the placement itself;
+- **64 rules** with no `general` at all → nothing better exists; old behaviour retained.
+
+**This is the same defect class the general-slot work removed from the DATA, surfacing at the
+JUDGE instead**: asserting a strength the chart cannot establish. And it could only be fixed
+now — the `general` slot did not exist before this arc created it, so there was nothing to fall
+back to.
+
+`_branch` returns `"general"` when Shadbala is unavailable and the rule has one; `fire_rules`
+resolves that to `rule.general`; `FiredRule.branch` gains a third legal value. Presentation
+only — `_bucket_fired` buckets by `rule.polarity`, which no branch choice touches — and the
+ratchet held at 286/397 across the change, as predicted.
+
+### BRANCH-PREDICATE CENSUS (2026-09-01) — 28 candidates, not 134
+
+The previous entry warned that "branch clause carrying its own predicate" might be a
+corpus-wide pattern needing a design decision. Measured, it is much smaller.
+
+134 evaluable rules have conditional language in their branch text, but that number is
+misleading and splits three ways:
+- **33 are strength-only** ("if afflicted", "when fortified") — that is exactly what the two
+  slots exist to carry. NOT a defect.
+- **21 name a NON-strength predicate**, plus **7 carrying both kinds** — the real candidate
+  pool, **28 rules**.
+- 31 unclear on a lexical scan.
+
+And even within the 28, a scan cannot settle it, because some merely RESTATE the rule's own
+condition. H1.C.1a reads "lord of the Lagna with the lord of the 6th, conjoined with or
+aspected by a malefic" and its `condition` is already an `And(...)` encoding exactly that —
+nothing unreachable, nothing firing on absent evidence. Only per-rule reading separates that
+from a genuine extra predicate like H2.C.53's "if 7th lord has maraka power".
+
+The 28: H1.C.1a/1b/1c, H1.B.17, H1.S.9, H2.L.2, H2.L.7, H2.C.9, H2.C.47, H2.C.48, H2.C.53,
+H2.C.54, H3.L.4, H3.L.6, H3.L.11, H3.C.2, H3.C.6, H3.C.9, H3.C.31, H3.C.34, H4.P.Saturn,
+H6.P.Sun, H6.P.Rahu, H7.L.1, H8.L.1, H8.L.2, H8.L.5, H11.C.47. Under engine-blind review at
+time of writing, with the reviewer asked for a STATED PRINCIPLE for when a branch clause earns
+its own record — not a case list — since the answer must still be right when applied beyond
+these 28.

@@ -11,12 +11,13 @@
     "fired_rule_ids": [
       "H10.C.1",
       "H10.C.33",
+      "H10.C.33m",
       "H10.C.56",
       "H10.L.9",
       "H10.P.Mercury",
       "H10.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -46,7 +47,7 @@
       "status_honour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },

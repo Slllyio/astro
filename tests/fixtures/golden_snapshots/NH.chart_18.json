@@ -1,14 +1,16 @@
 {
   "H10": {
     "citations": [
+      "HTJAH-II:11064",
       "HTJAH-II:14214",
       "HTJAH-II:9537"
     ],
     "fired_rule_ids": [
+      "H10.C.33m",
       "H10.C.56",
       "H10.L.9"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -38,7 +40,7 @@
       "status_honour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },

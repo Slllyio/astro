@@ -255,10 +255,40 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 11060)),
     RuleRecord(
         id="H10.C.33", house=10, signification="status_honour", group="combination",
-        kind="evaluable", condition=C.CountInHouse(10, 1, "benefic"),
-        fortified="benefics in the 10th (from Lagna or Moon) → a noble-minded native",
-        afflicted="malefics in the 10th → addicted to evil deeds",
+        # ★ BUNDLE SPLIT + PREDICATE CORRECTED 2026-09-01. HTJAH-II:11064-11066 is ONE
+        # sentence with TWO distinct antecedents: "Benefics in the 10th from the Ascendant or
+        # the Moon make the native noble-minded WHILE MALEFICS make him addicted to evil
+        # deeds." Both halves were fused into a single record whose condition was
+        # `CountInHouse(10, 1, "benefic")` — so the rule could only fire when a BENEFIC was in
+        # the 10th, and the malefic half was reachable only on a chart that had a benefic in
+        # the 10th AND an afflicted 10th. The branch meant to state the malefic case was gated
+        # behind the benefic case. It is now its own rule, H10.C.33m below.
+        #
+        # The condition also tested only the LAGNA while Raman says "from the Ascendant OR the
+        # Moon", so half the doctrine was unreachable on that axis too. Measured before
+        # shipping: the widening takes this rule 101 -> 158 of 346 goldens and changes NO
+        # scored row; the new malefic rule fires on 180/346, touches 30 scored H10 rows, and
+        # leaves the ratchet at 286/362/35 — non-decisive on every scored row it reaches.
+        kind="evaluable",
+        condition=C.Or(C.CountInHouse(10, 1, "benefic"),
+                       C.ClassInHouseFrom("benefic", "Moon", {10})),
+        fortified="benefics in the 10th from the Ascendant or the Moon → a noble-minded "
+                  "native",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 11064)),
+    # #33m — the malefic half of HTJAH-II:11064-11066, which C.33 could not reach because
+    # its condition required a benefic in the 10th. Raman's "while malefics make him addicted
+    # to evil deeds" is a separate combination with its own antecedent, so it gets its own
+    # predicate rather than a slot on the benefic rule.
+    RuleRecord(
+        id="H10.C.33m", house=10, signification="status_honour", group="combination",
+        kind="evaluable",
+        condition=C.Or(C.CountInHouse(10, 1, "malefic"),
+                       C.ClassInHouseFrom("malefic", "Moon", {10})),
+        fortified=None,
+        afflicted="malefics in the 10th from the Ascendant or the Moon → addicted to evil "
+                  "deeds",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 11064)),
     RuleRecord(
         id="H10.C.27", house=10, signification="status_honour", group="combination",
         kind="descriptive", condition=None,

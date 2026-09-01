@@ -4546,3 +4546,50 @@ in NO slot — with a note recording why the original assertion was replaced.
 H11.C.47, H11.C.52 and H2.C.53 firing off the wrong lord's affliction), and `_branch`'s
 fortified-default on sparse charts, which is a general property of the fallback and wants its
 own decision rather than a patch.
+
+
+### H10.C.33 SPLIT (2026-09-01) — an unreachable branch, and half a predicate
+
+**The defect.** HTJAH-II:11064-11066 is ONE sentence with TWO distinct antecedents: *"Benefics
+in the 10th from the Ascendant or the Moon make the native noble-minded WHILE MALEFICS make him
+addicted to evil deeds."* Both halves were fused into a single record whose condition was
+`CountInHouse(10, 1, "benefic")`. So the rule could only fire when a BENEFIC was in the 10th,
+and **the branch meant to state the malefic case was gated behind the benefic case** — reachable
+only on a chart that had a benefic in the 10th AND an afflicted 10th house.
+
+Second defect in the same record: the condition tested only the LAGNA while Raman says *"from
+the Ascendant OR the Moon"*, so half the doctrine was unreachable on that axis too.
+
+**Measured before shipping**, with the new `condition_delta` harness:
+- widening the benefic rule to include the from-Moon axis: **101 -> 158 of 346 goldens, and NO
+  scored row changes verdict**;
+- the new malefic rule H10.C.33m: fires **180/346**, touches **30 scored H10 rows**, and leaves
+  the ratchet at **286/362/35 — non-decisive on every scored row it reaches**.
+
+Both halves are broad (46% and 52%), which is inherent to Raman's sentence rather than a sign
+of over-encoding — but note the H7.C.8 precedent, where a verbatim-faithful rule was HELD on
+breadth grounds. The difference here is that this is not a new doctrine claim: it makes the
+other half of an already-cited sentence reachable, and both changes were prescribed by name in
+the engine-blind review that found the defect.
+
+### The remaining three "condition bugs" are ONE structural question, not three fixes
+
+H11.C.47, H11.C.52 and H2.C.53 were flagged as firing off the wrong evidence:
+- **H11.C.47** — *"Malefics here"* (HTJAH-II:14650) means malefics in the **5th**, not affliction
+  of the 11th;
+- **H11.C.52** — both afflicted clauses condition on affliction of the **10th** (14699);
+- **H2.C.53** — *"When the 7th lord has Maraka power"* (HTJAH-I:2663) is a **lordship identity**.
+
+None of these is a defect in the rule's `condition`. Each is a BRANCH carrying its own
+predicate that the two-slot record cannot express, so `_branch` selects it by the rule's own
+house-lord Shadbala instead. That is the same shape as the H10.C.33 defect just fixed — and the
+fix is the same shape too: give the clause its own rule.
+
+**But that is a PATTERN decision, not three edits.** Branch-with-its-own-predicate is likely
+widespread (the planet_in_house sweep alone annotated roughly two dozen "(a configuration, not
+an affliction)" clauses), and converting them wholesale would add a large number of new rules,
+each needing its own measurement and review. It should be decided deliberately — with a census
+of how many branch clauses carry their own predicate, and a rule for when one earns its own
+record — rather than fixed three at a time. All three currently name their real condition in
+their prose, which mitigates the reader-facing harm; the machine-facing harm (firing on the
+wrong evidence) remains.

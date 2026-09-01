@@ -463,7 +463,14 @@ def significator_dasha_windows(
         if md.start_jd >= horizon:
             break
         if md.maha in role_of:
-            out.append(EventWindow(md.maha, role_of[md.maha], md.start_jd, md.end_jd))
+            # Clip the start to birth. The FIRST Mahadasha's nominal start precedes birth by
+            # the elapsed balance (a native born partway through Mercury's 17 years gets a
+            # window nominally opening in 1978 for a 1990 birth) — astronomically right, but
+            # "the matter is active in 1978" is false for a person who did not exist then.
+            # Clipped here at the source rather than in a renderer: the same window is now
+            # read by four surfaces, and the un-clipped value escaped through the newest one.
+            out.append(EventWindow(md.maha, role_of[md.maha],
+                                   max(md.start_jd, chart.jd_ut), md.end_jd))
     out.sort(key=lambda w: w.start_jd)
     return tuple(out)
 

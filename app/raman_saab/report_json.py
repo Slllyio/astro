@@ -172,6 +172,13 @@ def _baladi_jagradadi(chart) -> dict:
     return baladi_jagradadi_states(chart)
 
 
+def _indication_label(key: str) -> str:
+    """Reader label for a metadata key, from the one composer in `detailed_report` —
+    imported lazily so this module keeps its import-light contract."""
+    from app.raman_saab.detailed_report import indication_label
+    return indication_label(key)
+
+
 def _proforma_dict(pf) -> dict:
     """Trimmed house proforma: the verdict + per-signification verdicts (not the full ledger)."""
     return {
@@ -179,8 +186,16 @@ def _proforma_dict(pf) -> dict:
         "lord": pf.lord,
         "rollup": str(pf.rollup),
         "significations": [
+            # `indications` (append-only 2026-09-01) is the verdict-INVARIANT lookup channel
+            # `judge_signification` already fills: the cause-of-end decanate, the source of
+            # gains, the organ and tridosha of an afflicting graha, the divisional readings.
+            # It was computed on every signification and dropped here, so the interactive
+            # page could never show it. Pairs, not a dict — a key may legitimately repeat.
             {"signification": sv.signification, "verdict": str(sv.verdict),
-             "karaka": sv.karaka, "degree": sv.degree}
+             "karaka": sv.karaka, "degree": sv.degree,
+             # [raw key, reader label, value] — the label travels WITH the data so the
+             # interactive page needs no second copy of the label table in JS.
+             "indications": [[k, _indication_label(k), str(v)] for k, v in sv.metadata]}
             for sv in pf.significations
         ],
     }

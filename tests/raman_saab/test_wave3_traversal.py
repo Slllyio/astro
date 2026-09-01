@@ -260,14 +260,21 @@ class TestInBlockCrossReferences:
     def test_longevity_pointer_only_on_the_house_that_defers_metadata(
             self, report, markdown):
         """The pointer is conditional on the deferred death_window / decanate_cause
-        metadata having actually been computed — H8 only."""
+        metadata having actually been computed — H8 only.
+
+        The pinned phrase was "carried in the Longevity chapter below" until 2026-09-01,
+        when the pointer was reworded because that sentence had become false at both ends:
+        the house block showed none of the rows, and the Longevity chapter printed only the
+        drekkana lord, never the decanate class. Both gaps are closed (`house_indications`,
+        `longevity_decanate_cause`); this asserts the new, true wording. Conditionality —
+        the actual subject of this test — is unchanged."""
         assert house_longevity_pointer(report, 8)
-        assert "carried in the Longevity chapter below" in _md_block(markdown, 8)
+        assert "the Longevity chapter below places them in" in _md_block(markdown, 8)
         for h in range(1, 13):
             if h == 8:
                 continue
             assert house_longevity_pointer(report, h) == "", h
-            assert "carried in the Longevity chapter below" not in _md_block(markdown, h)
+            assert "the Longevity chapter below places them in" not in _md_block(markdown, h)
 
     def test_inverted_pointer_travels_with_the_warning_and_only_with_it(
             self, report, markdown):
@@ -301,8 +308,8 @@ class TestInBlockCrossReferences:
         """Both surfaces are fed by the same composers, so both branches hold there."""
         assert "ask the dashboard for a matter" in _html_block(html, 10)
         assert "ask the dashboard for a matter" not in _html_block(html, 1)
-        assert "carried in the Longevity chapter below" in _html_block(html, 8)
-        assert "carried in the Longevity chapter below" not in _html_block(html, 1)
+        assert "the Longevity chapter below places them in" in _html_block(html, 8)
+        assert "the Longevity chapter below places them in" not in _html_block(html, 1)
 
 
 class TestYogaTimingGrouping:

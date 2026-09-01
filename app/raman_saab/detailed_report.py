@@ -1093,6 +1093,93 @@ def house_chief_combinations(r: "DetailedReport", house: int, per_sig: int = 3,
     return tuple(out)
 
 
+#: Reader-facing labels for the metadata keys. Extends `render._NOTE_LABELS` (which covers
+#: the legacy text surface) with every key `_lookup_metadata`, `_matter_varga_overlay` and
+#: `_ashtakavarga_overlay` actually emit. A key with no label renders under its own name
+#: rather than being dropped — the completeness contract forbids silent omission.
+_INDICATION_LABELS: Final[dict[str, str]] = {
+    "decanate_cause": "cause-of-end decanate (22nd drekkana)",
+    "drekkana22_lord": "22nd-drekkana lord",
+    "source_of_gains": "source of gains",
+    "karaka_in_12": "karaka in the 12th (Bhavartha Ratnakara inversion)",
+    "confinement_mode": "mode of confinement",
+    "organ_of": "organ ruled",
+    "tridosha_of": "tridosha",
+    "beeja_kshetra": "fertility sphutas",
+    "ayurdaya": "longevity span",
+    "death_window": "death-prone Dasha",
+    "active_periods": "active Dasha",
+    "saptamsa": "Saptamsa (children varga)",
+    "sav_bindus": "Sarvashtakavarga bindus",
+    "yoga": "yoga modulation",
+    "marital_bond": "marital bond",
+    "catastrophic_gate": "catastrophic-severity gate",
+}
+
+
+def indication_label(key: str) -> str:
+    """Reader-facing label for a metadata key. Varga keys (`varga_D10`) are formatted
+    generically so a new varga needs no table edit; unknown keys fall back to the key."""
+    if key.startswith("varga_D"):
+        return f"D{key[7:]} (divisional) reading"
+    return _INDICATION_LABELS.get(key, key.replace("_", " "))
+
+
+def house_indications(r: "DetailedReport", house: int,
+                      ) -> tuple[tuple[str, str, str], ...]:
+    """(signification, label, value) for every metadata pair a house's significations carry.
+
+    THE POINT OF THIS FUNCTION. `SignificationVerdict.metadata` is the engine's existing
+    non-verdict channel — its own docstring says "Lookup rows never change the verdict" —
+    and it carries the classificatory doctrine Raman states that a favourable/afflicted
+    grade cannot express: the cause-of-end decanate, the source-of-gains channel, the organ
+    and tridosha of an afflicting graha, the mode of confinement, the Bhavartha inversion.
+    On the canonical chart the engine computes **165 such pairs and rendered exactly one**
+    (`catastrophic_gate`); `report_html` read none of them and `report_json._proforma_dict`
+    dropped them before the interactive page could see them. Worse, `house_longevity_pointer`
+    below TELLS the reader the decanate detail "is carried in the Longevity chapter", where
+    only the drekkana lord printed — a promise the product did not keep.
+
+    Selection and formatting only: this reads a field `judge_signification` already returns
+    and cannot alter a verdict. Deterministic order (significations in proforma order, pairs
+    in their recorded order)."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ()
+    out: list[tuple[str, str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for sv in pf.significations:
+        for key, val in sv.metadata:
+            out.append((sv.signification, indication_label(key), str(val)))
+            seen.add((key, str(val)))
+    #: House-level metadata too (`HouseProforma.metadata`), skipping any pair a
+    #: signification already carried — on H8 the death-window and decanate rows are
+    #: recorded at both levels, and printing them twice would be noise, not completeness.
+    for key, val in pf.metadata:
+        if (key, str(val)) not in seen:
+            out.append(("this house", indication_label(key), str(val)))
+    return tuple(out)
+
+
+def longevity_decanate_cause(r: "DetailedReport") -> str:
+    """The 22nd-drekkana CLASS row (`decanate_cause`) for the Longevity chapter.
+
+    `house_longevity_pointer` above tells the reader this detail "is carried in the
+    Longevity chapter below" — and until now that chapter printed only the drekkana LORD,
+    never the class Raman actually reads the manner from. This closes that gap, at the
+    place the pointer names. Returns "" when the judge computed no class (a sentinel
+    midpoint or an unclassified cell), so it can never invent one."""
+    for pf in r.proformas:
+        for key, val in pf.metadata:
+            if key == "decanate_cause":
+                return str(val)
+        for sv in pf.significations:
+            for key, val in sv.metadata:
+                if key == "decanate_cause":
+                    return str(val)
+    return ""
+
+
 def house_maintainer_notes(r: "DetailedReport", house: int, per_sig: int = 3) -> str:
     """The encoding-scope fine print stripped out of this house's chief-combination
     prose, re-emitted verbatim in ONE trailing line (the marriage monograph's own
@@ -1377,10 +1464,15 @@ def house_longevity_pointer(r: "DetailedReport", house: int) -> str:
         keys |= {k for k, _v in sv.metadata}
     if not (keys & _LONGEVITY_DEFERRED_KEYS):
         return ""
-    return ("Cross-reference: the maraka-bhukti and 22nd-decanate detail this house "
-            "computes is not repeated here - it is carried in the Longevity chapter "
-            "below, where the band is established first and the marakas second "
-            "(PREC-8).")
+    # Reworded 2026-09-01. The old text claimed this detail "is not repeated here - it is
+    # carried in the Longevity chapter below", which was wrong at BOTH ends: the house
+    # block showed nothing, and the chapter printed only the drekkana lord, never the
+    # decanate class. Both are fixed (see `house_indications` and
+    # `longevity_decanate_cause`), so the pointer now says what is actually true.
+    return ("Cross-reference: the maraka-bhukti and 22nd-decanate rows this house computes "
+            "are listed under \"What the doctrine indicates\" above; the Longevity chapter "
+            "below places them in Raman's order, establishing the band first and the "
+            "marakas second (PREC-8).")
 
 
 #: One pointer, reused wherever an atlas-proven inverted channel is flagged.
@@ -5716,6 +5808,18 @@ def to_markdown(r: DetailedReport) -> str:
             if _mnotes:
                 L.append(f"  - _Encoding-scope notes (maintainer fine print, not "
                          f"readings): {_mnotes}_")
+        # The non-verdict lane: what Raman's doctrine says about this house that a
+        # favourable/afflicted grade cannot carry (cause-of-end decanate, source of gains,
+        # organ/tridosha, confinement mode, the divisional readings). Computed by the judge
+        # as verdict-INVARIANT metadata and, until now, shown to no one.
+        _inds = house_indications(r, mr.house)
+        if _inds:
+            L.append("")
+            L.append("**What the doctrine indicates** (not a grade — the kind, cause or "
+                     "channel Raman's rules name for this house):")
+            L.append("")
+            for _isig, _ilabel, _ival in _inds:
+                L.append(f"- _{_isig}_: {_ilabel} — {_ival}")
         # item 14 (2026-08-04 content amendment): "Raman writes..." — the driver
         # signification's own cited source, quoted verbatim before the computation.
         if pf is not None:
@@ -5892,6 +5996,10 @@ def to_markdown(r: DetailedReport) -> str:
                 L.append(f"- **{tier}**: {', '.join(names)}")
         L.append(f"- **22nd drekkana lord**: {mp.drekkana22_lord}  |  "
                  f"**64th navamsa lord**: {mp.navamsa64_lord}")
+        _dc = longevity_decanate_cause(r)
+        if _dc:
+            L.append(f"- **22nd drekkana class (the cause Raman reads the manner from)**: "
+                     f"{_dc}")
         L.append(f"- **Running period ({s.running_md} MD / {s.running_ad} AD)**: "
                  + ("carries a maraka-tier lord" if r.maraka_period_now
                     else "carries no maraka-tier lord")

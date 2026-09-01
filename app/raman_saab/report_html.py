@@ -584,7 +584,8 @@ def _house_strip(rows: tuple) -> str:
 def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
                    conclusion: str = "", ht=None, frame_line: str = "",
                    tier_line: str = "", chief: tuple = (), cross_refs: tuple = (),
-                   maintainer_notes: str = "", cal_rollup: str = "") -> str:
+                   maintainer_notes: str = "", cal_rollup: str = "",
+                   indications: tuple = ()) -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
     `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
     closing device) — passed in, not computed here, so both renderers share one composer.
@@ -701,6 +702,19 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
             f'<details class="disclosure" open><summary>Chief combinations &mdash; '
             f'the fired rules that decided, in Raman&rsquo;s own words</summary>'
             f'<ul>{chief_items}</ul>{notes_html}</details>')
+    # The non-verdict lane (append-only 2026-09-01): the classificatory doctrine the judge
+    # records as verdict-invariant metadata — WHICH cause, WHICH channel, WHICH organ —
+    # none of which a favourable/afflicted grade can carry. `open` because the completeness
+    # lock forbids hiding substantive data behind a click that shows only a count.
+    level_indications = ""
+    if indications:
+        ind_items = "".join(
+            f'<li><i>{_esc(isig)}</i>: {_esc(ilabel)} &mdash; <b>{_esc(ival)}</b></li>'
+            for isig, ilabel, ival in indications)
+        level_indications = (
+            f'<details class="disclosure" open><summary>What the doctrine indicates '
+            f'&mdash; the kind, cause or channel, not a grade</summary>'
+            f'<ul>{ind_items}</ul></details>')
     rollup_html = (f'<div class="split-note"><i>{_esc(cal_rollup)}</i></div>'
                    if cal_rollup else "")
     level_evidence = (
@@ -720,7 +734,8 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
         f'{split_note_html}{inverted_note_html}{xref_html}{conclusion_html}'
-        f'{level_why}{level_chief}{level_evidence}{level_calc}{level_classical}</section>')
+        f'{level_why}{level_chief}{level_indications}'
+        f'{level_evidence}{level_calc}{level_classical}</section>')
 
 
 def _house_chip(a, *, ring: bool = False, basis: str = "") -> str:
@@ -2250,6 +2265,8 @@ def _maraka(r: DetailedReport) -> str:
     s = r.synthesis
     running = ("carries a maraka-tier lord" if r.maraka_period_now
                else "carries no maraka-tier lord")
+    from app.raman_saab.detailed_report import longevity_decanate_cause
+    _dec_cause = longevity_decanate_cause(r)
     return ('<h2 class="section" id="maraka">The maraka scheme</h2>'
             '<p class="section-sub">Raman&rsquo;s second step after the longevity band '
             '(HTJAH-I:761-814): the 2nd and 7th are the houses of death; their lords, occupants '
@@ -2261,7 +2278,11 @@ def _maraka(r: DetailedReport) -> str:
             f'<span class="vv">{_esc(mp.drekkana22_lord)}</span></div>'
             f'<div class="vrow"><span class="vk">64th navamsa lord</span>'
             f'<span class="vv">{_esc(mp.navamsa64_lord)}</span></div>'
-            f'<div class="vrow"><span class="vk">running period</span>'
+            # The class, not just the lord — what `house_longevity_pointer` promises the
+            # reader is carried here (append-only 2026-09-01).
+            + (f'<div class="vrow"><span class="vk">22nd drekkana class</span>'
+               f'<span class="vv">{_esc(_dec_cause)}</span></div>' if _dec_cause else "")
+            + f'<div class="vrow"><span class="vk">running period</span>'
             f'<span class="vv">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD &mdash; '
             f'{running} (broad flag by design)</span></div></div>')
 
@@ -3464,6 +3485,7 @@ def to_html(r: DetailedReport) -> str:
                                                 house_dashboard_conflicts,
                                                 house_frame_line,
                                                 house_longevity_pointer,
+                                                house_indications,
                                                 house_maintainer_notes,
                                                 house_strip_rows)
     dist_houses = frozenset(h for h, _e in r.distinctive)
@@ -3489,7 +3511,8 @@ def to_html(r: DetailedReport) -> str:
                        chief=house_chief_combinations(r, mr.house),
                        cross_refs=_xrefs(mr.house),
                        maintainer_notes=house_maintainer_notes(r, mr.house),
-                       cal_rollup=calibration_rollup_line(r.calibration[mr.house]))
+                       cal_rollup=calibration_rollup_line(r.calibration[mr.house]),
+                       indications=house_indications(r, mr.house))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'

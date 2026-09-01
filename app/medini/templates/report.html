@@ -3289,6 +3289,17 @@ function render(R, S, FQ){
     const st=el('table'); st.append(el('tr',{},el('th',{},'matter'),el('th',{},'verdict'),el('th',{},'degree'),el('th',{},'karaka')));
     for(const sv of pf.significations) st.append(el('tr',{},el('td',{},sv.signification),el('td',{},vchip(sv.verdict)),el('td',{},sv.degree||'—'),el('td',{},sv.karaka)));
     b.append(st);
+    // What the doctrine indicates — the verdict-invariant lookup channel (cause-of-end
+    // decanate, source of gains, organ/tridosha, divisional readings). Not a grade; shown
+    // in full because the completeness lock forbids collapsing data to a count.
+    const inds=[];
+    for(const sv of pf.significations) for(const t of (sv.indications||[])) inds.push([sv.signification,t[1],t[2]]);
+    if(inds.length){
+      b.append(para('What the doctrine indicates — the kind, cause or channel Raman’s rules name for this house (not a verdict):','muted'));
+      const it=el('table'); it.append(el('tr',{},el('th',{},'matter'),el('th',{},'indication'),el('th',{},'reading')));
+      for(const [isig,ilabel,ival] of inds) it.append(el('tr',{},el('td',{},isig),el('td',{},ilabel),el('td',{},ival)));
+      b.append(it);
+    }
     // population context
     const cal=(R.calibration?.[String(pf.house)]||R.calibration?.[pf.house]||{}).entries||[];
     if(cal.length){ const invs=cal.filter(e=>e.inverted_warning);

@@ -176,16 +176,27 @@ class TestHouses2And3AndH9L12:
         assert rule.general is None
         assert rule.afflicted and "planet identity" in rule.afflicted
 
-    def test_h9_l12_repaired_without_disturbing_the_rest_of_house_9(self) -> None:
-        """H9.L.12's paragraph (HTJAH-II:7389-7394) has no conditional opener of any kind
-        and the encoder cut it at Raman's own "but". It is the LONE exception in a section
-        reviewed as correctly encoded — H9.L.1-11 use explicit malefic/benefic openers and
-        must stay untouched."""
-        assert _rule("H9.L.12").general
+    def test_h9_flat_base_readings_are_repaired(self) -> None:
+        """CORRECTED 2026-09-01. This test originally asserted H9.L.12 was the LONE entry in
+        House 9 needing repair, and pinned `general is None` on all eleven others. That was
+        false, and the assertion made the error durable: the condition-fidelity audit read
+        all twelve entries in full and found H9.L.6 (HTJAH-II:7340, "The ninth lord in the
+        sixth house gives a sickly father afflicted with chronic diseases") and H9.L.8 (7359,
+        "The native may lose his father early in life") are ALSO flat unconditioned bases
+        with no benefic/malefic opener, both filed under `afflicted`.
+
+        The original claim came from sampling the entries that DO have explicit openers
+        rather than reading every one — the same first-entry sampling error the audit was
+        designed to catch. Three entries need the repair, not one."""
+        for rid in ("H9.L.6", "H9.L.8", "H9.L.12"):
+            assert _rule(rid).general, rid
         assert _rule("H9.L.12").afflicted is None
-        for n in range(1, 12):
-            other = _rule(f"H9.L.{n}")
-            assert other.general is None, f"H9.L.{n} was wrongly swept up"
+        # L.6 and L.8 keep a genuine conditioned clause; only their flat base moved.
+        for rid in ("H9.L.6", "H9.L.8"):
+            assert _rule(rid).afflicted, f"{rid} lost its genuine conditioned clause"
+        # The nine entries with explicit openers stay untouched.
+        for n in (1, 2, 3, 4, 5, 7, 9, 10, 11):
+            assert _rule(f"H9.L.{n}").general is None, f"H9.L.{n} was wrongly swept up"
 
 
 class TestPlanetInHouseSweep:

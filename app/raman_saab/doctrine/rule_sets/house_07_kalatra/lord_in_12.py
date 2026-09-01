@@ -31,7 +31,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H7.L.3", house=7, signification="spouse", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(7, 3),
-        fortified="lucky brothers who may live abroad; female issues survive",
+        # "female issues survive" follows the AFFLICTION clause at HTJAH-II:257, not the
+        # base — misattributed to `fortified` by the original encoding. Moved to `general`
+        # with the base reading, since the base sentence ("This disposition gives lucky
+        # brothers who may live abroad", 254) is unconditioned.
+        general="lucky brothers who may live abroad",
+        fortified="lucky brothers who may live abroad",
         afflicted="adultery with a brother's or sister's married partner; misfortunes to co-borns",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 254)),
     RuleRecord(
@@ -91,7 +96,19 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H7.L.12", house=7, signification="spouse", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(7, 12),
-        fortified="more than one marriage; possible spiritual turn when both karaka and lord are strong",
+        # ★ UNSOURCED AND INVERTED, REMOVED 2026-09-01. The slot read "possible spiritual
+        # turn when both karaka and lord are STRONG". HTJAH-II:329-340 contains no spiritual
+        # turn at all, and the only karaka+lord clause in it is the OPPOSITE condition with an
+        # opposite outcome: "If both karaka and the 7th lord are WEAK, the native may only
+        # dream of women but never marry" (336-337) — which the `afflicted` slot already
+        # carries correctly. So the encoding asserted a favourable result on a strength
+        # condition Raman states negatively. Found by the condition-fidelity audit while
+        # reading the section in full; the earlier text sweep missed it because H7.L.12 was
+        # not an at-risk record by the both-slots rule.
+        general="there may be more than one marriage in the native's life; he may marry a "
+                "second time clandestinely while the first wife is still alive",
+        fortified="there may be more than one marriage in the native's life; he may marry a "
+                  "second time clandestinely while the first wife is still alive",
         afflicted="second marriage clandestine while first alive, or after losing first; severe affliction "
                   "→ partner dies or separates soon, no second marriage; death while travelling or abroad; "
                   "both karaka and 7th lord weak → only dreams of women, never marries; wife from servant "

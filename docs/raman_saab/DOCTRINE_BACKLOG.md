@@ -4400,3 +4400,96 @@ more. Whether a manner CONVERGENCE may confirm is a live doctrinal question — 
 printed Raman dictum stating it**, and his H8 factor list gives no warrant. It must not be
 slipped in as a threshold tweak; it is a separate INVESTIGATE with its own citation hunt and
 its own engine-blind review.
+
+
+## CONDITION-FIDELITY AUDIT (2026-09-01) — 132/132 BARE. H8 was an outlier, not the first case.
+
+After the H8 over-firing fix, the obvious question was whether the other eleven
+`lord_in_house` tables have the same defect. Nobody had checked — H8's was found by accident.
+Every rule in those eleven modules is a bare `LordIn(N, k)`, so the whole question is whether
+Raman states a bare placement or a richer predicate per entry.
+
+**Three engine-blind reviews read all 132 remaining entries IN FULL** — not sampled, because
+H8's defect ran across eleven of its twelve entries and a house carrying it in only three would
+slip past first-entry sampling (which is exactly how my own H9 "lone exception" claim went
+wrong; see below).
+
+**★ RESULT: 132 BARE, 0 NARROWER, 0 UNDETERMINED. The bare `LordIn(N, k)` encoding is faithful
+for Houses 1-7 and 9-12, and no condition should be narrowed.** Narrowing any of them would
+SUPPRESS doctrine Raman states broadly — the opposite error from H8's, and just as damaging.
+
+### Why H8 differs — the discriminator, worth keeping for any future audit of this shape
+
+The reviews converged on four independent structural facts:
+
+1. **Every other section closes by naming the placement as the base and strength as the
+   modifier** — HTJAH-I:1003-1007 ("the combination is of general application"), 2423 ("again
+   of general application"), 4190 ("very general... augmented or minimised according to the
+   strength"), 5173 ("quite general... qualified or modified"), 6062 ("the general results
+   likely to happen when the sixth lord is posited"), HTJAH-II:343 ("These results occur if the
+   7th lord is placed in the different Bhavas"), 7396, 14344, 16230. **H8's section carries no
+   such disclaimer, because its readings are not general — they are conjunction-specific.**
+2. **Every qualifier elsewhere is SCALAR and unnamed** ("favourably disposed", "well aspected",
+   "fortified", "beneficially"). H8's are DETERMINATE planets — *the 2nd lord*, *the 4th lord*,
+   *the 7th lord* — a rare, checkable event (measured 64 of 345 firings).
+3. **Every qualifier elsewhere has its complement pole stated**, and four entries (H5.L.1,
+   H5.L.4, H6.L.9, H6.L.11) are explicit THREE-WAY partitions (fortified / moderate / afflicted),
+   leaving no placement Raman declines to address. H8's conjunction has **no complement**: an
+   8th lord in the 2nd *without* the 2nd lord is a configuration his sentence simply does not
+   reach.
+4. **The syntactic tell:** in H8 the conjunction is the grammatical subject of the entry's FIRST
+   result-bearing sentence. Everywhere else that sentence is a flat declarative or a placement
+   restatement, and every conjunction/aspect/sign clause sits in a LATER sentence with its own
+   distinct outcome.
+
+House 12 came closest without reaching it — two of its entries use the exact H8 idiom ("If the
+6th lord joins the 12th lord in Lagna", 16132; "If the 12th lord joins the 2nd lord in the 3rd",
+16157) — but both are late sentences with their own outcomes, after an unconditioned opening.
+H9.L.1 is the sharpest illustration: "If the 9th lord combines with the Lagna lord in the first
+house and associates with or is aspected by a benefic planet..." (7303) is H8-shaped, but it is
+the SECOND sentence and carries a different outcome from the base.
+
+### `tools/raman_saab/condition_delta.py` — the instrument, now permanent
+
+The H8 measurement was improvised. It is now a harness that reports, in the order the questions
+should be asked: COVERAGE (firings now vs proposed), EXPOSURE (how many changed charts carry a
+scored expectation for that house), and IMPACT (which scored rows move, with golden / current /
+proposed per row). It reports DIRECTION deliberately — the H8 change cost one exact match, and a
+bare delta would have argued for reverting something that was right to ship. Restores the
+swapped condition in a `finally`, with a test proving no leak even when a proposal raises.
+
+### ★ FOUR TEXT DEFECTS the audit found in passing — including a correction to my own claim
+
+Reading all 132 entries in full surfaced defects the earlier text sweep had missed, because
+they were not "at-risk" records under its both-slots rule:
+
+- **H7.L.12's `fortified` was UNSOURCED AND INVERTED.** It read *"possible spiritual turn when
+  both karaka and lord are STRONG"*. HTJAH-II:329-340 contains no spiritual turn at all, and its
+  only karaka+lord clause is the OPPOSITE condition with an opposite outcome: *"If both karaka
+  and the 7th lord are WEAK, the native may only dream of women but never marry"* (336-337) —
+  which the `afflicted` slot already carried correctly. Removed.
+- **H7.L.3** attributed *"female issues survive"* to `fortified`; it follows the AFFLICTION
+  clause at 257.
+- **★ H9.L.6 and H9.L.8 — a CORRECTION TO THIS BACKLOG'S OWN EARLIER ENTRY.** The 2026-09-01
+  slot-mapping work asserted, in a module comment, a commit message and a TEST, that H9.L.12 was
+  *"the LONE exception in House 9"*. That was FALSE. H9.L.6 (7340, *"The ninth lord in the sixth
+  house gives a sickly father afflicted with chronic diseases"*) and H9.L.8 (7359, *"The native
+  may lose his father early in life"*) are also flat unconditioned bases with no benefic/malefic
+  opener, and both had them filed under `afflicted`. Three entries needed repair, not one.
+  **The error was made by sampling the entries that DO have explicit openers instead of reading
+  every one — precisely the mistake this audit existed to catch, committed by the process that
+  commissioned it.** The test that pinned the false claim has been corrected to assert the true
+  state and to record why it was wrong, rather than quietly re-scoped.
+
+### Still open from the audit (text-arm, not condition)
+
+- **Conditioned outcomes folded into unconditioned arms.** `H10.L.1.fortified` ends "Lagna and
+  10th lord together → famous pioneer, founds public institution" (HTJAH-II:9462), and
+  `_branch` returns "fortified" by default INCLUDING whenever Shadbala is absent — so a chart
+  with the 10th lord in Lagna and no conjunction still receives that text. Same shape in
+  `H10.L.5.fortified` and `H12.L.1.fortified`. Most preserve the "if" in prose, which mitigates
+  it; H10.L.1's does not.
+- **`_branch`'s fortified-default on sparse charts.** `H10.L.10` has no unconditioned reading in
+  Raman at all, so on a Track-B chart with no Shadbala a weak 10th lord receives the "highly
+  successful" reading. A general property of the fallback, not specific to these modules, but
+  worth its own decision.

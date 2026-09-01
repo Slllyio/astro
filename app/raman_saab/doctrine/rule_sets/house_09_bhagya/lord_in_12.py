@@ -51,8 +51,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H9.L.6", house=9, signification="fortune", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(9, 6),
         fortified="benefics flanking → wealth via father's legal wins, compensation, costs",
-        afflicted="sickly father with chronic disease; malefics → fortune frustrated by "
-                  "litigation/debts of father",
+        # HTJAH-II:7340 is a FLAT unconditioned base — "The ninth lord in the sixth house
+        # gives a sickly father afflicted with chronic diseases" — with no benefic/malefic
+        # opener. Only the malefic clause that follows is conditioned. (The father being
+        # "afflicted with chronic diseases" describes the FATHER, not the 9th lord; that
+        # wording is very likely what misled the original encoder.)
+        general="a sickly father afflicted with chronic diseases",
+        afflicted="malefics → the fortune frustrated by the father's litigation and debts",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7340)),
     RuleRecord(
         id="H9.L.7", house=9, signification="fortune", group="lord_in_house", kind="evaluable",
@@ -65,8 +70,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H9.L.8", house=9, signification="fortune", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(9, 8),
         fortified="benefics → inherits substantial paternal property",
-        afflicted="loses father early; malefics → severe poverty/heavy responsibility; "
-                  "abandons traditions, damages religious trusts",
+        # HTJAH-II:7359 is likewise a FLAT unconditioned base — "The native may lose his
+        # father early in life" — followed by two separately conditioned clauses ("If
+        # malefics afflict the eighth house in such a case...", "Afflictions may cause...").
+        general="the native may lose his father early in life",
+        afflicted="malefics afflicting the 8th house → severe poverty and heavy "
+                  "responsibility on the father's death; afflictions → abandons traditions, "
+                  "or damages religious institutions and trusts set up by the family",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7359)),
     RuleRecord(
         id="H9.L.9", house=9, signification="fortune", group="lord_in_house", kind="evaluable",
@@ -95,7 +105,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # is ONE paragraph with no conditional opener of any kind, and the encoder cut it at
         # Raman's own "but": "He will be religious and noble BUT ALWAYS IN WANT" — the first
         # half filed as fortified, the second half plus the rest of the paragraph as
-        # afflicted. This is the LONE exception in House 9; the rest of the section is
+        # afflicted.
+        #
+        # CORRECTION 2026-09-01: this comment originally called H9.L.12 "the LONE exception in
+        # House 9". That was WRONG, and the condition-fidelity audit caught it by reading all
+        # twelve entries in full. H9.L.6 (7340) and H9.L.8 (7359) also carry flat
+        # unconditioned base readings — "gives a sickly father afflicted with chronic
+        # diseases", "The native may lose his father early in life" — with no benefic/malefic
+        # opener, and both had them filed under `afflicted`. Both are now repaired. The claim
+        # below is retained, corrected, because the reasoning it rests on is still right for
+        # the OTHER nine entries; only the word "lone" was false. It was reached by sampling
+        # the entries with explicit openers rather than reading every one — the same
+        # first-entry sampling error this audit was designed to avoid.
+        #
+        # The rest of the section (the nine entries other than L.6, L.8 and L.12) is
         # written with explicit malefic/benefic openers and was reviewed as correctly
         # encoded, so repairing this record does not disturb H9.L.1-11.
         general="the 9th lord in the 12th gives a poor background; the native will suffer "

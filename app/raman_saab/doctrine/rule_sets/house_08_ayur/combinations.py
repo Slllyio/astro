@@ -581,7 +581,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # it exactly; the abstract Aquarius-27deg example is the outvoted printing slip). The
     # dictum is CONJUNCTIVE by Raman's own sentence (HTJAH-II:3684-3687): the Moon-side
     # malefic leg AND the named 22nd. Silent when the lagna degree is unknown (asc sentinel).
-    # Corroboration-tier per the drekkana amendment (in _DREKKANA_MANNER_RULE_IDS).
+    # Corroboration-tier per the drekkana amendment (in _MANNER_RULE_IDS).
     RuleRecord(
         id="H8.C.21", house=8, signification="death", group="combination", kind="evaluable",
         condition=C.And(_MaleficInfluencesFifthOrNinthFromMoon(),
@@ -706,7 +706,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # appear in his worked Ayudha instances). CORROBORATION-TIER (reviewer amendment): never
     # the sole confirming malefic for the death affliction — Savarkar (NH:10563-10570) has
     # Jupiter in Ayudha and Raman reads dasha-danger, not death (he died naturally); see
-    # _DREKKANA_MANNER_RULE_IDS in the judge. Known mechanism-mismatch fire, recorded per
+    # _MANNER_RULE_IDS in the judge. Known mechanism-mismatch fire, recorded per
     # the chart_67 precedent: Ashutosh Mukerjee (NH.chart_39) — his death paragraph is
     # timing/maraka-based (nh:8770-8773) and his death was natural; the fire lands the
     # right ordinal for the wrong mechanism and confirms nothing on its own.
@@ -761,6 +761,51 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the 22nd drekkana is a Sarpa/Nigala/Pasa/Ayudha drekkana → the manner of "
                   "death is violent or in captivity",
         frame="LAGNA", varga="D3", polarity="malefic", source=Citation("HTJAH-II", 6674)),
+
+    # C.33 — the Goutama Samhita weapon-death combination, which Raman quotes and then
+    # demonstrates clause-by-clause on Lincoln (HTJAH-II:6757-6762): "A combination in
+    # Goutama Samhita says that if the lord of the 8th is in the Ascendant and the waning
+    # Moon is aspected by Mars, death will be due to a weapon. The 8th lord Mercury is in the
+    # Ascendant and the waning Moon in the 12th house is aspected by Mars."
+    #
+    # MANNER TIER, by engine-blind review (DOCTRINE-CONTESTED verdict, 2026-09-01). The
+    # predicate is faithful; the tier was the whole issue. Raman's own taxonomy settles it:
+    # HTJAH-II:3591 heads the section "Nature of Death", and at 3728-3731 he writes "When
+    # these particular yogas are absent in a horoscope, classical works refer to the lord of
+    # the 22nd drekkana to find out the cause of death" — the weapon-yogas and the 22nd
+    # drekkana are ALTERNATE INSTRUMENTS OF ONE APPARATUS. The drekkana half is already
+    # corroboration-tier (H8.D.3/D.4/D.5), so letting this half confirm would make the tier
+    # depend on which instrument happened to fire. At 3884-3891 he assigns "Mars by weapons"
+    # explicitly under "indicate the CAUSE of death".
+    #
+    # Structural corroboration: in BOTH worked charts the combination sits in the Conclusion
+    # block, after the four-pillar ledger, beside the 22nd drekkana — Lincoln (6757) and
+    # Gandhi (6810, the sibling Gautama Samhita yoga, "the waning Moon in the 11th").
+    #
+    # The Moon's house is deliberately NOT a condition. The stated combination says only
+    # "the waning Moon is aspected by Mars"; "in the 12th house" appears solely in the
+    # demonstration sentence as chart description. The sibling yoga at 6810-6812 DOES make
+    # the Moon's house a stated condition ("the waning Moon in the 11th"), which is positive
+    # evidence that Raman prints the house when the combination requires it. Same reasoning
+    # for the benefic-relief clause the sibling carries and this one does not.
+    #
+    # Fires 5/346 goldens. Only two carry a scored H8/death expectation, and both are
+    # Abraham Lincoln recorded independently in two books (HTJAH-II.chart_73, NH.chart_24),
+    # both `afflicted` — so the corpus cannot falsify it in the confirm direction, which is a
+    # further argument for the conservative tier rather than against it.
+    #
+    # SINGLE-WITNESS TRANSMISSION: `data/knowledge_library` holds no Goutama Samhita, so this
+    # is Raman relaying a source we cannot independently check. The one corroboration
+    # available is that the same sentence appears in a second, independently OCR'd printing
+    # in the repo (HTJAH-I file:12225-12228), which rules out a transcription splice.
+    RuleRecord(
+        id="H8.C.33", house=8, signification="death", group="combination", kind="evaluable",
+        condition=C.And(C.LordIn(8, 1), C.MoonPhase("waning"),
+                        C.Aspects("Mars", "Moon")),
+        fortified=None,
+        afflicted="the 8th lord in the Ascendant with the waning Moon aspected by Mars → "
+                  "death is due to a weapon (Goutama Samhita, quoted and applied by Raman)",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 6757)),
 
     # D.6 — a benefic occupying the 8th UNDER MARS drishti: the protector is vitiated and
     # the configuration itself turns malefic. Gandhi verbatim (NH:9184-9191): "Jupiter is

@@ -4320,3 +4320,83 @@ lord conjunct the 3rd lord in the 3rd. An honest coverage gap is better than a r
 **Still open in H8:** Raman adds a SECOND condition to some entries that is not encoded — the
 9th wants the conjunction *"with malefics"* (3010), the 12th distinguishes benefics joining the
 8th lord (3053-3055). Each needs its own measured pass.
+
+
+### THE LINCOLN HUNT — CLOSED, and the gap is REAL (2026-09-01)
+
+The candidate Goutama Samhita rule was reviewed engine-blind and came back
+**DOCTRINE-CONTESTED**. The predicate was faithful; the proposed TIER was wrong. It is
+shipped as **H8.C.33 at MANNER tier**, and it does **not** recover Lincoln — by design.
+
+**Why the tier matters, in Raman's own taxonomy.** HTJAH-II:3591 heads the section "Nature of
+Death"; at **3728-3731** he writes *"When these particular yogas are absent in a horoscope,
+classical works refer to the lord of the 22nd drekkana to find out the cause of death"* — so
+the weapon-yogas and the 22nd drekkana are **alternate instruments of ONE apparatus**. The
+drekkana half is already corroboration-tier (the 2026-08-30 amendment), so letting the
+weapon-yoga half confirm would make the tier depend on which instrument happened to fire. At
+3884-3891 he assigns *"Mars by weapons"* explicitly under *"indicate the CAUSE of death"*.
+Structural corroboration: in BOTH worked charts the combination sits in the Conclusion block,
+after the four-pillar ledger, beside the 22nd drekkana — Lincoln (6757) and Gandhi (6810, the
+sibling yoga "the waning Moon in the 11th").
+
+Encoding it confirm-capable would have been **the same category error as the over-firing rule
+the narrowing removed** — recovering the row through a rule that is not doing the doctrinal
+work the verdict needs — and harder to spot, because the citation is genuine. `_MANNER_RULE_IDS`
+(renamed from `_DREKKANA_MANNER_RULE_IDS`, now a misnomer) holds it. Measured after shipping:
+Lincoln's H8/death stays favourable, all four fired malefics being manner-tier; ratchet
+unmoved at 286/362/35.
+
+**★ THE FINDING THAT MATTERS MOST, and it belongs with MEASURED TRUTH.** Raman's own
+four-pillar ledger for Lincoln is FAVOURABLE on three of four pillars, in his own words:
+*"The Eighth Lord: Mercury is **well placed** in the Ascendant with the 7th lord Sun"*
+(6741-6742); *"Ayushkaraka: Saturn occupies Scorpio in the 10th house aspected by Jupiter in
+own sign"* (6744-6745); the 8th itself *"aspected by Jupiter and exalted Venus"* (6711-6712).
+**The engine computing lord Sun strong and karaka Saturn strong is AGREEING with Raman's
+printed pillar reading — it is not misreading the chart.** His `afflicted` verdict rests on
+manner + timing + the historical fact that the man was shot.
+
+So this is not a corpus gap that one more rule can close, and it is not a judge defect either.
+It is a limit of the four-pillar method as such: on Lincoln, Raman's own pillars say
+favourable, and he overrides them with knowledge the pillars do not contain. Any future attempt
+to "fix" this row should start from that sentence, not from a search for more testimony.
+
+**Rejected, with reasons, so they are not re-proposed:**
+- **The nakshatra chain** (*"The 8th lord Mercury is in a constellation of Rahu who, in turn,
+  is in association with the planet of violence, Mars"*, 6753-6755): an observation about one
+  contributing factor in one chart, not a stated dictum — exactly the unit the north-star
+  playbook's confirmation rule excludes. Its own wording (*"the planet of violence"*) shows it
+  is explaining the MANNER anyway, so it would change nothing even if encoded. (Aside:
+  `InStarOf` takes a static lord name, so "the 8th lord in Rahu's star" is not expressible
+  without a dynamic-lord form.)
+- **The Saturn-Dasa / Mercury-Bhukti maraka reasoning** (6770-6775): timing, not natal
+  affliction — and already encoded, in `primitives/vimshottari.py:331-334` (Saturn-in-10th
+  Mrityu Yoga adds Saturn to the tertiary maraka set) and 324-326 (the from-Moon 2nd/7th/8th
+  lords). Nothing to add.
+- **The Jataka Tatwa assassination combination** (6766-6771): the strict form is not what Raman
+  applied to this chart, and the loosened form is not what the text says. The reviewer put the
+  objection better than the original proposal did — choosing the loosened form would be
+  **reverse-engineering the predicate from the chart you want it to fire on**. Its outcome
+  clause is manner anyway.
+
+**One live candidate, NOT certified, for a future citation hunt.** The from-Moon pillar at
+6747-6750 — *"Considered from the Moon: The 8th house is aspected by Saturn while the 8th lord
+Sun occupies the 2nd house with Mercury"* — is the only line in the passage recording an
+affliction to the 8th itself rather than a cause or a date, and **H8 currently has ZERO
+`frame="MOON"` rules** (H1 has seventeen, H9 three). But Raman's stated H8 factor list is
+*"(a) The House, (b) Its Lord, (c) Its Occupants and (d) The Karaka... The same considerations
+must be judged from the Navamsa chart also"* (2890-2894) — **the from-Moon frame is not in it**
+— and he states no general dictum of the form "the 8th from the Moon aspected by a malefic
+afflicts the 8th". Encoding it needs its own general-voice citation, which the reviewer could
+not find in the H8 chapter. The search should target Raman's from-Moon method statements
+OUTSIDE that chapter (he concludes *"The 7th house from the Moon also suffers affliction"* at
+1279-1280, so the frame is doctrinally live as affliction testimony elsewhere).
+
+**One open design question, surfaced and explicitly NOT recommended.** Lincoln carries three to
+four independent manner testimonies converging on the same instrument (22nd drekkana Ayudha,
+Goutama Samhita weapon, Jataka Tatwa assassination, and via Mars the 3884-3891 cause table).
+The Savarkar counter-instance that justified corroboration-tier is a SINGLE manner testimony
+(Jupiter in Ayudha, natural death) and does not refute a rule keyed on convergence of three or
+more. Whether a manner CONVERGENCE may confirm is a live doctrinal question — but there is **no
+printed Raman dictum stating it**, and his H8 factor list gives no warrant. It must not be
+slipped in as a threshold tweak; it is a separate INVESTIGATE with its own citation hunt and
+its own engine-blind review.

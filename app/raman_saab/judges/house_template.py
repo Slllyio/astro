@@ -136,11 +136,19 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
     "death",                                                                # H8 (manner/cause)
 })
 
-#: Drekkana death-MANNER rules — corroboration-tier by reviewer amendment (2026-08-30):
-#: they sharpen an affliction established by non-drekkana testimony and may never be the
-#: sole confirming malefic in clause 1.5 (see AFFLICTION_OWN_EVIDENCE in _build_frame_ledger).
-_DREKKANA_MANNER_RULE_IDS: Final[frozenset[str]] = frozenset(
-    {"H8.D.3", "H8.D.4", "H8.D.5", "H8.C.21"})
+#: Death-MANNER rules — corroboration-tier by reviewer amendment (2026-08-30): they sharpen
+#: an affliction established by OTHER testimony and may never be the sole confirming malefic
+#: in clause 1.5 (see AFFLICTION_OWN_EVIDENCE in _build_frame_ledger).
+#:
+#: RENAMED 2026-09-01 from `_DREKKANA_MANNER_RULE_IDS`, which had become a misnomer: the set
+#: now holds manner rules generally, not only drekkana ones. H8.C.33 (the Goutama Samhita
+#: weapon combination) joined on the same review's reasoning — Raman writes at
+#: HTJAH-II:3728-3731 that "when these particular yogas are absent... classical works refer to
+#: the lord of the 22nd drekkana to find out the cause of death", so the weapon-yogas and the
+#: drekkana are ALTERNATE INSTRUMENTS OF ONE APPARATUS. Letting one half confirm while the
+#: other corroborates would make the tier depend on which instrument happened to fire.
+_MANNER_RULE_IDS: Final[frozenset[str]] = frozenset(
+    {"H8.D.3", "H8.D.4", "H8.D.5", "H8.C.21", "H8.C.33"})
 
 # CATASTROPHIC sub-significations — bodily/liberty ruin (imprisonment, blindness, grave
 # accident) that Raman pronounces ONLY on a MULTIPLY-afflicted configuration, never on a
@@ -1295,7 +1303,7 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         # confirm the affliction would convert manner evidence into affliction evidence —
         # something Raman never does.
         confirming_mal = [fr for fr in malefic
-                          if getattr(fr.rule, "id", "") not in _DREKKANA_MANNER_RULE_IDS]
+                          if getattr(fr.rule, "id", "") not in _MANNER_RULE_IDS]
         if confirming_mal and not manner_ben:
             flags.append("AFFLICTION_OWN_EVIDENCE")
     # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS

@@ -4,11 +4,13 @@
       "HTJAH-II:3684",
       "HTJAH-II:3906",
       "HTJAH-II:6674",
+      "HTJAH-II:6757",
       "NH:5944"
     ],
     "fired_rule_ids": [
       "H8.C.21",
       "H8.C.26",
+      "H8.C.33",
       "H8.D.4",
       "H8.D.5"
     ],

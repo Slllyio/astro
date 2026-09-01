@@ -463,11 +463,25 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H1.N.66", house=1, signification="self", group="navamsa_qualifier",
         kind="evaluable",
         condition=_LordsInContact(1, 6),
-        fortified="no contact (aspect or association) between lords of 1st and "
-                  "6th → health protective; violation implicates illness/defamation",
-        afflicted="contact between lords of 1st and 6th (aspect or association) "
-                  "→ health suffers; defamation risk (Chart 18 case: Lagna-lord "
-                  "aspected by Mars/6th-lord)",
+        # SENTIMENT-SPLIT corrected 2026-09-01. HTJAH-I:1972-1974 states an UNCONDITIONED
+        # precept plus a worked illustration: "There should be no contact between lords of
+        # the 1st and 6th either by way of aspect or association. Here lord of Lagna is
+        # aspected by Mars lord of the 6th and 11th. The native was once implicated in a
+        # defamation case but subsequently acquitted." The precept was cut across both slots
+        # — and the `fortified` half was the logical NEGATION of this rule's own firing
+        # condition, so whenever the rule fired, its fortified text was false of that chart.
+        # (The file comment above already recorded unease about that half.)
+        #
+        # "health suffers" / "health protective" is dropped: it is not in the passage. The
+        # nearest health language is at HTJAH-I:1983 and belongs to a DIFFERENT chart and a
+        # different combination. Raman's acquittal — dropped by the old encoding — is restored.
+        general="there should be no contact between the lords of the 1st and 6th, either by "
+                "way of aspect or association",
+        fortified=None,
+        afflicted="contact between the lords of the 1st and 6th, by aspect or association → "
+                  "defamation (Chart 18: the Lagna-lord aspected by Mars, lord of the 6th and "
+                  "11th; the native was implicated in a defamation case and subsequently "
+                  "acquitted)",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 1972)),
 

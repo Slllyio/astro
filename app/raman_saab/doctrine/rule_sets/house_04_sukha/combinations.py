@@ -361,7 +361,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # genuinely still blocked or genuinely unscoped: the royalty and army sentences want
         # a strength gate and have no `status`/`career` key on H4, and the sinner/drowning
         # pair are life-event readings with no signification to route to.
-        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4219)),
+        # Citation corrected 2026-09-01: it pointed at HTJAH-I:4219, "The person loses lands
+        # by royal or Government orders if the lord of the fourth is neecha with Sun" — a
+        # sentence that was SPLIT OUT of this bundle into H4.C.53 on 2026-08-31, which now
+        # cites 4219 itself. This record therefore cited a line whose content it no longer
+        # contained. Its four surviving sentences begin at 4220 (great sinner, drowning) with
+        # the fortified pair at 4230-4232.
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4220)),
 
     # #52 — the mother-affection sentence, split out of C.24's bundle. Raman verbatim
     # (HTJAH-I:4228-4229): "He wins the affection of mother if lord of Lagna and the fourth

@@ -137,10 +137,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H1.M.G1", house=1, signification="self", group="moon_mind",
         kind="descriptive", condition=None,
-        fortified="health and accident tendency read from planets rising/setting "
-                  "and those configured with the Moon",
-        afflicted="liability to diseases and accidents — planets afflicting the Moon "
-                  "or rising/setting at birth indicate bodily vulnerability",
+        # SENTIMENT-SPLIT of a METHOD statement, corrected 2026-09-01. HTJAH-I:1236 is a
+        # single sentence that renders no verdict at all — "The liability to diseases and
+        # accidents is judged from the planets rising or setting, and those CONFIGURATED with
+        # the Moon." It tells the reader WHERE TO LOOK. The encoding cut it in two: the
+        # neutral "read it from..." half under a fortified heading, and a manufactured
+        # vulnerability verdict under an afflicted one — converting a method into a finding
+        # by substituting "afflicting" for Raman's "configurated", and adding "indicate
+        # bodily vulnerability", which is nowhere in the passage.
+        #
+        # `afflicted` is deliberately NOT back-filled from Raman's next sentence (1237-1238,
+        # the genuine affliction reading): that is already encoded as H1.M.G2 below, and
+        # duplicating it here would double-count the same testimony.
+        general="the liability to diseases and accidents is judged from the planets rising "
+                "or setting, and those configurated with the Moon",
+        fortified="the liability to diseases and accidents is judged from the planets rising "
+                  "or setting, and those configurated with the Moon",
+        afflicted=None,
         frame="MOON", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 1236)),
 

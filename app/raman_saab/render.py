@@ -22,7 +22,12 @@ _FLAG = {True: "strong", False: "weak", None: "n/a"}
 _REPL = {"→": "->", "←": "<-", "—": "-", "–": "-", "‘": "'",
          "’": "'", "“": '"', "”": '"', "…": "...", "°": " deg",
          "×": "x", "½": "1/2", "¾": "3/4", "¼": "1/4",
-         "·": "-", "±": "+-"}
+         "·": "-", "±": "+-",
+         # Logic glyphs used in the maintainer notes of a few descriptive rules
+         # (H11.C.34's "∧", H12.L.1 / H12.C.A18's "↔"). Added 2026-09-01: they had no
+         # fold and printed as "?" mojibake the moment those rules first reached a
+         # reader surface. A missing fold is silent until the text is rendered.
+         "∧": " AND ", "∨": " OR ", "↔": "<->", "≠": "!=", "≤": "<=", "≥": ">="}
 
 # Decorative emoji (the plain-terms avastha analogies) fold to nothing rather than "?"
 # mojibake; the emoji+space form first so no stray double space is left behind, and the

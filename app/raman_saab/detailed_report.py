@@ -1161,6 +1161,77 @@ def house_indications(r: "DetailedReport", house: int,
     return tuple(out)
 
 
+def house_further_combinations(r: "DetailedReport", house: int,
+                               ) -> tuple[tuple[str, str, str, str], ...]:
+    """The fired rules of a house that `house_chief_combinations` did NOT show.
+
+    That composer caps at `per_sig=3` per signification and orders `fired_neutral` last, so
+    a matter carrying three polar rules shows none of its non-graded ones. The cap is right
+    for a "chief combinations" list — it keeps the lead argument readable — but under the
+    CLAUDE.md completeness lock the remainder may not simply vanish. This is the remainder,
+    same tuple shape, same maintainer-note routing, deterministic order.
+
+    Selection only. Reads the ledgers the judge already produced; changes nothing."""
+    from app.raman_saab.monographs import split_maintainer_notes
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ()
+    shown = {c[1] for c in house_chief_combinations(r, house)}
+    out: list[tuple[str, str, str, str]] = []
+    seen: set[str] = set()
+    for sv in pf.significations:
+        led = sv.ledger
+        for fr in (*led.fired_malefic, *led.fired_benefic, *led.fired_neutral):
+            if fr.rule.id in shown or fr.rule.id in seen:
+                continue
+            text = (fr.text or "").strip()
+            if not text or _CHIEF_PLACEHOLDER in text:
+                continue
+            seen.add(fr.rule.id)
+            client, _notes = split_maintainer_notes(text)
+            out.append((sv.signification, fr.rule.id, client or text,
+                        f"{fr.rule.source.work}:{fr.rule.source.line}"))
+    return tuple(out)
+
+
+def _on_record_text(rule) -> str:
+    """Both result texts of a rule that never fires, joined without asserting a branch.
+
+    A descriptive rule has no `condition`, so no chart ever selects between its `fortified`
+    and `afflicted` slots — presenting either one under a strength heading would claim a
+    reading the engine did not make. They are joined plainly instead."""
+    parts = [s.strip() for s in (rule.fortified, rule.afflicted) if s and s.strip()]
+    parts = [s for s in parts if _CHIEF_PLACEHOLDER not in s]
+    return " / ".join(dict.fromkeys(parts))
+
+
+def descriptive_house_rules(house: int) -> tuple[tuple[str, str, str, str], ...]:
+    """Raman's doctrine on record for a house that the engine cannot yet evaluate.
+
+    97 `RuleRecord`s corpus-wide carry `kind="descriptive"` and `condition=None`. Both
+    `rules.fires()` and `rule_firing.fire_rules` skip them, and nothing else reads them —
+    so despite the class docstring promising they are "surfaced with its citation when a
+    placement holds", NO such path existed and their text reached no reader at all. This is
+    that path, mirroring the `descriptive_rules()` / "Further combination doctrine on
+    record" block the synthesis layer has used since 2026-08-18.
+
+    Framed as doctrine ON RECORD, never as a reading of this chart: these rules were not
+    evaluated, and saying otherwise would be a false claim about the engine's own work."""
+    from app.raman_saab.doctrine.rule_sets import ALL_RULES
+    from app.raman_saab.monographs import split_maintainer_notes
+    out: list[tuple[str, str, str, str]] = []
+    for rule in ALL_RULES:
+        if rule.house != house or rule.kind != "descriptive":
+            continue
+        text = _on_record_text(rule)
+        if not text:
+            continue
+        client, _notes = split_maintainer_notes(text)
+        out.append((rule.signification, rule.id, client or text,
+                    f"{rule.source.work}:{rule.source.line}"))
+    return tuple(out)
+
+
 def longevity_decanate_cause(r: "DetailedReport") -> str:
     """The 22nd-drekkana CLASS row (`decanate_cause`) for the Longevity chapter.
 
@@ -5820,6 +5891,24 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             for _isig, _ilabel, _ival in _inds:
                 L.append(f"- _{_isig}_: {_ilabel} — {_ival}")
+        # The rules that DID fire but the chief-combination cap could not show.
+        _further = house_further_combinations(r, mr.house)
+        if _further:
+            L.append("")
+            L.append("**Further fired combinations** (beyond the chief three per matter):")
+            L.append("")
+            for _fsig, _fid, _ftext, _fcite in _further:
+                L.append(f"- _{_fsig}_ (`{_fid}`): \"{_ftext}\" ({_fcite})")
+        # Doctrine on record but NOT evaluated — stated as such, never as a reading.
+        _onrec = descriptive_house_rules(mr.house)
+        if _onrec:
+            L.append("")
+            L.append("**Doctrine on record for this house, not yet computed** — Raman "
+                     "states these combinations; the engine cannot yet evaluate them, so "
+                     "they are listed, not applied to this chart:")
+            L.append("")
+            for _osig, _oid, _otext, _ocite in _onrec:
+                L.append(f"- _{_osig}_ (`{_oid}`): \"{_otext}\" ({_ocite})")
         # item 14 (2026-08-04 content amendment): "Raman writes..." — the driver
         # signification's own cited source, quoted verbatim before the computation.
         if pf is not None:

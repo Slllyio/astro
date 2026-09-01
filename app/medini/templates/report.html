@@ -3300,6 +3300,21 @@ function render(R, S, FQ){
       for(const [isig,ilabel,ival] of inds) it.append(el('tr',{},el('td',{},isig),el('td',{},ilabel),el('td',{},ival)));
       b.append(it);
     }
+    // The two non-graded rule lanes. Kept apart deliberately: `further_combinations` FIRED
+    // on this chart and only fell outside the chief-combination cap; `doctrine_on_record`
+    // was never evaluated, and presenting it as a reading would be a false claim.
+    const ruleRows=(rows,tbl)=>{ for(const [rsig,rid,rtext,rcite] of rows)
+      tbl.append(el('tr',{},el('td',{},rsig),el('td',{},rid),el('td',{},rtext),el('td',{},rcite))); };
+    if((pf.further_combinations||[]).length){
+      b.append(para('Further fired combinations — beyond the chief three per matter:','muted'));
+      const ft=el('table'); ft.append(el('tr',{},el('th',{},'matter'),el('th',{},'rule'),el('th',{},'Raman’s effect'),el('th',{},'citation')));
+      ruleRows(pf.further_combinations,ft); b.append(ft);
+    }
+    if((pf.doctrine_on_record||[]).length){
+      b.append(para('Doctrine on record for this house, not yet computed — Raman states these combinations; the engine cannot yet evaluate them, so they are listed, not applied to this chart:','muted'));
+      const ot=el('table'); ot.append(el('tr',{},el('th',{},'matter'),el('th',{},'rule'),el('th',{},'Raman’s effect'),el('th',{},'citation')));
+      ruleRows(pf.doctrine_on_record,ot); b.append(ot);
+    }
     // population context
     const cal=(R.calibration?.[String(pf.house)]||R.calibration?.[pf.house]||{}).entries||[];
     if(cal.length){ const invs=cal.filter(e=>e.inverted_warning);

@@ -16,7 +16,9 @@ import json
 import pytest
 
 from app.raman_saab.chart.model import BirthData
-from app.raman_saab.detailed_report import (build_detailed_report, house_indications,
+from app.raman_saab.detailed_report import (build_detailed_report,
+                                            descriptive_house_rules,
+                                            house_further_combinations, house_indications,
                                             indication_label, longevity_decanate_cause,
                                             to_markdown)
 from app.raman_saab.report_html import to_html
@@ -96,6 +98,47 @@ class TestLongevityPointerKeepsItsPromise:
         assert "22nd drekkana class" in to_markdown(report)
         assert cause in to_markdown(report)
         assert cause in to_html(report)
+
+
+class TestNonGradedRuleLane:
+    """The 97 `kind="descriptive"` rules never execute — `rules.fires()` and
+    `rule_firing.fire_rules` both skip a `condition=None` rule — so despite the class
+    docstring promising they are "surfaced with its citation when a placement holds", no
+    such path existed and their text reached no reader. It exists now, and says plainly
+    that these were NOT evaluated."""
+
+    def test_every_descriptive_rule_reaches_every_surface(self, report) -> None:
+        rows = [row for h in range(1, 13) for row in descriptive_house_rules(h)]
+        assert len(rows) > 90, "the corpus carries ~97 descriptive house rules"
+        md, html = to_markdown(report), to_html(report)
+        payload = to_report_dict(report)
+        in_json = {row[1] for pf in payload["proformas"] for row in pf["doctrine_on_record"]}
+        for _sig, rid, _text, _cite in rows:
+            assert rid in md, rid
+            assert rid in html, rid
+            assert rid in in_json, rid
+
+    def test_on_record_is_never_presented_as_a_reading(self, report) -> None:
+        """The framing is load-bearing: an unevaluated rule shown as a finding would be a
+        false claim about the engine's own work."""
+        for surface in (to_markdown(report), to_html(report)):
+            assert "not yet computed" in surface
+            assert "listed, not applied to this chart" in surface
+
+    def test_fired_rows_beyond_the_chief_cap_are_not_lost(self, report) -> None:
+        """`house_chief_combinations` caps at three per signification; the remainder is
+        shown rather than dropped (the completeness lock)."""
+        md = to_markdown(report)
+        for h in range(1, 13):
+            for _sig, rid, _text, _cite in house_further_combinations(report, h):
+                assert rid in md, rid
+
+    def test_further_and_on_record_never_overlap(self, report) -> None:
+        """A rule cannot be both fired-on-this-chart and never-evaluated."""
+        for h in range(1, 13):
+            fired = {row[1] for row in house_further_combinations(report, h)}
+            listed = {row[1] for row in descriptive_house_rules(h)}
+            assert not (fired & listed), h
 
 
 class TestIndicationsAreVerdictInert:

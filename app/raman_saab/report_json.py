@@ -179,7 +179,19 @@ def _indication_label(key: str) -> str:
     return indication_label(key)
 
 
-def _proforma_dict(pf) -> dict:
+def house_further_combinations(r, house):
+    """Thin re-export so `_proforma_dict` reads one composer, not two."""
+    from app.raman_saab.detailed_report import house_further_combinations as _f
+    return _f(r, house)
+
+
+def descriptive_house_rules(house):
+    """Thin re-export; see `detailed_report.descriptive_house_rules`."""
+    from app.raman_saab.detailed_report import descriptive_house_rules as _d
+    return _d(house)
+
+
+def _proforma_dict(pf, r=None) -> dict:
     """Trimmed house proforma: the verdict + per-signification verdicts (not the full ledger)."""
     return {
         "house": pf.house,
@@ -198,6 +210,14 @@ def _proforma_dict(pf) -> dict:
              "indications": [[k, _indication_label(k), str(v)] for k, v in sv.metadata]}
             for sv in pf.significations
         ],
+        # The non-graded rule lane (append-only 2026-09-01). `further_combinations` are the
+        # rules that FIRED but fell outside the chief-combination cap; `doctrine_on_record`
+        # are the descriptive rules the engine cannot evaluate — listed, never applied.
+        # The two are kept separate because conflating them would claim a reading the
+        # engine did not make.
+        "further_combinations": ([list(x) for x in house_further_combinations(r, pf.house)]
+                                 if r is not None else []),
+        "doctrine_on_record": [list(x) for x in descriptive_house_rules(pf.house)],
     }
 
 
@@ -318,7 +338,7 @@ def to_report_dict(r: DetailedReport) -> dict:
         "deeptadi_table": [list(row) for row in _deeptadi_table(r)],
 
         # houses + the honesty overlay + the strength / preponderance cross-checks
-        "proformas": [_proforma_dict(pf) for pf in r.proformas],
+        "proformas": [_proforma_dict(pf, r) for pf in r.proformas],
         "calibration": {str(h): _ad(cr) for h, cr in r.calibration.items()},
         # The feedback instrument — the questionnaire the reader answers about their own life.
         # Built here rather than in the route so every surface gets the same one, and built

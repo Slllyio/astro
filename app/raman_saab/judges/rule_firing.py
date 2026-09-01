@@ -34,9 +34,39 @@ def _lord_of(house: int, chart: RamanChart) -> str:
     return SIGN_LORDS[((chart.asc_sign - 1) + (house - 1)) % 12 + 1]
 
 
+def _branch_subject(rule: RuleRecord, chart: RamanChart) -> str:
+    """Whose strength decides this rule's reading.
+
+    Normally the bhava lord — Raman brands a lord-in-house or combination reading on the
+    house's own lord. But in the "Planets in the Nth House" tables he brands the branch on
+    the OCCUPANT: "Sun afflicted: Long and troublesome illness. Sun fortified: Good
+    administrative ability, few enemies, wealthy" (HTJAH-I:6116-6117, the Sun in the 6th).
+
+    CORRECTED 2026-09-01 after an engine-blind audit. Every one of the 108 evaluable
+    `planet_in_house` rules was being branched on its HOUSE LORD, so a chart with a strong
+    6th lord and a combust, node-hemmed Sun was told "administrative ability, few enemies,
+    wealthy" — Raman's fortified reading, selected by a planet his sentence never mentions.
+    The reviewer called this "systemic across the whole planet_in_house group and by far the
+    highest-leverage single finding in this audit; it needs one measured pass, not 84 splits."
+
+    All 108 conditions are `InRashiHouse`, which carries the occupant's name, so the subject
+    is read straight off the predicate rather than parsed out of the rule id. Anything else
+    falls back to the bhava lord.
+
+    Measured before shipping: the golden ratchet is UNCHANGED at 286/397 — branch selection
+    is presentation (`_bucket_fired` buckets by `rule.polarity`), so this could only ever
+    change which of Raman's readings is displayed, never a verdict."""
+    if rule.group == "planet_in_house":
+        planet = getattr(rule.condition, "planet", None)
+        if isinstance(planet, str):
+            return planet
+    return _lord_of(rule.house, chart)
+
+
 def _branch(rule: RuleRecord, chart: RamanChart) -> str:
-    """Pick the reading by the bhava-lord's Shadbala: lord meets its min-required →
-    fortified, else afflicted.
+    """Pick the reading by the Shadbala of whoever Raman brands the branch on — the bhava
+    lord for most rules, the OCCUPANT for `planet_in_house` (see `_branch_subject`). Meets
+    its min-required → fortified, else afflicted.
 
     WHEN STRENGTH IS UNKNOWN, PREFER `general` (2026-09-01). Shadbala is unavailable on 40 of
     the 346 golden charts (12%) — Track-B records with no birth time. The old fallback
@@ -50,11 +80,11 @@ def _branch(rule: RuleRecord, chart: RamanChart) -> str:
     available. Where a rule has none, the old behaviour stands: there is nothing better to
     show. Presentation only — `_bucket_fired` buckets by `rule.polarity`, so no branch choice
     can move a verdict."""
-    lord = _lord_of(rule.house, chart)
-    p = chart.planets.get(lord)
+    subject = _branch_subject(rule, chart)
+    p = chart.planets.get(subject)
     if p is None or p.shadbala_rupas is None:
         return "general" if rule.general else "fortified"
-    strong = shadbala_total.is_powerful(lord, p.shadbala_rupas.total / 60.0)
+    strong = shadbala_total.is_powerful(subject, p.shadbala_rupas.total / 60.0)
     if strong:
         return "fortified"
     return "afflicted" if rule.afflicted else "fortified"

@@ -4645,3 +4645,89 @@ H6.P.Sun, H6.P.Rahu, H7.L.1, H8.L.1, H8.L.2, H8.L.5, H11.C.47. Under engine-blin
 time of writing, with the reviewer asked for a STATED PRINCIPLE for when a branch clause earns
 its own record — not a case list — since the answer must still be right when applied beyond
 these 28.
+
+
+## BRANCH-PREDICATE AUDIT (2026-09-01) — a stated principle, and a systemic selector defect
+
+The 28 candidates were reviewed engine-blind, with the reviewer asked for a PRINCIPLE rather
+than a case list. Tally: **7 RESTATES, 3 SCOPE-NOTE, 18 EXTRA, 0 UNDETERMINED.**
+
+### THE PRINCIPLE — binding for the remaining ~106 rules with conditional branch text
+
+> **A branch clause earns its own `RuleRecord` if and only if it is a separate antecedent
+> carrying its own consequent — "when C', then R'" where R' still asserts something about the
+> native with the parent rule deleted. Otherwise it is a guard on the parent's condition, a
+> branch-selector input, or a documentation note — never a record.**
+
+Four tests, first failure decides:
+1. **Consequent.** Delete the parent — does the clause still assert something? *"a sportsman,
+   physical culturist or athlete"* yes; *"the intensity is reduced"*, *"minimised"*, *"unless
+   relieved by Jupiter's aspect"* no. **This one test disposes of every navamsa-mitigation and
+   every relief rider in the 28.**
+2. **Antecedent-independence.** Can the clause hold where the parent's condition FAILS? Yes ->
+   it must be its own record, because the parent can never reach those charts (H10.C.33's
+   malefic half; H3.C.2's Saturn half).
+3. **Satisfiability.** Can it co-hold with the parent? No -> source contradiction, descriptive
+   only. H2.L.2 is the new instance: parivartana(1,2) puts the 2nd lord in house 1 while the
+   parent requires it in house 2, so a conjoined rule would be dead -- the H2.C.46 shape.
+4. **Non-vacuity / encodability.** Not true-by-construction, not biographical, expressible
+   without inventing a threshold. "7th lord has Maraka power" fails (a) -- `maraka.py:122-133`
+   makes the 7th lord a PRIMARY maraka on every chart, so a split rule would fire exactly as
+   often as its parent, the H11.C.6 fake-coverage objection; "if a musician" fails (b);
+   "otherwise well disposed" fails (c).
+
+Corollary that decided most of the pool: **a clause whose subject is a strength test on the
+rule's own house lord is never a record and never a guard -- it is `_branch`'s job.** And a
+clause that INVERTS the parent's polarity ("quite the opposite results") passes test 1, while
+one that merely SCALES it ("reduced in degree") does not.
+
+### SHIPPED: the selector was asking the wrong planet, for 108 rules
+
+The reviewer's highest-leverage finding, verified directly against the source before acting.
+In the "Planets in the Nth House" tables Raman brands the branch on the **OCCUPANT**:
+
+> *"The Sun.—The person becomes a good politician... **Sun afflicted:** Long and troublesome
+> illness. **Sun fortified:** Good administrative ability, few enemies, wealthy"*
+> (HTJAH-I:6115-6117)
+
+Every one of the **108 evaluable `planet_in_house` rules** was branched on its HOUSE LORD. A
+chart with a strong 6th lord and a combust, node-hemmed Sun was shown "administrative ability,
+few enemies, wealthy" -- Raman's fortified reading, selected by a planet his sentence never
+mentions. `_branch_subject` now reads the occupant off `InRashiHouse.planet` (all 108
+conditions are that type, so coverage is total and no rule falls back silently).
+
+**Measured before shipping: ratchet UNCHANGED at 286/397.** Branch selection is presentation --
+`_bucket_fired` buckets by `rule.polarity` -- so this could only ever change WHICH of Raman's
+readings is displayed, never a verdict. One rule fixes what would otherwise have been 84
+splits.
+
+A correct side effect: **node-occupant rules now fall back to `general`.** Rahu and Ketu carry
+no Shadbala, so their strength is unassessable; branching on the occupant means those rules
+yield Raman's unconditioned reading instead of a strength claim borrowed from the house lord.
+
+### Still open — the 7 SPLIT candidates, and two inversions
+
+**Split (7)**, each a separate antecedent with its own consequent, all expressible today:
+H3.L.6 (6th lord also in the 3rd -> sportsman/athlete, = `Parivartana(3,6)`); H3.L.4 (three
+sentences, none about the 3rd lord's strength); H4.P.Saturn twice (the Lagnadhipati/benefic
+positive reading the parent lacks entirely, and the Mars/node affliction trio -- the latter
+contingent on resolving its UNVERIFIED subject attribution); H6.P.Rahu (Moon+Saturn joining
+Rahu); H7.L.1 (7th lord AND Venus afflicted -> clandestine relations); H8.L.5 (9th+8th lords in
+the 5th with a debilitated Lagna lord).
+
+**Plus H3.C.2 for coverage, not correctness:** *"Saturn will also give similar effects"*
+(HTJAH-I:3353) is an unreachable second antecedent -- the H10.C.33 shape, differing only in
+that the outcomes coincide.
+
+**TWO SLOT INVERSIONS, and they are worse than mis-slotting.** H8.L.1 and H8.L.5 put Raman's
+WEAK-lord relief in `fortified` -- *"If the 8th lord is WEAK or placed in the 6th, 8th or 12th
+from Navamsa Lagna, the intensity of misfortune is reduced"* (HTJAH-II:2905) -- and `_branch`
+shows `fortified` to STRONG-lord charts. **The relief is displayed to exactly the charts it does
+not apply to, and withheld from the ones it does.** H2.L.8 is the already-known third instance.
+These want the H2.L.8 treatment, and they are the next thing to do.
+
+**One open reading question:** H2.C.54's navamsa clause -- the corpus renders *"worse if"* where
+HTJAH-I:2674 reads *"These evil results should be anticipated IF..."*, i.e. a GATE, not an
+intensifier. Under the gate reading the rule's whole afflicted payload is asserted on charts
+Raman does not cover. The reviewer could not resolve the antecedent placement from the printed
+text and left it open.

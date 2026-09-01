@@ -85,3 +85,59 @@ class TestItCannotMoveAVerdict:
         value must not break the dataclass contract."""
         fr = rf.FiredRule(rule=_rule("H1.L.3"), branch=branch, text="x")
         assert fr.branch == branch
+
+
+class TestBranchSubjectIsWhoRamanBrandsItOn:
+    """`planet_in_house` rules brand on the OCCUPANT, not the house lord.
+
+    Raman writes "Sun afflicted: Long and troublesome illness. Sun fortified: Good
+    administrative ability, few enemies, wealthy" for the Sun in the 6th
+    (HTJAH-I:6116-6117). All 108 evaluable `planet_in_house` rules were being branched on
+    their HOUSE LORD instead, so a chart with a strong 6th lord and a combust, node-hemmed
+    Sun was shown the fortified reading — selected by a planet Raman's sentence never
+    mentions. An engine-blind audit called this "systemic across the whole planet_in_house
+    group and by far the highest-leverage single finding".
+    """
+
+    def test_planet_rules_branch_on_the_occupant(self) -> None:
+        rule = _rule("H6.P.Sun")
+        assert rule.house == 6
+        assert rf._branch_subject(rule, _AnyChart()) == "Sun", (
+            "the 6th lord must not decide a reading Raman brands on the Sun")
+
+    def test_other_groups_still_branch_on_the_house_lord(self) -> None:
+        """The correction is scoped to the tables where Raman brands on the occupant. A
+        lord-in-house reading is still about that lord."""
+        rule = _rule("H1.L.3")
+        assert rule.group == "lord_in_house"
+        subject = rf._branch_subject(rule, _AnyChart())
+        assert subject == rf._lord_of(1, _AnyChart())
+
+    def test_every_planet_rule_resolves_a_subject_from_its_predicate(self) -> None:
+        """The subject is read off `InRashiHouse.planet`, not parsed from the rule id — so a
+        renamed rule or a new planet rule cannot silently fall back to the house lord."""
+        planet_rules = [r for r in ALL_RULES
+                        if r.group == "planet_in_house" and r.kind == "evaluable"
+                        and r.condition is not None]
+        assert len(planet_rules) > 100
+        for r in planet_rules:
+            assert isinstance(getattr(r.condition, "planet", None), str), r.id
+            assert rf._branch_subject(r, _AnyChart()) == r.condition.planet, r.id
+
+    def test_a_node_occupant_falls_back_to_general(self) -> None:
+        """Rahu and Ketu carry no Shadbala, so their strength is unassessable. Branching on
+        the occupant means those rules now yield Raman's unconditioned reading rather than a
+        strength claim borrowed from the house lord."""
+        node_rules = [r for r in ALL_RULES
+                      if r.group == "planet_in_house" and r.kind == "evaluable"
+                      and getattr(r.condition, "planet", None) in ("Rahu", "Ketu")
+                      and r.general]
+        assert node_rules, "the corpus has node-occupant planet rules with a general slot"
+        for r in node_rules[:5]:
+            assert rf._branch(r, _AnyChart()) == "general", r.id
+
+
+class _AnyChart:
+    """A chart with no Shadbala anywhere — the sparse case."""
+    asc_sign = 1
+    planets: dict = {}

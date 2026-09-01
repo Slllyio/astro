@@ -16,6 +16,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H10.P.Sun", house=10, signification="career", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Sun", 10),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="successful, strong, happy; sons, vehicles, fame, intelligence, money, "
+                "power; government service; ancestral wealth; fond of music; personal "
+                "magnetism",
         fortified="successful, strong, happy; sons, vehicles, fame, intelligence, money, "
                   "power; government service; ancestral wealth; fond of music; personal "
                   "magnetism",
@@ -24,6 +32,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H10.P.Moon", house=10, signification="career", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Moon", 10),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="religious, wealthy, intelligent, bold; succeeds; corn, ornaments, women; "
+                "skilled in arts; helpful, virtuous; Jupiter conjunct → learned in ancient "
+                "subjects and astrology; Saturn aspect → dispassionate thinker, earns via "
+                "printing/selling books, trustee of religious institutions",
         fortified="religious, wealthy, intelligent, bold; succeeds; corn, ornaments, women; "
                   "skilled in arts; helpful, virtuous; Jupiter conjunct → learned in ancient "
                   "subjects and astrology; Saturn aspect → dispassionate thinker, earns via "
@@ -82,6 +99,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H10.P.Venus", house=10, signification="career", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Venus", 10),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="earns through houses/buildings; influential, many women working for him; "
+                "social, friendly, renowned; Saturn conjunct → profits from cosmetics/"
+                "women's articles, healing powers, skilled trader, respects divine people",
         fortified="earns through houses/buildings; influential, many women working for him; "
                   "social, friendly, renowned; Saturn conjunct → profits from cosmetics/"
                   "women's articles, healing powers, skilled trader, respects divine people",

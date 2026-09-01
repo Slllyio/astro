@@ -16,8 +16,6 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H10.L.1", house=10, signification="career", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(10, 1),
-        fortified="rises by perseverance; self-employed / independent profession; Lagna and "
-                  "10th lord together → famous pioneer, founds public institution",
         # UNSOURCED, REMOVED 2026-09-01. This slot read "weak Lagna and 10th lord →
         # modest attainment; little distinction". A dedicated provenance audit read
         # HTJAH-II:9456-9465 in full and searched BOTH volumes: "modest" and "little
@@ -35,6 +33,19 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # audit checked 185 rules across all 12 packages and both volumes and found this to
         # be the ONLY fabrication (0.5%); its adversarial arm, targeted at this defect's own
         # phrasing, found zero others.
+        # HTJAH-II:9459-9465. The base is unconditioned; the pioneer/institution clause is
+        # conditioned on the Lagna lord and 10th lord COMBINING in the 1st ('When the Lagna
+        # and 10th lord combine in the first house...'). Folded into `fortified` it showed
+        # on any strong-lord chart - and, because `_branch` also defaults to `fortified`
+        # when Shadbala is absent, on every sparse chart too. Now labelled as the
+        # configuration it is.
+        general="rises in life by sheer dint of perseverance; self-employed, or pursues a "
+                "profession of independence",
+        fortified="rises in life by sheer dint of perseverance; self-employed, or pursues a "
+                  "profession of independence; and (a configuration, not fortification) the "
+                  "Lagna lord and the 10th lord combining in the 1st -> very famous and a "
+                  "pioneer in his field, founds a public institution and engages in social "
+                  "projects",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 9459)),
     RuleRecord(
@@ -63,8 +74,16 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H10.L.5", house=10, signification="career", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(10, 5),
-        fortified="shines as broker / speculation; benefics with it → pious simple life, "
-                  "head of orphanage or remand home",
+        # HTJAH-II:9501-9506. Base unconditioned. TWO conditioned clauses were folded in:
+        # 'If benefics join the lord of the 10th in the 5th house' and the orphanage clause,
+        # which Raman gates on a NAVAMSA placement ('if the 10th lord occupies the 6th, 8th
+        # or 12th Navamsa') - the second condition was dropped entirely by the encoding.
+        general="shines well as a broker and engages in speculation and similar business",
+        fortified="shines well as a broker and engages in speculation and similar business; "
+                  "and (configurations, not fortification) benefics joining the 10th lord in "
+                  "the 5th -> a simple and pious life engaged in prayers and pious activities; "
+                  "the 10th lord in the 6th, 8th or 12th Navamsa -> may become head of an "
+                  "orphanage or remand home",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 9501)),
     RuleRecord(

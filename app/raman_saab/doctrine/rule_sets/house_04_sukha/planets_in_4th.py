@@ -134,18 +134,35 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H4.P.Rahu", house=4, signification="mother_home", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Rahu", 4),
-        fortified=None,
-        afflicted="foolish behaviour; few friends; subjected to fraud or guilty of fraud; "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="foolish behaviour; few friends; subjected to fraud or guilty of fraud; "
+                "Rahu-Mars affliction causes tragedy or violence; Rahu-Saturn affliction "
+                "causes mental disorder, hysteria or insanity",
+        fortified="foolish behaviour; few friends; subjected to fraud or guilty of fraud; "
                   "Rahu-Mars affliction causes tragedy or violence; Rahu-Saturn affliction "
                   "causes mental disorder, hysteria or insanity",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4273)),
     RuleRecord(
         id="H4.P.Ketu", house=4, signification="mother_home", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Ketu", 4),
-        fortified=None,
-        afflicted="deprived of mother, property and happiness; lives in foreign place; "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="deprived of mother, property and happiness; lives in foreign place; "
+                "exceptional experiences at end of life; reversals and sudden changes; "
+                "Ketu-Mars causes tragedy or violence; Ketu-Saturn causes mental disorder, "
+                "hysteria or insanity",
+        fortified="deprived of mother, property and happiness; lives in foreign place; "
                   "exceptional experiences at end of life; reversals and sudden changes; "
                   "Ketu-Mars causes tragedy or violence; Ketu-Saturn causes mental disorder, "
                   "hysteria or insanity",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4277)),
 )

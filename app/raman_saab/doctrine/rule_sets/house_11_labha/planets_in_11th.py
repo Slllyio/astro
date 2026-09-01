@@ -15,6 +15,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H11.P.Sun", house=11, signification="gains", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Sun", 11),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="long life; wealthy; wife, children, many servants; royal/governmental favours; "
+                "success without much effort; sagacious and principled; gains via inheritance",
         fortified="long life; wealthy; wife, children, many servants; royal/governmental favours; "
                   "success without much effort; sagacious and principled; gains via inheritance",
         afflicted=None,
@@ -23,6 +30,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H11.P.Moon", house=11, signification="gains", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Moon", 11),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="noble, generous; riches, wife, children; introspective, quiet; famous; "
+                "good profits in business; vast lands; helped by the fair sex; "
+                "gains via mother, sea-products, pearls, milk, farms, fruit orchards, breweries",
         fortified="noble, generous; riches, wife, children; introspective, quiet; famous; "
                   "good profits in business; vast lands; helped by the fair sex; "
                   "gains via mother, sea-products, pearls, milk, farms, fruit orchards, breweries",
@@ -49,6 +64,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H11.P.Mercury", house=11, signification="gains", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mercury", 11),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="learned in many sciences; keen sharp intellect; wealthy, truthful, happy; "
+                "many faithful servants; prospers in engineering; "
+                "gains via teaching, writing, friends or uncles",
         fortified="learned in many sciences; keen sharp intellect; wealthy, truthful, happy; "
                   "many faithful servants; prospers in engineering; "
                   "gains via teaching, writing, friends or uncles",
@@ -58,6 +81,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H11.P.Jupiter", house=11, signification="gains", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Jupiter", 11),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="long-lived; bold and wealthy; piercing intellect; renowned; fond of music; "
+                "accumulates riches; many friends; limited issues; "
+                "gains via knowledge (scientific/religious/literary) and well-placed sons",
         fortified="long-lived; bold and wealthy; piercing intellect; renowned; fond of music; "
                   "accumulates riches; many friends; limited issues; "
                   "gains via knowledge (scientific/religious/literary) and well-placed sons",

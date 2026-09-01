@@ -95,16 +95,25 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H7.P.Jupiter", house=7, signification="spouse", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Jupiter", 7),
-        fortified="diplomatic, kind; virtuous, good-looking, chaste wife; good education and gains "
-                  "via marriage; sensitive; speculative mind; good agriculturist; pilgrimages; "
-                  "superior to father; good sons; native devoted to his wife "
-                  "(HTJAH-II:367-368, not the cited line)",
-        afflicted=None,
         # MISCITED fragment noted inline rather than by moving the Citation: the record's
         # spine is correctly at 547-553, but "the native will be devoted to his wife" is at
         # HTJAH-II:367-368 ("If Jupiter occupies the 7th house, the native will be devoted to
         # his wife"). Naming the real line in the text keeps a reader who follows the
         # citation from concluding the clause was invented.
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="diplomatic, kind; virtuous, good-looking, chaste wife; good education and gains "
+                "via marriage; sensitive; speculative mind; good agriculturist; pilgrimages; "
+                "superior to father; good sons; native devoted to his wife "
+                "(HTJAH-II:367-368, not the cited line)",
+        fortified="diplomatic, kind; virtuous, good-looking, chaste wife; good education and gains "
+                  "via marriage; sensitive; speculative mind; good agriculturist; pilgrimages; "
+                  "superior to father; good sons; native devoted to his wife "
+                  "(HTJAH-II:367-368, not the cited line)",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 547)),
     RuleRecord(
         id="H7.P.Venus", house=7, signification="spouse", group="planet_in_house", kind="evaluable",
@@ -145,17 +154,33 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H7.P.Rahu", house=7, signification="spouse", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Rahu", 7),
-        fortified=None,
-        afflicted="brings ill-repute to family (if female native); unconventional, heterodox; "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="brings ill-repute to family (if female native); unconventional, heterodox; "
+                "affairs with outcaste women or foreigners; wife suffers womb disorders; rich "
+                "food, luxurious habits; diabetes; trouble from ghosts or the supernatural",
+        fortified="brings ill-repute to family (if female native); unconventional, heterodox; "
                   "affairs with outcaste women or foreigners; wife suffers womb disorders; rich "
                   "food, luxurious habits; diabetes; trouble from ghosts or the supernatural",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 573)),
     RuleRecord(
         id="H7.P.Ketu", house=7, signification="spouse", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Ketu", 7),
-        fortified=None,
-        afflicted="unhappy marriage; shrewish or sickly wife; passionate, sinful; lusts after "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="unhappy marriage; shrewish or sickly wife; passionate, sinful; lusts after "
+                "widows; cancer in abdomen or uterus (if female native); humiliation; loss "
+                "of virility",
+        fortified="unhappy marriage; shrewish or sickly wife; passionate, sinful; lusts after "
                   "widows; cancer in abdomen or uterus (if female native); humiliation; loss "
                   "of virility",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 579)),
 )

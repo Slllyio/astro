@@ -15,10 +15,18 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H5.P.Sun", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Sun", 5),
-        fortified=None,
-        afflicted="deprived of children, riches, happiness; short life; heart disease; "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="deprived of children, riches, happiness; short life; heart disease; "
+                "roams forests; a mountaineer; difficult child-birth; afflicted → loss "
+                "through speculation, trouble with cousins",
+        fortified="deprived of children, riches, happiness; short life; heart disease; "
                   "roams forests; a mountaineer; difficult child-birth; afflicted → loss "
                   "through speculation, trouble with cousins",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5232)),
     RuleRecord(
         id="H5.P.Moon", house=5, signification="children", group="planet_in_house",
@@ -125,18 +133,35 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H5.P.Rahu", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Rahu", 5),
-        fortified=None,
-        afflicted="colic; mistaken by others, unfriended; loses a number of children; "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="colic; mistaken by others, unfriended; loses a number of children; "
+                "hard-hearted, unconventional; heart trouble; affliction is a very bad "
+                "combination → scandal through children; with Venus → homosexual tendencies",
+        fortified="colic; mistaken by others, unfriended; loses a number of children; "
                   "hard-hearted, unconventional; heart trouble; affliction is a very bad "
                   "combination → scandal through children; with Venus → homosexual tendencies",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5262)),
     RuleRecord(
         id="H5.P.Ketu", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Ketu", 5),
-        fortified=None,
-        afflicted="loss of children; stomach trouble; strange experiences in emotions and feelings; "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="loss of children; stomach trouble; strange experiences in emotions and feelings; "
+                "later inclination to spirituality; afflicted → criminal tendencies, lacks shame, "
+                "vindictive; lacks the human touch toward one or two of the issues; with Venus → "
+                "platonic love; Mars the afflicter → many dangers, family extinguished",
+        fortified="loss of children; stomach trouble; strange experiences in emotions and feelings; "
                   "later inclination to spirituality; afflicted → criminal tendencies, lacks shame, "
                   "vindictive; lacks the human touch toward one or two of the issues; with Venus → "
                   "platonic love; Mars the afflicter → many dangers, family extinguished",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5265)),
 )

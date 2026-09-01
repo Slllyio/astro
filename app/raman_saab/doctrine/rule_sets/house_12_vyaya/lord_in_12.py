@@ -15,10 +15,28 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.L.1", house=12, signification="loss_moksha",
         group="lord_in_house", kind="evaluable",
         condition=C.LordIn(12, 1),
-        fortified="handsome, sweet-tongued; if 6th lord joins 12th lord in Lagna → long life",
-        afflicted="weak constitution, feeble-minded; imprisonment and living abroad; "
-                  "if 8th afflicted → short-lived; Lagna↔12th lord exchange → miser, "
-                  "hated, devoid of intelligence",
+        # HTJAH-II:16129-16136, completed 2026-09-01. Raman's opening is one 'however' pair
+        # - 'The native will have a weak constitution and will be feeble-minded. He will,
+        # HOWEVER, be handsome and sweet-tongued.' - which had been split across both slots.
+        # Reunited. Restores 'If the sign is common, the native will generally be travelling
+        # about' (16131), dropped entirely by the old encoding.
+        #
+        # Only the 8th-house clause is genuinely affliction-conditioned. The 6th-lord and
+        # exchange clauses are CONFIGURATIONS and are labelled as such. 'This also indicates
+        # imprisonment and living abroad' (16134) stays where the encoder put it and is
+        # marked UNDETERMINED: the referent of 'This' is ambiguous between the preceding
+        # 8th-house-afflicted clause and the placement generally, and the text will not
+        # settle it.
+        general="a weak constitution and feeble-minded; he will, however, be handsome and "
+                "sweet-tongued; and (a sign modality) if the sign is common, he will generally "
+                "be travelling about",
+        fortified="a weak constitution and feeble-minded; he will, however, be handsome and "
+                  "sweet-tongued; and (a configuration, not fortification) the 6th lord "
+                  "joining the 12th lord in Lagna -> the native will live long",
+        afflicted="the 8th house afflicted -> short-lived; (UNDETERMINED referent) this also "
+                  "indicates imprisonment and living abroad; (a configuration, not an "
+                  "affliction) the Lagna and 12th lords exchanging signs -> a miser, hated by "
+                  "all and devoid of intelligence",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16129)),
     RuleRecord(

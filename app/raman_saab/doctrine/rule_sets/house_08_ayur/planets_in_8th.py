@@ -50,15 +50,31 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H8.P.Mars", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mars", 8),
-        fortified=None,
-        afflicted="short-lived unless alleviators present; loss of spouse; few children; "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="short-lived unless alleviators present; loss of spouse; few children; "
+                "extramarital relations, hates relatives, blood complaints (piles); "
+                "Mars-8th + fixed Lagna + Venus-9th + Moon-7th + Jupiter as 2nd lord "
+                "→ life of servitude",
+        fortified="short-lived unless alleviators present; loss of spouse; few children; "
                   "extramarital relations, hates relatives, blood complaints (piles); "
                   "Mars-8th + fixed Lagna + Venus-9th + Moon-7th + Jupiter as 2nd lord "
                   "→ life of servitude",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3510)),
     RuleRecord(
         id="H8.P.Mercury", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mercury", 8),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="good qualities, well-bred, courteous; inherits and earns much wealth; "
+                "learned, famous; long life though weak constitution",
         fortified="good qualities, well-bred, courteous; inherits and earns much wealth; "
                   "learned, famous; long life though weak constitution",
         afflicted=None,
@@ -110,10 +126,18 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H8.P.Rahu", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Rahu", 8),
-        fortified=None,
-        afflicted="public censure, humiliation; many ailments; vicious, quarrelsome, "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="public censure, humiliation; many ailments; vicious, quarrelsome, "
+                "unscrupulous; Moon with malefic + Rahu in 8th/12th/5th → mental "
+                "disorders",
+        fortified="public censure, humiliation; many ailments; vicious, quarrelsome, "
                   "unscrupulous; Moon with malefic + Rahu in 8th/12th/5th → mental "
                   "disorders",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3568)),
     RuleRecord(
         id="H8.P.Ketu", house=8, signification="longevity", group="planet_in_house",

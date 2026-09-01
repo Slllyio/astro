@@ -69,6 +69,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H9.P.Mercury", house=9, signification="fortune", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Mercury", 9),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="much education and wealth; great scholar; theosophy/metaphysics; scientific "
+                "mind; friendly relations with father; Venus → music and pleasure; "
+                "Jupiter → wit and wisdom, lectures abroad on invitation",
         fortified="much education and wealth; great scholar; theosophy/metaphysics; scientific "
                   "mind; friendly relations with father; Venus → music and pleasure; "
                   "Jupiter → wit and wisdom, lectures abroad on invitation",

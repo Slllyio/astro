@@ -134,9 +134,17 @@ class TestHouses8To12SlotMapping:
         `descriptive` would stop it firing and move the ratchet."""
         rule = _rule("H10.L.1")
         assert rule.afflicted is None
-        assert rule.general is None, "unsourced text must be removed, never relocated"
         assert rule.fortified, "the sourced half of the record is kept"
         assert rule.condition is not None, "the rule still fires on the same charts"
+        # The unsourced words must not reappear in ANY slot. (This assertion replaced an
+        # earlier `general is None` on 2026-09-01: the record has since been given a
+        # `general` slot holding Raman's real base reading, which is a separate and correct
+        # change. What matters is not that the slot is empty but that the invented text is
+        # gone from all of them.)
+        for slot in ("general", "fortified", "afflicted"):
+            text = getattr(rule, slot) or ""
+            assert "modest attainment" not in text, slot
+            assert "little distinction" not in text, slot
 
 
 #: Houses 2, 3 and H9.L.12, from the third review's fragment-level map.

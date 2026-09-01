@@ -19,8 +19,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H2.P.Sun", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Sun", 2),
-        fortified=None,
-        afflicted="not favourable; losses by offending authorities; diseased face; money only by industrious effort; stubborn and peevish; nature of income depends on the sign",
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="not favourable; losses by offending authorities; diseased face; money only by industrious effort; stubborn and peevish; nature of income depends on the sign",
+        fortified="not favourable; losses by offending authorities; diseased face; money only by industrious effort; stubborn and peevish; nature of income depends on the sign",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 2540)),
     RuleRecord(
         id="H2.P.Moon", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
@@ -51,18 +57,36 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H2.P.Mercury", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Mercury", 2),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="learned in religious and philosophical lore; gain by lecturing, business and commerce; rich, intelligent, thrifty; spends on charity",
         fortified="learned in religious and philosophical lore; gain by lecturing, business and commerce; rich, intelligent, thrifty; spends on charity",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 2553)),
     RuleRecord(
         id="H2.P.Jupiter", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Jupiter", 2),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="poet, writer, astrologer or scientist; accumulates fortune; good wife and family; non-quarrelsome; money via things indicated by Jupiter's signs",
         fortified="poet, writer, astrologer or scientist; accumulates fortune; good wife and family; non-quarrelsome; money via things indicated by Jupiter's signs",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 2557)),
     RuleRecord(
         id="H2.P.Venus", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Venus", 2),
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="large family; money comes readily by favours; good food and conveyances; handsome; good spouse; health and wealth in large measure",
         fortified="large family; money comes readily by favours; good food and conveyances; handsome; good spouse; health and wealth in large measure",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 2563)),

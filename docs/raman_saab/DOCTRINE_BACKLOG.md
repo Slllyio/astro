@@ -4493,3 +4493,56 @@ they were not "at-risk" records under its both-slots rule:
   Raman at all, so on a Track-B chart with no Shadbala a weak 10th lord receives the "highly
   successful" reading. A general property of the fallback, not specific to these modules, but
   worth its own decision.
+
+
+### SINGLE-SLOT RELOCATION + ARM-FOLDING (2026-09-01) — the sweep's remainder, closed
+
+**29 single-slot `planet_in_house` rules relocated.** They carried Raman's unconditioned base
+reading in a lone `fortified` or `afflicted` slot — the same defect as the at-risk records, on
+the other side. Out of scope for the main sweep, which took only both-slots records.
+
+Done as a **pure, mechanical relocation**: the text was copied verbatim into `general` and
+mirrored into `fortified`, nothing rewritten. Every one of these sections had already been
+ruled unconditioned by the sweep's reviews (H2: "zero fortification openers and zero affliction
+openers across all nine planets"; H11: "53 lines of unbroken declarative prose containing not
+one conditional"; H1's nodes: "wholly unconditioned paragraphs... they belong in `general`"),
+and hand-rewriting them would have introduced text no reviewer checked.
+
+**`afflicted` was deliberately left None**, not mirrored. A first pass DID mirror into all
+three slots and was reverted: filling `afflicted` would put Raman's unconditioned reading back
+under an "afflicted" heading, which is the exact defect this whole arc removed. With it None,
+`_branch` always returns "fortified" (rule_firing.py:48), so the reading renders on every chart
+and never under a false label.
+
+The mirror also fixes a **live rendering bug**: a rule with `fortified=None` and `afflicted=X`
+renders NOTHING on a strong-lord chart, because `_branch` returns "fortified" and the text is
+then None. Twelve of the 29 were in that state.
+
+**107 of 108 `planet_in_house` rules now carry a `general` slot** — the one exception being
+H8.P.Ketu, reviewed as correctly encoded.
+
+**Arm-folding repaired in three `lord_in_house` records** (H10.L.1, H10.L.5, H12.L.1). Each had
+a CONDITIONED outcome folded into the unconditioned `fortified` arm, so it displayed on any
+strong-lord chart — and, because `_branch` also defaults to `fortified` when Shadbala is
+absent, on every sparse chart too. H10.L.1's "Lagna and 10th lord together -> famous pioneer,
+founds public institution" (HTJAH-II:9462) is the clearest case. Each is now labelled as the
+configuration it is, with the base reading in `general`.
+
+Two clauses that had been dropped entirely are restored: H10.L.5's navamsa gate on the
+orphanage clause ("if the 10th lord occupies the 6th, 8th or 12th Navamsa", 9506) and
+H12.L.1's "If the sign is common, the native will generally be travelling about" (16131).
+H12.L.1's "This also indicates imprisonment and living abroad" (16134) is left where the
+encoder put it and marked UNDETERMINED in place — the referent of "This" is ambiguous between
+the preceding 8th-house-afflicted clause and the placement generally, and the text will not
+settle it.
+
+**A test was tightened rather than re-scoped.** `test_the_one_unsourced_slot_was_removed_not_relocated`
+asserted `H10.L.1.general is None`, which was right when the unsourced text was cleared but
+became wrong once the record legitimately gained a base reading. It now asserts the thing that
+actually matters — that the invented words ("modest attainment", "little distinction") appear
+in NO slot — with a note recording why the original assertion was replaced.
+
+**Still open:** the four cross-house condition bugs (H10.C.33's unreachable malefic branch;
+H11.C.47, H11.C.52 and H2.C.53 firing off the wrong lord's affliction), and `_branch`'s
+fortified-default on sparse charts, which is a general property of the fallback and wants its
+own decision rather than a patch.

@@ -163,17 +163,33 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H1.P.Rahu", house=1, signification="self", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Rahu", 1),
-        fortified=None,
-        afflicted="health generally unsatisfactory (needs non-medical treatment); inclines to "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="health generally unsatisfactory (needs non-medical treatment); inclines to "
+                "occult; wilful; hypocritical super-consciousness; odd and eccentric; usually "
+                "bad for marriage; partakes of Saturn's characteristics",
+        fortified="health generally unsatisfactory (needs non-medical treatment); inclines to "
                   "occult; wilful; hypocritical super-consciousness; odd and eccentric; usually "
                   "bad for marriage; partakes of Saturn's characteristics",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1553)),
     RuleRecord(
         id="H1.P.Ketu", house=1, signification="self", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Ketu", 1),
-        fortified=None,
-        afflicted="psychic powers likely; weak constitution, emaciated figure; instability and "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="psychic powers likely; weak constitution, emaciated figure; instability and "
+                "deceitfulness; morbid imagination, strange appetites, excitability, wandering "
+                "disposition; married life unhappy unless other favourable configurations",
+        fortified="psychic powers likely; weak constitution, emaciated figure; instability and "
                   "deceitfulness; morbid imagination, strange appetites, excitability, wandering "
                   "disposition; married life unhappy unless other favourable configurations",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1559)),
 )

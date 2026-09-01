@@ -37,32 +37,58 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.P.Moon", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Moon", 12),
-        fortified=None,
-        afflicted="some deformity; narrow-minded, hard-hearted, mischievous; obscure "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="some deformity; narrow-minded, hard-hearted, mischievous; obscure "
+                "life in solitude; weak eyesight; waning Moon + Saturn → sloth and "
+                "lethargy",
+        fortified="some deformity; narrow-minded, hard-hearted, mischievous; obscure "
                   "life in solitude; weak eyesight; waning Moon + Saturn → sloth and "
                   "lethargy",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16609)),
     RuleRecord(
         id="H12.P.Mars", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Mars", 12),
-        fortified=None,
-        afflicted="may lose wife; selfish, hateful, heat-diseases; liable to deception "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="may lose wife; selfish, hateful, heat-diseases; liable to deception "
+                "and money-loss; expensive litigation; Mars+Saturn in 12th and 2nd with "
+                "Moon in Lagna and Sun in 7th → leucoderma; Mars aspected by Sun → "
+                "danger from fire or wicked people; malefics in 7th and 8th + Mars in "
+                "12th → second wife while first alive; injures the right eye",
+        fortified="may lose wife; selfish, hateful, heat-diseases; liable to deception "
                   "and money-loss; expensive litigation; Mars+Saturn in 12th and 2nd with "
                   "Moon in Lagna and Sun in 7th → leucoderma; Mars aspected by Sun → "
                   "danger from fire or wicked people; malefics in 7th and 8th + Mars in "
                   "12th → second wife while first alive; injures the right eye",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16615)),
     RuleRecord(
         id="H12.P.Mercury", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Mercury", 12),
-        fortified=None,
-        afflicted="capricious, wayward; extra-marital relations; penury; perverted "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="capricious, wayward; extra-marital relations; penury; perverted "
+                "thinking → unhappiness; few children; reckless share and trade "
+                "investment; family litigation dwindles wealth",
+        fortified="capricious, wayward; extra-marital relations; penury; perverted "
                   "thinking → unhappiness; few children; reckless share and trade "
                   "investment; family litigation dwindles wealth",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16625)),
     RuleRecord(
@@ -109,11 +135,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.P.Saturn", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Saturn", 12),
-        fortified=None,
-        afflicted="dull-headed, loses all money; squint eyes, deformed limb; many "
+        # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
+        # his GENERAL reading, not a strength branch. Text copied verbatim — this
+        # section was ruled unconditioned by the planet_in_house sweep's review, and
+        # the mirror also fixes a rendering bug (a lone `afflicted` slot renders
+        # NOTHING on a strong-lord chart, because `_branch` returns 'fortified').
+        general="dull-headed, loses all money; squint eyes, deformed limb; many "
+                "enemies, trade losses; pessimist; commits sins in secret; "
+                "Saturn+Rahu → heavy expenses on deaths and calamities; "
+                "Saturn+Mars → expenditure on co-borns",
+        fortified="dull-headed, loses all money; squint eyes, deformed limb; many "
                   "enemies, trade losses; pessimist; commits sins in secret; "
                   "Saturn+Rahu → heavy expenses on deaths and calamities; "
                   "Saturn+Mars → expenditure on co-borns",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16644)),
     RuleRecord(

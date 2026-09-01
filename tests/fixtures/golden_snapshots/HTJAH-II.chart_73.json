@@ -1,7 +1,6 @@
 {
   "H8": {
     "citations": [
-      "HTJAH-II:2902",
       "HTJAH-II:3684",
       "HTJAH-II:3906",
       "HTJAH-II:6674",
@@ -11,15 +10,14 @@
       "H8.C.21",
       "H8.C.26",
       "H8.D.4",
-      "H8.D.5",
-      "H8.L.1"
+      "H8.D.5"
     ],
-    "rollup": "afflicted",
+    "rollup": "favourable",
     "significations": {
       "death": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "legacies": {
         "degree": "moderate",
@@ -27,7 +25,7 @@
         "verdict": "favourable"
       },
       "longevity": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       },

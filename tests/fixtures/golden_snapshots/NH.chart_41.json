@@ -44,7 +44,6 @@
   },
   "H8": {
     "citations": [
-      "HTJAH-II:2902",
       "HTJAH-II:3531",
       "HTJAH-II:3902",
       "NH:14735",
@@ -56,7 +55,6 @@
       "H8.D.3",
       "H8.D.4",
       "H8.D.6",
-      "H8.L.1",
       "H8.P.Jupiter"
     ],
     "rollup": "afflicted",

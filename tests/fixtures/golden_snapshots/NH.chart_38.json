@@ -91,14 +91,12 @@
   },
   "H8": {
     "citations": [
-      "HTJAH-II:3011",
       "HTJAH-II:3584",
       "HTJAH-II:3906"
     ],
     "fired_rule_ids": [
       "H8.C.26",
-      "H8.D.2",
-      "H8.L.9"
+      "H8.D.2"
     ],
     "rollup": "afflicted",
     "significations": {

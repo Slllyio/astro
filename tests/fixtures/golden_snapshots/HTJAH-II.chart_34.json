@@ -1,19 +1,17 @@
 {
   "H8": {
     "citations": [
-      "HTJAH-II:2916",
       "HTJAH-II:3902"
     ],
     "fired_rule_ids": [
-      "H8.C.25",
-      "H8.L.2"
+      "H8.C.25"
     ],
-    "rollup": "afflicted",
+    "rollup": "favourable",
     "significations": {
       "death": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "legacies": {
         "degree": "moderate",
@@ -21,7 +19,7 @@
         "verdict": "favourable"
       },
       "longevity": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },

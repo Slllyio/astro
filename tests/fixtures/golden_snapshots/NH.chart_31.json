@@ -133,12 +133,10 @@
   },
   "H8": {
     "citations": [
-      "HTJAH-II:3042",
       "HTJAH-II:3906"
     ],
     "fired_rule_ids": [
-      "H8.C.26",
-      "H8.L.11"
+      "H8.C.26"
     ],
     "rollup": "favourable",
     "significations": {

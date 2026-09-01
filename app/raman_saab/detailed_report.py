@@ -1194,6 +1194,40 @@ def house_further_combinations(r: "DetailedReport", house: int,
     return tuple(out)
 
 
+def house_general_readings(r: "DetailedReport", house: int,
+                           ) -> tuple[tuple[str, str, str, str], ...]:
+    """Raman's UNCONDITIONED reading for each fired rule of a house that records one.
+
+    His "Results of Lord of the Nth House Occupying Different Houses" sections give a general
+    statement first and only then a fortified one; the general statement holds regardless of
+    strength, and he says so at HTJAH-I:1003-1007 ("the combination is of general
+    application... The same rules apply to all Bhava"). The corpus had nowhere to put it —
+    two slots, both strength-conditioned — so it was filed under `afflicted`, and a
+    weak-lord chart was shown Raman's base reading under an "afflicted" heading. See
+    `RuleRecord.general`.
+
+    Rows whose general text equals the branch text already shown are skipped: where Raman
+    gave no conditioned paragraph, `fortified` legitimately carries the same sentence, and
+    printing it twice would be noise rather than completeness."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ()
+    out: list[tuple[str, str, str, str]] = []
+    seen: set[str] = set()
+    for sv in pf.significations:
+        led = sv.ledger
+        for fr in (*led.fired_malefic, *led.fired_benefic, *led.fired_neutral):
+            gen = (getattr(fr.rule, "general", None) or "").strip()
+            if not gen or fr.rule.id in seen:
+                continue
+            if gen == (fr.text or "").strip():
+                continue
+            seen.add(fr.rule.id)
+            out.append((sv.signification, fr.rule.id, gen,
+                        f"{fr.rule.source.work}:{fr.rule.source.line}"))
+    return tuple(out)
+
+
 def _on_record_text(rule) -> str:
     """Both result texts of a rule that never fires, joined without asserting a branch.
 
@@ -5891,6 +5925,17 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             for _isig, _ilabel, _ival in _inds:
                 L.append(f"- _{_isig}_: {_ilabel} — {_ival}")
+        # Raman's unconditioned reading, which is neither the fortified nor the afflicted
+        # branch — it holds either way, and had no slot to live in until 2026-09-01.
+        _gen = house_general_readings(r, mr.house)
+        if _gen:
+            L.append("")
+            L.append("**Raman's general reading** (what the placement gives regardless of "
+                     "the lord's strength — his own \"of general application\", "
+                     "HTJAH-I:1003-1007):")
+            L.append("")
+            for _gsig, _gid, _gtext, _gcite in _gen:
+                L.append(f"- _{_gsig}_ (`{_gid}`): \"{_gtext}\" ({_gcite})")
         # The rules that DID fire but the chief-combination cap could not show.
         _further = house_further_combinations(r, mr.house)
         if _further:

@@ -3305,6 +3305,11 @@ function render(R, S, FQ){
     // was never evaluated, and presenting it as a reading would be a false claim.
     const ruleRows=(rows,tbl)=>{ for(const [rsig,rid,rtext,rcite] of rows)
       tbl.append(el('tr',{},el('td',{},rsig),el('td',{},rid),el('td',{},rtext),el('td',{},rcite))); };
+    if((pf.general_readings||[]).length){
+      b.append(para('Raman’s general reading — what the placement gives regardless of the lord’s strength (his own “of general application”, HTJAH-I:1003-1007); neither the fortified nor the afflicted branch:','muted'));
+      const gt=el('table'); gt.append(el('tr',{},el('th',{},'matter'),el('th',{},'rule'),el('th',{},'Raman’s reading'),el('th',{},'citation')));
+      ruleRows(pf.general_readings,gt); b.append(gt);
+    }
     if((pf.further_combinations||[]).length){
       b.append(para('Further fired combinations — beyond the chief three per matter:','muted'));
       const ft=el('table'); ft.append(el('tr',{},el('th',{},'matter'),el('th',{},'rule'),el('th',{},'Raman’s effect'),el('th',{},'citation')));

@@ -586,7 +586,7 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
                    tier_line: str = "", chief: tuple = (), cross_refs: tuple = (),
                    maintainer_notes: str = "", cal_rollup: str = "",
                    indications: tuple = (), further: tuple = (),
-                   on_record: tuple = ()) -> str:
+                   on_record: tuple = (), general: tuple = ()) -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
     `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
     closing device) — passed in, not computed here, so both renderers share one composer.
@@ -725,6 +725,14 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
             f'<li><i>{_esc(sig)}</i> <code>{_esc(rid)}</code> &mdash; '
             f'&ldquo;{_esc(txt)}&rdquo; ({_esc(cite)})</li>' for sig, rid, txt, cite in rows)
 
+    level_general = ""
+    if general:
+        level_general = (
+            f'<details class="disclosure" open><summary>Raman&rsquo;s general reading '
+            f'&mdash; what the placement gives regardless of the lord&rsquo;s strength'
+            f'</summary><p class="section-sub">His own &ldquo;of general application&rdquo; '
+            f'(HTJAH-I:1003-1007): neither the fortified nor the afflicted branch.</p>'
+            f'<ul>{_rule_items(general)}</ul></details>')
     level_further = ""
     if further:
         level_further = (
@@ -758,8 +766,9 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
         f'{split_note_html}{inverted_note_html}{xref_html}{conclusion_html}'
-        f'{level_why}{level_chief}{level_indications}{level_further}'
-        f'{level_on_record}{level_evidence}{level_calc}{level_classical}</section>')
+        f'{level_why}{level_chief}{level_general}{level_indications}'
+        f'{level_further}{level_on_record}'
+        f'{level_evidence}{level_calc}{level_classical}</section>')
 
 
 def _house_chip(a, *, ring: bool = False, basis: str = "") -> str:
@@ -3511,6 +3520,7 @@ def to_html(r: DetailedReport) -> str:
                                                 house_longevity_pointer,
                                                 descriptive_house_rules,
                                                 house_further_combinations,
+                                                house_general_readings,
                                                 house_indications,
                                                 house_maintainer_notes,
                                                 house_strip_rows)
@@ -3540,7 +3550,8 @@ def to_html(r: DetailedReport) -> str:
                        cal_rollup=calibration_rollup_line(r.calibration[mr.house]),
                        indications=house_indications(r, mr.house),
                        further=house_further_combinations(r, mr.house),
-                       on_record=descriptive_house_rules(mr.house))
+                       on_record=descriptive_house_rules(mr.house),
+                       general=house_general_readings(r, mr.house))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'

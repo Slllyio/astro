@@ -191,6 +191,12 @@ def descriptive_house_rules(house):
     return _d(house)
 
 
+def house_general_readings(r, house):
+    """Thin re-export; see `detailed_report.house_general_readings`."""
+    from app.raman_saab.detailed_report import house_general_readings as _g
+    return _g(r, house)
+
+
 def _proforma_dict(pf, r=None) -> dict:
     """Trimmed house proforma: the verdict + per-signification verdicts (not the full ledger)."""
     return {
@@ -218,6 +224,10 @@ def _proforma_dict(pf, r=None) -> dict:
         "further_combinations": ([list(x) for x in house_further_combinations(r, pf.house)]
                                  if r is not None else []),
         "doctrine_on_record": [list(x) for x in descriptive_house_rules(pf.house)],
+        # Raman's unconditioned reading (see `RuleRecord.general`) — neither
+        # the fortified nor the afflicted branch.
+        "general_readings": ([list(x) for x in house_general_readings(r, pf.house)]
+                             if r is not None else []),
     }
 
 

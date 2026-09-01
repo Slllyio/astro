@@ -91,9 +91,22 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H9.L.12", house=9, signification="fortune", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(9, 12),
-        fortified="religious and noble",
-        afflicted="poor background; suffers, works hard, success may not come; always in want; "
-                  "father dies early leaving native penniless",
+        # SENTIMENT-SPLIT, corrected 2026-09-01. HTJAH-II:7389-7394 (= HTJAH-I:12581-12584)
+        # is ONE paragraph with no conditional opener of any kind, and the encoder cut it at
+        # Raman's own "but": "He will be religious and noble BUT ALWAYS IN WANT" — the first
+        # half filed as fortified, the second half plus the rest of the paragraph as
+        # afflicted. This is the LONE exception in House 9; the rest of the section is
+        # written with explicit malefic/benefic openers and was reviewed as correctly
+        # encoded, so repairing this record does not disturb H9.L.1-11.
+        general="the 9th lord in the 12th gives a poor background; the native will suffer "
+                "much and will have to work very hard in life, and even then success may "
+                "not come to him; he will be religious and noble but always in want; the "
+                "father may die early, leaving the native penniless",
+        fortified="the 9th lord in the 12th gives a poor background; the native will suffer "
+                  "much and will have to work very hard in life, and even then success may "
+                  "not come to him; he will be religious and noble but always in want; the "
+                  "father may die early, leaving the native penniless",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7389)),
 
 )

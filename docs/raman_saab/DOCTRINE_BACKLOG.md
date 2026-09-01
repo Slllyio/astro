@@ -4046,3 +4046,74 @@ book text rather than term overlap; restricting to the categories where Raman do
 denominator. Two caveats on the current run: 206 golden records carried both a castable birth
 and per-house prose, and some `verdict_prose` is maintainer commentary rather than Raman's own
 words, which dilutes both arms equally but shrinks the real signal more than the sham.
+
+
+## SLOT-MAPPING ARC CLOSED (2026-09-01) — all twelve houses classified, 70 rules repaired
+
+Houses 2, 3 and H9.L.12 are done, which finishes the `lord_in_house` sweep the general-slot
+entry above opened. Final state of the classification, all of it from engine-blind review
+against Raman's printed text, none of it swept:
+
+| Family | Houses | Outcome |
+|---|---|---|
+| general + fortified, NO afflicted branch | H1, H4 | repaired (24 rules) |
+| MIXED — general + fortified with some genuine afflicted clauses | H2, H3, H8, H11, H12 | repaired per rule |
+| EXPLICIT-AFFLICTED — Raman does give an afflicted reading | H5, H6, H7, H9, H10 | untouched, pinned by test |
+
+**70 rules now carry a `general` slot.** `[ratchet]` 287/397 unchanged through every commit of
+the arc — the repair moves TEXT between presentation slots; `polarity` decides the verdict and
+`_branch` reads neither the new field nor any edited condition.
+
+House 2 closes with Raman's own confirmation at HTJAH-I:2423 — *"These combinations are AGAIN
+of general application"* — whose "again" back-references the design statement at 1003-1007 and
+settles the whole table.
+
+**H9.L.12 was the lone exception in an otherwise correctly-encoded House 9.** Its paragraph
+(HTJAH-II:7389-7394) carries no conditional opener of any kind, and the encoder cut it at
+Raman's own "but": *"He will be religious and noble BUT ALWAYS IN WANT"* — first half filed as
+fortified, second half plus the rest of the paragraph as afflicted. H9.L.1-11 use explicit
+malefic/benefic openers and are untouched; a test pins that.
+
+### Three things deliberately NOT repaired, because they are a different defect
+
+Each is misfiled but is NOT a general reading, so relocating it would have been a second error
+on top of the first. All three are annotated in place and need a CONDITION change, which would
+move the ratchet and therefore needs measurement first:
+
+1. **H3.L.3** — its three sibling-death clauses (HTJAH-I:3352-3354) are conditioned on PLANET
+   IDENTITY: which planet happens to be the 3rd lord (Mars / Saturn / Sun). There is no
+   affliction test in them at all, so firing them off an affliction predicate is wrong in BOTH
+   directions — an afflicted non-Mars 3rd lord wrongly reads "loses all younger brothers", and
+   an unafflicted Mars 3rd lord wrongly does not.
+2. **H2.L.4** — the affliction Raman names is of the **4TH lord**, not the 2nd (2360).
+3. **H3.L.4** — "When Mars is weak" is KARAKA strength (3361) and "if the 3rd house is
+   beneficially disposed" is a HOUSE-disposition branch (3361-3362); neither is a 3rd-lord
+   affliction.
+
+Also standing, and worth a product decision rather than a code change: **H2.L.8's `fortified`
+branch is ADVERSE** (HTJAH-I:2392-2393, "hardly any earnings, but inherited or accumulated
+wealth will disappear"). Raman's strong branch really is the bad one here. Any renderer that
+labels `fortified` as "the good reading" mis-presents it — which is now a live concern, since
+the new `general` lane renders these slots to readers who did not previously see them.
+
+### Content restored that the encoding had dropped entirely
+
+Relevant to the report-completeness lock, since these were silently absent rather than hidden:
+H2.L.1's *"becomes no doubt wealthy"* (2325, which inverted that sentence's balance by its
+absence); H2.L.4's explicit carry-over *"The above results will apply in addition to the
+following"* (2355); H2.L.9's *"Skilful"* (2395); H3.L.9's *"Long journeys. Sudden and
+unexpected changes in life."* (3394-3395); and H3.L.9's *"father untrustworthy"*, which was
+not merely dropped but mis-slotted — it is Raman's GENERAL reading, and only "misunderstandings
+with his father" (3397) is affliction-conditioned.
+
+### What remains open in this area
+
+- **H2.L.2's `fortified`** is real Raman but sourced from HTJAH-I:2506, a dasha-timing list
+  OUTSIDE the lord-in-house table, and is conditioned on a parivarthana rather than on
+  fortification. Left in place; it needs its own decision, not a slot move.
+- **The `planet_in_house` and `combination` groups were never swept for this defect.** The
+  provenance audit noted the same general-vs-afflicted pattern is live in
+  `house_04_sukha/planets_in_4th.py` (H4.P.Mars's one unconditioned sentence at 4250-4253 is
+  split across both slots). ~200 `combination` rules and the `planet_in_house` modules remain
+  unclassified. The reliable method is the one used throughout this arc: read the source
+  section once, then match every row in the module against it — never a lexical sweep.

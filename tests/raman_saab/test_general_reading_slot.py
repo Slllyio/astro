@@ -139,6 +139,55 @@ class TestHouses8To12SlotMapping:
         assert rule.condition is not None, "the rule still fires on the same charts"
 
 
+#: Houses 2, 3 and H9.L.12, from the third review's fragment-level map.
+H2_RELOCATED = ["H2.L.1", "H2.L.3", "H2.L.5", "H2.L.7", "H2.L.8", "H2.L.9", "H2.L.11"]
+H2_SPLIT = ["H2.L.2", "H2.L.4", "H2.L.6", "H2.L.10", "H2.L.12"]
+H3_RELOCATED = ["H3.L.1", "H3.L.2", "H3.L.5", "H3.L.7", "H3.L.8", "H3.L.10",
+                "H3.L.11", "H3.L.12"]
+H3_SPLIT = ["H3.L.4", "H3.L.6", "H3.L.9"]
+
+
+class TestHouses2And3AndH9L12:
+    """The last houses in the slot-mapping arc. House 2 closes with Raman's own "These
+    combinations are AGAIN of general application" (HTJAH-I:2423), whose "again"
+    back-references the design statement at 1003-1007 and settles the whole table."""
+
+    @pytest.mark.parametrize("rule_id", H2_RELOCATED + H3_RELOCATED)
+    def test_general_reading_relocated(self, rule_id: str) -> None:
+        rule = _rule(rule_id)
+        assert rule.general, rule_id
+        assert rule.afflicted is None, rule_id
+        assert rule.fortified, f"{rule_id} must keep prose to render when it fires"
+
+    @pytest.mark.parametrize("rule_id", H2_SPLIT + H3_SPLIT)
+    def test_split_kept_ramans_real_afflicted_clause(self, rule_id: str) -> None:
+        rule = _rule(rule_id)
+        assert rule.general, f"{rule_id} lost Raman's general reading"
+        assert rule.afflicted, f"{rule_id} lost its genuine afflicted clause"
+
+    def test_h3_l3_is_flagged_not_relocated(self) -> None:
+        """Its three sibling-death clauses (HTJAH-I:3352-3354) are conditioned on PLANET
+        IDENTITY — which planet happens to be the 3rd lord — with no affliction test in
+        them at all. They are misfiled, but they are NOT a general reading, so relocating
+        them would be a second error on top of the first. The slot is annotated instead;
+        the real repair is a configuration predicate, which is a CONDITION change and would
+        move the ratchet."""
+        rule = _rule("H3.L.3")
+        assert rule.general is None
+        assert rule.afflicted and "planet identity" in rule.afflicted
+
+    def test_h9_l12_repaired_without_disturbing_the_rest_of_house_9(self) -> None:
+        """H9.L.12's paragraph (HTJAH-II:7389-7394) has no conditional opener of any kind
+        and the encoder cut it at Raman's own "but". It is the LONE exception in a section
+        reviewed as correctly encoded — H9.L.1-11 use explicit malefic/benefic openers and
+        must stay untouched."""
+        assert _rule("H9.L.12").general
+        assert _rule("H9.L.12").afflicted is None
+        for n in range(1, 12):
+            other = _rule(f"H9.L.{n}")
+            assert other.general is None, f"H9.L.{n} was wrongly swept up"
+
+
 class TestGeneralReadingReachesTheReader:
     @pytest.fixture(scope="class")
     def report(self):

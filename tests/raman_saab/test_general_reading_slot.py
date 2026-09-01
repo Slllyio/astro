@@ -121,15 +121,22 @@ class TestHouses8To12SlotMapping:
         assert rule.afflicted, f"{rule_id} lost its genuine afflicted reading"
         assert rule.general is None, f"{rule_id} was wrongly relocated"
 
-    def test_undetermined_rules_were_left_untouched(self) -> None:
-        """H10.L.1's `afflicted` text does not appear at HTJAH-II:9459-9465 or anywhere in
-        the tenth-lord section — it is neither Raman's general reading nor a genuine
-        afflicted one, and looks encoder-supplied. Relocating it would have LAUNDERED
-        unsourced prose into the general slot, so it is deliberately untouched pending its
-        own investigation (DOCTRINE_BACKLOG)."""
+    def test_the_one_unsourced_slot_was_removed_not_relocated(self) -> None:
+        """H10.L.1 was held back from the relocation sweep and sent for its own provenance
+        audit, which read HTJAH-II:9456-9465 in full and searched BOTH volumes: "modest" and
+        "little distinction" appear nowhere, and the cited paragraph is four unconditioned
+        favourable sentences with no conditional clause at all. Verdict: encoder-supplied.
+
+        So the slot is cleared, NOT moved to `general` — relocating it would have laundered
+        unsourced prose into a slot that asserts Raman said it. The rule itself survives
+        because its `fortified` text is sourced verbatim; deleting the rule would discard
+        genuine doctrine to punish an invented sentence, and both deletion and demotion to
+        `descriptive` would stop it firing and move the ratchet."""
         rule = _rule("H10.L.1")
-        assert rule.general is None
-        assert rule.afflicted is not None
+        assert rule.afflicted is None
+        assert rule.general is None, "unsourced text must be removed, never relocated"
+        assert rule.fortified, "the sourced half of the record is kept"
+        assert rule.condition is not None, "the rule still fires on the same charts"
 
 
 class TestGeneralReadingReachesTheReader:

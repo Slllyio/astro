@@ -101,7 +101,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified="a number of younger brothers when 3rd lord is in 3rd, 6th or 11th",
         afflicted="not a very good combination; earnings with effort; vindictive; "
                   "unattractive or emaciated body; subservient and dependent; frequent illness",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 3351)),
+        # Citation corrected 2026-09-01: was HTJAH-I:3351, which is inside the THIRD-house
+        # paragraph ("The 3rd lord well-disposed in the 3rd, 6th or 11th indicates a number
+        # of younger brothers") and supports only this record's `fortified` half. The
+        # afflicted text is Raman verbatim at 3405-3407. A reader following the old citation
+        # to check the affliction would land on a sentence about younger brothers and
+        # reasonably conclude the affliction had been invented.
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 3405)),
     RuleRecord(
         id="H3.L.12", house=3, signification="siblings", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(3, 12),

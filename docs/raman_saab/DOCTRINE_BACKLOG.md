@@ -3893,3 +3893,112 @@ surface, all now closed:
 feeds `_bucket_fired` and the ratchet); NO rows were added to the significations table
 (`significations.py:61-71` records the measured failure — ungraded rows dropped cross-layer
 agreement 0.475 -> 0.439 and were reverted); `_decide` untouched.
+
+
+## PROVENANCE AUDIT (2026-09-01) — one fabrication in 185 rules, and it is fixed
+
+Triggered by a reviewer's aside that H10.L.1's `afflicted` text could not be found in Raman.
+Because a citation is what this engine's whole credibility rests on, that got its own
+engine-blind audit rather than a quiet fix.
+
+**H10.L.1 — CONFIRMED ENCODER-SUPPLIED. Removed, not relocated.** Its slot read *"weak Lagna
+and 10th lord -> modest attainment; little distinction"*. The auditor read HTJAH-II:9456-9465
+in full and searched BOTH volumes: "modest" and "little distinction" appear nowhere, and the
+cited paragraph is four unconditioned FAVOURABLE sentences with no conditional clause of any
+kind. The forensic signature is a **cross-house formula transfer**: Raman does use a
+strong/middling/weak ladder for a lord in Lagna -- but only for the 4th lord (HTJAH-I:4151)
+and the 11th (HTJAH-II:14259), never the 10th. The encoder generalised a real Raman idiom onto
+a placement where he withholds it, then translated a wealth ladder into a career register.
+That is why it read plausible and survived.
+The `fortified` half is sourced verbatim, so the rule was REPAIRED, not deleted: deletion
+would discard genuine doctrine to punish an invented sentence, and demotion to
+`kind="descriptive"` would stop it firing and take the sourced reading down with it. Both of
+those would also move the ratchet; clearing the text slot does not, and did not.
+
+**THE RATE: 185 rules verified across all 12 packages, both volumes, all three groups --
+174 SOURCED, 9 PARAPHRASE-OK, 1 MISCITED, 1 UNSOURCED (0.5%), 10 UNVERIFIED.** The auditor ran
+a second, adversarial arm aimed squarely at the defect's own phrasing (43 `weak`-token hits
+across the whole tree, hand-checking every nearest sibling of H10.L.1) and found **zero
+further fabrications** -- including in the two graded-ladder sentences the defect was probably
+copied from. Read the rate honestly: Arm A cluster-sampled by SOURCE SECTION, so 185 rules are
+only ~15 independent spans and ~7 of ~30 modules. `combinations_core.py`, `constitution.py`,
+`moon_mind.py`, `sign_afflictions.py`, `navamsa_qualifiers.py`, `from_karaka.py` and ~200
+`combination` rules were NOT sampled, and the `combination` modules are hand-composed from
+prose rather than transcribed from a table -- the likeliest place to find more.
+
+**H3.L.11 — MISCITED, corrected.** Cited HTJAH-I:3351, which sits inside the THIRD-house
+paragraph and supports only its `fortified` half; the afflicted text is Raman verbatim at
+3405-3407. The tell: every other row in that module cites monotonically increasing lines and
+L.11 alone jumped backwards 54 lines.
+
+**A method note worth keeping.** The auditor's explicit recommendation: **do NOT sweep for
+"afflicted slots that look invented" with a lexical heuristic.** The phrasing that most
+resembles the defect (`weak ... -> poor/modest/limited`) is Raman's own graded idiom in every
+other instance, so a regex sweep would be ~98% false positives -- and a false accusation of
+fabrication is as damaging as a missed one. The reliable unit is what Arm A used: read the
+source section once, then match every row in the module against it.
+
+**Three records carry honest encoder meta-text where Raman gives no favourable variant**
+(H3.L.8 "no specifically favourable variant given for this placement"; H4.L.8 and H4.L.12 "no
+specific benefit noted"). The auditor rated these NON-DOCTRINAL and correct behaviour -- they
+disclose the gap instead of filling it, and are the direct contrast that makes H10.L.1 stand
+out: three encoders met the same "Raman gives no reading here" situation and wrote a
+disclosure; one wrote a reading. (H4.L.8/H4.L.12 have since been given Raman's own general
+text, because the meta-text was DISPLAYING to readers as the strong-lord reading; the
+disclosure survives as a code comment.)
+
+## HOUSE 4 — the general-only section, an INVERSION, and a positive gloss (2026-09-01)
+
+HTJAH-I:4149-4188 has **zero fortification openers and exactly one affliction opener**
+(4181-4182, H4.L.10). Raman closes the section saying so: *"these combinations are very
+general and they should not be applied verbatim. The good and bad nature of results... becomes
+augmented or minimised according to the strength or weakness of the fourth lord"* (4190-4193).
+Each placement is ONE unconditioned sentence, and the encoder had split most of them across
+the two slots BY SENTIMENT -- cutting Raman mid-list, and in H4.L.4 filing his own final
+adjective ("sensual") as if it were an affliction. All twelve now carry `general`.
+
+*** H4.L.3 was INVERTED, not merely mis-slotted -- the most damaging single defect found in
+this arc.** Its "very little immovable property, even loss of meagre possessions" comes from
+the Satyacharya note at HTJAH-I:4193-4196, whose condition is the OPPOSITE of affliction:
+*"when the fourth lord, SUBJECTED TO SUBHA VARGAS OR FAVOURABLE ASPECTS, is in the third, one
+acquires very little of immovable property..."* Raman's entire point is that even a
+WELL-DISPOSED 4th lord in the 3rd gives little property. Filed under `afflicted`, the encoding
+taught the reverse of the sentence's reason for existing. Moved to `fortified`.
+
+**H4.L.6's `fortified` held "active, prone to roaming"** -- a positive re-spin of Raman's *"He
+will always be roaming about"*, with "active" appearing nowhere in the section. Raman gives no
+favourable variant for this placement. Two reviewers disagreed on whether to call this a
+fabrication or a loose paraphrase; the source was read directly and the disagreement is moot
+either way, because the whole paragraph is general and the slot was wrong regardless.
+
+**Not encoded, deliberately:** Raman's three-way modifier at 4196-4198 ("moderately afflicted
+-> evil tempered; strongly afflicted -> intensification") is SECTION-WIDE, not per-placement.
+And H4.L.1's genuine strength branch is strong/MIDDLING/weak -- the middling grade has no slot
+and is named in the `general` text rather than silently folded into either branch.
+
+### STILL OPEN after this arc — a full per-rule map exists, apply it next
+
+An engine-blind review produced an exact fragment-level repair map for **House 2 (12 rules)
+and House 3 (12 rules)**, plus **H9.L.12**, which is the lone sentiment-split in an otherwise
+correctly-encoded House 9 (its paragraph at HTJAH-II:7389-7394 has no opener of either kind;
+the encoder cut Raman at his own "but", filing "religious and noble" as fortified and "always
+in want" as afflicted). Tallies from that map: H2 = 5 RELOCATE-WHOLE (L.1/3/5/7/8), 5 SPLIT
+(L.2/4/6/10/12), 1 SENTIMENT-SPLIT (L.9). H3 = 4 RELOCATE-WHOLE (L.1/7/8/11), 2 SPLIT (L.6/9),
+5 SENTIMENT-SPLIT (L.2/4/5/10/12), 1 LEAVE (L.3).
+
+Three findings from that map that are NOT slot defects and must not be swept up:
+- **H3.L.3's three sibling-death clauses are keyed on PLANET IDENTITY** (which planet happens
+  to be the 3rd lord -- Mars/Saturn/Sun, HTJAH-I:3352-3354) with no affliction test anywhere.
+  Firing them off an affliction predicate is wrong in BOTH directions.
+- **H2.L.4's affliction is of the 4TH lord, not the 2nd** (HTJAH-I:2360). If the slot's
+  predicate tests the rule's own house lord, it fires on the wrong thing.
+- **H2.L.8's STRONG branch is ADVERSE** ("hardly any earnings, but inherited or accumulated
+  wealth will disappear", 2392-2393). Any renderer that labels `fortified` as the good reading
+  mis-presents this one.
+
+Plus content dropped from the encoding entirely, relevant to the report-completeness lock:
+H2.L.1's "becomes no doubt wealthy" (2325), H2.L.4's explicit carry-over "The above results
+will apply in addition to the following" (2355), H2.L.9's "Skilful" (2395), H3.L.9's "Long
+journeys. Sudden and unexpected changes in life." (3394-3395). And two provenance mismatches
+(real Raman, wrong location): H2.L.2's `fortified` is sourced from 2506, a dasha-timing list
+outside the lord-in-house table.

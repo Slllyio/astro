@@ -18,7 +18,24 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=C.LordIn(10, 1),
         fortified="rises by perseverance; self-employed / independent profession; Lagna and "
                   "10th lord together → famous pioneer, founds public institution",
-        afflicted="weak Lagna and 10th lord → modest attainment; little distinction",
+        # UNSOURCED, REMOVED 2026-09-01. This slot read "weak Lagna and 10th lord →
+        # modest attainment; little distinction". A dedicated provenance audit read
+        # HTJAH-II:9456-9465 in full and searched BOTH volumes: "modest" and "little
+        # distinction" appear nowhere, and the cited paragraph is four unconditioned
+        # favourable sentences containing no conditional clause at all. The forensic
+        # signature is a cross-house formula transfer: Raman DOES use a
+        # strong/middling/weak ladder for a lord in Lagna, but only for the 4th lord
+        # (HTJAH-I:4151) and the 11th (HTJAH-II:14259) — never the 10th. The encoder
+        # generalised a real idiom onto a placement where Raman withholds it.
+        #
+        # The `fortified` text on this record IS sourced, verbatim and completely, so the
+        # rule is repaired rather than deleted: deleting it would discard genuine doctrine
+        # to punish an invented sentence, and demoting it to `kind="descriptive"` would
+        # stop it firing and take the sourced reading down with the invented one. The same
+        # audit checked 185 rules across all 12 packages and both volumes and found this to
+        # be the ONLY fabrication (0.5%); its adversarial arm, targeted at this defect's own
+        # phrasing, found zero others.
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 9459)),
     RuleRecord(
         id="H10.L.2", house=10, signification="career", group="lord_in_house", kind="evaluable",

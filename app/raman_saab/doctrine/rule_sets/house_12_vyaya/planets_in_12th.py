@@ -98,9 +98,22 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.P.Ketu", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Ketu", 12),
-        fortified="Ketu in 12th from karakamsa → Kaivalya / Final Emancipation",
-        afflicted="restless, wandering mind; leaves country of birth; befriended by "
-                  "lower classes; inherited property lost",
+        # ★ CROSS-FRAME TRANSFER REMOVED 2026-09-01. This slot read "Ketu in 12th from
+        # karakamsa → Kaivalya / Final Emancipation". The sentence is Raman's, verbatim, at
+        # HTJAH-II:16527 — but its frame is the KARAKAMSA (the Atmakaraka's navamsa sign),
+        # while this record's condition is `InRashiHouse("Ketu", 12)` with `frame="LAGNA"`.
+        # As encoded it promised Final Emancipation to every chart with Ketu in the 12th from
+        # the ASCENDANT, a claim Raman makes nowhere. Not a fabrication — the words exist —
+        # but a miscitation with a doctrinal consequence, and the same shape as the H10.L.1
+        # defect: a real idiom generalised onto a placement it was never granted to. Re-home
+        # it to a karakamsa-framed rule if it is wanted; do not restore it here.
+        #
+        # HTJAH-II:16654-16656 is three unconditioned sentences and carries no branch.
+        general="restless and wandering mind; leaves his country of birth; the lower classes "
+                "will befriend him; all his inherited property may be lost",
+        fortified="restless and wandering mind; leaves his country of birth; the lower "
+                  "classes will befriend him; all his inherited property may be lost",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16654)),
 )

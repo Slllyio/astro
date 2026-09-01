@@ -54,6 +54,25 @@ _NOTE_LABELS = {
     "decanate_cause": "cause-of-end decanate", "marital_bond": "marital bond"}
 
 
+def branch_label(fr) -> str:
+    """The reader-facing label for a fired rule's branch.
+
+    `rule_firing._branch` picks a TEXT SLOT by the house-lord's Shadbala and can only return
+    "fortified" or "afflicted". Since 2026-09-01 a rule may also carry `general` — Raman's
+    UNCONDITIONED reading, which holds regardless of strength — and where he gives no
+    conditioned paragraph at all, `fortified` deliberately carries that same general text so
+    the fired prose is never empty. Printing "[fortified]" over it would tell the reader the
+    reading is strength-contingent when Raman says it is not, which is a milder version of
+    the very defect the `general` slot was added to fix.
+
+    Presentation only: this reads `FiredRule` after the fact and cannot change a branch, a
+    text, or a verdict."""
+    general = (getattr(fr.rule, "general", None) or "").strip()
+    if general and general == (fr.text or "").strip():
+        return "general"
+    return fr.branch
+
+
 def _house_block(p: HouseProforma) -> list[str]:
     hv = p.as_house_verdict()
     lines = [f"House {hv.house} - {_HOUSE_NAMES[hv.house]}: {hv.verdict.upper()}",
@@ -63,7 +82,7 @@ def _house_block(p: HouseProforma) -> list[str]:
     if not evidence:
         lines.append("  (no rule fired - insufficient evidence)")
     for fr in evidence:
-        lines.append(f"  - [{fr.branch}] {fr.text}  ({fr.rule.source.work}:{fr.rule.source.line})")
+        lines.append(f"  - [{branch_label(fr)}] {fr.text}  ({fr.rule.source.work}:{fr.rule.source.line})")
     for key, val in p.metadata:
         lines.append(f"  * {_NOTE_LABELS.get(key, key)}: {val}")
     return lines
@@ -99,7 +118,7 @@ def to_markdown(reading: RamanReading) -> str:
         out.append(f"*Lord {hv.lord} ({_FLAG[hv.lord_strong]}), "
                    f"Karaka {hv.karaka} ({_FLAG[hv.karaka_strong]})*")
         for fr in list(hv.benefic) + list(hv.malefic) + list(hv.neutral):
-            out.append(f"- **[{fr.branch}]** {fr.text} "
+            out.append(f"- **[{branch_label(fr)}]** {fr.text} "
                        f"(`{fr.rule.source.work}:{fr.rule.source.line}`)")
         for key, val in p.metadata:
             out.append(f"- _{_NOTE_LABELS.get(key, key)}:_ {val}")

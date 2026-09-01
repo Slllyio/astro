@@ -15,8 +15,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H6.P.Sun", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Sun", 6),
+        # ★ CROSS-HOUSE TRANSPLANT REMOVED 2026-09-01. This slot ended with "with Mercury →
+        # handles Govt trouble well". Raman makes no such statement about Mercury joining the
+        # Sun in the SIXTH — not at the cited 6115-6118, not in the 6th-house modifier
+        # paragraph (6159-6185), not in the pre-table combinations (6072-6111). The sentence
+        # exists at HTJAH-I:8218-8219, inside the paragraph headed "These results are
+        # modified by the aspects and associations received by the planet in the 7TH HOUSE".
+        # It is a seventh-house reading grafted onto a sixth-house placement. The SAME
+        # sentence was independently found grafted onto H3.P.Sun (with its subject reassigned
+        # there as well), so this is one passage transplanted twice.
         fortified="good politician, famous, successful; administrative ability; few enemies; "
-                  "wealthy; with Mercury → handles Govt trouble well",
+                  "wealthy",
         afflicted="not very good for health; long troublesome illness; Saturn affliction → "
                   "heart trouble/chest pain unless relieved by Jupiter's aspect",
         frame="LAGNA", varga="D1", polarity="malefic",
@@ -90,9 +99,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H6.P.Ketu", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Ketu", 6),
-        fortified="best position for Ketu in a horoscope; fame, authority, foeless; "
-                  "intuitive and occult powers",
-        afflicted="moral character loose",
+        # ★ INVERSION FIXED 2026-09-01. HTJAH-I:6155-6157 contains ZERO conditionals, and
+        # Raman explicitly insists the negative holds DESPITE the good: "The best position
+        # for Ketu to occupy in a horoscope. The person will have fame and authority. He will
+        # be foeless. NEVERTHELESS his moral character will be loose. The position also
+        # confers intuitive and occult powers." Conditioning "moral character loose" on
+        # affliction means a fortified chart never sees it — the precise inverse of what
+        # "Nevertheless" asserts.
+        general="the best position for Ketu to occupy in a horoscope; the person will have "
+                "fame and authority; he will be foeless; nevertheless his moral character "
+                "will be loose; the position also confers intuitive and occult powers",
+        fortified="the best position for Ketu to occupy in a horoscope; the person will have "
+                  "fame and authority; he will be foeless; nevertheless his moral character "
+                  "will be loose; the position also confers intuitive and occult powers",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 6155)),
 )

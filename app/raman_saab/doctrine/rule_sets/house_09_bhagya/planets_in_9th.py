@@ -22,11 +22,26 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H9.P.Moon", house=9, signification="fortune", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Moon", 9),
-        fortified="fortunate, prosperous; many sons, friends, kinsmen; principled, generous; "
-                  "builds charitable institutions; good immovables; foreign travel",
-        afflicted="Saturn/Mars/Mercury aspect → ruler (mixed); Moon+Mars → fatal injury to "
-                  "mother; Venus+Moon → immoral life, leagued with step-mother; Saturn here → "
-                  "much suffering",
+        # ★ INTERPOLATION REMOVED 2026-09-01. The old slot read "Saturn/Mars/Mercury aspect
+        # → ruler (MIXED)". Raman's text is unambiguously favourable and carries no hedge:
+        # "If Saturn, Mars and Mercury aspect the Moon, the native will become a ruler"
+        # (HTJAH-II:7524-7525). The "(mixed)" qualifier is the encoder's, and filing a plain
+        # favourable result under an "afflicted" heading inverts its direction.
+        #
+        # All four clauses here are CONJUNCTION or ASPECT conditions, not afflictions —
+        # HTJAH-II:7522-7534 contains zero openers of either strength kind — so the slot is
+        # relabelled rather than swept into `general`. The base reading, unconditioned, was
+        # sitting in `fortified`.
+        general="fortunate and prosperous; many sons, friends and kinsmen; principled and "
+                "generous-minded; may build charitable institutions; acquires good immovable "
+                "property and visits foreign countries",
+        fortified="fortunate and prosperous; many sons, friends and kinsmen; principled and "
+                  "generous-minded; may build charitable institutions; acquires good "
+                  "immovable property and visits foreign countries",
+        afflicted="(aspects and conjunctions, not afflictions) Saturn, Mars and Mercury "
+                  "aspecting the Moon → the native becomes a RULER; Moon with Mars → fatal "
+                  "injury to the mother; Venus with the Moon → immoral life, leagued with a "
+                  "step-mother; Saturn here → much suffering",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 7522)),
     RuleRecord(
         id="H9.P.Mars", house=9, signification="fortune", group="planet_in_house", kind="evaluable",

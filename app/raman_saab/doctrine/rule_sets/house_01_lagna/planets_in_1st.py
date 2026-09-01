@@ -26,11 +26,26 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H1.P.Moon", house=1, signification="self", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Moon", 1),
-        fortified="fanciful, romantic, moderate eater; restless but easy-going; changeable "
-                  "fortune; idealist, great traveller/explorer; sociable; succeeds in "
-                  "mass-contact professions",
-        afflicted="with Saturn: mind always worried; with Mars: menstrual disorders (women); "
-                  "with Rahu: hysterical tendencies; with Jupiter: mind elevated",
+        # DIRECTION INVERSION FIXED 2026-09-01. All four clauses in the old `afflicted`
+        # slot are CONJUNCTION conditions (HTJAH-I:1507-1511), not afflictions — and one of
+        # them is POSITIVE: Raman writes "and with Jupiter, the mind is elevated". Rendering
+        # a fortifying conjunction under an "afflicted" heading tells the reader the exact
+        # opposite of his sentence. The base reading, which was in `fortified`, is
+        # unconditioned. Raman states the axis himself at 1480-1481: a planet's effects "by
+        # house position, as given below, are subjected to modification" by aspect and
+        # conjunction — configuration, not strength.
+        general="fanciful and romantic, a moderate eater; considerable restlessness tempered "
+                "by an easy-going disposition; the fortune is generally changing; an "
+                "idealist, a great traveller and explorer; sociability a strong feature; "
+                "successful in professions that bring him into contact with the masses",
+        fortified="fanciful and romantic, a moderate eater; considerable restlessness "
+                  "tempered by an easy-going disposition; the fortune is generally changing; "
+                  "an idealist, a great traveller and explorer; sociability a strong feature; "
+                  "successful in professions that bring him into contact with the masses",
+        afflicted="(conjunctions, not afflictions - Raman's polarity preserved) with Saturn: "
+                  "the mind will always be worried; with Mars: menstrual disorders in a "
+                  "woman's chart; with Rahu: hysterical tendencies; with Jupiter: the mind "
+                  "is ELEVATED",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 1505)),
     RuleRecord(
         id="H1.P.Mars", house=1, signification="self", group="planet_in_house", kind="evaluable",

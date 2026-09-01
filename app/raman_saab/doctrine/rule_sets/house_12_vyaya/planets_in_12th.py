@@ -16,10 +16,21 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.P.Sun", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Sun", 12),
-        fortified="energetic and has sons",
-        afflicted="immoral life, vile occupations; not successful, feels neglected; "
-                  "loss of some limb, weak eyesight; afflicted Sun → wealth spent on "
-                  "fines or confiscated by Government",
+        # HTJAH-II:16603-16607. "He will, HOWEVER, be energetic and have sons" is the
+        # closing clause of Raman's unconditioned paragraph, joined by a contrastive — not a
+        # condition — so it was a sentiment-split. The appended clause IS genuinely
+        # affliction-conditioned, and it is the only such clause in the whole H10/H11/H12
+        # planet set: "The native's wealth is spent on fines or will be confiscated by the
+        # Government when the AFFLICTED Sun occupies the 12th" (HTJAH-II:16310-16311, ~290
+        # lines before the cited spine).
+        general="may take to an immoral life and engage himself in vile occupations; not "
+                "quite successful in life, may feel neglected by all; suffers the loss of "
+                "some limb and weak eyesight; will, however, be energetic and have sons",
+        fortified="may take to an immoral life and engage himself in vile occupations; not "
+                  "quite successful in life, may feel neglected by all; suffers the loss of "
+                  "some limb and weak eyesight; will, however, be energetic and have sons",
+        afflicted="the Sun afflicted in the 12th → wealth spent on fines or confiscated by "
+                  "the Government (HTJAH-II:16310-16311)",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16603)),
     RuleRecord(
@@ -58,20 +69,40 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.P.Jupiter", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Jupiter", 12),
-        fortified="makes one honest, pays taxes and tolls properly",
-        afflicted="derides religion, evil-minded; commits fearful deeds, lascivious "
-                  "life; later repents and reforms; anxious about vehicles, ornaments "
-                  "and clothes",
+        # HTJAH-II:16629-16632 has no conditional, and the `fortified` clause is ALSO
+        # unconditioned — "Jupiter in the 12th makes one honest and pay taxes and tolls
+        # properly" (16370-16371). Raman gives two unconditioned and opposed readings for the
+        # same placement in two passages; the encoder resolved the tension by valence-slotting
+        # them, an interpretation Raman did not authorise. Both are now stated as his.
+        general="may deride religion and be evil-minded; commits fearful deeds and leads a "
+                "lascivious life; later on he repents and reforms himself; always anxious "
+                "about his vehicles, ornaments and clothes; makes one honest and pay taxes "
+                "and tolls properly (HTJAH-II:16370-16371)",
+        fortified="may deride religion and be evil-minded; commits fearful deeds and leads a "
+                  "lascivious life; later on he repents and reforms himself; always anxious "
+                  "about his vehicles, ornaments and clothes; makes one honest and pay taxes "
+                  "and tolls properly (HTJAH-II:16370-16371)",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral",
         source=Citation("HTJAH-II", 16629)),
     RuleRecord(
         id="H12.P.Venus", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Venus", 12),
+        # HTJAH-II:16634-16642. `fortified` holds a GENUINE dignity branch — "If Venus is
+        # exalted, contrary results will happen" (16641-16642) — one of only two correct
+        # fortified slots across the H10/H11/H12 planet tables; kept. ("(favourable)" is the
+        # encoder's gloss on Raman's bare "contrary results"; retained as a reasonable read of
+        # the uniformly negative paragraph it reverses.) Everything in `afflicted` is
+        # unconditioned, INCLUDING the appended clause, which at 16316-16317 reads flatly
+        # "Venus causes loss of money through women of ill-fame, scandals or black-mail" with
+        # no affliction qualifier.
+        general="desertion by relatives; hankering after comforts without success, and penury "
+                "make his life miserable; indulges in lying and associates with low women; "
+                "poor eyesight; causes loss of money through women of ill-fame, scandals or "
+                "blackmail (HTJAH-II:16316-16317)",
         fortified="Venus exalted → contrary (favourable) results",
-        afflicted="desertion by relatives; hankering after comforts without success; "
-                  "penury, misery; lying with low women; poor eyesight; loss via women "
-                  "of ill-fame, scandals and blackmail",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16634)),
     RuleRecord(
@@ -89,9 +120,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H12.P.Rahu", house=12, signification="loss_moksha",
         group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Rahu", 12),
-        fortified="prosperous, helpful nature",
-        afflicted="immoral; eye-troubles; Sun in 7th + Mars in 10th + Rahu in 12th → "
-                  "father dies early",
+        # HTJAH-II:16649-16652. "The native will be prosperous, immoral, but of a helpful
+        # nature" is ONE clause torn into three pieces across a comma — "prosperous" and
+        # "helpful nature" to fortified, "immoral" to afflicted. The purest sentiment-split in
+        # the H10/H11/H12 set. The father-dies-early clause is a CONFIGURATION (16650-16652).
+        general="prosperous, immoral, but of a helpful nature; will have eye troubles",
+        fortified="prosperous, immoral, but of a helpful nature; will have eye troubles",
+        afflicted="(a configuration, not an affliction) the Sun in the 7th, Mars in the 10th "
+                  "and Rahu in the 12th → the father dies early",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-II", 16649)),
     RuleRecord(

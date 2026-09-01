@@ -188,6 +188,79 @@ class TestHouses2And3AndH9L12:
             assert other.general is None, f"H9.L.{n} was wrongly swept up"
 
 
+class TestPlanetInHouseSweep:
+    """The `planet_in_house` group, swept 2026-09-01 after four parallel engine-blind reviews.
+
+    These tables are structured differently from the lord tables, and the project's own
+    methodology docs say so: their modifier column is headed "Aspect / association modifiers",
+    not fortified/afflicted. Raman states the axis himself at HTJAH-I:1480-1481 — a planet's
+    effects "by house position, as given below, are subjected to modification" by aspect and
+    conjunction. Encoders collapsed that two-column (effect | configuration) table into the
+    two-slot (fortified | afflicted) record BY SENTIMENT, repeatedly cutting single sentences
+    at their own "but".
+    """
+
+    def test_every_at_risk_rule_was_classified(self) -> None:
+        """79 rules carried both slots. All but one now record a general reading; the
+        exception is H8.P.Ketu, which the review ruled correctly encoded — both of Raman's
+        openers there are explicit ("If Ketu in the 8th is aspected by a benefic" / "If Ketu
+        is afflicted") and both slots track them exactly."""
+        unswept = [r.id for r in ALL_RULES
+                   if r.group == "planet_in_house" and r.fortified and r.afflicted
+                   and not r.general]
+        assert unswept == ["H8.P.Ketu"], unswept
+
+    def test_h8_ketu_kept_its_genuine_branches(self) -> None:
+        rule = _rule("H8.P.Ketu")
+        assert rule.general is None
+        assert rule.fortified and rule.afflicted
+
+    @pytest.mark.parametrize("rule_id,fragment", [
+        # Raman's own "but"/"nevertheless"/"however" hinges, which had been used as the
+        # slot boundary. Each must now sit intact inside one reading.
+        ("H6.P.Ketu", "nevertheless his moral character will be loose"),
+        ("H3.P.Ketu", "strong and adventurous but funky"),
+        ("H12.P.Rahu", "prosperous, immoral, but of a helpful nature"),
+        ("H8.P.Jupiter", "unhappy but generous-hearted"),
+        ("H11.P.Mars", "clever and rich but lustful"),
+        ("H9.P.Rahu", "but he may become famous and acquire much wealth"),
+        ("H2.P.Mars", "good earning powers but usually miserly"),
+    ])
+    def test_torn_sentences_are_whole_again(self, rule_id: str, fragment: str) -> None:
+        assert fragment in (_rule(rule_id).general or ""), rule_id
+
+    @pytest.mark.parametrize("rule_id,gone", [
+        # The three unsourced / cross-frame claims removed by the sweep.
+        ("H3.P.Sun", "spiritually strong"),
+        ("H6.P.Sun", "Govt trouble"),
+        ("H7.P.Mars", "partnership"),
+        ("H12.P.Ketu", "karakamsa"),
+    ])
+    def test_unsourced_claims_are_gone_from_every_slot(self, rule_id: str, gone: str) -> None:
+        """Removed, never relocated — moving unsourced prose into `general` would launder it
+        into a slot that asserts Raman said it."""
+        rule = _rule(rule_id)
+        for slot in ("general", "fortified", "afflicted"):
+            assert gone not in (getattr(rule, slot) or ""), f"{rule_id}.{slot}"
+
+    def test_positive_results_are_no_longer_filed_as_afflictions(self) -> None:
+        """Two conjunction results Raman states favourably had been rendered under an
+        "afflicted" heading, telling the reader the opposite of his sentence."""
+        assert "ELEVATED" in (_rule("H1.P.Moon").afflicted or "")
+        moon9 = _rule("H9.P.Moon").afflicted or ""
+        assert "RULER" in moon9
+        assert "(mixed)" not in moon9, "the interpolated hedge is not Raman's"
+
+    def test_invented_positive_complements_are_cleared(self) -> None:
+        """H7.K.1/2/3 encode the affliction IN THE CONDITION, so they only ever fire in the
+        malefic case — yet each asserted a positive `fortified` result that `_branch` would
+        surface on a strong karaka, stating the inverse of Raman."""
+        for rid in ("H7.K.1", "H7.K.2", "H7.K.3"):
+            rule = _rule(rid)
+            assert rule.fortified is None, rid
+            assert rule.afflicted, f"{rid} must keep Raman's actual reading"
+
+
 class TestGeneralReadingReachesTheReader:
     @pytest.fixture(scope="class")
     def report(self):

@@ -21,18 +21,31 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H8.P.Sun", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Sun", 8),
-        fortified="exalted → long life, charming, eloquent; with 8th or 11th lord → "
-                  "sudden speculation gain",
-        afflicted="face/head sores, weak eyes, penury; limited (mostly male) progeny; "
-                  "Sun-8th + Moon/Rahu-12th + Saturn-trine → dental trouble",
+        # SPLIT. The affliction scope runs 3485-3491 and ends at the configuration sentence;
+        # 'He will have limited progeny, mostly male' (3492-3493) then stands unconditioned.
+        general="limited progeny, mostly male",
+        fortified="the Sun in the 8th in exaltation -> lives long, charming and an eloquent "
+                  "speaker; (a configuration) with the 8th or 11th lord -> sudden speculation "
+                  "gain",
+        afflicted="the Sun afflicted -> troubled with sores in the face and head, disgruntled "
+                  "in life, weak eyes, penury and an uneventful life; (a configuration) Sun in "
+                  "the 8th with the Moon or Rahu in the 12th and Saturn in a trine -> dental "
+                  "trouble",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3483)),
     RuleRecord(
         id="H8.P.Moon", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Moon", 8),
-        fortified="acquires possessions easily through legacies or inheritance",
-        afflicted="mental aberration, psychological complexes, capricious, unhealthy; "
-                  "may lose mother in infancy; slender build, weak eyesight; fond of "
-                  "fighting; with Mars+Saturn conjunct → eyesight afflicted",
+        # SENTIMENT-SPLIT. Zero openers of either kind; one unconditioned block cut so that
+        # its only pleasant clause (3502-3503) went to fortified. Restores 'apprehensive',
+        # 'amusement', 'large-hearted' and 'excessive perspiration', all dropped.
+        general="subject to mental aberration; apprehensive, suffers from psychological "
+                "complexes; capricious and unhealthy; may lose his mother in infancy or "
+                "boyhood; slender build and weak eyesight; acquires possessions easily through "
+                "legacies or inheritance; fond of fighting and amusement and large-hearted; "
+                "suffers from excessive perspiration",
+        fortified=None,
+        afflicted="(a conjunction, not an affliction) Mars and Saturn conjoining -> the "
+                  "eyesight is afflicted",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3498)),
     RuleRecord(
         id="H8.P.Mars", house=8, signification="longevity", group="planet_in_house",
@@ -53,27 +66,46 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H8.P.Jupiter", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Jupiter", 8),
-        fortified="long life; generous; painless death",
-        afflicted="unhappy; speech difficulty; ignoble deeds under noble pretence; "
-                  "widow liaisons; colitis; debilitated + Moon-4th → a menial, always "
-                  "ordered about",
+        # SENTIMENT-SPLIT. Raman's opening sentence IS the split line: 'The native will be
+        # UNHAPPY BUT GENEROUS HEARTED' (3531). Restores 'dirty habits'. The debility clause
+        # is a debility+configuration branch, not an affliction.
+        general="unhappy but generous-hearted; lives long; difficulty in speech; may do "
+                "ignoble deeds but pretend to be noble; may have liaisons with widows; dirty "
+                "habits and colitis; a painless death",
+        fortified=None,
+        afflicted="(a debility plus configuration, not an affliction) Jupiter debilitated with "
+                  "the Moon in the 4th -> a menial, always ordered about",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3531)),
     RuleRecord(
         id="H8.P.Venus", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Venus", 8),
-        fortified="much wealth, life of comfort and conveniences; exalted → great wealth",
-        afflicted="mother in danger; early emotional disappointment → piety later; "
-                  "debilitated/saturnine-Navamsa + Saturn aspect → subordination, "
-                  "drudgery with mother",
+        # SPLIT. Note the old afflicted slot served a FAVOURABLE outcome ('emotional
+        # disappointment -> piety') under an afflicted heading. The retained clause is a
+        # debility + malefic-aspect condition (3545-3548) - affliction in substance though
+        # Raman does not use the word; kept, and labelled as such.
+        general="the position gives many blessings: much wealth, a life of comfort and all its "
+                "conveniences; the mother may suffer danger; the native may meet with "
+                "emotional disappointments early in life and, as a consequence, resort to a "
+                "life of piety in later life",
+        fortified="Venus exalted in the 8th -> gains much wealth",
+        afflicted="Venus debilitated in Rasi or in a saturnine Navamsa and aspected by Saturn "
+                  "(affliction in substance, though Raman does not use the word) -> "
+                  "subordination and a life of drudgery along with his mother",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 3539)),
     RuleRecord(
         id="H8.P.Saturn", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Saturn", 8),
-        fortified="good longevity; perseveres against odds",
-        afflicted="many responsibilities; defective eyes; few children; paunch; women "
-                  "outside caste; asthma/consumption/lung disease; afflicted → children "
-                  "cause grief, dishonest and cruel; with Mars + Rahu-Lagna + "
-                  "Gulika-trine → generative-organ disease; with Moon → flatulence, spleen",
+        # SPLIT, with a sentiment-split nested inside it: 'good longevity BUT many
+        # responsibilities' is one sentence that was cut across both slots.
+        general="good longevity but many responsibilities in life; discharges his duties "
+                "through sheer perseverance against many odds; defective eyes; very few "
+                "children; a paunch; inclined to seek the company of women outside his caste; "
+                "predisposed to asthma, consumption and lung disorders",
+        fortified=None,
+        afflicted="Saturn afflicted by malefic planets -> his children cause him pain and "
+                  "grief, and the native will be dishonest and cruel; (configurations) with "
+                  "Mars and Rahu in Lagna and Gulika in a trine -> generative-organ disease; "
+                  "with the Moon -> flatulence and spleen",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3550)),
     RuleRecord(
         id="H8.P.Rahu", house=8, signification="longevity", group="planet_in_house",

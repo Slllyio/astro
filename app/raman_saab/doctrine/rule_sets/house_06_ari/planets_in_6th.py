@@ -24,76 +24,120 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # It is a seventh-house reading grafted onto a sixth-house placement. The SAME
         # sentence was independently found grafted onto H3.P.Sun (with its subject reassigned
         # there as well), so this is one passage transplanted twice.
-        fortified="good politician, famous, successful; administrative ability; few enemies; "
-                  "wealthy",
-        afflicted="not very good for health; long troublesome illness; Saturn affliction → "
-                  "heart trouble/chest pain unless relieved by Jupiter's aspect",
+        # SPLIT. HTJAH-I:6115-6118 + 6163-6170. Raman labels branches inline here, so the
+        # afflicted clauses are genuine and stay; only the unconditioned lead moves.
+        general="the person becomes a good politician, famous and successful; not very good "
+                "for health",
+        fortified="the Sun fortified -> administrative ability, few enemies, wealthy",
+        afflicted="the Sun afflicted -> a long and troublesome illness; affliction by Saturn "
+                  "-> heart trouble and chest pain, unless relieved by Jupiter's aspect",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 6115)),
     RuleRecord(
         id="H6.P.Moon", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Moon", 6),
-        fortified="ability and success in subordinate positions; success as caterer",
-        afflicted="Balarishta / much ill-health in childhood; Mars+Saturn affliction → "
-                  "curious incurable diseases and revengeful enemies; fixed sign → stone in "
-                  "bladder, submissive to women, stomach troubles; common sign afflicted → "
-                  "lung danger; Rahu/Ketu → mental derangement",
+        # SPLIT. 6124 ('success as a caterer') is unconditioned and sat in fortified. The
+        # FIXED-SIGN clause is a sign-modality condition, not an affliction; its neighbour
+        # ('common sign AFFLICTED -> lung danger') is genuinely affliction-conditioned.
+        general="indicates Balarishta, or much ill-health during early childhood; ability and "
+                "success in subordinate positions; success as a caterer; (a sign modality, not "
+                "an affliction) in a fixed sign -> stone in the bladder, submissive to women, "
+                "stomach troubles",
+        fortified="the Moon fortified, that is well disposed -> the ill-health of childhood is "
+                  "moderated",
+        afflicted="affliction by Mars and Saturn -> curious incurable diseases and revengeful "
+                  "enemies; afflicted in a common sign -> danger to the lungs; (a conjunction) "
+                  "with Rahu or Ketu -> mental derangement",
         frame="LAGNA", varga="D1", polarity="neutral",
         source=Citation("HTJAH-I", 6120)),
     RuleRecord(
         id="H6.P.Mars", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mars", 6),
-        fortified="highly passionate, victorious, successful as ruler/politician; well-disposed "
-                  "— an asset",
-        afflicted="worries from near relatives; accidents, losses, troubles through employees; "
-                  "Saturn → death by operation/animal injury; Rahu → suicide; Ketu → poisoning; "
-                  "Saturn-on-Mars → litigation with brothers/cousins",
+        # SPLIT. 'He will have worries from near relatives' is unconditioned and sat in the
+        # afflicted slot; the conjunction clauses are kept and labelled.
+        general="highly passionate, victorious and successful as a ruler or politician; "
+                "worries from near relatives",
+        fortified="Mars well-disposed is an asset",
+        afflicted="Mars afflicted -> accidents, losses and troubles through employees; if "
+                  "Saturn is the afflicting planet -> death by operation or animal injury; if "
+                  "Rahu afflicts -> suicide; if Ketu -> poisoning; Saturn afflicting Mars -> "
+                  "litigation with brothers and cousins",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 6126)),
     RuleRecord(
         id="H6.P.Mercury", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mercury", 6),
-        fortified="sharp intellect; terror to enemies; with Jupiter → spiritual gains; "
-                  "quarrelsome and showy yet respected; interrupted education",
-        afflicted="mental troubles, nervous breakdown; Mars+Rahu or Saturn+Rahu → insanity "
-                  "through excitement, servant troubles; Rahu/Ketu/Saturn → despondency, "
+        # LEAVE the afflicted slot (6175-6177 is genuine). Mirror defect only: the base
+        # reading sat in fortified, and 'lazy, harsh in speech' was dropped from Raman's
+        # sentence 'The person will be lazy, harsh in speech, but nevertheless, a terror to
+        # his enemies' (6135-6136) - restored.
+        general="lazy and harsh in speech, but nevertheless a terror to his enemies; sharp "
+                "intellect; quarrelsome and showy yet respected; interrupted education; a "
+                "tendency to poor health",
+        fortified="Mercury fortified -> the intellect tells; and (a conjunction, not "
+                  "fortification) with Jupiter -> spiritual gains",
+        afflicted="Mercury afflicted -> mental troubles and nervous breakdown; afflicted by "
+                  "Mars and Rahu, or Saturn and Rahu -> insanity through excitement, and "
+                  "servant troubles; afflicted by Rahu, Ketu or Saturn -> despondency and "
                   "abnormal behaviour",
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 6131)),
     RuleRecord(
         id="H6.P.Jupiter", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Jupiter", 6),
-        fortified="feared by enemies; health generally good",
-        afflicted="inactive, suffers disrespect, indulges in black magic, unlucky, dyspeptic; "
-                  "health suffers through over-indulgence; hardships and intemperance in food",
+        # SENTIMENT-SPLIT. 6138-6139 is ONE unconditioned comma-list - 'Inactive, suffers
+        # disrespect, indulges in black magic, feared by enemies, unlucky, dyspeptic,
+        # health generally good' - cut by valence, two items to fortified and five to
+        # afflicted. Raman gives Jupiter-in-6th NO fortification branch anywhere.
+        general="inactive, suffers disrespect, indulges in black magic, feared by enemies, "
+                "unlucky, dyspeptic, health generally good",
+        fortified=None,
+        afflicted="Jupiter afflicted -> health suffers through over-indulgence; hardships and "
+                  "intemperance in food habits",
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 6138)),
     RuleRecord(
         id="H6.P.Venus", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Venus", 6),
-        fortified="no enemies; favours from women; well-placed → success in nursing, films, drama",
-        afflicted="corrupted by young women; health affected by sexual indulgence, licentious; "
-                  "urinary and sexual troubles",
+        # SENTIMENT-SPLIT. 6141 is ONE unconditioned list - 'No enemies, corrupted by young
+        # women, favourable for getting favours from women' - items 1 and 3 to fortified,
+        # item 2 to afflicted. Restores 'fond of other women' (6142), dropped.
+        general="no enemies; corrupted by young women; favourable for getting favours from "
+                "women",
+        fortified="Venus well placed -> success in nursing, films or drama",
+        afflicted="Venus afflicted -> health affected by too much sexual indulgence, fond of "
+                  "other women and licentious; urinary and sexual troubles",
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 6141)),
     RuleRecord(
         id="H6.P.Saturn", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Saturn", 6),
-        fortified="foeless, courageous; gains through contract, mining, masonry; quarrelsome "
-                  "and obstinate but voracious eater",
-        afflicted="sickness through privation/neglect; subordinate troubles; Mars → dangerous "
-                  "illness and operations; Rahu → hysteria; incurable/undiagnosable psychic "
-                  "conditions",
+        # LEAVE the afflicted slot (6179-6180 is genuine). Mirror defect only: 6145's
+        # unconditioned list - 'quarrelsome, obstinate, voracious eater, foeless,
+        # courageous' - sat entire in fortified, negatives included.
+        general="quarrelsome and obstinate, a voracious eater, foeless and courageous",
+        fortified="Saturn well-aspected -> gains through contract, mining and masonry",
+        afflicted="Saturn afflicted -> sickness through privation or neglect, and subordinate "
+                  "troubles; if Mars is the afflicting planet -> dangerous illness and "
+                  "operations; if Rahu afflicts -> hysteria; incurable or undiagnosable "
+                  "psychic conditions",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 6145)),
     RuleRecord(
         id="H6.P.Rahu", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Rahu", 6),
-        fortified="long-lived and wealthy; many cousins",
-        afflicted="troubled by enemies, ghosts, diseases in private parts; puzzling sickness; "
-                  "scandalous private life; Moon+Saturn join Rahu → mental derangement; "
-                  "Rahu's affliction — huge debts, unexpected enmities, incurable diseases; "
-                  "Rahu+Saturn+Moon → psychological misfit",
+        # SENTIMENT-SPLIT. 6150 is ONE unconditioned sentence - 'Long-lived and wealthy,
+        # troubled by enemies, ghosts and diseases in private parts' - cut in half. Raman
+        # gives Rahu-in-6th no fortification branch. Restores his relief rider 'unless
+        # there is relief by benefic associations or aspects' (6183), which was dropped.
+        general="long-lived and wealthy, troubled by enemies, ghosts and diseases in the "
+                "private parts; many cousins; puzzling sickness; a scandalous private life; "
+                "between Rahu and Ketu, the latter's position is to be preferred in the 6th",
+        fortified=None,
+        afflicted="Rahu's affliction -> huge debts, unexpected enmities and incurable "
+                  "diseases, unless there is relief by benefic associations or aspects; (a "
+                  "conjunction) the Moon and Saturn joining Rahu -> mental derangement and a "
+                  "psychological misfit",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 6150)),
     RuleRecord(

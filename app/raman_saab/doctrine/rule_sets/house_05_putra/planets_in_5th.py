@@ -23,54 +23,103 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H5.P.Moon", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Moon", 5),
-        fortified="clarity of mind; happiness from children; lands, gems, precious stones; "
-                  "chance to serve the State; straightforward, truthful, learned, god-fearing, "
-                  "no enemies; speculation; one child becomes famous",
-        afflicted="joins/aspected by malefics → loss through children and loose sex relations; "
-                  "Mars affliction → intrigues, loose sex relations",
+        # LEAVE the afflicted slot - 5269-5273 gives four genuine affliction clauses.
+        # fortified=None: Raman gives the Moon in the 5th NO fortification branch anywhere.
+        # Adds the two affliction clauses that were unencoded (5271-5272).
+        # LEAVE the afflicted slot - 5269-5273 gives four genuine affliction clauses.
+        # fortified=None: Raman gives the Moon in the 5th NO fortification branch anywhere.
+        # Adds the two affliction clauses that were unencoded (5271-5272).
+        general="clarity of mind; happiness from children; lands, gems and precious stones; a "
+                "chance to serve the State; straightforward, truthful, learned, god-fearing, "
+                "with no enemies; gains by speculation; one child becomes famous; gentlemanly",
+        fortified=None,
+        afflicted="the Moon joining malefics or aspected by them -> loss through children and "
+                  "loose sex relations; if the afflicting planet be Mars -> intrigues, loose "
+                  "sex relations, and children die after some time; if the afflicting planet "
+                  "is Saturn -> fear of brain derangement",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 5236)),
     RuleRecord(
         id="H5.P.Mars", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mars", 5),
-        fortified="strengthened → gains via lands, chemicals, factories; rash speculation",
-        afflicted="miserable re wife, friends, children; disturbed thoughts; rash, weak-minded, "
-                  "back-biter; colic; misfortune through children; over-attached to sex → loss "
-                  "of health; dangerous child-birth (female chart); affliction → ruin and disgrace "
-                  "through opposite sex",
+        # SPLIT. 5275-5276 ('trouble and danger through children'; 'inclination to rush
+        # into rash speculations') is unconditioned - the sentence between it and the
+        # strengthened-clause shows the strengthened branch does not extend that far, so
+        # 'rash speculation' leaves fortified. 'Dangerous child-birth' is a GENDER
+        # condition (5244), not an affliction.
+        # SPLIT. 5275-5276 ('trouble and danger through children'; 'inclination to rush
+        # into rash speculations') is unconditioned - the sentence between it and the
+        # strengthened-clause shows the strengthened branch does not extend that far, so
+        # 'rash speculation' leaves fortified. 'Dangerous child-birth' is a GENDER
+        # condition (5244), not an affliction.
+        general="miserable in regard to wife, friends and children; disturbed thoughts; rash, "
+                "weak-minded and a back-biter; colic; misfortune through children; over- "
+                "attached to sex, with loss of health; trouble and danger through children are "
+                "shown; an inclination to rush into rash speculations; in a female chart, "
+                "dangerous child-birth (a gender condition, not an affliction)",
+        fortified="Mars strengthened -> gains through lands, chemicals and factories",
+        afflicted="affliction of Mars -> danger of ruin and disgrace through the opposite sex",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5241)),
     RuleRecord(
         id="H5.P.Mercury", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mercury", 5),
-        fortified="learned and happy; number of children; adviser or minister; highly intelligent; "
-                  "learned in Mantrasastras; Jupiter-aspected → gain via speculation and authorship",
-        afflicted="too much sex → low vitality; afflicted → anxiety and worry through children; "
-                  "Mars-afflicted → scandal in love affairs, emotion over reason",
+        # SPLIT. 'Inclined to too much of sex pleasure and consequently lacking in
+        # vitality' is unconditioned in the base entry and led the old afflicted slot.
+        # The Jupiter clause is an ASPECT condition (5278).
+        # SPLIT. 'Inclined to too much of sex pleasure and consequently lacking in
+        # vitality' is unconditioned in the base entry and led the old afflicted slot.
+        # The Jupiter clause is an ASPECT condition (5278).
+        general="learned and happy; a number of children; an adviser or minister; highly "
+                "intelligent; learned in the Mantrasastras; inclined to too much of sex "
+                "pleasure and consequently lacking in vitality",
+        fortified="(an aspect, not fortification) well aspected by Jupiter -> gain via "
+                  "speculation and authorship",
+        afflicted="Mercury afflicted -> anxiety and worry through children; afflicted by Mars "
+                  "-> scandal in love affairs, emotion over reason",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 5244)),
     RuleRecord(
         id="H5.P.Jupiter", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Jupiter", 5),
-        fortified="learned in logic, law, mantrasastra; highly intelligent; preceptor or adviser "
-                  "to a king; great discrimination; good friends, vehicles, decorous manners; "
-                  "many children; god-fearing; happy; strengthened → life smooth",
-        afflicted="afflicted → troubles per the afflicting planet's nature",
+        # LEAVE the afflicted slot (5280-5281, 'If afflicted'). Mirror defect only.
+        # LEAVE the afflicted slot (5280-5281, 'If afflicted'). Mirror defect only.
+        general="learned in logic, law and mantrasastra; highly intelligent; a preceptor or "
+                "adviser to a king; great discrimination; good friends, vehicles and decorous "
+                "manners; many children; god-fearing and happy",
+        fortified="Jupiter strengthened -> life runs smooth",
+        afflicted="Jupiter afflicted -> troubles according to the nature of the afflicting "
+                  "planet",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 5248)),
     RuleRecord(
         id="H5.P.Venus", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Venus", 5),
-        fortified="poetic; many friends and beautiful children; happiness through offspring; wise, "
-                  "discriminating; acquires wealth; respected by State; more female children; success "
-                  "in speculation; well-fortified → gains via females and attachments to actresses "
-                  "or singers",
-        afflicted="afflicted → loss of health via over-indulgence; with Rahu → homosexual "
-                  "tendencies; with Ketu → platonic love",
+        # LEAVE the first afflicted clause (5281-5285). Mirror defect on the base reading,
+        # and the Rahu/Ketu clauses are CONJUNCTIONS stated inside Raman's Rahu and Ketu
+        # paragraphs. Adds his three unencoded Venus affliction clauses (5283-5285).
+        # LEAVE the first afflicted clause (5281-5285). Mirror defect on the base reading,
+        # and the Rahu/Ketu clauses are CONJUNCTIONS stated inside Raman's Rahu and Ketu
+        # paragraphs. Adds his three unencoded Venus affliction clauses (5283-5285).
+        general="poetic; possesses a number of friends and beautiful children; happiness "
+                "through offspring; wise and discriminating; acquires wealth; respected by the "
+                "State; more female children; success in speculation",
+        fortified="Venus well-fortified -> gains via females, and attachments to actresses or "
+                  "singers",
+        afflicted="Venus afflicted -> loss of health via over-indulgence; if Mars is the "
+                  "afflicting planet -> indiscriminate bestowal of affection on children; Rahu "
+                  "afflicting -> strange courtships; Saturn afflicting -> disappointments in "
+                  "love affairs; (conjunctions, not afflictions) with Rahu -> homosexual "
+                  "tendencies; with Ketu -> platonic love",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 5252)),
     RuleRecord(
         id="H5.P.Saturn", house=5, signification="children", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Saturn", 5),
-        fortified="strengthened by Jupiter → gains in mines",
-        afflicted="evil-minded and stupid; sickly, weak; poor, hated; sorrows through children; "
-                  "variable unsteady fortune; hypocritical; quarrels with friends or relatives; "
-                  "domestic sorrow; Mars-afflicted → unnatural attachments (especially to elders), "
+        # SPLIT. The base list (5258-5260) is unconditioned; fortified and the
+        # Mars-affliction clause were both already correct and are kept.
+        # SPLIT. The base list (5258-5260) is unconditioned; fortified and the
+        # Mars-affliction clause were both already correct and are kept.
+        general="evil-minded and stupid; sickly and weak; poor and hated; sorrows through "
+                "children; variable, unsteady fortune; hypocritical; quarrels with friends or "
+                "relatives; domestic sorrow",
+        fortified="Saturn's position strengthened by Jupiter -> gains in mines",
+        afflicted="Saturn afflicted by Mars -> unnatural attachments (especially to elders), "
                   "loss of children, danger of drowning, heart trouble",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5258)),
     RuleRecord(

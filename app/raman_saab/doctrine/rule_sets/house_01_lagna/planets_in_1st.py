@@ -17,11 +17,19 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H1.P.Sun", house=1, signification="self", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Sun", 1),
-        fortified="strong moral nature, righteous, ambition and love of power; good health and "
-                  "vitality; cheerful, optimistic, popular; adds respect and lofty motives to "
-                  "the personality",
-        afflicted="if with Saturn or Mars: scars, hot constitution, impure blood, itches, "
-                  "fevers, inflammations, eye affections",
+        # HTJAH-I:1499-1503, no opener of either strength kind. The `afflicted` slot is
+        # entirely a CONJUNCTION clause (1502) — kept and labelled, not swept into `general`.
+        general="strong moral nature, righteous-minded, ambition and love of power; well "
+                "supported by good health and vitality; cheerfulness and an optimistic "
+                "temperament ensure popularity; adds respect to the personality and gives "
+                "lofty motives",
+        fortified="strong moral nature, righteous-minded, ambition and love of power; well "
+                  "supported by good health and vitality; cheerfulness and an optimistic "
+                  "temperament ensure popularity; adds respect to the personality and gives "
+                  "lofty motives",
+        afflicted="(a conjunction, not an affliction) with Saturn or Mars → scars and a hot "
+                  "constitution, impure blood, itches all over the body, fevers, "
+                  "inflammations, eye affections",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 1499)),
     RuleRecord(
         id="H1.P.Moon", house=1, signification="self", group="planet_in_house", kind="evaluable",
@@ -50,45 +58,107 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H1.P.Mars", house=1, signification="self", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Mars", 1),
-        fortified="hot constitution, courage, self-confidence, enterprise, practical ability, "
-                  "love of liberty; handsome; aspects should be carefully examined",
-        afflicted="reckless, rash; body has scars; domestic life unhappy; prone to accidents; "
-                  "cuts and burns likely",
+        # HTJAH-I:1511-1517, zero conditionals. One paragraph cut across both slots by
+        # sentiment, mid-sequence: "He becomes reckless of danger scorning defeat. This gives
+        # somewhat of a rash nature. The body will have scars and the appearance will be
+        # handsome." (1513-1514) — "scars" to afflicted, "handsome" to fortified.
+        general="a hot constitution, courage, self-confidence and enterprise; practical "
+                "ability and love of liberty and independence; reckless of danger, scorning "
+                "defeat, somewhat rash; the body will have scars and the appearance will be "
+                "handsome; domestic life unhappy unless there are other favourable "
+                "combinations; abuse of physical resources may lead to ill-health; proneness "
+                "to accidents; the aspects should be carefully examined; danger of cuts and "
+                "burns",
+        fortified="a hot constitution, courage, self-confidence and enterprise; practical "
+                  "ability and love of liberty and independence; reckless of danger, scorning "
+                  "defeat, somewhat rash; the body will have scars and the appearance will be "
+                  "handsome; domestic life unhappy unless there are other favourable "
+                  "combinations; abuse of physical resources may lead to ill-health; "
+                  "proneness to accidents; the aspects should be carefully examined; danger "
+                  "of cuts and burns",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1511)),
     RuleRecord(
         id="H1.P.Mercury", house=1, signification="self", group="planet_in_house",
         kind="evaluable",
         condition=C.InRashiHouse("Mercury", 1),
-        fortified="humorous, quick wit, mental ingenuity, well-read (especially occult), "
-                  "adaptable, intellectual; in good aspect to Venus: musical and talented",
-        afflicted="with Rahu or Ketu in Lagna: much nervous trouble",
+        # HTJAH-I:1519-1523. Both conditional clauses are ASPECT/CONJUNCTION conditions
+        # (1521, 1522-1523); the base reading sat in `fortified`.
+        general="humorous; quickness of wit and mental ingenuity strongly marked; well-read, "
+                "particularly in occult studies; adaptability a striking feature; makes the "
+                "man intellectual",
+        fortified="humorous; quickness of wit and mental ingenuity strongly marked; "
+                  "well-read, particularly in occult studies; adaptability a striking "
+                  "feature; makes the man intellectual; and (an aspect, not fortification) "
+                  "in good aspect to Venus → musical and talented",
+        afflicted="(a conjunction, not an affliction) Rahu or Ketu also in Lagna → much "
+                  "nervous trouble",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 1519)),
     RuleRecord(
         id="H1.P.Jupiter", house=1, signification="self", group="planet_in_house",
         kind="evaluable",
         condition=C.InRashiHouse("Jupiter", 1),
-        fortified="magnetic personality, optimistic, jovial, pleasant manners; more sons if 5th "
-                  "unafflicted; lawyers/professors/writers/theologians; influential leader",
-        afflicted="self-indulgence/gluttony affects health; with Rahu: sins committed, body "
-                  "corpulent; diseases from impure blood",
+        # HTJAH-I:1525-1530. The only conditional is a CONJUNCTION ("If with Rahu, sins will
+        # be committed", 1527-1528); "more sons if the 5th house is not affected" is an
+        # other-house condition. The self-indulgence and impure-blood clauses are
+        # unconditioned. "Body will be inclined towards corpulence" (1528) is UNDETERMINED —
+        # a fresh sentence right after the Rahu clause, so it is left where the encoder put
+        # it rather than moved on a guess.
+        general="a magnetic personality; an optimistic spirit, jovial disposition and "
+                "pleasant manners; more sons if the 5th house is not affected; "
+                "self-indulgence, especially in regard to gluttony, will affect health; "
+                "lawyers, professors, writers and theologians come under this planet; "
+                "becomes an influential leader; diseases may result from impure blood",
+        fortified="a magnetic personality; an optimistic spirit, jovial disposition and "
+                  "pleasant manners; more sons if the 5th house is not affected; "
+                  "self-indulgence, especially in regard to gluttony, will affect health; "
+                  "lawyers, professors, writers and theologians come under this planet; "
+                  "becomes an influential leader; diseases may result from impure blood",
+        afflicted="(a conjunction, not an affliction) with Rahu → sins will be committed; "
+                  "(UNDETERMINED whether the condition carries) the body inclined towards "
+                  "corpulence",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 1525)),
     RuleRecord(
         id="H1.P.Venus", house=1, signification="self", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Venus", 1),
-        fortified="fortunate (more so if Capricorn or Aquarius ascending); amiable, cheerful, "
-                  "emotional; art appreciation; fond of music/drama/singing; admired by opposite "
-                  "sex; magnetic personality; early marriage possible",
-        afflicted="discord in married life",
+        # HTJAH-I:1532-1539. The ONE genuine affliction opener in the whole House-1 section
+        # — "If afflicted, it indicates discord in married life" (1538-1539) — is correctly
+        # slotted and untouched. Only the unconditioned base reading moves, and the encoder's
+        # dropped clauses ("craving for pleasure", "passions pronounced", "fondness for
+        # scents and flowers", 1534-1536) are restored.
+        general="fortunate, more so if the ascendant happens to be Capricorn or Aquarius; "
+                "amiable, cheerful and emotional; appreciation of art; fond of music, drama "
+                "and singing; there will be a craving for pleasure and the passions will be "
+                "pronounced; fondness for scents and flowers; admired by the opposite sex; a "
+                "magnetic personality; early marriage possible",
+        fortified="fortunate, more so if the ascendant happens to be Capricorn or Aquarius; "
+                  "amiable, cheerful and emotional; appreciation of art; fond of music, drama "
+                  "and singing; there will be a craving for pleasure and the passions will be "
+                  "pronounced; fondness for scents and flowers; admired by the opposite sex; "
+                  "a magnetic personality; early marriage possible",
+        afflicted="Venus afflicted → discord in married life",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 1532)),
     RuleRecord(
         id="H1.P.Saturn", house=1, signification="self", group="planet_in_house",
         kind="evaluable",
         condition=C.InRashiHouse("Saturn", 1),
-        fortified="if unafflicted: consideration for others' welfare; self-confident, morally "
-                  "stable; calm, grave, serious; progress slow but certain",
-        afflicted="copies foreign customs; body weak and emaciated; aversion for responsibility; "
-                  "inactive habits; loss through negligence; misfortunes in early life; same "
-                  "results if ascendant merely aspected by Saturn",
+        # HTJAH-I:1541-1551. The one fortification opener in the section is here, and it is
+        # a NEGATED AFFLICTION: "BUT, if Saturn is not afflicted, there will be much
+        # consideration for the welfare of others" (1541-1542). Raman's "But" contrasts that
+        # branch AGAINST the base reading, which proves "copies foreign customs" is the base,
+        # not an affliction. "Calm, grave and serious" is likewise general — he gives it
+        # unconditioned in his own worked Aquarius example at 1488-1489 — so gating it behind
+        # fortification was wrong. "Self-confidence / moral stability" (1544) is UNDETERMINED
+        # (separated from the not-afflicted clause by a page break) and stays in `fortified`.
+        general="foreign customs will be easily copied and imitated; the disposition is calm, "
+                "grave and serious; the body will be weak and emaciated; progress in any "
+                "venture will be slow but certain; some aversion for responsibility; this "
+                "position makes habits inactive; loss through negligence and lack of "
+                "opportunity are possible; misfortunes are likely in the early part of life; "
+                "the same results are noticed if the ascendant is merely aspected by Saturn",
+        fortified="Saturn NOT afflicted → much consideration for the welfare of others; "
+                  "self-confidence is normally justified and moral stability will be marked",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1541)),
     RuleRecord(
         id="H1.P.Rahu", house=1, signification="self", group="planet_in_house", kind="evaluable",

@@ -4117,3 +4117,131 @@ with his father" (3397) is affliction-conditioned.
   split across both slots). ~200 `combination` rules and the `planet_in_house` modules remain
   unclassified. The reliable method is the one used throughout this arc: read the source
   section once, then match every row in the module against it — never a lexical sweep.
+
+
+## THE planet_in_house SWEEP (2026-09-01) — the defect class closed, and three more transplants
+
+Five engine-blind reviews covered every rule in the corpus that could carry the slot defect but
+had not been examined: **96 rules with BOTH text slots filled, outside `lord_in_house`** — 79
+`planet_in_house`, 12 `combination`, 3 `from_karaka`, 1 `navamsa_qualifier`, 1 `moon_mind`.
+Each review did TWO jobs over one reading of the source: slot classification AND provenance.
+
+**★ THE STRUCTURAL FINDING. The "Planets in the Nth House" tables are not built on a strength
+axis at all.** Raman writes each planet as one flat, unconditioned paragraph, modified by
+CONJUNCTION and ASPECT — he says so himself at HTJAH-I:1480-1481 ("its effects by house
+position, as given below, are subjected to modification correspondingly"), and **the project's
+own methodology docs already had it right**: their column is headed *"Effect | Aspect /
+association modifiers"* (`methodology/house_01_lagna.md:243`, `house_02_dhana.md:187`). The
+`.py` encoders collapsed that two-column table into the two-slot record BY SENTIMENT.
+
+The opener census is decisive. House 2: **zero** fortification and **zero** affliction openers
+across all nine planets. House 11: 53 lines of unbroken declarative prose with **not one
+conditional of any kind**. Houses 10/11/12 together: **two** fortification openers in 231
+lines, and exactly those two rules (H10.P.Ketu, H12.P.Venus) had a correctly-populated
+`fortified` slot.
+
+**The smoking gun for valence-driven slotting** is in House 10: the same conjunction pair lands
+in opposite slots by how pleasant the outcome is — Mars+Jupiter ("head of low-class people") in
+`fortified`, Mercury+Jupiter ("unhappy, childless") in `afflicted` — with identical grammar in
+Raman. And the tearing is repeatedly MID-SENTENCE, at Raman's own hinge word: *"strong and
+adventurous BUT funky"*, *"unhappy BUT generous hearted"*, *"clever and rich BUT lustful"*,
+*"NEVERTHELESS his moral character will be loose"*, *"He will HOWEVER be valorous"*.
+
+**Shipped: 78 of the 79 at-risk `planet_in_house` rules now carry a `general` slot.** The one
+exception is H8.P.Ketu, ruled correctly encoded (both of Raman's openers explicit, both slots
+tracking them). 150 rules corpus-wide now carry `general`. `[ratchet]` 287/397 unchanged
+through every commit.
+
+### The severe findings, handled separately from the bulk
+
+- **★ TWO MORE CROSS-HOUSE TRANSPLANTS, both of the SAME sentence.** HTJAH-I:8218-8219 sits
+  inside the paragraph headed *"These results are modified by the aspects and associations
+  received by the planet in the 7TH HOUSE"*. It had been grafted onto **H3.P.Sun** (with its
+  subject reassigned — Raman writes that the PARTNER may be a highly evolved spiritual soul,
+  not that the native is spiritually strong) and onto **H6.P.Sun**. One passage, two
+  placements, neither of which Raman grants it to.
+- **★ A THIRD UNSOURCED CLAIM.** H7.P.Mars asserted *"may gain through partnerships"*. The
+  nearest real text is line 560 — the VENUS entry — transferred one planet sideways onto a
+  placement where Raman concludes the opposite: *"intelligent, tactless, stubborn, peevish and
+  UNSUCCESSFUL"* (535-536).
+- **★ A CROSS-FRAME TRANSFER.** H12.P.Ketu promised *"Kaivalya / Final Emancipation"* — Raman's
+  words verbatim at HTJAH-II:16527, but framed on the **KARAKAMSA**, while the record's
+  condition is Ketu in the 12th with `frame="LAGNA"`. As encoded it promised Final Emancipation
+  to every chart with Ketu in the 12th from the Ascendant. **Removed, not relocated** —
+  moving unsourced or misframed prose into `general` would launder it into a slot that asserts
+  Raman said it.
+- **★ THREE DIRECTION INVERSIONS.** H6.P.Ketu conditioned *"moral character loose"* on
+  affliction when Raman's word is **"Nevertheless"** — he insists it holds DESPITE the good, so
+  a fortified chart never saw it. H9.P.Moon filed *"the native will become a RULER"* under
+  `afflicted` with an interpolated *"(mixed)"* hedge that is nowhere in Raman. H1.P.Moon filed
+  *"with Jupiter, the mind is ELEVATED"* under `afflicted`.
+- **★ THREE INVENTED POSITIVE COMPLEMENTS — the mirror of the hunted defect.** H7.K.1/K.2/K.3
+  encode the affliction IN THE CONDITION, so they only ever fire in the malefic case, yet each
+  carried an unsourced positive `fortified` string ("normal virility", "long-lived partner",
+  "harmonious marriage") that `_branch` surfaces on a strong karaka. A chart with Saturn in the
+  6th/8th from a strong Venus was shown *"normal virility"* — the inverse of Raman's flat
+  sentence that the position CAUSES impotency. The corpus's own correct handling of this shape
+  was already documented three files away at `moon_mind.py:147-151`.
+- **H1.M.G1 turned a METHOD into a verdict.** HTJAH-I:1236 renders no judgement at all — "The
+  liability to diseases and accidents is JUDGED FROM the planets rising or setting, and those
+  CONFIGURATED with the Moon" — and the encoding cut it in two, substituting "afflicting" for
+  "configurated" and adding "indicate bodily vulnerability".
+- **H1.N.66's `fortified` half was the logical NEGATION of its own firing condition**, so
+  whenever the rule fired its fortified text was false of that chart.
+
+### ★ AN IMPORTANT NEGATIVE RESULT — why the group was reviewed and not transformed
+
+**15 of the 17 scattered `combination` / `from_karaka` / `moon_mind` / `navamsa_qualifier`
+rules came back LEAVE.** The slot defect is largely ABSENT there: those slots hold genuinely
+conditioned prose, because `combination` rules are hand-composed from prose rather than
+transcribed from a table. **No fabrication and no frame transfer was found in any of them** —
+H8.C.7's Mandi/Navamsa frame, the likeliest candidate for the H12.P.Ketu error shape, is
+encoded correctly. A blanket sweep would have destroyed real doctrine in 15 of 17 cases. House
+3's planets module was likewise ruled the best-encoded of its batch (seven genuine affliction
+openers, every one preserved by the encoder), so its repairs were surgical.
+
+This is the third time in this arc that reviewing before sweeping prevented damage. It should
+be treated as settled method: **read the source section once, then match every row in the
+module against it — never a lexical sweep.**
+
+### STILL OPEN
+
+1. **Single-slot rules were out of scope and carry the same defect on the other side.** At
+   least 15 were named in passing: H1.P.Rahu/Ketu, H2.P.Sun/Mercury/Jupiter/Venus,
+   H7.P.Jupiter/Rahu/Ketu, H8.P.Mars/Mercury, H9.P.Mercury, H10.P.Sun/Moon/Venus,
+   H12.P.Moon/Mars/Mercury/Saturn, H4.P.Rahu/Ketu, H5.P.Sun/Rahu/Ketu. Their unconditioned
+   reading sits in a lone `fortified` or `afflicted`. Lower harm (nothing is INVERTED), same
+   repair direction.
+2. **★ H10.C.33 — a CONDITION/SLOT MISMATCH, not a text defect.** `condition=CountInHouse(10,
+   1, "benefic")` means the rule can only fire when a BENEFIC is in the 10th, yet its
+   `afflicted` slot asserts *"malefics in the 10th"*. The malefic half of Raman's sentence is
+   reachable only on a chart that has a benefic in the 10th AND an afflicted 10th house. It
+   needs its own predicate. **This would move the ratchet — measure first.**
+3. **Cross-house and cross-lord conditions that `_branch` fires on the wrong evidence:**
+   H11.C.47 ("Malefics HERE" means malefics in the 5th, not affliction of the 11th),
+   H11.C.52 (both clauses condition on affliction of the **10th**), H11.C.49 (one clause is
+   "strong Lagna lord BUT weak 7th house" — neither leg an affliction), H2.C.53 ("when the 7th
+   lord has MARAKA POWER" — a lordship identity). All annotated in place; all are CONDITION
+   work.
+4. **H7.K.2's set semantics, UNDETERMINED.** Raman writes "malefics in the 4th, 8th AND 12th
+   houses from Venus"; `ClassInHouseFrom` is an ANY-OF quantifier, so the rule fires on a
+   single malefic in the 4th from Venus. Whether his "and" is conjunctive or distributive is
+   not resolvable from the sentence, but the any-of reading is materially looser and will fire
+   on a large majority of charts.
+5. **Dropped content and under-citations**, both relevant to the report-completeness lock:
+   ~25 clauses were noted as omitted from their entries across the four reviews, and the whole
+   `planets_in_11th` family appends a "gains via..." tail drawn from Raman's sources-of-gain
+   list at HTJAH-II:14373-14386, ~80 lines from each record's cited spine. Under-citation, not
+   miscitation — the cited line is right for the record's spine.
+6. **H11's real house-level fortified/weak pair is unencoded** (HTJAH-II:14362-14371,
+   "Fortified planets in the 11th house confer..." / "If the 11th house be occupied by a weak
+   planet..."). That is the doctrinally correct home for a strength split on the 11th, and the
+   module has none.
+
+### Provenance, cumulative
+
+Across the two audits the corpus now has **~280 rules verified against Raman's printed text**.
+Confirmed unsourced or misframed: **H10.L.1, H3.P.Sun, H6.P.Sun, H7.P.Mars, H12.P.Ketu, and
+the three H7.K `fortified` complements** — eight in total, all now removed. Miscitations
+corrected or annotated: H3.L.11, H4.C.24, H7.P.Jupiter, H7.P.Mars. The `combination` modules,
+named by the first audit as the likeliest remaining risk, came back clean on their first look.

@@ -25,14 +25,28 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H2.P.Moon", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Moon", 2),
-        fortified="large family and much happiness; money through females; fair complexion; per Dhundiraja: reserved, not sociable, squint-eyed but much admired",
-        afflicted="variable financial position",
+        # HTJAH-I:2544-2547, no openers of either kind. 2545-2546 is one sentence split.
+        general="a large family and much happiness; money also obtained through females; the "
+                "financial position somewhat variable; a fair complexion; per Dhundiraja: "
+                "reserved and not much sociable, squint-eyed and much admired",
+        fortified="a large family and much happiness; money also obtained through females; "
+                  "the financial position somewhat variable; a fair complexion; per "
+                  "Dhundiraja: reserved and not much sociable, squint-eyed and much admired",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 2544)),
     RuleRecord(
         id="H2.P.Mars", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Mars", 2),
-        fortified="good earning power; accumulates much money; good conversationalist",
-        afflicted="quarrelsome, miserly, befriends evil-minded persons, unsympathetic, picks quarrels with all",
+        # HTJAH-I:2549-2551. "Good earning powers but usually miserly." (2549) cut at the
+        # "but". Raman OPENS the entry "Becomes quarrelsome" and CLOSES it "pick up quarrels
+        # with all", both unconditioned — the negatives are his base reading, not a variant.
+        general="becomes quarrelsome; good earning powers but usually miserly; much money is "
+                "accumulated; a good conversationalist; befriends evil-minded persons, is "
+                "unsympathetic and picks up quarrels with all",
+        fortified="becomes quarrelsome; good earning powers but usually miserly; much money "
+                  "is accumulated; a good conversationalist; befriends evil-minded persons, "
+                  "is unsympathetic and picks up quarrels with all",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 2549)),
     RuleRecord(
         id="H2.P.Mercury", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
@@ -55,19 +69,51 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H2.P.Saturn", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Saturn", 2),
-        fortified="gains by dealing with metals, mines, storage and labour; exception: if the 2nd is Libra, Capricorn or Aquarius the uphill-earning burden is cancelled",
-        afflicted="earning an uphill struggle (much work, little gain); harsh speech, unsocial, unhappy family life; unpopular",
+        # HTJAH-I:2567-2571. The sign exception was MIS-SCOPED: detached into `fortified` it
+        # read as cancelling the WHOLE malefic entry, where Raman scopes it to the
+        # uphill-earning clause alone — "Saturn, UNLESS the second is Libra, Capricorn or
+        # Aquarius, tends to make earning an uphill struggle" (2567-2568). Harsh speech,
+        # unsocial habits, unhappy family life and unpopularity are not exempted. It now
+        # travels with its own sentence. Restores "sorrowful and roaming about aimlessly...
+        # seldom takes advantage of them" (2568-2570), dropped by the old encoding.
+        general="unless the 2nd is Libra, Capricorn or Aquarius, earning tends to be an "
+                "uphill struggle, much work with little gain; harsh speech, unsocial, "
+                "sorrowful and roaming about aimlessly; comes across many opportunities but "
+                "seldom takes advantage of them; unhappy in family life; gains by dealing "
+                "with metals, storage, mines and labour; unpopular",
+        fortified="unless the 2nd is Libra, Capricorn or Aquarius, earning tends to be an "
+                  "uphill struggle, much work with little gain; harsh speech, unsocial, "
+                  "sorrowful and roaming about aimlessly; comes across many opportunities but "
+                  "seldom takes advantage of them; unhappy in family life; gains by dealing "
+                  "with metals, storage, mines and labour; unpopular",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 2567)),
     RuleRecord(
         id="H2.P.Rahu", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Rahu", 2),
-        fortified="if Jupiter aspects the 2nd → good earnings; money through friends and business",
-        afflicted="peevish, diseased face, friction in family life, danger to eye-sight; uncertain finances",
+        # HTJAH-I:2573-2575. The `afflicted` slot was Raman's opening unconditioned run.
+        # "Money is gained through friends and business" (2575) is UNDETERMINED — a fresh
+        # sentence after the Jupiter clause — so it stays in `fortified` rather than being
+        # moved on a guess.
+        general="peevish, diseased face, friction in family life, danger to eye-sight; "
+                "financial affairs uncertain unless other favourable combinations occur",
+        fortified="peevish, diseased face, friction in family life, danger to eye-sight; "
+                  "financial affairs uncertain unless other favourable combinations occur; "
+                  "money is gained through friends and business",
+        afflicted="(an aspect, not an affliction) Jupiter aspecting the 2nd house → earnings "
+                  "will be good",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 2573)),
     RuleRecord(
         id="H2.P.Ketu", house=2, signification="wealth", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Ketu", 2),
-        fortified="success in spiritualism, navigation, mystical arts and hospitals",
-        afflicted="bad speaker; loss through fraud and deception; financial liability",
+        # HTJAH-I:2577-2578: four flat sentences; the one positive was lifted into
+        # `fortified` purely by sentiment.
+        general="bad speaker; loss through fraud and deception; there will be liability in "
+                "financial affairs; success in spiritualism, navigation, mystical arts, "
+                "hospitals and the like may be expected",
+        fortified="bad speaker; loss through fraud and deception; there will be liability in "
+                  "financial affairs; success in spiritualism, navigation, mystical arts, "
+                  "hospitals and the like may be expected",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 2577)),
 )

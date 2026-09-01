@@ -163,6 +163,10 @@ _FROZEN = (
     # answers about their own life, generated with the reading. Appended at the very END: it is
     # the one section that asks rather than tells. _FROZEN grown in the same commit.
     ("feedback", "## Your feedback", 'id="feedback"'),
+    # v38 (2026-09-01, user-requested): the collected non-graded lane — every indication that
+    # is a kind, cause, channel, count or circumstance rather than a grade. A pure re-read of
+    # the house-block composers. Appended at the END; _FROZEN grown in the same commit.
+    ("indications", "## What Raman's rules indicate", 'id="indications"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -247,7 +251,10 @@ class TestTemplateContract:
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
             "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34",
-            "v35", "v36", "v37"
+            "v35", "v36", "v37",
+            # v38 (2026-09-01): the collected non-graded lane — "What Raman's rules
+            # indicate", grouped by category. A pure re-read of the house-block composers.
+            "v38",
         }
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6

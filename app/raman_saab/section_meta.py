@@ -118,6 +118,12 @@ SECTION_META: Final[dict[str, SectionMeta]] = {
         "Through which channels does the chart show gains and holdings?",
         "लाभ और संचय किन मार्गों से दिखते हैं?",
         2, "section:wealth"),
+    "indications": SectionMeta(
+        "What the rules indicate: kind, cause, channel and count — not a grade",
+        "\u0928\u093f\u092f\u092e \u0915\u094d\u092f\u093e \u0938\u0902\u0915\u0947\u0924 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902: \u092a\u094d\u0930\u0915\u093e\u0930, \u0915\u093e\u0930\u0923 \u0914\u0930 \u0938\u0902\u0916\u094d\u092f\u093e",
+        "What does Raman's doctrine say about me beyond good and bad?",
+        "\u0905\u091a\u094d\u091b\u0947-\u092c\u0941\u0930\u0947 \u0938\u0947 \u092a\u0930\u0947 \u0930\u092e\u0928 \u0915\u0940 \u0926\u0943\u0937\u094d\u091f\u093f \u0915\u094d\u092f\u093e \u0915\u0939\u0924\u0940 \u0939\u0948?",
+        2, "section:indications"),
     "aptitude": SectionMeta(
         "Aptitude and mind: intellect (Mercury), the Moon's mind, and working style",
         "योग्यता और मन: बुद्धि (बुध), चन्द्र-मन, और कार्यशैली",

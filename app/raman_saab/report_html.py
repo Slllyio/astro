@@ -2667,6 +2667,40 @@ def _simple_summary_section(r: DetailedReport) -> str:
             'with the reasons.</i></p>' + body)
 
 
+def _indications_section(r: DetailedReport) -> str:
+    """v38 — the collected non-graded lane, grouped by category.
+
+    A pure re-read of the three house-block composers: it computes nothing and adds no
+    doctrine. The per-row `kind` is load-bearing, not decoration — it says whether a line was
+    COMPUTED for this chart, FIRED on it, holds in GENERAL regardless of strength, or is
+    merely ON RECORD and was never evaluated. Collapsing those would let an unevaluated rule
+    read as a finding."""
+    from app.raman_saab.detailed_report import collected_indications
+    groups = collected_indications(r)
+    if not groups:
+        return ""
+    blocks = ""
+    for label, rows in groups:
+        items = "".join(
+            f'<tr><td>H{h}</td><td>{_esc(sig)}</td>'
+            f'<td><span class="chip">{_esc(kind)}</span></td>'
+            f'<td>{_esc(text)}</td><td>{_esc(cite)}</td></tr>'
+            for h, kind, sig, text, cite in rows)
+        blocks += (
+            f'<details class="disclosure" open><summary>{_esc(label)} '
+            f'({len(rows)})</summary><div class="scrollx"><table class="grid">'
+            f'<tr><th>house</th><th>matter</th><th>status</th><th>indication</th>'
+            f'<th>source</th></tr>{items}</table></div></details>')
+    return ('<h2 class="section" id="indications">What Raman&rsquo;s rules indicate</h2>'
+            '<p class="section-sub">Every line here is a KIND, cause, channel, count or '
+            'circumstance rather than a favourable/afflicted grade &mdash; the part of '
+            'Raman&rsquo;s doctrine a verdict cannot carry. Each row states whether it was '
+            '<b>computed</b> for this chart, <b>fired</b> on it, holds in <b>general</b> '
+            'regardless of the lord&rsquo;s strength, or is merely <b>on record</b> and was '
+            'never evaluated. Nothing here is new: every line also appears in its own house '
+            'block above.</p>' + blocks)
+
+
 def _feedback_section(r: DetailedReport) -> str:
     """v36 — the feedback instrument, rendered whole.
 
@@ -4091,6 +4125,7 @@ def to_html(r: DetailedReport) -> str:
   {_medical_section(r)}
 
   {_feedback_section(r)}
+  {_indications_section(r)}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

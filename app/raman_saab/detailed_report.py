@@ -696,6 +696,14 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # why the part carries no astrology at all. Appended per the append-only default; _FROZEN
     # grown in the same commit.
     SectionSpec("feedback", "## Your feedback", 'id="feedback"', "v36"),
+    # v38 (2026-09-01, user-requested: "why is it always good or bad -- can't we use whatever
+    # Raman has written?"). The collected non-graded lane: every indication in the chart that
+    # is a KIND, cause, channel, count or circumstance rather than a favourable/afflicted
+    # grade, grouped by category. A pure re-read (PREC-10) of the three house-block composers
+    # -- it computes nothing and adds no doctrine. Appended at the END, no exception claimed:
+    # it is a cross-reference chapter, and a reader meets the houses first. _FROZEN grown in
+    # the same commit, per the procedure.
+    SectionSpec("indications", "## What Raman's rules indicate", 'id="indications"', "v38"),
 )
 
 #: The HTML renderer's document order (the signature chips live in the page header, and the
@@ -721,6 +729,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "aptitude",   # v33 (2026-08-14): appended at the end, same order as SECTION_CONTRACT
     "medical",    # v35 (2026-08-19): the HPA-29 medical read, appended likewise
     "feedback",   # v36 (2026-08-20): the feedback instrument, last — it closes the document
+    "indications",  # v38 (2026-09-01): the collected non-graded lane, appended likewise
 )
 
 
@@ -1264,6 +1273,110 @@ def descriptive_house_rules(house: int) -> tuple[tuple[str, str, str, str], ...]
         out.append((rule.signification, rule.id, client or text,
                     f"{rule.source.work}:{rule.source.line}"))
     return tuple(out)
+
+
+#: Category -> the substrings that place an indication in it. Deliberately CONSERVATIVE:
+#: an indication that matches nothing lands in "other", never force-fit. Grouping is the only
+#: thing a mis-classification can damage — every row prints its full text, rule id and
+#: citation regardless of which bucket it falls in, so no doctrine is lost either way.
+#: Order matters: the first category whose cue matches wins, so the more specific ones
+#: (manner of death, disease) are listed before the broad ones (character).
+_INDICATION_CATEGORIES: Final[tuple[tuple[str, str, tuple[str, ...]], ...]] = (
+    ("timing", "When the matter is active (Dasha windows)",
+     ("active dasha:", "death-prone dasha:", "active periods")),
+    ("strength", "Measured strength and divisional readings",
+     ("sarvashtakavarga bindus:", "(divisional) reading:", "longevity span:",
+      "yoga modulation:", "saptamsa", "fertility sphutas:")),
+    ("manner", "How things end (manner, cause)",
+     ("drekkana", "decanate", "manner of", "cause of end", "hanging", "drowning",
+      "snake", "serpent", "weapon", "poison", "fire-", "burns", "suicide", "peaceful end",
+      "sudden end", "death by", "dies by")),
+    ("disease", "Body, health and named ailments",
+     ("disease", "ailment", "illness", "sick", "fever", "consumption", "leprosy",
+      "anaemia", "anemia", "tuberculo", "diabet", "piles", "asthma", "epilep", "deaf",
+      "blind", "eye", "ear-", "teeth", "tooth", "phlegm", "bilious", "windy", "organ",
+      "tridosha", "constitution", "body", "wound", "surgery", "operation")),
+    ("profession", "Work, calling and livelihood",
+     ("profession", "occupation", "livelihood", "career", "trade", "business",
+      "physician", "surgeon", "doctor", "lawyer", "judge", "judiciary", "army",
+      "commander", "priest", "teacher", "musician", "mathematician", "writer",
+      "engineer", "merchant", "agricultur", "servant", "jailor", "cemetery",
+      "government service", "diplomat")),
+    ("place", "Places and domains",
+     ("foreign", "abroad", "far-off", "pilgrimage", "holy place", "temple", "prison",
+      "hospital", "cemetery", "watery", "hill", "forest", "village", "town")),
+    ("count", "Counts and numbers",
+     ("two wives", "more than one", "only once", "three ", "first child", "first-born",
+      "number of", "many children", "no issue", "childless", "elder brother",
+      "younger brother", "many brothers")),
+    ("aptitude", "Mind, aptitude and learning",
+     ("intelligent", "learned", "scholar", "orator", "eloquent",
+      "buddhi", "intellect", "memory", "occultism", "astrolog", "mathematic",
+      "weak-minded", "aberration", "education", "knowledge")),
+    ("character", "Character and disposition",
+     ("character", "courageous", "timid", "generous", "miser", "honest", "sinful",
+      "wicked", "mean ", "sarcastic", "religious", "god-fearing", "virtuous",
+      "quarrel", "short-tempered", "ambitious", "independent spirit", "licentious",
+      "sensual", "immoral", "gambling", "philanthropic", "large-hearted")),
+    ("circumstance", "Circumstances of life",
+     ("rich", "wealth", "poverty", "penury", "debts", "gains", "losses", "property",
+      "land", "conveyance", "inherit", "fines", "expenditure", "prosperity",
+      "financial", "fortune", "fortunate", "misfortune")),
+)
+
+
+def indication_category(text: str) -> tuple[str, str]:
+    """(key, reader label) for an indication's text. "other" when nothing matches — the
+    conservative default, so an unmatched row is grouped honestly rather than force-fit."""
+    low = text.lower()
+    for key, label, cues in _INDICATION_CATEGORIES:
+        if any(cue in low for cue in cues):
+            return key, label
+    return "other", "Other indications on record"
+
+
+#: The bucket order the chapter prints in — the same order as `_INDICATION_CATEGORIES`,
+#: with "other" last so an unmatched row never leads the chapter.
+INDICATION_CATEGORY_ORDER: Final[tuple[str, ...]] = (
+    tuple(k for k, _l, _c in _INDICATION_CATEGORIES) + ("other",))
+
+
+def collected_indications(r: "DetailedReport",
+                          ) -> tuple[tuple[str, tuple[tuple[int, str, str, str, str], ...]], ...]:
+    """Every non-graded indication in the chart, grouped by category.
+
+    ((category label, ((house, source-kind, matter, text, citation), ...)), ...)
+
+    A PURE RE-READ (PREC-10) of what the house blocks already show: the three composers
+    above are called and their rows regrouped. It computes no verdict, reads no chart, and
+    adds no doctrine — if a row is here it is already in a house block, and vice versa.
+
+    `source-kind` is carried into the row and is NOT decoration: it says whether the line
+    was COMPUTED for this chart ("computed" — a `metadata` lookup), FIRED on it ("fired" /
+    "general" — a rule whose condition holds), or merely RECORDED and never evaluated
+    ("on record"). Collapsing those together would let an unevaluated rule read as a
+    finding, which is the one thing this chapter must not do."""
+    rows: list[tuple[int, str, str, str, str]] = []
+    for house in range(1, 13):
+        for sig, label, value in house_indications(r, house):
+            rows.append((house, "computed", sig, f"{label}: {value}", ""))
+        for sig, rid, text, cite in house_general_readings(r, house):
+            rows.append((house, "general", sig, text, f"{rid} - {cite}"))
+        for sig, rid, text, cite in house_chief_combinations(r, house):
+            rows.append((house, "fired", sig, text, f"{rid} - {cite}"))
+        for sig, rid, text, cite in house_further_combinations(r, house):
+            rows.append((house, "fired", sig, text, f"{rid} - {cite}"))
+        for sig, rid, text, cite in descriptive_house_rules(house):
+            rows.append((house, "on record", sig, text, f"{rid} - {cite}"))
+
+    by_key: dict[str, list[tuple[int, str, str, str, str]]] = {}
+    labels: dict[str, str] = {}
+    for row in rows:
+        key, label = indication_category(row[3])
+        labels[key] = label
+        by_key.setdefault(key, []).append(row)
+    return tuple((labels[k], tuple(by_key[k]))
+                 for k in INDICATION_CATEGORY_ORDER if by_key.get(k))
 
 
 def longevity_decanate_cause(r: "DetailedReport") -> str:
@@ -7455,6 +7568,28 @@ def to_markdown(r: DetailedReport) -> str:
                      f"{_md_cell(rect['neighbour_sign_name_en'])} cusp"
                      + (" — **tight**, so the birth time needs settling before any of this "
                         "reading is scored" if rect["tight"] else ""))
+
+    # ── what Raman's rules indicate (v38 — pure re-read, computes nothing) ───
+    _groups = collected_indications(r)
+    if _groups:
+        L.append("")
+        L.append("## What Raman's rules indicate")
+        L.append("")
+        L.extend(_method_preamble("indications"))
+        L.append("_Every line below is a KIND, cause, channel, count or circumstance rather "
+                 "than a favourable/afflicted grade - the part of Raman's doctrine a verdict "
+                 "cannot carry. Each row states whether it was **computed** for this chart, "
+                 "**fired** on it, holds in **general** regardless of the lord's strength, or "
+                 "is merely **on record** and was never evaluated. Nothing here is new: every "
+                 "line also appears in its own house block above._")
+        L.append("")
+        for _label, _rows in _groups:
+            L.append(f"### {_label} ({len(_rows)})")
+            L.append("")
+            for _h, _kind, _sig, _text, _cite in _rows:
+                _c = f" ({_cite})" if _cite else ""
+                L.append(f"- **H{_h}** _{_sig}_ [{_kind}] - {_text}{_c}")
+            L.append("")
 
     # ── footer ────────────────────────────────────────────────────────────────
     L.append("")

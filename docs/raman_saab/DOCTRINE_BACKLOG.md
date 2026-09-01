@@ -4002,3 +4002,47 @@ will apply in addition to the following" (2355), H2.L.9's "Skilful" (2395), H3.L
 journeys. Sudden and unexpected changes in life." (3394-3395). And two provenance mismatches
 (real Raman, wrong location): H2.L.2's `fortified` is sourced from 2506, a dasha-timing list
 outside the lord-in-house table.
+
+
+## INDICATION CORROBORATION (2026-09-01) — measured, and the answer is NULL
+
+The non-graded lane has no ordinal to score against, so without a check of its own it would
+have shipped unmeasured -- the one thing this project does not allow. `tools/raman_saab/
+indication_corroboration.py` closes that gap by asking a narrow, falsifiable question: do
+distinctive terms from an emitted indication appear in Raman's own `verdict_prose` for the
+SAME chart and the SAME house? If the engine says the 10th indicates `judiciary` and his prose
+for that chart says "a Judge", that is corroboration.
+
+**★ THE RESULT: 284/8666 = 3.3% corroborated, against 2.7% (232/8541) on deliberately
+MISASSIGNED prose. Lift +0.6%. VERDICT: NULL.** The real rate does not clearly exceed the
+baseline, so what the matcher is measuring is shared astrological vocabulary, not
+corroboration. The tool says so on its own face and refuses to present the raw 3.3% as a
+result.
+
+**The null arm is the whole point, and it is not optional.** A corroboration rate quoted alone
+is uninterpretable: astrological prose shares so much vocabulary that any generous matcher
+"corroborates" everything. Misassignment is deterministic (each chart's indications are scored
+against the NEXT chart's prose), so the baseline is reproducible and cannot be reseeded into a
+flattering value -- a test pins that. The matcher's own thresholds were set BEFORE any result
+was looked at (a term is DISTINCTIVE at document-frequency <= 10% of prose docs; a row needs
+two distinctive terms, or one rare term at <= 2%) and are reported alongside the number they
+produced.
+
+**This is the correct outcome, not a defect.** Raman's prose argues the GRADE far more often
+than it names the KIND, so most indications have nothing in his commentary to match against.
+The finding is consistent with the project's standing Measured-Truth position: the engine is a
+faithful scholarly instrument, and every axis on which we can check it is reported honestly,
+including the ones that come back null.
+
+**How to read it beside the other two axes -- never averaged, never merged:**
+- textbook fidelity (golden ratchet): 287/397 exact, 363/397 within-1, 34 inversions
+- real-outcome generalization: NULL (astrobank, 22,177 charts)
+- indication corroboration: **NULL** (this measure)
+
+**What would change the verdict.** Not a looser matcher -- that would raise both arms
+together. Only a genuinely sharper signal would: exact multi-word phrase matching against the
+book text rather than term overlap; restricting to the categories where Raman does name kinds
+(profession, manner of death, counts) rather than scoring all eleven; or growing the prose
+denominator. Two caveats on the current run: 206 golden records carried both a castable birth
+and per-house prose, and some `verdict_prose` is maintainer commentary rather than Raman's own
+words, which dilutes both arms equally but shrinks the real signal more than the sham.

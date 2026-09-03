@@ -285,12 +285,20 @@ class Conjunct(Condition):
 
 
 class Aspects(Condition):
-    """Planet `a` casts a (whole-sign) aspect on planet `b` (drishti; nodes 7th-only)."""
+    """Planet `a` casts a (whole-sign) aspect on planet `b` (drishti; nodes 7th-only).
+
+    Both ends accept "LORD_OF:n" as well as a static name (2026-09-02). `drishti.aspects_planet`
+    rejects any name absent from `chart.planets`, so an unresolved "LORD_OF:n" made this
+    SILENTLY ALWAYS FALSE — the same defect found in `InHouseClass` the same day, and the
+    reason Raman's "If aspected by the Sun" clauses could not be encoded against a house lord.
+    Static names pass through unchanged.
+    """
     def __init__(self, a: str, b: str) -> None:
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return drishti.aspects_planet(self.a, self.b, ctx.chart)
+        return drishti.aspects_planet(_resolve_planet(self.a, ctx.chart),
+                                      _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 class HasDignity(Condition):
@@ -520,6 +528,66 @@ class VargaDignity(Condition):
         p = ctx.chart.planets.get(subj)
         vs = _planet_varga_sign(p, self.varga) if p is not None else None
         return vs is not None and _varga_dignity(subj, vs) in self.states
+
+
+#: The "first-rate" malefics used for SEVERITY counts. The Sun is deliberately excluded —
+#: this mirrors the established convention already used by `_PutraKarakaDoublyAfflicted`
+#: (house_05_putra/combinations.py:167) and its siblings, so a "heavy affliction" means the
+#: same thing everywhere in the corpus rather than one thing per house.
+FIRST_RATE_MALEFICS: frozenset[str] = frozenset({"Mars", "Saturn", "Rahu", "Ketu"})
+
+
+class AfflictedBy(Condition):
+    """`planet` is CONJUNCT WITH or ASPECTED BY an afflicter — Raman's influence axis.
+
+    This is the shared form of a predicate the rule sets had re-invented ten times, once per
+    house (`_MaleficAfflictsLagnaLord`, `_AfflictsPlanet`, `_AfflictedBy`, `_LordAfflictedBy`
+    and their siblings). Every variant agreed on the substance — same rasi house, or a true
+    whole-sign drishti — so the duplication bought nothing and left each house free to drift.
+
+    **Affliction is NOT weakness.** Raman keeps the two axes apart and says so directly: at
+    HTJAH-II:3001-3009 he runs "in strength / weak / afflicted" as three tiers over one entry
+    with three non-nested outcomes, and at HTJAH-II:273-276 he writes of "both afflictions AND
+    benefic influences" on the same lord. Shadbala answers *how strong*; this answers *who is
+    standing on it*. Conflating them is what put affliction-gated sentences into the
+    `afflicted` TEXT SLOT — which `_branch` selects on weak Shadbala, an unrelated test.
+
+    `planet` accepts "LORD_OF:n" as well as a static name, so a dynamic house lord resolves
+    per chart. `afflictors` defaults to the natural malefics (Sun, Mars, Saturn, Rahu, Ketu);
+    pass an explicit set for Raman's narrower clauses. The subject can never afflict itself.
+    None-safe: an absent planet on a sparse Track-B chart yields False, never a raise.
+
+    `min_count` carries DEGREE, because Raman distinguishes plain affliction from "severely
+    afflicted" and "if the affliction is heavy". Encoding those as a bare boolean would fire
+    them on a single mild contact and assert a severity he did not. The corpus already had a
+    convention for this — `_PutraKarakaDoublyAfflicted`, `_MatruKarakaDoublyAfflicted` and
+    `_KarakaMultiplyAfflicted` all read ">= 2 of the FIRST-RATE malefics" — so severity reuses
+    it via `FIRST_RATE_MALEFICS` rather than inventing a second scale.
+    """
+    def __init__(self, planet: str, afflictors: Sequence[str] | set[str] | None = None,
+                 min_count: int = 1) -> None:
+        if min_count < 1:
+            raise ValueError("min_count must be >= 1; a rule that fires on zero afflicters "
+                             "is not an affliction predicate")
+        self.planet, self.min_count = planet, min_count
+        self.afflictors: frozenset[str] = (
+            frozenset(NATURAL_MALEFICS) if afflictors is None else frozenset(afflictors))
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        subject = _resolve_planet(self.planet, ctx.chart)
+        p = ctx.chart.planets.get(subject)
+        if p is None:
+            return False
+        hits = 0
+        for name in self.afflictors - {subject}:
+            q = ctx.chart.planets.get(name)
+            if q is None:
+                continue
+            if q.rasi_house == p.rasi_house or drishti.aspects_planet(name, subject, ctx.chart):
+                hits += 1
+                if hits >= self.min_count:
+                    return True
+        return False
 
 
 # ── relations (C6, H1, mutual) ───────────────────────────────────────────────

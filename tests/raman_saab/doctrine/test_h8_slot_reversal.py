@@ -113,10 +113,28 @@ class TestNothingWasDeleted:
         assert "neither knowledge nor wealth" in r.afflicted
         assert "9th and 8th lords" not in (_R["H8.L.5"].afflicted or "")
 
-    def test_the_two_descriptive_records_say_what_predicate_they_await(self) -> None:
+    def test_the_affliction_clauses_now_carry_a_real_predicate_at_ramans_severity(self) -> None:
+        """They shipped descriptive, awaiting a generalised affliction predicate; `AfflictedBy`
+        supplied it. Raman writes "SEVERELY afflicted" (2906) and "if the affliction is HEAVY"
+        (2962), so both use the corpus's established severity convention — >= 2 of the
+        first-rate malefics — rather than a bare boolean that would fire on one mild contact
+        and assert a severity he did not."""
         for rid in ("H8.L.1b", "H8.L.5b"):
-            assert _R[rid].kind == "descriptive"
-            assert "TODO(predicate:" in _R[rid].afflicted
+            r = _R[rid]
+            assert r.kind == "evaluable" and r.condition is not None, rid
+            aff = [c for c in r.condition.conds if isinstance(c, C.AfflictedBy)]
+            assert len(aff) == 1, rid
+            assert aff[0].min_count == 2, f"{rid} must require Raman's stated severity"
+            assert aff[0].afflictors == C.FIRST_RATE_MALEFICS, rid
+            assert "TODO(predicate:" not in (r.afflicted or ""), rid
+
+    def test_a_plain_affliction_clause_does_not_borrow_the_severity_threshold(self) -> None:
+        """H8.L.6a and H8.L.12c read a plain "If afflicted" / "afflicted by malefics", with no
+        severity word — so they must fire on a single contact. Applying the >= 2 threshold
+        everywhere would silently narrow Raman."""
+        for rid in ("H8.L.6a", "H8.L.12c"):
+            aff = [c for c in _R[rid].condition.conds if isinstance(c, C.AfflictedBy)]
+            assert len(aff) == 1 and aff[0].min_count == 1, rid
 
 
 class TestSatisfiableByConstruction:
@@ -253,8 +271,13 @@ class TestTheSweepAcrossTheRestOfTheSection:
         be the only unmarked-navamsa reference in the corpus. It is Raman's idiom for
         "strong" — HTJAH-II:7923, "in a kendra ... or is otherwise fortified"."""
         r = _R["H8.L.6a"]
-        assert r.condition is None and r.kind == "descriptive"
-        assert "idiom for" in r.afflicted
+        assert "idiom for" in r.afflicted, "the tag must stay labelled as idiom, in prose"
+        # The rule is now evaluable — but on the AFFLICTION Raman states, never on a
+        # kendra/trikona placement. This is the assertion that matters: the predicate must
+        # not have quietly acquired the positional test the frame review ruled out.
+        assert not any(isinstance(c, (C.InHouseClass, C.InVargaHouseFrom))
+                       for c in r.condition.conds), "kendra/trikona must not be encoded"
+        assert any(isinstance(c, C.AfflictedBy) for c in r.condition.conds)
 
     def test_h8_l12b_drops_the_conjunction_because_raman_reopens_the_antecedent(self) -> None:
         """HTJAH-II:3061 restarts with "If the 8th lord is in the 12th house", dropping "with

@@ -99,13 +99,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # house_01_lagna/combinations_core.py:99, generalised off the Lagna lord).
     RuleRecord(
         id="H8.L.1b", house=8, signification="longevity", group="lord_in_house",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        # "SEVERELY afflicted" -> the corpus's established severity convention: >= 2 of the
+        # first-rate malefics contacting the lord. A bare boolean would fire on one mild
+        # contact and assert a severity Raman did not.
+        condition=C.And(C.LordIn(8, 1), C.LordsConjunct(8, 1),
+                        C.AfflictedBy("LORD_OF:8", C.FIRST_RATE_MALEFICS, min_count=2)),
         fortified=None,
         general=None,
         afflicted="the 8th lord severely afflicted - disease and disfiguration, weak "
                   "constitution, no bodily comforts, the displeasure of superiors and "
-                  "trouble from Government. TODO(predicate: heavy malefic affliction of the "
-                  "8th lord - conjunction with or aspect by a natural malefic)",
+                  "trouble from Government",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2906)),
     RuleRecord(
         id="H8.L.2", house=8, signification="longevity", group="lord_in_house",
@@ -194,12 +198,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # (b) re-homed; descriptive for the same reason as H8.L.1b.
     RuleRecord(
         id="H8.L.5b", house=8, signification="longevity", group="lord_in_house",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(8, 5), C.LordsConjunct(8, 5),
+                        C.AfflictedBy("LORD_OF:8", C.FIRST_RATE_MALEFICS, min_count=2)),
         fortified=None, general=None,
         afflicted="the affliction heavy - a child may die as soon as it is born, or cause "
                   "much grief through an incurable physical affliction or mental "
-                  "retardation; the native may also suffer much bodily ill-health. "
-                  "TODO(predicate: heavy malefic affliction of the 8th lord)",
+                  "retardation; the native may also suffer much bodily ill-health",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2962)),
     # The separate paragraph at 2972, now its own rule with its own three-part antecedent.
     # Every clause is expressible today; nothing here needed new machinery.
@@ -243,13 +248,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # carried over mechanically from the near-identical sentence in the adjacent entry.
     RuleRecord(
         id="H8.L.6a", house=8, signification="longevity", group="lord_in_house",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        # Raman writes a plain "If afflicted" here, not "severely" -- min_count stays 1.
+        condition=C.And(C.LordIn(8, 6), C.LordsConjunct(8, 6),
+                        C.AfflictedBy("LORD_OF:8")),
         fortified=None, general=None,
         afflicted="the 8th lord afflicted - loss of money through theft, and trouble through "
                   "the courts and the police; the evil intensified when the 8th lord is "
                   "strong (Raman's 'in a kendra or trikona' read as his idiom for "
-                  "fortification, HTJAH-II:7923 - NOT encodable as a placement). "
-                  "TODO(predicate: heavy malefic affliction of the 8th lord)",
+                  "fortification, HTJAH-II:7923 - NOT encodable as a placement)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2986)),
     # MISSING from the corpus entirely until now (HTJAH-II:2989-2991).
     # The dignity proxy is PROVABLY unusable here: the 6th lord is in the 6th house by the
@@ -362,12 +369,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # predicate, the encoded sentence was a strictly weaker claim than his.
     RuleRecord(
         id="H8.L.10a", house=8, signification="longevity", group="lord_in_house",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(8, 10), C.LordsConjunct(8, 10),
+                        C.LordsConjunct(8, 2), C.AfflictedBy("LORD_OF:2")),
         fortified=None, general=None,
         afflicted="the 2nd lord ALSO AFFLICTED AND JOINING the 8th lord - his reputation may "
-                  "suffer through involvement in huge debts and inability to repay them. "
-                  "TODO(predicate: LordsConjunct(8,2) exists; the affliction half needs the "
-                  "generalised planet-affliction predicate)",
+                  "suffer through involvement in huge debts and inability to repay them",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3034)),
     RuleRecord(
         id="H8.L.10b", house=8, signification="longevity", group="lord_in_house",
@@ -428,12 +435,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 3061)),
     RuleRecord(
         id="H8.L.12c", house=8, signification="longevity", group="lord_in_house",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(8, 12), C.LordsConjunct(8, 12),
+                        C.AfflictedBy("LORD_OF:8")),
         fortified=None, general=None,
         afflicted="the 8th lord AFFLICTED BY MALEFICS - the native may resort to vicious acts "
-                  "clandestinely: rape, adultery, counterfeiting of money and smuggling. "
-                  "TODO(predicate: generalised planet-affliction. Note Raman's own caution at "
-                  "HTJAH-II:3073-3074 that criminal-act predictions require further "
-                  "qualification)",
+                  "clandestinely: rape, adultery, counterfeiting of money and smuggling "
+                  "(Raman's own caution at HTJAH-II:3073-3074: criminal-act predictions "
+                  "require further qualification)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3065)),
 )

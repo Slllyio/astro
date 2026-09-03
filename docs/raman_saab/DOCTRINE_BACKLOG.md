@@ -5064,3 +5064,134 @@ rule, and the H8 re-base of 2026-09-01 is the precedent.
   H8.L.12 `polarity="malefic"`, though both entries now open with an unconditioned Rajayoga in
   `general`. Slot moves cannot change a verdict (bucketing is on `polarity` alone), but a
   Rajayoga displayed under a malefic-bucketed record is visible to a reader.
+
+
+## ★ THE UNBIASED BASE RATE (2026-09-03) — House 5 is 5/12, with ZERO inversions
+
+House 8 came back 7 of 7 defective. **That number could not be extrapolated, because House 8 is
+where a defect had already been found** — the same selected-pool error that produced the
+"88.4% ceiling", which turned out to be a ceiling on a pool that could only admit agreements.
+So House 5 was swept: chosen for volume, never examined by the strength-slot lens, and the
+reviewer was told in the prompt that "all twelve are correctly encoded" would be a useful
+answer. It was asked for a number, not for defects.
+
+**Result: 5 of 12 correctly encoded (H5.L.2, L.3, L.5, L.6, L.7), and ZERO inversions.**
+
+The reviewer supplied its own sensitivity, which is the honest way to read it:
+
+| standard | figure |
+|---|---|
+| inversion-or-withholding only | 8 of 12 |
+| **as reported** (every sentence in a slot whose test matches its own antecedent) | **5 of 12** |
+| counting the table-wide axis question | 0 of 12 — *meaningless as a base rate* |
+
+**House 5 is materially healthier than House 8, and its defects are a different, milder kind.**
+H8's seven were INVERSIONS — readings asserting of a chart the opposite of what the branch had
+just measured. House 5 has none. Its seven are: text dropped by sentiment, a third tier the
+binary branch cannot express, an encoder-invented slot, three unconditioned readings misfiled,
+and one folded combination. **Four of the seven repeat repairs this project had already shipped
+elsewhere for the identical textual shape** — corroboration, not reviewer over-reach.
+
+A caution the reviewer volunteered and which should be honoured: House 5 is itself
+**pre-enriched** for one defect, because DOCTRINE_BACKLOG already listed H5.L.1 and H5.L.4 among
+the four known three-way partitions. The other two are **H6.L.9 and H6.L.11 — inside a house
+previously ruled "EXPLICIT-AFFLICTED, correctly encoded throughout"**. That ruling is now in
+tension with a fact this backlog itself records. **Sweep House 6 next.**
+
+### The seven repairs
+
+- **H5.L.1** — *"will have foes"* (5114) was SILENTLY DROPPED. Raman lists it between "few
+  children" and "gives happiness to others"; the encoding kept both flanking items and deleted
+  the one in the middle. That is trimming by SENTIMENT, not by antecedent — a negative result
+  removed from a favourable arm. Restored.
+- **H5.L.4** — the slot welded two antecedents with different outcomes: *"The lord, afflicted,
+  causes death of children"* (5134) and *"The lord, moderately strong, confers daughters and no
+  sons"* (5134-5135). Under the binary branch both displayed together, telling one reader that
+  children die AND that daughters are born.
+- **H5.L.8 — an ENCODER-INVENTED slot.** `fortified` read *"no specific benefit noted"*, a
+  phrase that appears in NEITHER volume. HTJAH-I:5153-5154 is four flat declaratives with no
+  conditional clause anywhere. **Cleared, not relocated**, per the H10.L.1 precedent: moving
+  unsourced prose into `general` would launder it into a slot asserting Raman said it. Every
+  strong-5th-lord chart had been shown the editorial line INSTEAD of Raman's only reading.
+- **H5.L.9** — no favourable opener exists; the base is flat and the gate appears only in the
+  last sentence. Identical in shape to H9.L.6 and H9.L.8, repaired 2026-09-01.
+- **H5.L.10** — *"If aspected by the Sun"* (5162) is a separate antecedent with its own
+  outcome, folded into the fortification arm, so a strong 5th lord with no solar aspect
+  anywhere was told it may join the intelligence department. Now H5.L.10a.
+- **H5.L.11 / H5.L.12** — ungated entries labelled strength-conditioned. `fortified` is KEPT
+  alongside `general` per the H1.L.10/11/12 precedent; the defect was the LABEL, not the
+  display.
+
+### ★ OPEN — DOCTRINE-CONTESTED, needs USER SIGN-OFF, and deliberately NOT acted on
+
+**HTJAH-I:5173-5175 closes this table by naming its own axis, and it is not Shadbala:**
+
+> *"...paying particular attention to the **benefic, malefic, or moderating nature of the
+> lord** qualified or modified otherwise **by the association or aspect of the other planets
+> and lords**."*
+
+Three tiers, on a NATURE-plus-ASSOCIATION axis. It maps exactly onto the three qualifiers Raman
+actually uses — *favourably disposed* / *moderately good* / *afflicted* — and explains why L.1
+and L.4 have a middle tier at all. HTJAH-II:7479-7481 glosses it independently (*"beneficially
+disposed **by aspect or association**"*), and HTJAH-II:7906-7910 lists strength and
+aspect/association as two separate inputs whose poles are *afflicted / beneficially disposed*.
+
+**This was NOT counted as twelve defects, and must not be reported that way.** It is true of
+Houses 1-7 and 9-12 identically; the project has a standing contrary convention adopted
+deliberately (this backlog, "Every qualifier elsewhere is SCALAR and unnamed"); and unlike H8 it
+does not INVERT — Shadbala is a lossy proxy for disposition, not its opposite. Overturning it is
+a corpus-wide, user-signed decision touching all 132 lord-in-house rules, not a reviewer's
+verdict on twelve records.
+
+**Corroborating tell, in HTJAH-I this time:** at 5121 Raman writes *"Lord **weak and
+afflicted**"* — a conjunction of two qualifiers, where every other entry says plain "afflicted".
+He would not conjoin synonyms. The weak != afflicted distinction established from HTJAH-II holds
+in this volume too.
+
+## AfflictedBy — one shared predicate replacing ten hand-rolled variants
+
+The rule sets had re-invented the affliction predicate **ten times, once per house**
+(`_MaleficAfflictsLagnaLord`, `_AfflictsPlanet`, `_AfflictedBy`, `_LordAfflictedBy` and
+siblings). Every variant agreed on the substance — same rasi house, or a true whole-sign
+drishti — so the duplication bought nothing and left each house free to drift.
+
+`conditions.AfflictedBy(planet, afflictors=None, min_count=1)` is the shared form. `planet`
+accepts "LORD_OF:n", so a dynamic house lord resolves per chart.
+
+**`min_count` carries DEGREE, and that matters doctrinally.** Raman distinguishes plain
+affliction from *"severely afflicted"* (2906) and *"if the affliction is heavy"* (2962).
+Encoding those as a bare boolean would fire them on one mild contact and assert a severity he
+did not. The corpus already had a convention — `_PutraKarakaDoublyAfflicted` and its siblings
+read ">= 2 of the FIRST-RATE malefics", Sun excluded — so severity REUSES it via
+`FIRST_RATE_MALEFICS` rather than inventing a second scale.
+
+Five H8 clauses converted descriptive -> evaluable: H8.L.1b and H8.L.5b at min_count=2 (Raman
+says severely/heavy), H8.L.6a, H8.L.10a and H8.L.12c at min_count=1 (he says plain "afflicted").
+Three of the five fire (1, 6, 3 of 346). H8.L.9c stays descriptive: its consequent is a
+dasha-timing claim, outside the atemporal EvalContext.
+
+## FIXED: a second condition that was silently always False
+
+`Aspects` resolved neither end through `_resolve_planet`, and `drishti.aspects_planet` rejects
+any name absent from `chart.planets` — so `Aspects("Sun", "LORD_OF:5")` returned False for every
+chart ever cast. H5.L.10a would have been **dead on arrival**. This is the SECOND condition
+found with this exact defect in two days (`InHouseClass` was the first), which makes it a
+pattern worth a sweep: **any Condition that reads `chart.planets` directly instead of going
+through `_resolve_planet` silently rejects a "LORD_OF:n" subject.**
+
+## Measurement
+
+3 VERDICT changes, all degree-only (moderate -> mild on H8/longevity), from the AfflictedBy
+conversions. **Ratchet unmoved at 286/397 exact, 362/397 within-1, 35 inversions.** Liveness
+never_fired 62 -> 65, consciously: H5.L.10a, H8.L.5b and H8.L.10a fire on no golden — each
+proved satisfiable by explicit witness, because a rule the ratchet never exercises is exactly
+playbook rule 4's coverage-gap blindness. Suite 6020 passed.
+
+## What the two houses together now say about the programme
+
+The corpus-wide lexical triage flagged 148 of 776 evaluable rules. **That number remains
+triage, and the two sweeps show why it cannot be converted to a defect count by extrapolation:**
+House 8 ran 7/7 and House 5 ran 7/12, but their defects are of DIFFERENT SEVERITY — H8
+inverted, H5 did not. A programme justified on "148 broken rules" would be overclaiming; one
+justified on "two houses examined, both carried real defects, the severity varies by house" is
+what the evidence supports. Sweep House 6 next, on the specific tension named above.

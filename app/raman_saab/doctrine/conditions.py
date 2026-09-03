@@ -241,7 +241,7 @@ class InRashiHouse(Condition):
         self.planet, self.house = planet, house
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.rasi_house == self.house
 
 
@@ -251,7 +251,7 @@ class InHouse(Condition):
         self.planet, self.house = planet, house
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.bhava == self.house
 
 
@@ -260,7 +260,7 @@ class InSign(Condition):
         self.planet, self.sign = planet, sign
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.sign == self.sign
 
 
@@ -280,7 +280,8 @@ class Conjunct(Condition):
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        pa, pb = ctx.chart.planets.get(self.a), ctx.chart.planets.get(self.b)
+        pa = ctx.chart.planets.get(_resolve_planet(self.a, ctx.chart))
+        pb = ctx.chart.planets.get(_resolve_planet(self.b, ctx.chart))
         return pa is not None and pb is not None and pa.rasi_house == pb.rasi_house
 
 
@@ -333,7 +334,7 @@ class Retrograde(Condition):
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.retrograde
 
 
@@ -345,7 +346,7 @@ class Combust(Condition):
         # Substantially combust: combust_fraction >= 0.5 (within half the orb). One threshold for the
         # whole engine, matching the judge's affliction bar (_COMBUST_HARD_FRACTION / B7 doctrine) --
         # a planet barely inside its orb (e.g. ~13 deg from the Sun) is not treated as afflicted.
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.combust_fraction >= 0.5
 
 
@@ -386,7 +387,7 @@ class InHouseFrom(Condition):
         self.planet, self.origin, self.n = planet, origin, n
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         oh = _origin_house(self.origin, ctx.chart)
         return p is not None and oh is not None and _house_from(p.rasi_house, oh) == self.n
 
@@ -716,7 +717,7 @@ class InStarOf(Condition):
         self.planet, self.lord = planet, lord
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and nakshatra.nakshatra_lord(p.nakshatra) == self.lord
 
 

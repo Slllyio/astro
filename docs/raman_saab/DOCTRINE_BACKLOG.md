@@ -4731,3 +4731,336 @@ HTJAH-I:2674 reads *"These evil results should be anticipated IF..."*, i.e. a GA
 intensifier. Under the gate reading the rule's whole afflicted payload is asserted on charts
 Raman does not cover. The reviewer could not resolve the antecedent placement from the printed
 text and left it open.
+
+
+## VARGA DOCTRINE LANGUAGE (2026-09-02) — Gates 0-2: the gate opened, and immediately repaired a wrong reading
+
+The milestone was deliberately NOT framed as "adding divisional charts". Three layers hide in
+that phrase, and only the middle one was missing:
+
+| Layer | Question | State |
+|---|---|---|
+| Computation | can the engine CAST D3/D7/D10/D12/D16/D30? | already yes — all 16 Shodashavarga |
+| Doctrine language | can a Raman RULE say something happens in one? | **no — this milestone** |
+| Synthesis | when/how strongly should a varga move a verdict? | **not solved; not attempted** |
+
+### The measurement that set the scope
+
+**Opening D10/D7/D12/D30 unlocks ZERO parked rules.** All 58 were classified by what they
+actually need: 7 want D60 classes, 7 are dasha-timing, 4 navamsa-Lagna/dispositor, 3 drekkana,
+1 "cruel navamsa", 1 parity — **none name D10, D7, D12 or D30.** So the payoff is expressive
+capacity, not rule count, and it was scoped and reported that way rather than oversold. The
+near-term unlock is the NAVAMSA predicates, which the same generalisation delivers.
+
+Also measured, and it changes the roadmap: the golden extractor now yields 569 presentations,
+206 verified, **5 new and 0 carrying a verdict.** Playbook rule 7 still names corpus growth as
+the accuracy lever; that is out of date. The bottleneck has moved from corpus VOLUME to
+doctrine REPRESENTATION and validation.
+
+### Gate 0 — `tools/raman_saab/doctrine_snapshot.py`, and why the ratchet was not enough
+
+The golden ratchet scores 397 rows and is blind to everything else: `_bucket_fired` buckets by
+`rule.polarity` and never looks at the branch, so a change can hold 286/362/35 exactly while
+altering what hundreds of charts SAY. The snapshot freezes three levels for every castable
+golden — varga signs (primitive), fired rules with branch and text-hash (predicate), and
+per-signification verdicts — and `--write` refuses to overwrite without a `--note`, so every
+re-freeze is a recorded decision.
+
+**It caught its own construction bug on the first run:** the verdict level came back empty on
+all 346 charts because `getattr(hv, "significations", {})` silently defaulted a wrong attribute
+name. A level that records nothing reads as "identical" forever. It now delegates to the golden
+harness's own `evidence_snapshot` (so the tool and the tests cannot disagree about what a
+verdict IS) and raises rather than writing a snapshot that cannot detect change.
+
+### Gate 1 — the gate itself
+
+`_SUPPORTED_VARGAS` went `{"D9"}` -> `{D1, D3, D7, D9, D10, D12, D16, D30}`. The chart layer
+now owns a canonical `VARGA_NUMBERS` / `varga_sign_by_name`, and doctrine addresses a division
+by NAME, never by harmonic number — the question a rule asks is "this planet's D10 sign per the
+engine's canonical implementation", not "compute the tenth harmonic", and that distinction will
+matter the first time a convention is audited (the published schemes for D30 and D60 differ).
+**D1 is documented as the Rasi/radix, not a derived varga**, so a varga="D1" rule is never
+reviewed as a varga rule.
+
+D9 is NOT special-cased: `PlanetPos.navamsa_sign` is set to `varga.navamsa_sign(lon)` by both
+constructors and `_VARGA_FN[9]` is that same function, so reading it through the named API is
+identical by construction — pinned for every planet of every golden. One path beats a bridge
+that could quietly diverge.
+
+**Acceptance: primitive + predicate + report equality, all three IDENTICAL across 346 charts.**
+
+**D60 is deliberately ABSENT, and the reason is stronger than "we did not find it":**
+
+```
+D60 named-class doctrine (Ghora / Rakshasa / Kulaghna / Devaloka ...)
+STATUS: BLOCKED - source attribution
+REASON: no citable Raman source identified. Checked HTJAH-I, HTJAH-II, HPA and GBB;
+        GBB's 21 "Shashtiamsa" occurrences are the UNIT of Shadbala (1/60 rupa), an
+        unrelated meaning that reads as a hit on a lexical sweep.
+DO NOT SUBSTITUTE: a non-Raman classical source. Seven rules stay parked; that is the
+        correct state, not a gap to close.
+```
+
+### ★ Gate 2 — TWO ROUTING DEFECTS, found by using the new capability
+
+Repairing H8.L.1/H8.L.5 required emptying a strength slot, which exposed that `_branch` and
+`fire_rules` answer an empty slot with **the opposite pole**:
+
+- a STRONG subject with `fortified=None` was routed to the AFFLICTED text;
+- a WEAK subject with `afflicted=None` was routed to the FORTIFIED text.
+
+Both now prefer Raman's `general` slot, which is true of every chart. Measured over the corpus:
+**650 rule-instances across 219 of 346 charts (63%) stopped being shown a strength-conditioned
+reading the chart does not satisfy. 0 primitive changes, 0 verdict changes, ratchet unmoved.**
+
+The sampled cases show the defect was worse than "wrong pole": `H9.P.Mars` and `H8.P.Moon`
+carry `afflicted` slots annotated **"(conjunctions, not afflictions)"** — conjunction riders,
+not affliction readings. A strong-Mars chart was shown "with Venus -> two wives and foreign
+residence" INSTEAD OF Raman's base reading, "wields authority and is affluent; has children and
+is happy".
+
+### ★★ THE SLOT IS A STRENGTH LABEL, NOT AN AFFLICTION LABEL — reviewer REVERSAL x2
+
+`_branch` selects `afflicted` on WEAK Shadbala (`is_powerful` -> the GBB-8:303 minimum-required
+table). Filing Raman's affliction-gated sentences there was a **name pun**, and it made both
+branches assert falsehoods about the chart being read.
+
+That weak != severely-afflicted is settled INSIDE the same table, not inferred. At
+**HTJAH-II:3001-3009** Raman runs three tiers over one entry: *"If the lord of the 8th house
+occupies the 8th house **in strength**... If the 8th lord is **weak**, he may have no serious
+troubles but may not also enjoy any luck... If the 8th lord is **afflicted**, the native will
+fail in his undertakings."* Three antecedents, three non-nested outcomes. **HTJAH-II:273-276**
+repeats it on the 7th lord, and its next clause — "both afflictions **and** benefic influences
+on the 7th lord" — shows affliction is Raman's INFLUENCE axis, orthogonal to STRENGTH.
+
+**Semantic snapshot — H8.L.1** (HTJAH-II:2902)
+```
+SOURCE    HTJAH-II:2902-2914, three sentences on TWO axes
+BEFORE    fortified = "misfortune reduced when 8th lord is weak or in 6/8/12 of Navamsa-Lagna"
+          afflicted = the severe-affliction reading
+AFTER     fortified = "the 8th lord strong - ... undiminished"   (Raman writes no strong-lord
+                      sentence; the only mitigation is gated on weakness, so its absence
+                      leaves the misfortune undiminished)
+          afflicted = "the 8th lord weak - the intensity of the misfortune is reduced"
+          H8.L.1a   = the Navamsa disjunct, now a PREDICATE (evaluable, D9)
+          H8.L.1b   = the severe-affliction clause, descriptive, TODO(affliction predicate)
+RATIONALE both branches asserted an antecedent the branch had just measured false
+EXPECTED  presentation only; 0 verdict movement
+```
+
+**Semantic snapshot — H8.L.5** (HTJAH-II:2957) — FOUR antecedents packed into three slots
+```
+BEFORE    fortified = mitigation (placement-gated) AND intensification (strength-gated),
+                      two clauses pointing opposite ways in one sentence
+          afflicted = the heavy-affliction clause AND a SEPARATE combination (2972)
+AFTER     fortified = "the 8th lord fortified - the evil results are intensified"
+          general   = restored, incl. the father-misunderstanding strand (2960) the old
+                      text had dropped
+          afflicted = None -- Raman gives this entry NO weak-lord reading
+          H8.L.5a   = the Navamsa mitigation (2965), a PREDICATE. Placement-only: unlike
+                      H8.L.1 there is no "weak or" disjunct, so it can never be reached by
+                      a strength branch at all.
+          H8.L.5b   = the heavy-affliction clause (2962), descriptive
+          H8.L.5c   = the 2972 combination as its OWN rule
+RATIONALE the worst display error in the file: any chart with merely a weak 8th lord -- no
+          9th lord involved, Lagna lord in fine dignity -- was told it had "no knowledge or
+          wealth, lustful, reviled". A missing rule masquerading as a branch.
+EXPECTED  presentation only; 0 verdict movement
+```
+
+`afflicted=None` is only SAFE because of the routing fix above; before it, emptying the slot
+would have shown a weak lord the intensification reading — the exact opposite of nothing.
+
+### Satisfiability, because these rules fire on nothing
+
+H8.L.1a / H8.L.5a / H8.L.5c fire on **ZERO of 346 goldens** — their parents already fire on
+only 3 and 1, the H8 conditions having been narrowed in 2026-09-01 to Raman's actual
+conjunction predicate, and these are strictly narrower still. A rule the ratchet never
+exercises is exactly playbook rule 4's coverage-gap blindness, so each is **proved satisfiable
+by explicit witness** (`test_h8_slot_reversal.py::TestSatisfiableByConstruction`) rather than
+assumed. Liveness re-based 59 -> 62, consciously, with the reason recorded in the baseline.
+
+### ★ OPEN — needs a USER decision, flagged by the reviewer at LOW confidence
+
+**H8.L.5's "kendra or trikona" frame (HTJAH-II:2967).** *"But if fortified in a kendra
+(quadrant) or trikona (trine), the evil results are intensified."* Under a **D1** reading the
+placement half is satisfied BY CONSTRUCTION — the rule already places the 8th lord in the 5th,
+and 5 is a trikona (`conditions.py:46`) — reducing the clause to pure strength. But the
+parallel entry at **HTJAH-II:2986-2988** says the evil is intensified if the 8th lord is "in a
+kendra or trikona" of an entry whose own condition places it **in the 6th** — neither a D1
+kendra nor a D1 trikona, so under the D1 reading that sentence is unsatisfiable and vacuous.
+The reading that keeps both meaningful is the **navamsa** frame, and 2967 opens with "But",
+contrasting directly against the D9 sentence before it. Currently shipped as the strength half
+only, with the kendra/trikona qualifier NOT encoded — the safe subset either way. It decides
+whether the fortified slot is exact or over-firing.
+
+### ★ OPEN — a sweep the reviewer identified but did not adjudicate
+
+**H8.L.2, H8.L.6, H8.L.9, H8.L.10, H8.L.12 all park Navamsa-placement or affliction clauses in
+strength slots** — the same defect class, visible on inspection (H8.L.2's `fortified` reads
+"evil reduced if 8th lord falls in 6/8/12 of Navamsa-Lagna": placement-gated, in a strength
+slot). Worth ONE reviewed sweep rather than five edits. The Navamsa halves are all now
+expressible via `InVargaHouseFrom`, which is what the gate was opened for.
+
+### What Gate 2 proves about the milestone
+
+The first two rules in the corpus to reach a varga through the **generic, reviewable**
+condition rather than a hand-rolled local subclass are H8.L.1a and H8.L.5a — and they exist
+because opening the gate was what let a known-wrong reading be repaired instead of merely
+described. That is a materially stronger milestone than "we added six varga types", and it was
+the reason B1 was sequenced immediately after A1.
+
+
+## ★ THE STRENGTH-SLOT DEFECT (2026-09-02) — corpus-wide, 7/7 REVERSAL where reviewed
+
+Two more engine-blind reviews were dispatched after the H8.L.1/H8.L.5 reversal. Both came back
+REVERSAL on everything they examined. **Across H8.L.2/6/9/10/12, ZERO of the ten populated
+strength slots was gated on the 8th lord's strength** — the branch subject.
+
+### The defect, stated once
+
+`_branch` selects `afflicted` on WEAK Shadbala (`is_powerful` -> GBB-8:303). The slot is a
+**STRENGTH label**. Any clause Raman gates on something else — an affliction, a conjunction, a
+varga placement, another planet entirely — is untestable by that branch, so filing it there
+shows the reading to charts selected by a test that never examined the stated antecedent.
+
+Three shapes, in rising severity:
+
+1. **Untestable antecedent in a strength slot** — H8.L.2's `fortified` held ONLY the D9
+   placement clause (HTJAH-II:2923-2925), with no strength term anywhere in the entry.
+2. **Unconditioned headline in `fortified`** — H8.L.6's Rajayoga (2978-2980), H8.L.10's "may
+   ALSO confer unexpected gains" (3038-3040, which restates the PLACEMENT as its antecedent),
+   H8.L.12's Rajayoga (3053-3054). Not a false assertion but a wrong **WITHHOLDING**: weak-lord
+   charts never saw Raman's main reading for the entry. That inverts him.
+3. **Another planet's condition in the 8th lord's slot** — H8.L.9's Sun and 9th lord, H8.L.10's
+   2nd lord. H8.L.10's encoding also **silently dropped half its antecedent**: Raman requires
+   the 2nd lord afflicted AND joining the 8th lord (3034-3036), so the encoded sentence was a
+   strictly weaker claim than his.
+
+### H8.L.9 was REMOVED, not repaired
+
+Not one of that entry's sentences is gated on the 8th lord's strength, and Raman states no
+unconditioned reading for it — so the base record had nothing legitimate to say. A strong-8th-
+lord chart with malefics on the 8th lord was shown the INHERITANCE reading; a weak one with
+benefics on it was shown the DISINHERITANCE reading. Backwards in both directions. Content now
+lives in H8.L.9a..e, each with its own antecedent and citation. It was also listed in
+`test_general_reading_slot.LEFT_ALONE` as a rule that "really does give an afflicted reading" —
+true of the TEXT, false of the SLOT, which is the whole distinction.
+
+### Material Raman states that the corpus never carried at all
+
+Found by reading the source, not by auditing slots — a slot audit cannot see an absence:
+
+- HTJAH-II:2989-2991 — the 6th lord fortified -> overcomes all troubles, enemies fail (H8.L.6b)
+- HTJAH-II:3023-3025 — the D9 6/8/12 mitigation for the 9th-house entry (H8.L.9e)
+- HTJAH-II:3036-3038 — the D9 6/8/12 mitigation for the 10th-house entry (H8.L.10b)
+
+### ★ TWO UNSATISFIABILITY PROOFS, and what they decided
+
+**H8.L.12b — Raman re-opens his own antecedent.** At 3061 he restarts with *"If the 8th lord is
+in the 12th house"*, DROPPING *"with the 12th lord"*. Under the conjunction the 12th lord is in
+the 12th by construction, and the 12th is neither trine nor quadrant, so the clause was
+**unsatisfiable as encoded** — a display promise that could never be met. Freed of the
+conjunction it fires on **15 goldens**. This is one place where the 2026-09-01 conjunction
+narrowing of this file genuinely does not apply.
+
+**The dignity proxy is a CONSTANT, not a conservative approximation, for two clauses.** H8.L.6's
+6th lord is in the 6th house by the entry's premise, hence in its own sign, so
+`LordHasDignity(6,{"own",...})` is tautologically TRUE on every firing chart; H8.L.9's 9th lord
+is likewise in its own house, making `LordHasDignity(9,{"debil"})` tautologically FALSE. Neither
+can stand in for Shadbala here. Both clauses ship descriptive.
+
+### ★ THE KENDRA/TRIKONA FRAME — settled, and the answer is "do not encode it"
+
+A dedicated review surveyed **~160 kendra/trikona/quadrant/trine occurrences across both
+volumes**. Result:
+
+- **Every occurrence that names a frame names a RASI origin** — "from Lagna", "from the
+  Ascendant", numbered "(1, 4, 7, 10)", "from the Moon", or from a named planet. **Zero** pair
+  the category words with a navamsa origin.
+- Conversely the **~120 navamsa references are ALWAYS marked** ("in Navamsa", "from Navamsa
+  Lagna") and **always use bare ordinals** — never the category words. That register split is
+  the most consistent habit in the book and is what decides it.
+- **The "But" argument is refuted.** HTJAH-II:2905 offers *"If the 8th lord is **weak or**
+  placed in the 6th/8th/12th from Navamsa Lagna, the intensity is reduced"* — weakness and
+  navamsa-dusthana as interchangeable alternatives for the SAME mitigation. So the "But" at 2967
+  negates **weakness**, and its negation is **fortification**: a strength contrast, not a frame
+  continuation.
+- **HTJAH-II:7923 fixes the idiom**: *"If the 9th lord is in a kendra or the 11th house or
+  aspects the 9th house **or is otherwise fortified**"* — kendra-occupation enumerated as a
+  member of the class *fortified*.
+
+**Verdict: D1 at MEDIUM — and MOOT for encoding at HIGH.** Both candidate frames agree the
+operative content is *8th lord strong -> evil intensified*, which is exactly what H8.L.5 already
+ships with no positional qualifier. **Do not add a kendra/trikona predicate on either frame**:
+on D1 it is satisfied by construction (H8.L.5) or unsatisfiable (H8.L.6); on D9 it would be the
+only unmarked-navamsa reference in the corpus. H8.L.6's tag is carried as PROSE, labelled as
+idiom.
+
+### The scale, measured — this is not an H8 problem
+
+A lexical triage over all 776 evaluable rules (TRIAGE ONLY; it orders the queue, it never
+adjudicates a slot):
+
+| antecedent type parked in a strength slot | rules |
+|---|---|
+| placement / varga | 59 |
+| conjunction | 44 |
+| affliction | 43 |
+| a different planet's condition | 15 |
+
+**148 of 776 (19%), in all twelve houses** — H8 27, H2 20, H12 18, H9 16, H1/H7/H11 14 each.
+The reviews landed on H8 because that is where we looked.
+
+**The bounded sub-queue the opened varga gate unblocks: 9 rules** state a varga placement as an
+antecedent in a strength slot WITHOUT encoding it (nine others already encode theirs correctly):
+`H2.L.7, H2.C.57, H8.L.2 (fixed), H8.P.Venus, H9.L.9, H9.B.23, H9.B.29, H10.L.3, H10.P.Saturn`.
+Two are already self-annotated as misfiled — H10.P.Saturn reads "(a configuration, not an
+affliction)", H8.P.Venus "(affliction in substance, though Raman does not use the word)". Note
+H9.B.23 also wants a **malefic shashtyamsa (D60)**, which stays BLOCKED on source attribution.
+
+### Machinery gaps, ranked by how many split-offs they block
+
+1. **No Shadbala `IsPowerful`/`IsWeak` Condition exists** in `conditions.py`. Blocks H8.L.6b and
+   H8.L.9d, and the documented dignity proxy is provably unusable for both (above). This is the
+   single highest-value predicate to build next.
+2. **No generalised planet-affliction predicate** — `_MaleficAfflictsLagnaLord`
+   (`house_01_lagna/combinations_core.py:99`) hardcodes the Lagna lord. Blocks six split-offs
+   (H8.L.1b, H8.L.5b, H8.L.6a, H8.L.9c, H8.L.10a, H8.L.12c).
+3. **`ClassInHouseFrom` has no subject-exclusion set** — it counts the very lords the rule is
+   about inside its benefic/malefic quantifier, so "benefics joining the 8th lord" is satisfied
+   by the 8th and 9th lords themselves whenever either is a benefic. Blocks H8.L.9a/9b/12a.
+4. **`InVargaHouseFrom` — exists and is proven**, and unblocked three of the four missing D9
+   mitigations immediately. This is what the varga gate was opened for.
+
+### FIXED in passing: a condition that was silently always False
+
+`InHouseClass.evaluate` read `chart.planets` directly, so a `"LORD_OF:n"` subject resolved to
+`None` and the condition **returned False for every chart ever cast**. H8.L.12b would have been
+a dead rule that looks alive. Every sibling condition already routed through `_resolve_planet`;
+this one was simply inconsistent. Static names pass through unchanged, so no shipped rule
+changed behaviour — pinned by a test.
+
+### Measurement
+
+**5 VERDICT changes** — the first verdict movement of the milestone: four degree-only
+(mild -> strong on H8/longevity) and one grade change (HTJAH-II.x146 H8/death,
+afflicted -> mixed). All trace to H8.L.12b, which fires on 15 charts. **The ratchet is UNMOVED
+at 286/397 exact, 362/397 within-1, 35 inversions** — no moved verdict falls on a scored row.
+Liveness `never_fired` UNCHANGED at 62: all four new evaluable rules fire.
+
+Both gates therefore pass independently: doctrinally validated at HIGH confidence, and
+empirically neutral. Had they conflicted, the citation would have won — that is the standing
+rule, and the H8 re-base of 2026-09-01 is the precedent.
+
+### Still open
+
+- The **remaining 8 rules** of the varga sub-queue, and the wider 148-rule triage. One reviewed
+  sweep per house, not per rule.
+- **`RuleRecord.fortified` is annotated `str`** (`doctrine/rules.py:37`) while `afflicted` and
+  `general` are `Optional[str]`, and eleven records now pass `fortified=None`. Runtime is fine
+  (`fire_rules` tests truthiness); the annotation is simply wrong.
+- **A polarity/display mismatch worth its own pass**: H8.L.6 carries `polarity="neutral"` and
+  H8.L.12 `polarity="malefic"`, though both entries now open with an unconditioned Rajayoga in
+  `general`. Slot moves cannot change a verdict (bucketing is on `polarity` alone), but a
+  Rajayoga displayed under a malefic-bucketed record is visible to a reader.

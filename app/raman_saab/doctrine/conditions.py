@@ -31,6 +31,7 @@ from typing import Any, Callable, Sequence
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart.varga import navamsa_sign as _navamsa_sign
+from app.raman_saab.chart.varga import varga_sign_by_name as _varga_sign_by_name
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.primitives import bhangas, nakshatra
 from app.raman_saab.primitives import relationships as _rel
@@ -101,26 +102,31 @@ def _origin_house(origin: object, chart: RamanChart) -> int | None:
     return p.rasi_house if p else None
 
 
-def _origin_varga_sign(origin: object, chart: RamanChart) -> int | None:
-    """The D9 mirror of `_origin_house`: resolve a frame origin to its NAVAMSA sign
-    (1..12). "LAGNA" -> navamsa of the ascendant degree; "MOON"/planet name -> that
-    planet's `navamsa_sign`; int n -> the nth sign from the navamsa Lagna;
-    "LORD_OF:n" -> the navamsa sign held by the D1 lord of house n (Raman's "in the
-    Navamsha from the sign held by the 2nd lord", HTJAH-I:1717-1718). Returns None
-    if a referenced planet is absent (sparse Track-B charts)."""
+def _origin_varga_sign(origin: object, chart: RamanChart, varga: str = "D9") -> int | None:
+    """The varga mirror of `_origin_house`: resolve a frame origin to its sign (1..12)
+    IN `varga`. "LAGNA" -> the varga of the ascendant degree; "MOON"/planet name -> that
+    planet's varga sign; int n -> the nth sign from the varga Lagna; "LORD_OF:n" -> the
+    varga sign held by the **D1** lord of house n (Raman's "in the Navamsha from the sign
+    held by the 2nd lord", HTJAH-I:1717-1718 — the lord is identified in the rasi, then
+    located in the varga). Returns None if a referenced planet is absent (sparse Track-B
+    charts).
+
+    `varga` defaults to "D9" so the 50 existing navamsa rules read unchanged at the call
+    site; it is not a claim that D9 is privileged.
+    """
     if origin == "LAGNA":
-        return _navamsa_sign(chart.asc_lon)
+        return _varga_sign_by_name(chart.asc_lon, varga)
     if origin == "MOON":
         m = chart.planets.get("Moon")
-        return m.navamsa_sign if m else None
+        return _planet_varga_sign(m, varga) if m else None
     if isinstance(origin, int):
-        nav_lagna = _navamsa_sign(chart.asc_lon)
-        return ((nav_lagna - 1) + (origin - 1)) % 12 + 1
+        varga_lagna = _varga_sign_by_name(chart.asc_lon, varga)
+        return ((varga_lagna - 1) + (origin - 1)) % 12 + 1
     if isinstance(origin, str) and origin.startswith(_LORD_OF_PREFIX):
         p = chart.planets.get(_lord_of(_parse_lord_of(origin), chart))
-        return p.navamsa_sign if p else None
+        return _planet_varga_sign(p, varga) if p else None
     p = chart.planets.get(origin)          # a planet name
-    return p.navamsa_sign if p else None
+    return _planet_varga_sign(p, varga) if p else None
 
 
 def _house_from(rasi_house: int, origin_house: int) -> int:
@@ -378,12 +384,19 @@ class InHouseFrom(Condition):
 
 
 class InHouseClass(Condition):
-    """Planet sits in a house of class `klass` ∈ {kendra,trikona,dusthana,upachaya,maraka} (H6)."""
+    """Planet sits in a house of class `klass` ∈ {kendra,trikona,dusthana,upachaya,maraka} (H6).
+
+    `planet` accepts a "LORD_OF:n" reference as well as a static name (2026-09-02). It read
+    `chart.planets` directly before, so a "LORD_OF:n" subject resolved to None and the
+    condition was SILENTLY ALWAYS FALSE — a dead rule that looks alive. Every sibling
+    condition already routed through `_resolve_planet`; this one was simply inconsistent.
+    Static names pass through unchanged, so no shipped rule changes behaviour.
+    """
     def __init__(self, planet: str, klass: str) -> None:
         self.planet, self.klass = planet, klass
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.rasi_house in _HOUSE_CLASS[self.klass]
 
 
@@ -402,18 +415,46 @@ class ClassInHouseFrom(Condition):
                    for name, p in ctx.chart.planets.items())
 
 
-# ── varga overlays (C2, D9 only for now) ─────────────────────────────────────
-_SUPPORTED_VARGAS = frozenset({"D9"})
+# ── varga overlays (C2) ──────────────────────────────────────────────────────
+#: Vargas a rule CONDITION may test. This is the doctrine-language gate, and it is
+#: deliberately narrower than the chart layer's `SUPPORTED_VARGAS` (all 16 Shodashavarga,
+#: every one of which the engine already casts). Widening it does not add astronomy — it
+#: widens what a Raman rule is able to SAY.
+#:
+#: **"D1" is the Rasi/radix, not a derived varga** (see `chart.varga.VARGA_NUMBERS`). It is
+#: admitted so a condition can address the natal chart through the same predicate, but a rule
+#: carrying varga="D1" is an ordinary natal rule.
+#:
+#: **D60 is deliberately ABSENT.** The shashtyamsa's named classes (Ghora, Rakshasa,
+#: Kulaghna, Devaloka …) appear in no citable Raman source — checked across HTJAH I & II,
+#: HPA and GBB, whose "Shashtiamsa" occurrences are the UNIT of Shadbala (1/60 rupa), an
+#: unrelated meaning. Admitting D60 here would invite encoding that table from a non-Raman
+#: classic, which the source firewall forbids. Seven rules stay parked on this; that is the
+#: correct state, not a gap to close. See DOCTRINE_BACKLOG "D60 named-class doctrine".
+_SUPPORTED_VARGAS = frozenset({"D1", "D3", "D7", "D9", "D10", "D12", "D16", "D30"})
 
 # Varga dignity vocabulary. NOTE: 'moolatrikona' is deliberately absent — it is a
 # D1 degree-range concept (sign + degree span, primitives.relationships.MOOLATRIKONA);
-# a navamsa position carries no degree-within-sign, so it cannot be tested in a varga.
+# a varga position carries no degree-within-sign, so it cannot be tested in a varga.
 _VARGA_DIGNITY_STATES = frozenset({"exalt", "debil", "own", "friend", "neutral", "enemy"})
 
 
 def _check_varga(varga: str) -> None:
     if varga not in _SUPPORTED_VARGAS:
         raise ValueError(f"unsupported varga {varga!r}; supported: {sorted(_SUPPORTED_VARGAS)}")
+
+
+def _planet_varga_sign(p: object, varga: str) -> int | None:
+    """A planet's sign in `varga`, or None if it carries no longitude.
+
+    D9 is NOT special-cased. `PlanetPos.navamsa_sign` is set to `varga.navamsa_sign(lon)` by
+    both constructors (`chart/adapter.py:46`, `chart/model.py:107`) and `_VARGA_FN[9]` is that
+    same function, so reading it through the named API returns an identical value — pinned for
+    every planet of every golden by `test_varga_conditions.TestPrimitiveEquality`. One path for
+    all vargas beats a bridge that could quietly diverge.
+    """
+    lon = getattr(p, "lon", None)
+    return None if lon is None else _varga_sign_by_name(float(lon), varga)
 
 
 class InVargaHouseFrom(Condition):
@@ -425,8 +466,8 @@ class InVargaHouseFrom(Condition):
     "LAGNA" = the navamsa Lagna (navamsa of the ascendant degree); "MOON"/planet
     name = that planet's navamsa sign; int n = the nth sign from the navamsa Lagna;
     "LORD_OF:n" = the D1 lord of house n located by its navamsa sign. `houses` is a
-    single int or an iterable of ints. Only varga="D9" is implemented (constructor
-    raises for anything else)."""
+    single int or an iterable of ints. `varga` may be any member of `_SUPPORTED_VARGAS`;
+    BOTH endpoints are resolved in that same varga, never mixed across charts."""
     def __init__(self, planet: str, origin: object, houses: int | Sequence[int] | set[int],
                  varga: str = "D9") -> None:
         _check_varga(varga)
@@ -436,33 +477,36 @@ class InVargaHouseFrom(Condition):
 
     def evaluate(self, ctx: EvalContext) -> bool:
         p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
-        ov = _origin_varga_sign(self.origin, ctx.chart)
-        return (p is not None and ov is not None
-                and _house_from(p.navamsa_sign, ov) in self.houses)
+        ov = _origin_varga_sign(self.origin, ctx.chart, self.varga)
+        pv = _planet_varga_sign(p, self.varga) if p is not None else None
+        return pv is not None and ov is not None and _house_from(pv, ov) in self.houses
 
 
-def _varga_dignity(planet: str, nav_sign: int) -> str:
-    """Dignity from the D9 sign alone ∈ {exalt, debil, own, friend, neutral, enemy}.
-    friend/neutral/enemy use the NAISARGIKA (natural) relation to the D9 sign's lord
-    only — temporal friendship is a D1 rasi-house-distance concept and would smuggle
-    D1 state into a varga predicate. Nodes are 'neutral' (Raman judges them by sign/
-    conjunction, not dignity — mirrors primitives.dignity)."""
+def _varga_dignity(planet: str, varga_sign: int) -> str:
+    """Dignity from a VARGA sign alone ∈ {exalt, debil, own, friend, neutral, enemy}.
+
+    Varga-agnostic by construction: it reads a sign, not a chart, so the same function
+    serves D9, D10, D30 or any other division. friend/neutral/enemy use the NAISARGIKA
+    (natural) relation to that sign's lord only — temporal friendship is a D1
+    rasi-house-distance concept and would smuggle D1 state into a varga predicate. Nodes
+    are 'neutral' (Raman judges them by sign/conjunction, not dignity — mirrors
+    primitives.dignity)."""
     if planet in ("Rahu", "Ketu"):
         return "neutral"
-    if nav_sign == _rel.EXALTATION[planet][0]:
+    if varga_sign == _rel.EXALTATION[planet][0]:
         return "exalt"
-    if nav_sign == _rel.DEBILITATION[planet][0]:
+    if varga_sign == _rel.DEBILITATION[planet][0]:
         return "debil"
-    lord = SIGN_LORDS[nav_sign]
+    lord = SIGN_LORDS[varga_sign]
     if lord == planet:
         return "own"
     return _rel.naisargika(planet, lord)
 
 
 class VargaDignity(Condition):
-    """Planet's D9-sign dignity is one of `states` ⊆ {exalt, debil, own, friend,
+    """Planet's dignity IN `varga` is one of `states` ⊆ {exalt, debil, own, friend,
     neutral, enemy} (C2). 'moolatrikona' is rejected at construction — see
-    `_varga_dignity`. Only varga="D9" is implemented."""
+    `_varga_dignity`. `varga` may be any member of `_SUPPORTED_VARGAS`."""
     def __init__(self, planet: str, varga: str, states: set[str]) -> None:
         _check_varga(varga)
         unknown = set(states) - _VARGA_DIGNITY_STATES
@@ -474,7 +518,8 @@ class VargaDignity(Condition):
     def evaluate(self, ctx: EvalContext) -> bool:
         subj = _resolve_planet(self.planet, ctx.chart)
         p = ctx.chart.planets.get(subj)
-        return p is not None and _varga_dignity(subj, p.navamsa_sign) in self.states
+        vs = _planet_varga_sign(p, self.varga) if p is not None else None
+        return vs is not None and _varga_dignity(subj, vs) in self.states
 
 
 # ── relations (C6, H1, mutual) ───────────────────────────────────────────────

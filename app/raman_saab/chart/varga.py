@@ -178,6 +178,33 @@ def varga_sign(lon: float, n: int) -> int:
     except KeyError:
         raise ValueError(f"unsupported varga D{n}; supported: {sorted(SUPPORTED_VARGAS)}") from None
 
+
+#: Canonical varga NAME -> division number, owned by the chart layer beside the functions
+#: that implement it. Doctrine code addresses a varga by NAME and never by harmonic number,
+#: because the question a rule asks is "this planet's D10 sign per the engine's canonical
+#: implementation", not "compute the tenth harmonic". Keeping the mapping here means an audit
+#: of any varga's CONVENTION (the several published schemes for D30 and D60 differ) changes
+#: one file, and no caller has to be re-checked for a hand-copied number.
+#:
+#: **D1 is the Rasi — the radix chart — not a derived varga.** It is addressable here so that
+#: callers can ask for a sign uniformly, but a rule whose varga is "D1" is an ordinary natal
+#: rule and must not be described, named or reviewed as a varga rule.
+VARGA_NUMBERS: dict[str, int] = {f"D{n}": n for n in sorted(_VARGA_FN)}
+
+
+def varga_sign_by_name(lon: float, varga: str) -> int:
+    """Sign (1..12) a longitude occupies in the NAMED divisional chart ("D9", "D10", ...).
+
+    The name-addressed twin of `varga_sign`. Doctrine conditions use this one; `varga_sign`
+    stays for callers that genuinely hold a division number (the varga_judge's 16-chart sweep).
+    """
+    try:
+        n = VARGA_NUMBERS[varga]
+    except (KeyError, TypeError):
+        raise ValueError(
+            f"unknown varga {varga!r}; known: {sorted(VARGA_NUMBERS)}") from None
+    return _VARGA_FN[n](lon)
+
 def nakshatra_pada(lon: float) -> tuple[int, int]:
     nak = int(lon // _NAK_SPAN) + 1                   # 1..27
     pada = int((lon % _NAK_SPAN) // _PADA_SPAN) + 1   # 1..4

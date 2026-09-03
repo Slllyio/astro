@@ -87,7 +87,15 @@ def _branch(rule: RuleRecord, chart: RamanChart) -> str:
     strong = shadbala_total.is_powerful(subject, p.shadbala_rupas.total / 60.0)
     if strong:
         return "fortified"
-    return "afflicted" if rule.afflicted else "fortified"
+    if rule.afflicted:
+        return "afflicted"
+    # A WEAK subject must never be routed to the FORTIFIED reading while Raman's
+    # unconditioned one is available (2026-09-02). The old fallback did exactly that, so a
+    # rule recording only a strength-conditioned upside — H8.L.5's "if fortified in a kendra
+    # or trikona, the evil results are intensified" — would assert that fortification of a
+    # lord the engine had just measured as weak. Preferring `general` states what Raman says
+    # regardless of strength, which is true of every chart.
+    return "general" if rule.general else "fortified"
 
 
 def fire_rules(chart: RamanChart, rules=ALL_RULES) -> list[FiredRule]:
@@ -107,6 +115,14 @@ def fire_rules(chart: RamanChart, rules=ALL_RULES) -> list[FiredRule]:
                 text, branch = rule.afflicted, "afflicted"
             elif rule.fortified:
                 text, branch = rule.fortified, "fortified"
+            elif rule.general:
+                # Raman's UNCONDITIONED reading beats the opposite pole (2026-09-02). The
+                # chain above falls through to `afflicted` when the preferred slot is empty,
+                # so a chart whose lord is STRONG but whose rule has `fortified=None` was
+                # being shown the affliction reading — a strength claim inverted, not merely
+                # absent. Where the rule records what Raman says regardless of strength,
+                # that is strictly the better answer than his other pole.
+                text, branch = rule.general, "general"
             else:
                 text, branch = (rule.afflicted or ""), "afflicted"
             out.append(FiredRule(rule=rule, branch=branch, text=text))

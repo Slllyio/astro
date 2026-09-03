@@ -69,9 +69,22 @@ class TestInVargaHouseFrom:
         assert C.InVargaHouseFrom("Mars", "MOON", {5}).evaluate(ctx) is False
 
     def test_unsupported_varga_raises_at_construction(self):
-        """Only D9 is implemented; an unknown varga is an encoding error -> ValueError."""
+        """An unadmitted varga is an encoding error -> ValueError.
+
+        AMENDED: this test asserted "only D9 is implemented" and used D10 as its unsupported
+        example. D10 is now admitted — the gate opened to the eight divisions in
+        `_SUPPORTED_VARGAS`, which is a deliberate expansion of what a rule may SAY, not a
+        change to what the engine can compute (it always cast all sixteen). The assertion it
+        was really making — that the gate is closed against anything outside it — is kept,
+        now expressed with D60, which is excluded because its named classes have no citable
+        Raman source. See `test_varga_conditions.TestTheGate`.
+        """
         with pytest.raises(ValueError):
-            C.InVargaHouseFrom("Mars", "LAGNA", {12}, varga="D10")
+            C.InVargaHouseFrom("Mars", "LAGNA", {12}, varga="D60")
+        with pytest.raises(ValueError):
+            C.InVargaHouseFrom("Mars", "LAGNA", {12}, varga="not-a-varga")
+        # and the newly admitted one no longer raises
+        assert C.InVargaHouseFrom("Mars", "LAGNA", {12}, varga="D10").varga == "D10"
 
 
 class TestVargaDignity:

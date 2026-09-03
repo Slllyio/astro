@@ -78,14 +78,49 @@ class TestCorrectlyEncodedHousesWereNotTouched:
 
 
 #: Whole `afflicted` slot was Raman's general reading (review list A).
-RELOCATED_WHOLE = ["H8.L.2", "H8.L.11", "H11.L.1", "H11.L.12",
+#:
+#: **H8.L.2 REMOVED 2026-09-02** — see `RESLOTTED_TO_OWN_RECORD`. Its `fortified` slot held a
+#: pure D9 PLACEMENT clause, which no strength branch can test.
+RELOCATED_WHOLE = ["H8.L.11", "H11.L.1", "H11.L.12",
                    "H12.L.4", "H12.L.5", "H12.L.7", "H12.L.9", "H12.L.10", "H12.L.11"]
 #: Slot MIXED a general reading with a genuine afflicted clause; split, not moved (list B).
-SPLIT = ["H8.L.1", "H8.L.3", "H8.L.4", "H8.L.5", "H8.L.6", "H8.L.7", "H8.L.10",
+#:
+#: **H8.L.5 REMOVED 2026-09-02.** This list's premise — that the clause left behind in
+#: `afflicted` was "the clause Raman really does condition on affliction" — was right about
+#: the TEXT and wrong about the SLOT. `_branch` selects `afflicted` on weak Shadbala, so the
+#: slot means "the subject is weak", and Raman conditions that clause on "If the affliction
+#: is heavy" — a malefic-influence test, not a strength test. An engine-blind review returned
+#: REVERSAL; the clause moved to the descriptive H8.L.5b and the slot is now correctly empty,
+#: because this entry gives no weak-lord reading at all. H8.L.1 STAYS in the list: its slot
+#: now carries Raman's genuine weak-lord sentence ("the intensity of the misfortune is
+#: reduced"), which is what this test was always trying to assert. See
+#: `test_h8_slot_reversal.py`.
+#: **H8.L.6 and H8.L.10 REMOVED 2026-09-02** — both had Raman's UNCONDITIONED headline
+#: sentence sitting in `fortified` (H8.L.6's Rajayoga, H8.L.10's "may ALSO confer unexpected
+#: gains", which restates the placement as its antecedent). That is not a false assertion but
+#: a wrong WITHHOLDING: weak-lord charts never saw Raman's main reading.
+SPLIT = ["H8.L.1", "H8.L.3", "H8.L.4", "H8.L.7",
          "H10.L.12", "H11.L.7", "H11.L.8", "H12.L.2", "H12.L.3"]
+#: Re-slotted once the STRENGTH and AFFLICTION axes were separated (2026-09-02, two
+#: engine-blind reviews, 7 rules REVERSAL out of 7 examined). `_branch` selects `afflicted`
+#: on weak Shadbala, so the slot is a STRENGTH label; every clause below was gated on
+#: something a strength branch cannot test — an affliction, a conjunction, a varga placement,
+#: or another planet entirely. Each maps to the record its displaced clause moved to.
+RESLOTTED_TO_OWN_RECORD = {
+    "H8.L.2": "H8.L.2a",     # D9 placement mitigation
+    "H8.L.5": "H8.L.5b",     # "If the affliction is heavy"
+    "H8.L.6": "H8.L.6a",     # "If afflicted" + the kendra/trikona idiom
+    "H8.L.10": "H8.L.10a",   # the 2nd lord afflicted AND joining — half the antecedent was lost
+    "H8.L.12": "H8.L.12a",   # "If benefics join" — a conjunction, not a strength test
+}
 #: Raman really does give an afflicted reading here (list C). Untouched, by construction.
+#:
+#: **H8.L.9 REMOVED — the rule no longer exists.** Not one of its sentences was gated on the
+#: 8th lord's strength, so the base record had nothing legitimate to say; its content lives in
+#: H8.L.9a..e. **H8.L.12 REMOVED** — its `afflicted` welded a conjunction test ("If benefics
+#: join") to an influence test ("If afflicted by malefics"); neither is a strength test.
 LEFT_ALONE = ["H6.L.1", "H6.L.2", "H6.L.3", "H6.L.7", "H6.L.12",
-              "H8.L.8", "H8.L.9", "H8.L.12",
+              "H8.L.8",
               "H10.L.2", "H10.L.3", "H10.L.4", "H10.L.7", "H10.L.11",
               "H11.L.2", "H11.L.3", "H11.L.5", "H11.L.6", "H11.L.10",
               "H12.L.6", "H12.L.12"]
@@ -114,6 +149,21 @@ class TestHouses8To12SlotMapping:
         assert rule.general, f"{rule_id} lost Raman's general reading"
         assert rule.afflicted, f"{rule_id} lost its genuine afflicted clause"
         assert rule.general != rule.afflicted, rule_id
+
+    @pytest.mark.parametrize("rule_id,heir", sorted(RESLOTTED_TO_OWN_RECORD.items()))
+    def test_a_reslotted_clause_kept_its_general_half_and_found_a_home(
+            self, rule_id: str, heir: str) -> None:
+        """The split's general half must survive, and the displaced half must exist
+        somewhere — vacating a wrong slot without re-homing the text would trade a false
+        display for a missing one."""
+        rule = _rule(rule_id)
+        assert rule.general, f"{rule_id} lost Raman's general reading"
+        assert rule.afflicted is None, (
+            f"{rule_id} still holds an affliction-gated clause in the weak-strength slot")
+        moved = _rule(heir)
+        assert any((getattr(moved, s) or "").strip()
+                   for s in ("general", "fortified", "afflicted")), (
+            f"{heir} is empty — the displaced clause was lost, not re-homed")
 
     @pytest.mark.parametrize("rule_id", LEFT_ALONE)
     def test_correctly_encoded_rules_were_not_swept_up(self, rule_id: str) -> None:

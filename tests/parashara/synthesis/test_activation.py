@@ -41,7 +41,8 @@ class TestWindowQuality:
         # Sun debilitated in Libra (7); MD lord Venus in Taurus (2): 3rd-from is (7-2)%12+1 = 6...
         # pick Mars in Capricorn? Mars EXALTS there. Use Jupiter debilitated in Capricorn (10),
         # MD lord Saturn in Scorpio (8): ad_from_md = (10-8)%12+1 = 3 -> position 0, dignity -1.
-        ch = _chart(1, {"Saturn": 8, "Jupiter": 10})
+        # Sagittarius lagna keeps Jupiter (Capricorn) in the 2nd from the Ascendant — no lagna vote.
+        ch = _chart(9, {"Saturn": 8, "Jupiter": 10})
         quality, ad_from_md, dig = window_quality(ch, "Saturn", "Jupiter")
         assert ad_from_md == 3 and dig == -1 and quality == "adverse"
 
@@ -50,9 +51,24 @@ class TestWindowQuality:
         # MD lord Sun in Virgo (6); Saturn exalted in Libra (7): ad_from_md = (7-6)%12+1 = 2...
         # need 6/8/12-from. Sun in Pisces (12), Saturn in Libra (7): (7-12)%12+1 = 8 -> pos -1,
         # dignity +1 (exalted) -> mixed.
-        ch = _chart(1, {"Sun": 12, "Saturn": 7})
+        # Virgo lagna keeps Saturn (Libra) in the 2nd from the Ascendant — no lagna vote.
+        ch = _chart(6, {"Sun": 12, "Saturn": 7})
         quality, ad_from_md, dig = window_quality(ch, "Sun", "Saturn")
         assert ad_from_md == 8 and dig == 1 and quality == "mixed"
+
+    def test_ascendant_frame_votes(self):
+        """AD lord in a trikona FROM THE ASCENDANT lifts an otherwise silent window auspicious
+        (BPHS-57:237): Aquarius lagna, Mercury in Gemini = the 5th; 3rd from the MD lord Jupiter."""
+        ch = _chart(11, {"Jupiter": 1, "Mercury": 3})
+        quality, ad_from_md, _ = window_quality(ch, "Jupiter", "Mercury")
+        assert ad_from_md == 3 and quality == "auspicious"
+
+    def test_venus_in_saturn_with_venus_in_lagna_is_not_adverse(self):
+        """The verse's own case: Venus in the lagna (kendra) during Saturn's dasa is promised
+        'marriage, birth of a son' (BPHS-57:228) — even 12th from Saturn it must not read adverse."""
+        ch = _chart(8, {"Saturn": 9, "Venus": 8})
+        quality, ad_from_md, _ = window_quality(ch, "Saturn", "Venus")
+        assert ad_from_md == 12 and quality == "mixed"
 
     def test_own_dasha_bhukti_rides_on_dignity(self):
         """The MD lord's own AD counts position 1 (kendra); own-sign dignity lifts it auspicious."""

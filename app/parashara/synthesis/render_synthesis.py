@@ -150,6 +150,7 @@ def _evidence_dict(e) -> dict:
 def _window_dict(w: ActiveWindow) -> dict:
     return {"maha_lord": w.maha_lord, "antar_lord": w.antar_lord, "quality": w.quality,
             "md_quality": w.md_quality, "ad_from_md": w.ad_from_md,
+            "ad_from_lagna": w.ad_from_lagna,
             "maraka": w.maraka, "beyond_span": w.beyond_span,
             "start_age": round(w.start_age, 2), "end_age": round(w.end_age, 2), "label": w.label}
 

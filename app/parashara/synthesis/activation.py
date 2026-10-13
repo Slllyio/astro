@@ -54,6 +54,11 @@ AD_QUALITY_SOURCE: Final[Citation] = Citation("BPHS-53", 364)
 AD_ADVERSE_SOURCE: Final[Citation] = Citation("BPHS-53", 375)
 #: AD lord exalted / in own house -> auspicious (the Sun's AD in his own dasha, sl.1-3).
 AD_DIGNITY_SOURCE: Final[Citation] = Citation("BPHS-52", 45)
+#: AD lord in kendra/trikona/11th -> auspicious ("marriage, birth of a son ..."; Venus AD in Saturn's
+#: dasa, sl.24-27) — the ASCENDANT frame; its adverse twin names the frame outright: "the 6th, the
+#: 8th or the 12th (from the Ascendant)" (sl.28-29, BPHS-57:257).
+AD_LAGNA_SOURCE: Final[Citation] = Citation("BPHS-57", 237)
+AD_LAGNA_ADVERSE_SOURCE: Final[Citation] = Citation("BPHS-57", 257)
 #: Maraka periods "will bring death ... depending on whether he has a long, medium or short life".
 MARAKA_PERIOD_SOURCE: Final[Citation] = Citation("BPHS-44", 51)
 
@@ -61,6 +66,10 @@ MARAKA_PERIOD_SOURCE: Final[Citation] = Citation("BPHS-44", 51)
 #: adverse (the dusthanas) — BPHS-53:364 / :375. The 3rd and 12th-as-counted carry no position vote.
 _AUSPICIOUS_FROM_MD: Final[frozenset[int]] = frozenset({1, 2, 4, 5, 7, 9, 10, 11})
 _ADVERSE_FROM_MD: Final[frozenset[int]] = frozenset({6, 8, 12})
+#: AD-from-lagna houses that are auspicious: kendra, trikona, the 11th (BPHS-57:237; also 57:42-43,
+#: :99, :330, 56:41, :338 — kendra/trikona "from the Ascendant"). The adverse set is 6/8/12
+#: (BPHS-57:257, "from the Ascendant"). BPHS-52:44-47 ("the 11th, Kendra or trikona") states NO frame.
+_AUSPICIOUS_FROM_LAGNA: Final[frozenset[int]] = frozenset({1, 4, 5, 7, 9, 10, 11})
 
 #: Quality rank for sorting — best first.
 QUALITY_RANK: Final[Mapping[str, int]] = {"auspicious": 0, "mixed": 1, "neutral": 2, "adverse": 3}
@@ -74,6 +83,7 @@ class ActiveWindow:
     quality: str              # auspicious | mixed | neutral | adverse (the AD rule, ch.52-60)
     md_quality: str           # favourable | unfavourable | neutral (the MD rule, BPHS-47:76)
     ad_from_md: int           # the AD lord's house counted from the MD lord (1..12)
+    ad_from_lagna: int        # the AD lord's house counted from the Ascendant (1..12)
     start_age: float          # years after birth (clipped at 0)
     end_age: float
     maraka: bool              # a maraka planet's period (BPHS-44:51) — classically sensitive
@@ -89,8 +99,14 @@ class ActiveWindow:
         if self.beyond_span:
             flags.append("beyond the computed Nisargayu span")
         note = f" ({'; '.join(flags)})" if flags else ""
+        why = (f" [{self.antar_lord} {_ord(self.ad_from_lagna)} from the lagna, "
+               f"{_ord(self.ad_from_md)} from {self.maha_lord}]") if self.ad_from_lagna else ""
         return (f"{self.antar_lord} periods within the {self.maha_lord} dasha, {age} — "
-                f"{self.quality}{note}")
+                f"{self.quality}{why}{note}")
+
+
+def _ord(n: int) -> str:
+    return f"{n}{'st' if n == 1 else 'nd' if n == 2 else 'rd' if n == 3 else 'th'}"
 
 
 def influences(chart: ParasharaChart, planet: str, house: int, *, signs=None) -> bool:
@@ -138,25 +154,47 @@ def window_quality(chart: ParasharaChart, md_lord: str, ad_lord: str, *, signs=N
                    ) -> tuple[str, int, int]:
     """(quality, ad_from_md, dignity_vote) for one (MD, AD) pair — BPHS's own antardasha grading.
 
-    Position vote: +1 if the AD lord sits in a kendra/trikona/2nd/11th from the MD lord
-    (BPHS-53:364), -1 in the 6th/8th/12th from it (BPHS-53:375). Dignity vote: `_dignity_vote`.
+    BPHS reckons the AD lord's position in TWO frames, and its verses use both (e.g. Venus's AD in
+    Saturn's dasa, BPHS-57:228-280: good "if Venus be in kendra, trikona or the 11th", bad in "the
+    6th, the 8th or the 12th (from the Ascendant)", and further good "if Venus be in the 9th, the 11th
+    or kendra from the lord of the Dasa"). Three votes, summed:
+      * lagna vote — AD lord in a kendra/trikona/11th from the Ascendant +1, in 6/8/12 -1
+        (BPHS-57:237 / :257 and many sibling verses);
+      * MD vote — AD lord in a kendra/trikona/2nd/11th from the MD lord +1, 6/8/12 -1
+        (BPHS-53:364 / :375);
+      * dignity vote — `_dignity_vote` (exalted/own +1, debilitated -1).
     quality: sum > 0 auspicious; sum < 0 adverse; opposed non-zero votes mixed; else neutral.
-    The MD lord's own antardasha (ad == md) counts position 1 (a kendra) — its quality then rides
-    on the lord's dignity, matching ch.52's "in his own Dasa" clauses.
+    The frames are co-equal in the text (verses join them with "or": 57:343, :541; 56:418), and
+    BPHS gives no combination rule, so equal weight is an inference and opposed frames read "mixed"
+    — the verses themselves promise both pairs of effects. Added 2026-10-13 (doctrine review
+    REVISE -> shipped with these disclosures); the MD-frame-only v2 was incomplete.
+
+    KNOWN APPROXIMATIONS (named, not silent): the verses' qualifiers are ignored — good clauses often
+    need "associated with or aspected by benefics" / "endowed with strength", bad ones "weak and..." /
+    "associated with malefics" (errs both ways); the 11th (lagna frame) and the 6th (adverse) are
+    applied uniformly though pair-specific (several adverse lagna clauses name only the 8th/12th:
+    57:61, :181, :343, :486). FOLLOW-UPS: node pair overrides (Ketu in Saturn's dasa evil "even if in
+    kendra or trikona", 57:153; Rahu's first two months in Sun's dasa, 52:210; Ketu 2nd/7th, 57:185);
+    a combustion adverse vote (57:256, :486, 56:107 — `primitives/combustion.py` exists); per-pair
+    verse tables for the 81 (MD, AD) combinations.
     """
     signs = signs or planet_signs(chart)
     md_sign, ad_sign = signs.get(md_lord), signs.get(ad_lord)
     if md_sign is None or ad_sign is None:
         return "neutral", 0, 0
     ad_from_md = ((ad_sign - md_sign) % 12) + 1
-    pos = 1 if ad_from_md in _AUSPICIOUS_FROM_MD else -1 if ad_from_md in _ADVERSE_FROM_MD else 0
+    ad_from_lagna = ((ad_sign - chart.asc_sign) % 12) + 1
+    md_vote = 1 if ad_from_md in _AUSPICIOUS_FROM_MD else -1 if ad_from_md in _ADVERSE_FROM_MD else 0
+    lagna_vote = (1 if ad_from_lagna in _AUSPICIOUS_FROM_LAGNA
+                  else -1 if ad_from_lagna in _ADVERSE_FROM_MD else 0)
     dig = _dignity_vote(ad_lord, ad_sign)
-    total = pos + dig
+    votes = (lagna_vote, md_vote, dig)
+    total = sum(votes)
     if total > 0:
         quality = "auspicious"
     elif total < 0:
         quality = "adverse"
-    elif pos != 0 and dig != 0:
+    elif any(v > 0 for v in votes) and any(v < 0 for v in votes):
         quality = "mixed"                                       # opposed votes, disclosed as such
     else:
         quality = "neutral"
@@ -226,6 +264,7 @@ def active_windows(reading: ParasharaReading, houses: Iterable[int]) -> tuple[Ac
             out.append(ActiveWindow(
                 maha_lord=maha_lord, antar_lord=b.lord, quality=quality,
                 md_quality=md_cache[maha_lord], ad_from_md=ad_from_md,
+                ad_from_lagna=((signs[b.lord] - chart.asc_sign) % 12) + 1 if b.lord in signs else 0,
                 start_age=max(0.0, b.start_year), end_age=b.end_year,
                 maraka=maha_lord in maraka_names or b.lord in maraka_names,
                 beyond_span=b.start_year > span))

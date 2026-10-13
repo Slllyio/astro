@@ -37,6 +37,14 @@ Pass bar AUC >= 0.55: none. No test survives BH q=0.10. (Raman's engine, same te
 No instrument was withheld for saturation (Raman's run had to withhold 3 of 5). The cross-chart
 control is now committed code (it was ad hoc in the Raman program).
 
+**Caveat added 2026-10-13 (validation audit; numbers unchanged).** Each row mixes two levels:
+day-dated events are scored against AD windows, year-only events (~83%) against MD windows. At MD
+level the instruments are NOT distinct: `h7_auspicious` and `h7_adverse` share one MD window set,
+and so do `maraka_both` and `maraka_either` (every MD maraka row is `both=True`). So the "both" row
+is not an independent confirmation of the "either" row, and most of each row's n is MD-level.
+The validation program (Phase 3, risk-set timing) reports AD and MD separately and supersedes
+these rows; they stay as published.
+
 ## Reading it honestly
 - This is the same measured truth as the Raman engine: classical indications are abundant enough
   to fit any life and cannot discriminate one — BPHS doctrine faithfully encoded inherits that.

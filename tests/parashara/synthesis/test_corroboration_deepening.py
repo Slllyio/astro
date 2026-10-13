@@ -96,6 +96,31 @@ class TestDeepenedCorroboration:
         assert "prominence is not favour" in md
 
 
+class TestConventionsDoNotVote:
+    """Labeled conventions are disclosed but never vote — only cited doctrine votes."""
+
+    @pytest.fixture(scope="class")
+    def report(self):
+        return synthesize(read(cast(year=1990, month=7, day=15, hour=12, minute=0,
+                                    tz_offset=5.5, latitude=12.97, longitude=77.59)))
+
+    def test_conventions_are_neutral_with_their_lean_shown(self, report):
+        """BAV band, D16/D60-by-sign-lord and off-7th D9 atoms carry no vote, lean in words."""
+        conv = [(h, e) for h, j in report.houses.items() for e in j.evidence
+                if e.condition in ("bav_band", "d16_flourish", "d60_diminish")
+                or (e.condition == "d9_dignity" and h != 7)]
+        assert conv, "the canonical chart should disclose some convention atoms"
+        for _, e in conv:
+            assert e.polarity.name == "NEUTRAL" and not e.counts
+            assert "labeled convention: disclosed, no vote (leans" in e.rule
+
+    def test_d9_still_votes_on_the_seventh(self, report):
+        """BPHS-7 assigns the Navamsa to the spouse, so D9 keeps its vote on the 7th."""
+        for e in report.houses[7].evidence:
+            if e.condition == "d9_dignity":
+                assert e.polarity.name != "NEUTRAL"
+
+
 class TestBavBand:
     """The lord's own Bhinnashtakavarga bindus — observed value cited, band labeled convention."""
 

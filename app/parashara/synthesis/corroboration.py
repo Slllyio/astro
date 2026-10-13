@@ -26,6 +26,7 @@ BPHS-root layer. Reopen if a BPHS per-house arudha rule is located.
 """
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Final
 
 from app.parashara.doctrine.arudha import FINANCE_SOURCE, UPAPADA_SPOUSE_SOURCE
@@ -87,9 +88,11 @@ def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence
     lord = house_lord(reading.chart.asc_sign, house)
     karaka = karaka_of(house)
 
-    # D9 — the fruit lens, for the lord and the karaka.
+    # D9 — the lord's and karaka's navamsa. BPHS-7 assigns the Navamsa to the SPOUSE, so it votes on
+    # the 7th; on every other house it is practice-convention — disclosed, no vote.
     for planet, role in _distinct((lord, "lord"), (karaka, "karaka")):
-        out += _varga_evidence(reading, house, planet, role, "D9", "Navamsa")
+        d9 = _varga_evidence(reading, house, planet, role, "D9", "Navamsa")
+        out += d9 if house == 7 else [_as_disclosure(e) for e in d9]
     # D10 — career lens, added for the 10th house.
     if house == 10:
         out += _varga_evidence(reading, house, karaka, "karaka", "D10", "Dasamsa")
@@ -112,8 +115,9 @@ def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence
             out += _varga_evidence(reading, house, planet, role, tag, gloss.split(" — ")[0],
                                    source=Citation("BPHS-7", line))
 
-    # BPHS-7:62-66 — the per-bhava D60/D16 rule (the lord's amsa decides diminish/flourish).
-    out += _d60_d16_evidence(reading, house, lord)
+    # BPHS-7:62-66 — the per-bhava D60/D16 rule. The rule is cited, but judging an amsa benefic or
+    # malefic by its sign-lord is this layer's convention — disclosed, no vote.
+    out += [_as_disclosure(e) for e in _d60_d16_evidence(reading, house, lord)]
 
     # Vargottama lord/karaka — same sign in D1 and D9 (Saravali, allied — marked in the rule).
     for planet, role in _distinct((lord, "lord"), (karaka, "karaka")):
@@ -128,8 +132,8 @@ def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence
     # Sudarshana — an occupant confirmed in the SAME house from Lagna, Moon and Sun (ch.74).
     out += _sudarshana_evidence(reading, house)
 
-    # The house-lord's own Bhinnashtakavarga bindus in the house sign (band = labeled convention).
-    out += _bav_evidence(reading, house, lord)
+    # The house-lord's own Bhinnashtakavarga bindus — the 4-of-8 band is a convention: disclosed, no vote.
+    out += [_as_disclosure(e) for e in _bav_evidence(reading, house, lord)]
 
     # The chart's MOVABLE (chara) significator for this house's matter (BPHS-32).
     out += _chara_evidence(reading, house, lord)
@@ -140,6 +144,17 @@ def gather_corroboration(reading: ParasharaReading, house: int) -> list[Evidence
     if house in (2, 11):
         out += _finance_evidence(reading, house)
     return out
+
+
+def _as_disclosure(e: Evidence) -> Evidence:
+    """A labeled CONVENTION never votes: only cited doctrine does (user decision 2026-10-13). The
+    atom stays in the audit trail with its lean in words, polarity NEUTRAL. Measured on the report
+    card: muting the four conventions (universal D9, D16/D60-by-sign-lord, BAV band) moved exact
+    79->85 with within-1 and inversions unchanged (dev split better, holdout mixed) — the case rests
+    on the principle, which the data neither demands nor forbids."""
+    lean = "favourable" if e.polarity is Polarity.SUPPORTS else "adverse"
+    return replace(e, polarity=Polarity.NEUTRAL,
+                   rule=f"{e.rule} — a labeled convention: disclosed, no vote (leans {lean})")
 
 
 def _bav_evidence(reading: ParasharaReading, house: int, lord: str) -> list[Evidence]:

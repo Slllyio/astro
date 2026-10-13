@@ -5329,3 +5329,73 @@ planet-in-house ids (`H<h>.P.<Planet>`). No lord-in-house record, new or old, is
 
 H7.L.8 and H7.L.12 are `malefic` parents whose `general` text is now mostly unconditioned and not
 malefic. Polarity drives verdicts, so it is its own measured decision.
+
+
+## ★ THE TWELVE-HOUSE STRENGTH-SLOT SWEEP IS COMPLETE (2026-10-13) — final tally and what it means
+
+Every lord-in-house table (12 houses x 12 entries) has now been read against Raman's printed text by
+an engine-blind reviewer, sentence by sentence, under one fixed question: *does each sentence sit in
+a slot whose selection test matches its own stated antecedent?*
+
+| House | correct | | House | correct |
+|---|---|---|---|---|
+| 1 | 10/12 | | 7 | **0/12** |
+| 2 | 3/12 | | 8 | 0/7 (biased sample) |
+| 3 | 7/12 | | 9 | **1/12** |
+| 4 | 8/12 | | 10 | **0/12** |
+| 5 | 5/12 | | 11 | **1/12** |
+| 6 | 6/12 | | 12 | 5/12 |
+
+**Fairly-sampled total (H8 excluded): 46 of 132 correct (35%).** The HTJAH-II houses (7, 9, 10, 11,
+12) are far worse than the HTJAH-I houses (1-6): 7/60 against 39/72. The likely reason is visible in
+the text: HTJAH-II's entries carry many more mid-entry conditionals, nearly all gated on affliction
+or benefic influence -- which an encoder reading "afflicted" naturally filed in the slot of that
+name.
+
+**The defect, stated once for the record.** `_branch` selects the slot called `afflicted` on WEAK
+Shadbala. It is a strength label. Raman keeps strength and affliction apart (HTJAH-II:3001-3009 runs
+"in strength / weak / afflicted" as three tiers on one entry; HTJAH-I:5121 writes "weak AND
+afflicted"). Every affliction-, conjunction-, aspect-, placement- or identity-gated sentence filed
+there was shown to charts chosen by a test that never examined its antecedent.
+
+**Inversions: only in House 8.** Nowhere else did a slot teach the opposite of its sentence. Outside
+H8 the harm was showing a reading whose condition was never tested, withholding Raman's main reading
+from weak-lord charts, or mislabelling an unconditioned reading as strength-conditioned.
+
+### Net effect on the engine
+
+- **Verdicts:** across all twelve houses, the only verdict changes the doctrine snapshot recorded
+  were the ones already documented (HTJAH-II.x155's H9 abstention, plus the earlier H8.L.12b and H6
+  polarity episodes). Every re-homed record is neutral. **Ratchet unmoved throughout: 286/397 exact,
+  362/397 within-1, 35 inversions.**
+- **Presentation:** thousands of rule-instances now show the sentence whose antecedent the chart
+  actually satisfies.
+- **Records removed** because Raman gives them no unconditioned reading: H8.L.9, H9.L.2, H10.L.10.
+- **Missing doctrine recovered:** dozens of dropped clauses and dropped words, plus section-level
+  sentences encoded nowhere (H9.L.S1/S2, H11.L.S1/S2, H12.L.S1 -- the last a Lagna-lord clause
+  dropped corpus-wide).
+- **Liveness 59 -> 69 over the arc**, every dormant record proved satisfiable by explicit chart.
+
+### What the sweep could NOT encode -- the remaining queue, ranked by how much it unblocks
+
+1. **A Shadbala strength Condition** (strong / weak for any lord or named planet). Blocks the most:
+   every "weak AND afflicted" clause (H7.L.7a, H10.L.10b), every named-planet strength clause
+   (Venus in H6/H7/H12, Mars in H3, the 9th lord in H3/H8), and several fortified-only clauses that
+   would otherwise leak to weak charts (H10.L.10a). It also lets the dignity proxy retire.
+2. **House (bhava) affliction.** Raman often afflicts the HOUSE, not the lord (H10.L.2a, H10.L.11a,
+   H12.L.1c, H7.L.2b, H3.L.6b).
+3. **Middle strength bands** -- every three-tier ladder (H4.L.1a, H11.L.1a, H6.L.9a, H5.L.4a).
+4. **Yoga presence, nakshatra-lord friendship, sign/nakshatra gender, D60 classes** (the last
+   BLOCKED on source attribution).
+
+### Flagged, not acted on
+
+- **Nodal drishti.** The `drishti`/`Aspects` code gives Rahu/Ketu 7th-only aspect, while CLAUDE.md
+  locks "Rahu/Ketu drishti = Jupiter-style 5/9" -- though that lock also says "Not BV Raman (no nodal
+  drishti)". The raman_saab engine appears deliberately Raman-faithful here; confirm with the user
+  before touching either.
+- **Parent polarity mismatches** (H7.L.8, H7.L.12 and similar): `malefic` parents whose `general` is
+  now unconditioned and not malefic. Polarity drives verdicts, so it is its own measured decision.
+- **Corpus-wide axis question** (House 5 review): Raman closes several tables naming a benefic /
+  moderating / malefic NATURE-plus-ASSOCIATION axis, not Shadbala. The sweep kept the project's
+  standing convention ("favourably disposed" = strength); overturning it is a user-signed decision.

@@ -2,6 +2,7 @@
   "H12": {
     "citations": [
       "HTJAH-II:16152",
+      "HTJAH-II:16153",
       "HTJAH-II:16236",
       "HTJAH-II:16252",
       "HTJAH-II:16260",
@@ -22,7 +23,8 @@
       "H12.C.C5",
       "H12.C.E3",
       "H12.C.H2",
-      "H12.L.3"
+      "H12.L.3",
+      "H12.L.3a"
     ],
     "rollup": "afflicted",
     "significations": {

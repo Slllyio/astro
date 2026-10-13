@@ -598,6 +598,25 @@ class AfflictedBy(Condition):
         return False
 
 
+class JoinedBy(Condition):
+    """`planet` shares its rasi house with one of `joiners` -- CONJUNCTION only, no aspect.
+
+    For Raman's "benefics there", "if malefics join": occupancy, not influence. The subject never
+    joins itself, so a house lord that is itself a benefic is not counted as "a benefic joining"
+    (`ClassInHouseFrom` would count it). Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str, joiners: Sequence[str] | set[str]) -> None:
+        self.planet, self.joiners = planet, frozenset(joiners)
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        subject = _resolve_planet(self.planet, ctx.chart)
+        p = ctx.chart.planets.get(subject)
+        return p is not None and any(
+            q.rasi_house == p.rasi_house
+            for name, q in ctx.chart.planets.items()
+            if name in self.joiners and name != subject)
+
+
 def InfluencedBy(planet: str, influencers: Sequence[str] | set[str] = FIRM_BENEFICS,
                  min_count: int = 1) -> AfflictedBy:
     """`planet` is conjunct with or aspected by one of `influencers` — for BENEFIC clauses.

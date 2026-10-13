@@ -92,7 +92,9 @@ class TestCorrectlyEncodedHousesWereNotTouched:
 #:
 #: **H8.L.2 REMOVED 2026-09-02** — see `RESLOTTED_TO_OWN_RECORD`. Its `fortified` slot held a
 #: pure D9 PLACEMENT clause, which no strength branch can test.
-RELOCATED_WHOLE = ["H8.L.11", "H11.L.1", "H11.L.12",
+#: H11.L.1 left 2026-10-13: 14259-14264 is a genuine strong / middling / weak ladder, so its
+#: strength slots now carry the outer tiers (see test_houses_10_to_12_sweep.py).
+RELOCATED_WHOLE = ["H8.L.11", "H11.L.12",
                    "H12.L.4", "H12.L.5", "H12.L.7", "H12.L.9", "H12.L.10", "H12.L.11"]
 #: Slot MIXED a general reading with a genuine afflicted clause; split, not moved (list B).
 #:
@@ -110,8 +112,9 @@ RELOCATED_WHOLE = ["H8.L.11", "H11.L.1", "H11.L.12",
 #: sentence sitting in `fortified` (H8.L.6's Rajayoga, H8.L.10's "may ALSO confer unexpected
 #: gains", which restates the placement as its antecedent). That is not a false assertion but
 #: a wrong WITHHOLDING: weak-lord charts never saw Raman's main reading.
-SPLIT = ["H8.L.1", "H8.L.3", "H8.L.4", "H8.L.7",
-         "H10.L.12", "H11.L.7", "H11.L.8", "H12.L.2", "H12.L.3"]
+#: H10.L.12, H11.L.7, H11.L.8, H12.L.3 left 2026-10-13: their "genuine afflicted clauses" were
+#: gated on affliction or a nakshatra placement, not weakness.
+SPLIT = ["H8.L.1", "H8.L.3", "H8.L.4", "H8.L.7", "H12.L.2"]
 #: Re-slotted once the STRENGTH and AFFLICTION axes were separated (2026-09-02, two
 #: engine-blind reviews, 7 rules REVERSAL out of 7 examined). `_branch` selects `afflicted`
 #: on weak Shadbala, so the slot is a STRENGTH label; every clause below was gated on
@@ -135,7 +138,24 @@ RESLOTTED_TO_OWN_RECORD = {
     "H2.L.12": "H2.L.12a",   # "If the second lord is afflicted"
     "H3.L.4": "H3.L.4c",     # Mars weak -- a different planet
     "H3.L.6": "H3.L.6b",     # the 6th AND 3rd HOUSES afflicted
-    "H3.L.9": "H3.L.9a",     # "When afflicted"     # "If the sixth lord is afflicted" — and all six other sentences
+    "H3.L.9": "H3.L.9a",     # "When afflicted"
+    # 2026-10-13 House 10-12 sweeps (H10 0/12, H11 1/12, H12 5/12)
+    "H10.L.2": "H10.L.2a",   # affliction of the 10th HOUSE
+    "H10.L.3": "H10.L.3a",   # a Navamsa placement
+    "H10.L.4": "H10.L.4a",   # debility / combustion / affliction, not weakness
+    "H10.L.7": "H10.L.7a",   # "If malefics afflict the 10th lord"
+    "H10.L.11": "H10.L.11a", # affliction of the 11th HOUSE
+    "H10.L.12": "H10.L.12b", # "if malefics afflict the 10th lord"
+    "H11.L.2": "H11.L.2b",   # "if malefics join"
+    "H11.L.3": "H11.L.3a",   # "Afflictions give contrary results"
+    "H11.L.5": "H11.L.5a",   # "If the 11th lord is afflicted"
+    "H11.L.6": "H11.L.6a",   # "If the 11th lord is afflicted in the 6th"
+    "H11.L.7": "H11.L.7a",   # "If there are afflictions to the 11th lord"
+    "H11.L.8": "H11.L.8a",   # "a malefic constellation" -- a nakshatra placement
+    "H11.L.10": "H11.L.10a", # the planet's malefic NATURE -- identity, by sign
+    "H12.L.3": "H12.L.3a",   # "If malefics afflict"
+    "H12.L.6": "H12.L.6a",   # "But if malefics afflict the 12th lord"
+    "H12.L.12": "H12.L.12a", # "If malefics afflict the twelfth lord"     # "If the sixth lord is afflicted" — and all six other sentences
                              # were mis-slotted too (2026-09-03 House-6 sweep)
 }
 #: Raman really does give an afflicted reading here (list C). Untouched, by construction.
@@ -150,11 +170,9 @@ RESLOTTED_TO_OWN_RECORD = {
 #: class, and a three-part conjunction — none of them a strength test. The opener count
 #: that ruled this house "correctly encoded throughout" cannot see sentences BETWEEN
 #: openers, which is exactly where the defect lived.
-LEFT_ALONE = ["H6.L.1", "H6.L.2", "H6.L.3", "H6.L.12",
-              "H8.L.8",
-              "H10.L.2", "H10.L.3", "H10.L.4", "H10.L.7", "H10.L.11",
-              "H11.L.2", "H11.L.3", "H11.L.5", "H11.L.6", "H11.L.10",
-              "H12.L.6", "H12.L.12"]
+#: Twelve more left 2026-10-13 (H10/H11/H12 sweeps) -- every one held an affliction-,
+#: occupancy- or identity-gated clause in the weak-strength slot.
+LEFT_ALONE = ["H6.L.1", "H6.L.2", "H6.L.3", "H6.L.12", "H8.L.8"]
 
 
 class TestHouses8To12SlotMapping:

@@ -180,21 +180,26 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 7352)),
     RuleRecord(
         id="H9.L.7a", house=9, signification="fortune", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-14: live on Raman's own stated ascetic-yoga list (HTJAH-II:11025-11053,
+        # doctrine/ascetic_yogas.py); two reviews: encode the stated rules, not his hedged
+        # chart readings -- under-fires. Neutral: refines a parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(9, 7), C.AsceticYogaPresent()),
         general="ascetic yogas present in the chart - the native may seek spiritual "
-                "guidance and fulfilment abroad. TODO(predicate: ascetic / Pravrajya yoga "
-                "presence)",
+                "guidance and fulfilment abroad",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 7354)),
     RuleRecord(
         id="H9.L.7b", house=9, signification="fortune", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-14: 'Asubhayoga -- A combination caused by evil planets' (Raman's
+        # glossary, HTJAH-I:18681-18685); spoiling = joined or aspected by malefics
+        # (HTJAH-I:8434) or papakartari 'with out any benefic influence' (HTJAH-II:975-977).
+        # Two reviews concurred. Neutral: refines a parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(9, 7), C.Or(C.AfflictedBy("LORD_OF:9"), C.And(C.HemmedBy("LORD_OF:9", "malefic"), C.Not(C.InfluencedBy("LORD_OF:9"))))),
         general="asubhayogas spoiling the 9th lord - the father may meet with his death "
-                "abroad. TODO(predicate: an asubha yoga involving the 9th lord; AfflictedBy "
-                "would be an unnamed approximation)",
+                "abroad",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 7356)),

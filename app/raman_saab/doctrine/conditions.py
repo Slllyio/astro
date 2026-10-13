@@ -675,6 +675,14 @@ class HouseAfflictedBy(Condition):
         return hits >= self.min_count
 
 
+class AsceticYogaPresent(Condition):
+    """At least one of Raman's own stated ascetic yogas holds (doctrine/ascetic_yogas.py,
+    HTJAH-II:11025-11053)."""
+    def evaluate(self, ctx: EvalContext) -> bool:
+        from app.raman_saab.doctrine.ascetic_yogas import ascetic_yogas
+        return bool(ascetic_yogas(ctx.chart))
+
+
 class IllDisposed(Condition):
     """`planet` is ILL-DISPOSED: its disposition reads clearly bad -- afflicting testimony and no
     fortifying testimony (doctrine/disposition.py). "Ill disposed" is one of Raman's INFLUENCE

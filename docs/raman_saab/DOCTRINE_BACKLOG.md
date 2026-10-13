@@ -5694,3 +5694,32 @@ Raman's own conditional exception (HTJAH-II:14302-14304); only one is ever displ
 
 Still parked: H7.L.6b ("Venus well placed" -- unclear word), H12.L.2a (enumeration proof).
 **Net:** 0 presentation changes on the goldens, 0 verdict changes, ratchet 286/397, 362/397, 35.
+
+## Ascetic and asubha yogas (2026-10-14) -- H9.L.7a and H9.L.7b live
+
+HTJAH-II:7353-7357 (9th lord in the 7th): "If ascetic yogas are present in the chart, the native may
+seek spiritual guidance and fulfilment abroad. If asubhayogas spoil the ninth lord, the father may
+meet with his death abroad." Two independent engine-blind reviews.
+
+**Ascetic yogas** (`doctrine/ascetic_yogas.py`). Raman's own stated list is HTJAH-II:11025-11053
+(10th-house chapter). His many worked-chart Parivraja readings are loose and hedged ("a slight
+adaptation of ... Brihat Jataka", NH:2388-2390; "some sort of", NH:3863-3864; "Strictly speaking
+no Parivraja yoga", NH:6916-6917) and he cancels the planet-cluster pattern twice (NH:14603,
+14860) -- both reviews: encode the stated rules, not the hedged readings. Encoded: four planets in
+the 10th (minus his Sun-combustion exception), the Moon in a Saturn decanate / Saturn-or-Mars
+navamsa aspected by Saturn, Saturn or the Lagna lord aspecting the Moon-sign lord (strict, no
+identity), the Moon in the 9th unaspected. Not encoded: the strength-graded rules, "five planets
+in a quadrant or trine" (ambiguous), Jupiter-in-9th "holy man". **Base rate: 35% of the goldens hold
+at least one** (84 via the Moon-sign-lord rule) -- Raman's own threshold; the classical-abundance
+mechanism again. Under-fires vs his readings of Buddha, Vivekananda, Sivananda.
+
+**Asubhayoga.** Raman's glossary: "Asubhayoga -- A combination caused by evil planets"
+(HTJAH-I:18681-18685). Reviewer A first said PARK (searched only the HTJAH-II index), reversed on
+seeing the glossary. Encoded as the 9th lord joined or aspected by a natural malefic (HTJAH-I:8434)
+or hemmed between malefics "with out any benefic influence" (HTJAH-II:975-977). Supporting
+definition of affliction (papakartari / malefic aspect / conjunction) is at
+three_hundred_combinations_complete:6567-6570 under combination 199 -- NOT in the registered 3HC
+copy, which ends near combination 162 (flag: the registered copy is incomplete). Fires 27/38.
+
+**Net:** 39 presentation changes (H9.L.7a 12, H9.L.7b 27), 0 verdict changes, ratchet 286/397,
+362/397, 35. Liveness unchanged (both fire).

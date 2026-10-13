@@ -47,6 +47,9 @@ def cmd_extract(a, run: Path) -> int:
 
 def cmd_packets(a, run: Path) -> int:
     items, cache = R.read_jsonl(run / "items.jsonl"), {}
+    if a.tiebreak and not (run / "decisions.jsonl").is_file():
+        print("[packets] --tiebreak needs decisions.jsonl: run ingest first", file=sys.stderr)
+        return 2
     decisions = {d["item_id"]: d for d in R.read_jsonl(run / "decisions.jsonl")} \
         if (run / "decisions.jsonl").is_file() else {}
     # A schema-invalid answer file exists but must still be re-dispatched.
@@ -86,12 +89,21 @@ def cmd_propose(a, run: Path) -> int:
     return 0
 
 
+_WRITABLE = {"CONFIRMED", "REJECTED", "CONTESTED"}
+
+
 def cmd_apply(a, run: Path) -> int:
-    decs = [d for d in R.read_jsonl(run / "decisions.jsonl")
-            if d["outcome"] in {"CONFIRMED", "REJECTED", "CONTESTED"}]
-    if not a.all:
-        wanted = set(a.ids.split(","))
-        decs = [d for d in decs if d["item_id"] in wanted]
+    allrows = R.read_jsonl(run / "decisions.jsonl")
+    if a.all:
+        decs = [d for d in allrows if d["outcome"] in _WRITABLE]
+    else:
+        wanted = [i for i in a.ids.split(",") if i]
+        by_id = {d["item_id"]: d for d in allrows}
+        bad = [i for i in wanted if i not in by_id or by_id[i]["outcome"] not in _WRITABLE]
+        if bad:
+            print(f"[apply] refusing; missing or non-writable ids: {bad}", file=sys.stderr)
+            return 2
+        decs = [by_id[i] for i in wanted]
     run_apply(decs, a.run, _dt.date.today().isoformat())
     print(f"[apply] wrote {len(decs)} decisions; review the diff, then commit")
     return 0
@@ -116,7 +128,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ids", default="")
     ap.add_argument("--all", action="store_true")
     a = ap.parse_args(argv)
-    a.run = a.run or R.new_run_id()
+    if a.stage == "apply" and bool(a.ids) == a.all:
+        ap.error("apply requires exactly one of --ids / --all")
+    if a.stage == "extract":
+        a.run = a.run or R.new_run_id()
+        print(f"[extract] run id: {a.run}")
+    elif not a.run:
+        ap.error(f"--run is required for {a.stage}")
     run = R.run_dir(a.run, a.runs_root)
     return globals()[f"cmd_{a.stage}"](a, run)
 

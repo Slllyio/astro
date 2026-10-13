@@ -127,6 +127,8 @@ def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str) -> None:
     """Order matters: confirming engine MISSES lowers the floor (expected under the amended
     confirmation rule), so re-base BEFORE any ratchet test runs. On any failure, restore both
     files so the fixture and baseline never disagree."""
+    if not decisions:
+        raise ValueError("no decisions to apply; refusing before touching anything")
     require_clean_tree()
     goldens_before = GOLDENS.read_text(encoding="utf-8")
     baseline_before = BASELINE.read_text(encoding="utf-8")

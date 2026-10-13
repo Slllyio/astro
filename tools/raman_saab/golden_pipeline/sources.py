@@ -53,17 +53,32 @@ def spans(item: dict) -> list[tuple[int, int]]:
     return [parse_citation(c)[1:] for c in item.get("citations") or [item["citation"]]]
 
 
-def passage_multi(lines: list[str], spans_: list[tuple[int, int]], context: int = 40) -> str:
-    """Union of the ±context windows around every span; non-adjacent blocks split by '...'."""
-    wins = sorted((max(1, s - context), min(len(lines), e + context)) for s, e in spans_)
+def windows(n_lines: int, spans_: list[tuple[int, int]], context: int = 40) -> list[tuple[int, int]]:
+    """Merged 1-based inclusive ±context windows around every span (the one packet window rule)."""
+    wins = sorted((max(1, s - context), min(n_lines, e + context)) for s, e in spans_)
     merged: list[list[int]] = []
     for lo, hi in wins:
         if merged and lo <= merged[-1][1] + 1:
             merged[-1][1] = max(merged[-1][1], hi)
         else:
             merged.append([lo, hi])
+    return [(lo, hi) for lo, hi in merged]
+
+
+def passage_multi(lines: list[str], spans_: list[tuple[int, int]], context: int = 40) -> str:
+    """Union of the ±context windows around every span; non-adjacent blocks split by '...'."""
     return "\n...\n".join("\n".join(f"{n}| {lines[n - 1]}" for n in range(lo, hi + 1))
-                          for lo, hi in merged)
+                          for lo, hi in windows(len(lines), spans_, context))
+
+
+def quote_in_windows(lines: list[str], quote: str, spans_: list[tuple[int, int]],
+                     context: int = 40) -> bool:
+    """True only if `quote` occurs inside one of the exact windows the packet rendered."""
+    q = normalise(quote)
+    if len(q.split()) < MIN_QUOTE_WORDS:
+        return False
+    return any(q in normalise("\n".join(lines[lo - 1:hi]))
+               for lo, hi in windows(len(lines), spans_, context))
 
 
 def normalise(text: str) -> str:

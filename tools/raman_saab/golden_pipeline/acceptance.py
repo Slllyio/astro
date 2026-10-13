@@ -42,7 +42,10 @@ def answer_key(before: list[dict], after: list[dict]) -> dict[str, str]:
             if (w.get("verdict_review") == v.get("verdict_review")
                     and w.get("review_note") == v.get("review_note")):
                 continue  # commit never touched it (e.g. insufficient-evidence rows)
-            if w.get("verdict_review") != "CONFIRMED":
+            if (w.get("verdict_review") != "CONFIRMED"
+                    and str(w.get("review_note") or "").lstrip().startswith("HELD")):
+                key[f"{rec['id']}#{tag}"] = "CONTESTED"  # HELD = contested, not rejected
+            elif w.get("verdict_review") != "CONFIRMED":
                 key[f"{rec['id']}#{tag}"] = "REJECT"
             elif _sig(w) == _sig(v):
                 key[f"{rec['id']}#{tag}"] = "CONFIRM"

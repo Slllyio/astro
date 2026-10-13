@@ -60,3 +60,18 @@ class TestMultiCitation:
         lines = [f"text{n}" for n in range(1, 201)]
         item = {**ITEM, "citation": "NH:50", "citations": ["NH:50", "NH:70"]}
         assert "\n...\n" not in P.render(item, lines, reviewer="A", flags=[])
+
+
+class TestPacketRules:
+    def test_ocr_copy_rule_and_all_citations_listed(self):
+        """Packet tells reviewers to keep OCR errors and lists every citation."""
+        lines = [f"t{n}" for n in range(1, 401)]
+        item = {**ITEM, "citation": "NH:50", "citations": ["NH:50", "NH:300"]}
+        text = P.render(item, lines, reviewer="A", flags=[])
+        assert "hirth" in text and "do not correct spelling" in text
+        assert "NH:50, NH:300" in text
+
+    def test_agent_file_has_ocr_rule(self):
+        """The reviewer agent definition carries the same rule."""
+        md = (Path(__file__).parents[3] / "tools/raman_saab/golden_pipeline/reviewer_agent.md")
+        assert "hirth" in md.read_text(encoding="utf-8")

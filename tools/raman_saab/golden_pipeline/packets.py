@@ -28,14 +28,16 @@ _QUESTION: Final[str] = (
     "- REVISE: it is his conclusion but the verdict or signification is wrong; give the "
     "correct ones.\n"
     "- REJECT: it is an observation, a splice of unrelated text, or not in the passage.\n"
-    "Scale: afflicted < mixed < favourable. Quote Raman verbatim from the passage.")
+    "Scale: afflicted < mixed < favourable. Quote Raman verbatim from the passage.\n"
+    "Copy the quote exactly as printed, including OCR errors such as 'hirth' or 'hy' "
+    "- do not correct spelling.")
 
 
 def render(item: dict[str, Any], lines: list[str], reviewer: str, flags: list[str]) -> str:
     flag_line = (f"\nExtraction flags (possible corruption): {', '.join(flags)}\n"
                  if flags else "")
     return (f"{_INTROS[reviewer]}\n\n{_QUESTION}\n\n"
-            f"Candidate (house {item['house']}, cited {item['citation']}):\n"
+            f"Candidate (house {item['house']}, cited {', '.join(item.get('citations') or [item['citation']])}):\n"
             f"  signification: {item['signification']}\n"
             f"  proposed verdict: {item['verdict']}\n"
             f"  extracted prose: {item['verdict_prose']}\n{flag_line}\n"

@@ -32,3 +32,8 @@ class TestAnswerKey:
         agree, div = compare({"a": "CONFIRM", "b": "REJECT"},
                              {"a": "CONFIRM", "b": "CONFIRM"})
         assert agree == 1 and div == [("b", "REJECT", "CONFIRM")]
+
+
+    def test_held_note_is_contested_not_reject(self):
+        """A HELD review_note means contested."""
+        assert answer_key([_rec("DRAFT")], [_rec("DRAFT", note="HELD: reviewers split")]) ==             {"X#H4": "CONTESTED"}

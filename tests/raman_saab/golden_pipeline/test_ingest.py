@@ -54,3 +54,18 @@ class TestIngest:
         item = {**ITEM, "citation": "NH:6", "citations": ["NH:6", "NH:300"]}
         _write(tmp_path, "A"); _write(tmp_path, "B")
         assert I.ingest_item(tmp_path, item, lines)["outcome"] == "CONFIRMED"
+
+
+    def test_quote_far_outside_packet_is_unverified(self, tmp_path):
+        """A real book sentence beyond the packet windows fails even with a matching quote_line."""
+        lines = ["filler"] * 600
+        lines[499] = "The native lost his mother very early in life"
+        _write(tmp_path, "A", extra={"quote_line": 500}); _write(tmp_path, "B", extra={"quote_line": 500})
+        assert I.ingest_item(tmp_path, ITEM, lines)["outcome"] == "UNVERIFIED"
+
+    def test_quote_inside_packet_window_verifies(self, tmp_path):
+        """A quote within cited span +-40 lines verifies."""
+        lines = ["filler"] * 100
+        lines[40] = "The native lost his mother very early in life"
+        _write(tmp_path, "A"); _write(tmp_path, "B")
+        assert I.ingest_item(tmp_path, ITEM, lines)["outcome"] == "CONFIRMED"

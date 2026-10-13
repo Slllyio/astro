@@ -153,3 +153,11 @@ class TestRunApplyFlow:
             AP.run_apply([_conf()], "r1", "2026-10-13")
         assert g.read_text(encoding="utf-8") == before and b.read_text(encoding="utf-8") == "{}"
         assert calls == [None]
+
+
+class TestEmptyGuard:
+    def test_run_apply_empty_raises_before_any_check(self, monkeypatch):
+        """Empty decision list raises before require_clean_tree or any write."""
+        monkeypatch.setattr(AP, "require_clean_tree", lambda: pytest.fail("reached"))
+        with pytest.raises(ValueError, match="no decisions"):
+            AP.run_apply([], "r1", "2026-10-13")

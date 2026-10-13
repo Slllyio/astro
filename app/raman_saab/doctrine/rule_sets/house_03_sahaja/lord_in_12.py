@@ -186,12 +186,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 3375)),
     RuleRecord(
         id="H3.L.6b", house=3, signification="siblings", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13 review: 'the 6th and the 3rd' are the LORDS, not the houses -- the
+        # paragraph (HTJAH-I:3374-3377) runs on lords and sets 'afflicted' against 'well
+        # disposed', a lord's quality; bare ordinals for lords recur (HTJAH-II:9489-9490).
+        # Medium confidence (elliptical wording).
+        # 2026-10-13: promoted from descriptive once HouseAfflictedBy existed (a natural
+        # malefic occupies or aspects the house; its own lord excluded). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(3, 6), C.AfflictedBy("LORD_OF:3"), C.AfflictedBy("LORD_OF:6")),
         general="when the 6th and the 3rd are both afflicted - he will suffer from "
-                "diseases, be tormented by enemies, and will himself be deceitful. "
-                "TODO(predicate: affliction of the HOUSES 3 and 6 - AfflictedBy takes a "
-                "planet, not a house)",
+                "diseases, be tormented by enemies, and will himself be deceitful",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 3376)),

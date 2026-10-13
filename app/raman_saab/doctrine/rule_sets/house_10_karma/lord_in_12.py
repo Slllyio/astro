@@ -75,11 +75,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 9467)),
     RuleRecord(
         id="H10.L.2a", house=10, signification="career", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13: promoted from descriptive once HouseAfflictedBy existed (a natural
+        # malefic occupies or aspects the house; its own lord excluded). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(10, 2), C.HouseAfflictedBy(10)),
         general="malefics afflicting the 10th house - suffers losses and is responsible for "
-                "winding up the family business. TODO(predicate: affliction of the 10th "
-                "HOUSE)",
+                "winding up the family business",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 9470)),
@@ -418,10 +420,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 9556)),
     RuleRecord(
         id="H10.L.11a", house=10, signification="career", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13: promoted from descriptive once HouseAfflictedBy existed (a natural
+        # malefic occupies or aspects the house; its own lord excluded). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(10, 11), C.HouseAfflictedBy(11)),
         general="the 11th house under affliction - friends turn enemies and cause every "
-                "sort of hardship and worry. TODO(predicate: affliction of the 11th HOUSE)",
+                "sort of hardship and worry",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 9560)),

@@ -5467,3 +5467,38 @@ CLAUDE.md lock row was corrected because it claimed Raman gave the nodes NO aspe
   yoga_library) keeps 5/9. It is not Raman's engine; changing it is a separate decision.
 - Guard: `test_drishti.py::test_ramans_ketu_lagna_aspected_by_rahu` (new) and the existing
   `test_nodes_cast_only_the_seventh_NOT_5_9`.
+
+## HouseAfflictedBy (2026-10-13) -- house (bhava) affliction, queue item 2
+
+**The condition.** A whole-sign house is afflicted when >= 1 natural malefic (Sun, Mars, Saturn,
+Rahu, Ketu) OCCUPIES or ASPECTS it (nodes 7th only). `min_count` carries degree, as in `AfflictedBy`.
+- One malefic suffices and the Sun counts: HTJAH-I:12018-12019 ("The 7th house is afflicted by the
+  8th house aspect of Mars and occupation by Ketu"), I:11598, I:10392, II:3211.
+- The house's OWN lord does not afflict it: HTJAH-I:2740-2741 ("This blemish is cancelled because
+  Mars is in his own house"); HPA-8:64-67.
+- Exception, also Raman's: an own lord debilitated WITHOUT cancellation and joined by a node loses
+  the shield (HTJAH-II:2139-2161, Saturn aspecting his own 7th). Joined-by-one-node == aspected-by-
+  the-other, so conjunction is the whole test. Kept to natural malefics; Raman's "rendered malefic"
+  might also cover a benefic own lord -- deliberate under-fire.
+- Benefic relief does NOT cancel the label (HTJAH-I:3769-3770, 8669, 11598): Raman weighs it
+  separately.
+
+**Base rate is high and that is Raman's threshold, not a bug.** Over 346 goldens (4152 house-slots)
+a house is afflicted 64% of the time (57% without the Sun, 49% Mars+Saturn only, 27% with >= 2).
+Mars and Saturn each reach four houses. This is the measured-truth mechanism again: classical
+indications are abundant.
+
+**Promoted (all neutral, text in `general`):** H7.L.2b (8 fires / 31 placements), H10.L.2a (20/35),
+H10.L.11a (18/26), H12.L.1c (5/34; the "But" depends on the 6L+12L-in-Lagna clause, kept).
+**H3.L.6b re-read by the doctrine review:** "the 6th and the 3rd are both afflicted" (HTJAH-I:3376)
+means the LORDS -- the paragraph runs on lords and sets "afflicted" against "well disposed"
+(medium confidence). Gated on `AfflictedBy("LORD_OF:3")` + `AfflictedBy("LORD_OF:6")`: 14/28.
+
+**Net:** 65 presentation changes, 0 verdict changes, ratchet 286/397, 362/397, 35.
+
+### Open -- needs a user decision
+
+- **Does the LAGNA lord afflict?** HTJAH-II:8368-8369 "Saturn does not afflict in the strict sense
+  of the term being the Lagna lord" (also I:11598) says no; HTJAH-I:4405 ("good as lord of Lagna and
+  bad as a natural malefic. The affliction is heavy") and I:5925 say it is both. Contested within
+  Raman, so NOT adopted. Matters most for H12.L.1c (8th-house longevity).

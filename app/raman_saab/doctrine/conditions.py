@@ -599,6 +599,50 @@ class AfflictedBy(Condition):
         return False
 
 
+class HouseAfflictedBy(Condition):
+    """Whole-sign `house` (from the Lagna) is OCCUPIED or ASPECTED by an afflicter -- the HOUSE
+    form of `AfflictedBy`, for Raman's "if the 10th house is afflicted" / "if malefics afflict
+    the 10th house" (HTJAH-II:9470), where the house itself, not its lord, is the subject.
+
+    Same recipe the house rule sets had each re-derived privately (`q.rasi_house == h or
+    drishti.aspects_house(q, h)`), same defaults as `AfflictedBy` (natural malefics; nodes 7th
+    only), same `min_count` for degree.
+
+    The house's OWN lord does not afflict it: "This blemish is cancelled because Mars is in his
+    own house" (HTJAH-I:2740-2741); "A planet, aspecting its own house ... will naturally
+    increase the signification of that house" (HPA-8:64-67). One exception, also Raman's: an
+    own lord that is DEBILITATED and JOINED BY A NODE loses that shield -- "The 7th house is
+    afflicted because although the 7th lord aspects it, the aspect is of a planet rendered
+    malefic by debility and association with a node" (HTJAH-II:2159-2161).
+
+    One malefic suffices and the Sun counts (HTJAH-I:12018-12019, 11598, 10392); benefic relief
+    is weighed separately by Raman and does not cancel the label (HTJAH-I:3769-3770).
+    """
+    def __init__(self, house: int, afflictors: Sequence[str] | set[str] | None = None,
+                 min_count: int = 1) -> None:
+        if min_count < 1:
+            raise ValueError("min_count must be >= 1")
+        self.house, self.min_count = house, min_count
+        self.afflictors: frozenset[str] = (
+            frozenset(NATURAL_MALEFICS) if afflictors is None else frozenset(afflictors))
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        chart = ctx.chart
+        own_lord = _lord_of(self.house, chart)
+        lord_p = chart.planets.get(own_lord)
+        # Raman's case: Saturn "does not obtain cancellation of debility but is afflicted by Ketu"
+        # (HTJAH-II:2139-2141). Joined by one node == aspected by the other (nodes: 7th only).
+        shielded = not (lord_p is not None and dignity(own_lord, chart) == "debil"
+                        and not neecha_bhanga(own_lord, chart)
+                        and any((n := chart.planets.get(node)) is not None
+                                and n.rasi_house == lord_p.rasi_house for node in ("Rahu", "Ketu")))
+        hits = sum(1 for name in self.afflictors - ({own_lord} if shielded else set())
+                   if (q := chart.planets.get(name)) is not None
+                   and (q.rasi_house == self.house
+                        or drishti.aspects_house(name, self.house, chart)))
+        return hits >= self.min_count
+
+
 class IsStrong(Condition):
     """`planet` is STRONG in Raman's sense: its Shadbala meets his minimum bar (GBB-8:303-312)
     AND no hard fact overrides that number -- it is neither combust nor debilitated without

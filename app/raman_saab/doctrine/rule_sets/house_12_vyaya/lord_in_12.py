@@ -59,12 +59,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 16132)),
     RuleRecord(
         id="H12.L.1c", house=12, signification="loss_moksha", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13: promoted from descriptive once HouseAfflictedBy existed (a natural
+        # malefic occupies or aspects the house; its own lord excluded). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(12, 1), C.LordIn(6, 1), C.HouseAfflictedBy(8)),
         general="the 6th lord joining the 12th lord in Lagna but the 8th house afflicted - "
                 "he will be short-lived; this also indicates imprisonment and living abroad "
-                "[referent of 'This' ambiguous]. TODO(predicate: affliction of the 8th "
-                "HOUSE)",
+                "[referent of 'This' ambiguous]",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 16133)),

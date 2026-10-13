@@ -74,11 +74,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 245)),
     RuleRecord(
         id="H7.L.2b", house=7, signification="wealth_through_marriage", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13: promoted from descriptive once HouseAfflictedBy existed (a natural
+        # malefic occupies or aspects the house; its own lord excluded). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(7, 2), C.Or(C.InSign("LORD_OF:7", 3), C.InSign("LORD_OF:7", 6), C.InSign("LORD_OF:7", 9), C.InSign("LORD_OF:7", 12)), C.HouseAfflictedBy(2)),
         general="the second house a dual sign and afflicted - more than one marriage is "
-                "likely. TODO(predicate: affliction of the 2nd HOUSE; the dual-sign half is "
-                "expressible as a sign test on LORD_OF:7)",
+                "likely",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 248)),

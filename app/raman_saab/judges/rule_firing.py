@@ -15,10 +15,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.doctrine.branch_axis import QUALIFIER_AXIS
 from app.raman_saab.doctrine.conditions import EvalContext
 from app.raman_saab.doctrine.disposition import disposition
 from app.raman_saab.doctrine.rule_sets import ALL_RULES
 from app.raman_saab.doctrine.rules import RuleRecord
+from app.raman_saab.primitives.effective_strength import effective_strength
 from app.raman_saab.primitives.shadbala import total as shadbala_total
 
 
@@ -64,6 +66,22 @@ def _branch_subject(rule: RuleRecord, chart: RamanChart) -> str:
     return _lord_of(rule.house, chart)
 
 
+def _slot_holds(axis: str, slot: str, subject: str, chart: RamanChart) -> bool:
+    """Does Raman's condition for `slot` hold on `axis`? Strength reads effective strength (a
+    combust lord is "powerless" whatever its number, HTJAH-I:3788); influence reads the
+    disposition flags; "both" is his conjoined "weak and afflicted" (HTJAH-I:5121)."""
+    if subject not in chart.planets:
+        return False
+    es = effective_strength(subject, chart)
+    strong, weak = es.band == "strong" and not es.decisively_weak, es.decisively_weak
+    d = disposition(subject, chart)
+    if axis == "strength":
+        return strong if slot == "fortified" else weak
+    if axis == "influence":
+        return d.reading == ("good" if slot == "fortified" else "bad")
+    return weak and bool(d.bad) if slot == "afflicted" else strong and d.reading == "good"
+
+
 def _branch(rule: RuleRecord, chart: RamanChart) -> str:
     """Pick the reading by the Shadbala of whoever Raman brands the branch on — the bhava
     lord for most rules, the OCCUPANT for `planet_in_house` (see `_branch_subject`). Meets
@@ -95,6 +113,23 @@ def _branch(rule: RuleRecord, chart: RamanChart) -> str:
                 return want
             if want or rule.general:
                 return "general"     # never show the opposite pole of a clear disposition
+    # The lord-in-house tables mix influence and strength words; each tagged slot is tested on
+    # the axis of Raman's own qualifier (doctrine/branch_axis.py). One slot holding picks it;
+    # both or neither shows his unconditioned reading; untagged slots keep strength selection.
+    axes = QUALIFIER_AXIS.get(rule.id)
+    if axes is not None:
+        holding = [slot for slot, axis in zip(("fortified", "afflicted"), axes)
+                   if axis and getattr(rule, slot) and _slot_holds(axis, slot, subject, chart)]
+        if len(holding) == 1:
+            return holding[0]
+        if rule.general:
+            return "general"
+        # No unconditioned text: a clear disposition still rules out the opposite pole before
+        # the strength fallback below can pick it.
+        d = disposition(subject, chart)
+        lean = {"good": "fortified", "bad": "afflicted"}.get(d.reading) if d else None
+        if lean and getattr(rule, lean):
+            return lean
     p = chart.planets.get(subject)
     if p is None or p.shadbala_rupas is None:
         return "general" if rule.general else "fortified"

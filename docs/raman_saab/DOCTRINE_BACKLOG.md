@@ -5633,3 +5633,37 @@ NH:1335). Functional-benefic fortification for natural malefics is kept because 
 "afflicted/well disposed" qualifiers, mostly in Raman's surrounding sentence rather than the slot
 text, so each record must first be tagged with its qualifier word (both reviews recommended
 routing by the word). Combination rules rarely have two poles.
+
+## Disposition axis -- stage 2 SHIPPED (2026-10-13): lord-in-house text picked by Raman's own word
+
+58 lord-in-house rules have a text choice that matters (1520 firings over the goldens). Two
+independent engine-blind reviews tagged every conditioned slot from HTJAH-I/II with the qualifier
+Raman wrote; they agreed on 56/58. `doctrine/branch_axis.py` lists the 47 rules with agreed,
+usable tags; `rule_firing._slot_holds` tests each slot on its axis -- INFLUENCE via
+`disposition` (one flag), STRENGTH via effective strength (combust = powerless, HTJAH-I:3788),
+BOTH ("weak and afflicted", HTJAH-I:5121) via both. One slot holding picks it; both or neither shows
+the unconditioned text; with no unconditioned text a clear disposition picks the matching pole
+before the old strength fallback (so an afflicted lord is never shown "well fortified").
+
+Fortified slots: 37-38 influence, 7 strength. Afflicted slots: 15 influence, 5 strength, 4 "weak and
+afflicted". Raman's lord-in-house tables are overwhelmingly on the INFLUENCE axis, as the House 5
+review suspected; the old Shadbala-only selection fit only ~12 of ~81 conditioned slots.
+
+**Left on the old selection (recorded in branch_axis.py):** H8.L.5 and H8.L.8 (reviews split),
+H6.L.11 / H10.L.3 / H12.L.4 / H8.L.3-fortified (unclear in Raman), H8.L.7 (condition on two lords),
+and fortified slots that merely repeat the unconditioned text (H7.L.6, H11.L.11, H12.L.6, H12.L.8).
+
+**Net:** 1036 presentation changes, 0 verdict changes, ratchet 286/397, 362/397, 35. Overhead
+measured at ~8% of a fire_rules pass.
+
+### Found by the tagging, NOT acted on (data work, its own pass)
+- **Afflicted sentences Raman wrote that were never encoded** (both reviews): H2.L.6 (2373-2378),
+  H3.L.9 (3397), H7.L.5 (two: "severely afflicted", "both afflictions and benefic influences"),
+  H7.L.6 (283-289), H8.L.1 ("severely afflicted", 2906), H8.L.5 (2962), H8.L.11 (3050), H10.L.4
+  (9495-9497), H10.L.8 (9527), H11.L.7 (14303), H12.L.6 (16184). H12.L.2 lacks its fortified
+  sentence (16146).
+- **H8.L.1's fortified text ("strong -> undiminished") has no "strong" clause in Raman** -- an
+  inference by the original encoding; its afflicted slot holds the "weak" sentence while Raman's
+  real afflicted sentence is missing.
+- **H11.L.7's fortified text contradicts its general text** ("marries only once" vs "more than once").
+- Fortified slots that copy the unconditioned text (H7.L.5, H7.L.6, H11.L.11, H12.L.6, H12.L.8).

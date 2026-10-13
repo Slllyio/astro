@@ -227,7 +227,7 @@ def quote_found(lines: list[str], quote: str, line: int, window: int = 60) -> bo
 - [ ] **Step 5: Run to verify pass**
 
 Run: `py -3.12 -m pytest tests/raman_saab/golden_pipeline/test_sources.py -q`
-Expected: `10 passed`
+Expected: `11 passed`
 
 - [ ] **Step 6: Commit**
 
@@ -452,7 +452,7 @@ class TestSpliceFlags:
 
     def test_two_passage_splice_flagged(self):
         """NH.chart_41 class: two non-adjacent passages joined, dropping what lay between."""
-        prose = "The Lagna is weak, being occupied by debilitated Mars. Remarks : None."
+        prose = "The Lagna is weak, being occupied by debilitated Mars. The fourth lord is well placed."
         assert "two_passage" in SC.flags(prose, LINES, 4)
 
     def test_clean_contiguous_prose_has_no_flags(self):
@@ -768,7 +768,7 @@ def validate(a: dict[str, Any]) -> dict[str, Any]:
 - [ ] **Step 4: Run to verify pass**
 
 Run: `py -3.12 -m pytest tests/raman_saab/golden_pipeline/test_answers.py -q`
-Expected: `10 passed`
+Expected: `11 passed`
 
 - [ ] **Step 5: Commit**
 
@@ -902,7 +902,7 @@ def reconcile(item: dict[str, Any], answers: dict[str, dict[str, Any]]) -> dict[
 - [ ] **Step 4: Run to verify pass**
 
 Run: `py -3.12 -m pytest tests/raman_saab/golden_pipeline/test_reconcile.py -q`
-Expected: `10 passed`
+Expected: `11 passed`
 
 - [ ] **Step 5: Commit**
 
@@ -1218,7 +1218,10 @@ def append_lineage(base: dict[str, Any], exact: tuple[int, int], within1: tuple[
             + f"{tag} {within1[0]}/{within1[1]} within-1."}
 
 
-_MEASURE: Final = ("import json, tests.raman_saab.test_goldens as G; "
+# No tests/__init__.py exists and site-packages ships its own `tests` package, so import the
+# module the way pytest does (prepend mode): put tests/ on sys.path.
+_MEASURE: Final = ("import sys, json; sys.path.insert(0, 'tests'); "
+                   "import raman_saab.test_goldens as G; "
                    "c,t,_=G.track_b_scoreboard(); w,_t,_r=G.track_b_ordinal_scoreboard(); "
                    "print(json.dumps([c,t,w,_t]))")
 
@@ -1236,16 +1239,28 @@ def _pytest(*args: str, env: dict[str, str] | None = None) -> None:
 
 
 def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str) -> None:
+    """Order matters: confirming engine MISSES lowers the floor (expected under the amended
+    confirmation rule), so re-base BEFORE any ratchet test runs. On any failure, restore both
+    files so the fixture and baseline never disagree."""
     require_clean_tree()
-    lines = GOLDENS.read_text(encoding="utf-8").split("\n")
-    GOLDENS.write_text("\n".join(edit_goldens_lines(lines, decisions, run_id)), encoding="utf-8")
-    _pytest("tests/raman_saab/test_goldens.py", env={"UPDATE_RAMAN_SNAPSHOTS": "1"})
-    exact, within1 = measure()
-    base = json.loads(BASELINE.read_text(encoding="utf-8"))
-    BASELINE.write_text(json.dumps(append_lineage(base, exact, within1, run_id, date),
-                                   ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    _pytest("tests/raman_saab/test_goldens.py", "tests/raman_saab/test_golden_verdict_uniqueness.py",
-            "tests/raman_saab/doctrine/test_rule_liveness.py")
+    goldens_before = GOLDENS.read_text(encoding="utf-8")
+    baseline_before = BASELINE.read_text(encoding="utf-8")
+    try:
+        lines = goldens_before.split("\n")
+        GOLDENS.write_text("\n".join(edit_goldens_lines(lines, decisions, run_id)),
+                           encoding="utf-8")
+        exact, within1 = measure()
+        base = json.loads(baseline_before)
+        BASELINE.write_text(json.dumps(append_lineage(base, exact, within1, run_id, date),
+                                       ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        _pytest("tests/raman_saab/test_goldens.py", env={"UPDATE_RAMAN_SNAPSHOTS": "1"})
+        _pytest("tests/raman_saab/test_goldens.py",
+                "tests/raman_saab/test_golden_verdict_uniqueness.py",
+                "tests/raman_saab/doctrine/test_rule_liveness.py")
+    except Exception:
+        GOLDENS.write_text(goldens_before, encoding="utf-8")
+        BASELINE.write_text(baseline_before, encoding="utf-8")
+        raise  # snapshots written by the refresh step show up in `git status`; discard by hand
     with BACKLOG.open("a", encoding="utf-8") as f:
         f.write(backlog_entry(decisions, run_id, date, exact, within1))
 
@@ -1337,7 +1352,10 @@ def _dist(got: str | None, want: str) -> int:
 
 
 def engine_lookup(goldens: list[dict[str, Any]]) -> Callable[[dict[str, Any]], str | None]:
-    import tests.raman_saab.test_goldens as G   # engine import happens here and only here
+    import sys
+    if "tests" not in sys.path:                 # no tests/__init__.py; import as pytest does
+        sys.path.insert(0, "tests")
+    import raman_saab.test_goldens as G         # engine import happens here and only here
     by_id = {r["id"]: r for r in goldens}
 
     def lookup(d: dict[str, Any]) -> str | None:
@@ -1496,6 +1514,8 @@ def cmd_packets(a, run: Path) -> int:
     items, cache = R.read_jsonl(run / "items.jsonl"), {}
     decisions = {d["item_id"]: d for d in R.read_jsonl(run / "decisions.jsonl")} \
         if (run / "decisions.jsonl").is_file() else {}
+    # A schema-invalid answer file exists but must still be re-dispatched.
+    invalid = {(d["item_id"], r) for d in decisions.values() for r in d.get("invalid", [])}
     for it in items:
         reviewers = "C" if a.tiebreak else "AB"
         if a.tiebreak and decisions.get(it["item_id"], {}).get("outcome") != "TIEBREAK":
@@ -1503,7 +1523,8 @@ def cmd_packets(a, run: Path) -> int:
         for r in reviewers:
             p = packet_path(run, it["item_id"], r)
             if a.missing:
-                if p.is_file() and not answer_path(run, it["item_id"], r).is_file():
+                if p.is_file() and (not answer_path(run, it["item_id"], r).is_file()
+                                    or (it["item_id"], r) in invalid):
                     print(p.name)
                 continue
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -1802,7 +1823,7 @@ majority. Only CONFIRMED is scored. New rows are adjudicated by
 - [ ] **Step 2: Run the new suite and the existing Raman suite**
 
 Run: `py -3.12 -m pytest tests/raman_saab/golden_pipeline -q`
-Expected: all pass (≈57 tests).
+Expected: all pass (69 tests).
 
 Run: `py -3.12 -m pytest tests/raman_saab -q -p no:cacheprovider`
 Expected: no NEW failures versus the branch base. (`test_doctrine_snapshot` may already fail on the base because of in-flight House 6 work in the main checkout; compare with `git stash`-free method: run the same command at the base commit in a scratch worktree if in doubt.)

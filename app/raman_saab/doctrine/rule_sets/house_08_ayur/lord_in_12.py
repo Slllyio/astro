@@ -69,12 +69,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # minimum-required table), so the mapping needs no interpretation.
     RuleRecord(
         id="H8.L.1", house=8, signification="longevity", group="lord_in_house",
+        # 2026-10-13: the fortified text ('the 8th lord strong - ... undiminished') was an
+        # inference -- Raman states the penury unconditionally (HTJAH-II:2902-2904) and
+        # qualifies only the weak case; the general slot already carries it.
         kind="evaluable", condition=C.And(C.LordIn(8, 1), C.LordsConjunct(8, 1)),
         # Raman gives NO strong-lord sentence. The licensed reading is the unconditioned one
         # at full force: the only mitigation offered is conditioned on weakness, so its
         # absence leaves the misfortune undiminished.
-        fortified="the 8th lord strong - penury, heavy debts and misfortune at every step, "
-                  "undiminished",
+        fortified=None,
         general="penury, heavy debts, misfortune at every step",
         afflicted="the 8th lord weak - the intensity of the misfortune is reduced",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2902)),
@@ -413,11 +415,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D9", polarity="neutral", source=Citation("HTJAH-II", 3036)),
     RuleRecord(
         id="H8.L.11", house=8, signification="longevity", group="lord_in_house",
+        # 2026-10-13: Raman's closing sentence 'Afflictions will aggravate the malefic
+        # results' (HTJAH-II:3050-3051) restored; found by the qualifier tagging.
         kind="evaluable", condition=C.And(C.LordIn(8, 11), C.LordsConjunct(8, 11)),
         fortified="benefic influence → friends and elder brother help overcome troubles",
         general="trouble to close friends; elder brother's hard time, strained relations "
                 "or misconduct; business losses, debts",
-        afflicted=None,
+        afflicted="afflictions -> the malefic results are aggravated",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3042)),
     RuleRecord(
         id="H8.L.12", house=8, signification="longevity", group="lord_in_house",

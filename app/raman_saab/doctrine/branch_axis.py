@@ -47,7 +47,7 @@ QUALIFIER_AXIS: Final[dict[str, tuple[Optional[str], Optional[str]]]] = {
     # House 7
     "H7.L.5": (None, _S),
     # House 8
-    "H8.L.1": (None, _S), "H8.L.3": (None, _I), "H8.L.4": (None, _I), "H8.L.11": (_I, None),
+    "H8.L.1": (None, _S), "H8.L.3": (None, _I), "H8.L.4": (None, _I), "H8.L.11": (_I, _I),
     # Houses 10-12
     "H10.L.4": (_S, None), "H10.L.8": (_I, None), "H11.L.1": (_S, _S), "H11.L.7": (_I, None),
     "H12.L.2": (None, _I),

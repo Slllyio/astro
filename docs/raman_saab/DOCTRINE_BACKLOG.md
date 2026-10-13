@@ -5667,3 +5667,30 @@ measured at ~8% of a fire_rules pass.
   real afflicted sentence is missing.
 - **H11.L.7's fortified text contradicts its general text** ("marries only once" vs "more than once").
 - Fortified slots that copy the unconditioned text (H7.L.5, H7.L.6, H11.L.11, H12.L.6, H12.L.8).
+
+## "Missing sentences" pass (2026-10-14) -- mostly a false alarm, three real fixes
+
+The stage-2 tagging reported 12 afflicted sentences Raman wrote but the records lacked. **Eleven
+already existed** as child records from the twelve-house sweep (H2.L.6a, H3.L.9a, H7.L.5a/b,
+H7.L.6a, H8.L.1b, H8.L.5b, H10.L.4a, H10.L.8a, H11.L.7a, H12.L.6a; H12.L.2's fortified side is
+H12.L.2a) -- the taggers were given only the parent records. Lesson: a reviewer packet for a family
+of records must include the children.
+
+Real fixes:
+- **H7.L.6a live** -- "If badly afflicted and the karaka Venus is also ill-disposed" (HTJAH-II:283).
+  New `IllDisposed` condition = disposition reads clearly bad (Raman "deliberately does not say
+  afflicted" of Venus there; "ill disposed" is an influence word per both reviews). "Badly
+  afflicted" reuses H7.L.5a's severity test (>= 2 first-rate malefics). Fires on no golden; proved
+  satisfiable by chart (test_missing_sentences.py); liveness 69 -> 70 consciously.
+- **H8.L.1 fortified slot emptied** -- "the 8th lord strong - ... undiminished" was an encoding
+  inference (Raman states the penury unconditionally, HTJAH-II:2902-2904). A past session wrote it
+  deliberately as "the unconditioned reading at full force"; with the slot empty a strong lord falls
+  back to `general`, which says exactly that without inventing a condition.
+- **H8.L.11 afflicted restored** -- "Afflictions will aggravate the malefic results"
+  (HTJAH-II:3050-3051); axis tag (influence, influence).
+
+Not a defect: H11.L.7's "marries more than once" (general) vs "if fortified, marries only once" is
+Raman's own conditional exception (HTJAH-II:14302-14304); only one is ever displayed.
+
+Still parked: H7.L.6b ("Venus well placed" -- unclear word), H12.L.2a (enumeration proof).
+**Net:** 0 presentation changes on the goldens, 0 verdict changes, ratchet 286/397, 362/397, 35.

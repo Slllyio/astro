@@ -675,6 +675,19 @@ class HouseAfflictedBy(Condition):
         return hits >= self.min_count
 
 
+class IllDisposed(Condition):
+    """`planet` is ILL-DISPOSED: its disposition reads clearly bad -- afflicting testimony and no
+    fortifying testimony (doctrine/disposition.py). "Ill disposed" is one of Raman's INFLUENCE
+    words, apart from strength (two concurring reviews, 2026-10-13)."""
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        from app.raman_saab.doctrine.disposition import disposition
+        d = disposition(_resolve_planet(self.planet, ctx.chart), ctx.chart)
+        return d is not None and d.reading == "bad"
+
+
 class IsStrong(Condition):
     """`planet` is STRONG in Raman's sense: its Shadbala meets his minimum bar (GBB-8:303-312)
     AND no hard fact overrides that number -- it is neither combust nor debilitated without

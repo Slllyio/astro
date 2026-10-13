@@ -55,9 +55,12 @@ class TestTheSlotsNowMatchTheAntecedents:
         """Raman writes no strong-lord sentence here. The licensed reading is the
         unconditioned one at full force — the only mitigation offered is conditioned on
         weakness, so its absence leaves the misfortune undiminished."""
+        # 2026-10-14: the same reasoning, made exact. "The 8th lord strong - ... undiminished"
+        # stated it with a condition Raman never wrote (two reviews flagged it); with the slot
+        # empty a strong lord falls back to `general`, which IS the unconditioned reading.
         r = _R["H8.L.1"]
-        assert "undiminished" in r.fortified
-        assert "when 8th lord is weak" not in r.fortified
+        assert r.fortified is None
+        assert "penury" in r.general and "weak" not in r.general
 
     def test_h8_l5_has_no_weak_lord_reading_at_all(self) -> None:
         """Unlike H8.L.1, this entry offers no "weak or" disjunct — its mitigation is

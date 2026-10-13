@@ -94,7 +94,9 @@ class TestCorrectlyEncodedHousesWereNotTouched:
 #: pure D9 PLACEMENT clause, which no strength branch can test.
 #: H11.L.1 left 2026-10-13: 14259-14264 is a genuine strong / middling / weak ladder, so its
 #: strength slots now carry the outer tiers (see test_houses_10_to_12_sweep.py).
-RELOCATED_WHOLE = ["H8.L.11", "H11.L.12",
+#: H8.L.11 left 2026-10-14: Raman's "Afflictions will aggravate the malefic results"
+#: (HTJAH-II:3050) was restored to its afflicted slot, so it is now SPLIT.
+RELOCATED_WHOLE = ["H11.L.12",
                    "H12.L.4", "H12.L.5", "H12.L.7", "H12.L.9", "H12.L.10", "H12.L.11"]
 #: Slot MIXED a general reading with a genuine afflicted clause; split, not moved (list B).
 #:
@@ -114,7 +116,7 @@ RELOCATED_WHOLE = ["H8.L.11", "H11.L.12",
 #: a wrong WITHHOLDING: weak-lord charts never saw Raman's main reading.
 #: H10.L.12, H11.L.7, H11.L.8, H12.L.3 left 2026-10-13: their "genuine afflicted clauses" were
 #: gated on affliction or a nakshatra placement, not weakness.
-SPLIT = ["H8.L.1", "H8.L.3", "H8.L.4", "H8.L.7", "H12.L.2"]
+SPLIT = ["H8.L.1", "H8.L.3", "H8.L.4", "H8.L.7", "H8.L.11", "H12.L.2"]
 #: Re-slotted once the STRENGTH and AFFLICTION axes were separated (2026-09-02, two
 #: engine-blind reviews, 7 rules REVERSAL out of 7 examined). `_branch` selects `afflicted`
 #: on weak Shadbala, so the slot is a STRENGTH label; every clause below was gated on

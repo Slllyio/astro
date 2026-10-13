@@ -204,13 +204,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 281)),
     RuleRecord(
         id="H7.L.6a", house=7, signification="spouse", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13: promoted once IllDisposed existed (disposition reads clearly bad);
+        # 'badly afflicted' reuses H7.L.5a's severity test. Neutral: refines a parent.
+        kind="evaluable",
+        condition=C.And(C.LordIn(7, 6), C.AfflictedBy("LORD_OF:7", C.FIRST_RATE_MALEFICS, min_count=2), C.IllDisposed("Venus")),
         general="the 7th lord badly afflicted and the karaka Venus also ill-disposed - one "
                 "may suffer from impotency and many other diseases; the native's wife may "
                 "be sickly and jealous by nature, denying the husband happiness from "
-                "marriage. TODO(predicate: 'ill-disposed' for the named planet Venus - "
-                "Raman deliberately does not say 'afflicted' here)",
+                "marriage",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 283)),

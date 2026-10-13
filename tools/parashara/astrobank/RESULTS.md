@@ -84,3 +84,36 @@ be localised to a year-only date), tier A+B: just 199 marriages, 34 divorces, 23
 Reproduce:
     py -3.12 -m tools.parashara.astrobank.build_store --raman-root <raman store> --out <parashara store> --natal-only
     py -3.12 -m tools.parashara.astrobank.transit_tests --raman-root <raman store> --store <parashara store>
+
+---
+
+# Amendment 1: A+B extension (run 2026-10-13, per AMENDMENT_1, tier C withdrawn by AMENDMENT_2)
+
+Extension store: 1,204 people outside the original store (0 cast failures), engine sha 19dc1dc4.
+Rule, instruments, controls and pass bar are identical to the primary run.
+
+| instrument | extension n | extension lift (CI) | **pooled A+B n** | **pooled lift (CI)** | pooled cross-chart (CI) | status |
+|---|---|---|---|---|---|---|
+| marriage: dasha H7 AND DT H7 | 115 | +0.026 (−0.050, +0.111) | **314** | **+0.034 (−0.014, +0.084)** | +0.029 (−0.019, +0.080) | null |
+| divorce: dasha H7 AND DT H7 | 11 | +0.027 (−0.200, +0.266) | 45 | −0.040 (−0.139, +0.069) | −0.020 (−0.132, +0.094) | null (uninformative) |
+| death: maraka AD AND DT H8 | 287 | −0.008 (−0.052, +0.038) | **517** | **+0.006 (−0.027, +0.043)** | +0.006 (−0.027, +0.040) | null |
+| marriage, transit only | 115 | −0.027 | 314 | +0.004 (−0.051, +0.059) | +0.004 | null |
+| divorce, transit only | 11 | −0.146 | 45 | −0.064 | −0.038 | null |
+| death, transit only | 287 | −0.010 | 517 | +0.009 (−0.032, +0.050) | +0.010 | null |
+
+- **Pooled verdict: null on every instrument.** No CI excludes 0 in the predicted direction.
+- Marriage leaned the predicted way in both samples (+0.038 primary, +0.026 extension, +0.034 pooled),
+  and the pooled CI is narrower, but still crosses 0. Reading: a small marriage effect (≲ +8%)
+  is not ruled out. Nothing is confirmed.
+- With the dasha leg removed, the marriage transit-only lean vanishes in the pool (+0.041 → +0.004).
+  Whatever lean there is sits in the dasha + transit conjunction, not in the transits alone. This is
+  an observation, not a test: no post-hoc claim is made on it.
+- Death shows no lean (+0.006). Divorce (n=45) stays uninformative.
+- Per AMENDMENT_1, this design is now CLOSED. The dasha + double-transit question moves into the
+  validation program's pooled risk-set timing test (Phase 3), with held-out confirmation on tier-C half C1.
+
+Reproduce:
+    py -3.12 -m tools.parashara.astrobank.build_store --raman-root <raman> --out <parashara_ext> --extension
+    py -3.12 -m tools.parashara.astrobank.build_store --raman-root <raman> --out <parashara_ext> --extension --natal-only
+    py -3.12 -m tools.parashara.astrobank.transit_tests --raman-root <raman> --store <parashara_ext> --population extension
+    py -3.12 -m tools.parashara.astrobank.transit_tests --raman-root <raman> --store <parashara_ext> --store <parashara> --population pooled

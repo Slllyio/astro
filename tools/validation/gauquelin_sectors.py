@@ -92,7 +92,8 @@ def main(argv: list[str] | None = None) -> int:
     hold = assign_holdout(g.person_id, salt="gauquelin-screening-v1")
     ovl = set(pd.read_csv(a.overlap).person_id_gauq)
     g = g[~g.person_id.isin(hold) & ~g.person_id.isin(ovl) & ~g.needs_geocoding
-          & g.birth_date.str.match(r"^\d{4}-\d\d-\d\d$")]
+          & g.birth_date.str.match(r"^\d{4}-\d\d-\d\d$")
+          & g.tz_offset_hours.notna() & g.latitude.notna() & g.longitude.notna()]   # 11 rows lack tz (deviation)
     rng = np.random.default_rng(SEED)
     res = {grp: analyse(g[g.profession == grp], rng) for grp in GROUPS}
     L = ["# Phase 4.1 results: Gauquelin Mars-sector positive control", "",

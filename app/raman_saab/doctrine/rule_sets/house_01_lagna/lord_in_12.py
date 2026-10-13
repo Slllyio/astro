@@ -98,14 +98,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 1023)),
     RuleRecord(
         id="H1.L.4a", house=1, signification="self", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general=None,
-        fortified="the 4th lord favourably disposed - the person will acquire considerable "
-                  "landed properties, specially through maternal sources; rich, happy, "
-                  "famous, and commands a number of conveyances. TODO(predicate: strength "
-                  "of LORD_OF:4 with LordIn(1, 4) - no strength Condition exists for "
-                  "another house's lord)",
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 4), C.IsStrong("LORD_OF:4")),
+        general="the 4th lord favourably disposed - the person will acquire considerable "
+                "landed properties, specially through maternal sources; rich, happy, "
+                "famous, and commands a number of conveyances",
+        fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 1026)),
     RuleRecord(

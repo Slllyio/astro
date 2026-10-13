@@ -39,12 +39,15 @@ class TestHouseSeven:
         assert {k for k, v in weak.items() if v} == {"H7.L.5"}
         assert "weak" in weak["H7.L.5"]
 
-    def test_weak_and_afflicted_is_parked_not_faked(self) -> None:
+    def test_weak_and_afflicted_was_parked_not_faked_and_is_now_exact(self) -> None:
         """295 needs BOTH halves. An affliction-conditioned record in the weak slot would still
-        show to a STRONG afflicted lord (fire_rules falls through to the weak text when the
-        other slots are empty), so it waits for a Shadbala Condition."""
-        assert _R["H7.L.7a"].kind == "descriptive"
-        assert "TODO(predicate:" in _R["H7.L.7a"].afflicted
+        have shown to a STRONG afflicted lord (fire_rules falls through to the weak text when the
+        other slots are empty), so it was parked rather than faked. RESOLVED 2026-10-13: IsWeak
+        exists, so both halves now live in the condition and the text is unconditioned."""
+        r = _R["H7.L.7a"]
+        assert r.kind == "evaluable"
+        assert {type(c).__name__ for c in r.condition.conds} >= {"IsWeak", "AfflictedBy"}
+        assert r.afflicted is None and "TODO(" not in r.general
 
 
 class TestHouseNine:

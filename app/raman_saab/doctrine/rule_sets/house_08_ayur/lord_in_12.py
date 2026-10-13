@@ -271,13 +271,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # constant. This needs a real Shadbala predicate, which `conditions.py` does not have.
     RuleRecord(
         id="H8.L.6b", house=8, signification="longevity", group="lord_in_house",
-        kind="descriptive", condition=None,
-        fortified="the 6th lord fortified - he overcomes all his troubles and emerges "
-                  "victor; no attempt by ill-wishers or enemies to harm him will succeed. "
-                  "TODO(predicate: Shadbala strength of the 6th lord - no IsPowerful "
-                  "Condition exists; the dignity proxy is tautological here)",
-        general=None, afflicted=None,
-        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 2989)),
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable", condition=C.And(C.LordIn(8, 6), C.LordsConjunct(8, 6), C.IsStrong("LORD_OF:6")),
+        fortified=None,
+        general="the 6th lord fortified - he overcomes all his troubles and emerges victor; "
+                "no attempt by ill-wishers or enemies to harm him will succeed", afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 2989)),
     RuleRecord(
         id="H8.L.7", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.And(C.LordIn(8, 7), C.LordsConjunct(8, 7)),
@@ -305,6 +309,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # lost. (It was also listed in `test_general_reading_slot.LEFT_ALONE` as a rule that
         # "really does give an afflicted reading" — true of the TEXT, false of the SLOT.)
         id="H8.L.9a", house=8, signification="longevity", group="lord_in_house",
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
         kind="descriptive", condition=None,
         fortified=None, general=None,
         afflicted="the 8th lord joining the 9th lord in the 9th WITH MALEFICS - the native "
@@ -312,9 +319,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "arise. TODO(predicate: malefic other than the 8th/9th lords in that "
                   "house - ClassInHouseFrom has no subject-exclusion set, so the two lords "
                   "the rule is about would count themselves)",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3011)),
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3011)),
     RuleRecord(
         id="H8.L.9b", house=8, signification="longevity", group="lord_in_house",
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
         kind="descriptive", condition=None,
         fortified=None,
         general="the 8th lord conjoined with BENEFICS in the 9th with the 9th lord - the "
@@ -322,26 +332,33 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                 "be harmonious. TODO(predicate: benefic other than the 8th/9th lords - same "
                 "subject-exclusion gap as H8.L.9a)",
         afflicted=None,
-        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 3015)),
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3015)),
     RuleRecord(
         id="H8.L.9c", house=8, signification="longevity", group="lord_in_house",
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
         kind="descriptive", condition=None,
         fortified=None, general=None,
         afflicted="the Sun, natural significator of the father, afflicted - the father may "
                   "die during the period of the 9th lord. TODO(predicate: generalised "
                   "planet-affliction; also a dasha-timing claim, outside the atemporal "
                   "EvalContext)",
-        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3013)),
+        frame="KARAKA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3013)),
     RuleRecord(
         id="H8.L.9d", house=8, signification="longevity", group="lord_in_house",
-        kind="descriptive", condition=None,
-        fortified=None, general=None,
-        afflicted="the NINTH lord weak - the native suffers all kinds of hardships, misery "
-                  "and unhappiness; friends and kinsmen may desert him while superiors find "
-                  "fault with him. TODO(predicate: Shadbala weakness of the 9th lord - the "
-                  "dignity proxy is provably TAUTOLOGICALLY FALSE here, the 9th lord being "
-                  "in its own house and so its own sign by the entry's premise)",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3017)),
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable", condition=C.And(C.LordIn(8, 9), C.LordsConjunct(8, 9), C.IsWeak("LORD_OF:9")),
+        fortified=None, general="the 9th lord weak - the native suffers all kinds of "
+                                "hardships, misery and unhappiness; friends and kinsmen may "
+                                "desert him while superiors find fault with him",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3017)),
     # The one clause of this entry the opened varga gate makes encodable today.
     RuleRecord(
         id="H8.L.9e", house=8, signification="longevity", group="lord_in_house",
@@ -415,13 +432,16 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3053)),
     RuleRecord(
         id="H8.L.12a", house=8, signification="longevity", group="lord_in_house",
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
         kind="descriptive", condition=None,
         fortified=None, general=None,
         afflicted="BENEFICS JOINING the 8th lord - unfavourable results may be expected: "
                   "treachery of friends resulting in many problems and grief, unexpected "
                   "expenditure and pecuniary losses. TODO(predicate: benefic other than the "
                   "8th/12th lords joining - the ClassInHouseFrom subject-exclusion gap)",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3055)),
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3055)),
     # HTJAH-II:3061-3065 is a SEPARATE COMBINATION, and Raman says so himself: he RE-OPENS
     # the antecedent as "If the 8th lord is in the 12th house", DROPPING "with the 12th lord".
     # That matters, because under the conjunction the 12th lord is in the 12th by

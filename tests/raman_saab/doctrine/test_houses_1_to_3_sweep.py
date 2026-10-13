@@ -42,7 +42,10 @@ class TestTheDefectsAreGone:
     def test_h1_l4_no_longer_shows_the_4th_lords_reading_as_the_lagna_lords(self) -> None:
         """HTJAH-I:1026 opens "If the 4th lord is favourably disposed" -- a different planet."""
         assert _R["H1.L.4"].fortified is None
-        assert "4th lord favourably disposed" in _R["H1.L.4a"].fortified
+        # Live since 2026-10-13: the 4th lord's strength is in the CONDITION (IsStrong), so the
+        # text is shown whenever the rule fires rather than chosen by the Lagna lord's branch.
+        assert "4th lord favourably disposed" in _R["H1.L.4a"].general
+        assert _R["H1.L.4a"].kind == "evaluable"
 
     def test_h2_l2_dropped_tara_remark_is_restored(self) -> None:
         """HTJAH-I:2335 (the 2nd lord outside the 3rd/5th/7th tara) was missing entirely."""
@@ -66,28 +69,33 @@ class TestTheDefectsAreGone:
         assert "dissimulation" in _R["H2.L.6"].fortified
 
 
-class TestTheProxyGatedRulesCanFire:
-    """H2.L.4a and H2.L.9a fire on ZERO of 346 goldens: they use the corpus's conservative
-    strength proxy (exalted / own / moolatrikona) so a weak lord is never shown a
-    strength-gated reading, and that under-fires by design. A rule the corpus never exercises
-    cannot be validated by the ratchet, so satisfiability is proved by an explicit chart."""
+class TestTheStrengthGatedRulesUseRealStrength:
+    """H2.L.4a/7a/9a first shipped on the conservative dignity proxy (exalted / own /
+    moolatrikona), so a weak 2nd lord would never be shown a strength-gated reading. The proxy
+    was replaced on 2026-10-13 by IsStrong -- Raman's binary strength, read with the facts that
+    override the number (combustion, uncancelled debility)."""
 
-    def test_h2_l4a_witness(self) -> None:
-        """Libra rising: Mars (2nd lord) exalted in Capricorn, the 4th; Saturn (4th lord)
-        conjunct the Sun, a natural malefic -- the 4th lord afflicted."""
-        ctx = _ctx({"Mars": 280.0, "Saturn": 100.0, "Sun": 105.0}, asc_lon=185.0)
-        assert _R["H2.L.4a"].condition.evaluate(ctx) is True
+    @pytest.mark.parametrize("rid", ["H2.L.4a", "H2.L.7a", "H2.L.9a"])
+    def test_no_dignity_proxy_remains(self, rid: str) -> None:
+        conds = _R[rid].condition.conds
+        assert any(isinstance(c, C.IsStrong) for c in conds), rid
+        assert not any(isinstance(c, C.LordHasDignity) for c in conds), rid
 
-    def test_h2_l9a_witness(self) -> None:
-        """Scorpio rising: Jupiter (2nd lord) exalted in Cancer, the 9th; the Moon (9th lord)
-        in the Lagna."""
+    def test_h2_l9a_fires_on_a_real_cast_chart(self) -> None:
+        """No golden exercises H2.L.9a, and a synthetic chart carries no Shadbala, so the witness
+        is a real cast chart: 1950-01-03 06:00 IST at Bangalore -- the 2nd lord in the 9th, the
+        9th lord in the Lagna, and the 2nd lord strong."""
+        from app.raman_saab.chart.adapter import cast_chart
+        from app.raman_saab.chart.model import BirthData
+        ch = cast_chart(BirthData("witness", 1950, 1, 3, 6, 0, 5.5, 12.97, 77.59), ayanamsa="raman")
+        assert _R["H2.L.9a"].condition.evaluate(C.EvalContext(ch)) is True
+
+    def test_placements_alone_never_fire_it_without_known_strength(self) -> None:
+        """Scorpio rising: Jupiter (2nd lord) exalted in Cancer, the 9th; the Moon (9th lord) in
+        the Lagna. Every placement holds, but a stated-position chart has no Shadbala -- and a
+        missing number is never read as 'strong'."""
         ctx = _ctx({"Jupiter": 95.0, "Moon": 220.0}, asc_lon=215.0)
-        assert _R["H2.L.9a"].condition.evaluate(ctx) is True
-
-    def test_the_proxy_rejects_a_lord_without_dignity(self) -> None:
-        """Libra rising: Mars (2nd lord) in Gemini, the 9th, and Mercury (9th lord) in the
-        Lagna. Both placements hold, but Mars has no dignity in Gemini -- so the strength
-        proxy alone must stop the rule."""
-        ctx = _ctx({"Mars": 65.0, "Mercury": 190.0}, asc_lon=185.0)
         assert C.LordIn(2, 9).evaluate(ctx) and C.LordIn(9, 1).evaluate(ctx)
         assert _R["H2.L.9a"].condition.evaluate(ctx) is False
+
+

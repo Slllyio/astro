@@ -360,24 +360,27 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # fortified default. It was neutral. Content: H10.L.10a-d.
     RuleRecord(
         id="H10.L.10a", house=10, signification="career", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general=None,
-        fortified="the 10th lord strongly disposed in the 10th - can be highly successful "
-                  "in his profession and command respect and honour. TODO(predicate: "
-                  "Shadbala strength of the 10th lord as a CONDITION; a fortified-only "
-                  "record leaks to weak charts)",
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(10, 10), C.IsStrong("LORD_OF:10")),
+        general="the 10th lord strongly disposed in the 10th - can be highly successful in "
+                "his profession and command respect and honour",
+        fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 9546)),
     RuleRecord(
         id="H10.L.10b", house=10, signification="career", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general=None,
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(10, 10), C.IsWeak("LORD_OF:10"), C.AfflictedBy("LORD_OF:10")),
+        general="the 10th lord weak and afflicted - no self-respect, cringing for favours; "
+                "dependent all his life; fickle-minded",
         fortified=None,
-        afflicted="the 10th lord weak AND afflicted - no self-respect, cringing for "
-                  "favours; dependent all his life; fickle-minded. TODO(predicate: Shadbala "
-                  "weakness to conjoin with AfflictedBy)",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 9548)),
     # Neutral: refines a parent that already votes for this placement.
     RuleRecord(

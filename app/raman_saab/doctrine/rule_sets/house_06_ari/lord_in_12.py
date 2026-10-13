@@ -161,29 +161,43 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # ---- clauses re-homed out of strength slots by the 2026-09-03 House-6 sweep ----------
     RuleRecord(
         id="H6.L.2a", house=6, signification="enemies_disease", group="lord_in_house",
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
         kind="descriptive", condition=None,
         fortified="the 6th lord CONJOINED WITH or ASPECTED BY benefics - untold suffering in "
                   "family life and deep sorrows, loss of money through enemies, defective "
                   "vision, uneven teeth and stammering. TODO(predicate: there is no "
                   "benefic-class analogue to AfflictedBy in conditions.py)",
         general=None, afflicted=None,
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 6007)),
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 6007)),
     RuleRecord(
         id="H6.L.2b", house=6, signification="enemies_disease", group="lord_in_house",
-        kind="descriptive", condition=None,
-        fortified=None, general=None,
-        afflicted="VENUS weak - the native will be a celibate and poverty stricken, just able "
-                  "to get a morsel of food when hungry. TODO(predicate: Shadbala weakness of "
-                  "a NAMED planet - no IsWeak Condition exists)",
-        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 6010)),
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable", condition=C.And(C.LordIn(6, 2), C.IsWeak("Venus")),
+        fortified=None, general="Venus weak - the native will be a celibate and poverty "
+                                "stricken, just able to get a morsel of food when hungry",
+        afflicted=None,
+        frame="KARAKA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 6010)),
     RuleRecord(
         id="H6.L.6a", house=6, signification="enemies_disease", group="lord_in_house",
-        kind="descriptive", condition=None,
-        fortified=None, general=None,
-        afflicted="the 6th lord in conjunction with a WEAK LAGNA LORD - an incurable disease, "
-                  "and increase of enmity with kith and kin. TODO(predicate: LordsConjunct(6,1) "
-                  "exists; the Lagna lord's weakness needs a Shadbala Condition)",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 6027)),
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable", condition=C.And(C.LordIn(6, 6), C.LordsConjunct(6, 1), C.IsWeak("LORD_OF:1")),
+        fortified=None, general="the 6th lord in conjunction with a weak Lagna lord - an "
+                                "incurable disease, and increase of enmity with kith and "
+                                "kin",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 6027)),
     RuleRecord(
         id="H6.L.7a", house=6, signification="enemies_disease", group="lord_in_house",
         kind="evaluable",
@@ -196,15 +210,21 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 6033)),
     RuleRecord(
         id="H6.L.7b", house=6, signification="enemies_disease", group="lord_in_house",
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
         kind="descriptive", condition=None,
         fortified=None, general=None,
         afflicted="the Rashi AND Navamsha involved both hermaphrodite - a sickly or barren "
                   "wife. TODO(predicate: a hermaphrodite sign-class test across D1 and D9; the "
                   "varga half is expressible via VargaDignity/varga_sign_by_name, the sign "
                   "class is not yet a Condition)",
-        frame="LAGNA", varga="D9", polarity="malefic", source=Citation("HTJAH-I", 6034)),
+        frame="LAGNA", varga="D9", polarity="neutral", source=Citation("HTJAH-I", 6034)),
     RuleRecord(
         id="H6.L.7c", house=6, signification="enemies_disease", group="lord_in_house",
+        # 2026-10-13: polarity set neutral -- a refinement of a parent that already votes
+        # for this placement (it predated the neutral rule; promoting siblings to live rules
+        # exposed it).
         kind="descriptive", condition=None,
         fortified=None, general=None,
         afflicted="the LAGNA LORD joining the 6th lord IN THE 7th, which is a hermaphrodite "
@@ -212,7 +232,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "TODO(predicate: a THREE-part antecedent. The old encoding reduced it to "
                   "'the 6th lord is weak' and asserted this on one-sixth of Raman's stated "
                   "evidence)",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 6035)),
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 6035)),
     RuleRecord(
         id="H6.L.9a", house=6, signification="enemies_disease", group="lord_in_house",
         kind="descriptive", condition=None,

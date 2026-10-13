@@ -134,6 +134,15 @@ def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, An
                 anchor = kws["frame"]               # a keyword node starts at its NAME
                 a = _offset(lines, anchor.lineno, anchor.col_offset)
                 edits.append((a, a, f"{slot}={literal(spec[slot], 8 + len(slot) + 1)},\n        "))
+        # `kind` / `polarity` take a string literal; `condition` takes Python source verbatim
+        # (it is code, e.g. 'C.And(C.LordIn(7, 7), C.IsWeak("LORD_OF:7"))'). Promoting a parked
+        # descriptive record to a live one needs all three, not just its text.
+        for key in ("kind", "polarity", "condition"):
+            if key in spec:
+                v = kws[key].value
+                a = _offset(lines, v.lineno, v.col_offset)
+                b = _offset(lines, v.end_lineno, v.end_col_offset)
+                edits.append((a, b, spec[key] if key == "condition" else json.dumps(spec[key])))
         if spec.get("note"):
             id_kw = kws["id"]
             line_end = _offset(lines, id_kw.lineno + 1, 0)
@@ -175,10 +184,12 @@ def verify(module: str, changes: dict[str, dict[str, Any]], new: list[dict[str, 
     for rid in delete or {}:
         assert rid not in recs, f"{rid} was meant to be removed"
     for rid, spec in changes.items():
-        for slot in _SLOTS:
+        for slot in (*_SLOTS, "kind", "polarity"):
             if slot in spec:
                 got = getattr(recs[rid], slot)
                 assert got == spec[slot], f"{rid}.{slot}: {got!r} != {spec[slot]!r}"
+        if spec.get("condition") not in (None, "None"):
+            assert recs[rid].condition is not None, f"{rid}: condition was not set"
     for spec in new:
         r = recs[spec["id"]]
         assert getattr(r, spec["slot"]) == spec["text"], spec["id"]

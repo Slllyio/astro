@@ -71,6 +71,17 @@ class TestApplySlotChanges:
         i = ids.index("H6.L.8")
         assert ids[i + 1:i + 3] == ["H6.L.8x", "H6.L.8y"]
 
+    def test_a_parked_record_can_be_promoted_to_a_live_rule(self) -> None:
+        """Turning a descriptive record evaluable needs its kind, condition and text changed
+        together; the condition is written as code, the kind as a string."""
+        src = apply(_FILE, changes={"H6.L.2b": {
+            "kind": "evaluable",
+            "condition": 'C.And(C.LordIn(6, 2), C.IsWeak("Venus"))',
+            "afflicted": "Venus weak - celibate and poverty stricken"}}, new=[])
+        r = _rules(src)["H6.L.2b"]
+        assert r.kind == "evaluable" and r.condition is not None
+        assert r.afflicted == "Venus weak - celibate and poverty stricken"
+
     def test_a_removed_record_leaves_a_comment_and_its_heir_takes_its_place(self) -> None:
         """Removal keeps the reason in the file, and children anchored after it still land there."""
         base = {"house": 6, "signification": "enemies_disease", "kind": "descriptive",

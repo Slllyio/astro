@@ -110,32 +110,37 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 3356)),
     RuleRecord(
         id="H3.L.4a", house=3, signification="siblings", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general=None,
-        fortified="the lord of the 3rd well fortified in the 4th and the lords of Lagna and "
-                  "the 9th rendered weak - his brothers will survive him. TODO(predicate: "
-                  "strength of LORD_OF:3 AND weakness of LORD_OF:1 and LORD_OF:9 - no "
-                  "named-lord strength Condition)",
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(3, 4), C.IsStrong("LORD_OF:3"), C.IsWeak("LORD_OF:1"), C.IsWeak("LORD_OF:9")),
+        general="the lord of the 3rd well fortified in the 4th and the lords of Lagna and "
+                "the 9th rendered weak - his brothers will survive him",
+        fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 3359)),
     RuleRecord(
         id="H3.L.4b", house=3, signification="siblings", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general=None,
-        fortified="he will have step-brothers if the 9th lord is strong. TODO(predicate: "
-                  "strength of LORD_OF:9)",
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(3, 4), C.IsStrong("LORD_OF:9")),
+        general="the 9th lord strong - he will have step-brothers",
+        fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 3360)),
     RuleRecord(
         id="H3.L.4c", house=3, signification="siblings", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general="when Mars is weak he will lose his lands and will have to live in others' "
-                "houses; evil results will be minimised if the 3rd house is beneficially "
-                "disposed. TODO(predicate: weakness of the named planet Mars; a 3rd-house "
-                "disposition modifier)",
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(3, 4), C.IsWeak("Mars")),
+        general="Mars weak - he will lose his lands and will have to live in others' "
+                "houses; the evil results will be minimised if the 3rd house is "
+                "beneficially disposed",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 3361)),

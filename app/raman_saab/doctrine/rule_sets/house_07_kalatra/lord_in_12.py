@@ -223,11 +223,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 286)),
     RuleRecord(
         id="H7.L.6c", house=7, signification="spouse", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(7, 6), C.IsWeak("Venus"), C.Not(C.AfflictedBy("Venus"))),
         general="Venus weak but not afflicted - one may desert or lose one's married "
-                "partner through some indiscreet act. TODO(predicate: Shadbala weakness of "
-                "the named planet Venus)",
+                "partner through some indiscreet act",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 288)),
@@ -243,15 +245,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 291)),
     RuleRecord(
         id="H7.L.7a", house=7, signification="spouse", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general=None,
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(7, 7), C.IsWeak("LORD_OF:7"), C.AfflictedBy("LORD_OF:7")),
+        general="the 7th lord weak and afflicted - a lonely life devoid of marriage and "
+                "friends, and loss through marriage negotiations",
         fortified=None,
-        afflicted="the 7th lord weak AND afflicted - a lonely life devoid of marriage and "
-                  "friends, and loss through marriage negotiations. TODO(predicate: a "
-                  "Shadbala weakness Condition to conjoin with AfflictedBy; the strength "
-                  "slot alone cannot test the affliction half, and the affliction condition "
-                  "alone would show this to a strong afflicted lord)",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 295)),
     RuleRecord(
         id="H7.L.8", house=7, signification="spouse", group="lord_in_house", kind="evaluable",
@@ -394,12 +396,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 333)),
     RuleRecord(
         id="H7.L.12c", house=7, signification="spouse", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general=None,
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(7, 12), C.IsWeak("Venus"), C.IsWeak("LORD_OF:7")),
+        general="both the karaka Venus and the 7th lord weak - the native may only dream of "
+                "women but never marry",
         fortified=None,
-        afflicted="both the karaka Venus and the 7th lord weak - the native may only dream "
-                  "of women but never marry. TODO(predicate: Shadbala weakness of the named "
-                  "planet Venus)",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 336)),
 )

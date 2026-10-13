@@ -40,6 +40,7 @@ from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS, Nature,
     compute_functional_nature, functional_nature, is_yogakaraka)
 from app.raman_saab.primitives.bhangas import neecha_bhanga
+from app.raman_saab.primitives.effective_strength import effective_strength
 
 # House classes (whole-sign, from the Lagna).
 _HOUSE_CLASS: dict[str, frozenset[int]] = {
@@ -596,6 +597,52 @@ class AfflictedBy(Condition):
                 if hits >= self.min_count:
                     return True
         return False
+
+
+class IsStrong(Condition):
+    """`planet` is STRONG in Raman's sense: its Shadbala meets his minimum bar (GBB-8:303-312)
+    AND no hard fact overrides that number -- it is neither combust nor debilitated without
+    cancellation.
+
+    Built on `primitives.effective_strength` (the B1 measure), NOT on raw `is_powerful`. Two
+    reasons, both recorded in that module: Raman reads a combust lord "powerless" even when it is
+    otherwise well disposed (HTJAH-I:3788), so the number alone contradicts him on his own worked
+    chart; and gating on raw `is_powerful` was tried before and over-fired badly (four HPA-20
+    yogas had to be deferred).
+
+    This is the BINARY reading the engine already uses -- no new strength vocabulary. Raman's
+    middle tiers ("moderately strong", "middling") and his upper band ("very powerful") are NOT
+    expressed by it and stay parked. The B2 "marginal" band (within 0.2 rupa of the bar) is
+    deliberately neither strong nor weak: it is a tuning band, not Raman's middle tier.
+
+    Unknown strength is never strong: a chart without Shadbala (Track-B), or Rahu/Ketu (no
+    Shadbala at all, GBB-3), returns False. Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        es = effective_strength(_resolve_planet(self.planet, ctx.chart), ctx.chart)
+        return es.band == "strong" and not es.decisively_weak
+
+
+class IsWeak(Condition):
+    """`planet` is WEAK in Raman's sense: below his minimum bar, OR combust, OR debilitated
+    without cancellation -- `effective_strength(...).decisively_weak`, i.e. "Raman would not let
+    this factor carry the matter".
+
+    Weakness and AFFLICTION are different conditions to Raman (HTJAH-II:3001-3009 runs "in
+    strength / weak / afflicted" as three tiers; HTJAH-I:5121 writes "weak AND afflicted"), so
+    "weak and afflicted" is `And(IsWeak(p), AfflictedBy(p))`, never either alone.
+
+    With no Shadbala on the chart, only the hard facts (combust, uncancelled debility) can make a
+    planet weak; a missing number is not read as a low one. Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        return effective_strength(_resolve_planet(self.planet, ctx.chart), ctx.chart).decisively_weak
 
 
 class JoinedBy(Condition):

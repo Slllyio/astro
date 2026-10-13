@@ -153,10 +153,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         source=Citation("HTJAH-II", 16161)),
     RuleRecord(
         id="H12.L.4a", house=12, signification="loss_moksha", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(12, 4), C.IsStrong("Venus")),
         general="Venus strong - the native may own his own conveyance but it will always "
-                "give trouble. TODO(predicate: Shadbala strength of the named planet Venus)",
+                "give trouble",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 16166)),

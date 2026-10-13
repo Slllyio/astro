@@ -259,7 +259,10 @@ class TestTheSweepAcrossTheRestOfTheSection:
         """Four clauses were MISSING entirely, not merely mis-slotted — three D9 mitigations
         and the 6th-lord relief. Reading the source found them; a slot audit alone would not
         have."""
-        assert "overcomes all his troubles" in _R["H8.L.6b"].fortified
+        # Live since 2026-10-13 via IsStrong("LORD_OF:6") -- which also dissolves the reviewer's
+        # objection that the dignity proxy is tautologically TRUE here (the 6th lord sits in its
+        # own sign by the entry's premise): Shadbala-with-overrides has no such blind spot.
+        assert "overcomes all his troubles" in _R["H8.L.6b"].general
         for rid in ("H8.L.9e", "H8.L.10b"):
             assert "Navamsa Lagna" in _R[rid].general
 

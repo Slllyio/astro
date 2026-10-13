@@ -167,8 +167,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # Neutral: refines a parent that already votes for this placement.
     RuleRecord(
         id="H2.L.4a", house=2, signification="wealth", group="lord_in_house",
+        # 2026-10-13: dignity proxy replaced by IsStrong.
         kind="evaluable",
-        condition=C.And(C.LordIn(2, 4), C.LordHasDignity(2, {"exalt", "own", "moolatrikona"}), C.AfflictedBy("LORD_OF:4")),
+        condition=C.And(C.LordIn(2, 4), C.IsStrong("LORD_OF:2"), C.AfflictedBy("LORD_OF:4")),
         general="the 2nd lord well fortified in the 4th but the 4th lord afflicted - losses "
                 "through the maternal relations that would otherwise benefit him",
         fortified=None,
@@ -225,8 +226,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # Neutral: refines a parent that already votes for this placement.
     RuleRecord(
         id="H2.L.7a", house=2, signification="wealth", group="lord_in_house",
+        # 2026-10-13: dignity proxy replaced by IsStrong.
         kind="evaluable",
-        condition=C.And(C.LordIn(2, 7), C.LordsConjunct(2, 7), C.LordHasDignity(2, {"exalt", "own", "moolatrikona"})),
+        condition=C.And(C.LordIn(2, 7), C.LordsConjunct(2, 7), C.IsStrong("LORD_OF:2")),
         general="the 2nd lord joining the 7th with the 7th lord, and strong - influx of "
                 "wealth through foreign sources; the native will undertake journeys to "
                 "foreign countries and do business",
@@ -274,8 +276,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # Neutral: refines a parent that already votes for this placement.
     RuleRecord(
         id="H2.L.9a", house=2, signification="wealth", group="lord_in_house",
+        # 2026-10-13: dignity proxy replaced by IsStrong.
         kind="evaluable",
-        condition=C.And(C.LordIn(2, 9), C.LordIn(9, 1), C.LordHasDignity(2, {"exalt", "own", "moolatrikona"})),
+        condition=C.And(C.LordIn(2, 9), C.LordIn(9, 1), C.IsStrong("LORD_OF:2")),
         general="the 2nd lord well fortified and the 9th lord in Lagna - good inheritance; "
                 "also benefits through different sources according to the sign and "
                 "nakshatra held by the 2nd lord",

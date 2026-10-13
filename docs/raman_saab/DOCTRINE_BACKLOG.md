@@ -5399,3 +5399,53 @@ from weak-lord charts, or mislabelling an unconditioned reading as strength-cond
 - **Corpus-wide axis question** (House 5 review): Raman closes several tables naming a benefic /
   moderating / malefic NATURE-plus-ASSOCIATION axis, not Shadbala. The sweep kept the project's
   standing convention ("favourably disposed" = strength); overturning it is a user-signed decision.
+
+
+## IsStrong / IsWeak (2026-10-13) — the strength check the sweep was waiting on
+
+**What they are.** Raman's BINARY strength as a rule CONDITION, built on `effective_strength` (B1):
+- `IsStrong(p)` = Shadbala meets the GBB-8:303 bar AND not combust AND not debilitated-uncancelled.
+- `IsWeak(p)` = below the bar OR combust OR debilitated-uncancelled (`decisively_weak`).
+- Unknown strength (Track-B charts, Rahu/Ketu) is never strong; only hard facts can make it weak.
+- The B2 "marginal" band is neither -- it is a tuning band, not Raman's middle tier.
+
+**Why not raw `is_powerful`.** Raman reads a combust ruler "powerless" even when well disposed
+(HTJAH-I:3788), and gating on the raw number was tried before and over-fired (four HPA-20 yogas
+deferred). Measured over the goldens: the raw bar calls a planet strong **198 times** where these
+facts make it powerless.
+
+**This is not the strength ontology the roadmap warned about.** No new vocabulary: it is the same
+binary reading the engine already uses for slot selection, made available to conditions. Middle
+tiers ("moderately strong", "middling") and the upper band ("very powerful") remain parked.
+
+**What it unblocked.** 14 parked clauses went live (H1.L.4a, H3.L.4a-c, H6.L.2b, H6.L.6a, H7.L.6c,
+H7.L.7a, H7.L.12c, H8.L.6b, H8.L.9d, H10.L.10a/b, H12.L.4a) and the dignity proxy was retired from
+H2.L.4a/7a/9a. Strength goes INTO the condition and the text into `general` -- left in a strength
+slot, `_branch` would test the rule's HOUSE lord with the raw number, the wrong planet for "Venus
+weak". It also dissolved two tautologies a reviewer had proved: the dignity proxy is constantly
+TRUE for a lord in its own house (H8.L.6b's 6th lord) and constantly FALSE for debility there
+(H8.L.9d's 9th lord). Shadbala-with-overrides has no such blind spot.
+
+**"Weak AND afflicted" is now exact** (H7.L.7a, H10.L.10b): `And(IsWeak(lord), AfflictedBy(lord))`.
+
+### ★ A bug the promotion exposed, and the guard that now prevents it
+
+Eleven re-homed records from the H6 and H8 sweeps had kept their parent's malefic/benefic polarity --
+created before the "re-homed refinements are neutral" rule. Harmless while descriptive. Promoting
+H6.L.6a to a live rule made it vote malefic and flip three H6/accidents verdicts. All eleven set
+neutral; `test_rehomed_records_are_neutral.py` now fails if any re-homed record carries a vote,
+with an explicit allowlist for the two genuine separate combinations (H8.L.5c, H8.L.12b).
+
+**Net:** 115 presentation changes, **0 verdict changes**, ratchet 286/397, 362/397, 35. Liveness
+unchanged at 69. H2.L.9a is proved satisfiable by a real cast chart (1950-01-03 06:00 IST,
+Bangalore) since synthetic charts carry no Shadbala; H7.L.6c by debility alone.
+
+### Flagged
+
+- `effective_strength` counts ANY combustion (`combust > 0.0`) as powerless, while the `Combust`
+  condition and the judge use a 0.5 orb fraction ("one threshold for the whole engine"). Two
+  thresholds for one fact. Reused as-is here (reuse over a second definition); reconciling them is
+  its own measured decision.
+- `_branch` (slot selection) still uses raw `is_powerful`, so a combust lord with a high number can
+  be shown its `fortified` text while `IsStrong` says it is not strong. Switching `_branch` to
+  effective strength is presentation-only and would make the two agree; measure first.

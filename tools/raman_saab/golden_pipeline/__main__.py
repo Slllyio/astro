@@ -8,6 +8,7 @@ Usage:
     py -3.12 -m tools.raman_saab.golden_pipeline ingest   --run R --sources-root DIR
     py -3.12 -m tools.raman_saab.golden_pipeline propose  --run R
     py -3.12 -m tools.raman_saab.golden_pipeline apply    --run R --ids ID[,ID...] | --all
+                                                  [--override-rejected ID[,ID...]] [--contest ID[,ID...]]
     py -3.12 -m tools.raman_saab.golden_pipeline status   --run R
 """
 from __future__ import annotations
@@ -102,17 +103,26 @@ _WRITABLE = {"CONFIRMED", "REJECTED", "CONTESTED"}
 
 def cmd_apply(a, run: Path) -> int:
     allrows = R.read_jsonl(run / "decisions.jsonl")
+    over = frozenset(i for i in a.override_rejected.split(",") if i)
+    contest = frozenset(i for i in a.contest.split(",") if i)
+    stray = sorted((over | contest) - {i for i in a.ids.split(",") if i})
+    if stray:
+        print(f"[apply] refusing; --override-rejected/--contest ids not in --ids: {stray}",
+              file=sys.stderr)
+        return 2
     if a.all:
         decs = [d for d in allrows if d["outcome"] in _WRITABLE]
     else:
         wanted = [i for i in a.ids.split(",") if i]
         by_id = {d["item_id"]: d for d in allrows}
-        bad = [i for i in wanted if i not in by_id or by_id[i]["outcome"] not in _WRITABLE]
+        bad = [i for i in wanted if i not in by_id or (by_id[i]["outcome"] not in _WRITABLE
+                                                   and i not in contest)]
         if bad:
             print(f"[apply] refusing; missing or non-writable ids: {bad}", file=sys.stderr)
             return 2
         decs = [by_id[i] for i in wanted]
-    run_apply(decs, a.run, _dt.date.today().isoformat())
+    run_apply(decs, a.run, _dt.date.today().isoformat(),
+              override_rejected=over, contest=contest)
     print(f"[apply] wrote {len(decs)} decisions; review the diff, then commit")
     return 0
 
@@ -138,6 +148,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--tiebreak", action="store_true")
     ap.add_argument("--ids", default="")
     ap.add_argument("--all", action="store_true")
+    ap.add_argument("--override-rejected", default="")
+    ap.add_argument("--contest", default="")
     a = ap.parse_args(argv)
     if a.stage == "apply" and bool(a.ids) == a.all:
         ap.error("apply requires exactly one of --ids / --all")

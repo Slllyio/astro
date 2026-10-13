@@ -186,3 +186,72 @@ class TestEmptyGuard:
         monkeypatch.setattr(AP, "require_clean_tree", lambda: pytest.fail("reached"))
         with pytest.raises(ValueError, match="no decisions"):
             AP.run_apply([], "r1", "2026-10-13")
+
+
+class TestOverrideRejected:
+    ID = "NH.chart_1#H4"
+
+    def test_refused_without_flag_accepted_with_it(self):
+        """A prior REJECTED DRAFT is writable only for ids named in override_rejected."""
+        line = _rec(note="REJECTED earlier")
+        with pytest.raises(ValueError):
+            AP.edit_goldens_lines([line], [_conf()], "r1")
+        out = AP.edit_goldens_lines([line], [_conf()], "r1", override_rejected=frozenset({self.ID}))
+        v = json.loads(out[0])["expected_verdicts"]["H4"]
+        assert v["verdict_review"] == "CONFIRMED" and v["verdict_prose"] == "q"
+        assert v["review_note"].startswith("REJECTED earlier | ")
+        assert "overridden" in v["review_note"] and "2026-10-13" in v["review_note"]
+        assert "store the conclusion as prose" in v["review_note"]
+        assert 'prior extracted prose: "p"' in v["review_note"]
+
+    def test_other_ids_keep_the_guard(self):
+        """The flag is per-id: naming a different id does not unlock this one."""
+        with pytest.raises(ValueError):
+            AP.edit_goldens_lines([_rec(note="REJECTED earlier")], [_conf()], "r1",
+                                  override_rejected=frozenset({"other#H1"}))
+
+    def test_confirmed_target_still_refused_with_flag(self):
+        """Override covers REJECTED DRAFTs only, never an already-CONFIRMED row."""
+        with pytest.raises(ValueError):
+            AP.edit_goldens_lines([_rec("CONFIRMED", note="REJECTED earlier")], [_conf()], "r1",
+                                  override_rejected=frozenset({self.ID}))
+
+
+class TestContest:
+    ID = "NH.chart_1#H4"
+    C = frozenset({ID})
+
+    def test_confirmed_becomes_contested_label_unchanged(self):
+        """CONFIRMED -> CONTESTED; label and prose untouched; note appended."""
+        d = _dec("CONFIRMED", verdict="mixed", signification="parents", revised=False)
+        out = AP.edit_goldens_lines([_rec("CONFIRMED", note="old")], [d], "r1", contest=self.C)
+        v = json.loads(out[0])["expected_verdicts"]["H4"]
+        assert v["verdict_review"] == "CONTESTED"
+        assert (v["verdict"], v["signification"], v["verdict_prose"]) == ("afflicted", "mother", "p")
+        assert v["review_note"].startswith("old | CONTESTED r1: the 2026-08-23 engine-blind label "
+                                           "(afflicted/mother) disagrees with golden_pipeline run r1 (")
+        assert "CONFIRMED mixed/parents" in v["review_note"]
+        assert v["review_note"].endswith("never enters the scored pool.")
+
+    def test_non_confirmed_target_raises(self):
+        """Only a CONFIRMED row can be contested."""
+        with pytest.raises(ValueError):
+            AP.edit_goldens_lines([_rec("DRAFT")], [_dec("REJECTED")], "r1", contest=self.C)
+
+    def test_not_found_accepted_only_when_contested(self):
+        """Contest bypasses the writable-outcome check for its ids only."""
+        out = AP.edit_goldens_lines([_rec("CONFIRMED")], [_dec("NOT_FOUND")], "r1", contest=self.C)
+        v = json.loads(out[0])["expected_verdicts"]["H4"]
+        assert v["verdict_review"] == "CONTESTED" and "(NOT_FOUND)" in v["review_note"]
+        with pytest.raises(ValueError):
+            AP.edit_goldens_lines([_rec("CONFIRMED")], [_dec("NOT_FOUND")], "r1")
+
+
+class TestBacklogMarks:
+    def test_rows_marked(self):
+        """Backlog rows flag OVERRIDE-REJECTED / CONTESTED ids."""
+        ds = [_conf(), {**_dec("NOT_FOUND"), "item_id": "x#H1"}]
+        md = AP.backlog_entry(ds, "r1", "2026-10-13", (1, 2), (2, 2),
+                              override_rejected=frozenset({"NH.chart_1#H4"}),
+                              contest=frozenset({"x#H1"}))
+        assert "OVERRIDE-REJECTED" in md and "CONTESTED" in md

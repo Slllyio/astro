@@ -39,12 +39,35 @@ def _note(dec: dict[str, Any], run_id: str) -> str:
     return f"{kind} by engine-blind review (golden_pipeline run {run_id}). {quotes}"
 
 
-def _apply_one(entry: dict[str, Any], dec: dict[str, Any], run_id: str) -> dict[str, Any]:
+_OVERRIDE_NOTE: Final = (
+    "Earlier REJECTED review overridden under the 2026-10-13 user decision: confirm the label "
+    "when a reviewer quotes Raman's actual conclusion and the extracted prose was only a factor; "
+    "store the conclusion as prose.")
+
+
+def _contest_one(entry: dict[str, Any], dec: dict[str, Any], run_id: str) -> dict[str, Any]:
     prior = entry.get("review_note") or ""
-    if entry.get("verdict_review") != "DRAFT" or prior.startswith("REJECTED"):
+    if entry.get("verdict_review") != "CONFIRMED":
+        raise ValueError(f"{dec['item_id']}: only a CONFIRMED row can be contested "
+                         f"(verdict_review={entry.get('verdict_review')!r})")
+    got = dec["outcome"] + (f" {dec['verdict']}/{dec['signification']}" if dec.get("verdict") else "")
+    note = (f"CONTESTED {run_id}: the 2026-08-23 engine-blind label ({entry.get('verdict')}/"
+            f"{entry.get('signification')}) disagrees with golden_pipeline run {run_id} ({got}); "
+            "a contested label never enters the scored pool.")
+    return {**entry, "verdict_review": "CONTESTED",
+            "review_note": f"{prior} | {note}" if prior else note}
+
+
+def _apply_one(entry: dict[str, Any], dec: dict[str, Any], run_id: str,
+               override_rejected: bool = False) -> dict[str, Any]:
+    prior = entry.get("review_note") or ""
+    overriding = override_rejected and prior.startswith("REJECTED")
+    if entry.get("verdict_review") != "DRAFT" or (prior.startswith("REJECTED") and not overriding):
         raise ValueError(f"{dec['item_id']}: target is not a live DRAFT "
                          f"(verdict_review={entry.get('verdict_review')!r}, note={prior[:30]!r})")
     note = _note(dec, run_id)
+    if overriding:
+        note += f" {_OVERRIDE_NOTE}"
     extra: dict[str, Any] = {}
     if dec["outcome"] == "CONFIRMED":  # user decision: store Raman's verified quoted conclusion
         quotes = [q for q, _ln in dec.get("quotes", {}).values()]
@@ -60,8 +83,10 @@ def _apply_one(entry: dict[str, Any], dec: dict[str, Any], run_id: str) -> dict[
 
 
 def edit_goldens_lines(lines: list[str], decisions: list[dict[str, Any]],
-                       run_id: str) -> list[str]:
-    bad = [d["item_id"] for d in decisions if d["outcome"] not in _WRITABLE]
+                       run_id: str, override_rejected: frozenset[str] = frozenset(),
+                       contest: frozenset[str] = frozenset()) -> list[str]:
+    bad = [d["item_id"] for d in decisions
+           if d["outcome"] not in _WRITABLE and d["item_id"] not in contest]
     if bad:
         raise ValueError(f"refusing unscorable outcomes: {bad}")
     ids = [d["item_id"] for d in decisions]
@@ -88,7 +113,8 @@ def edit_goldens_lines(lines: list[str], decisions: list[dict[str, Any]],
             tag = f"H{d['house']}"
             if tag not in ev:
                 continue  # reported as unmatched below
-            ev[tag] = _apply_one(ev[tag], d, run_id)
+            ev[tag] = (_contest_one(ev[tag], d, run_id) if d["item_id"] in contest else
+                       _apply_one(ev[tag], d, run_id, d["item_id"] in override_rejected))
             matched.add(d["item_id"])
         out.append(json.dumps({**rec, "expected_verdicts": ev}, ensure_ascii=False))
     missing = [i for i in ids if i not in matched]
@@ -128,7 +154,9 @@ def _pytest(*args: str, env: dict[str, str] | None = None) -> None:
                    env={**os.environ, **(env or {})}, cwd=ROOT)
 
 
-def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str) -> None:
+def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str,
+              override_rejected: frozenset[str] = frozenset(),
+              contest: frozenset[str] = frozenset()) -> None:
     """Order matters: confirming engine MISSES lowers the floor (expected under the amended
     confirmation rule), so re-base BEFORE any ratchet test runs. On any failure, restore both
     files so the fixture and baseline never disagree."""
@@ -139,7 +167,8 @@ def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str) -> None:
     baseline_before = BASELINE.read_text(encoding="utf-8")
     try:
         lines = goldens_before.split("\n")
-        GOLDENS.write_text("\n".join(edit_goldens_lines(lines, decisions, run_id)),
+        GOLDENS.write_text("\n".join(edit_goldens_lines(lines, decisions, run_id,
+                                                          override_rejected, contest)),
                            encoding="utf-8")
         exact, within1 = measure()
         base = json.loads(baseline_before)
@@ -153,13 +182,20 @@ def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str) -> None:
         BASELINE.write_text(baseline_before, encoding="utf-8")
         raise  # missing snapshots written by the verification run show up in `git status`; discard by hand
     with BACKLOG.open("a", encoding="utf-8") as f:
-        f.write(backlog_entry(decisions, run_id, date, exact, within1))
+        f.write(backlog_entry(decisions, run_id, date, exact, within1,
+                              override_rejected, contest))
 
 
 def backlog_entry(decisions: list[dict[str, Any]], run_id: str, date: str,
-                  exact: tuple[int, int], within1: tuple[int, int]) -> str:
+                  exact: tuple[int, int], within1: tuple[int, int],
+                  override_rejected: frozenset[str] = frozenset(),
+                  contest: frozenset[str] = frozenset()) -> str:
+    def mark(i: str) -> str:
+        return (" (CONTESTED)" if i in contest else
+                " (OVERRIDE-REJECTED)" if i in override_rejected else "")
     rows = "\n".join(
-        f"| {d['item_id']} | {d['outcome']}{' (REVISE)' if d.get('revised') else ''} | "
+        f"| {d['item_id']} | {d['outcome']}{' (REVISE)' if d.get('revised') else ''}"
+        f"{mark(d['item_id'])} | "
         f"{d.get('verdict', '')} | {d.get('signification', '')} |" for d in decisions)
     return (f"\n\n## golden_pipeline run {run_id} ({date}) — user-signed\n\n"
             f"Re-based to {exact[0]}/{exact[1]} exact, {within1[0]}/{within1[1]} within-1 "

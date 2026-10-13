@@ -104,3 +104,35 @@ class TestGuards:
         """Non-extract stages without --run are an argparse error."""
         with pytest.raises(SystemExit):
             CLI.main(["ingest", "--runs-root", str(tmp_path)])
+
+
+class TestOverrideFlags:
+    ROWS = [{"item_id": "a", "outcome": "CONFIRMED"}, {"item_id": "b", "outcome": "NOT_FOUND"}]
+
+    def _run(self, tmp_path, monkeypatch):
+        from tools.raman_saab.golden_pipeline import runs as R
+        runs = tmp_path / "runs"
+        R.write_jsonl(R.run_dir("r1", runs) / "decisions.jsonl", self.ROWS)
+        called = []
+        monkeypatch.setattr(CLI, "run_apply", lambda *a, **k: called.append((a, k)))
+        return ["apply", "--run", "r1", "--runs-root", str(runs)], called
+
+    def test_flags_passed_through_and_contest_bypasses_writable(self, tmp_path, monkeypatch):
+        """b is NOT_FOUND (non-writable) but accepted because it is contested."""
+        base, called = self._run(tmp_path, monkeypatch)
+        assert CLI.main(base + ["--ids", "a,b", "--override-rejected", "a", "--contest", "b"]) == 0
+        (args, kw), = called
+        assert [d["item_id"] for d in args[0]] == ["a", "b"]
+        assert kw["override_rejected"] == frozenset({"a"}) and kw["contest"] == frozenset({"b"})
+
+    def test_flag_ids_must_be_in_ids(self, tmp_path, monkeypatch):
+        """An override/contest id outside --ids -> exit 2, nothing applied."""
+        base, called = self._run(tmp_path, monkeypatch)
+        assert CLI.main(base + ["--ids", "a", "--contest", "b"]) == 2
+        assert CLI.main(base + ["--ids", "a", "--override-rejected", "zz"]) == 2
+        assert called == []
+
+    def test_non_writable_without_contest_still_refused(self, tmp_path, monkeypatch):
+        """Without --contest the NOT_FOUND id is still refused."""
+        base, called = self._run(tmp_path, monkeypatch)
+        assert CLI.main(base + ["--ids", "a,b"]) == 2 and called == []

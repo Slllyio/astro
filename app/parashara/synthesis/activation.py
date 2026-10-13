@@ -32,13 +32,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final, Iterable, Mapping, Optional
 
+from app.parashara.doctrine.antardasa_verses import QualifierContext, grade_pair
+from app.parashara.judges.richer_bhava import REQUIRED_SHADBALA
 from app.parashara.doctrine.sources import Citation
 from app.parashara.primitives.graha_drishti import aspects_sign
 from app.parashara.primitives.relationships import (
     EXALTATION, MOOLATRIKONA, SIGN_LORDS, naisargika)
 from app.parashara.reading import ParasharaReading
 from app.parashara.chart.cast import ParasharaChart
-from app.parashara.synthesis.chart_facts import ASPECTING_GRAHAS, house_sign, planet_signs
+from app.parashara.synthesis.chart_facts import (
+    ASPECTING_GRAHAS, functioning_malefics, house_sign, planet_signs)
 from app.parashara.synthesis.evidence import Evidence, Polarity, Tier
 
 #: Targeting: a period-lord conjunct/aspecting a house's LORD times that house (BPHS-47 sl.7-11).
@@ -88,6 +91,9 @@ class ActiveWindow:
     end_age: float
     maraka: bool              # a maraka planet's period (BPHS-44:51) — classically sensitive
     beyond_span: bool         # opens past the computed Nisargayu span (annotated, not clipped)
+    basis: str = "generic"    # "verse" = graded by the pair's own BPHS section; else the generic rule
+    verse_lines: tuple[Citation, ...] = ()   # the pair-verse clauses that fired (basis == "verse")
+    verse_unevaluated: int = 0               # verse clauses needing a qualifier not yet read
 
     @property
     def label(self) -> str:
@@ -99,8 +105,15 @@ class ActiveWindow:
         if self.beyond_span:
             flags.append("beyond the computed Nisargayu span")
         note = f" ({'; '.join(flags)})" if flags else ""
+        basis = ("by its own verse " + ", ".join(f"{c.work}:{c.line}" for c in self.verse_lines)
+                 if self.basis == "verse" and self.verse_lines
+                 else "by its own verse (no clause fired)" if self.basis == "verse"
+                 else "by the generic rule")
+        if self.basis == "verse" and self.verse_unevaluated:
+            basis += f"; {self.verse_unevaluated} clause(s) unevaluated"
         why = (f" [{self.antar_lord} {_ord(self.ad_from_lagna)} from the lagna, "
-               f"{_ord(self.ad_from_md)} from {self.maha_lord}]") if self.ad_from_lagna else ""
+               f"{_ord(self.ad_from_md)} from {self.maha_lord}; graded {basis}]"
+               ) if self.ad_from_lagna else ""
         return (f"{self.antar_lord} periods within the {self.maha_lord} dasha, {age} — "
                 f"{self.quality}{why}{note}")
 
@@ -233,6 +246,29 @@ def md_quality(chart: ParasharaChart, md_lord: str, *, signs=None) -> str:
     return "neutral"
 
 
+def _qualifier_context(reading: ParasharaReading, planet: str, signs) -> QualifierContext:
+    """Benefic/malefic contact (conjunct or aspected; functional nature per BPHS-3:187) and
+    Shadbala strength (vs the required minimum, BPHS-27:3747) for an antardasa lord."""
+    chart = reading.chart
+    malefics = functioning_malefics(chart, signs=signs)
+    psign = signs.get(planet)
+    flags = {"b_conj": False, "b_asp": False, "m_conj": False, "m_asp": False}
+    for other, osign in signs.items():
+        if other == planet or psign is None:
+            continue
+        nature = "m" if other in malefics else "b" if other in ASPECTING_GRAHAS else None
+        if nature is None:
+            continue
+        if osign == psign:
+            flags[f"{nature}_conj"] = True
+        if other in ASPECTING_GRAHAS and aspects_sign(other, osign, psign):
+            flags[f"{nature}_asp"] = True
+    sb, req = reading.shadbala.get(planet), REQUIRED_SHADBALA.get(planet)
+    strong = (sb.rupas >= req) if (sb is not None and req is not None) else None
+    return QualifierContext(benefic_conj=flags["b_conj"], benefic_asp=flags["b_asp"],
+                            malefic_conj=flags["m_conj"], malefic_asp=flags["m_asp"], strong=strong)
+
+
 def active_windows(reading: ParasharaReading, houses: Iterable[int]) -> tuple[ActiveWindow, ...]:
     """Every Vimshottari (MD, AD) window (age >= 0) bearing on any of `houses`, best quality first
     then chronological."""
@@ -244,7 +280,9 @@ def active_windows(reading: ParasharaReading, houses: Iterable[int]) -> tuple[Ac
         return ()
     maraka_names = {m.planet for m in reading.maraka_planets}
     span = reading.nisargayu_full.total_years
-    quality_cache: dict[tuple[str, str], tuple[str, int, int]] = {}
+    # Each pair is graded by ITS OWN BPHS verse (ch.52-60, `antardasa_verses`); the generic dual-frame
+    # rule is the fallback only where the verse offers no evaluable clause.
+    quality_cache: dict[tuple[str, str], tuple[str, str, tuple[Citation, ...], int]] = {}
     md_cache: dict[str, str] = {}
 
     out: list[ActiveWindow] = []
@@ -259,15 +297,26 @@ def active_windows(reading: ParasharaReading, houses: Iterable[int]) -> tuple[Ac
                 continue                                        # window does not target the topic
             key = (maha_lord, b.lord)
             if key not in quality_cache:
-                quality_cache[key] = window_quality(chart, maha_lord, b.lord, signs=signs)
-            quality, ad_from_md, _ = quality_cache[key]
+                pg = grade_pair(maha_lord, b.lord, asc_sign=chart.asc_sign, signs=signs,
+                                longitudes=chart.longitudes, speeds=chart.speeds,
+                                ctx=_qualifier_context(reading, b.lord, signs))
+                if pg is not None:
+                    quality_cache[key] = (pg.quality, "verse", tuple(f.source for f in pg.fired),
+                                          pg.unevaluated)
+                else:
+                    quality_cache[key] = (window_quality(chart, maha_lord, b.lord, signs=signs)[0],
+                                          "generic", (), 0)
+            quality, basis, lines, unevaluated = quality_cache[key]
+            md_sign, ad_sign = signs.get(maha_lord), signs.get(b.lord)
             out.append(ActiveWindow(
                 maha_lord=maha_lord, antar_lord=b.lord, quality=quality,
-                md_quality=md_cache[maha_lord], ad_from_md=ad_from_md,
-                ad_from_lagna=((signs[b.lord] - chart.asc_sign) % 12) + 1 if b.lord in signs else 0,
+                md_quality=md_cache[maha_lord],
+                ad_from_md=((ad_sign - md_sign) % 12) + 1 if md_sign and ad_sign else 0,
+                ad_from_lagna=((ad_sign - chart.asc_sign) % 12) + 1 if ad_sign else 0,
                 start_age=max(0.0, b.start_year), end_age=b.end_year,
                 maraka=maha_lord in maraka_names or b.lord in maraka_names,
-                beyond_span=b.start_year > span))
+                beyond_span=b.start_year > span, basis=basis, verse_lines=lines,
+                verse_unevaluated=unevaluated))
     out.sort(key=lambda w: (QUALITY_RANK[w.quality], w.start_age))
     return tuple(out)
 
@@ -280,8 +329,11 @@ def activation_evidence(houses: Iterable[int],
     if not windows:
         return []
     best = windows[0]                                           # best quality, earliest
-    source = (AD_QUALITY_SOURCE if best.quality == "auspicious"
-              else AD_ADVERSE_SOURCE if best.quality == "adverse" else TARGETING_SOURCE)
+    if best.basis == "verse" and best.verse_lines:
+        source = best.verse_lines[0]                    # the pair's own BPHS clause that fired
+    else:
+        source = (AD_QUALITY_SOURCE if best.quality == "auspicious"
+                  else AD_ADVERSE_SOURCE if best.quality == "adverse" else TARGETING_SOURCE)
     return [Evidence(
         topic=houses[0], tier=Tier.ACTIVATION, category="activation", polarity=Polarity.NEUTRAL,
         rule=f"the matter's strongest activation is {best.quality}, in the {best.maha_lord} dasha "

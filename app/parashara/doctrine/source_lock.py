@@ -88,6 +88,8 @@ def _grid_citations() -> Iterator[Citation]:
     for slokas in yoga_catalogue().values():
         for s in slokas:
             yield s.source
+    from app.parashara.doctrine.antardasa_verses import all_citations as antardasa_citations
+    yield from antardasa_citations()
 
 
 def iter_citations() -> Iterator[Citation]:

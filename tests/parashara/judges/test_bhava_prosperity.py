@@ -142,6 +142,37 @@ class TestSuptavastha:
         assert "avasthas" in passage(f"{supta.source.work}:{supta.source.line}")["text"].lower()
 
 
+class TestCh34Redemption:
+    """ch.11's evil-companion clause counts only FUNCTIONALLY evil dusthana lords (BPHS ch.34)."""
+
+    def test_trine_co_lords_are_redeemed(self):
+        """Aries lagna: Mars (8th + lagna) and Jupiter (12th + 9th) own trines, so only Mercury
+        (6th + 3rd) stays evil (BPHS-34:61, :115)."""
+        from app.parashara.chart.bhava_chart import _evil_dusthana_lords
+        assert _evil_dusthana_lords(1) == frozenset({"Mercury"})
+
+    def test_moon_as_eighth_lord_is_not_evil(self):
+        """Sagittarius lagna: the Moon owns the 8th — 'not evil' (BPHS-34:64); Mars (12th + 5th) is
+        trine-redeemed; Venus (6th + 11th) stays evil."""
+        from app.parashara.chart.bhava_chart import _evil_dusthana_lords
+        assert _evil_dusthana_lords(9) == frozenset({"Venus"})
+
+    def test_per_ascendant_key_overrides_redemption(self):
+        """Taurus lagna: Venus owns the 1st AND the 6th, yet Parashara's own key names him a malefic
+        (BPHS-34:386) — he stays evil; Jupiter (8th+11th) and Mars (12th+7th) are plainly evil."""
+        from app.parashara.chart.bhava_chart import _evil_dusthana_lords
+        assert _evil_dusthana_lords(2) == frozenset({"Venus", "Jupiter", "Mars"})
+
+    def test_redeemed_companion_does_not_fire_the_clause(self):
+        """Aries lagna, 10th lord Saturn with Jupiter (12th+9th lord): no evil association; with
+        Mercury (6th+3rd lord): the clause fires."""
+        lons_jup = {"Saturn": 245.0, "Jupiter": 250.0, "Mars": 10.0, "Sun": 40.0,
+                    "Moon": 70.0, "Mercury": 100.0, "Venus": 130.0}
+        lons_mer = {**lons_jup, "Mercury": 250.0, "Jupiter": 100.0}
+        assert not bhava_factors(10, lons_jup, asc_sign=1, moon_waxing=True).lord_conjunct_dusthana_lord
+        assert bhava_factors(10, lons_mer, asc_sign=1, moon_waxing=True).lord_conjunct_dusthana_lord
+
+
 class TestChartAdapter:
     #: Canonical baseline chart (CLAUDE.md), sidereal longitudes; Virgo lagna (sign 6).
     _CHART = {

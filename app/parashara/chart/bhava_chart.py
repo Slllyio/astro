@@ -46,9 +46,39 @@ def _is_benefic(planet: str, planet_signs: Mapping[str, int], *, moon_waxing: bo
     return fn.natural_benefic(planet) if planet in (fn.FIXED_BENEFICS | fn.FIXED_MALEFICS) else True
 
 
-def _dusthana_lords(asc_sign: int) -> frozenset[str]:
-    """Lords of the 6th, 8th and 12th houses from the lagna."""
-    return frozenset(SIGN_LORDS[_house_sign(h, asc_sign)] for h in (6, 8, 12))
+#: Trine co-lords that Parashara's OWN per-ascendant key (BPHS-34 sl.19-44) does NOT redeem — the
+#: 12-lagna verdicts outrank the general redemption rule. Taurus: "Jupiter, Venus and the Moon are
+#: malefics" (BPHS-34:386, Venus = 1st+6th lord); Aquarius: "Mercury gives meddling effects"
+#: (BPHS-34:713, 5th+8th lord — not auspicious); Virgo: the key is silent on Saturn (5th+6th lord,
+#: the 6th his moolatrikona — the notes' predominance rule, BPHS-34:123-126), so no textual support
+#: to redeem. Doctrine-reviewed 2026-10-13 (REVISE -> these exceptions).
+_NOT_REDEEMED: dict[int, str] = {2: "Venus", 11: "Mercury", 6: "Saturn"}
+
+
+def _evil_dusthana_lords(asc_sign: int) -> frozenset[str]:
+    """The dusthana lords that are FUNCTIONALLY evil for this lagna (BPHS ch.34's redemptions).
+
+    One definition of "an evil lord", used by BOTH halves of ch.11's clause (c) — the companion test
+    and the "if he himself is an evil lord" antidote. Redeemed (not evil):
+      * a dusthana lord who also owns a trine (1st/5th/9th) — sloka-level for the 8th lord ("his
+        simultaneous ownership of a trine will bestow auspicious effects", BPHS-34:60-62), extended
+        to the 6th/12th lords by the TRANSLATOR'S NOTE (BPHS-34:115 — note-level authority) —
+        except where Parashara's per-ascendant key says otherwise (`_NOT_REDEEMED`);
+      * the Sun or Moon as 8th lord — "The 8th lordship of the Sun and the Moon is not evil"
+        (BPHS-34:64-65, sloka).
+    Measured 2026-10-13 (report card): the literal 6/8/12 set made the clause fire MORE on houses
+    Raman calls favourable (16%) than afflicted (5%) via exactly these redeemed companions.
+    """
+    out = set()
+    for h in (6, 8, 12):
+        lord = SIGN_LORDS[_house_sign(h, asc_sign)]
+        owns = {hh for hh in range(1, 13) if SIGN_LORDS[_house_sign(hh, asc_sign)] == lord}
+        if owns & {1, 5, 9} and _NOT_REDEEMED.get(asc_sign) != lord:
+            continue                                   # trine co-lordship redeems (BPHS-34:60-62)
+        if lord in _LUMINARIES and 8 in owns:
+            continue                                   # Sun/Moon 8th lordship not evil (BPHS-34:64)
+        out.add(lord)
+    return frozenset(out)
 
 
 def _defeated_in_war(planet: str, longitudes: Mapping[str, float]) -> bool:
@@ -94,7 +124,8 @@ def bhava_factors(house: int, longitudes: Mapping[str, float], *,
     lord_companions = [p for p, s in planet_signs.items() if s == lord_sign and p != lord]
     lord_house = ((lord_sign - asc_sign) % 12) + 1 if lord_sign is not None else 0
 
-    dusthana = _dusthana_lords(asc_sign)
+    # ONE definition of "evil lord" for both halves of clause (c): functionally evil per ch.34.
+    dusthana = _evil_dusthana_lords(asc_sign)
     dusthana_companion = any(c in dusthana for c in lord_companions)
     malefic_companions = [c for c in lord_companions if not benefic.get(c, False)]
     malefic_companion = bool(malefic_companions)

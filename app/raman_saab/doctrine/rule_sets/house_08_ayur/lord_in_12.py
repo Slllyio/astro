@@ -110,7 +110,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the 8th lord severely afflicted - disease and disfiguration, weak "
                   "constitution, no bodily comforts, the displeasure of superiors and "
                   "trouble from Government",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2906)),
+        # polarity NEUTRAL by design: a refinement of a parent that already votes for this
+        # placement; it displays Raman's words without counting the placement twice.
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 2906)),
     RuleRecord(
         id="H8.L.2", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable", condition=C.And(C.LordIn(8, 2), C.LordsConjunct(8, 2)),
@@ -205,7 +207,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the affliction heavy - a child may die as soon as it is born, or cause "
                   "much grief through an incurable physical affliction or mental "
                   "retardation; the native may also suffer much bodily ill-health",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2962)),
+        # polarity NEUTRAL by design: a refinement of a parent that already votes for this
+        # placement; it displays Raman's words without counting the placement twice.
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 2962)),
     # The separate paragraph at 2972, now its own rule with its own three-part antecedent.
     # Every clause is expressible today; nothing here needed new machinery.
     RuleRecord(
@@ -257,7 +261,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "the courts and the police; the evil intensified when the 8th lord is "
                   "strong (Raman's 'in a kendra or trikona' read as his idiom for "
                   "fortification, HTJAH-II:7923 - NOT encodable as a placement)",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2986)),
+        # polarity NEUTRAL by design: a refinement of a parent that already votes for this
+        # placement; it displays Raman's words without counting the placement twice.
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 2986)),
     # MISSING from the corpus entirely until now (HTJAH-II:2989-2991).
     # The dignity proxy is PROVABLY unusable here: the 6th lord is in the 6th house by the
     # entry's premise, hence in its own sign, so LordHasDignity(6,{own,...}) is tautologically
@@ -375,7 +381,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified=None, general=None,
         afflicted="the 2nd lord ALSO AFFLICTED AND JOINING the 8th lord - his reputation may "
                   "suffer through involvement in huge debts and inability to repay them",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3034)),
+        # polarity NEUTRAL by design: a refinement of a parent that already votes for this
+        # placement; it displays Raman's words without counting the placement twice.
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3034)),
     RuleRecord(
         id="H8.L.10b", house=8, signification="longevity", group="lord_in_house",
         kind="evaluable",
@@ -443,5 +451,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "clandestinely: rape, adultery, counterfeiting of money and smuggling "
                   "(Raman's own caution at HTJAH-II:3073-3074: criminal-act predictions "
                   "require further qualification)",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3065)),
+        # polarity NEUTRAL by design: a refinement of a parent that already votes for this
+        # placement; it displays Raman's words without counting the placement twice.
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3065)),
 )

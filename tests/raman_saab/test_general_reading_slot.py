@@ -112,6 +112,8 @@ RESLOTTED_TO_OWN_RECORD = {
     "H8.L.6": "H8.L.6a",     # "If afflicted" + the kendra/trikona idiom
     "H8.L.10": "H8.L.10a",   # the 2nd lord afflicted AND joining — half the antecedent was lost
     "H8.L.12": "H8.L.12a",   # "If benefics join" — a conjunction, not a strength test
+    "H6.L.7": "H6.L.7a",     # "If the sixth lord is afflicted" — and all six other sentences
+                             # were mis-slotted too (2026-09-03 House-6 sweep)
 }
 #: Raman really does give an afflicted reading here (list C). Untouched, by construction.
 #:
@@ -119,7 +121,13 @@ RESLOTTED_TO_OWN_RECORD = {
 #: 8th lord's strength, so the base record had nothing legitimate to say; its content lives in
 #: H8.L.9a..e. **H8.L.12 REMOVED** — its `afflicted` welded a conjunction test ("If benefics
 #: join") to an influence test ("If afflicted by malefics"); neither is a strength test.
-LEFT_ALONE = ["H6.L.1", "H6.L.2", "H6.L.3", "H6.L.7", "H6.L.12",
+#: **H6.L.7 REMOVED 2026-09-03.** An unbiased House-6 review found ZERO correctly-slotted
+#: content in it: three unconditioned sentences ("Generally marries...", HTJAH-I:6031) sat
+#: in `fortified`, and its `afflicted` clauses were gated on an affliction, a D1+D9 sign
+#: class, and a three-part conjunction — none of them a strength test. The opener count
+#: that ruled this house "correctly encoded throughout" cannot see sentences BETWEEN
+#: openers, which is exactly where the defect lived.
+LEFT_ALONE = ["H6.L.1", "H6.L.2", "H6.L.3", "H6.L.12",
               "H8.L.8",
               "H10.L.2", "H10.L.3", "H10.L.4", "H10.L.7", "H10.L.11",
               "H11.L.2", "H11.L.3", "H11.L.5", "H11.L.6", "H11.L.10",

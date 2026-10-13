@@ -5195,3 +5195,44 @@ House 8 ran 7/7 and House 5 ran 7/12, but their defects are of DIFFERENT SEVERIT
 inverted, H5 did not. A programme justified on "148 broken rules" would be overclaiming; one
 justified on "two houses examined, both carried real defects, the severity varies by house" is
 what the evidence supports. Sweep House 6 next, on the specific tension named above.
+
+## HOUSE 6 SWEEP + THE REFINEMENT-POLARITY RULE (2026-09-03)
+
+**Base rate, three houses in:** H8 0/7 correct (the outlier — it was sampled BECAUSE a defect had
+been seen there), **H5 5/12, H6 6/12** (both sampled for volume, not suspicion). In fairly-chosen
+houses roughly half the lord-in-house rules have text in a slot whose test does not match its
+stated antecedent. **Neither H5 nor H6 has a single inversion** — no slot teaches the opposite of
+its sentence, which H8 did seven times.
+
+**H6 refuted its pinned ruling.** "EXPLICIT-AFFLICTED, correctly encoded throughout" was reached
+by counting openers, and an opener count cannot see unconditioned sentences sitting BETWEEN
+openers, welded third tiers, or openers that name a conjunction or another planet. H6.L.7 had
+zero correctly-slotted content. Both backlog-recorded three-way partitions are real, but they are
+different axes: H6.L.9 is a STRENGTH continuum ("well fortified / moderate / afflicted"), H6.L.11
+an ASSOCIATION continuum ("benefice / ordinary / malefic", glossed by Raman at HTJAH-I:6064).
+
+**The trap was avoided, on the evidence.** In the 6th house a strong lord legitimately strengthens
+enemies and disease, so negative text in `fortified` is NOT a defect signal there: H6.L.4's
+"dilapidated building" and H6.L.10's "sinful and destructive nature" are gated on "Well
+fortified" / "If fortified" verbatim and are correct. H6.L.5 was wrong not for being negative but
+because Raman attaches no condition to it at all.
+
+### ★ RULE: a re-homed refinement DISPLAYS but does not VOTE
+
+Measured: H6.L.7a ("the 6th lord afflicted -> divorce or the wife dies", HTJAH-I:6033) shipped as
+a malefic House-6 rule and flipped **13 charts' H6/accidents from mixed to afflicted** — a clause
+about the WIFE moving the native's ACCIDENTS verdict, which Raman never said. It is also double
+counting: the parent H6.L.7 already votes for the same placement. That is playbook rule 4's
+"evidence-redundancy" blindness, invisible to the ratchet (which stayed at 286/362/35 throughout).
+
+The reviews that motivated every re-homed record adjudicated **slot**, not polarity. So the six
+re-homed affliction refinements — H8.L.1b, H8.L.5b, H8.L.6a, H8.L.10a, H8.L.12c, H6.L.7a — are
+`polarity="neutral"`: they show Raman's words and cast no second vote. This reverted the three
+degree-only H8/longevity changes the H8 refinements had caused. **SEPARATE combinations keep
+their polarity** (H8.L.5c, H8.L.12b): they are Raman's own paragraphs with their own antecedents,
+not refinements of a parent's placement.
+
+**Open, for its own measured decision:** whether a refinement whose clause speaks to the house's
+OWN signification (H8.L.1b: severe affliction -> "disease and disfiguration", a longevity matter)
+should vote after all. It is defensible; it was not reviewed; the neutral default keeps every
+shipped change inside what was reviewed.

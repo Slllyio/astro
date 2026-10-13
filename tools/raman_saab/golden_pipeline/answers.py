@@ -25,7 +25,13 @@ def parse(text: str) -> dict[str, Any]:
         raise InvalidAnswer(f"bad JSON: {exc}") from exc
 
 
-def validate(a: dict[str, Any]) -> dict[str, Any]:
+def allowed_keys(house: int) -> tuple[str, ...]:
+    """The engine's fixed signification keys for a house (engine DATA, not the judge)."""
+    from app.raman_saab.doctrine.significations import SIGNIFICATIONS
+    return tuple(s.key for s in SIGNIFICATIONS[house])
+
+
+def validate(a: dict[str, Any], house: int | None = None) -> dict[str, Any]:
     if a.get("decision") not in DECISIONS:
         raise InvalidAnswer(f"decision={a.get('decision')!r}")
     if a.get("kind") not in KINDS:
@@ -37,6 +43,8 @@ def validate(a: dict[str, Any]) -> dict[str, Any]:
             raise InvalidAnswer(f"verdict={a.get('verdict')!r}")
     if not isinstance(a.get("signification"), str) or not a["signification"].strip():
         raise InvalidAnswer("signification missing")
+    if house is not None and a["decision"] != "REJECT" and a["signification"] not in allowed_keys(house):
+        raise InvalidAnswer(f"signification {a['signification']!r} not an engine key for house {house}")
     q = a.get("decisive_quote")
     if not isinstance(q, str) or not q.strip() or len(q.split()) > MAX_QUOTE_WORDS:
         raise InvalidAnswer("decisive_quote missing, empty or over 40 words")

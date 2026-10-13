@@ -62,3 +62,25 @@ class TestValidateHardening:
         """An empty quote cannot be source-verified."""
         with pytest.raises(A.InvalidAnswer):
             A.validate({**GOOD, "decisive_quote": q})
+
+
+class TestVocabulary:
+    def test_off_vocab_confirm_is_invalid(self):
+        """A CONFIRM naming a matter the engine does not judge is rejected."""
+        with pytest.raises(A.InvalidAnswer):
+            A.validate({**GOOD, "signification": "career_power"}, house=4)
+
+    def test_off_vocab_revise_is_invalid(self):
+        """REVISE is held to the same vocabulary."""
+        with pytest.raises(A.InvalidAnswer):
+            A.validate({**GOOD, "decision": "REVISE", "signification": "marriage"}, house=7)
+
+    def test_in_vocab_is_valid(self):
+        """The engine's own key passes."""
+        assert A.validate({**GOOD, "signification": "spouse"}, house=7)
+
+    def test_reject_with_any_signification_is_valid(self):
+        """REJECTs carry no scored signification, so free text is fine."""
+        a = {**GOOD, "decision": "REJECT", "kind": "observation", "verdict": None,
+             "signification": "speech_poetic_expression"}
+        assert A.validate(a, house=2)

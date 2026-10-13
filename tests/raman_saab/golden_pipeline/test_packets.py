@@ -40,6 +40,12 @@ class TestPacket:
         r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
         assert r.returncode == 0, r.stdout + r.stderr
 
+    def test_packet_lists_allowed_signification_keys(self):
+        """The packet names the engine's exact keys for the house and forces the choice."""
+        text = P.render({**ITEM, "house": 7}, LINES, reviewer="A", flags=[])
+        assert "marital_happiness" in text and "wealth_through_marriage" in text
+        assert "MUST be exactly one of these keys" in text
+
     def test_packet_text_has_no_engine_words(self):
         """No engine verdict field can leak into the text."""
         text = P.render(ITEM, LINES, reviewer="B", flags=[]).lower()

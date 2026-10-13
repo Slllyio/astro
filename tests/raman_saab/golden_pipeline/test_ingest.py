@@ -81,3 +81,11 @@ class TestIngest:
         _write(tmp_path, "A", extra={"decision": "REJECT"}); _write(tmp_path, "B", extra={"decision": "REJECT"})
         d = I.ingest_item(tmp_path, {**ITEM, "located": "NOT_LOCATED", "windows": []}, LINES)
         assert d["outcome"] == "NOT_LOCATED"
+
+
+class TestVocabularyIngest:
+    def test_off_vocab_answer_listed_invalid_not_scored(self, tmp_path):
+        """An off-vocabulary CONFIRM is listed for re-dispatch and never counted."""
+        _write(tmp_path, "A", extra={"signification": "self_body"}); _write(tmp_path, "B")
+        d = I.ingest_item(tmp_path, ITEM, LINES)
+        assert d["invalid"] == ["A"] and d["outcome"] != "CONFIRMED"

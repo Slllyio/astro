@@ -21,7 +21,7 @@ def ingest_item(run: Path, item: dict[str, Any], lines: list[str]) -> dict[str, 
         if not p.is_file():
             continue
         try:
-            a = A.validate(A.parse(p.read_text(encoding="utf-8")))
+            a = A.validate(A.parse(p.read_text(encoding="utf-8")), house=item["house"])
         except A.InvalidAnswer:
             invalid.append(r)
             continue

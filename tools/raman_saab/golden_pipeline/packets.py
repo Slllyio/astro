@@ -4,13 +4,14 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Final
 
+from tools.raman_saab.golden_pipeline.answers import allowed_keys
 from tools.raman_saab.golden_pipeline.sources import passage_multi, windows
 
 SCHEMA_TEXT: Final[str] = """Reply with ONLY this JSON object, nothing else:
 {"decision": "CONFIRM|REVISE|REJECT",
  "kind": "conclusion|observation|splice|not_found",
  "verdict": "afflicted|mixed|favourable",
- "signification": "<matter judged, snake_case>",
+ "signification": "<one of the allowed keys above>",
  "decisive_quote": "<= 40 words copied from the passage",
  "quote_line": <the line number where the quote starts>,
  "reason": "<one sentence>"}"""
@@ -41,6 +42,10 @@ def render(item: dict[str, Any], lines: list[str], reviewer: str, flags: list[st
             f"  signification: {item['signification']}\n"
             f"  proposed verdict: {item['verdict']}\n"
             f"  extracted prose: {item['verdict_prose']}\n{flag_line}\n"
+            f"Allowed signification keys for house {item['house']}: "
+            f"{', '.join(allowed_keys(item['house']))}\n"
+            "signification MUST be exactly one of these keys; if Raman's conclusion is about a "
+            "matter not in this list, REJECT with kind observation.\n\n"
             f"Passage (line| text):\n{passage_multi(lines, windows(item))}\n\n{SCHEMA_TEXT}\n")
 
 

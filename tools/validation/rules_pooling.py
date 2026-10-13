@@ -67,8 +67,19 @@ def dose_response(derived: Path) -> list[dict]:
             out.append({"outcome": outcome, "n": len(df), "n_case": int(df.y.sum()),
                         "mean_count": float(df["count"].mean()), "slope": float(fit.params[0]),
                         "se": float(fit.bse[0])})
-        except Exception:  # noqa: BLE001 - separation etc.: reported as skipped
-            out.append({"outcome": outcome, "n": len(df), "skipped": True})
+        except Exception:  # noqa: BLE001 - very large strata: fall back to dummies on informative decades
+            import statsmodels.api as sm
+            inf = df.groupby("decade").y.transform(lambda v: 0 < v.mean() < 1)
+            d2 = df[inf]
+            X = pd.get_dummies(d2.decade.astype(str), drop_first=True, dtype=float)
+            X.insert(0, "count", d2["count"])
+            try:
+                fit = sm.Logit(d2.y, sm.add_constant(X)).fit(disp=0, maxiter=500)
+                out.append({"outcome": outcome, "n": len(d2), "n_case": int(d2.y.sum()),
+                            "mean_count": float(d2["count"].mean()), "slope": float(fit.params["count"]),
+                            "se": float(fit.bse["count"]), "fallback": True})
+            except Exception:  # noqa: BLE001
+                out.append({"outcome": outcome, "n": len(df), "skipped": True})
     return out
 
 
@@ -108,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
         if d.get("skipped"):
             L.append(f"| {d['outcome']} | {d['n']} | – | – | skipped (fit failed) | |")
         else:
-            L.append(f"| {d['outcome']} | {d['n']} | {d['n_case']} | {d['mean_count']:.2f} | {d['slope']:+.3f} "
+            L.append(f"| {d['outcome']}{' (fallback)' if d.get('fallback') else ''} | {d['n']} | {d['n_case']} | {d['mean_count']:.2f} | {d['slope']:+.3f} "
                      f"| {d['slope']-1.96*d['se']:+.3f}..{d['slope']+1.96*d['se']:+.3f} |")
     e, s = q2["effect"], q2["se"]
     L += ["", f"**Pooled slope:** {e:+.4f} log-odds per extra rule (OR {math.exp(e):.3f} per rule; 95% CI "
@@ -117,7 +128,9 @@ def main(argv: list[str] | None = None) -> int:
           "Deviation (implementation, recorded): the first run used decade dummies in an ordinary logit; 5 of 9 fits "
           "failed by separation (decades with only cases or only contrasts). Decade adjustment is now done by "
           "conditional logistic regression with decade strata, which is the same adjustment without the failure. "
-          "The 4 slopes visible in the failed run were childless −0.097, widowed −0.040, bankrupt −0.222, suicide +0.037.", ""]
+          "The 4 slopes visible in the failed run were childless −0.097, widowed −0.040, bankrupt −0.222, suicide +0.037. "
+          "For the three large control universes (prison, widowed, suicide) the conditional likelihood fails on very "
+          "large strata; those use an ordinary logit with dummies for informative decades only (marked fallback).", ""]
     a.out.write_text("\n".join(L), encoding="utf-8")
     print("\n".join(L))
     return 0

@@ -213,9 +213,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="descriptive",
         condition=None,
         general="the 11th lord in the 8th occupying a malefic constellation - forced to eke "
-                "out his living by begging. TODO(predicate: 'malefic constellation' is "
-                "undefined in the entry - a malefic-ruled nakshatra, or the 3/5/7 taras of "
-                "the Satyacharya note; not chosen)",
+                "out his living by begging. TODO(predicate: PARKED by research 2026-10-13 "
+                "-- two readings both fit Raman's Chart 230 (HTJAH-II:15960): a star ruled "
+                "by a natural malefic (NH:15674-15678) or the 3rd/5th/7th tara "
+                "(Satyacharya, HTJAH-II:14346). Reviews split)",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 14311)),

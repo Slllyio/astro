@@ -113,7 +113,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="descriptive",
         condition=None,
         general="the 10th lord in an unfriendly constellation in the 3rd - rise in life "
-                "slow and beset with obstacles. TODO(predicate: nakshatra-lord friendship)",
+                "slow and beset with obstacles. TODO(predicate: PARKED by research "
+                "2026-10-13 -- NOT planetary friendship: on Raman's only worked use (Indira "
+                "Gandhi, HTJAH-II:14087) natural and Saturn-side compound friendship both "
+                "FAIL. Surviving readings: tara 3/5/7 from Janma (HTJAH-I:1142; NH:8376 "
+                "'Atimitra (very friendly) star'), the star lord's compound view, or the "
+                "star lord's functional nature. Reviews split; re-open on a second worked "
+                "chart that separates them)",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 9478)),

@@ -237,12 +237,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 2383)),
     RuleRecord(
         id="H2.L.7b", house=2, signification="wealth", group="lord_in_house",
-        kind="descriptive",
-        condition=None,
-        general="the Rashi, Navamsha or constellation held by the 2nd lord a feminine one - "
-                "he will benefit by contact with women. TODO(predicate: feminine (even) "
-                "sign in D1 OR D9, OR a feminine nakshatra; no nakshatra-gender predicate "
-                "exists, and a sign-only encoding would silently under-fire)",
+        # 2026-10-13: promoted -- two engine-blind reviews agreed on the sign halves
+        # (HPA-5:37-38). Neutral: refines a parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(2, 7), C.Or(C.InFeminineSign("LORD_OF:2", "D1"), C.InFeminineSign("LORD_OF:2", "D9"))),
+        general="the Rashi or Navamsha held by the 2nd lord a feminine one - he will "
+                "benefit by contact with women. [Raman also names the constellation; no "
+                "natal Raman book genders the nakshatras -- the only list is Muhurtha's "
+                "Yoni Kuta (ch.8:544), walled off from natal code -- so that branch is "
+                "omitted: under-fires, never wrongly.]",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 2385)),

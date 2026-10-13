@@ -1,6 +1,6 @@
 """HouseAfflictedBy: Raman's "if the Nth house is afflicted" -- the HOUSE, not its lord, is the
 subject. A natural malefic occupies or aspects it; neither the house's own lord (HTJAH-I:2740)
-nor the Lagna lord (HTJAH-I:13193, NH:26922) afflicts it, each with Raman's own exception.
+nor the Lagna lord (HTJAH-I:13193, NH:15663) afflicts it, each with Raman's own exception.
 
 All charts are Aries rising, so MARS is the Lagna lord: the generic examples use Saturn, the Sun
 and the nodes.
@@ -66,7 +66,7 @@ class TestTheOwnLordNeverAfflicts:
 
 class TestTheLagnaLordNeverAfflicts:
     def test_mars_as_lagna_lord_does_not_afflict_the_house_he_aspects(self) -> None:
-        """NH:26922 "ruler of Lagna is always the most benefic planet"; HTJAH-I:13193 "does not
+        """NH:15663 "ruler of Lagna is always the most benefic planet"; HTJAH-I:13193 "does not
         afflict in the strict sense of the term being the Lagna lord". Mars in Leo (5th) casts
         his 8th aspect on Pisces, the 12th."""
         assert C.HouseAfflictedBy(12).evaluate(_ctx({"Mars": 130.0})) is False

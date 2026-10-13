@@ -5509,7 +5509,7 @@ The user delegated the decision ("take decisions on well researched"). Two engin
 `bphs-doctrine-reviewer` agents read all of HTJAH-I/II and Notable Horoscopes independently and
 **both** returned EXCLUDE, medium-high confidence.
 - **Stated rule:** "ruler of Lagna is always the most benefic planet ... Saturn becomes the best
-  planet ... though usually the worst malefic" (NH:26922-26926); "Saturn does not afflict in the
+  planet ... though usually the worst malefic" (NH:15662-15665); "Saturn does not afflict in the
   strict sense of the term being the Lagna lord" (HTJAH-I:13193-13194 = II:8368-8369).
 - **Practice:** 8-11 worked house cases read the malefic Lagna lord's occupation or aspect as relief
   or strength, e.g. "The house and lord are both powerfully disposed" (HTJAH-I:17133), "It is quite
@@ -5561,3 +5561,30 @@ delegated by the user; rule: adopt on agreement, keep parked on a split).
 (4.58 rupas) WEAK where Raman says "fairly powerful". It is one chart, in a passage that also calls
 the Sun "fairly" strong on mixed testimony; worth a measured look at whether `IsWeak` on Shadbala
 alone (without combustion/debility) contradicts other printed charts.
+
+## Item 4 small predicates (2026-10-13)
+
+Two engine-blind reviews per term; ship only on agreement.
+- **H2.L.7b promoted** -- `InFeminineSign` (even sign, HPA-5:37-38) in D1 OR D9 for the 2nd lord in
+  the 7th. Raman's sentence (HTJAH-I:2385) also names the constellation; no natal Raman book genders
+  the nakshatras (the only list is Muhurtha ch.8:544 Yoni Kuta, a marriage-matching table and
+  walled off from natal code), so that branch is omitted -- under-fires, never wrongly. 21 fires.
+- **H10.L.3b parked** -- "unfriendly constellation" is NOT planetary friendship: on Raman's only
+  worked use (Indira Gandhi, HTJAH-II:14087) natural and Saturn-side compound friendship both fail
+  (both reviews). Survivors: tara 3/5/7 from Janma (HTJAH-I:1142; NH:8376 "Atimitra (very friendly)
+  star"), the star lord's compound view, the star lord's functional nature. One reviewer chose tara,
+  one parked.
+- **H11.L.8a parked** -- "malefic constellation": a star ruled by a natural malefic (NH:15674-15678)
+  and tara 3/5/7 (Satyacharya, HTJAH-II:14346) both fit Chart 230 (HTJAH-II:15960). Split.
+- **H6.L.7b parked** -- no Raman book defines hermaphrodite SIGNS (planets only: HPA-6:135, GBB-3:665);
+  he labels a sign by its own gender, not its lord's (HTJAH-I:5942). Both reviews.
+- **H9.L.7a/b remain parked** -- they need Pravrajya / Asubha yogas encoded first (new yoga work from
+  Three Hundred Combinations).
+
+**Citation correction:** "NH:" anchors resolve into `notable_horoscopes_raman/chapter_001`, whose
+line numbers differ from `Notable Horoscopes BV Raman.txt`. Two quotes were first cited by .txt
+numbering: the Lagna-lord rule is NH:15662-15665 (not 26922-26926) and "Atimitra" is NH:8376 (not
+14351). Fixed in code, tests and this file; the citation-anchor guard caught the second. Reviewers
+must cite NH from the `.md` split.
+
+**Net:** 21 presentation changes, 0 verdict changes, ratchet 286/397, 362/397, 35.

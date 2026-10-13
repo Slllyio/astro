@@ -468,6 +468,20 @@ def _planet_varga_sign(p: object, varga: str) -> int | None:
     return None if lon is None else _varga_sign_by_name(float(lon), varga)
 
 
+class InFeminineSign(Condition):
+    """`planet` occupies a FEMININE sign in `varga` -- an even sign: "All odd signs are cruel and
+    masculine and all even signs are mild and feminine" (HPA-5:37-38). Raman keeps the sign's
+    gender apart from its lord's (HTJAH-I:5942-5943), so this tests the sign alone."""
+    def __init__(self, planet: str, varga: str = "D1") -> None:
+        _check_varga(varga)
+        self.planet, self.varga = planet, varga
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
+        vs = _planet_varga_sign(p, self.varga) if p is not None else None
+        return vs is not None and vs % 2 == 0
+
+
 class InVargaHouseFrom(Condition):
     """Planet sits in one of `houses` counted IN the varga chart from the varga
     position of `origin` — BOTH endpoints are D9 positions. This is Raman's usage:
@@ -624,7 +638,7 @@ class HouseAfflictedBy(Condition):
     malefic by debility and association with a node" (HTJAH-II:2159-2161).
 
     The LAGNA lord does not afflict either: "ruler of Lagna is always the most benefic planet
-    ... Saturn becomes the best planet ... though usually the worst malefic" (NH:26922-26926);
+    ... Saturn becomes the best planet ... though usually the worst malefic" (NH:15662-15665);
     "Saturn does not afflict in the strict sense of the term being the Lagna lord"
     (HTJAH-I:13193-13194); in practice it reads as relief (HTJAH-I:11598, 13225, 16725, 17133,
     17153). It afflicts again once joined by a node: "Although Saturn as Lagna lord is a

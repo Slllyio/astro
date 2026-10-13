@@ -216,9 +216,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="descriptive", condition=None,
         fortified=None, general=None,
         afflicted="the Rashi AND Navamsha involved both hermaphrodite - a sickly or barren "
-                  "wife. TODO(predicate: a hermaphrodite sign-class test across D1 and D9; the "
-                  "varga half is expressible via VargaDignity/varga_sign_by_name, the sign "
-                  "class is not yet a Condition)",
+                  "wife. TODO(predicate: PARKED by research 2026-10-13 -- Raman defines "
+                  "hermaphrodite PLANETS only (HPA-6:135, GBB-3:665); no book defines "
+                  "hermaphrodite signs, and he labels a sign by its own gender, not its "
+                  "lord's (HTJAH-I:5942). Do NOT build 'signs of Mercury/Saturn')",
         frame="LAGNA", varga="D9", polarity="neutral", source=Citation("HTJAH-I", 6034)),
     RuleRecord(
         id="H6.L.7c", house=6, signification="enemies_disease", group="lord_in_house",

@@ -34,7 +34,6 @@ def pooled_rules(enr: pd.DataFrame) -> tuple[dict, pd.DataFrame]:
 
 
 def dose_response(derived: Path) -> list[dict]:
-    import statsmodels.api as sm
     R = derived / "raman"
     labels = pd.read_parquet(R / "labels.parquet")
     fires = pd.read_parquet(R / "rule_fires.parquet")
@@ -60,14 +59,14 @@ def dose_response(derived: Path) -> list[dict]:
         df["decade"] = (master.loc[df.person_id, "birth_date"].str[:4].astype(int) // 10 * 10).to_numpy()
         if df["count"].std() == 0:
             continue
-        X = pd.get_dummies(df.decade.astype(str), drop_first=True, dtype=float)
-        X.insert(0, "count", df["count"])
-        X = sm.add_constant(X)
+        # decade adjustment by conditional logistic regression (decade = stratum): strata with only
+        # cases or only contrasts drop out instead of causing separation (deviation note in results)
+        from statsmodels.discrete.conditional_models import ConditionalLogit
         try:
-            fit = sm.Logit(df.y, X).fit(disp=0, maxiter=200)
+            fit = ConditionalLogit(df.y.to_numpy(), df[["count"]].to_numpy(), groups=df.decade.to_numpy()).fit(disp=0)
             out.append({"outcome": outcome, "n": len(df), "n_case": int(df.y.sum()),
-                        "mean_count": float(df["count"].mean()), "slope": float(fit.params["count"]),
-                        "se": float(fit.bse["count"])})
+                        "mean_count": float(df["count"].mean()), "slope": float(fit.params[0]),
+                        "se": float(fit.bse[0])})
         except Exception:  # noqa: BLE001 - separation etc.: reported as skipped
             out.append({"outcome": outcome, "n": len(df), "skipped": True})
     return out
@@ -114,7 +113,11 @@ def main(argv: list[str] | None = None) -> int:
     e, s = q2["effect"], q2["se"]
     L += ["", f"**Pooled slope:** {e:+.4f} log-odds per extra rule (OR {math.exp(e):.3f} per rule; 95% CI "
           f"{math.exp(e-1.96*s):.3f}–{math.exp(e+1.96*s):.3f}), τ² {q2['tau2']:.4f}, p_TOST {q2['p_tost']:.4f} → "
-          f"**{recs['Q2_dose_slope'].verdict}**", ""]
+          f"**{recs['Q2_dose_slope'].verdict}**", "",
+          "Deviation (implementation, recorded): the first run used decade dummies in an ordinary logit; 5 of 9 fits "
+          "failed by separation (decades with only cases or only contrasts). Decade adjustment is now done by "
+          "conditional logistic regression with decade strata, which is the same adjustment without the failure. "
+          "The 4 slopes visible in the failed run were childless −0.097, widowed −0.040, bankrupt −0.222, suicide +0.037.", ""]
     a.out.write_text("\n".join(L), encoding="utf-8")
     print("\n".join(L))
     return 0

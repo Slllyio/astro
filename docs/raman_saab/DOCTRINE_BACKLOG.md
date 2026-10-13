@@ -5527,3 +5527,37 @@ The user delegated the decision ("take decisions on well researched"). Two engin
   dropped (H10.L.2a 1, H10.L.11a 3); 0 verdict changes; ratchet 286/397, 362/397, 35.
 - **Scope:** `HouseAfflictedBy` only. `AfflictedBy` (planet affliction) still counts a malefic
   Lagna lord; whether the same principle should apply there is a separate measured decision.
+
+## Middle and upper strength levels (2026-10-13) -- queue item 3: PARKED by research
+
+Five sentences need a strength grade finer than strong/weak: "middling in strength" (H4.L.1a
+HTJAH-I:4150, H11.L.1a HTJAH-II:14259), "moderate" (H6.L.9a I:6048), "moderately strong" (H5.L.4a
+I:5134), "very powerful" (H9.L.S1 II:7398). Two independent engine-blind reviews (decision
+delegated by the user; rule: adopt on agreement, keep parked on a split).
+
+**Agreed (high confidence):**
+- Raman prints NO multi-level scale. GBB-8:303-312 is one bar per planet; GBB-8:333-340 ranks
+  planets; GBB-10:134-139 compares Ishta vs Kashta; GBB-3:462-467 Saptavargaja points are one
+  Shadbala input, not levels. Nothing in HPA ch.7 or Three Hundred Combinations.
+- His grade words are a tally of mixed testimony across Rasi and Navamsa (I:2039-2041, 2134-2137,
+  2773-2778), NOT Shadbala. He calls a 4.58-rupa Sun "fairly powerful" (I:3924-3925) -- below his own
+  5-rupa bar -- and the chart's strongest planet (9.59 rupas) only "fairly powerful" for aspects
+  (I:3880-3890). Labels are unstable: Chart 22's Lagna is "powerful" at I:2039 and "fairly strong"
+  at I:2044. A Shadbala band would contradict printed charts.
+- The contrast terms in the target sentences run fortified <-> afflicted (I:6045-6049, 5129-5135):
+  the corpus-wide NATURE/ASSOCIATION axis question already flagged, not the Shadbala axis.
+
+**Split (so parked):**
+- Middle grade as "neither strong nor weak": reviewer B allows it as a complement; reviewer A calls
+  it an unstated inference. Measured: it would fire on 0-3 charts per sentence (Raman's bar is low;
+  most lords clear it).
+- "Very powerful": A would encode exalted/own/moolatrikona + Vargottama or own vargas majority, no
+  affliction (I:11046, 11695, 17023, 17185); B: only the exact printed conjunctions as separately
+  cited instances, or nothing. Also "very powerful" sometimes means maraka power (HPA-16:57-60).
+
+**Done:** the five TODOs re-worded so nobody builds a Shadbala band for them. No output change.
+
+**Flagged, not acted on:** reviewer A notes the engine's binary rule would grade the I:3924 Sun
+(4.58 rupas) WEAK where Raman says "fairly powerful". It is one chart, in a passage that also calls
+the Sun "fairly" strong on mixed testimony; worth a measured look at whether `IsWeak` on Shadbala
+alone (without combustion/debility) contradicts other printed charts.

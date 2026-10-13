@@ -334,9 +334,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=None,
         general=None,
         fortified="the 9th lord very powerful - he becomes capable of conferring fortune "
-                  "even if placed in a malefic house. TODO(predicate: a 'very powerful' "
-                  "Shadbala band ABOVE is_powerful, scoped to the 9th lord in a malefic "
-                  "house; section-level, applies to H9.L.6/8/12)",
+                  "even if placed in a malefic house. TODO(predicate: PARKED by research "
+                  "2026-10-13 -- no stated rule for 'very powerful'; his worked charts pair "
+                  "exaltation/own sign with Vargottama or own vargas (HTJAH-I:11695, 17023, "
+                  "17185), but two reviews split on encoding that. Not a Shadbala band; see "
+                  "DOCTRINE_BACKLOG 'Middle and upper strength levels')",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 7398)),
     RuleRecord(

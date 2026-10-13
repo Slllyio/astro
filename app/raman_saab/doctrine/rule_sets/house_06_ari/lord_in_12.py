@@ -238,8 +238,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="descriptive", condition=None,
         fortified=None,
         general="the 6th lord MODERATE - becomes a mason, timber merchant or stone cutter. "
-                "TODO(predicate: the MIDDLE band of the strength continuum; is_powerful is "
-                "binary against GBB-8:303 and cannot express it)",
+                "TODO(predicate: PARKED by research 2026-10-13 -- Raman prints no middle "
+                "strength level (GBB-8:303 is one bar); his 'middling' is a tally of mixed "
+                "testimony across Rasi and Navamsa, not a Shadbala band. Do NOT build a "
+                "Shadbala band for it; see DOCTRINE_BACKLOG 'Middle and upper strength "
+                "levels')",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 6048)),
     RuleRecord(

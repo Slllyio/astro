@@ -30,7 +30,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="descriptive",
         condition=None,
         general="the 11th lord in Lagna middling in strength - born in a fairly rich "
-                "family. TODO(predicate: a MIDDLE Shadbala band; is_powerful is binary)",
+                "family. TODO(predicate: PARKED by research 2026-10-13 -- Raman prints no "
+                "middle strength level (GBB-8:303 is one bar); his 'middling' is a tally of "
+                "mixed testimony across Rasi and Navamsa, not a Shadbala band. Do NOT build "
+                "a Shadbala band for it; see DOCTRINE_BACKLOG 'Middle and upper strength "
+                "levels')",
         fortified=None,
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 14259)),

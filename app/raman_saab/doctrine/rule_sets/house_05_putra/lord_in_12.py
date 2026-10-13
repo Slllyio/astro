@@ -65,10 +65,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H5.L.4a", house=5, signification="children", group="lord_in_house",
         kind="descriptive", condition=None,
         fortified=None,
-        general="the 5th lord moderately strong - daughters and no sons. TODO(predicate: a "
-                "MIDDLE band of the Shadbala scale; is_powerful is binary against GBB-8:303, "
-                "so this clause is unreachable by construction - it can never hold when the "
-                "branch that would display it fires)",
+        general="the 5th lord moderately strong - daughters and no sons. TODO(predicate: "
+                "PARKED by research 2026-10-13 -- Raman prints no middle strength level "
+                "(GBB-8:303 is one bar); his 'middling' is a tally of mixed testimony "
+                "across Rasi and Navamsa, not a Shadbala band. Do NOT build a Shadbala band "
+                "for it; see DOCTRINE_BACKLOG 'Middle and upper strength levels')",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 5134)),
     RuleRecord(

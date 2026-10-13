@@ -5274,3 +5274,58 @@ text made the cut land two characters late and eat a comma). Both have regressio
 - **Old pins overturned, with reasons recorded in the tests:** `H2_SPLIT` and `H3_SPLIT` are now
   empty -- every "genuine afflicted clause" they pinned was gated on affliction, another planet or
   two houses, never on the lord being weak.
+
+
+## HOUSES 4, 7, 9 STRENGTH-SLOT SWEEP (2026-10-13)
+
+**Base rates:** H4 8/12, **H7 0/12, H9 1/12**. Both H7 and H9 had been pinned "ruled CORRECT" by an
+earlier review -- the same pin House 5 carried before scoring 5/12. They turned out to be the worst
+fairly-sampled houses of the sweep: nearly every conditional sentence in their tables is gated on
+AFFLICTION or BENEFIC contact. In H7 Raman gives exactly ONE sentence gated on the lord's strength
+alone (HTJAH-II:273, "If the 7th lord is weak, there may be no children"); in H9, none at all --
+the section's only strength clause is the closing "very powerful" remark at 7398, a band above
+`is_powerful`'s minimum, now parked as H9.L.S1. Running total, eight fairly-sampled houses (H8
+excluded): 40 of 96 correct (42%). Still no inversions outside H8.
+
+**Net effect:** 1652 presentation changes; 44 new records, all neutral; H9.L.2 removed. Ratchet
+286/397, 362/397, 35. Liveness unchanged -- every new evaluable record fires on real charts.
+
+### ★ Correction to "neutral = no vote" -- measured, and it matters
+
+Neutral records never push a verdict towards favourable or afflicted. But whether ANY rule fired
+decides whether a signification is judged at all (house_template clause 7: nothing fired ->
+insufficient-evidence). Removing H9.L.2 (neutral, content-free: Raman gives nothing unconditional
+for the 9th lord in the 2nd) changed ONE unscored chart: on HTJAH-II.x155 it had been the only rule
+firing for H9 fortune/dharma/higher_learning/long_journeys, so its mere presence let the engine judge
+those on strength pillars ("afflicted"). Without it they honestly read insufficient-evidence. A
+verdict resting on a content-free rule is not Raman's; the abstention is the faithful state.
+Adding neutral records could, in principle, do the reverse on charts where nothing else fires --
+which is why every batch is measured against the doctrine snapshot, not assumed.
+
+Also checked: the functional-nature overlay (`_bucket_fired`, HTJAH-I:523-604) promotes a NEUTRAL
+rule to malefic when its subject is a functional malefic -- but `_rule_subject` only parses
+planet-in-house ids (`H<h>.P.<Planet>`). No lord-in-house record, new or old, is ever promoted.
+
+### Findings worth keeping
+
+- **Six more LORD_OF traps** (HasDignity, IsYogaKaraka, MutualAspect, Exchange, HemmedBy,
+  FunctionalNature), found because the H9 review had to route around HemmedBy. They hand the raw name
+  to a helper instead of reading `chart.planets`, which the first guard could not see. The guard now
+  requires `_resolve_planet` in ANY Condition that takes a subject planet. Zero live rules affected.
+- **`InfluencedBy` + `FIRM_BENEFICS`** (Jupiter, Venus): benefic-contact clauses read true instead of
+  `AfflictedBy(lord, {"Jupiter","Venus"})`. Moon and Mercury excluded -- conditional benefics in Raman.
+- **"Weak AND afflicted" cannot be faked** (H7.L.7a): a weak-slot record conditioned on affliction
+  would still show to a STRONG afflicted lord, because `fire_rules` falls through to the weak text
+  when the other slots are empty. Parked until a Shadbala Condition exists. A reviewer proposed the
+  trick; the code path refuted it.
+- **H4.L.3's 2026-09-01 "fix" was half-right**: the Satyacharya note's condition is favourable, but it
+  is subha VARGAS / benefic ASPECTS, not Shadbala, so `fortified` was the wrong home too.
+- **H9.L.4a keeps Raman's misprint** ("may not have any domestic unhappiness" inside an affliction
+  clause), flagged [sic], not silently corrected.
+- **The marriage monograph hardcoded "of the 50 encoded"** -- stale long before this sweep took House 7
+  to 84 evaluable rules. Now computed, and the unconditioned group is named "general", not "other".
+
+### Open (polarity, out of slot-repair scope)
+
+H7.L.8 and H7.L.12 are `malefic` parents whose `general` text is now mostly unconditioned and not
+malefic. Polarity drives verdicts, so it is its own measured decision.

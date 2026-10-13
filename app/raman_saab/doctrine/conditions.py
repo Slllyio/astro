@@ -308,7 +308,8 @@ class HasDignity(Condition):
         self.planet, self.states = planet, states
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return self.planet in ctx.chart.planets and dignity(self.planet, ctx.chart) in self.states
+        subj = _resolve_planet(self.planet, ctx.chart)
+        return subj in ctx.chart.planets and dignity(subj, ctx.chart) in self.states
 
 
 class LordHasDignity(Condition):
@@ -355,7 +356,7 @@ class IsYogaKaraka(Condition):
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return is_yogakaraka(self.planet, ctx.chart.asc_sign)
+        return is_yogakaraka(_resolve_planet(self.planet, ctx.chart), ctx.chart.asc_sign)
 
 
 class NeechaBhanga(Condition):
@@ -537,6 +538,12 @@ class VargaDignity(Condition):
 #: same thing everywhere in the corpus rather than one thing per house.
 FIRST_RATE_MALEFICS: frozenset[str] = frozenset({"Mars", "Saturn", "Rahu", "Ketu"})
 
+#: Benefics for "beneficially disposed / benefic influence" clauses. Jupiter and Venus only: Raman
+#: treats the Moon and Mercury as benefic only conditionally (waxing; unafflicted), so including
+#: them would fire these clauses on contacts he may not count. Under-fires, never wrongly. (The
+#: locked Avastha benefic list is for Avastha, not for this.)
+FIRM_BENEFICS: frozenset[str] = frozenset({"Jupiter", "Venus"})
+
 
 class AfflictedBy(Condition):
     """`planet` is CONJUNCT WITH or ASPECTED BY an afflicter — Raman's influence axis.
@@ -591,13 +598,25 @@ class AfflictedBy(Condition):
         return False
 
 
+def InfluencedBy(planet: str, influencers: Sequence[str] | set[str] = FIRM_BENEFICS,
+                 min_count: int = 1) -> AfflictedBy:
+    """`planet` is conjunct with or aspected by one of `influencers` — for BENEFIC clauses.
+
+    The same contact test as `AfflictedBy`, under a name that reads true: Raman's "beneficially
+    disposed", "associates with a benefic" and "benefic influences" are contacts, but writing
+    `AfflictedBy(lord, {"Jupiter", "Venus"})` would read as "afflicted by Jupiter".
+    """
+    return AfflictedBy(planet, influencers, min_count)
+
+
 # ── relations (C6, H1, mutual) ───────────────────────────────────────────────
 class MutualAspect(Condition):
     def __init__(self, a: str, b: str) -> None:
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return drishti.mutual_aspect(self.a, self.b, ctx.chart)
+        return drishti.mutual_aspect(_resolve_planet(self.a, ctx.chart),
+                                     _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 class Parivartana(Condition):
@@ -615,7 +634,8 @@ class Exchange(Condition):
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return bhangas.exchange(self.a, self.b, ctx.chart)
+        return bhangas.exchange(_resolve_planet(self.a, ctx.chart),
+                                _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 def _in_2_12(h1: int, h2: int) -> bool:
@@ -697,7 +717,7 @@ class HemmedBy(Condition):
 
     def evaluate(self, ctx: EvalContext) -> bool:
         from app.raman_saab.doctrine import hemming
-        return hemming.hemmed_planet(ctx.chart, self.target, self.klass)
+        return hemming.hemmed_planet(ctx.chart, _resolve_planet(self.target, ctx.chart), self.klass)
 
 
 # ── functional nature (C4) & nakshatra (C3) ──────────────────────────────────
@@ -707,8 +727,9 @@ class FunctionalNature(Condition):
         self.planet, self.natures = planet, natures
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return (self.planet in ctx.chart.planets
-                and functional_nature(self.planet, ctx.chart) in self.natures)
+        subj = _resolve_planet(self.planet, ctx.chart)
+        return (subj in ctx.chart.planets
+                and functional_nature(subj, ctx.chart) in self.natures)
 
 
 class InStarOf(Condition):

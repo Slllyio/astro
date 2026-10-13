@@ -162,6 +162,7 @@
   "H9": {
     "citations": [
       "HTJAH-II:7310",
+      "HTJAH-II:7312",
       "HTJAH-II:7429",
       "HTJAH-II:7431",
       "HTJAH-II:7443",
@@ -195,7 +196,8 @@
       "H9.D.43",
       "H9.D.48",
       "H9.D.51",
-      "H9.L.2",
+      "H9.L.2a",
+      "H9.L.2b",
       "H9.P.Rahu"
     ],
     "rollup": "mixed",

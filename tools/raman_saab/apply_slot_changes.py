@@ -92,7 +92,10 @@ def _new_record(spec: dict[str, Any]) -> str:
     return note + "    RuleRecord(\n" + "\n".join(body) + "\n"
 
 
-def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, Any]]) -> str:
+def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, Any]],
+          delete: dict[str, str] | None = None) -> str:
+    """`delete` maps rule id -> reason; the record is replaced by a comment carrying the reason,
+    so the removal stays visible in the file it happened to."""
     src = file.read_text(encoding="utf-8")
     lines = src.splitlines(keepends=True)
     calls = _record_calls(ast.parse(src))
@@ -108,8 +111,10 @@ def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, An
             anchor = next(n["after"] for n in new if n["id"] == anchor)
         return anchor
 
+    delete = delete or {}
     missing = [rid for rid in changes if rid not in calls] + \
-              [n["after"] for n in new if root(n["after"]) not in calls]
+              [n["after"] for n in new if root(n["after"]) not in calls] + \
+              [rid for rid in delete if rid not in calls]
     if missing:
         raise KeyError(f"rule ids not found in {file.name}: {missing}")
 
@@ -144,6 +149,13 @@ def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, An
         nl = src.index("\n", pos) + 1               # past the trailing "),"
         edits.append((nl, nl, text))
 
+    for rid, reason in delete.items():               # whole record -> explanatory comment
+        call = calls[rid]
+        a = _offset(lines, call.lineno, 0)
+        b = src.index("\n", _offset(lines, call.end_lineno, call.end_col_offset)) + 1
+        edits.append((a, b, "".join(f"    # {ln}\n" for ln in
+                                    textwrap.wrap(f"{rid} REMOVED: {reason}", _WIDTH - 6))))
+
     for a, b, rep in sorted(edits, key=lambda e: (e[0], e[1]), reverse=True):
         src = src[:a] + rep + src[b:]
     try:
@@ -155,10 +167,13 @@ def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, An
     return src
 
 
-def verify(module: str, changes: dict[str, dict[str, Any]], new: list[dict[str, Any]]) -> None:
+def verify(module: str, changes: dict[str, dict[str, Any]], new: list[dict[str, Any]],
+           delete: dict[str, str] | None = None) -> None:
     """Re-import and confirm every slot reads back exactly as specified."""
     mod = importlib.reload(importlib.import_module(module))
     recs = {r.id: r for r in mod.RULES}
+    for rid in delete or {}:
+        assert rid not in recs, f"{rid} was meant to be removed"
     for rid, spec in changes.items():
         for slot in _SLOTS:
             if slot in spec:
@@ -174,12 +189,13 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     ns = runpy.run_path(sys.argv[1])
     file = _ROOT / ns["FILE"]
-    changes, new = ns.get("CHANGES", {}), ns.get("NEW", [])
-    file.write_text(apply(file, changes, new), encoding="utf-8")
+    changes, new, delete = ns.get("CHANGES", {}), ns.get("NEW", []), ns.get("DELETE", {})
+    file.write_text(apply(file, changes, new, delete), encoding="utf-8")
     module = ".".join(Path(ns["FILE"]).with_suffix("").parts)
     sys.path.insert(0, str(_ROOT))
-    verify(module, changes, new)
-    logger.info("%s: %d records edited, %d added, verified", file.name, len(changes), len(new))
+    verify(module, changes, new, delete)
+    logger.info("%s: %d edited, %d added, %d removed, verified",
+                file.name, len(changes), len(new), len(delete))
 
 
 if __name__ == "__main__":

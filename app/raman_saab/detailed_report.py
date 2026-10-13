@@ -7043,9 +7043,14 @@ def to_markdown(r: DetailedReport) -> str:
             _affl = [x for x in m.fired_kalatra if x[0] == "afflicted"]
             _rest = [x for x in m.fired_kalatra
                      if x[0] not in ("fortified", "afflicted")]
-            L.append(f"- **Kalatra rules firing in THIS chart** (of the 50 encoded; "
+            # The encoded count is COMPUTED: it was a hardcoded "50", stale long before the
+            # 2026-10-13 House-7 sweep split it to 84 evaluable rules. `_rest` is the `general`
+            # branch -- Raman's unconditioned readings -- so it is named, not "other".
+            from app.raman_saab.doctrine.rule_sets import ALL_RULES as _ALL
+            _n7 = sum(1 for _r in _ALL if _r.house == 7 and _r.kind == "evaluable")
+            L.append(f"- **Kalatra rules firing in THIS chart** (of the {_n7} encoded; "
                      f"{len(_fort)} fortified, {len(_affl)} afflicted"
-                     + (f", {len(_rest)} other" if _rest else "") + "):")
+                     + (f", {len(_rest)} general" if _rest else "") + "):")
             _fine: list[str] = []
             for branch, text, cite in (*_fort, *_affl, *_rest):
                 clean, mnote = split_maintainer_notes(text)

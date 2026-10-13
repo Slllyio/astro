@@ -24,7 +24,18 @@ is that even a WELL-DISPOSED 4th lord in the 3rd gives little property. Filed un
 Not encoded, and deliberately so: Raman's three-way strength modifier at 4196-4198 ("If the
 fourth lord is moderately afflicted, the evil nature is somewhat tempered. If the fourth lord
 is strongly afflicted, there will be an intensification") is a SECTION-WIDE modifier, not a
-per-placement branch, and there is no slot for a middling grade."""
+per-placement branch, and there is no slot for a middling grade.
+
+CORRECTED 2026-10-13 (House-4 strength-slot sweep). Two claims above were half-right, and one
+count was wrong:
+- The Satyacharya note's condition is favourable, but it is subha VARGAS or favourable ASPECTS --
+  not Shadbala strength -- so `fortified` was the wrong home as well. It is now H4.L.3a, fired on
+  benefic aspect (the only encodable half), and H4.L.3's base reading is back in `fortified`.
+- 4181 IS the section's one affliction opener, but the `afflicted` slot is a STRENGTH label
+  (`_branch` selects it on weak Shadbala). It is now H4.L.10a with an affliction predicate.
+- "ZERO fortification openers" misses 4150-4151, which grades the 4th lord in Lagna strong /
+  middling / weak. Its outer tiers sit in the strength slots correctly; the middle tier is
+  H4.L.1a."""
 from __future__ import annotations
 
 from typing import Final
@@ -37,17 +48,29 @@ from app.raman_saab.doctrine.sources import Citation
 RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H4.L.1", house=4, signification="mother_home", group="lord_in_house",
+        # 2026-10-13 House-4 sweep: 4150-4151 grades the 4th lord in Lagna strong / middling
+        # / weak (rich / mediocre / poor family). The middle tier was in general; a binary
+        # branch cannot express it, so it is H4.L.1a.
         kind="evaluable", condition=C.LordIn(4, 1),
         # HTJAH-I:4149-4151. The base sentence is unconditioned; only the family's wealth
         # is graded, and Raman grades it THREE ways — "strong, middling or weak... rich,
         # mediocre or poor". The middling grade has no slot and is deliberately NOT folded
         # into either branch; it is named here so the omission is visible.
         general="highly learned, but afraid to speak in public assemblies; likely to lose "
-                "inherited wealth (born in a mediocre family when the 4th lord is middling)",
+                "inherited wealth",
         fortified="highly learned, but afraid to speak in public assemblies; likely to lose "
                   "inherited wealth; born in a rich family",
         afflicted="the 4th lord in Lagna weak - born in a poor family",
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4149)),
+    RuleRecord(
+        id="H4.L.1a", house=4, signification="mother_home", group="lord_in_house",
+        kind="descriptive",
+        condition=None,
+        general="the 4th lord in Lagna middling in strength - born in a mediocre family. "
+                "TODO(predicate: a MIDDLE Shadbala band; is_powerful is binary)",
+        fortified=None,
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4150)),
     RuleRecord(
         id="H4.L.2", house=4, signification="mother_home", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(4, 2),
@@ -61,6 +84,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4153)),
     RuleRecord(
         id="H4.L.3", house=4, signification="mother_home", group="lord_in_house",
+        # 2026-10-13 House-4 sweep: the Satyacharya note (4193-4196) is gated on subha
+        # VARGAS or favourable ASPECTS, not Shadbala, so it left fortified for H4.L.3a. A
+        # strong lord had been losing its base reading to it.
         kind="evaluable", condition=C.LordIn(4, 3),
         # HTJAH-I:4156-4157 unconditioned. The property clause was INVERTED: it comes from
         # the Satyacharya note at 4193-4196, conditioned on the 4th lord being "subjected to
@@ -68,12 +94,25 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # `fortified`, where its actual condition puts it.
         general="sickly, generous, a man of character, and acquires wealth by self-effort; "
                 "suffers from the machinations of step-brothers and step-mother",
-        fortified="the 4th lord in the 3rd subjected to subha vargas or favourable aspects "
-                  "(Satyacharya) - acquires very little immovable property, and may even be "
-                  "deprived of his meagre possessions, besides trouble on account of "
-                  "step-mother and step-brothers",
+        fortified="sickly, generous, a man of character, and acquires wealth by "
+                  "self-effort; suffers from the machinations of step-brothers and "
+                  "step-mother",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4156)),
+    # Only the favourable-ASPECT half of Raman's 'subha vargas or favourable aspects' is
+    # encodable (no subha-varga predicate); Jupiter and Venus only, since the Moon and
+    # Mercury are benefic only conditionally. Fires less often than the text allows, never
+    # wrongly. Neutral: refines a parent that already votes for this placement.
+    RuleRecord(
+        id="H4.L.3a", house=4, signification="mother_home", group="lord_in_house",
+        kind="evaluable",
+        condition=C.And(C.LordIn(4, 3), C.Or(C.Aspects("Jupiter", "LORD_OF:4"), C.Aspects("Venus", "LORD_OF:4"))),
+        general="the 4th lord in the 3rd under favourable aspects (Satyacharya) - acquires "
+                "very little immovable property, and may even be deprived of his meagre "
+                "possessions, besides trouble on account of step-mother and step-brothers",
+        fortified=None,
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4193)),
     RuleRecord(
         id="H4.L.4", house=4, signification="mother_home", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(4, 4),
@@ -111,18 +150,38 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4165)),
     RuleRecord(
         id="H4.L.7", house=4, signification="mother_home", group="lord_in_house",
+        # 2026-10-13 House-4 sweep: the livelihood clause (4168-4170) is gated on the 7th
+        # being a movable or fixed SIGN -- testable exactly, since the 4th lord in the 7th
+        # sits in that sign. Now H4.L.7a/b; neither fires in a dual sign, where Raman says
+        # nothing.
         kind="evaluable", condition=C.LordIn(4, 7),
         # HTJAH-I:4168-4170, unconditioned. The distant-place clause is a SIGN-MODALITY
         # configuration ("according as the seventh happens to be a movable or fixed sign"),
         # not a strength branch.
-        general="generally happy; commands houses and lands; ekes out a livelihood in "
-                "distant places or near his birthplace, according as the 7th is a movable "
-                "or a fixed sign",
-        fortified="generally happy; commands houses and lands; ekes out a livelihood in "
-                  "distant places or near his birthplace, according as the 7th is a movable "
-                  "or a fixed sign",
+        general="generally happy; commands houses and lands",
+        fortified="generally happy; commands houses and lands",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4168)),
+    # Neutral: refines a parent that already votes for this placement.
+    RuleRecord(
+        id="H4.L.7a", house=4, signification="mother_home", group="lord_in_house",
+        kind="evaluable",
+        condition=C.And(C.LordIn(4, 7), C.Or(C.InSign("LORD_OF:4", 1), C.InSign("LORD_OF:4", 4), C.InSign("LORD_OF:4", 7), C.InSign("LORD_OF:4", 10))),
+        general="the 4th lord in the 7th in a movable sign - ekes out a livelihood in "
+                "distant places",
+        fortified=None,
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4168)),
+    # Neutral: refines a parent that already votes for this placement.
+    RuleRecord(
+        id="H4.L.7b", house=4, signification="mother_home", group="lord_in_house",
+        kind="evaluable",
+        condition=C.And(C.LordIn(4, 7), C.Or(C.InSign("LORD_OF:4", 2), C.InSign("LORD_OF:4", 5), C.InSign("LORD_OF:4", 8), C.InSign("LORD_OF:4", 11))),
+        general="the 4th lord in the 7th in a fixed sign - ekes out a livelihood near his "
+                "birthplace",
+        fortified=None,
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4169)),
     RuleRecord(
         id="H4.L.8", house=4, signification="mother_home", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(4, 8),
@@ -149,6 +208,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4175)),
     RuleRecord(
         id="H4.L.10", house=4, signification="mother_home", group="lord_in_house",
+        # 2026-10-13 House-4 sweep: 'Loss of reputation is possible if the 4th lord is
+        # afflicted' (4181) is an AFFLICTION clause, not a weakness clause -- now H4.L.10a.
         kind="evaluable", condition=C.LordIn(4, 10),
         # HTJAH-I:4180-4182. The ONE genuine affliction opener in this section:
         # "Loss of reputation is possible if the 4th lord is afflicted."
@@ -156,8 +217,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                 "personality felt by the world",
         fortified="political success; an expert chemist; vanquishes his enemies and makes "
                   "his personality felt by the world",
-        afflicted="the 4th lord afflicted - loss of reputation is possible",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4180)),
+    # Neutral: refines a parent that already votes for this placement.
+    RuleRecord(
+        id="H4.L.10a", house=4, signification="mother_home", group="lord_in_house",
+        kind="evaluable",
+        condition=C.And(C.LordIn(4, 10), C.AfflictedBy("LORD_OF:4")),
+        general="the 4th lord in the 10th afflicted - loss of reputation is possible",
+        fortified=None,
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4181)),
     RuleRecord(
         id="H4.L.11", house=4, signification="mother_home", group="lord_in_house",
         kind="evaluable", condition=C.LordIn(4, 11),

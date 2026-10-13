@@ -45,6 +45,7 @@
   "H4": {
     "citations": [
       "HTJAH-I:4156",
+      "HTJAH-I:4193",
       "HTJAH-I:4211",
       "NH:4961",
       "NH:4963",
@@ -55,7 +56,8 @@
       "H4.C.5",
       "H4.C.50",
       "H4.C.51",
-      "H4.L.3"
+      "H4.L.3",
+      "H4.L.3a"
     ],
     "rollup": "afflicted",
     "significations": {

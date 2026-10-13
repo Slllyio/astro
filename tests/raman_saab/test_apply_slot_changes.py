@@ -71,6 +71,16 @@ class TestApplySlotChanges:
         i = ids.index("H6.L.8")
         assert ids[i + 1:i + 3] == ["H6.L.8x", "H6.L.8y"]
 
+    def test_a_removed_record_leaves_a_comment_and_its_heir_takes_its_place(self) -> None:
+        """Removal keeps the reason in the file, and children anchored after it still land there."""
+        base = {"house": 6, "signification": "enemies_disease", "kind": "descriptive",
+                "slot": "general", "src": 6039, "work": "HTJAH-I", "polarity": "neutral"}
+        src = apply(_FILE, changes={}, new=[dict(base, id="H6.L.8x", after="H6.L.8", text="heir")],
+                    delete={"H6.L.8": "every sentence moved to its own record"})
+        recs = _rules(src)
+        assert "H6.L.8" not in recs and "H6.L.8x" in recs
+        assert "H6.L.8 REMOVED: every sentence moved to its own record" in src
+
     def test_replacing_text_containing_multibyte_characters_keeps_the_comma(self, tmp_path) -> None:
         """AST columns are UTF-8 bytes. A slot holding an arrow once made the cut land two
         characters late and eat the trailing comma; the result must parse and read back exactly."""

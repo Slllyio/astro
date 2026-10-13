@@ -75,8 +75,13 @@ class TestCorrectlyEncodedHousesWereNotTouched:
     there in his own words. A blanket sweep of the House-1 fix would have destroyed real
     doctrine, so the absence of a `general` slot on those rules is the assertion."""
 
-    @pytest.mark.parametrize("rule_id", ["H5.L.1", "H5.L.2", "H5.L.3",
-                                         "H9.L.2", "H9.L.3", "H9.L.4"])
+    #: H9.L.2/3/4 REMOVED 2026-10-13. The "Houses 5, 7 and 9 CORRECT" ruling did not survive an
+    #: unbiased re-read: H7 was 0/12 and H9 1/12. Their afflicted-slot clauses are gated on
+    #: AFFLICTION or malefic influence ("If the ninth lord is afflicted", HTJAH-II:7330), never on
+    #: the 9th lord being weak; and H9.L.3/4 DO carry unconditioned bases (7316-7320, 7326-7330).
+    #: H9.L.2 no longer exists -- Raman gives no unconditioned reading for it. The H5 entries
+    #: below were confirmed correct by the House-5 sweep and stay.
+    @pytest.mark.parametrize("rule_id", ["H5.L.1", "H5.L.2", "H5.L.3"])
     def test_afflicted_reading_still_present(self, rule_id: str) -> None:
         rule = _rule(rule_id)
         assert rule.afflicted, f"{rule_id} lost its genuine afflicted reading"
@@ -277,12 +282,16 @@ class TestHouses2And3AndH9L12:
         for rid in ("H9.L.6", "H9.L.8", "H9.L.12"):
             assert _rule(rid).general, rid
         assert _rule("H9.L.12").afflicted is None
-        # L.6 and L.8 keep a genuine conditioned clause; only their flat base moved.
-        for rid in ("H9.L.6", "H9.L.8"):
-            assert _rule(rid).afflicted, f"{rid} lost its genuine conditioned clause"
-        # The nine entries with explicit openers stay untouched.
-        for n in (1, 2, 3, 4, 5, 7, 9, 10, 11):
-            assert _rule(f"H9.L.{n}").general is None, f"H9.L.{n} was wrongly swept up"
+        # AMENDED 2026-10-13 (House-9 sweep, 1/12 correct). The second half of this test pinned
+        # "the nine entries with explicit openers" as untouched -- but there are no such nine.
+        # Only H9.L.2 opens on a condition at all; every other entry opens by restating the
+        # placement, i.e. unconditioned. And every conditional clause in the section is gated on
+        # affliction, benefic contact, hemming, a yoga or a navamsa placement -- not one on the
+        # 9th lord's strength. So every entry with an unconditioned base now carries it in
+        # `general`, and the weak-strength slot is empty across the table.
+        for n in (1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12):
+            assert _rule(f"H9.L.{n}").general, f"H9.L.{n} lost Raman's unconditioned reading"
+            assert _rule(f"H9.L.{n}").afflicted is None, f"H9.L.{n} has a non-strength clause in the weak slot"
 
 
 class TestPlanetInHouseSweep:

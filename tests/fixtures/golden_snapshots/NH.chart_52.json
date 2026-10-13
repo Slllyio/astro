@@ -79,6 +79,7 @@
   "H7": {
     "citations": [
       "HTJAH-II:323",
+      "HTJAH-II:326",
       "HTJAH-II:487",
       "HTJAH-II:929",
       "NH:11140"
@@ -87,7 +88,8 @@
       "H7.C.40",
       "H7.C.67",
       "H7.C.88",
-      "H7.L.11"
+      "H7.L.11",
+      "H7.L.11b"
     ],
     "rollup": "afflicted",
     "significations": {

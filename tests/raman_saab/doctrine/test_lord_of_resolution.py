@@ -50,8 +50,11 @@ class TestNoConditionSilentlyRejectsAHouseLord:
                 continue
             takes_subject = re.search(
                 r"def __init__\(self,\s*(%s)\b" % "|".join(_SUBJECT_ARGS), init)
-            reads_planets = "planets.get(" in body or "planets[" in body
-            if takes_subject and reads_planets and "_resolve_planet" not in body:
+            # WIDENED 2026-10-13: the first version required a direct `chart.planets` read, and
+            # so missed six Conditions that hand the raw name to a helper instead (HasDignity,
+            # IsYogaKaraka, MutualAspect, Exchange, HemmedBy, FunctionalNature). How the chart is
+            # read does not matter; an unresolved "LORD_OF:n" is wrong either way.
+            if takes_subject and "_resolve_planet" not in body:
                 offenders.append(name)
         assert not offenders, (
             "these Conditions take a subject planet but read chart.planets directly, so a "

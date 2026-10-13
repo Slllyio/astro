@@ -902,7 +902,7 @@ def reconcile(item: dict[str, Any], answers: dict[str, dict[str, Any]]) -> dict[
 - [ ] **Step 4: Run to verify pass**
 
 Run: `py -3.12 -m pytest tests/raman_saab/golden_pipeline/test_reconcile.py -q`
-Expected: `11 passed`
+Expected: `10 passed`
 
 - [ ] **Step 5: Commit**
 

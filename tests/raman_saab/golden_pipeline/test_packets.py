@@ -9,7 +9,7 @@ from tools.raman_saab.golden_pipeline import sources as S
 
 LINES = S.read_lines(Path(__file__).parent / "fixtures" / "excerpt.md")
 ITEM = {"item_id": "NH.chart_1#H4", "record_id": "NH.chart_1", "house": 4, "book": "NH",
-        "citation": "NH:6", "signification": "mother", "verdict": "afflicted",
+        "citation": "NH:6", "located": "verbatim", "windows": [[1, 12]], "signification": "mother", "verdict": "afflicted",
         "verdict_prose": "The native lost his mother very early in life"}
 
 
@@ -46,20 +46,20 @@ class TestPacket:
         assert "engine" not in text and "fidelity" not in text and "ratchet" not in text
 
 
-class TestMultiCitation:
-    def test_passage_contains_both_blocks(self):
-        """Every cited span appears, with line numbers, separated by an ellipsis line."""
+class TestStoredWindows:
+    def test_passage_renders_stored_windows_not_citations(self):
+        """The located windows are rendered; a stale citation's neighbourhood is not."""
         lines = [f"text{n}" for n in range(1, 401)]
-        item = {**ITEM, "citation": "NH:50", "citations": ["NH:50", "NH:300-301"]}
+        item = {**ITEM, "citation": "NH:50", "citations": ["NH:50"],
+                "windows": [[100, 120], [300, 301]]}
         text = P.render(item, lines, reviewer="A", flags=[])
-        assert "50| text50" in text and "300| text300" in text and "301| text301" in text
-        assert "\n...\n" in text and "150| text150" not in text
+        assert "100| text100" in text and "301| text301" in text
+        assert "\n...\n" in text and "50| text50\n" not in text and "NH:50" in text
 
-    def test_overlapping_windows_merge(self):
-        """Close citations yield one contiguous block, no ellipsis."""
+    def test_single_window_has_no_ellipsis(self):
+        """One located window yields one contiguous block."""
         lines = [f"text{n}" for n in range(1, 201)]
-        item = {**ITEM, "citation": "NH:50", "citations": ["NH:50", "NH:70"]}
-        assert "\n...\n" not in P.render(item, lines, reviewer="A", flags=[])
+        assert "\n...\n" not in P.render({**ITEM, "windows": [[40, 90]]}, lines, "A", [])
 
 
 class TestPacketRules:

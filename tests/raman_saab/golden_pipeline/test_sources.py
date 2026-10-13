@@ -86,3 +86,60 @@ class TestBookPath:
         """A gitignored source that is absent fails loudly, naming the path."""
         with pytest.raises(FileNotFoundError):
             S.book_path(tmp_path, "NH")
+
+
+def _book(n=400, at=None):
+    lines = [f"filler line {k} about nothing" for k in range(1, n + 1)]
+    for line_no, text in (at or {}).items():
+        lines[line_no - 1] = text
+    return lines
+
+
+class TestLocate:
+    def test_verbatim_prose_locates_its_own_line(self):
+        """The prose's own words fix the window, whatever the stale citation says."""
+        lines = _book(at={300: "Conclusion: the native lost his mother very ear-",
+                          301: "ly in life and was raised by relatives."})
+        item = {"book": "NH", "verdict_prose": "The native lost his mother very early in life "
+                "and was raised by relatives.", "citations": ["NH:10"]}
+        located, wins = S.locate(item, lines, {"id": "NH.chart_1"})
+        assert located == "verbatim" and wins == [[260, 340]]
+
+    def test_htjah_header_skips_cross_reference_decoy(self):
+        """'as in Chart No. 5' is a mention, not the presentation; the block starts at 'Born'."""
+        lines = _book(at={50: "This resembles the case as in Chart No. 5 above.",
+                          100: "Chart No. 5.—Born on 7-5-1861 at 4-5 a.m. (L.T.)",
+                          180: "Chart No. 6.—Born on 1-1-1900 at 6 a.m."})
+        item = {"book": "HTJAH-I", "verdict_prose": "words that are nowhere in this book at all",
+                "citations": ["HTJAH-I:50"]}
+        rec = {"id": "HTJAH-I.x5", "name": "Chart 5 (extracted, DRAFT)",
+               "birth": {"dt": "1861-05-07T04:05:00"}}
+        assert S.locate(item, lines, rec) == ("chart_header", [[100, 179]])
+
+    def test_htjah_birth_date_disambiguates_reused_number(self):
+        """Two presentations share a number; the record's birth date picks its own."""
+        lines = _book(at={100: "Chart No. 13.—Born on 2-11-1935 at 5-20 a.m.",
+                          200: "Chart No. 13 .-Born 16-10-1918 at 2 p.m.",
+                          300: "Chart No. 14.—Born 1-1-1920 at 2 p.m."})
+        item = {"book": "HTJAH-I", "verdict_prose": "absent prose words here and there",
+                "citations": ["HTJAH-I:1"]}
+        rec = {"id": "HTJAH-I.x13", "name": "Chart 13", "birth": {"dt": "1918-10-16T14:00:00"}}
+        assert S.locate(item, lines, rec) == ("chart_header", [[200, 299]])
+
+    def test_nh_header_block_confirmed_by_name(self):
+        """NH 'No. 38.- HENRY FORD' opens the block, capped at the next header."""
+        lines = _book(at={100: "No. 37.— SAYAJI RAO III, GAEKWAR OF BARODA",
+                          200: "No. 38.- HENRY FORD", 330: "No. 39— SIR ASHUTOSH MUKERJEE"})
+        item = {"book": "NH", "verdict_prose": "absent prose words here and there",
+                "citations": ["NH:120"]}
+        assert S.locate(item, lines, {"id": "NH.chart_38", "name": "Henry Ford"}) == \
+            ("chart_header", [[200, 329]])
+        # a contradicting name is not this record's chart
+        assert S.locate(item, lines, {"id": "NH.chart_38", "name": "Lord Tennyson"})[0] == \
+            "NOT_LOCATED"
+
+    def test_nothing_found_is_not_located(self):
+        """No prose match and no header -> NOT_LOCATED with no windows."""
+        item = {"book": "NH", "verdict_prose": "absent prose words here and there",
+                "citations": ["NH:120"]}
+        assert S.locate(item, _book(), {"id": "NH.chart_99"}) == ("NOT_LOCATED", [])

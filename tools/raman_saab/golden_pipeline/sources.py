@@ -48,37 +48,24 @@ def passage(lines: list[str], start: int, end: int, context: int = 40) -> str:
     return "\n".join(f"{n}| {lines[n - 1]}" for n in range(lo, hi + 1))
 
 
-def spans(item: dict) -> list[tuple[int, int]]:
-    """All cited (start, end) spans of an item; older items carry only 'citation'."""
-    return [parse_citation(c)[1:] for c in item.get("citations") or [item["citation"]]]
+def windows(item: dict) -> list[list[int]]:
+    """The item's located 1-based inclusive windows (set by extract); the ONE packet window rule.
+    Citation line numbers are never used: they predate a rewrite of the source files."""
+    return item["windows"]
 
 
-def windows(n_lines: int, spans_: list[tuple[int, int]], context: int = 40) -> list[tuple[int, int]]:
-    """Merged 1-based inclusive ±context windows around every span (the one packet window rule)."""
-    wins = sorted((max(1, s - context), min(n_lines, e + context)) for s, e in spans_)
-    merged: list[list[int]] = []
-    for lo, hi in wins:
-        if merged and lo <= merged[-1][1] + 1:
-            merged[-1][1] = max(merged[-1][1], hi)
-        else:
-            merged.append([lo, hi])
-    return [(lo, hi) for lo, hi in merged]
-
-
-def passage_multi(lines: list[str], spans_: list[tuple[int, int]], context: int = 40) -> str:
-    """Union of the ±context windows around every span; non-adjacent blocks split by '...'."""
+def passage_multi(lines: list[str], wins: list[list[int]]) -> str:
+    """The item's stored windows, line-numbered; non-adjacent blocks split by '...'."""
     return "\n...\n".join("\n".join(f"{n}| {lines[n - 1]}" for n in range(lo, hi + 1))
-                          for lo, hi in windows(len(lines), spans_, context))
+                          for lo, hi in wins)
 
 
-def quote_in_windows(lines: list[str], quote: str, spans_: list[tuple[int, int]],
-                     context: int = 40) -> bool:
+def quote_in_windows(lines: list[str], quote: str, wins: list[list[int]]) -> bool:
     """True only if `quote` occurs inside one of the exact windows the packet rendered."""
     q = normalise(quote)
     if len(q.split()) < MIN_QUOTE_WORDS:
         return False
-    return any(q in normalise("\n".join(lines[lo - 1:hi]))
-               for lo, hi in windows(len(lines), spans_, context))
+    return any(q in normalise("\n".join(lines[lo - 1:hi])) for lo, hi in wins)
 
 
 def normalise(text: str) -> str:
@@ -95,3 +82,123 @@ def quote_found(lines: list[str], quote: str, line: int, window: int = 60) -> bo
         return False
     lo, hi = max(0, line - 1 - window), min(len(lines), line + window)
     return q in normalise("\n".join(lines[lo:hi]))
+
+
+# --- Locating an item's passage by CONTENT (citation line numbers predate a source rewrite) ---
+
+HEAD_WORDS: Final[int] = 8
+MAX_BLOCK: Final[int] = 250
+_HTJAH_CHART: Final = re.compile(r"Chart\s*No\.?\s*(\d(?:\s?\d)*)", re.IGNORECASE)
+_NH_HEADER: Final = re.compile(r"^\s*No\.?\s*([0-9Il]{1,3})(?![0-9])[^A-Za-z0-9]*"
+                               r"([A-Z][A-Z .,'’&()-]{2,})\s*$")
+
+
+def _words(lines: list[str]) -> tuple[str, list[int]]:
+    """Normalised word stream (hard-wrap hyphens re-joined) and each word's 1-based line."""
+    words: list[str] = []
+    at: list[int] = []
+    carry: tuple[str, int] | None = None
+    for n, raw in enumerate(lines, 1):
+        toks = normalise(raw).split()
+        here = [n] * len(toks)
+        if carry and toks:
+            toks[0], here[0] = carry[0] + toks[0], carry[1]
+        elif carry:
+            words.append(carry[0]); at.append(carry[1])
+        carry = None
+        if toks and re.search(r"\w-\s*$", raw):
+            carry = (toks.pop(), here.pop())
+        words.extend(toks); at.extend(here)
+    if carry:
+        words.append(carry[0]); at.append(carry[1])
+    return " " + " ".join(words) + " ", at
+
+
+def _occurrences(joined: str, phrase: str) -> list[int]:
+    """Word indices where `phrase` (normalised) starts."""
+    out, pos, needle = [], joined.find(" " + phrase + " "), " " + phrase + " "
+    while pos != -1:
+        out.append(joined.count(" ", 0, pos + 1) - 1)
+        pos = joined.find(needle, pos + 1)
+    return out
+
+
+def _blocks(starts: list[tuple[int, int]], n_lines: int) -> list[tuple[int, int, int]]:
+    """(number, header line, last line) per presentation: to the next one, capped."""
+    starts = sorted(starts, key=lambda s: s[1])
+    nxt = [s[1] - 1 for s in starts[1:]] + [n_lines]
+    return [(no, ln, min(end, ln + MAX_BLOCK - 1)) for (no, ln), end in zip(starts, nxt)]
+
+
+def _born_on(text: str, dt: str) -> bool:
+    y, m, d = (int(x) for x in dt[:10].split("-"))
+    return bool(re.search(rf"(?<!\d)(?:\d{{1,2}}\s*/\s*)?0?{d}(?:\s*/\s*\d{{1,2}})?\s*[-./]\s*"
+                          rf"0?{m}\s*[-./]\s*{y}(?!\d)", text))
+
+
+def _htjah_header(lines: list[str], record: dict) -> tuple[int, int] | None:
+    pres = []
+    for i, line in enumerate(lines):
+        m = _HTJAH_CHART.search(line)
+        if m and re.search(r"\bBorn\b", "\n".join(lines[i:i + 3]), re.IGNORECASE):
+            pres.append((int(m.group(1).replace(" ", "")), i + 1))
+    blocks = _blocks(pres, len(lines))
+    num = re.search(r"\d+", str(record.get("name") or ""))
+    no = int(num.group()) if num else None
+    dt = (record.get("birth") or {}).get("dt")
+    if dt:  # the record's own birth date is decisive; the number only breaks ties
+        cands = [b for b in blocks if _born_on("\n".join(lines[b[1] - 1:b[1] + 2]), dt)]
+        cands = [b for b in cands if b[0] == no] or cands
+    else:
+        cands = [b for b in blocks if b[0] == no]
+    return (cands[0][1], cands[0][2]) if len(cands) == 1 else None
+
+
+def _name_ok(header: str, name: str) -> bool:
+    sig = [w for w in normalise(name).split() if len(w) >= 4 and w not in {"chart", "extracted"}]
+    flat = normalise(header).replace(" ", "")
+    return not sig or any(w in flat for w in sig)
+
+
+def _nh_header(lines: list[str], record: dict) -> tuple[int, int] | None:
+    num = re.search(r"chart_(\d+)$", record["id"])
+    if not num:
+        return None
+    heads = []
+    for i, line in enumerate(lines):
+        m = _NH_HEADER.match(line)
+        if m:
+            no = int(m.group(1).replace("I", "1").replace("l", "1"))
+            heads.append((no, i + 1))
+    cands = [b for b in _blocks(heads, len(lines)) if b[0] == int(num.group(1))
+             and _name_ok(lines[b[1] - 1], str(record.get("name") or ""))]
+    return (cands[0][1], cands[0][2]) if len(cands) == 1 else None
+
+
+def chart_header(item: dict, lines: list[str], record: dict) -> tuple[int, int] | None:
+    """This record's own chart presentation block, or None when absent or ambiguous."""
+    if item["book"] == "NH":
+        return _nh_header(lines, record)
+    if item["book"] in ("HTJAH-I", "HTJAH-II"):
+        return _htjah_header(lines, record)
+    return None  # 3HC: no per-record chart presentation format known
+
+
+def locate(item: dict, lines: list[str], record: dict) -> tuple[str, list[list[int]]]:
+    """('verbatim'|'chart_header'|'NOT_LOCATED', windows). Never uses citation line numbers."""
+    joined, at = _words(lines)
+    prose = normalise(item.get("verdict_prose") or "").split()
+    block = chart_header(item, lines, record)
+    hits: list[int] = []
+    if len(prose) >= MIN_QUOTE_WORDS + 1:
+        hits = _occurrences(joined, " ".join(prose[:HEAD_WORDS]))
+        if len(hits) > 1 and block:  # repeated phrase: keep the one inside our own chart
+            hits = [h for h in hits if block[0] <= at[h] <= block[1]]
+    if len(hits) == 1:
+        start = at[hits[0]]
+        whole = hits[0] in _occurrences(joined, " ".join(prose))
+        end = at[hits[0] + len(prose) - 1] if whole else start
+        return "verbatim", [[max(1, start - 40), min(len(lines), max(start + 40, end))]]
+    if block:
+        return "chart_header", [[block[0], block[1]]]
+    return "NOT_LOCATED", []

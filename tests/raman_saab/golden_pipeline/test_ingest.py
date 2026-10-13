@@ -9,7 +9,7 @@ from tools.raman_saab.golden_pipeline import sources as S
 
 LINES = S.read_lines(Path(__file__).parent / "fixtures" / "excerpt.md")
 ITEM = {"item_id": "NH.chart_1#H4", "record_id": "NH.chart_1", "house": 4, "book": "NH",
-        "citation": "NH:6", "signification": "mother", "verdict": "afflicted",
+        "citation": "NH:6", "located": "verbatim", "windows": [[1, 12]], "signification": "mother", "verdict": "afflicted",
         "verdict_prose": "x"}
 
 
@@ -47,25 +47,24 @@ class TestIngest:
         assert I.ingest_item(tmp_path, ITEM, LINES) == I.ingest_item(tmp_path, ITEM, LINES)
 
 
-    def test_quote_under_second_citation_verifies(self, tmp_path):
-        """The verdict often sits under a later citation; a quote there is verified."""
+    def test_quote_in_second_window_verifies(self, tmp_path):
+        """A quote inside any stored window verifies."""
         lines = ["filler"] * 400
         lines[299] = "The native lost his mother very early in life"
-        item = {**ITEM, "citation": "NH:6", "citations": ["NH:6", "NH:300"]}
+        item = {**ITEM, "windows": [[1, 50], [280, 320]]}
         _write(tmp_path, "A"); _write(tmp_path, "B")
         assert I.ingest_item(tmp_path, item, lines)["outcome"] == "CONFIRMED"
 
-
-    def test_quote_far_outside_packet_is_unverified(self, tmp_path):
-        """A real book sentence beyond the packet windows fails even with a matching quote_line."""
+    def test_quote_outside_stored_windows_is_unverified(self, tmp_path):
+        """A real book sentence beyond the stored windows fails, even near a citation."""
         lines = ["filler"] * 600
-        lines[499] = "The native lost his mother very early in life"
-        _write(tmp_path, "A", extra={"quote_line": 500}); _write(tmp_path, "B", extra={"quote_line": 500})
-        assert I.ingest_item(tmp_path, ITEM, lines)["outcome"] == "UNVERIFIED"
-
-    def test_quote_inside_packet_window_verifies(self, tmp_path):
-        """A quote within cited span +-40 lines verifies."""
-        lines = ["filler"] * 100
-        lines[40] = "The native lost his mother very early in life"
+        lines[9] = "The native lost his mother very early in life"
+        item = {**ITEM, "citations": ["NH:10"], "windows": [[400, 500]]}
         _write(tmp_path, "A"); _write(tmp_path, "B")
-        assert I.ingest_item(tmp_path, ITEM, lines)["outcome"] == "CONFIRMED"
+        assert I.ingest_item(tmp_path, item, lines)["outcome"] == "UNVERIFIED"
+
+    def test_not_located_item_is_never_decided(self, tmp_path):
+        """An unlocated item cannot be confirmed or rejected, whatever answers exist."""
+        _write(tmp_path, "A", extra={"decision": "REJECT"}); _write(tmp_path, "B", extra={"decision": "REJECT"})
+        d = I.ingest_item(tmp_path, {**ITEM, "located": "NOT_LOCATED", "windows": []}, LINES)
+        assert d["outcome"] == "NOT_LOCATED"

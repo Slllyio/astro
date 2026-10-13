@@ -46,6 +46,24 @@ class TestCli:
         assert "NH.chart_1__H4.A.md" in capsys.readouterr().out
 
 
+class TestNotLocated:
+    def test_not_located_gets_no_packet_and_is_counted(self, tmp_path, capsys):
+        """An item whose passage cannot be found is never sent to reviewers."""
+        g, src, runs = _setup(tmp_path)
+        rec = json.loads(g.read_text(encoding="utf-8"))
+        rec["expected_verdicts"]["H4"]["verdict_prose"] = "words absent from the whole book"
+        rec["id"] = "NH.chart_99"
+        g.write_text(json.dumps(rec) + "\n", encoding="utf-8")
+        CLI.main(["extract", "--input", str(g), "--run", "r1", "--runs-root", str(runs),
+                  "--sources-root", str(src)])
+        CLI.main(["packets", "--run", "r1", "--runs-root", str(runs), "--sources-root", str(src)])
+        pk = runs / "r1" / "packets"
+        assert not pk.exists() or not any(pk.iterdir())
+        capsys.readouterr()
+        CLI.main(["status", "--run", "r1", "--runs-root", str(runs)])
+        assert "NOT_LOCATED: 1" in capsys.readouterr().out
+
+
 class TestGuards:
     def _run(self, tmp_path, monkeypatch, rows):
         from tools.raman_saab.golden_pipeline import runs as R

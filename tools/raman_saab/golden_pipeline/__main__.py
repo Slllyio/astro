@@ -36,12 +36,18 @@ def _lines_for(item, root: Path, cache: dict) -> list[str]:
 
 def cmd_extract(a, run: Path) -> int:
     from tools.raman_saab.golden_pipeline.splice_check import flags
-    items, cache = select_pending(R.load_goldens(Path(a.input))), {}
+    records = R.load_goldens(Path(a.input))
+    by_id, cache = {r["id"]: r for r in records}, {}
+    items = select_pending(records)
     for it in items:
-        starts = [s for s, _e in S.spans(it)]
-        it["flags"] = flags(it["verdict_prose"], _lines_for(it, a.sources_root, cache), starts)
+        lines = _lines_for(it, a.sources_root, cache)
+        it["located"], it["windows"] = S.locate(it, lines, by_id[it["record_id"]])
+        mids = [(lo + hi) // 2 for lo, hi in it["windows"]]
+        reach = max([(hi - lo) // 2 + 40 for lo, hi in it["windows"]], default=0)
+        it["flags"] = flags(it["verdict_prose"], lines, mids, window=reach)
     R.write_jsonl(run / "items.jsonl", items)
-    print(f"[extract] {len(items)} pending items -> {run / 'items.jsonl'}")
+    print(f"[extract] {len(items)} pending items -> {run / 'items.jsonl'} "
+          f"{dict(Counter(it['located'] for it in items))}")
     return 0
 
 
@@ -55,6 +61,8 @@ def cmd_packets(a, run: Path) -> int:
     # A schema-invalid answer file exists but must still be re-dispatched.
     invalid = {(d["item_id"], r) for d in decisions.values() for r in d.get("invalid", [])}
     for it in items:
+        if it["located"] == "NOT_LOCATED":
+            continue  # no trustworthy passage: never sent, so never auto-rejected
         reviewers = "C" if a.tiebreak else "AB"
         if a.tiebreak and decisions.get(it["item_id"], {}).get("outcome") != "TIEBREAK":
             continue
@@ -112,6 +120,9 @@ def cmd_apply(a, run: Path) -> int:
 def cmd_status(a, run: Path) -> int:
     for name in ("items.jsonl", "decisions.jsonl", "proposal.md"):
         print(f"{name}: {'yes' if (run / name).is_file() else 'no'}")
+    if (run / "items.jsonl").is_file():
+        for k, n in sorted(Counter(it["located"] for it in R.read_jsonl(run / "items.jsonl")).items()):
+            print(f"{k}: {n}")
     return 0
 
 

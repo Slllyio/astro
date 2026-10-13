@@ -7,10 +7,13 @@ from typing import Any
 from tools.raman_saab.golden_pipeline import answers as A
 from tools.raman_saab.golden_pipeline.packets import answer_path
 from tools.raman_saab.golden_pipeline.reconcile import reconcile
-from tools.raman_saab.golden_pipeline.sources import quote_in_windows, spans
+from tools.raman_saab.golden_pipeline.sources import quote_in_windows, windows
 
 
 def ingest_item(run: Path, item: dict[str, Any], lines: list[str]) -> dict[str, Any]:
+    if item["located"] == "NOT_LOCATED":  # never sent to reviewers, so never decidable
+        return {"item_id": item["item_id"], "record_id": item["record_id"],
+                "house": item["house"], "outcome": "NOT_LOCATED"}
     got: dict[str, dict[str, Any]] = {}
     invalid: list[str] = []
     for r in "ABC":
@@ -22,7 +25,7 @@ def ingest_item(run: Path, item: dict[str, Any], lines: list[str]) -> dict[str, 
         except A.InvalidAnswer:
             invalid.append(r)
             continue
-        got[r] = {**a, "quote_ok": quote_in_windows(lines, a["decisive_quote"], spans(item))}
+        got[r] = {**a, "quote_ok": quote_in_windows(lines, a["decisive_quote"], windows(item))}
     decision = reconcile(item, got)
     return {"item_id": item["item_id"], "record_id": item["record_id"],
             "house": item["house"], "proposed_verdict": item["verdict"],

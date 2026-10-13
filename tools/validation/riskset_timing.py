@@ -157,6 +157,38 @@ def excess(xc: np.ndarray, xk: np.ndarray, pids, rng) -> dict:
             "p": float(2 * (1 - __import__("scipy.stats").stats.norm.cdf(abs(d.mean()) / se))) if se > 0 else 1.0}
 
 
+def cluster_se(d: np.ndarray, pids) -> float:
+    """Cluster-robust SE of a mean (clusters = people)."""
+    _, inv = np.unique(np.asarray(pids), return_inverse=True)
+    k = inv.max() + 1
+    s_p = np.bincount(inv, weights=d - d.mean())
+    return float(np.sqrt(k / max(1, k - 1) * (s_p ** 2).sum()) / len(d))
+
+
+def calibrate(xc: np.ndarray, xk: np.ndarray, pids, kind: str, rng, reps: int = 500) -> dict:
+    """PHASE3_AMENDMENT_1: replicated gate. kind='sham' permutes the case label within each set
+    (target 0); kind='planted' resamples the case at mean(controls)+SESOI (target SESOI).
+    Pass: |mean E - target| <= 0.005 and 95%-CI coverage of the target in [0.90, 0.99]."""
+    target = 0.0 if kind == "sham" else SESOI
+    allx = np.c_[xc, xk]
+    n = len(xk)
+    es, cov = [], []
+    for _ in range(reps):
+        if kind == "sham":
+            j = rng.integers(0, K_CONTROLS + 1, n)
+            c = allx[np.arange(n), j]
+            k = (allx.sum(1) - c) / K_CONTROLS
+        else:
+            c = (rng.random(n) < np.clip(xk.mean(1) + SESOI, 0, 1)).astype(float)
+            k = xk.mean(1)
+        d = c - k
+        e, se = d.mean(), cluster_se(d, pids)
+        es.append(e); cov.append(e - 1.96 * se <= target <= e + 1.96 * se)
+    m, c_ = float(np.mean(es)), float(np.mean(cov))
+    return {"target": target, "mean_E": m, "sd_E": float(np.std(es)), "coverage": c_, "reps": reps,
+            "pass": bool(abs(m - target) <= 0.005 and 0.90 <= c_ <= 0.99)}
+
+
 def clr_or(xc: np.ndarray, xk: np.ndarray) -> float | None:
     """Conditional-logistic OR (risk sets as strata) for a binary exposure."""
     from statsmodels.discrete.conditional_models import ConditionalLogit
@@ -296,27 +328,23 @@ def main(argv: list[str] | None = None) -> int:
     by_level = {lvl: [s for s in sets if s["level"] == lvl] for lvl in ("AD", "MD")}
     pids = {lvl: [s["case"] for s in ss] for lvl, ss in by_level.items()}
 
-    # ---- 1. sham first: case label permuted within each risk set ---------------------------------
-    sham_ok = True
+    # ---- 1. controls first (PHASE3_AMENDMENT_1: replicated gates) ---------------------------------
+    out["first_run_single_draw"] = {"planted_AD": {"E": 0.0071, "ci": [-0.0098, 0.0252], "recovered": False},
+                                    "planted_MD": {"E": 0.0311, "ci": [0.0223, 0.0401], "recovered": True},
+                                    "note": "runner 1f33733e stopped here; see PHASE3_AMENDMENT_1.md"}
+    gates_ok = True
     for lvl, ss in by_level.items():
         xc, xk, _ = score(ss, store)
-        allx = np.c_[xc, xk]
-        j = rng.integers(0, K_CONTROLS + 1, len(ss))
-        sc = allx[np.arange(len(ss)), j]
-        sk = np.array([np.delete(row, jj) for row, jj in zip(allx, j)])
-        sh = excess(sc, sk, pids[lvl], rng)
-        out[f"sham_{lvl}"] = sh
-        sham_ok &= sh["ci"][0] <= 0 <= sh["ci"][1]
-        # planted recovery: case exposure resampled at mean(controls) + SESOI
-        pc = (rng.random(len(ss)) < np.clip(xk.mean(1) + SESOI, 0, 1)).astype(float)
-        pl = excess(pc, xk, pids[lvl], rng)
-        out[f"planted_{lvl}"] = pl | {"recovered": bool(pl["ci"][0] <= SESOI <= pl["ci"][1])}
-    out["sham_ok"] = bool(sham_ok)
-    planted_ok = all(out[f"planted_{lv}"]["recovered"] for lv in by_level)
-    out["planted_ok"] = planted_ok
-    if not sham_ok or not planted_ok:
+        for kind in ("sham", "planted"):
+            g = calibrate(xc, xk, pids[lvl], kind, rng)
+            out[f"{kind}_{lvl}"] = g
+            gates_ok &= g["pass"]
+    out["gates_ok"] = bool(gates_ok)
+    if not gates_ok:
+        a.out_json.parent.mkdir(parents=True, exist_ok=True)
         a.out_json.write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
-        raise SystemExit("[phase3] CONTROL FAILED (sham or planted) -- real exposure NOT compared")
+        raise SystemExit("[phase3] CONTROL GATE FAILED -- real exposure NOT compared")
+    sham_ok = True
 
     # ---- 2. placebo dasha, then real ----------------------------------------------------------
     results = {}
@@ -375,7 +403,7 @@ def main(argv: list[str] | None = None) -> int:
         res = Result(test_id=f"phase3:{tag}", prereg_id=PREREG, engine="parashara", statistic="hit_diff",
                      unit="event", effect=r["E"], se=r["se"], se0=r["se0"], sesoi=SESOI, n_cases=r["n"],
                      n_clusters=r["n_people"], sham_ok=sham_ok, n_controls=r["n"] * K_CONTROLS,
-                     ci95_override=r["ci"], planted_recovered=out[f"planted_{'AD' if tag == 'P1' else 'MD'}"]["recovered"],
+                     ci95_override=r["ci"], planted_recovered=out[f"planted_{'AD' if tag == 'P1' else 'MD'}"]["pass"],
                      config={"holm_p": adj[tag], "coverage": r["coverage"], "clr_or": r["clr_or"]})
         r["verdict"] = res.verdict if adj[tag] < 0.05 or res.verdict != "SIGNAL" else "UNDERPOWERED (Holm)"
         r["holm_p"], r["mde80"], r["p_tost"] = adj[tag], mde80(r["se0"]), res.p_tost
@@ -408,7 +436,7 @@ def markdown(o: dict) -> str:
     L = ["# Phase 3 results: risk-set dasha-activation timing", "",
          f"Per `docs/validation/PHASE3_TIMING_PREREG.md` ({PREREG}). Generated by `tools/validation/riskset_timing.py`.",
          f"Mapped events (A+B): {o['n_mapped_events']}; risk sets built: {o['n_sets']}. "
-         f"Shams passed: **{o['sham_ok']}**.", "",
+         f"Control gates passed (Amendment 1, 500-draw calibration): **{o['gates_ok']}**.", "",
          "E = case exposure − mean of 10 matched controls' exposure (0 = no timing effect). SESOI 0.03.", "",
          "## Primaries", "", "| test | E | 95% CI | n | control coverage | CLR OR | MDE80 | Holm p | p_TOST | verdict |",
          "|---|---|---|---|---|---|---|---|---|---|"]
@@ -417,9 +445,19 @@ def markdown(o: dict) -> str:
         L.append(f"| {t} ({'AD level, day-dated' if t == 'P1' else 'MD level, year-dated'}) | {r['E']:+.4f} "
                  f"| {r['ci'][0]:+.4f}..{r['ci'][1]:+.4f} | {r['n']} | {r['coverage']:.2f} | "
                  f"{(r['clr_or'] or float('nan')):.3f} | {r['mde80']:.3f} | {r['holm_p']:.3f} | {r['p_tost']:.3f} | **{r['verdict']}** |")
-    L += ["", "## Controls (computed before the real exposure)", "", "| arm | E | 95% CI | n | coverage |", "|---|---|---|---|---|"]
-    for k in ("sham_AD", "sham_MD", "planted_AD", "planted_MD", "placebo_P1", "placebo_P2"):
-        L.append(_row(k + (f" (recovered: {o[k]['recovered']})" if "recovered" in o[k] else ""), o[k]))
+    L += ["", "## Control gates (computed before the real exposure; PHASE3_AMENDMENT_1)", "",
+          "| gate | target | mean E over 500 draws | SD | CI coverage | pass |", "|---|---|---|---|---|---|"]
+    for k in ("sham_AD", "sham_MD", "planted_AD", "planted_MD"):
+        g = o[k]
+        L.append(f"| {k} | {g['target']:+.3f} | {g['mean_E']:+.4f} | {g['sd_E']:.4f} | {g['coverage']:.3f} | {g['pass']} |")
+    f1 = o["first_run_single_draw"]
+    L += ["", f"First run (single-draw gates, runner 1f33733e) stopped here: planted AD +{f1['planted_AD']['E']:.4f} "
+          f"CI {f1['planted_AD']['ci']} (failed), planted MD +{f1['planted_MD']['E']:.4f} (recovered). "
+          "Diagnosed as a 1% draw; gates replaced before the real comparison (PHASE3_AMENDMENT_1.md).", "",
+          "## Placebo dasha (right chart, dasha seeded one nakshatra ahead)", "",
+          "| arm | E | 95% CI | n | coverage |", "|---|---|---|---|---|"]
+    for k in ("placebo_P1", "placebo_P2"):
+        L.append(_row(k, o[k]))
     L += ["", "## Secondaries and sensitivity arms (descriptive unless a primary is SIGNAL)", "",
           "| arm | E | 95% CI | n | coverage |", "|---|---|---|---|---|"]
     for k in ("S2_P1", "S2_P2", "S3_double_transit", "P1_raman_ayanamsa", "P2_raman_ayanamsa",

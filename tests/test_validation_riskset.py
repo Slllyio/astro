@@ -60,3 +60,15 @@ class TestAuditFixes:
         assert map_event("health", "Negative") == (6,)
         assert map_event("Health", "Finally healed") is None
         assert map_event("Health", "Begin remission") is None
+
+
+class TestReplicatedGates:
+    def test_planted_gate_passes_on_unbiased_pipeline(self):
+        """Amendment 1: 500 planted draws recover +0.03 with calibrated coverage."""
+        from tools.validation.riskset_timing import calibrate
+        rng = np.random.default_rng(1)
+        xk = (rng.random((3000, 10)) < 0.3).astype(float)
+        xc = (rng.random(3000) < 0.3).astype(float)
+        pids = [str(i) for i in range(3000)]
+        assert calibrate(xc, xk, pids, "planted", rng, reps=200)["pass"]
+        assert calibrate(xc, xk, pids, "sham", rng, reps=200)["pass"]

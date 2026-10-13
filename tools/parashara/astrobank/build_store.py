@@ -101,6 +101,43 @@ def _process(row: dict[str, Any]) -> dict[str, list[dict]]:
     return {"verdicts": verdicts, "ayurdaya": ayur, "sig_windows": sig, "maraka_windows": mar}
 
 
+def process_natal(row: dict[str, Any]) -> dict[str, Any] | None:
+    """Natal facts for the double-transit test (DOUBLE_TRANSIT_PREREG.md): the 7th/8th house signs
+    and their lords' signs (Parashara cast, Lahiri). Separate table so earlier results stay
+    reproducible."""
+    try:
+        from app.parashara.chart.cast import cast
+        from app.parashara.primitives.relationships import SIGN_LORDS
+        y, mo, d = (int(x) for x in row["birth_date"].split("-"))
+        t = row["birth_time"]
+        ch = cast(year=y, month=mo, day=d, hour=int(t[:2]), minute=int(t[3:5]),
+                  tz_offset=float(row["tz_offset"]), latitude=float(row["latitude"]),
+                  longitude=float(row["longitude"]))
+        sign = {p: int(lon % 360.0 // 30) + 1 for p, lon in ch.longitudes.items()}
+        out: dict[str, Any] = {"person_id": row["person_id"], "asc_sign": ch.asc_sign}
+        for h in (7, 8):
+            hs = ((ch.asc_sign - 1 + h - 1) % 12) + 1
+            out[f"h{h}_sign"] = hs
+            out[f"h{h}_lord_sign"] = sign[SIGN_LORDS[hs]]
+        return out
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def run_natal(raman_root: Path, out: Path, workers: int) -> int:
+    pop = pd.read_parquet(raman_root / "store_population.parquet")
+    master = pd.read_parquet(raman_root / "person_master.parquet")
+    rows = master[master.person_id.isin(set(pop.person_id))][
+        ["person_id", "birth_date", "birth_time", "tz_offset", "latitude", "longitude"]
+    ].to_dict("records")
+    with mp.Pool(processes=workers, initializer=init_worker) as pool:
+        res = pool.map(process_natal, rows, chunksize=200)
+    ok = [r for r in res if r is not None]
+    pd.DataFrame(ok).to_parquet(out / "natal.parquet", compression="zstd", index=False)
+    print(f"[natal] {len(ok)}/{len(rows)} charts -> natal.parquet")
+    return 0
+
+
 def _engine_sha() -> str:
     try:
         return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
@@ -170,7 +207,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--workers", type=int, default=max(1, (mp.cpu_count() or 4) - 2))
     ap.add_argument("--bench", type=int, default=None)
+    ap.add_argument("--natal-only", action="store_true",
+                    help="write only natal.parquet (double-transit test inputs)")
     a = ap.parse_args(argv)
+    if a.natal_only:
+        return run_natal(a.raman_root, a.out, a.workers)
     return run(a.raman_root, a.out, a.workers, a.bench)
 
 

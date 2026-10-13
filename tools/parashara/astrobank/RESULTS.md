@@ -48,3 +48,31 @@ Reproduce:
     py -3.12 -m tools.parashara.astrobank.build_store --raman-root <raman store> --out <parashara store>
     py -3.12 -m tools.parashara.astrobank.static_tests --raman-root <raman store> --store <parashara store>
     py -3.12 -m tools.parashara.astrobank.timing_tests --raman-root <raman store> --store <parashara store>
+
+---
+
+# Dasha + double transit (run 2026-10-13, per DOUBLE_TRANSIT_PREREG.md, committed first)
+
+**Verdict: NULL on every instrument — but UNDERPOWERED.** Day-precision events only (transits cannot
+be localised to a year-only date), tier A+B: just 199 marriages, 34 divorces, 230 deaths.
+
+| instrument | events / people | coverage | within-person lift (CI) | cross-chart excess (CI) | status |
+|---|---|---|---|---|---|
+| marriage: dasha H7 AND double transit H7 | 199 / 169 | 0.21 | +0.038 (−0.022, +0.101) | +0.036 (−0.027, +0.099) | null |
+| divorce: dasha H7 AND double transit H7 | 34 / 26 | 0.22 | −0.027 (−0.134, +0.104) | −0.062 (−0.171, +0.062) | null |
+| death: maraka AD AND double transit H8 | 230 / 230 | 0.18 | +0.012 (−0.041, +0.065) | +0.018 (−0.035, +0.070) | null |
+| marriage, transit only | 199 / 169 | 0.32 | +0.041 (−0.022, +0.109) | +0.017 (−0.051, +0.085) | null |
+| divorce, transit only | 34 / 26 | 0.34 | −0.034 (−0.191, +0.160) | −0.043 (−0.177, +0.127) | null |
+| death, transit only | 230 / 230 | 0.31 | +0.021 (−0.040, +0.083) | +0.029 (−0.033, +0.092) | null |
+
+- The double transit SOLVED saturation (coverage 0.66 -> ~0.20): the instrument is narrow enough to
+  test. It did not pass.
+- Point estimates for marriage (+3.8%) and death (+1.2%) lean the predicted way, but the CIs are
+  ~4x too wide to separate them from zero. Honest reading: the hypothesis is NOT confirmed, and a
+  small true effect is NOT ruled out. Divorce (n=34) is uninformative.
+- What would settle it: ~4x more day-precision events. The pre-registered rule stands unchanged for a
+  confirmatory run (tier C held out; new day-dated events) — no redesign after seeing these numbers.
+
+Reproduce:
+    py -3.12 -m tools.parashara.astrobank.build_store --raman-root <raman store> --out <parashara store> --natal-only
+    py -3.12 -m tools.parashara.astrobank.transit_tests --raman-root <raman store> --store <parashara store>

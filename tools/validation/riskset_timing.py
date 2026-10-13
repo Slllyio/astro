@@ -45,13 +45,13 @@ EVENT_MAP: tuple[tuple[str, tuple[int, ...] | str], ...] = (
     (r"^death of child", (5,)), (r"^death of sibling", (3,)),
     (r"^death of", ()),                                           # significant person etc: excluded
     (r"^death and came back", ()),
-    (r"^death( by|,|$)", MARAKA),
+    (r"^death( by|,|$| (disease|unspecified|accident|suicide)$)", MARAKA),   # + legacy rows (audit B1)
     (r"parents divorced", ()),
     (r"\bmarriage\b|divorce|begin significant relationship|end significant relationship", (7,)),
     (r"adopted a child|conception|abortion/ miscarriage", (5,)),
     (r"new job|new career|fired/laid off/quit|retired|\bprize\b|gain social status"
      r"|published/ exhibited/ released|begin major project|^career\b", (10,)),
-    (r"acute illness|chronic illness|medical diagnosis|medical procedure|^health\b", (6,)),
+    (r"acute illness|chronic illness|medical diagnosis|medical procedure|^health negative", (6,)),
     (r"accident \(non-fatal\)|violent trauma|^accidents\b", (6,)),
     (r"trial dates|law suit|^legal\b", (6,)),
     (r"\barrest\b", (12,)),
@@ -174,7 +174,7 @@ def clr_or(xc: np.ndarray, xk: np.ndarray) -> float | None:
         return None
 
 
-def clr_slope(tt: np.ndarray) -> float | None:
+def clr_slope(tt: np.ndarray) -> tuple[float, float] | None:
     """S1: CLR log-odds slope per activation tier (0..4; uncovered ages dropped)."""
     from statsmodels.discrete.conditional_models import ConditionalLogit
     n, m = tt.shape
@@ -183,7 +183,8 @@ def clr_slope(tt: np.ndarray) -> float | None:
     g = np.repeat(np.arange(n), m)
     keep = x >= 0
     try:
-        return float(ConditionalLogit(y[keep], x[keep][:, None], groups=g[keep]).fit(disp=0).params[0])
+        res = ConditionalLogit(y[keep], x[keep][:, None], groups=g[keep]).fit(disp=0)
+        return float(res.params[0]), float(res.pvalues[0])
     except Exception:  # noqa: BLE001
         return None
 
@@ -208,14 +209,20 @@ def load_events(derived: Path) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, fl
         master[["person_id", "quality_tier", "decade", "birth_jd", "rodden_rating"]], on="person_id")
     ev = ev[ev.quality_tier.isin(["A", "B"])]
     ev["houses"] = [map_event(r, s) for r, s in zip(ev.event_root, ev.event_subtype)]
-    death_age: dict[str, float] = {}
-    for r in ev[ev.houses == MARAKA].itertuples():
-        a = (_jd(r.event_year, 7, 2) - r.birth_jd) / _YEAR
-        death_age[r.person_id] = min(a, death_age.get(r.person_id, np.inf))
     ev = ev[ev.houses.notna()].copy()
     day = ev.date_precision == "day"
     ev["event_jd"] = np.where(day, [_jd(y, m, d) for y, m, d in zip(ev.event_year, ev.event_month, ev.event_day)],
                               [_jd(y, 7, 2) for y in ev.event_year])
+    # own death: one event per person, the day-precision row preferred (audit B1, NB7)
+    is_death = ev.houses.astype(str) == MARAKA
+    deaths = ev[is_death].assign(_rank=(~day[is_death]).astype(int)).sort_values(["person_id", "_rank", "event_jd"])
+    deaths = deaths.drop_duplicates("person_id").drop(columns="_rank")
+    death_age = {r.person_id: (r.event_jd - r.birth_jd) / _YEAR for r in deaths.itertuples()}
+    ev = pd.concat([ev[~is_death], deaths])
+    n0 = len(ev)
+    ev = ev.assign(_h=ev.houses.astype(str)).drop_duplicates(["person_id", "event_jd", "_h"]).drop(columns="_h")
+    print(f"[phase3] dedup person x date x house: {n0} -> {len(ev)} events (audit B2)")
+    day = ev.date_precision == "day"
     ev["age"] = (ev.event_jd - ev.birth_jd) / _YEAR
     ev["level"] = np.where(day, "AD", "MD")
     ev["rodden"] = ev.rodden_rating
@@ -281,6 +288,9 @@ def main(argv: list[str] | None = None) -> int:
     rng = np.random.default_rng(SEED)
     ev, master, death_age = load_events(a.derived)
     store = Store(a.store)
+    n_ev = len(ev)
+    ev = ev[ev.person_id.isin(store.data)]
+    print(f"[phase3] cases in store: {len(ev)}/{n_ev} (audit NB5)")
     sets = build_sets(ev, master, death_age, set(store.data), rng)
     out: dict = {"n_mapped_events": int(len(ev)), "n_sets": len(sets)}
     by_level = {lvl: [s for s in sets if s["level"] == lvl] for lvl in ("AD", "MD")}
@@ -302,9 +312,11 @@ def main(argv: list[str] | None = None) -> int:
         pl = excess(pc, xk, pids[lvl], rng)
         out[f"planted_{lvl}"] = pl | {"recovered": bool(pl["ci"][0] <= SESOI <= pl["ci"][1])}
     out["sham_ok"] = bool(sham_ok)
-    if not sham_ok:
+    planted_ok = all(out[f"planted_{lv}"]["recovered"] for lv in by_level)
+    out["planted_ok"] = planted_ok
+    if not sham_ok or not planted_ok:
         a.out_json.write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
-        raise SystemExit("[phase3] SHAM FAILED -- pipeline not trustworthy; real exposure NOT compared")
+        raise SystemExit("[phase3] CONTROL FAILED (sham or planted) -- real exposure NOT compared")
 
     # ---- 2. placebo dasha, then real ----------------------------------------------------------
     results = {}
@@ -316,7 +328,8 @@ def main(argv: list[str] | None = None) -> int:
         results[tag] = r
         out[tag] = r
         if lvl == "AD":
-            out["S1_slope"] = clr_slope(tt)
+            s1 = clr_slope(tt)
+            out["S1_slope"], out["S1_p"] = s1 if s1 else (None, None)
             out["S1_slope_conj_only"] = clr_slope(score(ss, store, conj_only=True)[2])
             fam = {}
             for f in sorted({s["family"] for s in ss}):
@@ -343,7 +356,10 @@ def main(argv: list[str] | None = None) -> int:
             alt.append(d)
         spec = (xc - xk.mean(1)) - np.nanmean(np.vstack(alt), 0)
         lo, hi = cluster_bootstrap(spec, np.asarray(pids[lvl]), rng=rng)
-        out[f"S2_{tag}"] = {"E": float(spec.mean()), "ci": (lo, hi)}
+        se2 = (hi - lo) / 3.919928
+        from scipy.stats import norm
+        out[f"S2_{tag}"] = {"E": float(spec.mean()), "ci": (lo, hi),
+                            "p": float(2 * (1 - norm.cdf(abs(spec.mean()) / se2))) if se2 > 0 else 1.0}
         # Raman-ayanamsa sensitivity (same risk sets)
     raman = Store(a.store_raman)
     for lvl, tag in (("AD", "P1"), ("MD", "P2")):
@@ -364,7 +380,16 @@ def main(argv: list[str] | None = None) -> int:
         r["verdict"] = res.verdict if adj[tag] < 0.05 or res.verdict != "SIGNAL" else "UNDERPOWERED (Holm)"
         r["holm_p"], r["mde80"], r["p_tost"] = adj[tag], mde80(r["se0"]), res.p_tost
         if a.sink:
-            emit(res, a.sink)
+            tmp = a.sink.with_suffix(".tmp")
+            rec = emit(res, tmp)
+            tmp.unlink()
+            rec["verdict"] = r["verdict"]                 # Holm override applied (audit NB2)
+            a.sink.parent.mkdir(parents=True, exist_ok=True)
+            with a.sink.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, default=str) + "\n")
+    # secondaries: p-values + Holm within the three (audit NB3)
+    sec = {"S1": out.get("S1_p"), "S2": out["S2_P1"].get("p"), "S3": out["S3_double_transit"]["p"]}
+    out["secondary_holm"] = holm({k: v for k, v in sec.items() if v is not None})
     a.out_json.parent.mkdir(parents=True, exist_ok=True)
     a.out_json.write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
     a.out.write_text(markdown(out), encoding="utf-8")
@@ -403,7 +428,13 @@ def markdown(o: dict) -> str:
             L.append(_row(k, o[k]))
     for f, r in o.get("P1_by_family", {}).items():
         L.append(_row(f"P1 family: {f}", r))
-    L += ["", f"S1 dose-response (CLR log-odds per tier 0–4): {o.get('S1_slope')} · conj-only: {o.get('S1_slope_conj_only')}", ""]
+    L += ["", f"S1 dose-response (CLR log-odds per tier 0–4): {o.get('S1_slope')} (p {o.get('S1_p')}) · "
+          f"conj-only: {o.get('S1_slope_conj_only')}",
+          f"Secondary Holm-adjusted p (S1-S3): {o.get('secondary_holm')}",
+          "S3 uses the 8th as the transit target for own death, per "
+          "`tools/parashara/astrobank/DOUBLE_TRANSIT_PREREG.md` (cited by the Phase 3 prereg).",
+          "Shams: the within-set permutation sham checks arithmetic only (its expectation is 0 by "
+          "construction); the PLACEBO dasha is the informative control.", ""]
     return "\n".join(L)
 
 

@@ -46,3 +46,17 @@ class TestStatistics:
     def test_holm(self):
         """Holm: smallest p times m, then monotone."""
         assert holm({"a": 0.01, "b": 0.04}) == {"a": 0.02, "b": 0.04}
+
+
+class TestAuditFixes:
+    def test_legacy_death_rows_map_to_maraka(self):
+        """Audit B1: old-format 'Death' + subtype rows are own deaths; a suicide ATTEMPT is not."""
+        for sub in ("Disease", "Unspecified", "Accident", "Suicide"):
+            assert map_event("Death", sub) == MARAKA
+        assert map_event("Death", "Suicide Attempt") is None
+
+    def test_health_maps_only_negative(self):
+        """Audit NB6: 'Health' + healing/remission subtypes are not 'health negative'."""
+        assert map_event("health", "Negative") == (6,)
+        assert map_event("Health", "Finally healed") is None
+        assert map_event("Health", "Begin remission") is None

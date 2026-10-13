@@ -150,6 +150,40 @@ def score_field_case() -> dict[str, Any]:
             "static_misses": static_misses, "events": events}
 
 
+_BPHS_GOLDENS = Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "bphs_goldens.jsonl"
+#: Every BPHS-note assertion is a FAVOURABLE outcome; a verdict 'agrees' if the matter manifests.
+_MANIFESTS = frozenset({"granted", "delayed"})
+_PARTIAL = frozenset({"difficult", "mixed", "ordinary"})
+
+
+def score_bphs() -> dict[str, Any]:
+    """Track 3 — BPHS's own example horoscopes (translator's notes): each stated favourable outcome
+    checked against the synthesis verdict for that house. Positives only (the notes state no
+    denials), so this is a fidelity spot-check, never a headline accuracy figure."""
+    rows: list[dict[str, Any]] = []
+    for raw in _BPHS_GOLDENS.read_text(encoding="utf-8").splitlines():
+        s = raw.strip()
+        if not s or s.startswith("#"):
+            continue
+        rec = json.loads(s)
+        b = rec["birth"]
+        date_part, _, time_part = b["dt"].partition("T")
+        y, mo, d = (int(x) for x in date_part.split("-"))
+        hh, mm = (int(x) for x in time_part.split(":")[:2])
+        report = synthesize(read(cast_parashara(year=y, month=mo, day=d, hour=hh, minute=mm,
+                                                tz_offset=b["tz"], latitude=b["lat"],
+                                                longitude=b["lon"])))
+        for a in rec["assertions"]:
+            verdict = report.houses[a["house"]].verdict
+            outcome = ("agree" if verdict in _MANIFESTS
+                       else "partial" if verdict in _PARTIAL else "disagree")
+            rows.append({"native": rec["name"], "house": a["house"], "verdict": verdict,
+                         "outcome": outcome, "citation": a["citation"]})
+    return {"rows": rows, "agree": sum(r["outcome"] == "agree" for r in rows),
+            "partial": sum(r["outcome"] == "partial" for r in rows),
+            "disagree": sum(r["outcome"] == "disagree" for r in rows)}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--limit", type=int, default=None, help="score only the first N verdicts")
@@ -191,6 +225,16 @@ def main() -> None:
         mark = f"HIT ({e['quality']})" if e["hit"] else "miss"
         print(f"    {e['event']:22s} {e['year']}  houses{e['houses']}  {mark:18s} "
               f"chance {e['chance']:.0%}")
+
+    t3 = score_bphs()
+    n3 = len(t3["rows"])
+    print(f"\nTrack 3 — BPHS's own example horoscopes ({n3} stated favourable outcomes; "
+          f"positives only — a spot-check, not a headline):")
+    print(f"  agree (granted/delayed) {t3['agree']}/{n3}   partial (difficult/mixed/ordinary) "
+          f"{t3['partial']}/{n3}   disagree (denied) {t3['disagree']}/{n3}")
+    for r in t3["rows"]:
+        print(f"    {r['native'][:34]:34s} H{r['house']:<2d} {r['verdict']:10s} {r['outcome']:9s} "
+              f"[{r['citation']}]")
 
 
 if __name__ == "__main__":

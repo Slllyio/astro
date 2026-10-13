@@ -5,7 +5,9 @@ card covers every synthesis verdict, skips rather than stubs positions-only char
 """
 from __future__ import annotations
 
-from tools.parashara.synthesis_report_card import SYNTH_TO_RAMAN, score, score_field_case
+from app.parashara.doctrine.sources import Citation, verify
+from tools.parashara.synthesis_report_card import (
+    SYNTH_TO_RAMAN, score, score_bphs, score_field_case)
 from app.parashara.synthesis.judgment import VERDICT_MEANING
 
 
@@ -29,3 +31,12 @@ class TestReportCard:
         assert f["static_total"] == 50
         assert len(f["events"]) == 14
         assert all(0.0 <= e["chance"] <= 1.0 for e in f["events"])
+
+    def test_bphs_track_scores_every_assertion_with_resolving_citations(self):
+        """Track 3 scores all 12 BPHS-note assertions, each pinned to a real corpus line."""
+        t = score_bphs()
+        assert len(t["rows"]) == 12
+        assert t["agree"] + t["partial"] + t["disagree"] == 12
+        for r in t["rows"]:
+            work, _, line = r["citation"].rpartition(":")
+            assert verify(Citation(work, int(line))), r["citation"]

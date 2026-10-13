@@ -48,6 +48,24 @@ def passage(lines: list[str], start: int, end: int, context: int = 40) -> str:
     return "\n".join(f"{n}| {lines[n - 1]}" for n in range(lo, hi + 1))
 
 
+def spans(item: dict) -> list[tuple[int, int]]:
+    """All cited (start, end) spans of an item; older items carry only 'citation'."""
+    return [parse_citation(c)[1:] for c in item.get("citations") or [item["citation"]]]
+
+
+def passage_multi(lines: list[str], spans_: list[tuple[int, int]], context: int = 40) -> str:
+    """Union of the ±context windows around every span; non-adjacent blocks split by '...'."""
+    wins = sorted((max(1, s - context), min(len(lines), e + context)) for s, e in spans_)
+    merged: list[list[int]] = []
+    for lo, hi in wins:
+        if merged and lo <= merged[-1][1] + 1:
+            merged[-1][1] = max(merged[-1][1], hi)
+        else:
+            merged.append([lo, hi])
+    return "\n...\n".join("\n".join(f"{n}| {lines[n - 1]}" for n in range(lo, hi + 1))
+                          for lo, hi in merged)
+
+
 def normalise(text: str) -> str:
     text = re.sub(r"-\s*\n\s*", "", text)          # de-hyphenate across hard wraps
     text = re.sub(r"(?<=\w)-(?=\w)", "", text)    # compound words wrapped at their hyphen

@@ -33,3 +33,15 @@ class TestSpliceFlags:
         """Converter junk inside prose (seen in the fixture) is a corruption flag."""
         prose = "no elder brother The linked image cannot be displayed. The file may"
         assert "artifact" in SC.flags(prose, LINES, 6)
+
+    def test_paraphrase_is_not_a_splice(self):
+        """Curated paraphrase: head not verbatim in source, so no two_passage flag."""
+        prose = "Raman concludes that the mother was lost in infancy owing to a weak fourth house"
+        assert SC.flags(prose, LINES, 6) == []
+
+    def test_multi_span_window_covers_second_citation(self):
+        """A prose contiguous near the second citation is clean when both spans are passed."""
+        lines = ["filler"] * 300
+        lines[250] = "The native lost his mother very early in life and was brought up by relatives."
+        prose = "The native lost his mother very early in life and was brought up by relatives."
+        assert SC.flags(prose, lines, [5, 251]) == []

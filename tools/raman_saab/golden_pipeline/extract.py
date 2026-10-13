@@ -29,6 +29,7 @@ def select_pending(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "house": int(tag.lstrip("H")),
                 "book": rec["book"],
                 "citation": cites[0],
+                "citations": list(cites),
                 "signification": v["signification"],
                 "verdict": v["verdict"],
                 "verdict_prose": v.get("verdict_prose", ""),

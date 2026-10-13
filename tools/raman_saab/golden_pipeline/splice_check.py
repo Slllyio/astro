@@ -14,7 +14,11 @@ _FOOTNOTE_INLINE: Final = re.compile(_FOOTNOTE.pattern.replace(r"\n\s*", r"(?:^|
 _ARTIFACT: Final = re.compile(r"linked image cannot be displayed", re.I)
 
 
-def flags(prose: str, lines: list[str], line: int, window: int = 80) -> list[str]:
+_HEAD_WORDS: Final = 8
+
+
+def flags(prose: str, lines: list[str], line: int | list[int], window: int = 80) -> list[str]:
+    """`line` may be one cited start or all cited starts (windows are pooled)."""
     out: list[str] = []
     if _FOOTNOTE_INLINE.search(prose):
         out.append("footnote")
@@ -22,7 +26,11 @@ def flags(prose: str, lines: list[str], line: int, window: int = 80) -> list[str
         out.append("section_heading")
     if _ARTIFACT.search(prose):
         out.append("artifact")
-    lo, hi = max(0, line - 1 - window), min(len(lines), line + window)
-    if normalise(prose) not in normalise("\n".join(lines[lo:hi])) and not out:
+    starts = [line] if isinstance(line, int) else line
+    text = normalise("\n".join("\n".join(lines[max(0, s - 1 - window):min(len(lines), s + window)])
+                              for s in starts))
+    # Stored prose is often a curated paraphrase; a splice STARTS verbatim but does not finish.
+    head = " ".join(normalise(prose).split()[:_HEAD_WORDS])
+    if not out and head in text and normalise(prose) not in text:
         out.append("two_passage")
     return out

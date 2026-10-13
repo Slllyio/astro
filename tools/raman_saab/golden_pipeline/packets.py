@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Final
 
-from tools.raman_saab.golden_pipeline.sources import parse_citation, passage
+from tools.raman_saab.golden_pipeline.sources import passage_multi, spans
 
 SCHEMA_TEXT: Final[str] = """Reply with ONLY this JSON object, nothing else:
 {"decision": "CONFIRM|REVISE|REJECT",
@@ -32,7 +32,6 @@ _QUESTION: Final[str] = (
 
 
 def render(item: dict[str, Any], lines: list[str], reviewer: str, flags: list[str]) -> str:
-    _book, start, end = parse_citation(item["citation"])
     flag_line = (f"\nExtraction flags (possible corruption): {', '.join(flags)}\n"
                  if flags else "")
     return (f"{_INTROS[reviewer]}\n\n{_QUESTION}\n\n"
@@ -40,7 +39,7 @@ def render(item: dict[str, Any], lines: list[str], reviewer: str, flags: list[st
             f"  signification: {item['signification']}\n"
             f"  proposed verdict: {item['verdict']}\n"
             f"  extracted prose: {item['verdict_prose']}\n{flag_line}\n"
-            f"Passage (line| text):\n{passage(lines, start, end)}\n\n{SCHEMA_TEXT}\n")
+            f"Passage (line| text):\n{passage_multi(lines, spans(item))}\n\n{SCHEMA_TEXT}\n")
 
 
 def packet_path(run: Path, item_id: str, reviewer: str) -> Path:

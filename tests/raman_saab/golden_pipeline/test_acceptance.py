@@ -3,9 +3,11 @@ from __future__ import annotations
 from tools.raman_saab.golden_pipeline.acceptance import answer_key, compare
 
 
-def _rec(review, verdict="mixed", sig="mother"):
-    return {"id": "X", "expected_verdicts": {"H4": {
-        "verdict_review": review, "verdict": verdict, "signification": sig}}}
+def _rec(review, verdict="mixed", sig="mother", note=None):
+    v = {"verdict_review": review, "verdict": verdict, "signification": sig}
+    if note:
+        v["review_note"] = note
+    return {"id": "X", "expected_verdicts": {"H4": v}}
 
 
 class TestAnswerKey:
@@ -17,9 +19,13 @@ class TestAnswerKey:
         """Label changed on promotion = REVISE."""
         assert answer_key([_rec("DRAFT")], [_rec("CONFIRMED", "afflicted")]) == {"X#H4": "REVISE"}
 
-    def test_draft_stays_draft_is_reject(self):
-        """Not promoted = REJECT."""
-        assert answer_key([_rec("DRAFT")], [_rec("DRAFT")]) == {"X#H4": "REJECT"}
+    def test_draft_stays_draft_with_new_note_is_reject(self):
+        """Not promoted but annotated by the commit = REJECT."""
+        assert answer_key([_rec("DRAFT")], [_rec("DRAFT", note="REJECTED x")]) == {"X#H4": "REJECT"}
+
+    def test_untouched_draft_is_skipped(self):
+        """A DRAFT the commit never touched is not an August decision."""
+        assert answer_key([_rec("DRAFT")], [_rec("DRAFT")]) == {}
 
     def test_compare_counts_agreement_and_lists_divergence(self):
         """Every divergence is listed for reading by hand."""

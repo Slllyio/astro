@@ -39,6 +39,9 @@ def answer_key(before: list[dict], after: list[dict]) -> dict[str, str]:
             if v.get("verdict_review") != "DRAFT":
                 continue
             w = (post.get(rec["id"], {}).get("expected_verdicts") or {}).get(tag, {})
+            if (w.get("verdict_review") == v.get("verdict_review")
+                    and w.get("review_note") == v.get("review_note")):
+                continue  # commit never touched it (e.g. insufficient-evidence rows)
             if w.get("verdict_review") != "CONFIRMED":
                 key[f"{rec['id']}#{tag}"] = "REJECT"
             elif _sig(w) == _sig(v):

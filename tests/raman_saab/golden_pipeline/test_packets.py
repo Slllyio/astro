@@ -44,3 +44,19 @@ class TestPacket:
         """No engine verdict field can leak into the text."""
         text = P.render(ITEM, LINES, reviewer="B", flags=[]).lower()
         assert "engine" not in text and "fidelity" not in text and "ratchet" not in text
+
+
+class TestMultiCitation:
+    def test_passage_contains_both_blocks(self):
+        """Every cited span appears, with line numbers, separated by an ellipsis line."""
+        lines = [f"text{n}" for n in range(1, 401)]
+        item = {**ITEM, "citation": "NH:50", "citations": ["NH:50", "NH:300-301"]}
+        text = P.render(item, lines, reviewer="A", flags=[])
+        assert "50| text50" in text and "300| text300" in text and "301| text301" in text
+        assert "\n...\n" in text and "150| text150" not in text
+
+    def test_overlapping_windows_merge(self):
+        """Close citations yield one contiguous block, no ellipsis."""
+        lines = [f"text{n}" for n in range(1, 201)]
+        item = {**ITEM, "citation": "NH:50", "citations": ["NH:50", "NH:70"]}
+        assert "\n...\n" not in P.render(item, lines, reviewer="A", flags=[])

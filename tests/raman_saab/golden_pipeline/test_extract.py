@@ -40,8 +40,14 @@ class TestSelectPending:
         """The item holds exactly what a reviewer needs and nothing from the engine."""
         item = E.select_pending([_rec("NH.chart_1", {"H4": _v("DRAFT")})])[0]
         assert item == {"item_id": "NH.chart_1#H4", "record_id": "NH.chart_1", "house": 4,
-                        "book": "NH", "citation": "NH:10", "signification": "mother",
+                        "book": "NH", "citation": "NH:10", "citations": ["NH:10"], "signification": "mother",
                         "verdict": "mixed", "verdict_prose": "the native lost his mother"}
+
+    def test_all_citations_carried_first_kept(self):
+        """Several citations travel on the item; 'citation' stays the first."""
+        item = E.select_pending([_rec("NH.chart_1", {"H4": _v("DRAFT")},
+                                      citations=("NH:10", "NH:900"))])[0]
+        assert item["citation"] == "NH:10" and item["citations"] == ["NH:10", "NH:900"]
 
     def test_record_without_citation_is_skipped(self):
         """No citation means no source passage, so it cannot be reviewed."""

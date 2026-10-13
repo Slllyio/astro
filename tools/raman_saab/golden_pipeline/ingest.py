@@ -7,7 +7,7 @@ from typing import Any
 from tools.raman_saab.golden_pipeline import answers as A
 from tools.raman_saab.golden_pipeline.packets import answer_path
 from tools.raman_saab.golden_pipeline.reconcile import reconcile
-from tools.raman_saab.golden_pipeline.sources import quote_found
+from tools.raman_saab.golden_pipeline.sources import quote_found, spans
 
 
 def ingest_item(run: Path, item: dict[str, Any], lines: list[str]) -> dict[str, Any]:
@@ -22,7 +22,8 @@ def ingest_item(run: Path, item: dict[str, Any], lines: list[str]) -> dict[str, 
         except A.InvalidAnswer:
             invalid.append(r)
             continue
-        got[r] = {**a, "quote_ok": quote_found(lines, a["decisive_quote"], a["quote_line"])}
+        near = [a["quote_line"], *(n for s in spans(item) for n in s)]
+        got[r] = {**a, "quote_ok": any(quote_found(lines, a["decisive_quote"], n) for n in near)}
     decision = reconcile(item, got)
     return {"item_id": item["item_id"], "record_id": item["record_id"],
             "house": item["house"], "proposed_verdict": item["verdict"],

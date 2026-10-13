@@ -45,3 +45,12 @@ class TestIngest:
         """Ingesting twice yields identical decisions."""
         _write(tmp_path, "A"); _write(tmp_path, "B")
         assert I.ingest_item(tmp_path, ITEM, LINES) == I.ingest_item(tmp_path, ITEM, LINES)
+
+
+    def test_quote_under_second_citation_verifies(self, tmp_path):
+        """The verdict often sits under a later citation; a quote there is verified."""
+        lines = ["filler"] * 400
+        lines[299] = "The native lost his mother very early in life"
+        item = {**ITEM, "citation": "NH:6", "citations": ["NH:6", "NH:300"]}
+        _write(tmp_path, "A"); _write(tmp_path, "B")
+        assert I.ingest_item(tmp_path, item, lines)["outcome"] == "CONFIRMED"

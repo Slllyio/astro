@@ -38,8 +38,8 @@ def cmd_extract(a, run: Path) -> int:
     from tools.raman_saab.golden_pipeline.splice_check import flags
     items, cache = select_pending(R.load_goldens(Path(a.input))), {}
     for it in items:
-        _b, start, _e = S.parse_citation(it["citation"])
-        it["flags"] = flags(it["verdict_prose"], _lines_for(it, a.sources_root, cache), start)
+        starts = [s for s, _e in S.spans(it)]
+        it["flags"] = flags(it["verdict_prose"], _lines_for(it, a.sources_root, cache), starts)
     R.write_jsonl(run / "items.jsonl", items)
     print(f"[extract] {len(items)} pending items -> {run / 'items.jsonl'}")
     return 0

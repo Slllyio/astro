@@ -5588,3 +5588,48 @@ numbering: the Lagna-lord rule is NH:15662-15665 (not 26922-26926) and "Atimitra
 must cite NH from the `.md` split.
 
 **Net:** 21 presentation changes, 0 verdict changes, ratchet 286/397, 362/397, 35.
+
+## Disposition axis -- stage 1 SHIPPED (2026-10-13): planet-in-house text picked by influence
+
+The corpus-wide "nature-and-association axis" question, opened by the House 5 review and flagged
+since. Decision delegated by the user ("take decisions on well researched").
+
+**Research (two independent engine-blind reviews, concurring):** Raman's fortified / well
+disposed / afflicted words are INFLUENCE, and "strong / weak" is a separate STRENGTH axis.
+Definitions in his own words: "If the Moon is fortified, that is well aspected or conjoined"
+(HTJAH-I:4283); "fortified, i.e., joined with or aspected by benefices" (I:2338); "strong and not
+afflicted, by aspect or association, by malefic planets" (I:8434); "beneficially disposed by aspect
+or association" (II:7480). Shadbala-only selection is contradicted by NH:14852-14854 ("Venus is the
+strongest planet ... and even he is afflicted"). "Fortified" and "well disposed" are synonyms in
+practice (II:1033 vs 1039).
+
+**Three implementation rounds, each tested on Raman's worked charts:**
+1. Netted score with rescues (dispositor, Jupiter relief, per-Lagna table): an adversarial review on
+   12 charts found 2 agreements, 2 reversals. Rejected.
+2. Revised with the reviewer's four cited changes: a FRESH 23-case holdout -- his "fortified" calls
+   8/10, his "afflicted" calls 2/13. Pattern: when Raman calls a planet afflicted he names the
+   malefic contact and does not net it ("fortification as well as affliction", NH:2843-2846).
+3. **Two independent flags** (no netting): AFFLICTED = natural-malefic contact / combust (full orb,
+   II:4067-4076) / hemmed without benefic relief; FORTIFIED = Jupiter/Venus, functional benefic or
+   yogakaraka, dispositor or Lagna lord contact, exalted/own/moolatrikona, own nakshatra. A
+   SECOND fresh holdout, 37 HTJAH-I cases: module "bad" 8/8 correct; "good" 5/7, the two
+   opposites both from exempting the Lagna lord. Raman blames a malefic Lagna lord for afflicting a
+   PLANET (HTJAH-I:5925-5937, 5641-5643) while also calling it "the most benefic" (NH:15662) --
+   so for planets it now sets BOTH flags (mixed). That leaves 0 opposites on that holdout (the fix
+   was informed by it; residual risk is on the fortified side).
+
+**Display rule (rule_firing._branch, planet_in_house only):** one flag -> that text; both or
+neither -> Raman's unconditioned `general` text (incomplete, never the wrong pole); no general
+recorded -> strength still decides, as before. 3250 presentation changes, 0 verdict changes,
+ratchet 286/397, 362/397, 35. Over the goldens' 1423 two-pole firings: 248 fortified, 171
+afflicted, 872 mixed, 132 none.
+
+**Deliberately not counted (contested in Raman):** natural benefics as afflicters when they own the
+3rd/6th/8th/12th (NH:14854 vs NH:4727-4732); Jupiter "relieving" affliction as a net (I:6117 vs
+NH:1335). Functional-benefic fortification for natural malefics is kept because it can only produce
+"mixed", though Raman sets lordship aside when judging a karaka (I:5837, I:4761-4763).
+
+**Stage 2, not started:** the lord-in-house tables (594 two-pole firings) mix "strong/weak" and
+"afflicted/well disposed" qualifiers, mostly in Raman's surrounding sentence rather than the slot
+text, so each record must first be tagged with its qualifier word (both reviews recommended
+routing by the word). Combination rules rarely have two poles.

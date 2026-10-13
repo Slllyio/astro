@@ -16,6 +16,7 @@ from dataclasses import dataclass
 
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.conditions import EvalContext
+from app.raman_saab.doctrine.disposition import disposition
 from app.raman_saab.doctrine.rule_sets import ALL_RULES
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.primitives.shadbala import total as shadbala_total
@@ -81,6 +82,19 @@ def _branch(rule: RuleRecord, chart: RamanChart) -> str:
     show. Presentation only — `_bucket_fired` buckets by `rule.polarity`, so no branch choice
     can move a verdict."""
     subject = _branch_subject(rule, chart)
+    # The "Planets in the Nth house" tables brand the branch "X afflicted: ... X fortified: ...",
+    # and Raman defines both words by INFLUENCE, not strength: "fortified, that is well aspected
+    # or conjoined" (HTJAH-I:4283); "Venus is the strongest planet ... and even he is afflicted"
+    # (NH:14852-14854). Two concurring reviews, 2026-10-13 -- see doctrine/disposition.py. Mixed
+    # or no testimony shows his unconditioned reading; with none recorded, strength still decides.
+    if rule.group == "planet_in_house":
+        d = disposition(subject, chart)
+        if d is not None:
+            want = {"good": "fortified", "bad": "afflicted"}.get(d.reading)
+            if want and getattr(rule, want):
+                return want
+            if want or rule.general:
+                return "general"     # never show the opposite pole of a clear disposition
     p = chart.planets.get(subject)
     if p is None or p.shadbala_rupas is None:
         return "general" if rule.general else "fortified"

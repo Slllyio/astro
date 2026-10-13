@@ -67,7 +67,11 @@ def _record_calls(tree: ast.AST) -> dict[str, ast.Call]:
 
 
 def _offset(lines: list[str], lineno: int, col: int) -> int:
-    return sum(len(ln) for ln in lines[: lineno - 1]) + col
+    """Character offset of an AST position. `col` is a UTF-8 BYTE offset — the rule files
+    contain "→" and "—" (3 bytes, 1 character each), and treating bytes as characters cut two
+    characters past a span's end and ate the trailing comma."""
+    char_col = len(lines[lineno - 1].encode("utf-8")[:col].decode("utf-8"))
+    return sum(len(ln) for ln in lines[: lineno - 1]) + char_col
 
 
 def _new_record(spec: dict[str, Any]) -> str:
@@ -92,8 +96,20 @@ def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, An
     src = file.read_text(encoding="utf-8")
     lines = src.splitlines(keepends=True)
     calls = _record_calls(ast.parse(src))
+    new_ids = {n["id"] for n in new}
+
+    def root(anchor: str) -> str:
+        """Follow `after` through new records to the existing record the chain hangs off."""
+        seen = set()
+        while anchor in new_ids:
+            if anchor in seen:
+                raise ValueError(f"cyclic 'after' chain at {anchor}")
+            seen.add(anchor)
+            anchor = next(n["after"] for n in new if n["id"] == anchor)
+        return anchor
+
     missing = [rid for rid in changes if rid not in calls] + \
-              [n["after"] for n in new if n.get("after") and n["after"] not in calls]
+              [n["after"] for n in new if root(n["after"]) not in calls]
     if missing:
         raise KeyError(f"rule ids not found in {file.name}: {missing}")
 
@@ -110,8 +126,8 @@ def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, An
                 b = _offset(lines, v.end_lineno, v.end_col_offset)
                 edits.append((a, b, literal(spec[slot], v.col_offset)))
             else:                                   # insert before `frame=`
-                anchor = kws["frame"]
-                a = _offset(lines, anchor.lineno, anchor.col_offset - len("frame="))
+                anchor = kws["frame"]               # a keyword node starts at its NAME
+                a = _offset(lines, anchor.lineno, anchor.col_offset)
                 edits.append((a, a, f"{slot}={literal(spec[slot], 8 + len(slot) + 1)},\n        "))
         if spec.get("note"):
             id_kw = kws["id"]
@@ -119,15 +135,23 @@ def apply(file: Path, changes: dict[str, dict[str, Any]], new: list[dict[str, An
             note = "".join(f"        # {ln}\n" for ln in textwrap.wrap(spec["note"], _WIDTH - 10))
             edits.append((line_end, line_end, note))
 
-    for spec in new:                                # insert after the named record
-        anchor = calls[spec["after"]]
+    blocks: dict[str, str] = {}                     # existing anchor -> chained new records
+    for spec in new:                                # spec order is output order
+        blocks[root(spec["after"])] = blocks.get(root(spec["after"]), "") + _new_record(spec)
+    for anchor_id, text in blocks.items():
+        anchor = calls[anchor_id]
         pos = _offset(lines, anchor.end_lineno, anchor.end_col_offset)
         nl = src.index("\n", pos) + 1               # past the trailing "),"
-        edits.append((nl, nl, _new_record(spec)))
+        edits.append((nl, nl, text))
 
     for a, b, rep in sorted(edits, key=lambda e: (e[0], e[1]), reverse=True):
         src = src[:a] + rep + src[b:]
-    ast.parse(src)                                  # refuse to write broken Python
+    try:
+        ast.parse(src)                              # refuse to write broken Python
+    except SyntaxError as exc:
+        ctx = src.splitlines()[max(0, (exc.lineno or 1) - 8):(exc.lineno or 1) + 2]
+        raise SyntaxError(f"generated code does not parse (nothing written): {exc.msg} at line "
+                          f"{exc.lineno}\n" + "\n".join(ctx)) from None
     return src
 
 

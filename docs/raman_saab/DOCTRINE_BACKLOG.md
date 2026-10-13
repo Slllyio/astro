@@ -5236,3 +5236,41 @@ not refinements of a parent's placement.
 OWN signification (H8.L.1b: severe affliction -> "disease and disfiguration", a longevity matter)
 should vote after all. It is defensible; it was not reviewed; the neutral default keeps every
 shipped change inside what was reviewed.
+
+
+## HOUSES 1-3 STRENGTH-SLOT SWEEP (2026-10-13)
+
+**Base rates:** H1 10/12, H2 3/12, H3 7/12 correctly encoded. Running total across six fairly-sampled
+houses (1, 2, 3, 5, 6 and the H8 outlier excluded): 31 of 60 correct (52%). **No inversions anywhere
+outside H8.** Every defect was a clause gated on something the strength branch cannot test.
+
+**Applied by tool, not by hand:** `tools/raman_saab/apply_slot_changes.py` edits each RuleRecord by id
+through the AST and re-imports to verify. Two of its own bugs were caught by its refuse-to-write guard
+before touching a file: chained new records, and AST columns being UTF-8 BYTES (an arrow in the old
+text made the cut land two characters late and eat a comma). Both have regression tests.
+
+**Net effect:** 826 presentation changes, **0 verdict changes** (every new record is neutral). Ratchet
+286/397, 362/397, 35. Liveness 65 -> 67 (H2.L.4a, H2.L.9a; proved satisfiable).
+
+### Findings worth keeping
+
+- **H1.L.4's strength reading belonged to the 4th lord** ("If the 4th lord is favourably disposed",
+  HTJAH-I:1026) -- the module docstring's "nine fortification openers" was really eight for the Lagna
+  lord plus one for another planet. Opener-counting cannot see whose strength an opener names.
+- **H2 was the worst fairly-sampled house (3/12)**, and two findings are about Raman's own text, not
+  the encoding:
+  - **H2.L.2f -- Raman contradicts himself.** HTJAH-I:2506 sits under "In the second" (2nd lord in
+    the 2nd) but gates on "the 1st and 2nd lords have exchanged their houses", which puts the 2nd
+    lord in the 1st. The antecedent cannot hold with its own heading. Kept, descriptive, never fired.
+  - **H2.L.2c -- a general remark parked inside one entry.** "Exaltation, or disposition in Lagna,
+    4th, 5th, 7th, 9th or 10th will make him a Yoga Karaka" (2339) cannot hold while the 2nd lord is
+    in the 2nd. Encoded unscoped it would fire on about half of all charts; parked pending an
+    overlap check against the H2 combinations.
+- **Strength-plus-something clauses use the dignity proxy** (H2.L.4a, H2.L.7a, H2.L.9a): leaving the
+  text `fortified`-only would show a strength-gated reading to a WEAK lord via `_branch`'s fallback.
+  The proxy under-fires but never mislabels. Replace with a Shadbala Condition when one exists.
+- **Planet identity is expressible exactly by sign** (H3.L.3a-c): Mars in the 3rd in Aries or Scorpio
+  IS the 3rd lord in the 3rd. The old annotation said this needed a new predicate; it did not.
+- **Old pins overturned, with reasons recorded in the tests:** `H2_SPLIT` and `H3_SPLIT` are now
+  empty -- every "genuine afflicted clause" they pinned was gated on affliction, another planet or
+  two houses, never on the lord being weak.

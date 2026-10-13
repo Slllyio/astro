@@ -26,10 +26,13 @@ from app.raman_saab.detailed_report import (build_detailed_report, house_general
 from app.raman_saab.doctrine.rule_sets import ALL_RULES
 from app.raman_saab.report_html import to_html
 
-#: Lagna lord in the 4th, so H1.L.4 fires and its general reading is distinct from the
-#: fortified text. The canonical baseline cannot exercise this: its lord falls in the 11th,
-#: one of the three placements where Raman gives no conditioned paragraph at all.
-LORD_IN_4TH = BirthData("general-slot probe", 1990, 7, 15, 0, 0, 5.5, 12.97, 77.59)
+#: Lagna lord in the 1st, strong, so H1.L.1 fires its fortified reading and the general reading
+#: is distinct from it. RE-POINTED 2026-10-13: the old probe used H1.L.4, whose fortified text
+#: turned out to be gated on the 4TH lord, not the Lagna lord (HTJAH-I:1026 "If the 4th lord is
+#: favourably disposed"), and moved to H1.L.4a -- so H1.L.4 no longer has a distinct strength
+#: reading to contrast with. The canonical baseline cannot exercise this either: its lord falls
+#: in the 11th, where Raman gives no conditioned paragraph at all.
+GENERAL_SLOT_PROBE = BirthData("general-slot probe", 1990, 7, 15, 1, 0, 5.5, 12.97, 77.59)
 
 
 def _rule(rule_id: str):
@@ -52,16 +55,19 @@ class TestHouseOneSlotMapping:
             assert rule.general, f"H1.L.{n} lost Raman's general reading"
 
     def test_the_one_genuine_afflicted_clause_is_preserved(self) -> None:
-        """H1.L.1's old slot text ENDED with a real afflicted reading Raman gives at
-        HTJAH-I:1088-1089 ("If the ascendant lord is posited in the Lagna subject to evil
-        combinations, the native will not be physically happy"). A wholesale relocation
-        would have destroyed it; the review caught that, and this pins it."""
-        rule = _rule("H1.L.1")
-        assert rule.afflicted is not None
-        assert "evil combinations" in rule.afflicted
-        assert "not physically happy" in rule.afflicted
-        assert "lives by own exertion" in (rule.general or "")
-        assert "lives by own exertion" not in rule.afflicted
+        """H1.L.1's old slot text ENDED with a real Raman reading (HTJAH-I:1088-1089, "If the
+        ascendant lord is posited in the Lagna subject to evil combinations, the native will not
+        be physically happy"). A wholesale relocation would have destroyed it; this pins that it
+        survives. AMENDED 2026-10-13: it is gated on AFFLICTION ("evil combinations"), not on the
+        Lagna lord's weakness, so it now lives in H1.L.1a with an affliction predicate instead
+        of the weak-strength slot."""
+        assert _rule("H1.L.1").afflicted is None
+        moved = _rule("H1.L.1a")
+        assert moved.kind == "evaluable" and moved.condition is not None
+        assert "evil combinations" in moved.general
+        assert "not be physically happy" in moved.general
+        assert "lives by own exertion" in (_rule("H1.L.1").general or "")
+        assert "lives by own exertion" not in moved.general
 
 
 class TestCorrectlyEncodedHousesWereNotTouched:
@@ -112,7 +118,19 @@ RESLOTTED_TO_OWN_RECORD = {
     "H8.L.6": "H8.L.6a",     # "If afflicted" + the kendra/trikona idiom
     "H8.L.10": "H8.L.10a",   # the 2nd lord afflicted AND joining — half the antecedent was lost
     "H8.L.12": "H8.L.12a",   # "If benefics join" — a conjunction, not a strength test
-    "H6.L.7": "H6.L.7a",     # "If the sixth lord is afflicted" — and all six other sentences
+    "H6.L.7": "H6.L.7a",
+    # 2026-10-13 House 1-3 sweeps
+    "H2.L.1": "H2.L.1a",     # inheritance gated on the 9th lord or the Sun
+    "H2.L.2": "H2.L.2e",     # aspect/affliction clauses (2342-2345)
+    "H2.L.4": "H2.L.4a",     # the 4TH lord afflicted
+    "H2.L.6": "H2.L.6a",     # "If afflicted"
+    "H2.L.7": "H2.L.7a",     # strength AND the 7th-lord conjunction
+    "H2.L.9": "H2.L.9a",     # strength AND the 9th lord in Lagna
+    "H2.L.10": "H2.L.10a",   # "Powerful afflictions"
+    "H2.L.12": "H2.L.12a",   # "If the second lord is afflicted"
+    "H3.L.4": "H3.L.4c",     # Mars weak -- a different planet
+    "H3.L.6": "H3.L.6b",     # the 6th AND 3rd HOUSES afflicted
+    "H3.L.9": "H3.L.9a",     # "When afflicted"     # "If the sixth lord is afflicted" — and all six other sentences
                              # were mis-slotted too (2026-09-03 House-6 sweep)
 }
 #: Raman really does give an afflicted reading here (list C). Untouched, by construction.
@@ -206,11 +224,16 @@ class TestHouses8To12SlotMapping:
 
 
 #: Houses 2, 3 and H9.L.12, from the third review's fragment-level map.
-H2_RELOCATED = ["H2.L.1", "H2.L.3", "H2.L.5", "H2.L.7", "H2.L.8", "H2.L.9", "H2.L.11"]
-H2_SPLIT = ["H2.L.2", "H2.L.4", "H2.L.6", "H2.L.10", "H2.L.12"]
+#: H2.L.1/7/9 left this list 2026-10-13 -- see RESLOTTED_TO_OWN_RECORD.
+H2_RELOCATED = ["H2.L.3", "H2.L.5", "H2.L.8", "H2.L.11"]
+#: H2_SPLIT and H3_SPLIT are EMPTY since the 2026-10-13 sweeps. Every "genuine afflicted
+#: clause" they pinned in the weak-strength slot was gated on AFFLICTION, on another
+#: planet (the 4th lord, Mars) or on two HOUSES -- never on the house lord being weak.
+#: Each now lives in its own record; see RESLOTTED_TO_OWN_RECORD.
+H2_SPLIT: list[str] = []
 H3_RELOCATED = ["H3.L.1", "H3.L.2", "H3.L.5", "H3.L.7", "H3.L.8", "H3.L.10",
                 "H3.L.11", "H3.L.12"]
-H3_SPLIT = ["H3.L.4", "H3.L.6", "H3.L.9"]
+H3_SPLIT: list[str] = []
 
 
 class TestHouses2And3AndH9L12:
@@ -225,22 +248,19 @@ class TestHouses2And3AndH9L12:
         assert rule.afflicted is None, rule_id
         assert rule.fortified, f"{rule_id} must keep prose to render when it fires"
 
-    @pytest.mark.parametrize("rule_id", H2_SPLIT + H3_SPLIT)
-    def test_split_kept_ramans_real_afflicted_clause(self, rule_id: str) -> None:
-        rule = _rule(rule_id)
-        assert rule.general, f"{rule_id} lost Raman's general reading"
-        assert rule.afflicted, f"{rule_id} lost its genuine afflicted clause"
 
     def test_h3_l3_is_flagged_not_relocated(self) -> None:
         """Its three sibling-death clauses (HTJAH-I:3352-3354) are conditioned on PLANET
-        IDENTITY — which planet happens to be the 3rd lord — with no affliction test in
-        them at all. They are misfiled, but they are NOT a general reading, so relocating
-        them would be a second error on top of the first. The slot is annotated instead;
-        the real repair is a configuration predicate, which is a CONDITION change and would
-        move the ratchet."""
+        IDENTITY -- which planet happens to be the 3rd lord. RESOLVED 2026-10-13: identity is
+        expressible exactly by sign (Mars in the 3rd in Aries or Scorpio IS the 3rd lord in the
+        3rd), so they became H3.L.3a-c with their own predicates. The sweep also found 3348-3349
+        is Raman's UNCONDITIONED entry for this placement, previously sitting in `fortified`, so
+        the record now carries a general reading after all."""
         rule = _rule("H3.L.3")
-        assert rule.general is None
-        assert rule.afflicted and "planet identity" in rule.afflicted
+        assert rule.general and rule.general.startswith("brave")
+        assert rule.afflicted is None
+        for rid in ("H3.L.3a", "H3.L.3b", "H3.L.3c"):
+            assert _rule(rid).kind == "evaluable", rid
 
     def test_h9_flat_base_readings_are_repaired(self) -> None:
         """CORRECTED 2026-09-01. This test originally asserted H9.L.12 was the LONE entry in
@@ -341,12 +361,12 @@ class TestPlanetInHouseSweep:
 class TestGeneralReadingReachesTheReader:
     @pytest.fixture(scope="class")
     def report(self):
-        return build_detailed_report(LORD_IN_4TH)
+        return build_detailed_report(GENERAL_SLOT_PROBE)
 
     def test_composed_for_a_chart_that_exercises_it(self, report) -> None:
         rows = house_general_readings(report, 1)
-        assert rows, "H1.L.4 should fire on this chart and carry a general reading"
-        assert any(rid == "H1.L.4" for _s, rid, _t, _c in rows)
+        assert rows, "H1.L.1 should fire on this chart and carry a general reading"
+        assert any(rid == "H1.L.1" for _s, rid, _t, _c in rows)
 
     def test_surfaces_in_markdown_and_html(self, report) -> None:
         rows = house_general_readings(report, 1)

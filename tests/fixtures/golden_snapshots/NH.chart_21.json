@@ -1,10 +1,16 @@
 {
   "H10": {
     "citations": [
-      "HTJAH-II:9564"
+      "HTJAH-II:9564",
+      "HTJAH-II:9569",
+      "HTJAH-II:9570",
+      "HTJAH-II:9573"
     ],
     "fired_rule_ids": [
-      "H10.L.12"
+      "H10.L.12",
+      "H10.L.12a",
+      "H10.L.12b",
+      "H10.L.12c"
     ],
     "rollup": "afflicted",
     "significations": {

@@ -82,7 +82,10 @@ class TestTheThirdTierTheBranchCannotExpress:
             r = _R[rid]
             assert r.kind == "descriptive" and r.condition is None, rid
             assert "TODO(predicate:" in r.general, rid
-        assert "unreachable by construction" in _R["H5.L.4a"].general
+        # 2026-10-13 research: the blocker is doctrine (Raman prints no middle level), not a
+        # missing Shadbala band -- the TODO now says so, to stop anyone building one.
+        assert "PARKED by research" in _R["H5.L.4a"].general
+        assert "Do NOT build a Shadbala band" in _R["H5.L.4a"].general
 
 
 class TestTheInventedSlot:

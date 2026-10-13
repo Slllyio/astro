@@ -3744,7 +3744,7 @@ def to_html(r: DetailedReport) -> str:
                 _fine.append(f"{_kci}: {_mnote}")
         kal = "".join(_lis)
         tally = (f'{len(_fort)} fortified, {len(_affl)} afflicted'
-                 + (f', {len(_rest)} other' if _rest else ''))
+                 + (f', {len(_rest)} general' if _rest else ''))  # Raman's unconditioned readings
         fine_html = ("" if not _fine else
                      '<p class="section-sub caveat"><i>Encoding-scope notes '
                      '(maintainer fine print, not readings): '

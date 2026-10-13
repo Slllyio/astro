@@ -2,11 +2,13 @@
   "H10": {
     "citations": [
       "HTJAH-II:11064",
-      "HTJAH-II:9484"
+      "HTJAH-II:9484",
+      "HTJAH-II:9495"
     ],
     "fired_rule_ids": [
       "H10.C.33m",
-      "H10.L.4"
+      "H10.L.4",
+      "H10.L.4a"
     ],
     "rollup": "mixed",
     "significations": {

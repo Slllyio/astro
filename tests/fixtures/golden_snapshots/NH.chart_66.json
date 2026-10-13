@@ -5,6 +5,7 @@
       "HTJAH-II:13261",
       "HTJAH-II:14214",
       "HTJAH-II:9467",
+      "HTJAH-II:9470",
       "HTJAH-II:9860"
     ],
     "fired_rule_ids": [
@@ -13,6 +14,7 @@
       "H10.C.33m",
       "H10.C.56",
       "H10.L.2",
+      "H10.L.2a",
       "H10.P.Jupiter"
     ],
     "rollup": "mixed",

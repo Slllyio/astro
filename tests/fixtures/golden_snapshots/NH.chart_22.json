@@ -4,12 +4,14 @@
       "HTJAH-II:11064",
       "HTJAH-II:14214",
       "HTJAH-II:9484",
+      "HTJAH-II:9495",
       "HTJAH-II:9900"
     ],
     "fired_rule_ids": [
       "H10.C.33m",
       "H10.C.56",
       "H10.L.4",
+      "H10.L.4a",
       "H10.P.Ketu"
     ],
     "rollup": "mixed",
@@ -90,6 +92,8 @@
     "citations": [
       "HTJAH-II:1773",
       "HTJAH-II:259",
+      "HTJAH-II:262",
+      "HTJAH-II:264",
       "HTJAH-II:368",
       "HTJAH-II:374"
     ],
@@ -97,7 +101,9 @@
       "H7.C.7",
       "H7.C.86",
       "H7.K.2",
-      "H7.L.4"
+      "H7.L.4",
+      "H7.L.4a",
+      "H7.L.4b"
     ],
     "rollup": "afflicted",
     "significations": {

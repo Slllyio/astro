@@ -106,16 +106,21 @@ class TestMarriageWave2:
         assert expect  # the canonical chart has such windows
 
     def test_fired_rules_grouped_fortified_first_with_tally(self, markdown):
-        """The kalatra bullets carry a tally and every fortified row precedes
-        every afflicted row."""
+        """The kalatra bullets carry a tally and are grouped fortified, then afflicted, then
+        general. AMENDED 2026-10-13: the House-7 sweep moved most affliction clauses out of the
+        weak-strength slot into their own records with `general` text, so a third group now
+        routinely appears; it is named "general" (Raman's unconditioned readings), not "other",
+        and the encoded count is computed rather than the stale hardcoded "50"."""
+        from app.raman_saab.doctrine.rule_sets import ALL_RULES
         sec = _section(markdown, "## Marriage monograph")
-        assert "fortified," in sec and "afflicted):" in sec
+        n7 = sum(1 for r in ALL_RULES if r.house == 7 and r.kind == "evaluable")
+        assert f"(of the {n7} encoded;" in sec and "fortified," in sec and "afflicted" in sec
         branches = [ln.strip()[3:].split(")")[0] for ln in sec.splitlines()
                     if ln.strip().startswith("- (")]
         assert branches, "no fired-rule bullets rendered"
-        last_fort = max(i for i, b in enumerate(branches) if b == "fortified")
-        first_affl = min(i for i, b in enumerate(branches) if b == "afflicted")
-        assert last_fort < first_affl
+        order = {"fortified": 0, "afflicted": 1, "general": 2}
+        ranks = [order[b] for b in branches if b in order]
+        assert ranks == sorted(ranks), f"groups out of order: {branches}"
 
     def test_maintainer_notes_routed_to_fine_print(self, markdown):
         """"v1-OOS" / "owned by H7.C.60" no longer sit in client bullets; both

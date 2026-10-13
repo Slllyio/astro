@@ -40,6 +40,7 @@ from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS, Nature,
     compute_functional_nature, functional_nature, is_yogakaraka)
 from app.raman_saab.primitives.bhangas import neecha_bhanga
+from app.raman_saab.primitives.effective_strength import effective_strength
 
 # House classes (whole-sign, from the Lagna).
 _HOUSE_CLASS: dict[str, frozenset[int]] = {
@@ -308,7 +309,8 @@ class HasDignity(Condition):
         self.planet, self.states = planet, states
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return self.planet in ctx.chart.planets and dignity(self.planet, ctx.chart) in self.states
+        subj = _resolve_planet(self.planet, ctx.chart)
+        return subj in ctx.chart.planets and dignity(subj, ctx.chart) in self.states
 
 
 class LordHasDignity(Condition):
@@ -355,7 +357,7 @@ class IsYogaKaraka(Condition):
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return is_yogakaraka(self.planet, ctx.chart.asc_sign)
+        return is_yogakaraka(_resolve_planet(self.planet, ctx.chart), ctx.chart.asc_sign)
 
 
 class NeechaBhanga(Condition):
@@ -537,6 +539,12 @@ class VargaDignity(Condition):
 #: same thing everywhere in the corpus rather than one thing per house.
 FIRST_RATE_MALEFICS: frozenset[str] = frozenset({"Mars", "Saturn", "Rahu", "Ketu"})
 
+#: Benefics for "beneficially disposed / benefic influence" clauses. Jupiter and Venus only: Raman
+#: treats the Moon and Mercury as benefic only conditionally (waxing; unafflicted), so including
+#: them would fire these clauses on contacts he may not count. Under-fires, never wrongly. (The
+#: locked Avastha benefic list is for Avastha, not for this.)
+FIRM_BENEFICS: frozenset[str] = frozenset({"Jupiter", "Venus"})
+
 
 class AfflictedBy(Condition):
     """`planet` is CONJUNCT WITH or ASPECTED BY an afflicter — Raman's influence axis.
@@ -591,13 +599,152 @@ class AfflictedBy(Condition):
         return False
 
 
+def _node_joined(planet: str, chart: RamanChart) -> bool:
+    """`planet` shares a sign with Rahu or Ketu -- the same set as "afflicted by a node", since
+    joined by one node is aspected by the other (nodes aspect the 7th only)."""
+    p = chart.planets.get(planet)
+    return p is not None and any((n := chart.planets.get(node)) is not None
+                                 and n.rasi_house == p.rasi_house for node in ("Rahu", "Ketu"))
+
+
+class HouseAfflictedBy(Condition):
+    """Whole-sign `house` (from the Lagna) is OCCUPIED or ASPECTED by an afflicter -- the HOUSE
+    form of `AfflictedBy`, for Raman's "if the 10th house is afflicted" / "if malefics afflict
+    the 10th house" (HTJAH-II:9470), where the house itself, not its lord, is the subject.
+
+    Same recipe the house rule sets had each re-derived privately (`q.rasi_house == h or
+    drishti.aspects_house(q, h)`), same defaults as `AfflictedBy` (natural malefics; nodes 7th
+    only), same `min_count` for degree.
+
+    The house's OWN lord does not afflict it: "This blemish is cancelled because Mars is in his
+    own house" (HTJAH-I:2740-2741); "A planet, aspecting its own house ... will naturally
+    increase the signification of that house" (HPA-8:64-67). One exception, also Raman's: an
+    own lord that is DEBILITATED and JOINED BY A NODE loses that shield -- "The 7th house is
+    afflicted because although the 7th lord aspects it, the aspect is of a planet rendered
+    malefic by debility and association with a node" (HTJAH-II:2159-2161).
+
+    The LAGNA lord does not afflict either: "ruler of Lagna is always the most benefic planet
+    ... Saturn becomes the best planet ... though usually the worst malefic" (NH:26922-26926);
+    "Saturn does not afflict in the strict sense of the term being the Lagna lord"
+    (HTJAH-I:13193-13194); in practice it reads as relief (HTJAH-I:11598, 13225, 16725, 17133,
+    17153). It afflicts again once joined by a node: "Although Saturn as Lagna lord is a
+    benefice, his association with Ketu ... renders him a malefic" (HTJAH-I:17253-17255; also
+    17231). Two independent engine-blind reviews agreed (2026-10-13, decision delegated by the
+    user); the mixed weighings (HTJAH-I:4405, 5925) never turn a house afflicted.
+
+    One malefic suffices and the Sun counts (HTJAH-I:12018-12019, 11598, 10392); benefic relief
+    is weighed separately by Raman and does not cancel the label (HTJAH-I:3769-3770).
+    """
+    def __init__(self, house: int, afflictors: Sequence[str] | set[str] | None = None,
+                 min_count: int = 1) -> None:
+        if min_count < 1:
+            raise ValueError("min_count must be >= 1")
+        self.house, self.min_count = house, min_count
+        self.afflictors: frozenset[str] = (
+            frozenset(NATURAL_MALEFICS) if afflictors is None else frozenset(afflictors))
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        chart = ctx.chart
+        own_lord, lagna_lord = _lord_of(self.house, chart), _lord_of(1, chart)
+        exempt = set()
+        # Raman's case: Saturn "does not obtain cancellation of debility but is afflicted by Ketu"
+        # (HTJAH-II:2139-2141).
+        if not (_node_joined(own_lord, chart) and dignity(own_lord, chart) == "debil"
+                and not neecha_bhanga(own_lord, chart)):
+            exempt.add(own_lord)
+        if not _node_joined(lagna_lord, chart):
+            exempt.add(lagna_lord)
+        hits = sum(1 for name in self.afflictors - exempt
+                   if (q := chart.planets.get(name)) is not None
+                   and (q.rasi_house == self.house
+                        or drishti.aspects_house(name, self.house, chart)))
+        return hits >= self.min_count
+
+
+class IsStrong(Condition):
+    """`planet` is STRONG in Raman's sense: its Shadbala meets his minimum bar (GBB-8:303-312)
+    AND no hard fact overrides that number -- it is neither combust nor debilitated without
+    cancellation.
+
+    Built on `primitives.effective_strength` (the B1 measure), NOT on raw `is_powerful`. Two
+    reasons, both recorded in that module: Raman reads a combust lord "powerless" even when it is
+    otherwise well disposed (HTJAH-I:3788), so the number alone contradicts him on his own worked
+    chart; and gating on raw `is_powerful` was tried before and over-fired badly (four HPA-20
+    yogas had to be deferred).
+
+    This is the BINARY reading the engine already uses -- no new strength vocabulary. Raman's
+    middle tiers ("moderately strong", "middling") and his upper band ("very powerful") are NOT
+    expressed by it and stay parked. The B2 "marginal" band (within 0.2 rupa of the bar) is
+    deliberately neither strong nor weak: it is a tuning band, not Raman's middle tier.
+
+    Unknown strength is never strong: a chart without Shadbala (Track-B), or Rahu/Ketu (no
+    Shadbala at all, GBB-3), returns False. Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        es = effective_strength(_resolve_planet(self.planet, ctx.chart), ctx.chart)
+        return es.band == "strong" and not es.decisively_weak
+
+
+class IsWeak(Condition):
+    """`planet` is WEAK in Raman's sense: below his minimum bar, OR combust, OR debilitated
+    without cancellation -- `effective_strength(...).decisively_weak`, i.e. "Raman would not let
+    this factor carry the matter".
+
+    Weakness and AFFLICTION are different conditions to Raman (HTJAH-II:3001-3009 runs "in
+    strength / weak / afflicted" as three tiers; HTJAH-I:5121 writes "weak AND afflicted"), so
+    "weak and afflicted" is `And(IsWeak(p), AfflictedBy(p))`, never either alone.
+
+    With no Shadbala on the chart, only the hard facts (combust, uncancelled debility) can make a
+    planet weak; a missing number is not read as a low one. Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        return effective_strength(_resolve_planet(self.planet, ctx.chart), ctx.chart).decisively_weak
+
+
+class JoinedBy(Condition):
+    """`planet` shares its rasi house with one of `joiners` -- CONJUNCTION only, no aspect.
+
+    For Raman's "benefics there", "if malefics join": occupancy, not influence. The subject never
+    joins itself, so a house lord that is itself a benefic is not counted as "a benefic joining"
+    (`ClassInHouseFrom` would count it). Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str, joiners: Sequence[str] | set[str]) -> None:
+        self.planet, self.joiners = planet, frozenset(joiners)
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        subject = _resolve_planet(self.planet, ctx.chart)
+        p = ctx.chart.planets.get(subject)
+        return p is not None and any(
+            q.rasi_house == p.rasi_house
+            for name, q in ctx.chart.planets.items()
+            if name in self.joiners and name != subject)
+
+
+def InfluencedBy(planet: str, influencers: Sequence[str] | set[str] = FIRM_BENEFICS,
+                 min_count: int = 1) -> AfflictedBy:
+    """`planet` is conjunct with or aspected by one of `influencers` — for BENEFIC clauses.
+
+    The same contact test as `AfflictedBy`, under a name that reads true: Raman's "beneficially
+    disposed", "associates with a benefic" and "benefic influences" are contacts, but writing
+    `AfflictedBy(lord, {"Jupiter", "Venus"})` would read as "afflicted by Jupiter".
+    """
+    return AfflictedBy(planet, influencers, min_count)
+
+
 # ── relations (C6, H1, mutual) ───────────────────────────────────────────────
 class MutualAspect(Condition):
     def __init__(self, a: str, b: str) -> None:
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return drishti.mutual_aspect(self.a, self.b, ctx.chart)
+        return drishti.mutual_aspect(_resolve_planet(self.a, ctx.chart),
+                                     _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 class Parivartana(Condition):
@@ -615,7 +762,8 @@ class Exchange(Condition):
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return bhangas.exchange(self.a, self.b, ctx.chart)
+        return bhangas.exchange(_resolve_planet(self.a, ctx.chart),
+                                _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 def _in_2_12(h1: int, h2: int) -> bool:
@@ -697,7 +845,7 @@ class HemmedBy(Condition):
 
     def evaluate(self, ctx: EvalContext) -> bool:
         from app.raman_saab.doctrine import hemming
-        return hemming.hemmed_planet(ctx.chart, self.target, self.klass)
+        return hemming.hemmed_planet(ctx.chart, _resolve_planet(self.target, ctx.chart), self.klass)
 
 
 # ── functional nature (C4) & nakshatra (C3) ──────────────────────────────────
@@ -707,8 +855,9 @@ class FunctionalNature(Condition):
         self.planet, self.natures = planet, natures
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return (self.planet in ctx.chart.planets
-                and functional_nature(self.planet, ctx.chart) in self.natures)
+        subj = _resolve_planet(self.planet, ctx.chart)
+        return (subj in ctx.chart.planets
+                and functional_nature(subj, ctx.chart) in self.natures)
 
 
 class InStarOf(Condition):

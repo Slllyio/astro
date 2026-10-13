@@ -5238,6 +5238,331 @@ should vote after all. It is defensible; it was not reviewed; the neutral defaul
 shipped change inside what was reviewed.
 
 
+## HOUSES 1-3 STRENGTH-SLOT SWEEP (2026-10-13)
+
+**Base rates:** H1 10/12, H2 3/12, H3 7/12 correctly encoded. Running total across six fairly-sampled
+houses (1, 2, 3, 5, 6 and the H8 outlier excluded): 31 of 60 correct (52%). **No inversions anywhere
+outside H8.** Every defect was a clause gated on something the strength branch cannot test.
+
+**Applied by tool, not by hand:** `tools/raman_saab/apply_slot_changes.py` edits each RuleRecord by id
+through the AST and re-imports to verify. Two of its own bugs were caught by its refuse-to-write guard
+before touching a file: chained new records, and AST columns being UTF-8 BYTES (an arrow in the old
+text made the cut land two characters late and eat a comma). Both have regression tests.
+
+**Net effect:** 826 presentation changes, **0 verdict changes** (every new record is neutral). Ratchet
+286/397, 362/397, 35. Liveness 65 -> 67 (H2.L.4a, H2.L.9a; proved satisfiable).
+
+### Findings worth keeping
+
+- **H1.L.4's strength reading belonged to the 4th lord** ("If the 4th lord is favourably disposed",
+  HTJAH-I:1026) -- the module docstring's "nine fortification openers" was really eight for the Lagna
+  lord plus one for another planet. Opener-counting cannot see whose strength an opener names.
+- **H2 was the worst fairly-sampled house (3/12)**, and two findings are about Raman's own text, not
+  the encoding:
+  - **H2.L.2f -- Raman contradicts himself.** HTJAH-I:2506 sits under "In the second" (2nd lord in
+    the 2nd) but gates on "the 1st and 2nd lords have exchanged their houses", which puts the 2nd
+    lord in the 1st. The antecedent cannot hold with its own heading. Kept, descriptive, never fired.
+  - **H2.L.2c -- a general remark parked inside one entry.** "Exaltation, or disposition in Lagna,
+    4th, 5th, 7th, 9th or 10th will make him a Yoga Karaka" (2339) cannot hold while the 2nd lord is
+    in the 2nd. Encoded unscoped it would fire on about half of all charts; parked pending an
+    overlap check against the H2 combinations.
+- **Strength-plus-something clauses use the dignity proxy** (H2.L.4a, H2.L.7a, H2.L.9a): leaving the
+  text `fortified`-only would show a strength-gated reading to a WEAK lord via `_branch`'s fallback.
+  The proxy under-fires but never mislabels. Replace with a Shadbala Condition when one exists.
+- **Planet identity is expressible exactly by sign** (H3.L.3a-c): Mars in the 3rd in Aries or Scorpio
+  IS the 3rd lord in the 3rd. The old annotation said this needed a new predicate; it did not.
+- **Old pins overturned, with reasons recorded in the tests:** `H2_SPLIT` and `H3_SPLIT` are now
+  empty -- every "genuine afflicted clause" they pinned was gated on affliction, another planet or
+  two houses, never on the lord being weak.
+
+
+## HOUSES 4, 7, 9 STRENGTH-SLOT SWEEP (2026-10-13)
+
+**Base rates:** H4 8/12, **H7 0/12, H9 1/12**. Both H7 and H9 had been pinned "ruled CORRECT" by an
+earlier review -- the same pin House 5 carried before scoring 5/12. They turned out to be the worst
+fairly-sampled houses of the sweep: nearly every conditional sentence in their tables is gated on
+AFFLICTION or BENEFIC contact. In H7 Raman gives exactly ONE sentence gated on the lord's strength
+alone (HTJAH-II:273, "If the 7th lord is weak, there may be no children"); in H9, none at all --
+the section's only strength clause is the closing "very powerful" remark at 7398, a band above
+`is_powerful`'s minimum, now parked as H9.L.S1. Running total, eight fairly-sampled houses (H8
+excluded): 40 of 96 correct (42%). Still no inversions outside H8.
+
+**Net effect:** 1652 presentation changes; 44 new records, all neutral; H9.L.2 removed. Ratchet
+286/397, 362/397, 35. Liveness unchanged -- every new evaluable record fires on real charts.
+
+### ★ Correction to "neutral = no vote" -- measured, and it matters
+
+Neutral records never push a verdict towards favourable or afflicted. But whether ANY rule fired
+decides whether a signification is judged at all (house_template clause 7: nothing fired ->
+insufficient-evidence). Removing H9.L.2 (neutral, content-free: Raman gives nothing unconditional
+for the 9th lord in the 2nd) changed ONE unscored chart: on HTJAH-II.x155 it had been the only rule
+firing for H9 fortune/dharma/higher_learning/long_journeys, so its mere presence let the engine judge
+those on strength pillars ("afflicted"). Without it they honestly read insufficient-evidence. A
+verdict resting on a content-free rule is not Raman's; the abstention is the faithful state.
+Adding neutral records could, in principle, do the reverse on charts where nothing else fires --
+which is why every batch is measured against the doctrine snapshot, not assumed.
+
+Also checked: the functional-nature overlay (`_bucket_fired`, HTJAH-I:523-604) promotes a NEUTRAL
+rule to malefic when its subject is a functional malefic -- but `_rule_subject` only parses
+planet-in-house ids (`H<h>.P.<Planet>`). No lord-in-house record, new or old, is ever promoted.
+
+### Findings worth keeping
+
+- **Six more LORD_OF traps** (HasDignity, IsYogaKaraka, MutualAspect, Exchange, HemmedBy,
+  FunctionalNature), found because the H9 review had to route around HemmedBy. They hand the raw name
+  to a helper instead of reading `chart.planets`, which the first guard could not see. The guard now
+  requires `_resolve_planet` in ANY Condition that takes a subject planet. Zero live rules affected.
+- **`InfluencedBy` + `FIRM_BENEFICS`** (Jupiter, Venus): benefic-contact clauses read true instead of
+  `AfflictedBy(lord, {"Jupiter","Venus"})`. Moon and Mercury excluded -- conditional benefics in Raman.
+- **"Weak AND afflicted" cannot be faked** (H7.L.7a): a weak-slot record conditioned on affliction
+  would still show to a STRONG afflicted lord, because `fire_rules` falls through to the weak text
+  when the other slots are empty. Parked until a Shadbala Condition exists. A reviewer proposed the
+  trick; the code path refuted it.
+- **H4.L.3's 2026-09-01 "fix" was half-right**: the Satyacharya note's condition is favourable, but it
+  is subha VARGAS / benefic ASPECTS, not Shadbala, so `fortified` was the wrong home too.
+- **H9.L.4a keeps Raman's misprint** ("may not have any domestic unhappiness" inside an affliction
+  clause), flagged [sic], not silently corrected.
+- **The marriage monograph hardcoded "of the 50 encoded"** -- stale long before this sweep took House 7
+  to 84 evaluable rules. Now computed, and the unconditioned group is named "general", not "other".
+
+### Open (polarity, out of slot-repair scope)
+
+H7.L.8 and H7.L.12 are `malefic` parents whose `general` text is now mostly unconditioned and not
+malefic. Polarity drives verdicts, so it is its own measured decision.
+
+
+## ★ THE TWELVE-HOUSE STRENGTH-SLOT SWEEP IS COMPLETE (2026-10-13) — final tally and what it means
+
+Every lord-in-house table (12 houses x 12 entries) has now been read against Raman's printed text by
+an engine-blind reviewer, sentence by sentence, under one fixed question: *does each sentence sit in
+a slot whose selection test matches its own stated antecedent?*
+
+| House | correct | | House | correct |
+|---|---|---|---|---|
+| 1 | 10/12 | | 7 | **0/12** |
+| 2 | 3/12 | | 8 | 0/7 (biased sample) |
+| 3 | 7/12 | | 9 | **1/12** |
+| 4 | 8/12 | | 10 | **0/12** |
+| 5 | 5/12 | | 11 | **1/12** |
+| 6 | 6/12 | | 12 | 5/12 |
+
+**Fairly-sampled total (H8 excluded): 46 of 132 correct (35%).** The HTJAH-II houses (7, 9, 10, 11,
+12) are far worse than the HTJAH-I houses (1-6): 7/60 against 39/72. The likely reason is visible in
+the text: HTJAH-II's entries carry many more mid-entry conditionals, nearly all gated on affliction
+or benefic influence -- which an encoder reading "afflicted" naturally filed in the slot of that
+name.
+
+**The defect, stated once for the record.** `_branch` selects the slot called `afflicted` on WEAK
+Shadbala. It is a strength label. Raman keeps strength and affliction apart (HTJAH-II:3001-3009 runs
+"in strength / weak / afflicted" as three tiers on one entry; HTJAH-I:5121 writes "weak AND
+afflicted"). Every affliction-, conjunction-, aspect-, placement- or identity-gated sentence filed
+there was shown to charts chosen by a test that never examined its antecedent.
+
+**Inversions: only in House 8.** Nowhere else did a slot teach the opposite of its sentence. Outside
+H8 the harm was showing a reading whose condition was never tested, withholding Raman's main reading
+from weak-lord charts, or mislabelling an unconditioned reading as strength-conditioned.
+
+### Net effect on the engine
+
+- **Verdicts:** across all twelve houses, the only verdict changes the doctrine snapshot recorded
+  were the ones already documented (HTJAH-II.x155's H9 abstention, plus the earlier H8.L.12b and H6
+  polarity episodes). Every re-homed record is neutral. **Ratchet unmoved throughout: 286/397 exact,
+  362/397 within-1, 35 inversions.**
+- **Presentation:** thousands of rule-instances now show the sentence whose antecedent the chart
+  actually satisfies.
+- **Records removed** because Raman gives them no unconditioned reading: H8.L.9, H9.L.2, H10.L.10.
+- **Missing doctrine recovered:** dozens of dropped clauses and dropped words, plus section-level
+  sentences encoded nowhere (H9.L.S1/S2, H11.L.S1/S2, H12.L.S1 -- the last a Lagna-lord clause
+  dropped corpus-wide).
+- **Liveness 59 -> 69 over the arc**, every dormant record proved satisfiable by explicit chart.
+
+### What the sweep could NOT encode -- the remaining queue, ranked by how much it unblocks
+
+1. **A Shadbala strength Condition** (strong / weak for any lord or named planet). Blocks the most:
+   every "weak AND afflicted" clause (H7.L.7a, H10.L.10b), every named-planet strength clause
+   (Venus in H6/H7/H12, Mars in H3, the 9th lord in H3/H8), and several fortified-only clauses that
+   would otherwise leak to weak charts (H10.L.10a). It also lets the dignity proxy retire.
+2. **House (bhava) affliction.** Raman often afflicts the HOUSE, not the lord (H10.L.2a, H10.L.11a,
+   H12.L.1c, H7.L.2b, H3.L.6b).
+3. **Middle strength bands** -- every three-tier ladder (H4.L.1a, H11.L.1a, H6.L.9a, H5.L.4a).
+4. **Yoga presence, nakshatra-lord friendship, sign/nakshatra gender, D60 classes** (the last
+   BLOCKED on source attribution).
+
+### Flagged, not acted on
+
+- **Nodal drishti.** The `drishti`/`Aspects` code gives Rahu/Ketu 7th-only aspect, while CLAUDE.md
+  locks "Rahu/Ketu drishti = Jupiter-style 5/9" -- though that lock also says "Not BV Raman (no nodal
+  drishti)". The raman_saab engine appears deliberately Raman-faithful here; confirm with the user
+  before touching either.
+- **Parent polarity mismatches** (H7.L.8, H7.L.12 and similar): `malefic` parents whose `general` is
+  now unconditioned and not malefic. Polarity drives verdicts, so it is its own measured decision.
+- **Corpus-wide axis question** (House 5 review): Raman closes several tables naming a benefic /
+  moderating / malefic NATURE-plus-ASSOCIATION axis, not Shadbala. The sweep kept the project's
+  standing convention ("favourably disposed" = strength); overturning it is a user-signed decision.
+
+
+## IsStrong / IsWeak (2026-10-13) — the strength check the sweep was waiting on
+
+**What they are.** Raman's BINARY strength as a rule CONDITION, built on `effective_strength` (B1):
+- `IsStrong(p)` = Shadbala meets the GBB-8:303 bar AND not combust AND not debilitated-uncancelled.
+- `IsWeak(p)` = below the bar OR combust OR debilitated-uncancelled (`decisively_weak`).
+- Unknown strength (Track-B charts, Rahu/Ketu) is never strong; only hard facts can make it weak.
+- The B2 "marginal" band is neither -- it is a tuning band, not Raman's middle tier.
+
+**Why not raw `is_powerful`.** Raman reads a combust ruler "powerless" even when well disposed
+(HTJAH-I:3788), and gating on the raw number was tried before and over-fired (four HPA-20 yogas
+deferred). Measured over the goldens: the raw bar calls a planet strong **198 times** where these
+facts make it powerless.
+
+**This is not the strength ontology the roadmap warned about.** No new vocabulary: it is the same
+binary reading the engine already uses for slot selection, made available to conditions. Middle
+tiers ("moderately strong", "middling") and the upper band ("very powerful") remain parked.
+
+**What it unblocked.** 14 parked clauses went live (H1.L.4a, H3.L.4a-c, H6.L.2b, H6.L.6a, H7.L.6c,
+H7.L.7a, H7.L.12c, H8.L.6b, H8.L.9d, H10.L.10a/b, H12.L.4a) and the dignity proxy was retired from
+H2.L.4a/7a/9a. Strength goes INTO the condition and the text into `general` -- left in a strength
+slot, `_branch` would test the rule's HOUSE lord with the raw number, the wrong planet for "Venus
+weak". It also dissolved two tautologies a reviewer had proved: the dignity proxy is constantly
+TRUE for a lord in its own house (H8.L.6b's 6th lord) and constantly FALSE for debility there
+(H8.L.9d's 9th lord). Shadbala-with-overrides has no such blind spot.
+
+**"Weak AND afflicted" is now exact** (H7.L.7a, H10.L.10b): `And(IsWeak(lord), AfflictedBy(lord))`.
+
+### ★ A bug the promotion exposed, and the guard that now prevents it
+
+Eleven re-homed records from the H6 and H8 sweeps had kept their parent's malefic/benefic polarity --
+created before the "re-homed refinements are neutral" rule. Harmless while descriptive. Promoting
+H6.L.6a to a live rule made it vote malefic and flip three H6/accidents verdicts. All eleven set
+neutral; `test_rehomed_records_are_neutral.py` now fails if any re-homed record carries a vote,
+with an explicit allowlist for the two genuine separate combinations (H8.L.5c, H8.L.12b).
+
+**Net:** 115 presentation changes, **0 verdict changes**, ratchet 286/397, 362/397, 35. Liveness
+unchanged at 69. H2.L.9a is proved satisfiable by a real cast chart (1950-01-03 06:00 IST,
+Bangalore) since synthetic charts carry no Shadbala; H7.L.6c by debility alone.
+
+### Flagged
+
+- `effective_strength` counts ANY combustion (`combust > 0.0`) as powerless, while the `Combust`
+  condition and the judge use a 0.5 orb fraction ("one threshold for the whole engine"). Two
+  thresholds for one fact. Reused as-is here (reuse over a second definition); reconciling them is
+  its own measured decision.
+- `_branch` (slot selection) still uses raw `is_powerful`, so a combust lord with a high number can
+  be shown its `fortified` text while `IsStrong` says it is not strong. Switching `_branch` to
+  effective strength is presentation-only and would make the two agree; measure first.
+
+## Nodal drishti -- RESOLVED 2026-10-13 (user: "follow Raman only, even for Rahu/Ketu aspects")
+
+The Raman engine keeps **Rahu/Ketu = 7th aspect only**. Nothing in the engine changed; the
+CLAUDE.md lock row was corrected because it claimed Raman gave the nodes NO aspect.
+
+- Raman's aspect chapter (HPA-8) lists the 7th for all planets and the special aspects of Mars,
+  Jupiter and Saturn; it never mentions the nodes.
+- His worked judgments count the nodes' 7th repeatedly: HTJAH-I:2062 "Lagna is occupied by Ketu
+  and aspected by Rahu. Lagna is therefore weak"; HTJAH-I:2221 (Jupiter with Rahu "aspected by ...
+  Ketu"), 2720 (Ketu in the 2nd "aspected by Rahu"), 6092 ("aspected by Rahu or the Sun").
+- No worked chart uses a nodal 5th or 9th. HTJAH-I:7107 "Rahu aspects Upapada" is in a Jaimini
+  passage (sign aspects), a different system -- not evidence for Parashari node aspects.
+- "No nodal drishti" would contradict Raman's own text, so it was rejected.
+- `app/core/drishti_argala.py` (legacy engine; used by bhava_judge, gochara_engine,
+  yoga_library) keeps 5/9. It is not Raman's engine; changing it is a separate decision.
+- Guard: `test_drishti.py::test_ramans_ketu_lagna_aspected_by_rahu` (new) and the existing
+  `test_nodes_cast_only_the_seventh_NOT_5_9`.
+
+## HouseAfflictedBy (2026-10-13) -- house (bhava) affliction, queue item 2
+
+**The condition.** A whole-sign house is afflicted when >= 1 natural malefic (Sun, Mars, Saturn,
+Rahu, Ketu) OCCUPIES or ASPECTS it (nodes 7th only). `min_count` carries degree, as in `AfflictedBy`.
+- One malefic suffices and the Sun counts: HTJAH-I:12018-12019 ("The 7th house is afflicted by the
+  8th house aspect of Mars and occupation by Ketu"), I:11598, I:10392, II:3211.
+- The house's OWN lord does not afflict it: HTJAH-I:2740-2741 ("This blemish is cancelled because
+  Mars is in his own house"); HPA-8:64-67.
+- Exception, also Raman's: an own lord debilitated WITHOUT cancellation and joined by a node loses
+  the shield (HTJAH-II:2139-2161, Saturn aspecting his own 7th). Joined-by-one-node == aspected-by-
+  the-other, so conjunction is the whole test. Kept to natural malefics; Raman's "rendered malefic"
+  might also cover a benefic own lord -- deliberate under-fire.
+- Benefic relief does NOT cancel the label (HTJAH-I:3769-3770, 8669, 11598): Raman weighs it
+  separately.
+
+**Base rate is high and that is Raman's threshold, not a bug.** Over 346 goldens (4152 house-slots)
+a house is afflicted 64% of the time (57% without the Sun, 49% Mars+Saturn only, 27% with >= 2).
+Mars and Saturn each reach four houses. This is the measured-truth mechanism again: classical
+indications are abundant.
+
+**Promoted (all neutral, text in `general`):** H7.L.2b (8 fires / 31 placements), H10.L.2a (20/35),
+H10.L.11a (18/26), H12.L.1c (5/34; the "But" depends on the 6L+12L-in-Lagna clause, kept).
+**H3.L.6b re-read by the doctrine review:** "the 6th and the 3rd are both afflicted" (HTJAH-I:3376)
+means the LORDS -- the paragraph runs on lords and sets "afflicted" against "well disposed"
+(medium confidence). Gated on `AfflictedBy("LORD_OF:3")` + `AfflictedBy("LORD_OF:6")`: 14/28.
+
+**Net:** 65 presentation changes, 0 verdict changes, ratchet 286/397, 362/397, 35.
+
+### Resolved same day: the Lagna lord (see below)
+
+- **Does the LAGNA lord afflict?** (original open question) HTJAH-II:8368-8369 "Saturn does not afflict in the strict sense
+  of the term being the Lagna lord" (also I:11598) says no; HTJAH-I:4405 ("good as lord of Lagna and
+  bad as a natural malefic. The affliction is heavy") and I:5925 say it is both. Contested within
+  Raman, so NOT adopted. Matters most for H12.L.1c (8th-house longevity).
+
+### The Lagna lord does NOT afflict a house -- unless joined by a node (2026-10-13)
+
+The user delegated the decision ("take decisions on well researched"). Two engine-blind
+`bphs-doctrine-reviewer` agents read all of HTJAH-I/II and Notable Horoscopes independently and
+**both** returned EXCLUDE, medium-high confidence.
+- **Stated rule:** "ruler of Lagna is always the most benefic planet ... Saturn becomes the best
+  planet ... though usually the worst malefic" (NH:26922-26926); "Saturn does not afflict in the
+  strict sense of the term being the Lagna lord" (HTJAH-I:13193-13194 = II:8368-8369).
+- **Practice:** 8-11 worked house cases read the malefic Lagna lord's occupation or aspect as relief
+  or strength, e.g. "The house and lord are both powerfully disposed" (HTJAH-I:17133), "It is quite
+  strong" (17153), "The aspect of the Sun on the 11th house prevents denial of elder co-borns"
+  (16725). No house case reads it as plain affliction.
+- **Mixed weighings** (HTJAH-I:4405 "good as lord of Lagna and bad as a natural malefic", 5925)
+  attribute the heavy affliction elsewhere and never turn the house afflicted. Charts 8/64/93 are
+  one native analysed three times; the later formal wording is "does not afflict".
+- **Exception encoded:** joined by a node it afflicts again -- "Although Saturn as Lagna lord is a
+  benefice, his association with Ketu ... renders him a malefic" (HTJAH-I:17253-17255); also
+  I:17231 ("with a node, Ketu ... The 11th lord is blemished"). That is the overlap of both
+  reviewers' proposed exceptions; broader triggers (any malefic aspect, 6th-lord association)
+  rest on one chart each and would gut the rule, since most planets have some malefic contact.
+- **Measured:** the Lagna lord was the sole afflicter in 188/3806 house-slots (4.9%). 4 firings
+  dropped (H10.L.2a 1, H10.L.11a 3); 0 verdict changes; ratchet 286/397, 362/397, 35.
+- **Scope:** `HouseAfflictedBy` only. `AfflictedBy` (planet affliction) still counts a malefic
+  Lagna lord; whether the same principle should apply there is a separate measured decision.
+
+## Middle and upper strength levels (2026-10-13) -- queue item 3: PARKED by research
+
+Five sentences need a strength grade finer than strong/weak: "middling in strength" (H4.L.1a
+HTJAH-I:4150, H11.L.1a HTJAH-II:14259), "moderate" (H6.L.9a I:6048), "moderately strong" (H5.L.4a
+I:5134), "very powerful" (H9.L.S1 II:7398). Two independent engine-blind reviews (decision
+delegated by the user; rule: adopt on agreement, keep parked on a split).
+
+**Agreed (high confidence):**
+- Raman prints NO multi-level scale. GBB-8:303-312 is one bar per planet; GBB-8:333-340 ranks
+  planets; GBB-10:134-139 compares Ishta vs Kashta; GBB-3:462-467 Saptavargaja points are one
+  Shadbala input, not levels. Nothing in HPA ch.7 or Three Hundred Combinations.
+- His grade words are a tally of mixed testimony across Rasi and Navamsa (I:2039-2041, 2134-2137,
+  2773-2778), NOT Shadbala. He calls a 4.58-rupa Sun "fairly powerful" (I:3924-3925) -- below his own
+  5-rupa bar -- and the chart's strongest planet (9.59 rupas) only "fairly powerful" for aspects
+  (I:3880-3890). Labels are unstable: Chart 22's Lagna is "powerful" at I:2039 and "fairly strong"
+  at I:2044. A Shadbala band would contradict printed charts.
+- The contrast terms in the target sentences run fortified <-> afflicted (I:6045-6049, 5129-5135):
+  the corpus-wide NATURE/ASSOCIATION axis question already flagged, not the Shadbala axis.
+
+**Split (so parked):**
+- Middle grade as "neither strong nor weak": reviewer B allows it as a complement; reviewer A calls
+  it an unstated inference. Measured: it would fire on 0-3 charts per sentence (Raman's bar is low;
+  most lords clear it).
+- "Very powerful": A would encode exalted/own/moolatrikona + Vargottama or own vargas majority, no
+  affliction (I:11046, 11695, 17023, 17185); B: only the exact printed conjunctions as separately
+  cited instances, or nothing. Also "very powerful" sometimes means maraka power (HPA-16:57-60).
+
+**Done:** the five TODOs re-worded so nobody builds a Shadbala band for them. No output change.
+
+**Flagged, not acted on:** reviewer A notes the engine's binary rule would grade the I:3924 Sun
+(4.58 rupas) WEAK where Raman says "fairly powerful". It is one chart, in a passage that also calls
+the Sun "fairly" strong on mixed testimony; worth a measured look at whether `IsWeak` on Shadbala
+alone (without combustion/debility) contradicts other printed charts.
+
+
 ## golden_pipeline run pilot1 (2026-10-13) — user-signed
 
 Re-based to 285/395 exact, 358/395 within-1 (both axes, side by side).

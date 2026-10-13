@@ -58,3 +58,56 @@ class TestApplySlotChanges:
         expr = literal(text, 8)
         assert expr.count("\n") >= 1
         assert ast.literal_eval(f"({expr})") == text
+
+    def test_new_records_can_chain_after_each_other_in_spec_order(self) -> None:
+        """A split often yields several clauses from one entry; they must land in reading order."""
+        base = {"house": 6, "signification": "enemies_disease", "kind": "descriptive",
+                "slot": "general", "src": 6039, "work": "HTJAH-I", "polarity": "neutral"}
+        src = apply(_FILE, changes={}, new=[
+            dict(base, id="H6.L.8x", after="H6.L.8", text="first"),
+            dict(base, id="H6.L.8y", after="H6.L.8x", text="second"),
+        ])
+        ids = list(_rules(src))
+        i = ids.index("H6.L.8")
+        assert ids[i + 1:i + 3] == ["H6.L.8x", "H6.L.8y"]
+
+    def test_a_parked_record_can_be_promoted_to_a_live_rule(self) -> None:
+        """Turning a descriptive record evaluable needs its kind, condition and text changed
+        together; the condition is written as code, the kind as a string."""
+        src = apply(_FILE, changes={"H6.L.2b": {
+            "kind": "evaluable",
+            "condition": 'C.And(C.LordIn(6, 2), C.IsWeak("Venus"))',
+            "afflicted": "Venus weak - celibate and poverty stricken"}}, new=[])
+        r = _rules(src)["H6.L.2b"]
+        assert r.kind == "evaluable" and r.condition is not None
+        assert r.afflicted == "Venus weak - celibate and poverty stricken"
+
+    def test_a_removed_record_leaves_a_comment_and_its_heir_takes_its_place(self) -> None:
+        """Removal keeps the reason in the file, and children anchored after it still land there."""
+        base = {"house": 6, "signification": "enemies_disease", "kind": "descriptive",
+                "slot": "general", "src": 6039, "work": "HTJAH-I", "polarity": "neutral"}
+        src = apply(_FILE, changes={}, new=[dict(base, id="H6.L.8x", after="H6.L.8", text="heir")],
+                    delete={"H6.L.8": "every sentence moved to its own record"})
+        recs = _rules(src)
+        assert "H6.L.8" not in recs and "H6.L.8x" in recs
+        assert "H6.L.8 REMOVED: every sentence moved to its own record" in src
+
+    def test_replacing_text_containing_multibyte_characters_keeps_the_comma(self, tmp_path) -> None:
+        """AST columns are UTF-8 bytes. A slot holding an arrow once made the cut land two
+        characters late and eat the trailing comma; the result must parse and read back exactly."""
+        f = tmp_path / "rules.py"
+        f.write_text("\n".join([
+            "from app.raman_saab.doctrine import conditions as C",
+            "from app.raman_saab.doctrine.rules import RuleRecord",
+            "from app.raman_saab.doctrine.sources import Citation",
+            "RULES = (",
+            "    RuleRecord(",
+            '        id="T.L.1", house=3, signification="siblings", group="lord_in_house",',
+            '        kind="evaluable", condition=C.LordIn(3, 3),',
+            '        fortified="one → two — three",',
+            "        afflicted=None,",
+            '        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 3348)),',
+            ")",
+            ""]), encoding="utf-8")
+        recs = _rules(apply(f, changes={"T.L.1": {"fortified": "plain replacement"}}, new=[]))
+        assert recs["T.L.1"].fortified == "plain replacement"

@@ -47,6 +47,8 @@
   "H2": {
     "citations": [
       "HTJAH-I:2332",
+      "HTJAH-I:2335",
+      "HTJAH-I:2343",
       "HTJAH-I:2436",
       "HTJAH-I:2440",
       "HTJAH-I:2456",
@@ -92,6 +94,8 @@
       "H2.C.69",
       "H2.C.72",
       "H2.L.2",
+      "H2.L.2b",
+      "H2.L.2e",
       "H2.P.Jupiter",
       "H2.P.Mars",
       "H2.P.Mercury",
@@ -158,6 +162,7 @@
   "H9": {
     "citations": [
       "HTJAH-II:7310",
+      "HTJAH-II:7312",
       "HTJAH-II:7429",
       "HTJAH-II:7431",
       "HTJAH-II:7443",
@@ -191,7 +196,8 @@
       "H9.D.43",
       "H9.D.48",
       "H9.D.51",
-      "H9.L.2",
+      "H9.L.2a",
+      "H9.L.2b",
       "H9.P.Rahu"
     ],
     "rollup": "mixed",

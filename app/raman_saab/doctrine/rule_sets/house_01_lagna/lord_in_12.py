@@ -44,6 +44,9 @@ from app.raman_saab.doctrine.sources import Citation
 RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H1.L.1", house=1, signification="self", group="lord_in_house", kind="evaluable",
+        # 2026-10-13 House-1 sweep: the old afflicted text (HTJAH-I:1088-1089) is gated on
+        # 'evil combinations' -- an AFFLICTION test from the Other Important Combinations
+        # section, not the Lagna lord's weakness. Re-homed to H1.L.1a.
         condition=C.LordIn(1, 1),
         fortified="becomes famous in his own community and country",
         general="lives by own exertion, independent spirit, two wives or one married and "
@@ -51,9 +54,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # HTJAH-I:1088-1089 verbatim: "If the ascendant lord is posited in the Lagna subject
         # to evil combinations, the native will not be physically happy." A real afflicted
         # reading Raman does give for this placement, so it is kept.
-        afflicted="the Lagna-lord in the Lagna subject to evil combinations - not physically "
-                  "happy",
+        afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 997)),
+    # 'Evil combinations' read as malefic contact, per Raman's own gloss at
+    # HTJAH-I:1005-1006 ('in Lagna and aspected by evil planets'). Neutral: refines a parent
+    # that already votes for this placement.
+    RuleRecord(
+        id="H1.L.1a", house=1, signification="self", group="lord_in_house",
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 1), C.AfflictedBy("LORD_OF:1")),
+        general="the ascendant lord in the Lagna subject to evil combinations - the native "
+                "will not be physically happy",
+        fortified=None,
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 1088)),
     RuleRecord(
         id="H1.L.2", house=1, signification="self", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(1, 2),
@@ -73,13 +87,28 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 1015)),
     RuleRecord(
         id="H1.L.4", house=1, signification="self", group="lord_in_house", kind="evaluable",
+        # 2026-10-13 House-1 sweep: HTJAH-I:1026 opens 'If the 4th lord is favourably
+        # disposed' -- a DIFFERENT planet from the branch subject (the Lagna lord). Re-homed
+        # to H1.L.4a.
         condition=C.LordIn(1, 4),
-        fortified="acquires considerable landed property (especially maternal), rich, happy, "
-                  "famous, many conveyances",
+        fortified=None,
         general="happiness from parents, many brothers, materialistic, well-built, "
                 "fair-looking, well-behaved",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 1023)),
+    RuleRecord(
+        id="H1.L.4a", house=1, signification="self", group="lord_in_house",
+        # 2026-10-13: promoted from descriptive once IsStrong/IsWeak existed (effective
+        # strength: Shadbala bar plus combustion/debility overrides). Neutral: refines a
+        # parent placement.
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 4), C.IsStrong("LORD_OF:4")),
+        general="the 4th lord favourably disposed - the person will acquire considerable "
+                "landed properties, specially through maternal sources; rich, happy, "
+                "famous, and commands a number of conveyances",
+        fortified=None,
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 1026)),
     RuleRecord(
         id="H1.L.5", house=1, signification="self", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(1, 5),

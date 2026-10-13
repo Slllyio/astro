@@ -5236,3 +5236,27 @@ not refinements of a parent's placement.
 OWN signification (H8.L.1b: severe affliction -> "disease and disfiguration", a longevity matter)
 should vote after all. It is defensible; it was not reviewed; the neutral default keeps every
 shipped change inside what was reviewed.
+
+
+## golden_pipeline run pilot1 (2026-10-13) — user-signed
+
+Re-based to 285/395 exact, 358/395 within-1 (both axes, side by side).
+
+| item | outcome | verdict | signification |
+|---|---|---|---|
+| NH.chart_22#H10 | CONFIRMED (OVERRIDE-REJECTED) | afflicted | career |
+| NH.chart_26#H9 | CONFIRMED (OVERRIDE-REJECTED) | afflicted | fortune |
+| NH.chart_32#H1 | CONFIRMED (OVERRIDE-REJECTED) | favourable | self |
+| NH.chart_49#H4 | CONFIRMED (OVERRIDE-REJECTED) | favourable | education |
+| NH.chart_52#H9 | CONFIRMED (OVERRIDE-REJECTED) | favourable | fortune |
+| NH.chart_54#H1 | CONFIRMED (OVERRIDE-REJECTED) | afflicted | self |
+| NH.chart_76#H10 | CONFIRMED (REVISE) (OVERRIDE-REJECTED) | favourable | career |
+| HTJAH-II.h11_02#H7 | NOT_FOUND (CONTESTED) |  |  |
+| NH.chart_18#H4 | CONFIRMED (CONTESTED) | afflicted | education |
+| NH.chart_21#H10 | CONFIRMED (REVISE) (CONTESTED) | afflicted | career |
+| NH.chart_37#H7 | CONFIRMED (REVISE) (CONTESTED) | afflicted | spouse |
+| NH.chart_37#H10 | CONFIRMED (REVISE) (CONTESTED) | favourable | profession_authority |
+| NH.chart_39#H8 | REJECTED (CONTESTED) |  |  |
+| NH.chart_42#H10 | REJECTED (CONTESTED) |  |  |
+| NH.chart_49#H10 | CONFIRMED (REVISE) (CONTESTED) | mixed | status_honour |
+| NH.chart_68#H10 | CONFIRMED (CONTESTED) | afflicted | career |

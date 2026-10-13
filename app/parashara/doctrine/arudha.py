@@ -89,7 +89,11 @@ _BENEFIC_SIGNS: Final[frozenset[int]] = frozenset({4, 3, 6, 7, 2, 9, 12})
 _BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
 
 
-def _debilitation(planet: str) -> int:
+def _debilitation(planet: str) -> int | None:
+    """The debilitation sign (7th from exaltation), or None for the nodes — ch.3 gives Rahu/Ketu no
+    exaltation, so they can never be 'debilitated' (a node 2nd from the Upapada used to crash read())."""
+    if planet not in EXALTATION:
+        return None
     return ((EXALTATION[planet] + 6 - 1) % 12) + 1
 
 

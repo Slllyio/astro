@@ -134,6 +134,21 @@ class TestSpouseFromUpapada:
         assert verify(UPAPADA_SPOUSE_SOURCE) and UPAPADA_SPOUSE_SOURCE.work == "BPHS-30"
 
 
+class TestNodeSafety:
+    def test_node_has_no_debilitation(self):
+        """ch.3 gives Rahu/Ketu no exaltation, so they have no debilitation sign either."""
+        from app.parashara.doctrine.arudha import _debilitation
+        assert _debilitation("Rahu") is None and _debilitation("Ketu") is None
+        assert _debilitation("Sun") == 7                       # exalted Aries -> debilitated Libra
+
+    def test_rahu_second_from_upapada_does_not_crash(self):
+        """Raman golden HTJAH-I.chart_29 puts Rahu 2nd from the Upapada — read() used to KeyError."""
+        ch = cast(year=1903, month=3, day=18, hour=0, minute=0,
+                  tz_offset=5.0, latitude=15.5333, longitude=75.0)
+        s = spouse_from_upapada(ch)
+        assert "Rahu" in s.occupants
+
+
 class TestCitations:
     def test_sources_resolve(self):
         assert verify(RULE_SOURCE) and RULE_SOURCE.work == "BPHS-29"

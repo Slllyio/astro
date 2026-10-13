@@ -599,6 +599,14 @@ class AfflictedBy(Condition):
         return False
 
 
+def _node_joined(planet: str, chart: RamanChart) -> bool:
+    """`planet` shares a sign with Rahu or Ketu -- the same set as "afflicted by a node", since
+    joined by one node is aspected by the other (nodes aspect the 7th only)."""
+    p = chart.planets.get(planet)
+    return p is not None and any((n := chart.planets.get(node)) is not None
+                                 and n.rasi_house == p.rasi_house for node in ("Rahu", "Ketu"))
+
+
 class HouseAfflictedBy(Condition):
     """Whole-sign `house` (from the Lagna) is OCCUPIED or ASPECTED by an afflicter -- the HOUSE
     form of `AfflictedBy`, for Raman's "if the 10th house is afflicted" / "if malefics afflict
@@ -615,6 +623,15 @@ class HouseAfflictedBy(Condition):
     afflicted because although the 7th lord aspects it, the aspect is of a planet rendered
     malefic by debility and association with a node" (HTJAH-II:2159-2161).
 
+    The LAGNA lord does not afflict either: "ruler of Lagna is always the most benefic planet
+    ... Saturn becomes the best planet ... though usually the worst malefic" (NH:26922-26926);
+    "Saturn does not afflict in the strict sense of the term being the Lagna lord"
+    (HTJAH-I:13193-13194); in practice it reads as relief (HTJAH-I:11598, 13225, 16725, 17133,
+    17153). It afflicts again once joined by a node: "Although Saturn as Lagna lord is a
+    benefice, his association with Ketu ... renders him a malefic" (HTJAH-I:17253-17255; also
+    17231). Two independent engine-blind reviews agreed (2026-10-13, decision delegated by the
+    user); the mixed weighings (HTJAH-I:4405, 5925) never turn a house afflicted.
+
     One malefic suffices and the Sun counts (HTJAH-I:12018-12019, 11598, 10392); benefic relief
     is weighed separately by Raman and does not cancel the label (HTJAH-I:3769-3770).
     """
@@ -628,15 +645,16 @@ class HouseAfflictedBy(Condition):
 
     def evaluate(self, ctx: EvalContext) -> bool:
         chart = ctx.chart
-        own_lord = _lord_of(self.house, chart)
-        lord_p = chart.planets.get(own_lord)
+        own_lord, lagna_lord = _lord_of(self.house, chart), _lord_of(1, chart)
+        exempt = set()
         # Raman's case: Saturn "does not obtain cancellation of debility but is afflicted by Ketu"
-        # (HTJAH-II:2139-2141). Joined by one node == aspected by the other (nodes: 7th only).
-        shielded = not (lord_p is not None and dignity(own_lord, chart) == "debil"
-                        and not neecha_bhanga(own_lord, chart)
-                        and any((n := chart.planets.get(node)) is not None
-                                and n.rasi_house == lord_p.rasi_house for node in ("Rahu", "Ketu")))
-        hits = sum(1 for name in self.afflictors - ({own_lord} if shielded else set())
+        # (HTJAH-II:2139-2141).
+        if not (_node_joined(own_lord, chart) and dignity(own_lord, chart) == "debil"
+                and not neecha_bhanga(own_lord, chart)):
+            exempt.add(own_lord)
+        if not _node_joined(lagna_lord, chart):
+            exempt.add(lagna_lord)
+        hits = sum(1 for name in self.afflictors - exempt
                    if (q := chart.planets.get(name)) is not None
                    and (q.rasi_house == self.house
                         or drishti.aspects_house(name, self.house, chart)))

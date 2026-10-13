@@ -5496,9 +5496,34 @@ means the LORDS -- the paragraph runs on lords and sets "afflicted" against "wel
 
 **Net:** 65 presentation changes, 0 verdict changes, ratchet 286/397, 362/397, 35.
 
-### Open -- needs a user decision
+### Resolved same day: the Lagna lord (see below)
 
-- **Does the LAGNA lord afflict?** HTJAH-II:8368-8369 "Saturn does not afflict in the strict sense
+- **Does the LAGNA lord afflict?** (original open question) HTJAH-II:8368-8369 "Saturn does not afflict in the strict sense
   of the term being the Lagna lord" (also I:11598) says no; HTJAH-I:4405 ("good as lord of Lagna and
   bad as a natural malefic. The affliction is heavy") and I:5925 say it is both. Contested within
   Raman, so NOT adopted. Matters most for H12.L.1c (8th-house longevity).
+
+### The Lagna lord does NOT afflict a house -- unless joined by a node (2026-10-13)
+
+The user delegated the decision ("take decisions on well researched"). Two engine-blind
+`bphs-doctrine-reviewer` agents read all of HTJAH-I/II and Notable Horoscopes independently and
+**both** returned EXCLUDE, medium-high confidence.
+- **Stated rule:** "ruler of Lagna is always the most benefic planet ... Saturn becomes the best
+  planet ... though usually the worst malefic" (NH:26922-26926); "Saturn does not afflict in the
+  strict sense of the term being the Lagna lord" (HTJAH-I:13193-13194 = II:8368-8369).
+- **Practice:** 8-11 worked house cases read the malefic Lagna lord's occupation or aspect as relief
+  or strength, e.g. "The house and lord are both powerfully disposed" (HTJAH-I:17133), "It is quite
+  strong" (17153), "The aspect of the Sun on the 11th house prevents denial of elder co-borns"
+  (16725). No house case reads it as plain affliction.
+- **Mixed weighings** (HTJAH-I:4405 "good as lord of Lagna and bad as a natural malefic", 5925)
+  attribute the heavy affliction elsewhere and never turn the house afflicted. Charts 8/64/93 are
+  one native analysed three times; the later formal wording is "does not afflict".
+- **Exception encoded:** joined by a node it afflicts again -- "Although Saturn as Lagna lord is a
+  benefice, his association with Ketu ... renders him a malefic" (HTJAH-I:17253-17255); also
+  I:17231 ("with a node, Ketu ... The 11th lord is blemished"). That is the overlap of both
+  reviewers' proposed exceptions; broader triggers (any malefic aspect, 6th-lord association)
+  rest on one chart each and would gut the rule, since most planets have some malefic contact.
+- **Measured:** the Lagna lord was the sole afflicter in 188/3806 house-slots (4.9%). 4 firings
+  dropped (H10.L.2a 1, H10.L.11a 3); 0 verdict changes; ratchet 286/397, 362/397, 35.
+- **Scope:** `HouseAfflictedBy` only. `AfflictedBy` (planet affliction) still counts a malefic
+  Lagna lord; whether the same principle should apply there is a separate measured decision.

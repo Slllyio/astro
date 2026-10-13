@@ -30,14 +30,18 @@ def validate(a: dict[str, Any]) -> dict[str, Any]:
         raise InvalidAnswer(f"decision={a.get('decision')!r}")
     if a.get("kind") not in KINDS:
         raise InvalidAnswer(f"kind={a.get('kind')!r}")
-    if a["decision"] != "REJECT" and a.get("verdict") not in VERDICTS:
-        raise InvalidAnswer(f"verdict={a.get('verdict')!r}")
+    if a["decision"] != "REJECT":
+        if a["kind"] != "conclusion":
+            raise InvalidAnswer(f"{a['decision']} requires kind='conclusion', got {a['kind']!r}")
+        if a.get("verdict") not in VERDICTS:
+            raise InvalidAnswer(f"verdict={a.get('verdict')!r}")
     if not isinstance(a.get("signification"), str) or not a["signification"].strip():
         raise InvalidAnswer("signification missing")
     q = a.get("decisive_quote")
-    if not isinstance(q, str) or len(q.split()) > MAX_QUOTE_WORDS:
-        raise InvalidAnswer("decisive_quote missing or over 40 words")
-    if not isinstance(a.get("quote_line"), int):
+    if not isinstance(q, str) or not q.strip() or len(q.split()) > MAX_QUOTE_WORDS:
+        raise InvalidAnswer("decisive_quote missing, empty or over 40 words")
+    ql = a.get("quote_line")
+    if not isinstance(ql, int) or isinstance(ql, bool):
         raise InvalidAnswer("quote_line must be an int")
     if not isinstance(a.get("reason"), str):
         raise InvalidAnswer("reason must be a string")

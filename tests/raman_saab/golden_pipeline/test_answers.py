@@ -43,3 +43,22 @@ class TestValidate:
     def test_reject_may_omit_verdict(self):
         """A REJECT need not assert a verdict."""
         A.validate({**GOOD, "decision": "REJECT", "kind": "observation", "verdict": None})
+
+
+class TestValidateHardening:
+    @pytest.mark.parametrize("decision", ["CONFIRM", "REVISE"])
+    def test_accept_requires_conclusion_kind(self, decision):
+        """Only a CONCLUSION may be confirmed; an observation is not a verdict."""
+        with pytest.raises(A.InvalidAnswer):
+            A.validate({**GOOD, "decision": decision, "kind": "observation"})
+
+    def test_bool_quote_line_rejected(self):
+        """bool is an int subclass but never a line number."""
+        with pytest.raises(A.InvalidAnswer):
+            A.validate({**GOOD, "quote_line": True})
+
+    @pytest.mark.parametrize("q", ["", "   "])
+    def test_blank_quote_rejected(self, q):
+        """An empty quote cannot be source-verified."""
+        with pytest.raises(A.InvalidAnswer):
+            A.validate({**GOOD, "decisive_quote": q})

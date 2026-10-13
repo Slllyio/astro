@@ -8,7 +8,7 @@ from typing import Any
 def _key(a: dict[str, Any]) -> tuple:
     if a["decision"] == "REJECT":
         return ("REJECT",)
-    return ("ACCEPT", a["verdict"], a["signification"])
+    return ("ACCEPT", a["verdict"], a["signification"].strip().casefold())
 
 
 def _outcome(item: dict[str, Any], key: tuple, answers: dict[str, Any]) -> dict[str, Any]:
@@ -16,9 +16,12 @@ def _outcome(item: dict[str, Any], key: tuple, answers: dict[str, Any]) -> dict[
               if _key(a) == key}
     if key[0] == "REJECT":
         return {"outcome": "REJECTED", "quotes": quotes}
-    _, verdict, sig = key
+    first = next(a for a in answers.values() if _key(a) == key)  # keep reviewer's own string
+    verdict, sig = first["verdict"], first["signification"]
     return {"outcome": "CONFIRMED", "verdict": verdict, "signification": sig,
-            "revised": (verdict, sig) != (item["verdict"], item["signification"]),
+            "revised": _key({"decision": "CONFIRM", "verdict": verdict, "signification": sig})
+            != _key({"decision": "CONFIRM", "verdict": item["verdict"],
+                     "signification": item["signification"]}),
             "quotes": quotes}
 
 

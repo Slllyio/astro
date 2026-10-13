@@ -8,9 +8,10 @@ import sys
 from pathlib import Path
 from typing import Any, Final
 
-GOLDENS: Final = Path("tests/fixtures/raman_goldens.jsonl")
-BASELINE: Final = Path("tests/fixtures/golden_accuracy_baseline.json")
-BACKLOG: Final = Path("docs/raman_saab/DOCTRINE_BACKLOG.md")
+ROOT: Final = Path(__file__).resolve().parents[3]
+GOLDENS: Final = ROOT / "tests/fixtures/raman_goldens.jsonl"
+BASELINE: Final = ROOT / "tests/fixtures/golden_accuracy_baseline.json"
+BACKLOG: Final = ROOT / "docs/raman_saab/DOCTRINE_BACKLOG.md"
 _WRITABLE: Final = {"CONFIRMED", "REJECTED", "CONTESTED"}
 
 
@@ -20,7 +21,7 @@ class DirtyTree(RuntimeError):
 
 def _git_status() -> str:
     return subprocess.run(["git", "status", "--porcelain"], capture_output=True,
-                          text=True, check=True).stdout
+                          text=True, check=True, cwd=ROOT).stdout
 
 
 def require_clean_tree() -> None:
@@ -39,7 +40,12 @@ def _note(dec: dict[str, Any], run_id: str) -> str:
 
 
 def _apply_one(entry: dict[str, Any], dec: dict[str, Any], run_id: str) -> dict[str, Any]:
-    new = {**entry, "review_note": _note(dec, run_id)}
+    prior = entry.get("review_note") or ""
+    if entry.get("verdict_review") != "DRAFT" or prior.startswith("REJECTED"):
+        raise ValueError(f"{dec['item_id']}: target is not a live DRAFT "
+                         f"(verdict_review={entry.get('verdict_review')!r}, note={prior[:30]!r})")
+    note = _note(dec, run_id)
+    new = {**entry, "review_note": f"{prior} | {note}" if prior else note}
     if dec["outcome"] == "CONFIRMED":
         new.update(verdict_review="CONFIRMED", verdict=dec["verdict"],
                    signification=dec["signification"])
@@ -53,6 +59,11 @@ def edit_goldens_lines(lines: list[str], decisions: list[dict[str, Any]],
     bad = [d["item_id"] for d in decisions if d["outcome"] not in _WRITABLE]
     if bad:
         raise ValueError(f"refusing unscorable outcomes: {bad}")
+    ids = [d["item_id"] for d in decisions]
+    dup = sorted({i for i in ids if ids.count(i) > 1})
+    if dup:
+        raise ValueError(f"duplicate item_id in decisions: {dup}")
+    matched: set[str] = set()
     by_rec: dict[str, list[dict[str, Any]]] = {}
     for d in decisions:
         by_rec.setdefault(d["record_id"], []).append(d)
@@ -70,8 +81,14 @@ def edit_goldens_lines(lines: list[str], decisions: list[dict[str, Any]],
         ev = dict(rec["expected_verdicts"])
         for d in decs:
             tag = f"H{d['house']}"
+            if tag not in ev:
+                continue  # reported as unmatched below
             ev[tag] = _apply_one(ev[tag], d, run_id)
+            matched.add(d["item_id"])
         out.append(json.dumps({**rec, "expected_verdicts": ev}, ensure_ascii=False))
+    missing = [i for i in ids if i not in matched]
+    if missing:
+        raise ValueError(f"decisions matched no golden line/house: {missing}")
     return out
 
 
@@ -88,7 +105,7 @@ def append_lineage(base: dict[str, Any], exact: tuple[int, int], within1: tuple[
 
 # No tests/__init__.py exists and site-packages ships its own `tests` package, so import the
 # module the way pytest does (prepend mode): put tests/ on sys.path.
-_MEASURE: Final = ("import sys, json; sys.path.insert(0, 'tests'); "
+_MEASURE: Final = (f"import sys, json; sys.path.insert(0, {str(ROOT / 'tests')!r}); "
                    "import raman_saab.test_goldens as G; "
                    "c,t,_=G.track_b_scoreboard(); w,_t,_r=G.track_b_ordinal_scoreboard(); "
                    "print(json.dumps([c,t,w,_t]))")
@@ -96,14 +113,14 @@ _MEASURE: Final = ("import sys, json; sys.path.insert(0, 'tests'); "
 
 def measure() -> tuple[tuple[int, int], tuple[int, int]]:
     out = subprocess.run([sys.executable, "-c", _MEASURE], capture_output=True, text=True,
-                         check=True).stdout.strip().splitlines()[-1]
+                         check=True, cwd=ROOT).stdout.strip().splitlines()[-1]
     c, t, w, wt = json.loads(out)
     return (c, t), (w, wt)
 
 
 def _pytest(*args: str, env: dict[str, str] | None = None) -> None:
     subprocess.run([sys.executable, "-m", "pytest", "-q", *args], check=True,
-                   env={**os.environ, **(env or {})})
+                   env={**os.environ, **(env or {})}, cwd=ROOT)
 
 
 def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str) -> None:
@@ -121,14 +138,13 @@ def run_apply(decisions: list[dict[str, Any]], run_id: str, date: str) -> None:
         base = json.loads(baseline_before)
         BASELINE.write_text(json.dumps(append_lineage(base, exact, within1, run_id, date),
                                        ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        _pytest("tests/raman_saab/test_goldens.py", env={"UPDATE_RAMAN_SNAPSHOTS": "1"})
         _pytest("tests/raman_saab/test_goldens.py",
                 "tests/raman_saab/test_golden_verdict_uniqueness.py",
                 "tests/raman_saab/doctrine/test_rule_liveness.py")
-    except Exception:
+    except BaseException:
         GOLDENS.write_text(goldens_before, encoding="utf-8")
         BASELINE.write_text(baseline_before, encoding="utf-8")
-        raise  # snapshots written by the refresh step show up in `git status`; discard by hand
+        raise  # missing snapshots written by the verification run show up in `git status`; discard by hand
     with BACKLOG.open("a", encoding="utf-8") as f:
         f.write(backlog_entry(decisions, run_id, date, exact, within1))
 

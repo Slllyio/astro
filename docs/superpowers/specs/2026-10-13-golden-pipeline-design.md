@@ -116,7 +116,7 @@ per packet. The dispatching session saves each reply to `answers/<row_id>.<A|B|C
    wraps. This keeps every claim falsifiable by string search.
 3. Both REJECT → stays DRAFT with `review_note: "REJECTED by engine-blind review (run <id>) …"`
    so it is never re-queued.
-4. Both CONFIRM/REVISE with identical decision, verdict and signification → that outcome.
+4. Identical outcome — both accept (CONFIRM or REVISE) with the same verdict and signification (case-insensitive), and every accepting answer must have kind = conclusion → that outcome.
 5. Any split (including a single REJECT) → `packets --tiebreak` writes a third packet
    (reviewer C). 2-of-3 agreement decides, per the NH.chart_38 H9 precedent (2026-08-29).
    No 2-of-3 majority → `CONTESTED`.

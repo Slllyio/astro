@@ -58,3 +58,11 @@ class TestReconcile:
         for answers in ({"A": ans()}, {"A": ans(ok=False), "B": ans(ok=False)},
                         {"A": ans(), "B": ans("REJECT", None)}):
             assert reconcile(ITEM, answers)["outcome"] != "CONFIRMED"
+
+
+class TestCaseInsensitive:
+    def test_signification_case_and_space_agree(self):
+        """'Mother' and ' mother ' are one signification; original string kept."""
+        r = reconcile(ITEM, {"A": ans(sig="Mother"), "B": ans(sig=" mother ")})
+        assert r["outcome"] == "CONFIRMED" and r["signification"] == "Mother"
+        assert r["revised"] is False

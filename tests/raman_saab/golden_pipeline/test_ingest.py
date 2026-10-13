@@ -29,6 +29,19 @@ class TestIngest:
         d = I.ingest_item(tmp_path, ITEM, LINES)
         assert d["outcome"] == "CONFIRMED" and d["item_id"] == ITEM["item_id"]
 
+    def test_confirmed_carries_agreeing_quotes(self, tmp_path):
+        """Apply stores Raman's quote, so the decision must carry every agreeing quote."""
+        _write(tmp_path, "A"); _write(tmp_path, "B", quote="his mother very early in life")
+        q = I.ingest_item(tmp_path, ITEM, LINES)["quotes"]
+        assert {r: v[0] for r, v in q.items()} == {"A": "lost his mother very early in life",
+                                                  "B": "his mother very early in life"}
+
+    def test_not_found_rejects_ingest_as_not_found(self, tmp_path):
+        """Agreed not_found REJECTs are re-queueable, never REJECTED."""
+        rej = {"decision": "REJECT", "kind": "not_found"}
+        _write(tmp_path, "A", extra=rej); _write(tmp_path, "B", extra=rej)
+        assert I.ingest_item(tmp_path, ITEM, LINES)["outcome"] == "NOT_FOUND"
+
     def test_quote_not_in_source_stays_draft(self, tmp_path):
         """A fabricated quote makes the item UNVERIFIED, never CONFIRMED."""
         _write(tmp_path, "A", quote="the native gained a great fortune abroad")

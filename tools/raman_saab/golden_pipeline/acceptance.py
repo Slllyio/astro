@@ -60,7 +60,7 @@ def compare(key: dict[str, str], got: dict[str, str]) -> tuple[int, list[tuple[s
 
 
 def _pipeline_label(d: dict[str, Any]) -> str:
-    # UNVERIFIED/INCOMPLETE/TIEBREAK/CONTESTED map to themselves: divergences to read by hand.
+    # UNVERIFIED/INCOMPLETE/TIEBREAK/CONTESTED/NOT_FOUND map to themselves: divergences to read by hand.
     if d["outcome"] == "CONFIRMED":
         return "REVISE" if d.get("revised") else "CONFIRM"
     return {"REJECTED": "REJECT"}.get(d["outcome"], d["outcome"])

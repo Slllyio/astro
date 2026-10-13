@@ -15,6 +15,10 @@ def _outcome(item: dict[str, Any], key: tuple, answers: dict[str, Any]) -> dict[
     quotes = {r: (a["decisive_quote"], a["quote_line"]) for r, a in answers.items()
               if _key(a) == key}
     if key[0] == "REJECT":
+        # "the passage holds no conclusion" says the WINDOW failed, not the label: re-queueable
+        agreeing = [a for a in answers.values() if _key(a) == key]
+        if all(a.get("kind") == "not_found" for a in agreeing):
+            return {"outcome": "NOT_FOUND", "quotes": quotes}
         return {"outcome": "REJECTED", "quotes": quotes}
     first = next(a for a in answers.values() if _key(a) == key)  # keep reviewer's own string
     verdict, sig = first["verdict"], first["signification"]

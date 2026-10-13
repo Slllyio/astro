@@ -27,13 +27,13 @@ class TestEditLines:
         assert out[0] == LINES[0] and out[2] == LINES[2] and out[3] == LINES[3]
 
     def test_confirm_changes_only_review_fields(self):
-        """CONFIRMED sets verdict_review + review_note and nothing else."""
+        """CONFIRMED sets verdict_review + review_note; the label is untouched."""
         out = AP.edit_goldens_lines(LINES, [_dec("CONFIRMED", verdict="afflicted",
                                                  signification="mother", revised=False)], "r1")
         v = json.loads(out[1])["expected_verdicts"]["H4"]
         assert v["verdict_review"] == "CONFIRMED" and "r1" in v["review_note"]
-        assert {k: v[k] for k in ("signification", "verdict", "verdict_prose")} == \
-               {"signification": "mother", "verdict": "afflicted", "verdict_prose": "p"}
+        assert {k: v[k] for k in ("signification", "verdict")} == \
+               {"signification": "mother", "verdict": "afflicted"}
 
     def test_revise_changes_verdict_and_signification(self):
         """A REVISE'd confirmation carries the corrected label."""
@@ -52,6 +52,31 @@ class TestEditLines:
         """No-majority items become CONTESTED."""
         out = AP.edit_goldens_lines(LINES, [_dec("CONTESTED")], "r1")
         assert json.loads(out[1])["expected_verdicts"]["H4"]["verdict_review"] == "CONTESTED"
+
+    def test_confirm_replaces_prose_with_longest_agreeing_quote(self):
+        """User decision: a confirmed row stores Raman's verified quote; old prose kept in note."""
+        d = _dec("CONFIRMED", verdict="afflicted", signification="mother", revised=False,
+                 quotes={"A": ["lost his mother", 6], "B": ["the native lost his mother early", 6]})
+        v = json.loads(AP.edit_goldens_lines(LINES, [d], "r1")[1])["expected_verdicts"]["H4"]
+        assert v["verdict_prose"] == "the native lost his mother early"
+        assert v["review_note"].endswith('prior extracted prose: "p"')
+
+    def test_confirm_without_quotes_refused(self):
+        """No verified quote means nothing to store: refuse rather than keep stale prose."""
+        d = _dec("CONFIRMED", verdict="afflicted", signification="mother", revised=False,
+                 quotes={})
+        with pytest.raises(ValueError):
+            AP.edit_goldens_lines(LINES, [d], "r1")
+
+    def test_rejected_keeps_prose(self):
+        """Only CONFIRMED rewrites verdict_prose."""
+        out = AP.edit_goldens_lines(LINES, [_dec("REJECTED")], "r1")
+        assert json.loads(out[1])["expected_verdicts"]["H4"]["verdict_prose"] == "p"
+
+    def test_not_found_is_refused(self):
+        """NOT_FOUND is non-writable: the row stays a live DRAFT for re-queueing."""
+        with pytest.raises(ValueError):
+            AP.edit_goldens_lines(LINES, [_dec("NOT_FOUND")], "r1")
 
     def test_unscorable_outcomes_are_refused(self):
         """INCOMPLETE / TIEBREAK / UNVERIFIED are never written."""

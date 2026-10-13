@@ -88,7 +88,13 @@ def quote_found(lines: list[str], quote: str, line: int, window: int = 60) -> bo
 
 HEAD_WORDS: Final[int] = 8
 MAX_BLOCK: Final[int] = 250
+#: HTJAH lines kept before a record's own header (Raman discusses the chart BEFORE presenting it).
+MAX_BEFORE: Final[int] = 200
 _HTJAH_CHART: Final = re.compile(r"Chart\s*No\.?\s*(\d(?:\s?\d)*)", re.IGNORECASE)
+#: A presentation has "Born" (OCR: "Bom", "Male born") right after its number; a mention
+#: ("In Chart No. 98, the native was born") does not.
+_HTJAH_BORN: Final = re.compile(r"[^A-Za-z0-9]*(?:(?:fe)?male\s+)?B[o0](?:rn|m)\b",
+                                re.IGNORECASE)
 _NH_HEADER: Final = re.compile(r"^\s*No\.?\s*([0-9Il]{1,3})(?![0-9])[^A-Za-z0-9]*"
                                r"([A-Z][A-Z .,'’&()-]{2,})\s*$")
 
@@ -130,6 +136,15 @@ def _blocks(starts: list[tuple[int, int]], n_lines: int) -> list[tuple[int, int,
     return [(no, ln, min(end, ln + MAX_BLOCK - 1)) for (no, ln), end in zip(starts, nxt)]
 
 
+def _htjah_window(starts: list[tuple[int, int]], ln: int, n_lines: int) -> tuple[int, int]:
+    """From just after the previous presentation header, through the record's own header
+    at `ln`, to the next one; at most MAX_BEFORE lines before `ln` and MAX_BLOCK in total."""
+    prev = max((s for _, s in starts if s < ln), default=0)
+    nxt = min((s for _, s in starts if s > ln), default=n_lines + 1)
+    lo = max(prev + 1, ln - MAX_BEFORE)
+    return lo, min(nxt - 1, lo + MAX_BLOCK - 1)
+
+
 def _born_on(text: str, dt: str) -> bool:
     y, m, d = (int(x) for x in dt[:10].split("-"))
     return bool(re.search(rf"(?<!\d)(?:\d{{1,2}}\s*/\s*)?0?{d}(?:\s*/\s*\d{{1,2}})?\s*[-./]\s*"
@@ -140,7 +155,7 @@ def _htjah_header(lines: list[str], record: dict) -> tuple[int, int] | None:
     pres = []
     for i, line in enumerate(lines):
         m = _HTJAH_CHART.search(line)
-        if m and re.search(r"\bBorn\b", "\n".join(lines[i:i + 3]), re.IGNORECASE):
+        if m and _HTJAH_BORN.match("\n".join([line[m.end():], *lines[i + 1:i + 3]])):
             pres.append((int(m.group(1).replace(" ", "")), i + 1))
     blocks = _blocks(pres, len(lines))
     num = re.search(r"\d+", str(record.get("name") or ""))
@@ -151,7 +166,7 @@ def _htjah_header(lines: list[str], record: dict) -> tuple[int, int] | None:
         cands = [b for b in cands if b[0] == no] or cands
     else:
         cands = [b for b in blocks if b[0] == no]
-    return (cands[0][1], cands[0][2]) if len(cands) == 1 else None
+    return _htjah_window(pres, cands[0][1], len(lines)) if len(cands) == 1 else None
 
 
 def _name_ok(header: str, name: str) -> bool:
@@ -192,6 +207,9 @@ def locate(item: dict, lines: list[str], record: dict) -> tuple[str, list[list[i
     hits: list[int] = []
     if len(prose) >= MIN_QUOTE_WORDS + 1:
         hits = _occurrences(joined, " ".join(prose[:HEAD_WORDS]))
+        if len(hits) > 1:  # repeated opening: the WHOLE prose decides first
+            whole = set(_occurrences(joined, " ".join(prose)))
+            hits = [h for h in hits if h in whole] or hits
         if len(hits) > 1 and block:  # repeated phrase: keep the one inside our own chart
             hits = [h for h in hits if block[0] <= at[h] <= block[1]]
     if len(hits) == 1:

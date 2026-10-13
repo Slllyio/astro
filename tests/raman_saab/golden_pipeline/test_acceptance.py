@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from tools.raman_saab.golden_pipeline.acceptance import answer_key, compare
+from tools.raman_saab.golden_pipeline.acceptance import _pipeline_label, answer_key, compare
 
 
 def _rec(review, verdict="mixed", sig="mother", note=None):
@@ -37,3 +37,8 @@ class TestAnswerKey:
     def test_held_note_is_contested_not_reject(self):
         """A HELD review_note means contested."""
         assert answer_key([_rec("DRAFT")], [_rec("DRAFT", note="HELD: reviewers split")]) ==             {"X#H4": "CONTESTED"}
+
+
+    def test_not_found_maps_to_itself(self):
+        """NOT_FOUND is never a REJECT: it is a divergence to read by hand."""
+        assert _pipeline_label({"outcome": "NOT_FOUND"}) == "NOT_FOUND"

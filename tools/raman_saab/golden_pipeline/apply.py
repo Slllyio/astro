@@ -45,11 +45,16 @@ def _apply_one(entry: dict[str, Any], dec: dict[str, Any], run_id: str) -> dict[
         raise ValueError(f"{dec['item_id']}: target is not a live DRAFT "
                          f"(verdict_review={entry.get('verdict_review')!r}, note={prior[:30]!r})")
     note = _note(dec, run_id)
-    new = {**entry, "review_note": f"{prior} | {note}" if prior else note}
-    if dec["outcome"] == "CONFIRMED":
-        new.update(verdict_review="CONFIRMED", verdict=dec["verdict"],
-                   signification=dec["signification"])
-    elif dec["outcome"] == "CONTESTED":
+    extra: dict[str, Any] = {}
+    if dec["outcome"] == "CONFIRMED":  # user decision: store Raman's verified quoted conclusion
+        quotes = [q for q, _ln in dec.get("quotes", {}).values()]
+        if not quotes:
+            raise ValueError(f"{dec['item_id']}: CONFIRMED without a verified quote")
+        note += f' prior extracted prose: "{entry.get("verdict_prose", "")}"'
+        extra = {"verdict_review": "CONFIRMED", "verdict": dec["verdict"],
+                 "signification": dec["signification"], "verdict_prose": max(quotes, key=len)}
+    new = {**entry, "review_note": f"{prior} | {note}" if prior else note, **extra}
+    if dec["outcome"] == "CONTESTED":
         new["verdict_review"] = "CONTESTED"
     return new  # REJECTED: stays DRAFT, note added
 

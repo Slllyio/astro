@@ -115,7 +115,11 @@ per packet. The dispatching session saves each reply to `answers/<row_id>.<A|B|C
    line breaks collapsed, de-hyphenated across wraps — because the source is OCR with hard
    wraps. This keeps every claim falsifiable by string search.
 3. Both REJECT → stays DRAFT with `review_note: "REJECTED by engine-blind review (run <id>) …"`
-   so it is never re-queued.
+   so it is never re-queued. **Exception (pilot 2026-10-13):** when every agreeing (or
+   2-of-3 majority) REJECT has `kind: not_found`, the outcome is `NOT_FOUND` — the reviewers
+   saw no conclusion *in the window*, which indicts the window, not the label. NOT_FOUND is
+   non-writable: no note, row stays a live DRAFT, re-queued once its window is fixed.
+   REJECT with kind observation/splice stays REJECTED.
 4. Identical outcome — both accept (CONFIRM or REVISE) with the same verdict and signification (case-insensitive), and every accepting answer must have kind = conclusion → that outcome.
 5. Any split (including a single REJECT) → `packets --tiebreak` writes a third packet
    (reviewer C). 2-of-3 agreement decides, per the NH.chart_38 H9 precedent (2026-08-29).
@@ -123,6 +127,14 @@ per packet. The dispatching session saves each reply to `answers/<row_id>.<A|B|C
 6. Missing answer → listed by `packets --missing` for re-dispatch.
 
 **Invariant:** every failure path ends in DRAFT or CONTESTED, never CONFIRMED.
+
+**HTJAH packet windows (pilot 2026-10-13).** In *How to Judge a Horoscope* Raman discusses a
+chart BEFORE its `Chart No. N.—Born …` line, so a `chart_header` window runs from just after
+the previous presentation header, through the record's own header, to the next presentation
+header (≤ 200 lines before the header, ≤ 250 in total, own header always inside). A
+presentation needs "Born" (OCR "Bom", "Male born") directly after its number; a mention such
+as "In Chart No. 98, the native was born" is not one. When a verbatim opening repeats inside
+the wider window, the whole prose decides first. NH windows and verbatim locates are unchanged.
 
 ## Propose
 
@@ -135,6 +147,12 @@ on **both** axes side by side (exact and within-1) — never averaged.
 - Refuses unless the git tree is clean (prevents mixing with another session's edits).
 - Changes only `verdict_review`, `review_note` (the adjudication record), and REVISE'd
   verdict/signification, for the approved ids in `tests/fixtures/raman_goldens.jsonl`.
+- **CONFIRMED rows store Raman's quoted conclusion (user decision 2026-10-13):**
+  `verdict_prose` becomes the longest source-verified `decisive_quote` among the agreeing
+  answers, and the appended `review_note` ends `prior extracted prose: "<old>"`. A CONFIRMED
+  decision without a verified quote is refused.
+- Refuses every non-writable outcome (INCOMPLETE, UNVERIFIED, TIEBREAK, NOT_FOUND,
+  NOT_LOCATED); acceptance scoring reports NOT_FOUND as itself, never as REJECT.
   Edits are **line-level** — the file contains `#` comment blocks that a load-and-dump
   would destroy.
 - Writes snapshots for newly confirmed rows (`UPDATE_RAMAN_SNAPSHOTS=1`) into

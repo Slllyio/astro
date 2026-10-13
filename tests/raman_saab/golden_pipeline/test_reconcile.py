@@ -5,8 +5,9 @@ from tools.raman_saab.golden_pipeline.reconcile import reconcile
 ITEM = {"verdict": "afflicted", "signification": "mother"}
 
 
-def ans(decision="CONFIRM", verdict="afflicted", sig="mother", ok=True):
-    return {"decision": decision, "verdict": verdict, "signification": sig,
+def ans(decision="CONFIRM", verdict="afflicted", sig="mother", ok=True, kind=None):
+    kind = kind or ("observation" if decision == "REJECT" else "conclusion")
+    return {"decision": decision, "kind": kind, "verdict": verdict, "signification": sig,
             "quote_ok": ok, "decisive_quote": "q", "quote_line": 1}
 
 
@@ -66,3 +67,23 @@ class TestCaseInsensitive:
         r = reconcile(ITEM, {"A": ans(sig="Mother"), "B": ans(sig=" mother ")})
         assert r["outcome"] == "CONFIRMED" and r["signification"] == "Mother"
         assert r["revised"] is False
+
+
+class TestNotFound:
+    def test_agreed_not_found_rejects_are_not_terminal(self):
+        """Both reviewers saw no conclusion in the passage: NOT_FOUND, re-queueable."""
+        r = reconcile(ITEM, {"A": ans("REJECT", None, kind="not_found"),
+                             "B": ans("REJECT", None, kind="not_found")})
+        assert r["outcome"] == "NOT_FOUND"
+
+    def test_mixed_reject_kinds_stay_rejected(self):
+        """One observation/splice reject among the agreeing answers keeps it terminal."""
+        r = reconcile(ITEM, {"A": ans("REJECT", None, kind="not_found"),
+                             "B": ans("REJECT", None, kind="splice")})
+        assert r["outcome"] == "REJECTED"
+
+    def test_majority_not_found_is_not_found(self):
+        """2-of-3 REJECT majority, all not_found -> NOT_FOUND."""
+        r = reconcile(ITEM, {"A": ans("REJECT", None, kind="not_found"), "B": ans(),
+                             "C": ans("REJECT", None, kind="not_found")})
+        assert r["outcome"] == "NOT_FOUND"

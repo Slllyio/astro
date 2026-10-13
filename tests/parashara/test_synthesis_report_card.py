@@ -5,7 +5,7 @@ card covers every synthesis verdict, skips rather than stubs positions-only char
 """
 from __future__ import annotations
 
-from tools.parashara.synthesis_report_card import SYNTH_TO_RAMAN, score
+from tools.parashara.synthesis_report_card import SYNTH_TO_RAMAN, score, score_field_case
 from app.parashara.synthesis.judgment import VERDICT_MEANING
 
 
@@ -21,3 +21,11 @@ class TestReportCard:
         assert 0 <= s["exact"] <= s["within1"] <= s["total"]
         assert set(s["baselines"]) == {"ch11", "richer"}
         assert sum(s["confusion"].values()) == s["total"]
+
+    def test_field_case_scores_every_verdict_and_event_with_chance(self):
+        """Track 2 scores all 50 owner-confirmed verdicts and all 14 dated events, each event
+        carrying its chance rate (so a timing hit is never read without its base rate)."""
+        f = score_field_case()
+        assert f["static_total"] == 50
+        assert len(f["events"]) == 14
+        assert all(0.0 <= e["chance"] <= 1.0 for e in f["events"])

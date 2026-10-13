@@ -28,7 +28,9 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 from collections import Counter
+from pathlib import Path
 from typing import Any, Optional
 
 from app.parashara.chart.cast import cast as cast_parashara
@@ -94,6 +96,60 @@ def score(limit: Optional[int] = None) -> dict[str, Any]:
             "confusion": dict(confusion), "baselines": base}
 
 
+_FIELD_CASE = Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "field_case_01.json"
+_LIFE_SPAN = 80.0   # years over which the timing chance-rate is measured
+
+
+def score_field_case() -> dict[str, Any]:
+    """Track 2 — the one REAL-OUTCOME chart (anonymised, owner-confirmed): its per-signification
+    verdicts scored against the synthesis house verdict, and its dated events against the dasha
+    windows that target each event's house.
+
+    Event -> house(s) is borrowed from the Raman engine's cited event taxonomy (tooling only; the
+    parashara engine itself never imports it). Every timing hit is printed beside its CHANCE RATE —
+    the share of life the event's houses are targeted anyway — because window targeting is broad and
+    a hit that chance would deliver 90% of the time proves little.
+    """
+    from app.parashara.synthesis.activation import active_windows
+    from app.raman_saab.rectification.events import EVENT_TAXONOMY
+
+    case = json.loads(_FIELD_CASE.read_text(encoding="utf-8"))
+    b = case["birth"]
+    reading = read(cast_parashara(year=b["year"], month=b["month"], day=b["day"], hour=b["hour"],
+                                  minute=b["minute"], tz_offset=b["tz_offset"],
+                                  latitude=b["latitude"], longitude=b["longitude"]))
+    report = synthesize(reading)
+
+    static_total = static_exact = static_w1 = 0
+    static_misses: list[str] = []
+    for house_s, sigs in case["confirmed_verdicts"].items():
+        synth = report.houses[int(house_s)].verdict
+        mapped = SYNTH_TO_RAMAN[synth]
+        for sig, truth in sigs.items():
+            d = _dist(mapped, truth)
+            static_total += 1
+            static_exact += d == 0
+            static_w1 += d <= 1
+            if d >= 2:
+                static_misses.append(f"H{house_s}.{sig}: synthesis {synth} vs truth {truth}")
+
+    birth_year = b["year"] + (b["month"] - 1 + b["day"] / 31.0) / 12.0
+    events: list[dict[str, Any]] = []
+    for e in case["events"]:
+        spec = EVENT_TAXONOMY[e["event_type"]]
+        houses = (spec.house, *spec.aux_houses)
+        age = e["year"] + ((e.get("month") or 6) - 0.5) / 12.0 - birth_year
+        windows = active_windows(reading, houses)
+        hit = next((w for w in windows if w.start_age <= age < w.end_age), None)
+        covered = sum(max(0.0, min(w.end_age, _LIFE_SPAN) - w.start_age)
+                      for w in windows if w.start_age < _LIFE_SPAN)
+        events.append({"event": e["event_type"], "year": e["year"], "houses": houses,
+                       "hit": hit is not None, "quality": hit.quality if hit else None,
+                       "chance": min(1.0, covered / _LIFE_SPAN)})
+    return {"static_total": static_total, "static_exact": static_exact, "static_within1": static_w1,
+            "static_misses": static_misses, "events": events}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--limit", type=int, default=None, help="score only the first N verdicts")
@@ -120,6 +176,21 @@ def main() -> None:
     print(f"\n[report-card] synthesis agrees with Raman on {s['exact']}/{n} exact, "
           f"{s['within1']}/{n} within-1, {s['inversions']} inversions")
     print("(agreement with RAMAN, not 'BPHS accuracy' — a fixed yardstick for before/after deltas.)")
+
+    f = score_field_case()
+    n2 = f["static_total"]
+    print(f"\nTrack 2 — field_case_01 (one real, owner-confirmed chart; Lahiri cast):")
+    print(f"  static: exact={f['static_exact']}/{n2}  within-1={f['static_within1']}/{n2}")
+    for m in f["static_misses"]:
+        print(f"    miss  {m}")
+    hits = sum(e["hit"] for e in f["events"])
+    mean_chance = sum(e["chance"] for e in f["events"]) / len(f["events"])
+    print(f"  timing: {hits}/{len(f['events'])} events fall in a window targeting their house "
+          f"(chance would give ~{mean_chance:.0%} — read the hits against that)")
+    for e in f["events"]:
+        mark = f"HIT ({e['quality']})" if e["hit"] else "miss"
+        print(f"    {e['event']:22s} {e['year']}  houses{e['houses']}  {mark:18s} "
+              f"chance {e['chance']:.0%}")
 
 
 if __name__ == "__main__":

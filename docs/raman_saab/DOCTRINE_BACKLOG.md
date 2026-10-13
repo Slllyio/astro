@@ -5449,3 +5449,21 @@ Bangalore) since synthetic charts carry no Shadbala; H7.L.6c by debility alone.
 - `_branch` (slot selection) still uses raw `is_powerful`, so a combust lord with a high number can
   be shown its `fortified` text while `IsStrong` says it is not strong. Switching `_branch` to
   effective strength is presentation-only and would make the two agree; measure first.
+
+## Nodal drishti -- RESOLVED 2026-10-13 (user: "follow Raman only, even for Rahu/Ketu aspects")
+
+The Raman engine keeps **Rahu/Ketu = 7th aspect only**. Nothing in the engine changed; the
+CLAUDE.md lock row was corrected because it claimed Raman gave the nodes NO aspect.
+
+- Raman's aspect chapter (HPA-8) lists the 7th for all planets and the special aspects of Mars,
+  Jupiter and Saturn; it never mentions the nodes.
+- His worked judgments count the nodes' 7th repeatedly: HTJAH-I:2062 "Lagna is occupied by Ketu
+  and aspected by Rahu. Lagna is therefore weak"; HTJAH-I:2221 (Jupiter with Rahu "aspected by ...
+  Ketu"), 2720 (Ketu in the 2nd "aspected by Rahu"), 6092 ("aspected by Rahu or the Sun").
+- No worked chart uses a nodal 5th or 9th. HTJAH-I:7107 "Rahu aspects Upapada" is in a Jaimini
+  passage (sign aspects), a different system -- not evidence for Parashari node aspects.
+- "No nodal drishti" would contradict Raman's own text, so it was rejected.
+- `app/core/drishti_argala.py` (legacy engine; used by bhava_judge, gochara_engine,
+  yoga_library) keeps 5/9. It is not Raman's engine; changing it is a separate decision.
+- Guard: `test_drishti.py::test_ramans_ketu_lagna_aspected_by_rahu` (new) and the existing
+  `test_nodes_cast_only_the_seventh_NOT_5_9`.

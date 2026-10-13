@@ -206,7 +206,7 @@ Sun 19 / 9.5 · Moon 25 / 12.5 · Mars 15 / 7.5 · Mercury 12 / 6 · Jupiter 15 
 |---|---|---|---|
 | D1 | **Ayanamsa = Raman** (`SIDM_RAMAN`) by default; Lahiri configurable | his book charts are cast on it; ~0.9–1.4° behind Lahiri | CLAUDE.md Lahiri lock — namespaced to `app/raman_saab/`, never mutates global |
 | D2 | **Bhava (Chalita / Sripati cusp) judged, not Rashi** | HTJAH-I:973 verbatim | repo whole-sign (whole-sign retained for lordship/aspects only) |
-| D3 | **Rahu/Ketu cast only the 7th aspect** (no special 5/9) | HTJAH-II nodes used by opposition only | `app/core/drishti_argala.py` 5/9 (Bhasin/Nadi) — own table, guard test |
+| D3 | **Rahu/Ketu cast only the 7th aspect** (no special 5/9) | HPA-8 silent on nodes; Raman's judgments count their 7th (HTJAH-I:2062 "Lagna is occupied by Ketu and aspected by Rahu"), never a 5th/9th. Re-confirmed 2026-10-13, user: "follow Raman only" | `app/core/drishti_argala.py` 5/9 (Bhasin/Nadi) — own table, guard test |
 | D4 | **Fixed naisargika + bhava karakas** (no Jaimini chara) | HTJAH judges via fixed karakas | orthogonal to the Jaimini chara-karaka lock |
 | D5 | **Real Shadbala in Rupas** arbitrates contradictions | GBB Ch.3–10 | — (re-derived to Raman's own numbers) |
 

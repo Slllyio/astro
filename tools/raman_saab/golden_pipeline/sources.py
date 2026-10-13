@@ -28,7 +28,7 @@ def book_path(root: Path, book: str) -> Path:
 
 
 def read_lines(path: Path) -> list[str]:
-    return path.read_text(encoding="utf-8", errors="ignore").splitlines()
+    return path.read_text(encoding="utf-8", errors="replace").splitlines()
 
 
 def parse_citation(citation: str) -> tuple[str, int, int]:
@@ -36,7 +36,10 @@ def parse_citation(citation: str) -> tuple[str, int, int]:
     if not m:
         raise ValueError(f"unparseable citation: {citation!r}")
     start = int(m.group(2))
-    return m.group(1), start, int(m.group(3) or start)
+    end = int(m.group(3) or start)
+    if end < start:
+        raise ValueError(f"inverted range: {citation!r}")
+    return m.group(1), start, end
 
 
 def passage(lines: list[str], start: int, end: int, context: int = 40) -> str:
@@ -47,6 +50,7 @@ def passage(lines: list[str], start: int, end: int, context: int = 40) -> str:
 
 def normalise(text: str) -> str:
     text = re.sub(r"-\s*\n\s*", "", text)          # de-hyphenate across hard wraps
+    text = re.sub(r"(?<=\w)-(?=\w)", "", text)    # compound words wrapped at their hyphen
     text = re.sub(r"[^\w]+", " ", text.lower())    # punctuation/quotes/dashes -> space
     return " ".join(text.split())
 

@@ -23,6 +23,11 @@ class TestParseCitation:
         with pytest.raises(ValueError):
             S.parse_citation("Raman somewhere")
 
+    def test_inverted_range_raises(self):
+        """A citation whose end precedes its start is rejected, not accepted."""
+        with pytest.raises(ValueError):
+            S.parse_citation("NH:20-10")
+
 
 class TestPassage:
     def test_passage_is_line_numbered_with_context(self):
@@ -58,6 +63,17 @@ class TestQuoteFound:
         """A 1-3 word quote matches anything and proves nothing."""
         lines = S.read_lines(EXCERPT)
         assert not S.quote_found(lines, "the native", 6)
+
+    def test_compound_word_wrapped_at_hyphen_matches(self):
+        """A compound word OCR-wrapped at its hyphen still matches the true quote."""
+        lines = ["The native was a well-", "known scholar of the sastras in his day."]
+        assert S.quote_found(lines, "was a well-known scholar of the sastras", 1)
+
+    def test_bad_byte_does_not_fuse_words(self, tmp_path):
+        """An undecodable byte between words must not fuse them together."""
+        p = tmp_path / "t.md"
+        p.write_bytes(b"lost his\xffmother very early in life")
+        assert S.quote_found(S.read_lines(p), "lost his mother very early", 1)
 
 
 class TestBookPath:

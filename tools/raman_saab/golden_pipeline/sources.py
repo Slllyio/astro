@@ -70,6 +70,7 @@ def quote_in_windows(lines: list[str], quote: str, wins: list[list[int]]) -> boo
 
 def normalise(text: str) -> str:
     text = re.sub(r"-\s*\n\s*", "", text)          # de-hyphenate across hard wraps
+    text = re.sub(r"(?<=\w)-[ \t]+(?=\w)", "", text)  # OCR 'Putra- karaka': a wrap copied flat
     text = re.sub(r"(?<=\w)-(?=\w)", "", text)    # compound words wrapped at their hyphen
     text = re.sub(r"[^\w]+", " ", text.lower())    # punctuation/quotes/dashes -> space
     return " ".join(text.split())

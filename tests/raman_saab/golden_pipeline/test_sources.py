@@ -179,3 +179,11 @@ class TestLocate:
         item = {"book": "NH", "verdict_prose": "absent prose words here and there",
                 "citations": ["NH:120"]}
         assert S.locate(item, _book(), {"id": "NH.chart_99"}) == ("NOT_LOCATED", [])
+
+
+class TestHyphenSpaceOcr:
+    def test_quote_with_hyphen_space_matches_hard_wrapped_source(self):
+        """A reviewer copying an OCR 'Putra- karaka' (hyphen, space) must match the wrapped source."""
+        lines = ["spoiled by the presence of Putra- ", "karaka plus the influence of Mars and Saturn."]
+        assert S.quote_in_windows(lines, "spoiled by the presence of Putra- karaka plus the influence",
+                                  [[1, 2]])

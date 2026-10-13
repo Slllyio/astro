@@ -37,11 +37,12 @@ class TestPopulationGuard:
 
 class TestAmendmentPopulations:
     def test_populations_partition_correctly(self):
-        """store/extension split A+B by store membership; tierC never overlaps A+B."""
+        """store/extension split A+B by store membership; tier C is never read (AMENDMENT_2)."""
         from tools.parashara.astrobank.transit_tests import select_people
         tier = {"s1": "A", "s2": "C", "e1": "B", "e2": "C", "x": "A"}
         cast, store = {"s1", "s2", "e1", "e2"}, {"s1", "s2", "x"}
         assert select_people("store", cast, store, tier) == {"s1"}
         assert select_people("extension", cast, store, tier) == {"e1"}
         assert select_people("pooled", cast, store, tier) == {"s1", "e1"}
-        assert select_people("tierC", cast, store, tier) == {"s2", "e2"}   # in or out of store
+        with pytest.raises(ValueError):
+            select_people("tierC", cast, store, tier)

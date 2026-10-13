@@ -27,7 +27,6 @@ import numpy as np
 import pandas as pd
 import swisseph as swe
 
-from app.empirical.tournament.holdout import HoldoutGuard
 from app.parashara.primitives.graha_drishti import aspects_sign
 
 _YEAR = 365.2425
@@ -45,7 +44,7 @@ TESTS = [
 ]
 
 
-POPULATIONS = ("store", "extension", "pooled", "tierC")
+POPULATIONS = ("store", "extension", "pooled")   # tierC withdrawn: AMENDMENT_2
 
 
 def select_people(population: str, cast: set[str], store_pop: set[str],
@@ -58,8 +57,6 @@ def select_people(population: str, cast: set[str], store_pop: set[str],
         return ab - store_pop
     if population == "pooled":
         return ab
-    if population == "tierC":
-        return {p for p in cast if tier.get(p) == "C"}
     raise ValueError(population)
 
 
@@ -108,12 +105,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--store", type=Path, action="append", required=True,
                     help="Parashara store dir; repeat to pool (e.g. primary + extension)")
     ap.add_argument("--population", choices=POPULATIONS, default="store",
-                    help="store = original run (default); extension / pooled = AMENDMENT_1 A+B; "
-                         "tierC = the held-out confirmation, readable ONCE via the ledger")
-    ap.add_argument("--ledger", type=Path, default=Path("data/empirical/holdout_ledger.json"))
+                    help="store = original run (default); extension / pooled = AMENDMENT_1 A+B "
+                         "(the tier-C confirmation is withdrawn by AMENDMENT_2)")
     a = ap.parse_args(argv)
-    if a.population == "tierC":
-        HoldoutGuard(a.ledger).claim("double_transit_amendment1_tierC")
     swe.set_sid_mode(swe.SIDM_LAHIRI)
     rng = np.random.default_rng(20260724)
 

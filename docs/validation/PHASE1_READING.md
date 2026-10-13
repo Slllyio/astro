@@ -44,7 +44,7 @@ is **NOT met** on either engine: most tests are UNDERPOWERED, not bounded. Hones
   only way to close them. More house-AUC tests at the same n add nothing.
 
 ## Not covered
-- Raman 91-rule enrichment: per-rule results were never persisted. Moves to Phase 4.2.
+- Raman 91-rule enrichment: moved to Phase 4.2. **Correction (2026-10-14):** the per-rule results WERE persisted (`raman/rule_enrichment.parquet`, 91 rows); the claim that they were not was wrong. Phase 4.2 pools them.
 - Raman `H8_class_match`: a bare rate with no null reference.
 - Clerical: the prereg names `transit_results_pooled.json`. It was written to `parashara_ext/`,
   because the extension store was listed first, to keep the primary store untouched. Same file;

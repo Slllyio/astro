@@ -13,6 +13,17 @@ Three states by the dignity of the OCCUPIED sign:
 This is the same "Prabuddha / Jagrad" state ch.11's bhava judgment keys its own-or-exalt prosperity
 clause on (BPHS-11:14) — encoded here as a first-class avastha in its own right, using the
 relationship doctrine of ch.3.
+
+"Enemy's sign" = NATURAL (naisargika) enmity — a DELIBERATE READING OF A CONTESTED SLOKA (doctrine
+review 2026-10-13: DOCTRINE-CONTESTED, HOLD). Sl.5 uses only the three-way friend/neutral/enemy
+vocabulary; the compound (panchadha) reading is a slight favourite on chapter context (Deeptadi,
+sl.8-10, is compound by its five-fold wording) and the ch.3 note calls compound "the final
+relationship", but no sloka settles it, the ch.3 sl.58 line that might is OCR-corrupt (:1074), and
+the translator himself reads "inimical sign" as natural-first in ch.9 (:427-442). The report card
+showed the natural-enemy part of Supta carrying no signal vs Raman — that may PRIORITISE a re-look,
+never justify a switch. Reopen only on: a legible ch.3 sl.58 / Sanskrit; a second BPHS translation
+keying Jagradadi to panchadha; or a Raman text stating the relationship type. A reopened measurement
+must include the natural-NEUTRAL + temporary-enemy cases a compound switch would newly mark asleep.
 """
 from __future__ import annotations
 

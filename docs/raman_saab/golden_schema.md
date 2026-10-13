@@ -113,10 +113,13 @@ Keyed by house tag `"H1".."H12"`. Each value:
   `insufficient-evidence` \| `DRAFT`.
 * `verdict_prose` — the exact Raman sentence(s) the verdict is read from (kept so a
   human can re-judge). Drives the keyword lexicon (see extractor docs).
-* `verdict_review` — `DRAFT` \| `CONFIRMED`. **This is the assertion gate.** Only
-  `CONFIRMED` verdicts are asserted in Track B; `DRAFT` rows are skipped (the engine
-  is allowed to disagree with an un-reviewed machine guess) and merely counted by a
-  reporting test.
+* `verdict_review` ∈ {`DRAFT`, `CONFIRMED`, `DUPLICATE`, `CONTESTED`} (enforced in
+`tests/raman_saab/test_goldens.py` `_REVIEWS`). DRAFT = awaiting adjudication (a DRAFT whose
+`review_note` begins `REJECTED` was adjudicated and is never re-queued); DUPLICATE = the same
+nativity × matter scores on another record; CONTESTED = blind readings disagree with no 2-of-3
+majority. Only CONFIRMED is scored. New rows are adjudicated by
+`tools/raman_saab/golden_pipeline` (design: docs/superpowers/specs/2026-10-13-golden-pipeline-design.md).
+  **This is the assertion gate.** Only `CONFIRMED` verdicts are asserted in Track B; other states are skipped (the engine is allowed to disagree with an un-reviewed guess) and merely counted by a reporting test.
 
 A verdict literal of `"DRAFT"` (as opposed to a real ordinal with
 `verdict_review:"DRAFT"`) is also treated as un-reviewed and skipped — both
@@ -156,7 +159,12 @@ full `birth`; Track B also needs ≥1 `CONFIRMED` verdict). Typical values:
 5. Every `stated_positions[*]` has exactly one of `lon`/`sign`, a `bhava`, and a
    valid `position_source`.
 6. Every `expected_verdicts["H<n>"]` has `1 ≤ n ≤ 12`, a `verdict` ∈ the allowed
-   set (incl. `DRAFT`), and `verdict_review` ∈ `{DRAFT, CONFIRMED}`.
+   set (incl. `DRAFT`), and `verdict_review` ∈ {`DRAFT`, `CONFIRMED`, `DUPLICATE`, `CONTESTED`} (enforced in
+`tests/raman_saab/test_goldens.py` `_REVIEWS`). DRAFT = awaiting adjudication (a DRAFT whose
+`review_note` begins `REJECTED` was adjudicated and is never re-queued); DUPLICATE = the same
+nativity × matter scores on another record; CONTESTED = blind readings disagree with no 2-of-3
+majority. Only CONFIRMED is scored. New rows are adjudicated by
+`tools/raman_saab/golden_pipeline` (design: docs/superpowers/specs/2026-10-13-golden-pipeline-design.md).
 7. `track_eligibility` ⊆ `{"A","B","3"}`, non-empty.
 8. `confidence` ∈ `[0,1]`.
 9. `expected_longevity` is `null`, or a `{years,months,days}` int-triple, or a

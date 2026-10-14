@@ -51,6 +51,9 @@ engine's `timer_set` + `bhukti_tier` + `lords_associated`, its own dashas, Raman
 prediction, traced by diagnostic to a chart-level selection effect (cases' charts are activated ~1 point
 less over their whole lives; identical under a scrambled dasha). Within-person: null at both levels.
 C1 stays unread. Full reading: `PHASE3R_READING.md`.
+**Phase 3P (pratyantar level, Raman engine; user request):** the PD lord activating the event's house
++0.009 (−0.010..+0.029) and MD+AD+PD convergence −0.005 (−0.022..+0.012), both BOUNDED_NULL, with the
+within-person effect null too. The placebo is indistinguishable. See `PHASE3P_READING.md`.
 
 ## Stopping rule: triggered, and honoured
 No new outcome questions are opened. Not run, by design: 4.4 vocation, 4.5 lifespan, 4.6 H5 codings,

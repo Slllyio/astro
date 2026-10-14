@@ -71,3 +71,19 @@ The two axes are reported side by side, never averaged.
 `docs/validation/`: SESOI_PREREG, BOUNDS + PHASE1_READING, RELIABILITY + PHASE2_READING,
 PHASE3_TIMING_PREREG + AMENDMENT_1 + RESULTS + DEEP + READING, PHASE4_{1,2,3}_*_PREREG + RESULTS,
 PHASE4_READING. Code: `tools/validation/`. Result records: `E:/astro/data/validation/results.jsonl`.
+
+## Handoff: where everything is (for the next session)
+- **Code + docs:** branch `validation`, worktree `E:\tmp\astro-validation` (local only, not pushed;
+  never touch origin/main). It is varga-corroboration + `app/empirical` + `tools/validation/`.
+- **Worktree data links:** `data/knowledge_library` is a junction to the varga worktree's copy, and
+  `app/medini/data/*.parquet` are hard links to varga's (gitignored; needed for the full suite).
+- **Data outputs:** `E:/astro/data/validation/` holds the result records (`results.jsonl`), the activation
+  stores (Parashara and Raman engine, both frames), and per-phase JSON. The Parashara extension store
+  is at `E:/astro/data/astro_databank/derived/parashara_ext/`.
+- **Holdouts, all unread:** C1 / C2 (manifest `tools/validation/holdout_manifest_tierC1.json`), Gauquelin
+  25% (salt `gauquelin-screening-v1`), Wikidata. The ledger `data/empirical/holdout_ledger.json` has no claims.
+- **Open, by user choice only:** Yogini dasha or Jaimini chara dasha timing, each needing its own
+  prereg. Any new risk-set test must match on latitude band, or report within-person E (Phase 3R lesson).
+- **Leftover, harmless:** varga worktree has an uncommitted partial `build_store.py` edit; its finished
+  version is committed here (64721b38). It can be discarded.
+- **Not done:** bringing `validation` into `main-local` (a user decision).

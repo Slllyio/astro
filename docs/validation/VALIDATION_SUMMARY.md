@@ -44,6 +44,14 @@ that size:
 - Deviations recorded in the results files: the Phase 4.2 estimator (separation), 11 Gauquelin rows
   with a missing tz, and one wrong statement in Phase 1 (per-rule results were in fact persisted).
 
+## Addendum (2026-10-14): Phase 3R, Raman's own engine (user request)
+The one open path, "Raman's own judge driving the timing", was pre-registered and run: the Raman
+engine's `timer_set` + `bhukti_tier` + `lords_associated`, its own dashas, Raman ayanamsa and
+`maraka_set`. **AD level: bounded null (+0.003). MD level: negative (−0.018)**, the opposite of the
+prediction, traced by diagnostic to a chart-level selection effect (cases' charts are activated ~1 point
+less over their whole lives; identical under a scrambled dasha). Within-person: null at both levels.
+C1 stays unread. Full reading: `PHASE3R_READING.md`.
+
 ## Stopping rule: triggered, and honoured
 No new outcome questions are opened. Not run, by design: 4.4 vocation, 4.5 lifespan, 4.6 H5 codings,
 4.7 time twins, Phase 5 composite/ML. Holdouts C1 (11,542), C2 (11,404), Gauquelin (25%) and

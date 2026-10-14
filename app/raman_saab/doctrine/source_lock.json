@@ -3,6 +3,10 @@
     "line_count": 347,
     "sha256": "62304e9502869261a1893f97d2790f65b6027e58b64ede0de90ac75f8593be2e"
   },
+  "bphs/chapter_007_divisional-consideration.md": {
+    "line_count": 1028,
+    "sha256": "3997642373d231346b0455b14932edddf867028d61f763863182a07ecac1b187"
+  },
   "graha_bhava_balas_raman/chapter_001_chapter.md": {
     "line_count": 218,
     "sha256": "299f8ccef56e1bbcbec6410da893aa2153ff6380832c464840b9d2ecdc7ea6c5"
@@ -14,6 +18,10 @@
   "graha_bhava_balas_raman/chapter_010_ishta-and-kashta-phalas.md": {
     "line_count": 1412,
     "sha256": "9e43401be8d41851e944a176d2bab004950890319026156c6044c8e80c9d619e"
+  },
+  "hindu_predictive_astrology_raman/chapter_011_the-shadvargas.md": {
+    "line_count": 201,
+    "sha256": "5f35904d050ed505dd4802d28b9d123797efab0d318495dc80ebb2cfb678eee3"
   },
   "hindu_predictive_astrology_raman/chapter_018_results-of-ascending-signs.md": {
     "line_count": 327,
@@ -79,6 +87,10 @@
     "line_count": 17062,
     "sha256": "c8dd6a38d64fbf9c107bd24ae6bb9651956812bf90b1a678117848d0392b01c4"
   },
+  "phaladeepika/chapter_05_chapter-3-divisions-of-the-zodiac.md": {
+    "line_count": 334,
+    "sha256": "38a5daddf9f3f3a12886008e9a98e0654c0718a14664fccbc1234a6e4776ab6b"
+  },
   "prasna_tantra_raman/chapter_002_bhava-prasna.md": {
     "line_count": 486,
     "sha256": "b03b99288138a0ed70ae92dc8b38e13ae92b2967e0ca2ecdaa4fc2672601094e"
@@ -94,6 +106,14 @@
   "studies_jaimini_raman/chapter_009_summary.md": {
     "line_count": 1600,
     "sha256": "1aa61e4137c9b445d67279e19e79f221bd20f83108d5af633fb50ed4fa295b13"
+  },
+  "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md": {
+    "line_count": 12053,
+    "sha256": "c64292c49c7ae70e2fa79bdea0142b10b9c4fa0cbcbdabd9ac2c55f30e74bde1"
+  },
+  "three_hundred_combinations_hocr/chapter_001_full-text-unsplit.md": {
+    "line_count": 3237,
+    "sha256": "650f912639d99197309c873d8357ea760f6cf6e496b9420c12f7c0421ba11584"
   },
   "three_hundred_combinations_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 8984,

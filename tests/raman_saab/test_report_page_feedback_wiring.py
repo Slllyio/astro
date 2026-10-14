@@ -53,7 +53,9 @@ class TestWiring:
         they went and read, and the claim must not survive that — a wrong before_reading label
         would put a satisfaction survey into the evidence column."""
         assert "function instWatchNavigation()" in page
-        assert "if(n !== 12) INST_CONTEXT = 'after_reading';" in page
+        # merged 2026-10-14: the colophon is page 9 in the seven-movement layout (was 12)
+        assert "if(n !== COLOPHON_PAGE) INST_CONTEXT = 'after_reading';" in page
+        assert "const COLOPHON_PAGE = 9;" in page
 
     def test_the_gate_keeps_the_later_parts_shut_until_part_a_is_done(self, page):
         assert "class:'fbi-locked'" in page

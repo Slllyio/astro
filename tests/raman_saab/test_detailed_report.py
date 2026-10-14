@@ -299,18 +299,17 @@ class TestDetailedReport:
         assert d is not None and d.signification == "incarceration" and d.inverted_warning
         assert "WARNING" in markdown and "atlas-proven INVERTED channel" in markdown
 
-    def test_your_reading_is_first_and_jargon_free(self, report, markdown):
+    def test_your_reading_is_first_and_jargon_free(self, report, markdown, section_text):
         """'Your Reading' is the section right after the title/preamble, before any technical
         content — and it must NEVER leak the jargon that made earlier report versions hard to
         understand (Shadbala, bindus, tier names, MD/AD, raw house numbers)."""
         title_pos = markdown.find("# Detailed reading")
         pr_pos = markdown.find("## Your Reading")
-        info_pos = markdown.find("## Information content")
-        assert 0 <= title_pos < pr_pos < info_pos
+        assert 0 <= title_pos < pr_pos
 
         from app.raman_saab.detailed_report import _fold_ascii
         pr = report.plain_reading
-        section = markdown[pr_pos:info_pos]
+        section = section_text(markdown, "plain_reading")
         # the renderer ASCII-folds output (em dashes -> hyphens etc.); fold both sides to compare
         assert _fold_ascii(pr.opening) in section
         for _theme, para in pr.life_paragraphs:
@@ -551,16 +550,13 @@ class TestDetailedReport:
         src = inspect.getsource(_dasha_transit_confluences)
         assert "judge_house" not in src and "rollup" not in src
 
-    def test_markdown_shows_dasha_transit_confluence_section(self, markdown):
+    def test_markdown_shows_dasha_transit_confluence_section(self, markdown, section_text):
         """The new section is nested right after Gochara, before Divisional deep-reads, and
         cites the same transit-secondary-to-Dasha doctrine as the outlook above it."""
         assert "## Dasha x Transit confluence" in markdown
-        i = markdown.find("## Current transits (Gochara) with Vedha")
-        j = markdown.find("## Dasha x Transit confluence")
-        k = markdown.find("## Divisional deep-reads")
-        assert 0 <= i < j < k
-        assert "HTJAH-II:4679" in markdown[j:k]
-        assert "In simple terms:" in markdown[j:j + 600]
+        seg = section_text(markdown, "dasha_transit")
+        assert "HTJAH-II:4679" in seg
+        assert "In simple terms:" in seg[:600]
 
     def test_yoga_timing_never_names_a_whole_chart_pattern_yoga(self, report):
         """The Nabhasa whole-chart-distribution yogas (Asraya/Dala/Sankhya/Akriti) and the
@@ -637,16 +633,13 @@ class TestDetailedReport:
         src = inspect.getsource(_yoga_dasha_confluences)
         assert "judge_house" not in src and "rollup" not in src
 
-    def test_markdown_shows_yoga_dasha_timing_section(self, markdown):
+    def test_markdown_shows_yoga_dasha_timing_section(self, markdown, section_text):
         """The new section sits right after Yogas, before Ashtakavarga, and states the 3-family
         coverage gap plainly rather than implying full yoga coverage."""
         assert "## Yoga x Dasha timing" in markdown
-        i = markdown.find("## Yogas present in this chart")
-        j = markdown.find("## Yoga x Dasha timing")
-        k = markdown.find("## Ashtakavarga")
-        assert 0 <= i < j < k
-        assert "HTJAH-I:4324" in markdown[j:k]
-        assert "coverage gap" in markdown[j:k]
+        seg = section_text(markdown, "yoga_timing")
+        assert "HTJAH-I:4324" in seg
+        assert "coverage gap" in seg
 
     def test_house_strength_covers_all_twelve_houses(self, report):
         """One row per house, verdict unchanged from the proforma rollup, ranks 1..12 with no
@@ -1046,17 +1039,22 @@ class TestRulerOfNativity:
         assert set(_RULER_TEMPERAMENT) == {"Sun", "Mars", "Mercury", "Jupiter", "Venus",
                                            "Saturn"}
 
-    def test_markdown_shows_ruler_section(self, markdown):
-        """The section sits right after Chart signature, before Planetary positions, citing
-        the first-impression doctrine, with the method-not-prediction framing."""
+    def test_markdown_shows_ruler_section(self, markdown, section_text):
+        """The section follows Chart signature, citing the first-impression doctrine, with the
+        method-not-prediction framing. (Merged 2026-10-14: sliced via `section_text` rather than
+        to "## Planetary positions", which the reading arc now places in Movement III, after the
+        integrated reading -- the old hard-coded slice swallowed that section's frame.)"""
         i = markdown.find("## Chart signature")
         j = markdown.find("## Ruler of the nativity")
-        k = markdown.find("## Planetary positions")
-        assert 0 <= i < j < k
-        section = markdown[j:k]
+        assert 0 <= i < j
+        section = section_text(markdown, "ruler")
         assert "HTJAH-I:16001-16002" in section
         assert "HTJAH-I:6248" in section
-        assert "not a prediction" in section
+        # the per-section "not a prediction" restatement was consolidated OUT by user decision
+        # (hedge consolidation, 2026-08-07): the frame speaks once in the header plus the
+        # guard trio. test_sitting.py::TestTheHedgeCensus pins the census; this section must
+        # NOT re-grow its own copy.
+        assert "not a prediction" not in section
         assert "In simple terms:" in section
 
 
@@ -1281,7 +1279,8 @@ class TestLifeChapters:
         assert "HPA-34:369-381" in section
         assert "HTJAH-I:8410-8411" in section
         assert "HTJAH-I:15950-15999" in section
-        assert "not a prediction" in section
+        # consolidated out (hedge consolidation, 2026-08-07) — see the ruler test above.
+        assert "not a prediction" not in section
         assert section.count("### ") >= 3 and "Mahadasha (" in section
         assert "- now" in section
 
@@ -1762,7 +1761,9 @@ class TestWave1ReportCompleteness:
         i = markdown.find('"Today for you (Muhurtha)"')
         assert i >= 0
         assert markdown.find("## Current transits (Gochara) with Vedha") < i
-        assert i < markdown.find("## Divisional deep-reads (Shodasavarga)")
+        # merged 2026-10-14: the arc places the divisionals in Movement III, so the timing
+        # close is now bounded by the summing-up movement rather than by the divisionals.
+        assert i < markdown.find("## VII. The summing up")
         window = markdown[i - 400:i + 600]
         assert "## Muhurtha" not in window                        # a pointer, not a section
         assert "computed live at view time" in window

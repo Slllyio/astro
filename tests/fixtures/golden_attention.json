@@ -1,0 +1,4994 @@
+{
+ "_about": "Which house Raman pronounced on in each of his own worked examples. Target is EXPERT ATTENTION, never life outcomes — clear of the astrobank firewall.",
+ "_source": "tests/fixtures/raman_goldens.jsonl",
+ "_distinct_from": "tests/fixtures/notable_attention.json scores EMPHASIS in free prose; this scores SELECTION in a targeted illustration. Related questions, not the same one. Report them apart; never pool them.",
+ "_split": "deterministic: sorted by id, alternating tune/holdout, frozen before scoring",
+ "_admission": "cast must reproduce the Lagna Raman states (records without one are kept but flagged lagna_confirmed=false)",
+ "_trivial_baselines": {
+  "always_top_house": {
+   "house": 7,
+   "precision_at_1": 0.258
+  },
+  "always_top_3": {
+   "houses": [
+    7,
+    9,
+    1
+   ],
+   "recall_at_3": 0.447
+  }
+ },
+ "_counts": {
+  "worked_examples": 224,
+  "admitted": 190,
+  "tune": 95,
+  "holdout": 95,
+  "rejected": {
+   "no usable birth data": 34
+  }
+ },
+ "charts": [
+  {
+   "id": "HTJAH-I.chart_09",
+   "book": "HTJAH-I",
+   "name": "Chart 9 (Libra Lagna, ordinary man, no travels)",
+   "birth": {
+    "dt": "1863-02-22T22:16:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:1177-1195"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_10",
+   "book": "HTJAH-I",
+   "name": "Chart 10 (Aquarius, saturnine, weak constitution)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:1197-1214"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_12",
+   "book": "HTJAH-I",
+   "name": "Chart 12 (Capricorn female, ill-health in Jupiter Dasa)",
+   "birth": {
+    "dt": "1918-10-16T14:20:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:1797-1819"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_15",
+   "book": "HTJAH-I",
+   "name": "Chart 15 (Aries, self-made high position after struggle)",
+   "birth": {
+    "dt": "1891-06-09T03:34:00",
+    "tz": 4.8544,
+    "lat": 18.8667,
+    "lon": 72.8167
+   },
+   "lagna_sign": 1,
+   "computed_lagna_sign": 1,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:1903-1918"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_17",
+   "book": "HTJAH-I",
+   "name": "Chart 17 (Taurus, legal distinction, unhappy re children)",
+   "birth": {
+    "dt": "1864-03-09T11:15:00",
+    "tz": 5.17,
+    "lat": 13.0,
+    "lon": 77.55
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:1937-1956"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_18",
+   "book": "HTJAH-I",
+   "name": "Chart 18 (Gemini, fortunes change, defamation acquitted)",
+   "birth": {
+    "dt": "1896-08-12T01:52:00",
+    "tz": 5.1722,
+    "lat": 13.0333,
+    "lon": 77.5833
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:1958-1974"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_20",
+   "book": "HTJAH-I",
+   "name": "Chart 20 (Cancer, all 3 factors afflicted)",
+   "birth": {
+    "dt": "1909-07-29T06:42:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:1995-2010"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_24",
+   "book": "HTJAH-I",
+   "name": "Chart 24 (Leo, attractive, chequered career)",
+   "birth": {
+    "dt": "1898-08-29T05:30:00",
+    "tz": 5.1722,
+    "lat": 16.8333,
+    "lon": 77.5833
+   },
+   "lagna_sign": 5,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2080-2092"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_29",
+   "book": "HTJAH-I",
+   "name": "Chart 29 (Scorpio, Moon-in-Lagna, well-off businessman)",
+   "birth": {
+    "dt": "1903-03-18T00:00:00",
+    "tz": 5.0,
+    "lat": 15.5333,
+    "lon": 75.0
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-I:2167-2183"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_31",
+   "book": "HTJAH-I",
+   "name": "Chart 31 (Sagittarius, career strides yet lacks happiness)",
+   "birth": {
+    "dt": "1903-10-21T10:43:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:2209-2232"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_33",
+   "book": "HTJAH-I",
+   "name": "Chart 33 (Aquarius cusp, six-planet 10th cannot rescue afflicted Lagna)",
+   "birth": {
+    "dt": "1910-10-31T13:41:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-I:2249-2262"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_35",
+   "book": "HTJAH-I",
+   "name": "Chart 35 (Aquarius, Jupiter-in-Lagna antidote, fortunate self-made)",
+   "birth": {
+    "dt": "1903-05-28T00:32:00",
+    "tz": 5.18,
+    "lat": 9.0,
+    "lon": 77.7,
+    "rectified": "Raman states Aquarius lagna + 'Pisces rises in the Navamsha' + Jupiter-in-Lagna + Saturn(Aq-lord)-in-own-sign (HTJAH-I:2264-2289). The printed '1-19 a.m.' puts the lagna 1.9deg into PISCES under the swisseph-Raman ayanamsa (wrong chart: Jupiter in the 12th); ~00:32 reproduces Raman's full structure (Aquarius 18deg, Pisces navamsa, Jupiter in Lagna). Rectified to the Raman-stated chart; H1 self=favourable unchanged."
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2272-2289"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_38",
+   "book": "HTJAH-I",
+   "name": "Chart 38 (Speaker in Indian State, Venus pivotal)",
+   "birth": {
+    "dt": "1893-10-21T04:01:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2594-2611"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_39",
+   "book": "HTJAH-I",
+   "name": "Chart 39 (Loss of eye-sight, every vision factor afflicted)",
+   "birth": {
+    "dt": "1883-03-24T06:00:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2720-2737"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_40",
+   "book": "HTJAH-I",
+   "name": "Chart 40 (Inherited an empire, all three pillars strong)",
+   "birth": {
+    "dt": "1895-12-14T03:05:00",
+    "tz": 0.0,
+    "lat": 52.85,
+    "lon": 0.5
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2739-2765"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_41",
+   "book": "HTJAH-I",
+   "name": "Chart 41 (Rs. 1500/month, Raja-Yoga in 2nd)",
+   "birth": {
+    "dt": "1900-02-04T04:00:00",
+    "tz": 6.1,
+    "lat": 23.0,
+    "lon": 91.5
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2767-2786"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_42",
+   "book": "HTJAH-I",
+   "name": "Chart 42 (Ordinary man Rs. 50-60/month, Dwirdwadasa)",
+   "birth": {
+    "dt": "1909-07-03T21:14:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2788-2805"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_43",
+   "book": "HTJAH-I",
+   "name": "Chart 43 (Sound finances, no debt, neecha-bhanga Jupiter)",
+   "birth": {
+    "dt": "1890-08-24T20:44:00",
+    "tz": 5.1089,
+    "lat": 12.3333,
+    "lon": 76.6333
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2807-2823"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_44",
+   "book": "HTJAH-I",
+   "name": "Chart 44 (Lost all fortune, Rs. 50000 debt)",
+   "birth": {
+    "dt": "1888-09-30T04:35:00",
+    "tz": 4.9833,
+    "lat": 26.5,
+    "lon": 74.75
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2827-2848"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_45",
+   "book": "HTJAH-I",
+   "name": "Chart 45 (Under-Secretary Rs. 1000+/month, Yoga Karaka Saturn)",
+   "birth": {
+    "dt": "1898-01-22T22:07:00",
+    "tz": 5.35,
+    "lat": 13.0667,
+    "lon": 80.25
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2850-2873"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_46",
+   "book": "HTJAH-I",
+   "name": "Chart 46 (Financially sound via Chandramangala Yoga)",
+   "birth": {
+    "dt": "1891-01-30T19:00:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2898-2912"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_48",
+   "book": "HTJAH-I",
+   "name": "Chart 48 (Moderate wealth by hard labour, govt loss)",
+   "birth": {
+    "dt": "1887-10-21T03:10:00",
+    "tz": 5.7611,
+    "lat": 25.3333,
+    "lon": 86.4167
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:2923-2943"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_49",
+   "book": "HTJAH-I",
+   "name": "Chart 49 (New Method, earns well in Jupiter Dasha)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13.0667,
+    "lon": 77.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3274-3293"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_50",
+   "book": "HTJAH-I",
+   "name": "Chart 50 (Aristocrat reduced to poverty, debt, mental torture)",
+   "birth": {
+    "dt": "1883-04-15T13:30:00",
+    "tz": 4.6667,
+    "lat": 30.0,
+    "lon": 70.0
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3295-3303"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_51",
+   "book": "HTJAH-I",
+   "name": "Chart 51 (New Method, commands lakhs of rupees)",
+   "birth": {
+    "dt": "1887-08-07T13:30:00",
+    "tz": 5.1333,
+    "lat": 11.0,
+    "lon": 77.0
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    2
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3307-3318"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_52",
+   "book": "HTJAH-I",
+   "name": "Chart 52 (Cancer 3rd strong, weak Moon lord, 6 siblings 3 died)",
+   "birth": {
+    "dt": "1856-02-12T12:21:00",
+    "tz": 5.6,
+    "lat": 18.0,
+    "lon": 84.0
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-I:3669-3683"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_53",
+   "book": "HTJAH-I",
+   "name": "Chart 53 (Taurus 3rd weak, lord Venus + Mars well-disposed, 8 siblings)",
+   "birth": {
+    "dt": "1880-08-24T20:44:00",
+    "tz": 5.3333,
+    "lat": 13.0,
+    "lon": 80.0
+   },
+   "lagna_sign": 12,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3687-3703"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_54",
+   "book": "HTJAH-I",
+   "name": "Chart 54 (Capricorn 3rd malefic, strong Saturn lord, 2 brothers)",
+   "birth": {
+    "dt": "1887-08-07T13:35:00",
+    "tz": 5.1333,
+    "lat": 11.0,
+    "lon": 77.0
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3705-3716"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_55",
+   "book": "HTJAH-I",
+   "name": "Chart 55 (Venus+Mars Papakarthari, 3rd/lord/Karaka afflicted, somewhat deaf)",
+   "birth": {
+    "dt": "1889-09-10T06:00:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:3718-3720",
+    "HTJAH-I:3729"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_56",
+   "book": "HTJAH-I",
+   "name": "Chart 56 (Saturn aspects 3rd, debilitated lord in 6th, partially deaf)",
+   "birth": {
+    "dt": "1895-06-01T23:42:00",
+    "tz": 5.0389,
+    "lat": 13.0,
+    "lon": 75.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:3722-3723",
+    "HTJAH-I:3733"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_57",
+   "book": "HTJAH-I",
+   "name": "Chart 57 (3rd + Moon lord afflicted by dusthana lords + Saturn, partially deaf)",
+   "birth": {
+    "dt": "1864-03-09T11:27:00",
+    "tz": 5.1722,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:3725-3727",
+    "HTJAH-I:3739"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_58",
+   "book": "HTJAH-I",
+   "name": "Chart 58 (Aries 3rd, lord=Karaka Mars severely afflicted, no brothers)",
+   "birth": {
+    "dt": "1901-08-28T17:30",
+    "tz": 5.3789,
+    "lat": 16.3,
+    "lon": 80.6833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:3748-3771"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_59",
+   "book": "HTJAH-I",
+   "name": "Chart 59 (Libra 3rd, combust powerless Venus lord, no brothers)",
+   "birth": {
+    "dt": "1928-07-09T08:50:00",
+    "tz": 5.5,
+    "lat": 9.4167,
+    "lon": 77.75
+   },
+   "lagna_sign": 5,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3773-3790"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_60",
+   "book": "HTJAH-I",
+   "name": "Chart 60 (Sagittarius 3rd, Jupiter lord well-disposed but Karaka+house afflicted, no brothers)",
+   "birth": {
+    "dt": "1896-10-21T06:00:00",
+    "tz": 5.2022,
+    "lat": 9.9667,
+    "lon": 78.0333
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3802-3816"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.chart_61",
+   "book": "HTJAH-I",
+   "name": "Chart 61 (Aries 3rd Papakarthari in Amsa, debilitated Saturn, denies brothers)",
+   "birth": {
+    "dt": "1880-12-29T10:10:00",
+    "tz": 5.8922,
+    "lat": 22.5833,
+    "lon": 88.3833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3818-3838"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.chart_62",
+   "book": "HTJAH-I",
+   "name": "Chart 62 (Aries 3rd somewhat favourable, lord-cum-Karaka Mars afflicted, no brothers)",
+   "birth": {
+    "dt": "1889-08-24T17:41:00",
+    "tz": 5.4922,
+    "lat": 16.0667,
+    "lon": 82.3833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    3
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:3840-3855"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h4_01",
+   "book": "HTJAH-I",
+   "name": "Chart 64 (H4 mother)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.5833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    4
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:4404"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h4_02",
+   "book": "HTJAH-I",
+   "name": "Chart 76 (H4 education)",
+   "birth": {
+    "dt": "1856-02-12T12:21:00",
+    "tz": 5.6,
+    "lat": 18,
+    "lon": 84
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    4
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:4743"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h4_03",
+   "book": "HTJAH-I",
+   "name": "Chart 77 (H4 education)",
+   "birth": {
+    "dt": "1856-07-26T00:00:00",
+    "tz": -0.4178,
+    "lat": 53.0333,
+    "lon": -6.2667
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    4
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:4775"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h4_04",
+   "book": "HTJAH-I",
+   "name": "Chart 81 (H4 education)",
+   "birth": {
+    "dt": "1902-11-23T05:16:00",
+    "tz": 4.8444,
+    "lat": 23.1,
+    "lon": 72.6667
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    4
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:4869"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h4_05",
+   "book": "HTJAH-I",
+   "name": "Chart 85-A (H4 vehicles)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.5833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    4
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:4975"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h4_06",
+   "book": "HTJAH-I",
+   "name": "Chart 85-B (H4 property)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.5833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    4
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:4975"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_01",
+   "book": "HTJAH-I",
+   "name": "Chart 91 (H5 children)",
+   "birth": {
+    "dt": "1903-10-30T21:30:00",
+    "tz": 5.0633,
+    "lat": 17.6667,
+    "lon": 75.95
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:5613"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_02",
+   "book": "HTJAH-I",
+   "name": "Chart 92 (H5 children)",
+   "birth": {
+    "dt": "1912-09-30T17:15:00",
+    "tz": 5.5,
+    "lat": 30.3167,
+    "lon": 75.4167
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:5635"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_04",
+   "book": "HTJAH-I",
+   "name": "Chart 94 (H5 children)",
+   "birth": {
+    "dt": "1888-07-16T23:06:00",
+    "tz": 4.8544,
+    "lat": 18.9,
+    "lon": 72.8167
+   },
+   "lagna_sign": 12,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:5672"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_05",
+   "book": "HTJAH-I",
+   "name": "Chart 95 (H5 children)",
+   "birth": {
+    "dt": "1914-06-02T07:05:00",
+    "tz": 5.5,
+    "lat": 22.75,
+    "lon": 72.6833
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:5694"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_06",
+   "book": "HTJAH-I",
+   "name": "Chart 96 (H5 children)",
+   "birth": {
+    "dt": "1913-03-28T20:35:00",
+    "tz": 5.5,
+    "lat": 29,
+    "lon": 72.6667
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:5715"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_07",
+   "book": "HTJAH-I",
+   "name": "Chart 97 (H5 children)",
+   "birth": {
+    "dt": "1914-12-25T02:30:00",
+    "tz": 5.5,
+    "lat": 22.7167,
+    "lon": 71.7167
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:5733"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_08",
+   "book": "HTJAH-I",
+   "name": "Chart 98 (H5 children)",
+   "birth": {
+    "dt": "1901-05-24T13:36:00",
+    "tz": 5.4556,
+    "lat": 17,
+    "lon": 81.8333
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:5750"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_09",
+   "book": "HTJAH-I",
+   "name": "Chart 99 (H5 children)",
+   "birth": {
+    "dt": "1892-04-12T12:45:00",
+    "tz": 4.7389,
+    "lat": 11.6,
+    "lon": 71.0833
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:5770"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_10",
+   "book": "HTJAH-I",
+   "name": "Chart 100 (H5 children)",
+   "birth": {
+    "dt": "1897-06-03T05:30:00",
+    "tz": 5.3789,
+    "lat": 16.1333,
+    "lon": 80.6833
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:5804"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_11",
+   "book": "HTJAH-I",
+   "name": "Chart 101 (H5 children)",
+   "birth": {
+    "dt": "1891-05-06T17:10:00",
+    "tz": 4.8544,
+    "lat": 18.9,
+    "lon": 72.8167
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:5826"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_12",
+   "book": "HTJAH-I",
+   "name": "Chart 102 (H5 children)",
+   "birth": {
+    "dt": "1880-12-29T10:10:00",
+    "tz": 5.8922,
+    "lat": 22.5833,
+    "lon": 88.3833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:5851"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_13",
+   "book": "HTJAH-I",
+   "name": "Chart 103 (H5 children)",
+   "birth": {
+    "dt": "1906-12-06T01:10:00",
+    "tz": 5.5,
+    "lat": 10.7333,
+    "lon": 79.1
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:5876"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_14",
+   "book": "HTJAH-I",
+   "name": "Chart 104 (H5 children)",
+   "birth": {
+    "dt": "1907-04-11T18:50:00",
+    "tz": 5.5,
+    "lat": 11.25,
+    "lon": 75.75
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:5889"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_15",
+   "book": "HTJAH-I",
+   "name": "Chart 105 (H5 children)",
+   "birth": {
+    "dt": "1906-01-06T17:24:00",
+    "tz": 5.5,
+    "lat": 30.0,
+    "lon": 78.0
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:5906"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h5_16",
+   "book": "HTJAH-I",
+   "name": "Chart 106 (H5 children)",
+   "birth": {
+    "dt": "1902-05-30T03:19:00",
+    "tz": 5.4511,
+    "lat": 17,
+    "lon": 81.7667
+   },
+   "lagna_sign": 1,
+   "computed_lagna_sign": 1,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:5924"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h5_18",
+   "book": "HTJAH-I",
+   "name": "Chart 108 (H5 children)",
+   "birth": {
+    "dt": "1905-01-29T05:00:00",
+    "tz": 5.5,
+    "lat": 9.7167,
+    "lon": 76.2167
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    5
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-I:5956"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h6_01",
+   "book": "HTJAH-I",
+   "name": "Chart 109 (H6 disease_chronic)",
+   "birth": {
+    "dt": "1919-01-28T15:58:00",
+    "tz": 5.5,
+    "lat": 22.667,
+    "lon": 88.5
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:6616"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h6_02",
+   "book": "HTJAH-I",
+   "name": "Chart 110 (H6 disease_chronic)",
+   "birth": {
+    "dt": "1921-09-03T03:00:00",
+    "tz": 5.5,
+    "lat": 8.75,
+    "lon": 73.75
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:6634"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h6_03",
+   "book": "HTJAH-I",
+   "name": "Chart 111 (H6 enemies_disease)",
+   "birth": {
+    "dt": "1914-07-26T17:24:00",
+    "tz": 5.5,
+    "lat": 29.0,
+    "lon": 77.667
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.7,
+   "citations": [
+    "HTJAH-I:6646"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h6_04",
+   "book": "HTJAH-I",
+   "name": "Chart 112 (H6 disease_chronic)",
+   "birth": {
+    "dt": "1912-06-15T05:23:00",
+    "tz": 5.5,
+    "lat": 25.383,
+    "lon": 86.517
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-I:6664"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h6_05",
+   "book": "HTJAH-I",
+   "name": "Chart 113 (H6 enemies_disease)",
+   "birth": {
+    "dt": "1893-10-07T08:30:00",
+    "tz": 5.481,
+    "lat": 16.95,
+    "lon": 82.217
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:6667"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h6_06",
+   "book": "HTJAH-I",
+   "name": "Chart 114 (H6 disease_chronic)",
+   "birth": {
+    "dt": "1911-09-09T23:18:00",
+    "tz": 5.5,
+    "lat": 22.883,
+    "lon": 88.45
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-I:6682"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h6_07",
+   "book": "HTJAH-I",
+   "name": "Chart 115 (H6 enemies_disease)",
+   "birth": {
+    "dt": "1916-05-19T06:10:00",
+    "tz": 5.5,
+    "lat": 22.017,
+    "lon": 82.067
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:6694"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h6_08",
+   "book": "HTJAH-I",
+   "name": "Chart 116 (H6 enemies_disease)",
+   "birth": {
+    "dt": "1895-05-05T04:00:00",
+    "tz": 5.172,
+    "lat": 13.033,
+    "lon": 77.583
+   },
+   "lagna_sign": 12,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-I:6699"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h6_09",
+   "book": "HTJAH-I",
+   "name": "Chart 118 (H6 disease_chronic)",
+   "birth": {
+    "dt": "1879-08-23T12:10:00",
+    "tz": 5.172,
+    "lat": 13.0,
+    "lon": 77.583
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:6860"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h6_11",
+   "book": "HTJAH-I",
+   "name": "Chart 120 (H6 debts)",
+   "birth": {
+    "dt": "1902-07-19T03:45:00",
+    "tz": 5.8,
+    "lat": 18.667,
+    "lon": 87.0
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.4,
+   "citations": [
+    "HTJAH-I:6931"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-I.h6_12",
+   "book": "HTJAH-I",
+   "name": "Chart 121 (H6 enemies)",
+   "birth": {
+    "dt": "1908-03-16T10:56:00",
+    "tz": 5.5,
+    "lat": 15.4,
+    "lon": 75.65
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-I:6937"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-I.h6_13",
+   "book": "HTJAH-I",
+   "name": "Chart 122 (H6 enemies)",
+   "birth": {
+    "dt": "1856-07-23T06:24:00",
+    "tz": 5.059,
+    "lat": 18.533,
+    "lon": 75.883
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-I:6952"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_01",
+   "book": "HTJAH-II",
+   "name": "Chart 1 (H7 marriage)",
+   "birth": {
+    "dt": "1937-08-16T08:31:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:999"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_02",
+   "book": "HTJAH-II",
+   "name": "Chart 2 (H7 marriage)",
+   "birth": {
+    "dt": "1942-08-03T07:23:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 5,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1109"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_03",
+   "book": "HTJAH-II",
+   "name": "Chart 3 (H7 marriage)",
+   "birth": {
+    "dt": "1953-12-04T05:17:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1166"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_04",
+   "book": "HTJAH-II",
+   "name": "Chart 4 (H7 marriage)",
+   "birth": {
+    "dt": "1950-11-20T03:00:00",
+    "tz": 5.5,
+    "lat": 18.9167,
+    "lon": 72.9
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1244"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_05",
+   "book": "HTJAH-II",
+   "name": "Chart 5 (H7 marriage)",
+   "birth": {
+    "dt": "1935-10-08T11:30:00",
+    "tz": 5.5,
+    "lat": 13.1667,
+    "lon": 76.1667
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:1297"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_06",
+   "book": "HTJAH-II",
+   "name": "Chart 6 (H7 marriage)",
+   "birth": {
+    "dt": "1883-03-24T06:00:00",
+    "tz": 5.172,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 12,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:1343"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_07",
+   "book": "HTJAH-II",
+   "name": "Chart 7 (H7 marriage)",
+   "birth": {
+    "dt": "1856-02-12T12:21:00",
+    "tz": 5.6,
+    "lat": 18.0,
+    "lon": 84.0
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:1388"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_08",
+   "book": "HTJAH-II",
+   "name": "Chart 8 (H7 marriage)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1436"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_09",
+   "book": "HTJAH-II",
+   "name": "Chart 9 (H7 marriage)",
+   "birth": {
+    "dt": "1940-11-03T07:00:00",
+    "tz": -5.0,
+    "lat": 35.7333,
+    "lon": -81.35
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1510"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_10",
+   "book": "HTJAH-II",
+   "name": "Chart 10 (H7 marriage)",
+   "birth": {
+    "dt": "1948-03-13T10:30:00",
+    "tz": 5.5,
+    "lat": 11.1,
+    "lon": 79.7
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1539"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_11",
+   "book": "HTJAH-II",
+   "name": "Chart 11 (H7 marriage)",
+   "birth": {
+    "dt": "1953-12-26T23:47:00",
+    "tz": 5.5,
+    "lat": 10.3833,
+    "lon": 78.9167
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1580"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_12",
+   "book": "HTJAH-II",
+   "name": "Chart 12 (H7 marriage)",
+   "birth": {
+    "dt": "1940-05-21T07:50:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1625"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_33",
+   "book": "HTJAH-II",
+   "name": "Chart 33 ayur (Pindayu = 86y 2m 20d; Aquarius Lagna 9d42')",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    8
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:4105",
+    "HTJAH-II:4249-4260"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_34",
+   "book": "HTJAH-II",
+   "name": "Chart 34 ayur (Amsayu 68y 10m 5d; actual death 15-4-1950 at 70y 3m 15d)",
+   "birth": {
+    "dt": "1879-12-30T01:00:00",
+    "tz": 5.2167,
+    "lat": 9.8333,
+    "lon": 78.25
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    8
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:4332",
+    "HTJAH-II:4435-4441"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_35",
+   "book": "HTJAH-II",
+   "name": "Chart 35 ayur (Poornayu; died 7-2-1966 Rahu Dasa Sun Bhukti; Sagittarius Lagna)",
+   "birth": {
+    "dt": "1896-01-31T04:30:00",
+    "tz": 4.8844,
+    "lat": 22.0,
+    "lon": 73.2667
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    8
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:4661",
+    "HTJAH-II:4844-4855"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_73",
+   "book": "HTJAH-II",
+   "name": "Chart 73 (Lincoln - assassinated, shot)",
+   "birth": {
+    "dt": "1809-02-12T07:32:00",
+    "tz": -5.9333,
+    "lat": 35.0,
+    "lon": -89.0
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    8
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:6711-6775"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_74",
+   "book": "HTJAH-II",
+   "name": "Chart 74 (Gandhi - assassinated by a fanatic)",
+   "birth": {
+    "dt": "1869-10-02T07:45:00",
+    "tz": 4.6544,
+    "lat": 21.6167,
+    "lon": 69.8167
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    8
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:6777-6819"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.chart_75",
+   "book": "HTJAH-II",
+   "name": "Chart 75 (Kennedy/JFK - US President shot dead)",
+   "birth": {
+    "dt": "1917-05-29T15:00:00",
+    "tz": -5.0,
+    "lat": 42.0833,
+    "lon": -71.1333
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    8
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:6821-6869"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.chart_78",
+   "book": "HTJAH-II",
+   "name": "Chart 78 (Hitler - believed suicide)",
+   "birth": {
+    "dt": "1889-04-20T18:30:00",
+    "tz": 0.8667,
+    "lat": 48.0,
+    "lon": 13.0
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    8
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:6959-6993"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h10_01",
+   "book": "HTJAH-II",
+   "name": "Chart 114 (H10 profession_learned)",
+   "birth": {
+    "dt": "1889-11-14T23:03:00",
+    "tz": 5.4667,
+    "lat": 25.4167,
+    "lon": 82
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    10
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:9693"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h10_02",
+   "book": "HTJAH-II",
+   "name": "Chart 126 (H10 profession_learned)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.5
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    10
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:10714"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h10_03",
+   "book": "HTJAH-II",
+   "name": "Chart 195 (H10 profession_authority)",
+   "birth": {
+    "dt": "1884-06-04T10:18:00",
+    "tz": 5.1089,
+    "lat": 12,
+    "lon": 76.6333
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    10
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:13336"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h10_04",
+   "book": "HTJAH-II",
+   "name": "Chart 198 (H10 profession_authority)",
+   "birth": {
+    "dt": "1889-11-14T23:03:00",
+    "tz": 5.4667,
+    "lat": 25.4167,
+    "lon": 82
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    10
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:13503"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h10_05",
+   "book": "HTJAH-II",
+   "name": "Chart 203 (H10 status_honour)",
+   "birth": {
+    "dt": "1769-08-15T10:28:00",
+    "tz": 0.5778,
+    "lat": 41.9167,
+    "lon": 8.6667
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    10
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:13808"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h10_06",
+   "book": "HTJAH-II",
+   "name": "Chart 204 (H10 status_honour)",
+   "birth": {
+    "dt": "1883-07-29T14:00:00",
+    "tz": 1.0667,
+    "lat": 41,
+    "lon": 16
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    10
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-II:13892"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_01",
+   "book": "HTJAH-II",
+   "name": "Chart 210 (H11 elder_siblings)",
+   "birth": {
+    "dt": "1937-08-16T08:31:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:14804"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_02",
+   "book": "HTJAH-II",
+   "name": "Chart 211 (H11 elder_siblings)",
+   "birth": {
+    "dt": "1940-05-21T07:50:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:14835"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_03",
+   "book": "HTJAH-II",
+   "name": "Chart 212 (H11 elder_siblings)",
+   "birth": {
+    "dt": "1946-09-29T11:58:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:14908"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_04",
+   "book": "HTJAH-II",
+   "name": "Chart 213 (H11 elder_siblings)",
+   "birth": {
+    "dt": "1974-01-06T12:40:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 1,
+   "computed_lagna_sign": 1,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:14988"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_05",
+   "book": "HTJAH-II",
+   "name": "Chart 214 (H11 elder_siblings)",
+   "birth": {
+    "dt": "1943-12-30T21:19:00",
+    "tz": 5.0167,
+    "lat": 27.6,
+    "lon": 75.25
+   },
+   "lagna_sign": 5,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:15034"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_06",
+   "book": "HTJAH-II",
+   "name": "Chart 215 (H11 elder_siblings)",
+   "birth": {
+    "dt": "1953-02-26T21:20:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:15083"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_07",
+   "book": "HTJAH-II",
+   "name": "Chart 216 (H11 elder_siblings)",
+   "birth": {
+    "dt": "1925-05-12T07:30:00",
+    "tz": 5.5,
+    "lat": 13.067,
+    "lon": 80.283
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:15131"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_08",
+   "book": "HTJAH-II",
+   "name": "Chart 217 (H11 gains)",
+   "birth": {
+    "dt": "1922-10-28T20:40:00",
+    "tz": 5.5,
+    "lat": 9.917,
+    "lon": 78.117
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:15242"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_09",
+   "book": "HTJAH-II",
+   "name": "Chart 218 (H11 gains)",
+   "birth": {
+    "dt": "1904-04-18T17:57:00",
+    "tz": 5.5333,
+    "lat": 25.3,
+    "lon": 83
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:15288"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_10",
+   "book": "HTJAH-II",
+   "name": "Chart 219 (H11 gains)",
+   "birth": {
+    "dt": "1863-07-30T14:00:00",
+    "tz": -5.5389,
+    "lat": 42.083,
+    "lon": -83.083
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:15331"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_12",
+   "book": "HTJAH-II",
+   "name": "Chart 223 (H11 gains)",
+   "birth": {
+    "dt": "1939-06-03T22:30:00",
+    "tz": 5.5,
+    "lat": 24.85,
+    "lon": 67.067
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:15559"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_13",
+   "book": "HTJAH-II",
+   "name": "Chart 225 (H11 acquisitions)",
+   "birth": {
+    "dt": "1892-10-16T07:12:00",
+    "tz": 5.0667,
+    "lat": 13,
+    "lon": 76
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:15654"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_14",
+   "book": "HTJAH-II",
+   "name": "Chart 227 (H11 acquisitions)",
+   "birth": {
+    "dt": "1926-04-21T01:40:00",
+    "tz": 0,
+    "lat": 51.5,
+    "lon": -0.083
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:15776"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_15",
+   "book": "HTJAH-II",
+   "name": "Chart 228 (H11 gains)",
+   "birth": {
+    "dt": "1953-02-20T01:10:00",
+    "tz": 5.5,
+    "lat": 12.333,
+    "lon": 75.65
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:15833"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_16",
+   "book": "HTJAH-II",
+   "name": "Chart 229 (H11 gains)",
+   "birth": {
+    "dt": "1917-11-19T23:12:00",
+    "tz": 5.5,
+    "lat": 25.45,
+    "lon": 81.85
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:15890"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h11_17",
+   "book": "HTJAH-II",
+   "name": "Chart 230 (H11 gains)",
+   "birth": {
+    "dt": "1894-06-23T22:00:00",
+    "tz": 0,
+    "lat": 51.5,
+    "lon": -0.083
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:15956"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h11_18",
+   "book": "HTJAH-II",
+   "name": "Chart 232 (H11 gains)",
+   "birth": {
+    "dt": "1933-09-29T22:15:00",
+    "tz": 5.5,
+    "lat": 10.833,
+    "lon": 78.7
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    11
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:16087"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_01",
+   "book": "HTJAH-II",
+   "name": "Chart 234 (H12 moksha)",
+   "birth": {
+    "dt": "1896-02-29T13:00:00",
+    "tz": 4.866,
+    "lat": 20.6,
+    "lon": 72.983
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:16890"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_03",
+   "book": "HTJAH-II",
+   "name": "Chart 240 (H12 expenditure)",
+   "birth": {
+    "dt": "1948-11-25T19:28:00",
+    "tz": 5.5,
+    "lat": 13.333,
+    "lon": 74.8
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:17087"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_04",
+   "book": "HTJAH-II",
+   "name": "Chart 242 (H12 expenditure)",
+   "birth": {
+    "dt": "1901-06-06T00:00:00",
+    "tz": 7.517,
+    "lat": -7.25,
+    "lon": 112.75
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:17143"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_05",
+   "book": "HTJAH-II",
+   "name": "Chart 243 (H12 expenditure)",
+   "birth": {
+    "dt": "1934-02-15T09:15:00",
+    "tz": 5.5,
+    "lat": 12.3,
+    "lon": 76.65
+   },
+   "lagna_sign": 12,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:17170"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_06",
+   "book": "HTJAH-II",
+   "name": "Chart 244 (H12 incarceration)",
+   "birth": {
+    "dt": "1928-01-05T17:26:00",
+    "tz": 5.5,
+    "lat": 27.45,
+    "lon": 68.133
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:17211"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_08",
+   "book": "HTJAH-II",
+   "name": "Chart 246 (H12 expenditure)",
+   "birth": {
+    "dt": "1887-08-07T13:21:00",
+    "tz": 5.134,
+    "lat": 11,
+    "lon": 77.017
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:17251"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_09",
+   "book": "HTJAH-II",
+   "name": "Chart 247 (H12 incarceration)",
+   "birth": {
+    "dt": "1869-10-02T07:45:00",
+    "tz": 4.654,
+    "lat": 21.617,
+    "lon": 69.817
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:17291"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_10",
+   "book": "HTJAH-II",
+   "name": "Chart 248 (H12 incarceration)",
+   "birth": {
+    "dt": "1883-05-28T21:25:00",
+    "tz": 4.926,
+    "lat": 18.383,
+    "lon": 73.883
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:17321"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_11",
+   "book": "HTJAH-II",
+   "name": "Chart 249 (H12 incarceration)",
+   "birth": {
+    "dt": "1889-11-14T23:03:00",
+    "tz": 5.467,
+    "lat": 25.417,
+    "lon": 82
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:17349"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_12",
+   "book": "HTJAH-II",
+   "name": "Chart 250 (H12 incarceration)",
+   "birth": {
+    "dt": "1910-05-19T08:29:00",
+    "tz": 5.5,
+    "lat": 18.517,
+    "lon": 73.867
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:17378"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_13",
+   "book": "HTJAH-II",
+   "name": "Chart 251 (H12 left_eye)",
+   "birth": {
+    "dt": "1883-03-24T18:00:00",
+    "tz": 5.172,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:17420"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_14",
+   "book": "HTJAH-II",
+   "name": "Chart 252 (H12 left_eye)",
+   "birth": {
+    "dt": "1608-12-09T06:30:00",
+    "tz": -0.006,
+    "lat": 51.517,
+    "lon": -0.083
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:17447"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_15",
+   "book": "HTJAH-II",
+   "name": "Chart 253 (H12 left_eye)",
+   "birth": {
+    "dt": "1947-08-01T22:10:00",
+    "tz": 5.5,
+    "lat": 14.817,
+    "lon": 74.25
+   },
+   "lagna_sign": 12,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:17482"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_16",
+   "book": "HTJAH-II",
+   "name": "Chart 254 (H12 left_eye)",
+   "birth": {
+    "dt": "1951-08-02T13:35:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.5
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:17507"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h12_17",
+   "book": "HTJAH-II",
+   "name": "Chart 257 (H12 moksha)",
+   "birth": {
+    "dt": "1917-11-13T08:30:00",
+    "tz": 5.5,
+    "lat": 12.967,
+    "lon": 77.583
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:17587"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h12_18",
+   "book": "HTJAH-II",
+   "name": "Chart 258 (H12 moksha)",
+   "birth": {
+    "dt": "1892-10-16T07:12:00",
+    "tz": 5.067,
+    "lat": 13,
+    "lon": 76
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    12
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:17627"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_01",
+   "book": "HTJAH-II",
+   "name": "Chart 13 (H7 marital_happiness)",
+   "birth": {
+    "dt": "1918-10-16T14:00:00",
+    "tz": 5.17,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1687"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_02",
+   "book": "HTJAH-II",
+   "name": "Chart 14 (H7 spouse)",
+   "birth": {
+    "dt": "1957-11-03T10:20:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.5
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1741"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_03",
+   "book": "HTJAH-II",
+   "name": "Chart 15 (H7 marital_happiness)",
+   "birth": {
+    "dt": "1941-12-08T01:20:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1782"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_04",
+   "book": "HTJAH-II",
+   "name": "Chart 16 (H7 marital_happiness)",
+   "birth": {
+    "dt": "1953-02-25T06:54:00",
+    "tz": 5.5,
+    "lat": 8.483,
+    "lon": 76.983
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:1826"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_05",
+   "book": "HTJAH-II",
+   "name": "Chart 17 (H7 spouse)",
+   "birth": {
+    "dt": "1948-08-14T00:07:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1869"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_06",
+   "book": "HTJAH-II",
+   "name": "Chart 18 (H7 spouse)",
+   "birth": {
+    "dt": "1947-04-02T07:02:00",
+    "tz": 5.5,
+    "lat": 26.383,
+    "lon": 78.067
+   },
+   "lagna_sign": 1,
+   "computed_lagna_sign": 1,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:1918"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_07",
+   "book": "HTJAH-II",
+   "name": "Chart 19 (H7 coverture)",
+   "birth": {
+    "dt": "1938-03-16T21:30:00",
+    "tz": 5.5,
+    "lat": 12.3,
+    "lon": 76.7
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:1976"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_09",
+   "book": "HTJAH-II",
+   "name": "Chart 21 (H7 coverture)",
+   "birth": {
+    "dt": "1954-10-07T22:00:00",
+    "tz": 5.5,
+    "lat": 12.3,
+    "lon": 76.7
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:2054"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_10",
+   "book": "HTJAH-II",
+   "name": "Chart 22 (H7 coverture)",
+   "birth": {
+    "dt": "1939-11-22T22:10:00",
+    "tz": 5.5,
+    "lat": 12.15,
+    "lon": 77.15
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:2118"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_11",
+   "book": "HTJAH-II",
+   "name": "Chart 23 (H7 coverture)",
+   "birth": {
+    "dt": "1937-03-16T18:45:00",
+    "tz": 5.5,
+    "lat": 28.85,
+    "lon": 78.817
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:2173"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_12",
+   "book": "HTJAH-II",
+   "name": "Chart 24 (H7 coverture)",
+   "birth": {
+    "dt": "1755-11-02T20:00:00",
+    "tz": 2,
+    "lat": 46.5,
+    "lon": 30
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-II:2233"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_13",
+   "book": "HTJAH-II",
+   "name": "Chart 25 (H7 coverture)",
+   "birth": {
+    "dt": "1953-02-02T00:43:00",
+    "tz": 5.5,
+    "lat": 12.3,
+    "lon": 76.7
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-II:2280"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_14",
+   "book": "HTJAH-II",
+   "name": "Chart 26 (H7 spouse)",
+   "birth": {
+    "dt": "1871-10-10T14:00:00",
+    "tz": -0.17,
+    "lat": 51.45,
+    "lon": -2.583
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:2446"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_15",
+   "book": "HTJAH-II",
+   "name": "Chart 27 (H7 spouse)",
+   "birth": {
+    "dt": "1886-04-06T18:30:00",
+    "tz": 5.23,
+    "lat": 17.5,
+    "lon": 78.5
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:2498"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_16",
+   "book": "HTJAH-II",
+   "name": "Chart 28 (H7 spouse)",
+   "birth": {
+    "dt": "1894-06-23T22:00:00",
+    "tz": 0,
+    "lat": 51.5,
+    "lon": -0.083
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:2642"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_17",
+   "book": "HTJAH-II",
+   "name": "Chart 29 (H7 spouse)",
+   "birth": {
+    "dt": "1938-09-10T09:00:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:2686"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h7_18",
+   "book": "HTJAH-II",
+   "name": "Chart 30 (H7 spouse)",
+   "birth": {
+    "dt": "1897-01-23T12:00:00",
+    "tz": 0.38,
+    "lat": 20.633,
+    "lon": 5.733
+   },
+   "lagna_sign": 1,
+   "computed_lagna_sign": 1,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-II:2733"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h7_19",
+   "book": "HTJAH-II",
+   "name": "Chart 32 (H7 spouse)",
+   "birth": {
+    "dt": "1953-07-24T13:30:00",
+    "tz": 5.5,
+    "lat": 13.083,
+    "lon": 80.25
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:2834"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_01",
+   "book": "HTJAH-II",
+   "name": "85 (H9 father)",
+   "birth": {
+    "dt": "1883-03-24T06:00:00",
+    "tz": 5.172,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": null,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": false,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.45,
+   "citations": [
+    "HTJAH-II:7638"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_02",
+   "book": "HTJAH-II",
+   "name": "86 (H9 father)",
+   "birth": {
+    "dt": "1857-04-14T13:45:00",
+    "tz": -0.006,
+    "lat": 51.5,
+    "lon": -0.083
+   },
+   "lagna_sign": 5,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:7929"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_03",
+   "book": "HTJAH-II",
+   "name": "87 (H9 father)",
+   "birth": {
+    "dt": "1877-04-23T22:25:00",
+    "tz": -0.094,
+    "lat": 54.933,
+    "lon": -1.417
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:8006"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_04",
+   "book": "HTJAH-II",
+   "name": "88 (H9 father)",
+   "birth": {
+    "dt": "1950-10-06T14:18:00",
+    "tz": 5.5,
+    "lat": 27.7,
+    "lon": 75.55
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:8050"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_05",
+   "book": "HTJAH-II",
+   "name": "89 (H9 father)",
+   "birth": {
+    "dt": "1947-05-02T19:20:00",
+    "tz": 5.5,
+    "lat": 23.35,
+    "lon": 82.35
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:8097"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_06",
+   "book": "HTJAH-II",
+   "name": "90 (H9 father)",
+   "birth": {
+    "dt": "1951-10-29T12:48:00",
+    "tz": 5.5,
+    "lat": 23.383,
+    "lon": 85.383
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:8151"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_07",
+   "book": "HTJAH-II",
+   "name": "91 (H9 father)",
+   "birth": {
+    "dt": "1949-08-01T12:42:00",
+    "tz": 5.5,
+    "lat": 22.3,
+    "lon": 70.933
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:8196"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_08",
+   "book": "HTJAH-II",
+   "name": "92 (H9 father)",
+   "birth": {
+    "dt": "1938-01-31T00:23:00",
+    "tz": 5.5,
+    "lat": 8.733,
+    "lon": 77.733
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:8286"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_09",
+   "book": "HTJAH-II",
+   "name": "93 (H9 father)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 33,
+    "lon": 77.583
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:8331"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_10",
+   "book": "HTJAH-II",
+   "name": "94 (H9 father)",
+   "birth": {
+    "dt": "1949-10-24T15:33:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.65,
+   "citations": [
+    "HTJAH-II:8380"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_11",
+   "book": "HTJAH-II",
+   "name": "95 (H9 father)",
+   "birth": {
+    "dt": "1925-05-12T07:30:00",
+    "tz": 5.5,
+    "lat": 13.067,
+    "lon": 80.283
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:8471"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_12",
+   "book": "HTJAH-II",
+   "name": "96 (H9 father)",
+   "birth": {
+    "dt": "1958-08-04T06:40:00",
+    "tz": 5.5,
+    "lat": 9.917,
+    "lon": 78.117
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:8532"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_13",
+   "book": "HTJAH-II",
+   "name": "97 (H9 father)",
+   "birth": {
+    "dt": "1954-12-12T07:30:00",
+    "tz": 5.5,
+    "lat": 13.067,
+    "lon": 80.283
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.6,
+   "citations": [
+    "HTJAH-II:8580"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_14",
+   "book": "HTJAH-II",
+   "name": "99 (H9 fortune)",
+   "birth": {
+    "dt": "1925-05-12T07:30:00",
+    "tz": 5.5,
+    "lat": 13.067,
+    "lon": 80.283
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:8805"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_15",
+   "book": "HTJAH-II",
+   "name": "100 (H9 long_journeys)",
+   "birth": {
+    "dt": "1889-11-14T23:03:00",
+    "tz": 5.467,
+    "lat": 25.417,
+    "lon": 82
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:8829"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "HTJAH-II.h9_17",
+   "book": "HTJAH-II",
+   "name": "105 (H9 long_journeys)",
+   "birth": {
+    "dt": "1942-08-03T07:23:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 5,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.55,
+   "citations": [
+    "HTJAH-II:9026"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "HTJAH-II.h9_18",
+   "book": "HTJAH-II",
+   "name": "113 (H9 dharma)",
+   "birth": {
+    "dt": "1912-08-08T19:35:00",
+    "tz": 5.5,
+    "lat": 13,
+    "lon": 77.583
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    9
+   ],
+   "confidence": 0.5,
+   "citations": [
+    "HTJAH-II:9420"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_25",
+   "book": "NH",
+   "name": "Lord Tennyson",
+   "birth": {
+    "dt": "1809-08-06T23:45:00",
+    "tz": -0.03,
+    "lat": 53.533,
+    "lon": -0.4
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    2,
+    7,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:4777",
+    "NH:4787",
+    "NH:4801"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_26",
+   "book": "NH",
+   "name": "Karl Marx",
+   "birth": {
+    "dt": "1818-05-15T02:00:00",
+    "tz": 0.44,
+    "lat": 49.733,
+    "lon": 6.633
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:4859",
+    "NH:4872",
+    "NH:4900",
+    "NH:4976"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_28",
+   "book": "NH",
+   "name": "Sri Ramakrishna Paramahamsa",
+   "birth": {
+    "dt": "1836-02-18T06:23:00",
+    "tz": 5.85,
+    "lat": 22.883,
+    "lon": 87.733
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    7,
+    9
+   ],
+   "confidence": 0.7,
+   "citations": [
+    "NH:5143",
+    "NH:5156",
+    "NH:5161"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_32",
+   "book": "NH",
+   "name": "Sri Narasimha Bharathi",
+   "birth": {
+    "dt": "1858-03-11T21:00:00",
+    "tz": 5.17,
+    "lat": 13.0,
+    "lon": 77.59
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    4,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:5543",
+    "NH:5552",
+    "NH:5555",
+    "NH:5566"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_33",
+   "book": "NH",
+   "name": "Jagadish Chandra Bose",
+   "birth": {
+    "dt": "1858-11-30T16:25:00",
+    "tz": 6.0,
+    "lat": 23.55,
+    "lon": 90.03
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    6,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:5655",
+    "NH:5687",
+    "NH:5700",
+    "NH:5702"
+   ],
+   "review": [
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_34",
+   "book": "NH",
+   "name": "Havelock Ellis",
+   "birth": {
+    "dt": "1859-02-02T08:30:00",
+    "tz": -0.01,
+    "lat": 51.37,
+    "lon": -0.1
+   },
+   "lagna_sign": 11,
+   "computed_lagna_sign": 11,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6,
+    10,
+    12
+   ],
+   "confidence": 0.7,
+   "citations": [
+    "NH:5770",
+    "NH:5777",
+    "NH:5804"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_35",
+   "book": "NH",
+   "name": "Rabindranath Tagore",
+   "birth": {
+    "dt": "1861-05-07T02:51:00",
+    "tz": 5.9,
+    "lat": 22.67,
+    "lon": 88.5
+   },
+   "lagna_sign": 12,
+   "computed_lagna_sign": 12,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    4,
+    5,
+    7,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:5860",
+    "NH:5870",
+    "NH:5877",
+    "NH:5890",
+    "NH:5913"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_36",
+   "book": "NH",
+   "name": "Sri Swami Vivekananda",
+   "birth": {
+    "dt": "1863-01-12T18:33:00",
+    "tz": 5.9,
+    "lat": 22.667,
+    "lon": 88.5
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    6,
+    7,
+    8,
+    9,
+    10
+   ],
+   "confidence": 0.7,
+   "citations": [
+    "NH:6013",
+    "NH:6026",
+    "NH:6046",
+    "NH:6125",
+    "NH:6127"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_37",
+   "book": "NH",
+   "name": "Sayaji Rao III, Gaekwar of Baroda",
+   "birth": {
+    "dt": "1863-03-12T02:03:00",
+    "tz": 4.88,
+    "lat": 22.333,
+    "lon": 73.25
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    2,
+    5,
+    7,
+    10,
+    11
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:6224",
+    "NH:6233",
+    "NH:6241",
+    "NH:6327",
+    "NH:6331"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_39",
+   "book": "NH",
+   "name": "Sir Ashutosh Mukerjee",
+   "birth": {
+    "dt": "1864-06-29T03:55:00",
+    "tz": 5.87,
+    "lat": 22.583,
+    "lon": 88.0
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    2,
+    5,
+    6,
+    8,
+    9
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:6561",
+    "NH:6572",
+    "NH:6583",
+    "NH:6606",
+    "NH:6614"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_42",
+   "book": "NH",
+   "name": "Chittaranjan Das",
+   "birth": {
+    "dt": "1870-11-05T06:49:00",
+    "tz": 5.9,
+    "lat": 22.67,
+    "lon": 88.5
+   },
+   "lagna_sign": 8,
+   "computed_lagna_sign": 8,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    4,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:7020",
+    "NH:7028",
+    "NH:7034",
+    "NH:7037"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_43",
+   "book": "NH",
+   "name": "Aurobindo Ghose",
+   "birth": {
+    "dt": "1872-08-15T05:17:00",
+    "tz": 5.89,
+    "lat": 22.5,
+    "lon": 88.33
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    4,
+    9
+   ],
+   "confidence": 0.7,
+   "citations": [
+    "NH:7124",
+    "NH:7144",
+    "NH:7158"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_45",
+   "book": "NH",
+   "name": "Albert Einstein",
+   "birth": {
+    "dt": "1879-03-14T11:30:00",
+    "tz": 0.67,
+    "lat": 48.4,
+    "lon": 10.0
+   },
+   "lagna_sign": 3,
+   "computed_lagna_sign": 3,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    7,
+    8,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:7352",
+    "NH:7372",
+    "NH:7375",
+    "NH:7389",
+    "NH:7421",
+    "NH:7437"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_47",
+   "book": "NH",
+   "name": "Franklin Delano Roosevelt",
+   "birth": {
+    "dt": "1882-01-30T20:00:00",
+    "tz": -4.93,
+    "lat": 40.72,
+    "lon": -73.98
+   },
+   "lagna_sign": 5,
+   "computed_lagna_sign": 5,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    7,
+    9,
+    10,
+    11
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:7605",
+    "NH:7622",
+    "NH:7629",
+    "NH:7637",
+    "NH:7694"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_51",
+   "book": "NH",
+   "name": "Harry S. Truman",
+   "birth": {
+    "dt": "1884-05-08T16:26:00",
+    "tz": -6.3,
+    "lat": 39.12,
+    "lon": -94.5
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    2,
+    8,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:8151",
+    "NH:8152",
+    "NH:8157",
+    "NH:8181"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_53",
+   "book": "NH",
+   "name": "Rajendra Prasad",
+   "birth": {
+    "dt": "1884-12-03T08:45:00",
+    "tz": 5.68,
+    "lat": 25.6,
+    "lon": 85.17
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    4,
+    7,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:8410",
+    "NH:8417",
+    "NH:8430",
+    "NH:8432",
+    "NH:8434"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_54",
+   "book": "NH",
+   "name": "M. N. Tantri",
+   "birth": {
+    "dt": "1885-10-06T01:36:00",
+    "tz": 4.86,
+    "lat": 20.5,
+    "lon": 72.97
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    4,
+    7,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:8563",
+    "NH:8583",
+    "NH:8585",
+    "NH:8586",
+    "NH:8588",
+    "NH:8595"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_55",
+   "book": "NH",
+   "name": "The Nizam of Hyderabad",
+   "birth": {
+    "dt": "1886-04-06T18:36:00",
+    "tz": 4.7,
+    "lat": 17.5,
+    "lon": 70.5
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    6,
+    7,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:8663",
+    "NH:8664",
+    "NH:8688",
+    "NH:8720",
+    "NH:8731"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_57",
+   "book": "NH",
+   "name": "Swami Sivananda",
+   "birth": {
+    "dt": "1887-09-08T04:16:00",
+    "tz": 5.18,
+    "lat": 8.8,
+    "lon": 77.667
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    4,
+    5,
+    7,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:8939",
+    "NH:8984",
+    "NH:8988",
+    "NH:8992",
+    "NH:9004",
+    "NH:9048"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_61",
+   "book": "NH",
+   "name": "General Franco",
+   "birth": {
+    "dt": "1892-12-04T04:09:00",
+    "tz": -0.53,
+    "lat": 42.5,
+    "lon": -8.0
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    7,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:9559",
+    "NH:9563",
+    "NH:9565"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_62",
+   "book": "NH",
+   "name": "Ramakrishna Dalmia",
+   "birth": {
+    "dt": "1893-04-07T09:31:00",
+    "tz": 5.06,
+    "lat": 20.933,
+    "lon": 75.917
+   },
+   "lagna_sign": 2,
+   "computed_lagna_sign": 2,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    2,
+    7,
+    10,
+    11
+   ],
+   "confidence": 0.7,
+   "citations": [
+    "NH:9666",
+    "NH:9668",
+    "NH:9680",
+    "NH:9694"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_63",
+   "book": "NH",
+   "name": "Meher Baba",
+   "birth": {
+    "dt": "1894-02-25T04:30:00",
+    "tz": 4.92,
+    "lat": 18.517,
+    "lon": 73.867
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    7,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:9763",
+    "NH:9775",
+    "NH:9777"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_65",
+   "book": "NH",
+   "name": "An Example for Raja Yoga",
+   "birth": {
+    "dt": "1897-09-20T06:21:00",
+    "tz": 5.17,
+    "lat": 13.0,
+    "lon": 77.589
+   },
+   "lagna_sign": 6,
+   "computed_lagna_sign": 6,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    5,
+    7,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:10004",
+    "NH:10038",
+    "NH:10049",
+    "NH:10064",
+    "NH:10070"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_67",
+   "book": "NH",
+   "name": "An Example for Dhana Yoga (industrialist)",
+   "birth": {
+    "dt": "1896-01-30T04:30:00",
+    "tz": 4.87,
+    "lat": 22.33,
+    "lon": 73.0
+   },
+   "lagna_sign": 9,
+   "computed_lagna_sign": 9,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    2,
+    4,
+    5,
+    7,
+    9,
+    11
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:10251",
+    "NH:10281",
+    "NH:10291",
+    "NH:10292",
+    "NH:10337",
+    "NH:10355",
+    "NH:10376"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_69",
+   "book": "NH",
+   "name": "Suddhananda Bharathi",
+   "birth": {
+    "dt": "1897-05-12T10:19:00",
+    "tz": 5.24,
+    "lat": 9.85,
+    "lon": 78.62
+   },
+   "lagna_sign": 4,
+   "computed_lagna_sign": 4,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    7,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:10565",
+    "NH:10574",
+    "NH:10579",
+    "NH:10598"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "NH.chart_71",
+   "book": "NH",
+   "name": "Madhavrao Sadasivrao Golwalkar",
+   "birth": {
+    "dt": "1906-02-19T04:34:00",
+    "tz": 5.5,
+    "lat": 21.13,
+    "lon": 79.08
+   },
+   "lagna_sign": 10,
+   "computed_lagna_sign": 10,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    3,
+    5,
+    7,
+    9
+   ],
+   "confidence": 0.7,
+   "citations": [
+    "NH:10829",
+    "NH:10842",
+    "NH:10856",
+    "NH:10888",
+    "NH:10892"
+   ],
+   "review": [
+    "CONFIRMED"
+   ],
+   "split": "tune"
+  },
+  {
+   "id": "NH.chart_75",
+   "book": "NH",
+   "name": "Ex-King Farouk",
+   "birth": {
+    "dt": "1920-02-11T22:18:00",
+    "tz": 2.0,
+    "lat": 30.03,
+    "lon": 31.25
+   },
+   "lagna_sign": 7,
+   "computed_lagna_sign": 7,
+   "lagna_confirmed": true,
+   "pronounced_houses": [
+    1,
+    7,
+    9,
+    10
+   ],
+   "confidence": 0.3,
+   "citations": [
+    "NH:11313",
+    "NH:11351",
+    "NH:11354",
+    "NH:11385"
+   ],
+   "review": [
+    "CONFIRMED",
+    "DRAFT"
+   ],
+   "split": "holdout"
+  }
+ ]
+}

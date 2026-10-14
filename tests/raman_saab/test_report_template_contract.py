@@ -20,6 +20,7 @@ from app.raman_saab.detailed_report import (
     to_markdown,
 )
 from app.raman_saab.report_html import to_html
+from app.raman_saab.report_movements import MOVEMENTS, flattened_order, movement_passage
 
 _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 
@@ -28,7 +29,8 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 #: marker change must consciously touch this file too. Append-only: may only ever GROW.
 _FROZEN = (
     ("title", "# Detailed reading", 'class="name"'),
-    # v37 amendment (2026-08-20, conscious, same-commit as the module, user-requested): the
+    # v40 (merged 2026-10-14; was v37 on the empirical-engine branch):
+    # amendment (2026-08-20, conscious, same-commit as the module, user-requested): the
     # plain-words summary, inserted FIRST. Third exception to append-at-the-end, after v5 and
     # v32 — a summary a reader meets after the technical chapters is not a summary.
     ("simple_summary", "## In simple words", 'id="simple-summary"'),
@@ -46,7 +48,8 @@ _FROZEN = (
     # coherence work): the interpretation guide — the report's own precedence rules
     # collected into one section, placed right after the honesty headline.
     ("interpretation_guide", "## How to read this report", 'id="interpretation-guide"'),
-    # v34 (2026-08-18): the integrated interpretation layer, a conscious near-top amendment
+    # v37 (merged 2026-10-14; was v34 on the empirical-engine branch):
+    # (2026-08-18): the integrated interpretation layer, a conscious near-top amendment
     # right after "How to read this report" (the v5/v32 exception, grown here in lockstep).
     ("themes", "## The integrated reading", 'id="integrated-reading"'),
     ("stands_out", "## What stands out in this chart", 'id="stands-out"'),
@@ -55,6 +58,8 @@ _FROZEN = (
     ("digest", "## What matters most (ranked digest)", 'id="digest"'),
     ("dashboard", "## The twelve matters at a glance", 'id="dashboard"'),
     ("chart_signature", "## Chart signature", 'class="sig"'),
+    # v35 (2026-08-07, conscious, same-commit): the Sitting — the continuous reading.
+    ("sitting", "## The reading, as one sitting", 'id="sitting"'),
     # v13 amendment (2026-07-26, conscious, same-commit as the module): Ruler of the nativity —
     # Raman's own first-impression move — inserted right after the Chart signature it opens from.
     ("ruler", "## Ruler of the nativity", 'id="ruler"'),
@@ -153,22 +158,64 @@ _FROZEN = (
     # v4 amendment (2026-07-26, conscious, same-commit as the module): the Nichod capstone,
     # appended LAST — after reference material — since it distils the whole document.
     ("nichod", "## Nichod", 'id="nichod"'),
-    # v33 amendment (2026-08-14, conscious, same-commit as the module, user-requested):
+    # v34 amendment (2026-08-06, conscious, same-commit as the module, user-requested): the
+    # intuition layer — which planet governs a contested house, how firmly each house stands,
+    # and which of Raman's own worked charts this one recalls. All three are pure re-reads.
+    ("dominance", "## What governs each house", 'id="dominance"'),
+    ("restraint", "## How firmly each house stands", 'id="restraint"'),
+    ("analogy", "## Charts of Raman's this one recalls", 'id="analogy"'),
+    # v36 (merged 2026-10-14; was v33 on the empirical-engine branch):
+    # amendment (2026-08-14, conscious, same-commit as the module, user-requested):
     # aptitude, intelligence & work style — appended at the END per the append-only default.
     ("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"'),
-    # v35 (2026-08-19): the medical read — HPA-29's own tables through Raman's own
+    # v38 (merged 2026-10-14; was v35 on the empirical-engine branch):
+    # (2026-08-19): the medical read — HPA-29's own tables through Raman's own
     # 6th-house procedure. Appended likewise; _FROZEN grown in the same commit.
     ("medical", "## Medical read (classical correspondence)", 'id="medical"'),
-    # v36 (2026-08-20, user-requested): the feedback instrument — the questionnaire the reader
+    # v39 (merged 2026-10-14; was v36 on the empirical-engine branch):
+    # (2026-08-20, user-requested): the feedback instrument — the questionnaire the reader
     # answers about their own life, generated with the reading. Appended at the very END: it is
     # the one section that asks rather than tells. _FROZEN grown in the same commit.
     ("feedback", "## Your feedback", 'id="feedback"'),
-    # v38 (2026-09-01, user-requested): the collected non-graded lane — every indication that
+    # v41 (merged 2026-10-14; was v38 on the empirical-engine branch):
+    # (2026-09-01, user-requested): the collected non-graded lane — every indication that
     # is a kind, cause, channel, count or circumstance rather than a grade. A pure re-read of
     # the house-block composers. Appended at the END; _FROZEN grown in the same commit.
     ("indications", "## What Raman's rules indicate", 'id="indications"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
+
+#: The v33 READING ORDER, copied here BY HAND for the same reason `_FROZEN` is: the registry
+#: derives its sequence from `report_movements.MOVEMENTS`, so a test that only compared those
+#: two would pass silently when both were edited together. Re-sequencing the report means
+#: editing this tuple too, consciously, in the same commit.
+_ORDER_V41: tuple[str, ...] = (
+    # v41 (merged 2026-10-14): the six empirical-engine sections placed in the arc —
+    # simple_summary after the header trio (a reader has to meet it before anything else),
+    # themes before stands_out, indications after restraint, aptitude opening the matters,
+    # medical after health_readout, feedback after nichod (asks rather than tells; user request).
+    # I. Who this is
+    # v35: "sitting" enters here — after the signature frames, before the technical hand-off.
+    "title", "plain_reading", "chart_signature", "simple_summary", "sitting", "now_box",
+    "ruler", "planet_bios", "psych",
+    # II. How to read it honestly
+    "info_content", "interpretation_guide", "judgment_graph", "themes", "stands_out",
+    "digest", "dashboard",
+    # III. The instrument
+    "chart_grids", "positions", "rect_confidence", "shadbala", "ashtakavarga", "divisional",
+    # IV. The twelve fields
+    "houses", "house_strength", "preponderance", "dominance", "restraint", "indications",
+    "yogas", "yoga_deep", "deeptadi",
+    # V. The matters of life
+    "aptitude", "career", "profession", "wealth", "marriage", "children", "health_readout",
+    "medical", "arishta", "longevity", "maraka", "maraka_saturn",
+    # VI. In time
+    "timeline", "yoga_timing", "ishta_kashta", "md_condition", "av_dasha_seat", "dasa_kakshya",
+    "life_chapters", "decades", "gochara", "dasha_transit",
+    # VII. The summing up
+    "karakamsa", "soul", "karmic", "pitru", "analogy", "synthesis", "life_synthesis",
+    "glossary", "nichod", "feedback",
+)
 
 
 @pytest.fixture(scope="module")
@@ -187,11 +234,52 @@ def html(report):
 
 
 class TestTemplateContract:
-    def test_registry_is_append_only(self):
-        """The contract may grow, but the frozen prefix — ids AND markers — can never change."""
-        rows = tuple((s.section_id, s.md_marker, s.html_marker) for s in SECTION_CONTRACT)
-        assert rows[: len(_FROZEN)] == _FROZEN
-        assert set(HTML_SECTION_ORDER) <= {s.section_id for s in SECTION_CONTRACT}
+    def test_section_set_is_append_only(self):
+        """COMPLETENESS — the frozen SET of (id, markers) may grow, but never change or shrink.
+
+        v33 split what used to be one assertion in two. Until then a single ordered-prefix
+        comparison enforced both "no section is ever lost" (correct, permanent) and "the order
+        never changes" (accidental) — so the only legal move for 32 versions was to append,
+        and the registry became a build log rather than a reading order. Set equality keeps
+        the completeness guarantee at full strength; :meth:`test_reading_order_is_the_reviewed_arc`
+        governs sequence separately.
+        """
+        rows = {(s.section_id, s.md_marker, s.html_marker) for s in SECTION_CONTRACT}
+        assert rows == set(_FROZEN)
+
+    def test_html_order_carries_every_section(self):
+        """Tightened from `<=` to `==` at v33: a subset would have let a section be dropped
+        from the HTML order entirely while every test still passed."""
+        assert set(HTML_SECTION_ORDER) == {s.section_id for s in SECTION_CONTRACT}
+
+    def test_reading_order_is_the_reviewed_arc(self):
+        """ORDER — pinned to a sequence copied BY HAND, for the same reason `_FROZEN` is.
+
+        `SECTION_CONTRACT` derives its order from `report_movements.MOVEMENTS`, so comparing
+        the two would be near-tautological: editing the arc and the registry together would
+        pass silently. `_ORDER_V41` lives here so re-sequencing stays as deliberate an act as
+        changing a marker.
+        """
+        assert tuple(s.section_id for s in SECTION_CONTRACT) == _ORDER_V41
+        assert tuple(HTML_SECTION_ORDER) == _ORDER_V41
+        assert flattened_order() == _ORDER_V41
+
+    def test_movements_partition_the_contract(self):
+        """Every section sits in exactly one movement — no section lost, none duplicated."""
+        placed = [sid for mv in MOVEMENTS for sid in mv.section_ids]
+        assert len(placed) == len(set(placed)) == len(SECTION_CONTRACT)
+        assert set(placed) == {s.section_id for s in SECTION_CONTRACT}
+
+    def test_nichod_stays_last_and_the_header_trio_stays_together(self):
+        """Two structural constraints the arc may never violate.
+
+        `nichod` is the capstone and closes the reading; since the 2026-10-14 merge only
+        `feedback` follows it (user request — the one section that asks rather than tells). `title`/`plain_reading`/
+        `chart_signature` are one `<header>` element in the HTML and are emitted as a single
+        chunk, so they must remain adjacent in that internal order.
+        """
+        assert _ORDER_V41[-2:] == ("nichod", "feedback")
+        assert _ORDER_V41[:3] == ("title", "plain_reading", "chart_signature")
 
     @needs_corpus
     def test_renderers_emit_the_frozen_markers(self, markdown, html):
@@ -250,11 +338,17 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34",
-            "v35", "v36", "v37",
-            # v38 (2026-09-01): the collected non-graded lane — "What Raman's rules
-            # indicate", grouped by category. A pure re-read of the house-block composers.
-            "v38",
+            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32",
+            # v33 was the reading arc — a re-ORDERING, so it added no section and needs no tag.
+            # v34 adds the intuition layer: dominance, restraint and analogy.
+            # v35 adds the Sitting — the continuous reading in Raman's NH arc.
+            "v34", "v35",
+            # v36-v41: the six empirical-engine sections, renumbered at the 2026-10-14 merge
+            # (they were v33-v38 on that branch): v36 aptitude, v37 the integrated reading
+            # (themes), v38 the medical read, v39 the feedback instrument, v40 "In simple
+            # words", v41 the collected non-graded lane — "What Raman's rules indicate",
+            # grouped by category, a pure re-read of the house-block composers.
+            "v36", "v37", "v38", "v39", "v40", "v41",
         }
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
@@ -288,12 +382,20 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v30") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v31") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v32") == 1
-        assert sum(1 for s in SECTION_CONTRACT if s.since == "v33") == 1
-        assert sum(1 for s in SECTION_CONTRACT if s.since == "v34") == 1
-        # v35: the medical read (HPA-29 sign->anatomy / planet->disease, applied through
+        # v34: dominance, restraint, analogy (the intuition layer); v35: the Sitting.
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v34") == 3
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v35") == 1
+        # v36-v41 (merged 2026-10-14; were v33-v38 on the empirical-engine branch):
+        # aptitude, themes, medical, feedback, simple_summary, indications — one each.
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v36") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v37") == 1
+        # v38: the medical read (HPA-29 sign->anatomy / planet->disease, applied through
         # Raman's own 6th-house rule) — the audit's largest content gap, closed once the
         # doctrine corpus was mounted and the chapter's anchors verified line-for-line.
-        assert sum(1 for s in SECTION_CONTRACT if s.since == "v35") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v38") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v39") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v40") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v41") == 1
 
 
 class TestRectConfidence:
@@ -339,16 +441,36 @@ class TestRectConfidence:
         assert 0 <= rc.overall_stable_plus <= rc.scan_window
 
 
-class TestJudgmentGraphSection:
-    """v32 — the judgment graph, used already in Your Reading and now shown right beside it."""
+def _html_section(html: str, section_id: str) -> str:
+    """One section's HTML — from its own marker to whichever section follows it.
 
-    def test_renders_right_after_your_reading(self, markdown, html):
+    Slicing to a HARDCODED next section is what broke when v33 re-sequenced the document: the
+    old `html[index("judgment-graph"):index("ruler")]` silently produced an empty string once
+    `ruler` moved ahead of it, and an assertion against "" fails for the wrong reason. Deriving
+    the neighbour from the contract keeps these assertions order-independent.
+    """
+    by = {s.section_id: s.html_marker for s in SECTION_CONTRACT}
+    order = [sid for sid in HTML_SECTION_ORDER if by[sid]]
+    i = order.index(section_id)
+    start = html.index(by[section_id])
+    end = html.index(by[order[i + 1]]) if i + 1 < len(order) else len(html)
+    assert end > start, f"{section_id!r} slice is empty — marker order broke"
+    return html[start:end]
+
+
+class TestJudgmentGraphSection:
+    """v32 — the judgment graph; v33 moves it into Movement II, the how-to-read-it frame."""
+
+    def test_renders_in_the_how_to_read_movement(self, markdown, html):
+        """It explains how the report reaches its readings, so it belongs to the frame rather
+        than to the reading — v33 groups it with the honesty headline and the guide."""
         assert "## Judgment graph" in markdown
         assert 'id="judgment-graph"' in html
         assert markdown.index("## Your Reading") < markdown.index("## Judgment graph")
-        assert markdown.index("## Judgment graph") < markdown.index("## Information content")
+        assert markdown.index("## Judgment graph") < markdown.index("## What stands out")
         assert html.index('id="plain-reading"') < html.index('id="judgment-graph"')
-        assert html.index('id="judgment-graph"') < html.index('id="ruler"')
+        mv = next(m for m in MOVEMENTS if "judgment_graph" in m.section_ids)
+        assert mv.numeral == "II"
 
     def test_counts_match_a_direct_graph_build(self, report, markdown):
         from app.raman_saab.judgment_graph import build_judgment_graph
@@ -358,7 +480,7 @@ class TestJudgmentGraphSection:
     def test_dominant_planet_and_a_house_appear_in_the_html_svg(self, report, html):
         assert report.planet_bios, "canonical chart should have at least one dominant planet"
         dom = report.planet_bios[0].planet
-        seg = html[html.index('id="judgment-graph"'):html.index('id="ruler"')]
+        seg = _html_section(html, "judgment_graph")
         assert dom in seg
         assert "<svg" in seg
 
@@ -366,7 +488,7 @@ class TestJudgmentGraphSection:
         """The reader-facing view: one card per house, on every surface."""
         from app.raman_saab.judgment_graph import (build_judgment_graph, house_facts,
                                                    house_sentence)
-        seg = html[html.index('id="judgment-graph"'):html.index('id="ruler"')]
+        seg = _html_section(html, "judgment_graph")
         assert seg.count('class="jg-house"') == 12
         facts = house_facts(build_judgment_graph(report))
         assert len(facts) == 12
@@ -378,7 +500,7 @@ class TestJudgmentGraphSection:
 
     def test_planet_names_are_never_truncated(self, html):
         """The old aspect network sliced names to 4 chars ('Satu 20', 'Jupi 25'). Gone."""
-        seg = html[html.index('id="judgment-graph"'):html.index('id="ruler"')]
+        seg = _html_section(html, "judgment_graph")
         for stub in ("Satu ", "Jupi ", "Merc ", "Venu ", "Satu<", "Jupi<"):
             assert stub not in seg, f"truncated planet name {stub!r} reappeared"
 
@@ -606,7 +728,7 @@ class TestMonographsV25toV27:
 
 
 class TestAptitudeV33:
-    """v33: aptitude, intelligence & work style — populated, cited, bannered, guard-safe."""
+    """v36 (was v33 on the empirical-engine branch): aptitude, intelligence & work style — populated, cited, bannered, guard-safe."""
 
     def test_renders_in_every_surface(self, report, markdown, html):
         from app.raman_saab.report_json import to_report_dict
@@ -798,3 +920,87 @@ class TestHealthReadout:
         section = markdown[start:end if end > 0 else None]
         m = _FORBIDDEN_RE.search(section)
         assert m is None, f"health read-out prose trips the guard: {m.group(0)!r}"
+
+
+class TestMovements:
+    """v33 — the reading arc: seven movements, each opening with a connective passage.
+
+    The movements SUPPLEMENT the sections; they never replace them. Every one of the 53
+    contracted sections still renders in full underneath its movement heading, which is what
+    `TestTemplateContract` above continues to pin.
+    """
+
+    def test_every_movement_heads_both_text_surfaces(self, markdown, html):
+        """All seven headings reach markdown AND the standalone HTML (REPORT COMPLETENESS:
+        a surface that shows fewer movements than another is a dropped surface)."""
+        for mv in MOVEMENTS:
+            assert f"## {mv.numeral}. {mv.title}" in markdown, f"markdown lost movement {mv.numeral}"
+            assert f'id="movement-{mv.numeral.lower()}"' in html, f"HTML lost movement {mv.numeral}"
+            assert mv.title in html
+
+    def test_movement_headings_appear_in_arc_order(self, markdown, html):
+        """The seven headings must themselves run I -> VII on every surface."""
+        md_pos = [markdown.index(f"## {mv.numeral}. {mv.title}") for mv in MOVEMENTS]
+        html_pos = [html.index(f'id="movement-{mv.numeral.lower()}"') for mv in MOVEMENTS]
+        assert md_pos == sorted(md_pos)
+        assert html_pos == sorted(html_pos)
+
+    def test_the_document_still_opens_with_its_own_title(self, markdown, html):
+        """Movement I carries `title`, so its heading follows the H1 rather than preceding it —
+        a report that opened with '## I. Who this is' above its own name would read wrong."""
+        assert markdown.lstrip().startswith("# Detailed reading")
+        assert markdown.index("# Detailed reading") < markdown.index("## I. Who this is")
+        assert html.index('class="name"') < html.index('id="movement-i"')
+
+    def test_every_movement_carries_a_passage_on_a_full_report(self, report):
+        """The passages read defensively from the report, so a sparse chart falls back to
+        generic phrasing rather than raising. This pins that a FULLY populated report yields
+        real prose at every boundary — otherwise the fallbacks quietly become the norm and the
+        movements go mute without any test noticing."""
+        for i, mv in enumerate(MOVEMENTS):
+            passage = movement_passage(report, i)
+            assert passage.strip(), f"movement {mv.numeral} produced no passage"
+            assert passage.endswith("."), f"movement {mv.numeral} passage is not a sentence"
+            assert len(passage) > 60, f"movement {mv.numeral} passage is suspiciously short"
+
+    def test_passages_reach_both_surfaces(self, report, markdown, html):
+        """The composed prose must actually be rendered, not merely computable."""
+        from app.raman_saab.detailed_report import _fold_ascii
+        for i in range(len(MOVEMENTS)):
+            passage = movement_passage(report, i)
+            assert _fold_ascii(passage) in markdown, f"markdown dropped passage {i}"
+
+    def test_passages_never_trip_the_llm_guard(self, report):
+        """Connective prose is held to the same wording contract as every other composed
+        surface: descriptive idiom only, never a decree or a dated forecast. (The guard is a
+        blunt denylist and has already caught an innocent 'brings to' here — the rule is to
+        write around it, never to widen it.)"""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for i, mv in enumerate(MOVEMENTS):
+            m = _FORBIDDEN_RE.search(movement_passage(report, i))
+            assert m is None, f"movement {mv.numeral} passage trips the guard: {m.group(0)!r}"
+
+    def test_passage_index_out_of_range_is_empty_not_an_error(self, report):
+        """A renderer asking for a movement that does not exist gets "", never an exception."""
+        assert movement_passage(report, -1) == ""
+        assert movement_passage(report, len(MOVEMENTS)) == ""
+
+    def test_sections_render_under_their_own_movement(self, markdown):
+        """Each section must appear after its movement's heading and before the next one —
+        the arc has to actually group the document, not merely label it."""
+        heads = [markdown.index(f"## {mv.numeral}. {mv.title}") for mv in MOVEMENTS]
+        heads.append(len(markdown))
+        by_id = {s.section_id: s.md_marker for s in SECTION_CONTRACT}
+        for i, mv in enumerate(MOVEMENTS):
+            for sid in mv.section_ids:
+                marker = by_id[sid]
+                if not marker:
+                    continue
+                at = markdown.index(marker)
+                if sid == "title":
+                    # documented exception: the document's own H1 precedes Movement I's
+                    # heading, so the report does not open with "## I. Who this is".
+                    assert at < heads[i]
+                    continue
+                assert heads[i] < at < heads[i + 1], \
+                    f"{sid!r} renders outside movement {mv.numeral}"

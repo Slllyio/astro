@@ -15,7 +15,17 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Final, Optional
+
+#: What the report says when the date it is cast for falls outside the chart's unrolled
+#: Vimshottari sequence. The Chara dasha has surfaced exactly this, in exactly these words,
+#: since it was written ("surface None honestly, not a silent Lagna fallback") — the Vimshottari
+#: running period simply never got the same treatment and dereferenced None instead, which
+#: crashed the whole report for any nativity whose ~140-year span ended before today.
+#:
+#: That is not an edge case here: MOST OF RAMAN'S OWN WORKED NATIVITIES ARE 19TH CENTURY, so
+#: the engine could not produce a report for the charts it is validated against.
+BEYOND_SEQUENCE: Final[str] = "(beyond computed sequence)"
 
 import swisseph as swe
 
@@ -34,10 +44,6 @@ from app.raman_saab.primitives import longevity_combos as lc
 
 _SIGNS = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
           "Sagittarius", "Capricorn", "Aquarius", "Pisces")
-#: What a dasha field says when the reference date falls outside the unrolled sequence.
-#: One constant so the Vimshottari and chara answers are worded identically — a reader who
-#: learns what it means in one row does not have to learn it again in the next.
-_BEYOND = "(beyond computed sequence)"
 _HOUSE = {1: "Self/Body", 2: "Wealth/Family", 3: "Siblings/Courage", 4: "Mother/Home",
           5: "Children/Mind", 6: "Health/Enemies", 7: "Spouse/Partnership", 8: "Longevity",
           9: "Father/Fortune", 10: "Career", 11: "Gains", 12: "Loss/Moksha/Spirituality"}
@@ -250,9 +256,9 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         # a 500 from the public API until this was handled. Say so in the SAME words the chara
         # dasha uses one line below, rather than falling back to a lord that would read as a
         # real running period. `antar` is None too on an MD-level hit.
-        running_md=period.maha if period else _BEYOND,
-        running_ad=(period.antar or _BEYOND) if period else _BEYOND,
-        chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else _BEYOND)(
+        running_md=period.maha if period else BEYOND_SEQUENCE,
+        running_ad=(period.antar or BEYOND_SEQUENCE) if period else BEYOND_SEQUENCE,
+        chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else BEYOND_SEQUENCE)(
             cd.chara_dasha_on(chart, age)),       # surface None honestly, not a silent Lagna fallback
         sade_sati=tr.sade_sati(chart, y, m, d, ayanamsa=ayanamsa), matters=tuple(matters))
 
@@ -292,3 +298,19 @@ def _today() -> tuple[int, int, int]:
     import datetime
     t = datetime.datetime.now(datetime.timezone.utc)    # UTC, consistent with reading_timeline
     return (t.year, t.month, t.day)
+
+
+def running_period(syn: Any) -> Optional[tuple[str, str]]:
+    """`(MD, AD)` when the report's reference date sits inside the unrolled Vimshottari
+    sequence, else None.
+
+    Prose consumers MUST route through this rather than truth-testing `running_md`: the
+    sentinel is a non-empty string, so `if md:` is true for it and yields sentences like
+    "You are in a (beyond computed sequence) chapter". Label and lookup consumers can read the
+    field directly — a sentinel renders acceptably in a label and matches no planet name.
+    """
+    md = getattr(syn, "running_md", None)
+    ad = getattr(syn, "running_ad", None)
+    if not md or md == BEYOND_SEQUENCE:
+        return None
+    return md, ad

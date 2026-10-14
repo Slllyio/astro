@@ -42,24 +42,31 @@ class TestTheDefaultIsFull:
         assert "fetch(" not in block
 
 
+#: where the full (buffered, movement-ordered) render begins, right after the short mode
+_FULL_START = "  // v33: sections are BUFFERED"
+
+
 class TestWiring:
     def test_the_short_renderer_is_actually_called(self, page):
         assert "function shortReadingCard(sr)" in page
-        assert "add(shortReadingCard(R.short_reading))" in page
+        # merged 2026-10-14: the short mode writes straight into the folios via put(...)
+        assert "shortReadingCard(R.short_reading)" in page[page.index("if(READ_LEN==='short'){"):]
 
     def test_the_toggle_is_offered_on_the_full_reading_too(self, page):
         """Otherwise the short reading is undiscoverable from where readers start."""
-        # `page[page.index(x):].startswith("chapter(2);")` is true by construction once the
-        # index call succeeds — the only real check was the ValueError it would otherwise raise.
-        assert "chapter(2);\n  add(readingLengthToggle());" in page, \
-            "the reading-length toggle no longer follows chapter(2) in the full reading"
+        # merged 2026-10-14: main's buffered movement render replaced chapter(N); the toggle
+        # now rides the pre-section buffer, which the flush puts at the head of Movement I.
+        full = page[page.index(_FULL_START):]
+        assert "\n  add(readingLengthToggle());" in full, \
+            "the reading-length toggle is no longer added in the full reading"
 
     def test_every_folio_carries_the_way_back(self, page):
         """A mode you cannot find your way out of is a trap: in the short reading the other
         folios are where a reader looks for the switch, so it is on each of them."""
-        block = page[page.index("if(READ_LEN==='short'){"):page.index("chapter(2);\n  add(readingLengthToggle());")]
-        assert "for(let i=3;i<=11;i++)" in block
-        assert block.count("add(readingLengthToggle());") >= 2
+        block = page[page.index("if(READ_LEN==='short'){"):page.index(_FULL_START)]
+        # merged 2026-10-14: seven movement folios (leaves 2-8) instead of eleven chapters
+        assert "for(let i=3;i<=8;i++)" in block
+        assert block.count("readingLengthToggle()") >= 2
 
     def test_the_other_folios_are_explained_not_left_blank(self, page):
         assert "You are reading the short version." in page
@@ -67,7 +74,7 @@ class TestWiring:
     def test_feedback_still_renders_in_the_short_reading(self, page):
         """Shortening the reading must not quietly switch off the thing that measures how
         well it lands."""
-        block = page[page.index("if(READ_LEN==='short'){"):page.index("chapter(2);\n  add(readingLengthToggle());")]
+        block = page[page.index("if(READ_LEN==='short'){"):page.index(_FULL_START)]
         assert "feedbackInstrument(R.feedback_instrument)" in block
         assert "feedbackCard(FQ)" in block
 

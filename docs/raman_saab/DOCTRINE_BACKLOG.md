@@ -5723,3 +5723,31 @@ copy, which ends near combination 162 (flag: the registered copy is incomplete).
 
 **Net:** 39 presentation changes (H9.L.7a 12, H9.L.7b 27), 0 verdict changes, ratchet 286/397,
 362/397, 35. Liveness unchanged (both fire).
+
+## MERGE OF main INTO claude/empirical-engine-lag-vrxsau (2026-10-14) -- committed WITH 12 KNOWN FAILURES
+
+Branches split 2026-08-05 (main +168, this branch +202). Merged at user request to bring in the
+complete Three Hundred Combinations (3HCC, main a71dfa9a) and everything else on main. Saved at the
+user's instruction before the tail was fixed. **Golden ratchet held exactly: 286/397, 362/397, 35.**
+
+Resolved: all 15 conflicted files. Report layer: every section of both branches kept (REPORT
+COMPLETENESS); this branch's six sections renumbered v36-v41 (aptitude, themes, medical, feedback,
+simple_summary, indications) and placed in main's `report_movements.MOVEMENTS` arc (feedback after
+nichod by user request). Contract test now `_ORDER_V41`.
+
+**Open -- fix next session (pytest tests/raman_saab: 12 failed / 7231 passed):**
+1. test_book_registry::test_unsplit_books_match_the_registry
+2. test_citation_anchors_land_on_text::test_no_anchor_resolves_to_blank
+3. test_rule_liveness::test_yoga_liveness_does_not_regress (main added ~110 yogas; re-baseline)
+4. test_source_lock::test_source_lock_matches_disk
+5-6. test_yogas: Matrunasa-199 and Raja-263
+7. test_detailed_report::...test_the_general_varga_anchors_agree_with_the_domain_table (D-27 cite)
+8. test_doctrine_snapshot (main's yogas change presentations; check 0 verdict change, re-freeze)
+9. test_sitting::TestTheHedgeCensus -- USER DECISION PENDING: main caps the "not a prediction"
+   family at 8 per reading; with this branch's sections the Mainpuri report has 13. Raise the cap or
+   consolidate wording.
+10. test_theme_synthesis::...background_provenance_is_stated_and_honest
+11-12. test_wave2_yogas_houses_preponderance: family map lacks main's new yogas; json new fields.
+Also: the merged interactive page (report.html) passes a JS syntax check but has NOT been opened in
+a browser. The digest now pins governing_factor/foundation first, salience orders the rest (merge
+judgement call, review it).

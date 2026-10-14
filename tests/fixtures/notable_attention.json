@@ -1,0 +1,2382 @@
+{
+ "_about": "Raman's OWN attention per worked chart, from Notable Horoscopes. The target is EXPERT ATTENTION, never life outcomes — this sits clear of the astrobank firewall and does not relitigate the measured-null generalization axis.",
+ "_source": "data/Notable Horoscopes BV Raman.txt",
+ "_split": "deterministic: usable charts sorted by name, alternating tune/holdout. Frozen before any salience model existed or any score was seen.",
+ "_usable_rule": "printed lat+long (castable) AND at least one emphasised factor",
+ "_trivial_baselines": {
+  "_why": "Raman genuinely emphasises Lagna, the 10th and the 9th most often, so a constant guess already scores well. A salience model that does not BEAT these numbers has demonstrated nothing.",
+  "always_top_house": {
+   "house": 1,
+   "precision_at_1": 0.634
+  },
+  "always_top_3_houses": {
+   "houses": [
+    1,
+    10,
+    7
+   ],
+   "recall_at_3": 0.805
+  },
+  "top_house_share_of_all_emphasis": 0.248
+ },
+ "_counts": {
+  "sections_parsed": 75,
+  "usable": 41,
+  "tune": 21,
+  "holdout": 20
+ },
+ "_caveat": "n is small. Every number computed against this benchmark must be reported with a confidence interval, and a difference inside the interval is not a result.",
+ "charts": [
+  {
+   "number": "24",
+   "name": "ABRAHAM LINCOLN",
+   "line_start": 10463,
+   "line_end": 10776,
+   "birth_details": "*Born on 12th February 1809 at 7-32 a.m. (L.M.T.). (Lat. 35° N., Long. 89° E.) Planetary Positions.-The Sun 304° 6'; the Moon 275° 20'; Mars 185° 46'; Mercury 312° 44’; Jupiter 332° 16; Venus 347° 46' ; Saturn 223° 16' ; Rahu 197° 44' ; Ketu 17° 44' ; and Lagna 316° 39'. Ayanamsa 19° 40'. Jupiter Venus Ketu Rahu Sun Lagna Mercury RASI Moon Lagna",
+   "positions_raw": "The Sun 304° 6'; the Moon 275° 20'; Mars 185° 46'; Mercury 312° 44’; Jupiter 332° 16; Venus 347° 46' ; Saturn 223° 16' ; Rahu 197° 44' ; Ketu 17° 44' ; and Lagna 316° 39'. Ayanamsa 19° 40'. Jupiter Venus Ketu Rahu Sun Lagna Mercury RASI Moon Lagna NAVAMSA Jupiter Moon Merc, Saturn Rahu Mars 1 Ketu Balance of t",
+   "balance_of_dasa": "the Sun",
+   "latitude": 35.0,
+   "longitude": 89.0,
+   "sun_longitude": 304.1,
+   "stated_lagna": "",
+   "prose_chars": 7435,
+   "houses": {
+    "12": 3,
+    "4": 7,
+    "9": 3,
+    "2": 13,
+    "10": 10,
+    "7": 8,
+    "8": 2,
+    "5": 1,
+    "1": 14,
+    "6": 1
+   },
+   "grahas": {
+    "Sun": 8,
+    "Moon": 7,
+    "Mars": 8,
+    "Mercury": 6,
+    "Jupiter": 17,
+    "Venus": 8,
+    "Saturn": 17,
+    "Rahu": 4
+   },
+   "yogas": {
+    "Subhavesi": 2,
+    "Vesi": 1,
+    "Mrityu": 1
+   },
+   "emphasised_houses": [],
+   "emphasised_grahas": [
+    "Moon",
+    "Saturn",
+    "Mars",
+    "Rahu"
+   ],
+   "split": "tune",
+   "computed_lagna": "Aquarius",
+   "admitted": true,
+   "admit_median_deg": 0.55,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "58",
+   "name": "ADOLF HITLER",
+   "line_start": 20703,
+   "line_end": 21084,
+   "birth_details": "Born on 20th April 1889 at 6-30 p.m. (L.M.T.). (Lat. 48° N., Long. 13° E.) Planetary Positions. — The Sun 9° 56' ; the Moon 255° 46’ ; Mars 25° 31 ; Mercury 4° 48' ; Jupiter 257° 23' ; Venus 25° 50’; Saturn 112° 35'; Rahu 85°6'; Ketu 265°6'; and Lagna 180°54'. Ayanamsa 20°52'. Sun Mars Mercury Venus ■ 1 Mercury Rahu Sun RASI Sat 1 NAVAMSA",
+   "positions_raw": "The Sun 9° 56' ; the Moon 255° 46’ ; Mars 25° 31 ; Mercury 4° 48' ; Jupiter 257° 23' ; Venus 25° 50’; Saturn 112° 35'; Rahu 85°6'; Ketu 265°6'; and Lagna 180°54'. Ayanamsa 20°52'. Sun Mars Mercury Venus ■ 1 Mercury Rahu Sun RASI Sat 1 NAVAMSA ■ Sat. Moon Moon Jupiter Ketu Lagoa 1 ■ Jupiter Balance of Ve",
+   "balance_of_dasa": "Venus",
+   "latitude": 48.0,
+   "longitude": 13.0,
+   "sun_longitude": 9.933333333333334,
+   "stated_lagna": "Libra",
+   "prose_chars": 10446,
+   "houses": {
+    "3": 8,
+    "6": 8,
+    "10": 5,
+    "7": 14,
+    "9": 5,
+    "4": 1,
+    "8": 5,
+    "1": 13
+   },
+   "grahas": {
+    "Sun": 10,
+    "Moon": 15,
+    "Mars": 17,
+    "Mercury": 6,
+    "Jupiter": 7,
+    "Venus": 10,
+    "Saturn": 15,
+    "Rahu": 20,
+    "Ketu": 6
+   },
+   "yogas": {
+    "Chandala": 1,
+    "Mahabhagya": 2,
+    "Lakshmi": 2,
+    "Sreekanta": 1,
+    "Rajayoga": 2
+   },
+   "emphasised_houses": [
+    10,
+    7
+   ],
+   "emphasised_grahas": [
+    "Mars",
+    "Saturn",
+    "Sun",
+    "Moon"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Libra",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (Lagna Libra confirmed)"
+  },
+  {
+   "number": "45",
+   "name": "ALBERT EINSTEIN",
+   "line_start": 16647,
+   "line_end": 16938,
+   "birth_details": "Born on 14th March 1879 at 11-30 a.m. (L.M.T.) (Lat. 48° 24' N., Long. 10° E.) Planetary Positions. — The Sun 332° 46'; the Moon 233° 48'; Mars 276° 12'; Mercury 342° 25'; Jupiter 306° 44’; Venus 356° 16’; Saturn 333° 28' ; Rahu 280° 46' ; Ketu 100° 46' ; and Lagna 81 ° 47’. Ayanamsa 20° 43', Sun Mercury Venus Saturn Lagna Rahil Lagna Jupiter RAS1 K",
+   "positions_raw": "The Sun 332° 46'; the Moon 233° 48'; Mars 276° 12'; Mercury 342° 25'; Jupiter 306° 44’; Venus 356° 16’; Saturn 333° 28' ; Rahu 280° 46' ; Ketu 100° 46' ; and Lagna 81 ° 47’. Ayanamsa 20° 43', Sun Mercury Venus Saturn Lagna Rahil Lagna Jupiter RAS1 Ketu Moon Mars Venus NAVAMSA Sun Mars Rahu Moon Jupit. ! Saturn",
+   "balance_of_dasa": "Mercury",
+   "latitude": 48.4,
+   "longitude": 10.0,
+   "sun_longitude": 332.76666666666665,
+   "stated_lagna": "",
+   "prose_chars": 7387,
+   "houses": {
+    "9": 10,
+    "3": 2,
+    "5": 7,
+    "12": 1,
+    "10": 11,
+    "4": 4,
+    "6": 4,
+    "8": 5,
+    "2": 3,
+    "11": 1,
+    "7": 5,
+    "1": 12
+   },
+   "grahas": {
+    "Sun": 4,
+    "Moon": 3,
+    "Mars": 6,
+    "Mercury": 9,
+    "Jupiter": 8,
+    "Venus": 8,
+    "Saturn": 4,
+    "Rahu": 14
+   },
+   "yogas": {
+    "Chaturya": 1,
+    "Papakarthari": 1,
+    "Parivraja": 1,
+    "Malavya": 1
+   },
+   "emphasised_houses": [
+    7
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Mercury",
+    "Jupiter",
+    "Rahu"
+   ],
+   "split": "tune",
+   "computed_lagna": "Gemini",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "3",
+   "name": "ALEXANDER THE GREAT",
+   "line_start": 2575,
+   "line_end": 2911,
+   "birth_details": "*Born on 22nd July 356 B. C. between 10 and 12 at night. (Lat 40° 43' N„ Long. 22° 35' E.) Planetary Positions. — The Sun 123° 35' ; the Moon 208° 31* ; Mars 86° 18' ; Mercury 105° 3V ; Jupiter 185° 54' ; Venus 1 26° 20' ; Saturn 59° 54' ; Rahu 314° 2' ; Ketu 134° 2'; and Lagna 19° 31' ; Ayanamsa + 10 0 32'. Lagna Saturn Mars Venus Sun Mars Moon Rahu RASI",
+   "positions_raw": "The Sun 123° 35' ; the Moon 208° 31* ; Mars 86° 18' ; Mercury 105° 3V ; Jupiter 185° 54' ; Venus 1 26° 20' ; Saturn 59° 54' ; Rahu 314° 2' ; Ketu 134° 2'; and Lagna 19° 31' ; Ayanamsa + 10 0 32'. Lagna Saturn Mars Venus Sun Mars Moon Rahu RASI Merc. Rahu NAVAMSA Sun Venus Ketu Ketu Moon Jupiter ■ ■ Jupiter Mercu",
+   "balance_of_dasa": "Jupiter's",
+   "latitude": 40.71666666666667,
+   "longitude": 22.583333333333332,
+   "sun_longitude": 123.58333333333333,
+   "stated_lagna": "Aries",
+   "prose_chars": 7442,
+   "houses": {
+    "9": 5,
+    "4": 5,
+    "3": 4,
+    "6": 6,
+    "8": 1,
+    "7": 7,
+    "10": 4,
+    "5": 3,
+    "2": 2,
+    "1": 13
+   },
+   "grahas": {
+    "Sun": 4,
+    "Moon": 5,
+    "Mars": 5,
+    "Mercury": 9,
+    "Jupiter": 14,
+    "Venus": 4,
+    "Saturn": 4,
+    "Rahu": 2,
+    "Ketu": 3
+   },
+   "yogas": {
+    "Parvata": 1,
+    "Rajayoga": 4
+   },
+   "emphasised_houses": [
+    6,
+    8
+   ],
+   "emphasised_grahas": [],
+   "split": "holdout",
+   "admitted": false,
+   "admit_reason": "unparseable birth data"
+  },
+  {
+   "number": "67",
+   "name": "AN EXAMPLE FOR DHANA YOGA",
+   "line_start": 23537,
+   "line_end": 23863,
+   "birth_details": "Born on 30th/31 st January 1896 at 4-30 a.m. (L.M.T.) (Lat. 22° 20' N., Long. 73° E.) Planetary Positions. — The Sun 289° 39'; the Moon 116°; Mars 253° 19'; Mercury 304° 54’; Jupiter 102° 20'; Venus 249° 49’; Saturn 207° 27’; Rahu 313° 14'; Ketu 133° 14'; and Lagna 257°27\\ Ayanamsa 20° 58’. \\ Limit XLinili Sun Venus Saturn Mercury Raliu RAS1 Moon Ju",
+   "positions_raw": "The Sun 289° 39'; the Moon 116°; Mars 253° 19'; Mercury 304° 54’; Jupiter 102° 20'; Venus 249° 49’; Saturn 207° 27’; Rahu 313° 14'; Ketu 133° 14'; and Lagna 257°27\\ Ayanamsa 20° 58’. \\ Limit XLinili Sun Venus Saturn Mercury Raliu RAS1 Moon Jupit. Moon NAVAMSA Mars Ketu Sun Ketu Rahu Lagna Mars Venus Saiurn Mer",
+   "balance_of_dasa": "Mercury",
+   "latitude": 22.333333333333332,
+   "longitude": 73.0,
+   "sun_longitude": 289.65,
+   "stated_lagna": "Sagittarius",
+   "prose_chars": 8849,
+   "houses": {
+    "4": 8,
+    "8": 1,
+    "5": 9,
+    "7": 5,
+    "2": 26,
+    "9": 14,
+    "10": 6,
+    "1": 25,
+    "11": 4
+   },
+   "grahas": {
+    "Sun": 11,
+    "Moon": 9,
+    "Mars": 9,
+    "Mercury": 8,
+    "Jupiter": 19,
+    "Venus": 5,
+    "Saturn": 24,
+    "Rahu": 7,
+    "Ketu": 2
+   },
+   "yogas": {
+    "Dhana": 3,
+    "Obhayachari": 1,
+    "Kesari": 1,
+    "Adhi": 1,
+    "Adhama": 2,
+    "Lakshmi": 3,
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    1
+   ],
+   "emphasised_grahas": [
+    "Saturn"
+   ],
+   "split": "tune",
+   "computed_lagna": "Sagittarius",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.7,
+   "admit_reason": "ok (Lagna Sagittarius confirmed)"
+  },
+  {
+   "number": "74",
+   "name": "AN EXAMPLE FOR RAJA YOGA",
+   "line_start": 25638,
+   "line_end": 25997,
+   "birth_details": "Born on 16th October 1918 at 2-25 p.m. (I.S.T.) (Lat. 13° N„ Long. 77°35' E.) Planetary Positions. — The Sun 180° 54'; the Moon 34°17'; Mars 229° 31' ; Mercury 180° 32'; Jupiter 84° 1'; Venus 171 0 10’; Saturn 124° 23'; Rahu 224° 24'; Ketu 44° 24'; and Lagna 298° 27'. Ayanamsa 21 0 16’. Ketu Jupit. Jupiter Saturn Moon RASI Rahu NAVAMSA Venus Lagna",
+   "positions_raw": "The Sun 180° 54'; the Moon 34°17'; Mars 229° 31' ; Mercury 180° 32'; Jupiter 84° 1'; Venus 171 0 10’; Saturn 124° 23'; Rahu 224° 24'; Ketu 44° 24'; and Lagna 298° 27'. Ayanamsa 21 0 16’. Ketu Jupit. Jupiter Saturn Moon RASI Rahu NAVAMSA Venus Lagna Lagna Sat. Moon Ketu Mars Rahu Mercury Sun Venus Mars Mercury Su",
+   "balance_of_dasa": "Rahu",
+   "latitude": 13.0,
+   "longitude": 77.58333333333333,
+   "sun_longitude": 180.9,
+   "stated_lagna": "",
+   "prose_chars": 8950,
+   "houses": {
+    "2": 15,
+    "7": 13,
+    "4": 6,
+    "8": 1,
+    "10": 12,
+    "5": 20,
+    "9": 11,
+    "6": 2,
+    "12": 2,
+    "1": 16
+   },
+   "grahas": {
+    "Sun": 6,
+    "Moon": 6,
+    "Mars": 13,
+    "Mercury": 14,
+    "Jupiter": 15,
+    "Venus": 15,
+    "Saturn": 19,
+    "Rahu": 8,
+    "Ketu": 5
+   },
+   "yogas": {
+    "Karmadhipa": 1,
+    "Karmadhipathi": 1,
+    "Rajayoga": 4
+   },
+   "emphasised_houses": [
+    1,
+    5
+   ],
+   "emphasised_grahas": [
+    "Mars",
+    "Saturn",
+    "Rahu",
+    "Venus",
+    "Moon"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Capricorn",
+   "admitted": true,
+   "admit_median_deg": 0.06,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "48",
+   "name": "AN EXAMPLE FOR RELIGIOUSNESS AND",
+   "line_start": 17519,
+   "line_end": 17868,
+   "birth_details": "Born on 24th March 1883 at 6 a.m. (L.M.T.) (Lat 13° N., Long. 77 ° 35' E.) Planetary Positions. — The Sun 342° 17' ; the Moon 165° 20'; Mars 31 7° 33'; Mercury 321 0 50'; Jupiter 62° 4.3’; Venus 298° 38’ ; Saturn 31 0 51’; Rahu 202°49' ; Ketu 22 49’ ; and Lagna 340° 37'. Ayanamsa 20° 47'. Lagna Sun Ketu Saturn Jupit. 1 Mars Mercury Rahu Moon ! i i Merc",
+   "positions_raw": "The Sun 342° 17' ; the Moon 165° 20'; Mars 31 7° 33'; Mercury 321 0 50'; Jupiter 62° 4.3’; Venus 298° 38’ ; Saturn 31 0 51’; Rahu 202°49' ; Ketu 22 49’ ; and Lagna 340° 37'. Ayanamsa 20° 47'. Lagna Sun Ketu Saturn Jupit. 1 Mars Mercury Rahu Moon ! i i Mercury Mars RASI ■ ■ NAVAMSA i t Venus | Sat. » Venus | Rahu",
+   "balance_of_dasa": "Moon",
+   "latitude": 13.0,
+   "longitude": 77.58333333333333,
+   "sun_longitude": 342.28333333333336,
+   "stated_lagna": "",
+   "prose_chars": 8631,
+   "houses": {
+    "4": 5,
+    "2": 16,
+    "12": 12,
+    "1": 11,
+    "11": 2,
+    "3": 8,
+    "5": 7,
+    "7": 6,
+    "9": 8,
+    "10": 5,
+    "8": 4
+   },
+   "grahas": {
+    "Sun": 6,
+    "Moon": 10,
+    "Mars": 20,
+    "Mercury": 2,
+    "Jupiter": 11,
+    "Venus": 3,
+    "Saturn": 11,
+    "Rahu": 9,
+    "Ketu": 2
+   },
+   "yogas": {
+    "Papakarthari": 2,
+    "Virinchi": 2
+   },
+   "emphasised_houses": [
+    8,
+    9
+   ],
+   "emphasised_grahas": [
+    "Jupiter",
+    "Rahu"
+   ],
+   "split": "tune",
+   "computed_lagna": "Pisces",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "70",
+   "name": "AN EXAMPLE FOR SCIENTIFIC EMINENCE",
+   "line_start": 24436,
+   "line_end": 24855,
+   "birth_details": "Born on 23rd/22nd November 1902 at 5-16 a m. (L.M.T.) (Lat. 23° 6' N.. Long. 72°40' E.) Planetary Positions. — The Sun 218° 44'; the Moon 137° 22’; Mars 145° 37’; Mercury 207° 51'; Jupiter 290° 11’; Venus 217° 14’; Saturn 272° 45’; Rahu 182° 10’; Ketu 2° 10’; and Lagna 204° 17’. Ayanamsa 21 °0’. Ketu Ketu Lagna Mercury RASI NAVAMSA Jupiter Saturn J",
+   "positions_raw": "The Sun 218° 44'; the Moon 137° 22’; Mars 145° 37’; Mercury 207° 51'; Jupiter 290° 11’; Venus 217° 14’; Saturn 272° 45’; Rahu 182° 10’; Ketu 2° 10’; and Lagna 204° 17’. Ayanamsa 21 °0’. Ketu Ketu Lagna Mercury RASI NAVAMSA Jupiter Saturn Jupiter Moon Mars Sat. Venus Sun Mercury Lagna Rahu Mars Rahu Moon Sun",
+   "balance_of_dasa": "Venus",
+   "latitude": 23.1,
+   "longitude": 72.66666666666667,
+   "sun_longitude": 218.73333333333332,
+   "stated_lagna": "Libra",
+   "prose_chars": 10811,
+   "houses": {
+    "2": 17,
+    "11": 7,
+    "4": 6,
+    "7": 6,
+    "10": 6,
+    "12": 2,
+    "6": 8,
+    "9": 2,
+    "1": 16,
+    "3": 1
+   },
+   "grahas": {
+    "Sun": 10,
+    "Moon": 8,
+    "Mars": 17,
+    "Mercury": 10,
+    "Jupiter": 15,
+    "Venus": 8,
+    "Saturn": 15,
+    "Rahu": 11,
+    "Ketu": 2
+   },
+   "yogas": {
+    "Mangala": 2,
+    "Sasa": 4
+   },
+   "emphasised_houses": [
+    1,
+    2,
+    11,
+    9,
+    10,
+    7
+   ],
+   "emphasised_grahas": [
+    "Sun",
+    "Mars",
+    "Venus",
+    "Jupiter",
+    "Saturn"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Libra",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (Lagna Libra confirmed)"
+  },
+  {
+   "number": "4",
+   "name": "AUGUSTUS CAESAR",
+   "line_start": 2912,
+   "line_end": 3309,
+   "birth_details": "‘Born on 23rd September 63 B.C. at about 5-48 a.m. (Lat. 41° 53' N., Long. 12° 28' E.) Planetary Positions. — The Sun 183° 25' ; the Moon 303° 55'; Mars 39° 25'; Mercury 173° 25'; Jupiter 111° 25'; Venus 230 = 25'; Saturn 36° 55' ; Rahu 39° 25' ; and Lagna 180° 30' ; Ayanamsa +6° 25'. Mars Saturn Rahu Mars Rahu Sat. Moon RASI Jupit. NAVAMSA",
+   "positions_raw": "The Sun 183° 25' ; the Moon 303° 55'; Mars 39° 25'; Mercury 173° 25'; Jupiter 111° 25'; Venus 230 = 25'; Saturn 36° 55' ; Rahu 39° 25' ; and Lagna 180° 30' ; Ayanamsa +6° 25'. Mars Saturn Rahu Mars Rahu Sat. Moon RASI Jupit. NAVAMSA 1 Jupit. Venus Mercury Venus Kctu Lagna Sun More. Sun Moon Lagna Kelu",
+   "balance_of_dasa": "Mars",
+   "latitude": 41.88333333333333,
+   "longitude": 12.466666666666667,
+   "sun_longitude": 183.41666666666666,
+   "stated_lagna": "Libra",
+   "prose_chars": 8640,
+   "houses": {
+    "2": 3,
+    "10": 9,
+    "4": 3,
+    "7": 3,
+    "5": 2,
+    "6": 4,
+    "8": 3,
+    "9": 4,
+    "3": 2,
+    "12": 1,
+    "11": 2,
+    "1": 12
+   },
+   "grahas": {
+    "Sun": 2,
+    "Moon": 1,
+    "Mars": 8,
+    "Mercury": 4,
+    "Jupiter": 19,
+    "Venus": 8,
+    "Saturn": 10,
+    "Rahu": 9,
+    "Ketu": 3
+   },
+   "yogas": {
+    "Mahapurusha": 1,
+    "Hamsa": 4,
+    "Adhi": 2,
+    "Parijata": 1
+   },
+   "emphasised_houses": [
+    4,
+    3,
+    6,
+    8,
+    1,
+    9,
+    10
+   ],
+   "emphasised_grahas": [
+    "Jupiter",
+    "Mars",
+    "Ketu"
+   ],
+   "split": "tune",
+   "admitted": false,
+   "admit_reason": "unparseable birth data"
+  },
+  {
+   "number": "17",
+   "name": "AURANGZEB",
+   "line_start": 7820,
+   "line_end": 8246,
+   "birth_details": "*Born on 3rd November 1618 (N.S.) at 1-43 p.m. (L.M.T.) (Lat. 28° 39' N., Long. 77° 13' E.) Planetary Positions. — The Sun 203°50’ ; the Moon 35° 14'; Mars 144°; Mercury 199°; Jupiter 310° ; Venus 259° ; Saturn 48°; Rahu 280°; and Lagna 313°45'. Ayanamsa 1 7° 4'. Moon Saturn Merc. Rahu Sun Saturn Lagna Jupiter RAS1 Kctu Moon Lagna NAVAMSA",
+   "positions_raw": "The Sun 203°50’ ; the Moon 35° 14'; Mars 144°; Mercury 199°; Jupiter 310° ; Venus 259° ; Saturn 48°; Rahu 280°; and Lagna 313°45'. Ayanamsa 1 7° 4'. Moon Saturn Merc. Rahu Sun Saturn Lagna Jupiter RAS1 Kctu Moon Lagna NAVAMSA Rahu Mars Venus Sun Mercury Jupit. Mars Ketu Venus Balance of Sun's Dasa at birth",
+   "balance_of_dasa": "Sun's",
+   "latitude": 28.65,
+   "longitude": 77.21666666666667,
+   "sun_longitude": 203.83333333333334,
+   "stated_lagna": "",
+   "prose_chars": 12281,
+   "houses": {
+    "4": 2,
+    "10": 17,
+    "7": 11,
+    "6": 11,
+    "2": 7,
+    "11": 3,
+    "9": 10,
+    "12": 3,
+    "5": 8,
+    "1": 20,
+    "8": 2
+   },
+   "grahas": {
+    "Sun": 15,
+    "Moon": 6,
+    "Mars": 15,
+    "Mercury": 11,
+    "Jupiter": 20,
+    "Venus": 3,
+    "Saturn": 21,
+    "Rahu": 12,
+    "Ketu": 1
+   },
+   "yogas": {
+    "Daitya": 1,
+    "Chatussagara": 1,
+    "Gajakesari": 1,
+    "Rakshasa": 2,
+    "Papakarthari": 1,
+    "Chandala": 2,
+    "Rajayoga": 3
+   },
+   "emphasised_houses": [
+    1,
+    10,
+    9
+   ],
+   "emphasised_grahas": [
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Mercury",
+    "Rahu"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Aquarius",
+   "admitted": true,
+   "admit_median_deg": 1.22,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "30",
+   "name": "BALA GANGADHARA TILAK",
+   "line_start": 12181,
+   "line_end": 12614,
+   "birth_details": "*Born on 23rd July 1856 at 6-24 a.m. (L.M.T.) (Lat. 18° 32' N., Long. 73° 53' E.) Planetary Positions. — The Sun 99° 55' ; the Moon 349° 15'; Mars 185° 10'; Mercury 82° 32'; Jupiter 348° 44' ; Venus 100° 24'; Saturn 76° 53'; Rahu 358° 57' ; Ketu 178° 57' ; and Lagna 110° 23'. Ayanamsa 20° 24'. Moon Jupiter Rahu Merc. Sat. Sat. Rahu Mercury RASI Lagn",
+   "positions_raw": "The Sun 99° 55' ; the Moon 349° 15'; Mars 185° 10'; Mercury 82° 32'; Jupiter 348° 44' ; Venus 100° 24'; Saturn 76° 53'; Rahu 358° 57' ; Ketu 178° 57' ; and Lagna 110° 23'. Ayanamsa 20° 24'. Moon Jupiter Rahu Merc. Sat. Sat. Rahu Mercury RASI Lagna Sun Venus NAVAMSA Lagna Mars Ketu Moon Jupit. Mars Venus Sun",
+   "balance_of_dasa": "Mercury",
+   "latitude": 18.533333333333335,
+   "longitude": 73.88333333333334,
+   "sun_longitude": 99.91666666666667,
+   "stated_lagna": "",
+   "prose_chars": 11535,
+   "houses": {
+    "9": 11,
+    "4": 3,
+    "7": 4,
+    "10": 3,
+    "11": 3,
+    "8": 6,
+    "3": 7,
+    "12": 7,
+    "2": 4,
+    "5": 3,
+    "1": 24,
+    "6": 1
+   },
+   "grahas": {
+    "Sun": 8,
+    "Moon": 16,
+    "Mars": 7,
+    "Mercury": 20,
+    "Jupiter": 22,
+    "Venus": 13,
+    "Saturn": 18,
+    "Rahu": 21,
+    "Ketu": 5
+   },
+   "yogas": {
+    "Bandhana": 1,
+    "Subhakarthari": 1,
+    "Chandala": 2,
+    "Kahala": 1,
+    "Dama": 1,
+    "Rajayoga": 5
+   },
+   "emphasised_houses": [
+    9,
+    1
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Mercury",
+    "Jupiter",
+    "Mars",
+    "Saturn",
+    "Rahu"
+   ],
+   "split": "tune",
+   "computed_lagna": "Cancer",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "29",
+   "name": "BANGALORE SURYANARAIN RAO",
+   "line_start": 11916,
+   "line_end": 12180,
+   "birth_details": "Born on 12th February 1856 at about 12-21 p.m. (L.M.T.) (Lat. 18° N„ Long. 84° E.) Planetary Positions. — The Sun 301 0 12'; the Moon 18° 29' ; Mars 180° 53' ; Mercury 308° 27’ ; Jupiter 321° 38’ ; Venus 260° 33'; Saturn 63° 20'; Rahu 6° 9'; Ketu 186° 9'; and Lagna 43° 9'. Ayanamsa 20° 24'. Moon Rahu Lagna Sat. Lagna Jupiter Rahu Sun Mercury Jupiter",
+   "positions_raw": "The Sun 301 0 12'; the Moon 18° 29' ; Mars 180° 53' ; Mercury 308° 27’ ; Jupiter 321° 38’ ; Venus 260° 33'; Saturn 63° 20'; Rahu 6° 9'; Ketu 186° 9'; and Lagna 43° 9'. Ayanamsa 20° 24'. Moon Rahu Lagna Sat. Lagna Jupiter Rahu Sun Mercury Jupiter RASI NAVAMSA Venus i Mars Ketu Merc. Ketu Sun Saturn Venus",
+   "balance_of_dasa": "Venus",
+   "latitude": 18.0,
+   "longitude": 84.0,
+   "sun_longitude": null,
+   "stated_lagna": "",
+   "prose_chars": 5321,
+   "houses": {
+    "6": 1,
+    "8": 3,
+    "2": 7,
+    "12": 2,
+    "10": 9,
+    "7": 5,
+    "9": 1,
+    "4": 2,
+    "3": 2,
+    "1": 6
+   },
+   "grahas": {
+    "Sun": 7,
+    "Moon": 5,
+    "Mars": 6,
+    "Mercury": 6,
+    "Jupiter": 10,
+    "Venus": 4,
+    "Saturn": 7,
+    "Rahu": 5,
+    "Ketu": 1
+   },
+   "yogas": {
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    10
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Mars",
+    "Rahu",
+    "Mercury",
+    "Jupiter"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Taurus",
+   "admitted": true,
+   "admit_median_deg": 2.02,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "60",
+   "name": "DWIGHT EISENHOWER",
+   "line_start": 21437,
+   "line_end": 21767,
+   "birth_details": "*Born on 14th October 1890 at 5-15 p-m. (L.M.T.) (Lat 37° 45' N., Long. 96° 32' W.) Planetary Positions. -The Sun 180° 2'; the Moon 192° 44': Mars 263° 13'; Mercury 162° 40'; Jupiter 281° 54'; Venus 225° 14; Saturn 141 ° 51'; Rahu 56° 27'; Ketu 236° 27'; and Lagna 357° 2'. Ayanamsa 20° 52'. Lagoa Rahu Lagna Jupiter Mercury RASI Ketu NAVAMSA Jupiter",
+   "positions_raw": "The Sun 180° 2'; the Moon 192° 44': Mars 263° 13'; Mercury 162° 40'; Jupiter 281° 54'; Venus 225° 14; Saturn 141 ° 51'; Rahu 56° 27'; Ketu 236° 27'; and Lagna 357° 2'. Ayanamsa 20° 52'. Lagoa Rahu Lagna Jupiter Mercury RASI Ketu NAVAMSA Jupiter Sat. Moon Rahu Mars Venus Ketu Sun Moon Merc ■ Venus Sun Mars Satur",
+   "balance_of_dasa": "Rahu",
+   "latitude": 37.75,
+   "longitude": -96.53333333333333,
+   "sun_longitude": 180.03333333333333,
+   "stated_lagna": "",
+   "prose_chars": 7754,
+   "houses": {
+    "10": 6,
+    "7": 5,
+    "11": 4,
+    "9": 4,
+    "6": 2,
+    "2": 4,
+    "4": 3,
+    "1": 7
+   },
+   "grahas": {
+    "Sun": 1,
+    "Moon": 3,
+    "Mars": 14,
+    "Mercury": 13,
+    "Jupiter": 6,
+    "Venus": 4,
+    "Saturn": 8,
+    "Rahu": 3,
+    "Ketu": 4
+   },
+   "yogas": {
+    "Bhadra": 3
+   },
+   "emphasised_houses": [
+    7,
+    1
+   ],
+   "emphasised_grahas": [
+    "Mercury",
+    "Mars"
+   ],
+   "split": "tune",
+   "computed_lagna": "Sagittarius",
+   "admitted": true,
+   "admit_median_deg": 0.17,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "64",
+   "name": "EDWARD, DUKE OF WINDSOR",
+   "line_start": 22636,
+   "line_end": 22931,
+   "birth_details": "Born on 23rd June 1894 at 10 p.m. (L.M.T.) (Long. 0°5' W„ Lat. 51°30'N.) Planetary Positions. — The Sun 71° 24’; the Moon 313°; Mars 339° 27’; Mercury 96° 42'; Jupiter 57° 27'; Venus 32° 4’; Saturn 177° 29'; Rahu 344° 57’; Ketu 164° 57'; and Lagna 283° 4'. Ayanamsa 20° 56’. Mars Rahu Jupiter Venus Sun Lagna Ketu Moon RASI Merc. NAVAMSA Lagna",
+   "positions_raw": "The Sun 71° 24’; the Moon 313°; Mars 339° 27’; Mercury 96° 42'; Jupiter 57° 27'; Venus 32° 4’; Saturn 177° 29'; Rahu 344° 57’; Ketu 164° 57'; and Lagna 283° 4'. Ayanamsa 20° 56’. Mars Rahu Jupiter Venus Sun Lagna Ketu Moon RASI Merc. NAVAMSA Lagna Sun Moon Venus Mercury Sat. Ketu Rahu Saturn Mars Jupiter",
+   "balance_of_dasa": "Rahu",
+   "latitude": 51.5,
+   "longitude": -0.08333333333333333,
+   "sun_longitude": 71.4,
+   "stated_lagna": "",
+   "prose_chars": 7119,
+   "houses": {
+    "9": 14,
+    "2": 4,
+    "6": 2,
+    "5": 1,
+    "8": 4,
+    "10": 6,
+    "4": 2,
+    "3": 1,
+    "1": 5
+   },
+   "grahas": {
+    "Sun": 7,
+    "Moon": 3,
+    "Mars": 17,
+    "Mercury": 1,
+    "Jupiter": 11,
+    "Venus": 2,
+    "Saturn": 17,
+    "Rahu": 12,
+    "Ketu": 6
+   },
+   "yogas": {
+    "Adhi": 1,
+    "Gajakesari": 1,
+    "Malavya": 1,
+    "Rekha": 2
+   },
+   "emphasised_houses": [
+    8,
+    9,
+    10
+   ],
+   "emphasised_grahas": [
+    "Saturn",
+    "Rahu",
+    "Moon",
+    "Jupiter",
+    "Venus",
+    "Mars"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Capricorn",
+   "admitted": true,
+   "admit_median_deg": 0.02,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "75",
+   "name": "EX KING FAROUK",
+   "line_start": 25998,
+   "line_end": 26296,
+   "birth_details": "Born on 11-2-1920 at 10-18 p.m. (L.M.T.) (Lat 30° 2' N., Long. 31° 15' W.) Planetary Positions. — The Sun 300° 32'; the Moon 210° 19': Mars 192° 14’; Mercury 305° 17'; Jupiter 110° 46’; Venus 264° 56’; Saturn 138° 18'; Rahu 208° 53'; Ketu 28° 53'; and Lagna 180° 33' ; 10th house 92° 1'. Ayanamsa 21 °18\\ Ketu Rahu Mercury Sun RASI Jupit. NAVAMSA Moon",
+   "positions_raw": "The Sun 300° 32'; the Moon 210° 19': Mars 192° 14’; Mercury 305° 17'; Jupiter 110° 46’; Venus 264° 56’; Saturn 138° 18'; Rahu 208° 53'; Ketu 28° 53'; and Lagna 180° 33' ; 10th house 92° 1'. Ayanamsa 21 °18\\ Ketu Rahu Mercury Sun RASI Jupit. NAVAMSA Moon Sat. lupit. Mars Venus ■ Moon Mars Lagna Rahu Ketu Mercury Ve",
+   "balance_of_dasa": "Jupiter",
+   "latitude": 30.033333333333335,
+   "longitude": -31.25,
+   "sun_longitude": 300.53333333333336,
+   "stated_lagna": "Libra",
+   "prose_chars": 7613,
+   "houses": {
+    "3": 1,
+    "10": 6,
+    "7": 3,
+    "8": 1,
+    "1": 9,
+    "9": 7,
+    "11": 4,
+    "2": 5,
+    "5": 1,
+    "6": 1
+   },
+   "grahas": {
+    "Sun": 8,
+    "Moon": 5,
+    "Mars": 14,
+    "Mercury": 13,
+    "Jupiter": 9,
+    "Venus": 6,
+    "Saturn": 23,
+    "Rahu": 7
+   },
+   "yogas": {
+    "Papakarthari": 1,
+    "Hamsa": 3,
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    1
+   ],
+   "emphasised_grahas": [
+    "Mars",
+    "Rahu"
+   ],
+   "split": "tune",
+   "admitted": false,
+   "admit_reason": "unparseable birth data"
+  },
+  {
+   "number": "47",
+   "name": "FRANKLIN DELANO ROOSEVELT",
+   "line_start": 17251,
+   "line_end": 17518,
+   "birth_details": "Born on 30th January 1882 at 8 p.m. (L.M.T.) (Lat. 40° 43' N, Long. 73° 59' W.) Planetary Positions. — The Sun 290° 20' ; the Moon 75° 5' ; Mars 66° 15 ; Mercury 306° 23' ; Jupiter 26° 10' ; Venus 285° 16' ; Saturn 15° 20' ; Rahu 224° 55’ ; Ketu 44° 55' ; and Lagna 143° 32'. Ayanamsa 20° 46'. Saturn Jupiter Ketu Moon Mars Venus Ketu Mercury RASI ■",
+   "positions_raw": "The Sun 290° 20' ; the Moon 75° 5' ; Mars 66° 15 ; Mercury 306° 23' ; Jupiter 26° 10' ; Venus 285° 16' ; Saturn 15° 20' ; Rahu 224° 55’ ; Ketu 44° 55' ; and Lagna 143° 32'. Ayanamsa 20° 46'. Saturn Jupiter Ketu Moon Mars Venus Ketu Mercury RASI ■ Moon NAVA MSA Sun Venus Lagna Saturn Rahu Mercury Lagna M i, r s jnpitc",
+   "balance_of_dasa": "Rahu",
+   "latitude": 40.71666666666667,
+   "longitude": -73.98333333333333,
+   "sun_longitude": 290.3333333333333,
+   "stated_lagna": "",
+   "prose_chars": 6256,
+   "houses": {
+    "11": 1,
+    "9": 7,
+    "10": 7,
+    "6": 9,
+    "7": 5,
+    "5": 3,
+    "8": 3,
+    "2": 5,
+    "12": 2,
+    "4": 1,
+    "3": 2,
+    "1": 12
+   },
+   "grahas": {
+    "Sun": 4,
+    "Moon": 3,
+    "Mars": 6,
+    "Mercury": 6,
+    "Jupiter": 10,
+    "Venus": 4,
+    "Saturn": 17,
+    "Rahu": 2,
+    "Ketu": 10
+   },
+   "yogas": {
+    "Chandramangala": 3,
+    "Cliandramangala": 1,
+    "Rajayoga": 3
+   },
+   "emphasised_houses": [
+    1
+   ],
+   "emphasised_grahas": [],
+   "split": "holdout",
+   "computed_lagna": "Leo",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "61",
+   "name": "GENERAL FRANCO",
+   "line_start": 21768,
+   "line_end": 22022,
+   "birth_details": "Born on 4th December 1892 at about 4-9 a.m. (L.M.T.) (Lat.42° 30' N„ Long. 8°W.) Planetary Positions. — The Sun 231 0 39'; the Moon 53° 3'; Mars 323° 54’; Mercury 247° 21'; Jupiter 354° 9'; Venus 196° 9’; Saturn 169° 55'; Rahu 15°8'; Ketu 195°8'; and Lagna 194°36\\ Ayanamsa 20°54'. Jupiter Kahu Moon Mars Mereurv Saturn Mars RASI Lagna lupit. Venus",
+   "positions_raw": "The Sun 231 0 39'; the Moon 53° 3'; Mars 323° 54’; Mercury 247° 21'; Jupiter 354° 9'; Venus 196° 9’; Saturn 169° 55'; Rahu 15°8'; Ketu 195°8'; and Lagna 194°36\\ Ayanamsa 20°54'. Jupiter Kahu Moon Mars Mereurv Saturn Mars RASI Lagna lupit. Venus Ketu NAVAMSA Moon Sun Rahu Mercury Sun Lagna Venus Ketu Sat.",
+   "balance_of_dasa": "the Moon",
+   "latitude": 42.5,
+   "longitude": -8.0,
+   "sun_longitude": null,
+   "stated_lagna": "Libra",
+   "prose_chars": 5093,
+   "houses": {
+    "12": 2,
+    "2": 3,
+    "7": 2,
+    "5": 5,
+    "10": 4,
+    "9": 6,
+    "11": 2,
+    "6": 2,
+    "8": 1,
+    "3": 1,
+    "1": 8
+   },
+   "grahas": {
+    "Sun": 1,
+    "Moon": 7,
+    "Mars": 9,
+    "Mercury": 8,
+    "Jupiter": 8,
+    "Venus": 2,
+    "Saturn": 20,
+    "Ketu": 2
+   },
+   "yogas": {
+    "Papakarthari": 1,
+    "Adhi": 1,
+    "Atihi": 1,
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    10,
+    1
+   ],
+   "emphasised_grahas": [
+    "Mars",
+    "Mercury",
+    "Saturn"
+   ],
+   "split": "tune",
+   "computed_lagna": "Libra",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (Lagna Libra confirmed)"
+  },
+  {
+   "number": "51",
+   "name": "HARRY S. TRUMAN",
+   "line_start": 18501,
+   "line_end": 18777,
+   "birth_details": "Born on 8th May 1884 at 4-26 p.m. (L.M.T.) (Lat. 39° 7' N., Long. 94° 30 W.) Planetary Positions. — The Sun 27° 54' ; the Meon 194° 27' ; Mars 116° 27' ; Mercury 40° 29' (R) ; Jupiter 97° 19' ; Venus 73° 13'; Saturn 49° 30' ; Rahu 181 °1 ’ ; Ketu 1°1’; and Lagna 178°15\\ Ayanamsa 20°47\\ Sun Kctu Mercury Saturn Venus 1 Mercury Ketu Saturn — RASI Mars",
+   "positions_raw": "The Sun 27° 54' ; the Meon 194° 27' ; Mars 116° 27' ; Mercury 40° 29' (R) ; Jupiter 97° 19' ; Venus 73° 13'; Saturn 49° 30' ; Rahu 181 °1 ’ ; Ketu 1°1’; and Lagna 178°15\\ Ayanamsa 20°47\\ Sun Kctu Mercury Saturn Venus 1 Mercury Ketu Saturn — RASI Mars Jupit. Moon Mars NAVAMSA 1 Venus Rahu Moon Lagna Sun Rahu La",
+   "balance_of_dasa": "Rahu",
+   "latitude": 39.11666666666667,
+   "longitude": -94.5,
+   "sun_longitude": 27.9,
+   "stated_lagna": "Virgo",
+   "prose_chars": 5853,
+   "houses": {
+    "3": 1,
+    "8": 2,
+    "1": 7,
+    "10": 13,
+    "11": 2,
+    "2": 8,
+    "4": 3,
+    "7": 8,
+    "9": 10,
+    "5": 2,
+    "12": 1,
+    "6": 1
+   },
+   "grahas": {
+    "Sun": 6,
+    "Moon": 3,
+    "Mars": 11,
+    "Mercury": 4,
+    "Jupiter": 5,
+    "Venus": 9,
+    "Saturn": 6,
+    "Rahu": 5,
+    "Ketu": 8
+   },
+   "yogas": {
+    "Chandramangala": 1,
+    "Gajakesari": 1,
+    "Rajayoga": 4
+   },
+   "emphasised_houses": [
+    9,
+    10
+   ],
+   "emphasised_grahas": [
+    "Mars",
+    "Mercury",
+    "Jupiter",
+    "Saturn"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Virgo",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.02,
+   "admit_reason": "ok (Lagna Virgo confirmed)"
+  },
+  {
+   "number": "38",
+   "name": "HENRY FORD",
+   "line_start": 14502,
+   "line_end": 14746,
+   "birth_details": "Born on 30th July 1863 at *2 p.m. (L.M T.) (Lat. 42° 5' N , Long. 83° 5' W.) Planetary Positions.-The Sun 106° 34’ ; the Moon 290° 12'; Mars 127° 35'; Mercury 102° 32' ; Jupiter 179° 56' ; Venus 151 0 44' ; Saturn 160° 32' ; Rahu 223° 5' ; Ketu 43° 5’; and Lagna 21 1 ° 52’. Ayanamsa 20° 30'. 208 Notable Horoscopes respectively. Rahu being aspected by Satur",
+   "positions_raw": "The Sun 106° 34’ ; the Moon 290° 12'; Mars 127° 35'; Mercury 102° 32' ; Jupiter 179° 56' ; Venus 151 0 44' ; Saturn 160° 32' ; Rahu 223° 5' ; Ketu 43° 5’; and Lagna 21 1 ° 52’. Ayanamsa 20° 30'. 208 Notable Horoscopes respectively. Rahu being aspected by Saturn is in a way harmonious in the sense that their attributes, according to the dictum Sanivadrahu, are",
+   "balance_of_dasa": "",
+   "latitude": 42.083333333333336,
+   "longitude": -83.08333333333333,
+   "sun_longitude": 106.56666666666666,
+   "stated_lagna": "",
+   "prose_chars": 8575,
+   "houses": {
+    "9": 10,
+    "6": 1,
+    "8": 2,
+    "12": 2,
+    "4": 2,
+    "11": 10,
+    "10": 8,
+    "2": 7,
+    "7": 4,
+    "3": 1,
+    "5": 1,
+    "1": 12
+   },
+   "grahas": {
+    "Sun": 7,
+    "Moon": 11,
+    "Mars": 7,
+    "Mercury": 5,
+    "Jupiter": 14,
+    "Venus": 13,
+    "Saturn": 14,
+    "Rahu": 12,
+    "Ketu": 2
+   },
+   "yogas": {
+    "Marutha": 3,
+    "Dhana": 1
+   },
+   "emphasised_houses": [],
+   "emphasised_grahas": [
+    "Saturn"
+   ],
+   "split": "tune",
+   "computed_lagna": "Libra",
+   "admitted": true,
+   "admit_median_deg": 0.08,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "40",
+   "name": "HERBERT GEORGE WELLS",
+   "line_start": 15120,
+   "line_end": 15508,
+   "birth_details": "*Born on 21st September 1866 at 3-33 p.m. (G.M.T.). (Lat. 51° 24' N, Long. 0° 1' E.) Planetary Positions. — The Sun 157° 52' ; the Moon 300° 3' ; Mars 76° ; Mercury 148° 25' ; Jupiter 271 ° 54' ; Venus 204° 9'; Saturn 199° 11'; Rahu 162° 15'; Ketu 342°20’; and Lagna 273° 16’. Ayanamsa 20° 32'. Ketu Mars Sun Sat. Rahu Venus Moon RASI Mars NAVAMSA",
+   "positions_raw": "The Sun 157° 52' ; the Moon 300° 3' ; Mars 76° ; Mercury 148° 25' ; Jupiter 271 ° 54' ; Venus 204° 9'; Saturn 199° 11'; Rahu 162° 15'; Ketu 342°20’; and Lagna 273° 16’. Ayanamsa 20° 32'. Ketu Mars Sun Sat. Rahu Venus Moon RASI Mars NAVAMSA Lagna Jupiter Merc lupit. Lagna Venus Saturn Sun Rahu Mere. Moon ; Ketu",
+   "balance_of_dasa": "Mars",
+   "latitude": 51.4,
+   "longitude": 0.016666666666666666,
+   "sun_longitude": 157.86666666666667,
+   "stated_lagna": "",
+   "prose_chars": 11449,
+   "houses": {
+    "10": 6,
+    "7": 11,
+    "3": 4,
+    "11": 3,
+    "8": 8,
+    "4": 5,
+    "9": 10,
+    "5": 7,
+    "6": 2,
+    "2": 9,
+    "1": 10
+   },
+   "grahas": {
+    "Sun": 6,
+    "Moon": 6,
+    "Mars": 15,
+    "Mercury": 14,
+    "Jupiter": 12,
+    "Venus": 12,
+    "Saturn": 14,
+    "Rahu": 11,
+    "Ketu": 13
+   },
+   "yogas": {
+    "Pushkala": 1,
+    "Lakshmi": 1,
+    "Harsha": 1,
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    1,
+    7,
+    9
+   ],
+   "emphasised_grahas": [
+    "Jupiter",
+    "Saturn",
+    "Ketu",
+    "Moon"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Capricorn",
+   "admitted": true,
+   "admit_median_deg": 0.02,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "59",
+   "name": "JAWAHARLAL NEHRU",
+   "line_start": 21085,
+   "line_end": 21436,
+   "birth_details": "‘Born on 14th November 1889 at 11-3 p.m. (L.M.T.) (Lat. 25° 25' N„ Long. 82° E.) Planetary Positions — The Sun 21 1 °43'; the Moon 109° 20'; Mars 161° 25’; Mercury 198° 35'; Jupiter 256° 38'; Venus 188° 48'; Saturn 132° 15'; Rahu 74° 10'; Ketu 254° 10'; and Lagna 114° 25'. Ayanamsa 20° 52'. Rabu Merc. Mars RASI Moon Lagna Rahu Lagna NAVA MSA Sun",
+   "positions_raw": "The Sun 21 1 °43'; the Moon 109° 20'; Mars 161° 25’; Mercury 198° 35'; Jupiter 256° 38'; Venus 188° 48'; Saturn 132° 15'; Rahu 74° 10'; Ketu 254° 10'; and Lagna 114° 25'. Ayanamsa 20° 52'. Rabu Merc. Mars RASI Moon Lagna Rahu Lagna NAVA MSA Sun Saturn Sat. Ketu Jupiter Jupiter Ketu Sun Mercury Venus Mars Venus M",
+   "balance_of_dasa": "Mercury",
+   "latitude": 25.416666666666668,
+   "longitude": 82.0,
+   "sun_longitude": null,
+   "stated_lagna": "Cancer",
+   "prose_chars": 9265,
+   "houses": {
+    "3": 5,
+    "5": 5,
+    "2": 6,
+    "4": 5,
+    "9": 6,
+    "12": 5,
+    "10": 8,
+    "6": 3,
+    "11": 3,
+    "8": 1,
+    "7": 4,
+    "1": 13
+   },
+   "grahas": {
+    "Sun": 16,
+    "Moon": 10,
+    "Mars": 8,
+    "Mercury": 10,
+    "Jupiter": 8,
+    "Venus": 15,
+    "Saturn": 5,
+    "Rahu": 9,
+    "Ketu": 4
+   },
+   "yogas": {
+    "Guruchandala": 1,
+    "Papakarthari": 4,
+    "Obhayachari": 1,
+    "Rajalakshana": 1,
+    "Sankha": 1,
+    "Malavya": 1,
+    "Rajayoga": 2
+   },
+   "emphasised_houses": [
+    3,
+    5
+   ],
+   "emphasised_grahas": [
+    "Sun"
+   ],
+   "split": "tune",
+   "computed_lagna": "Cancer",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (Lagna Cancer confirmed)"
+  },
+  {
+   "number": "6",
+   "name": "JESUS CHRIST",
+   "line_start": 3868,
+   "line_end": 4257,
+   "birth_details": "*Born on 25th December 7 B.C. on Friday at about 10-18 p.m. (A.V.C. 747). (Lat. 31° 43' N., Long. 35° 13' E.) Planetary Positions. — The Sun 247° 59' ; the Moon 336’ 41'; Mars 314° 29' ; Mercury 255° 58' ; Jupiter 353° 17’: Venus 233° 1 ' ; Saturn 351° 47' ; Rahu 210° 35' ; and Lagna 165 g 29’. Ayanamsa : 5° 27’. Saturn Moon Jupiter Kelu Lagna Sun Mars RAS",
+   "positions_raw": "The Sun 247° 59' ; the Moon 336’ 41'; Mars 314° 29' ; Mercury 255° 58' ; Jupiter 353° 17’: Venus 233° 1 ' ; Saturn 351° 47' ; Rahu 210° 35' ; and Lagna 165 g 29’. Ayanamsa : 5° 27’. Saturn Moon Jupiter Kelu Lagna Sun Mars RASI ■ Mars navamsa Rahu ■ Ketu Sat. Jupit. Venus Mercury Sun Mercury Rahu Venus \\ j Lagna",
+   "balance_of_dasa": "Saturn's",
+   "latitude": 31.716666666666665,
+   "longitude": 35.21666666666667,
+   "sun_longitude": 247.98333333333332,
+   "stated_lagna": "Virgo",
+   "prose_chars": 10136,
+   "houses": {
+    "9": 4,
+    "10": 1,
+    "12": 1,
+    "4": 1,
+    "7": 2,
+    "3": 3,
+    "2": 1,
+    "8": 1,
+    "1": 8
+   },
+   "grahas": {
+    "Sun": 1,
+    "Moon": 3,
+    "Mars": 4,
+    "Mercury": 4,
+    "Jupiter": 13,
+    "Venus": 4,
+    "Saturn": 15,
+    "Rahu": 1,
+    "Ketu": 11
+   },
+   "yogas": {
+    "Hamsa": 1,
+    "Gajakesari": 1,
+    "Kama": 1,
+    "Pasa": 1,
+    "Parivraja": 1
+   },
+   "emphasised_houses": [
+    1
+   ],
+   "emphasised_grahas": [
+    "Jupiter",
+    "Ketu",
+    "Saturn"
+   ],
+   "split": "holdout",
+   "admitted": false,
+   "admit_reason": "unparseable birth data"
+  },
+  {
+   "number": "26",
+   "name": "KARL MARX",
+   "line_start": 11018,
+   "line_end": 11391,
+   "birth_details": "Born on 15th May 1818 at about 2 a.m. (L.M.T.) (Lat. 49° 44' N., Long. 6° 38' E.) Planetary Positions. — The Sun 24° 18’; the Moon 24° 8'; Mars 90\" 58'; Mercury 40° 12' ; Jupiter 263° 5'(R) ; Venus 39° 12' ; Saturn 325° 59' ; Rahu 18°39' ; Ketu 198°39’ ; and Lagna 302°56’. Ayanamsa 19° 52'. Sun Moon Rahu Mercury Venus Ketu Venus Mercury Saturn Lagna",
+   "positions_raw": "The Sun 24° 18’; the Moon 24° 8'; Mars 90\" 58'; Mercury 40° 12' ; Jupiter 263° 5'(R) ; Venus 39° 12' ; Saturn 325° 59' ; Rahu 18°39' ; Ketu 198°39’ ; and Lagna 302°56’. Ayanamsa 19° 52'. Sun Moon Rahu Mercury Venus Ketu Venus Mercury Saturn Lagna Saturn RASI Mars NAVAMSA Mars Jupiter Ketu Sun Moon Lagna Jupit",
+   "balance_of_dasa": "Venus",
+   "latitude": 49.733333333333334,
+   "longitude": 6.633333333333333,
+   "sun_longitude": 24.3,
+   "stated_lagna": "",
+   "prose_chars": 10584,
+   "houses": {
+    "3": 6,
+    "10": 9,
+    "11": 3,
+    "2": 9,
+    "6": 7,
+    "7": 4,
+    "8": 4,
+    "4": 2,
+    "1": 17,
+    "9": 5,
+    "12": 1
+   },
+   "grahas": {
+    "Sun": 8,
+    "Moon": 6,
+    "Mars": 14,
+    "Mercury": 7,
+    "Jupiter": 7,
+    "Venus": 7,
+    "Saturn": 19,
+    "Rahu": 14,
+    "Ketu": 1
+   },
+   "yogas": {
+    "Dainya": 1,
+    "Dama": 1
+   },
+   "emphasised_houses": [
+    4,
+    9,
+    10
+   ],
+   "emphasised_grahas": [
+    "Venus",
+    "Rahu",
+    "Jupiter",
+    "Mercury",
+    "Saturn"
+   ],
+   "split": "tune",
+   "computed_lagna": "Aquarius",
+   "admitted": true,
+   "admit_median_deg": 4.96,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "71",
+   "name": "MADHAVRAO SADASIVRAO",
+   "line_start": 24856,
+   "line_end": 25178,
+   "birth_details": "Born on 1 9th/1 8th February 1906 at 4-34 a.m. (L.M.T.) (Lat. 21° 8' N., Long. 79° 5' E.) Planetary Positions. — The Sun 308° 15' ; the Moon 254° 30'; Mars 349° 21'; Mercury 306° 37’; Jupiter 36° 42' ; Venus 309° 22' ; Saturn 313° 37' ; Rahu 119° 27' ; Ketu 299° 27’ ; and Lagna 274° 57'. Ayanamsa 21 ° 6'. Mars Jupiter Rahu Jupit. Mercury Sun V enus Saturn RA",
+   "positions_raw": "The Sun 308° 15' ; the Moon 254° 30'; Mars 349° 21'; Mercury 306° 37’; Jupiter 36° 42' ; Venus 309° 22' ; Saturn 313° 37' ; Rahu 119° 27' ; Ketu 299° 27’ ; and Lagna 274° 57'. Ayanamsa 21 ° 6'. Mars Jupiter Rahu Jupit. Mercury Sun V enus Saturn RASI Rahu Sat. Lagn i NAVAMSA 1 apna Kciu Moon Moon Venus- Sun Mars Mercury",
+   "balance_of_dasa": "Venus",
+   "latitude": 21.133333333333333,
+   "longitude": 79.08333333333333,
+   "sun_longitude": 308.25,
+   "stated_lagna": "",
+   "prose_chars": 8602,
+   "houses": {
+    "9": 8,
+    "10": 7,
+    "7": 11,
+    "6": 1,
+    "11": 1,
+    "2": 5,
+    "3": 8,
+    "5": 3,
+    "12": 3,
+    "4": 2,
+    "8": 4,
+    "1": 9
+   },
+   "grahas": {
+    "Sun": 12,
+    "Moon": 9,
+    "Mars": 10,
+    "Mercury": 18,
+    "Jupiter": 9,
+    "Venus": 10,
+    "Saturn": 14,
+    "Rahu": 10
+   },
+   "yogas": {
+    "Adhitya": 1,
+    "Sani": 1,
+    "Sanyasa": 1,
+    "Rajayoga": 2
+   },
+   "emphasised_houses": [
+    9,
+    10,
+    7,
+    1
+   ],
+   "emphasised_grahas": [
+    "Sun",
+    "Mercury",
+    "Venus",
+    "Saturn"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Sagittarius",
+   "admitted": false,
+   "admit_median_deg": 9.62,
+   "admit_reason": "median 9.6deg vs printed"
+  },
+  {
+   "number": "22",
+   "name": "MARIE ANTOINETTE",
+   "line_start": 9757,
+   "line_end": 10127,
+   "birth_details": "Born on 2nd November 1755 (N.S.) at about 8 p.m. (Lat. 46° 30' N., Long. 30° E.) Planetary Positions. — The Sun 201°; the Moon 182°; Mars 87° ; Mercury 224° ; Jupiter 169° ; Venus 202° ; Saturn 274°; Rahu 156°; Ketu 336°; and Lagna 74\" 1'. Ayanamsa 18° 57'. Ketu Mars Lagna 1 Sun Venus Mars Jupiter RASI — Rahu Sat. Lagna NAVAMSA Saturn",
+   "positions_raw": "The Sun 201°; the Moon 182°; Mars 87° ; Mercury 224° ; Jupiter 169° ; Venus 202° ; Saturn 274°; Rahu 156°; Ketu 336°; and Lagna 74\" 1'. Ayanamsa 18° 57'. Ketu Mars Lagna 1 Sun Venus Mars Jupiter RASI — Rahu Sat. Lagna NAVAMSA Saturn Ketu Mercury Sun Moon Venus Jupit. Rabu Mercury Moon Balance of Mars",
+   "balance_of_dasa": "Mars",
+   "latitude": 46.5,
+   "longitude": 30.0,
+   "sun_longitude": 201.0,
+   "stated_lagna": "",
+   "prose_chars": 10448,
+   "houses": {
+    "6": 9,
+    "2": 4,
+    "4": 4,
+    "5": 6,
+    "9": 5,
+    "11": 2,
+    "7": 16,
+    "10": 2,
+    "8": 7,
+    "12": 3,
+    "1": 15,
+    "3": 1
+   },
+   "grahas": {
+    "Sun": 6,
+    "Moon": 11,
+    "Mars": 14,
+    "Mercury": 5,
+    "Jupiter": 10,
+    "Venus": 11,
+    "Saturn": 22,
+    "Rahu": 12,
+    "Ketu": 1
+   },
+   "yogas": {
+    "Parivarthana": 1,
+    "Moon": 1,
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    4,
+    8
+   ],
+   "emphasised_grahas": [
+    "Sun",
+    "Moon",
+    "Saturn",
+    "Rahu",
+    "Mars",
+    "Venus"
+   ],
+   "split": "tune",
+   "computed_lagna": "Gemini",
+   "admitted": true,
+   "admit_median_deg": 0.42,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "72",
+   "name": "NATHURAM VINAYAK GODSE",
+   "line_start": 25179,
+   "line_end": 25394,
+   "birth_details": "Born on 19th May 1910 at 8-29 a.m. (I.S.T.)(Long 73° 52' E„ Lat. 18° 31 N.) Planetary Positions.-The Sun 36° 41' ; the Moon 160° 43'; Mars 79° 16'; Mercury 45° 39'; Jupiter 163° 44'; Venus 351 ° 42' ; Saturn 9° 4’ ; Rahu 37° 17' ; Ketu 217° 17' ; and Lagna 79° 16'. Ayanamsa 21 ° 1'. Venus . Saturn Mercury Sun Ketu Lagna Mars Jupiter Mercury Saturn",
+   "positions_raw": "The Sun 36° 41' ; the Moon 160° 43'; Mars 79° 16'; Mercury 45° 39'; Jupiter 163° 44'; Venus 351 ° 42' ; Saturn 9° 4’ ; Rahu 37° 17' ; Ketu 217° 17' ; and Lagna 79° 16'. Ayanamsa 21 ° 1'. Venus . Saturn Mercury Sun Ketu Lagna Mars Jupiter Mercury Saturn RASI Sun NAVAMSA 1 Venus Ketu Moon Jupit Ketu Balance",
+   "balance_of_dasa": "Moon's",
+   "latitude": 18.516666666666666,
+   "longitude": 73.86666666666666,
+   "sun_longitude": 36.68333333333333,
+   "stated_lagna": "",
+   "prose_chars": 4166,
+   "houses": {
+    "9": 1,
+    "4": 2,
+    "10": 2,
+    "6": 4,
+    "11": 1,
+    "8": 6,
+    "2": 1,
+    "3": 2,
+    "1": 12
+   },
+   "grahas": {
+    "Sun": 5,
+    "Moon": 4,
+    "Mars": 7,
+    "Mercury": 3,
+    "Jupiter": 4,
+    "Venus": 3,
+    "Saturn": 8,
+    "Rahu": 8
+   },
+   "yogas": {
+    "Papakarthari": 1
+   },
+   "emphasised_houses": [
+    1,
+    4,
+    10,
+    8,
+    2,
+    3
+   ],
+   "emphasised_grahas": [
+    "Mars",
+    "Saturn",
+    "Rahu",
+    "Moon",
+    "Jupiter"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Gemini",
+   "admitted": true,
+   "admit_median_deg": 0.02,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "44",
+   "name": "POPE PIUS XII",
+   "line_start": 16401,
+   "line_end": 16646,
+   "birth_details": "Born on 2nd March 1876 at 0-39 a.m. (L.M.T.) (Lat. 41° 53' N, Long. 12° 28' E.) Planetary Positions. — The Sun 321 ° 6'; the Moon 32° 42'; Mars 1 1 0 29 ; Mercury 295° 36'; Jupiter 221 0 5’; Venus 358° 33'; Saturn 309° 29' ; Rahu 339° 33'; Ketu 159° 33'; and Lagna 221 ° 6'. Ayanamsa 20° 33'. Venus Rahu Mars Moon Venus Ketu Sun ~ Sun Saturn RAS1",
+   "positions_raw": "The Sun 321 ° 6'; the Moon 32° 42'; Mars 1 1 0 29 ; Mercury 295° 36'; Jupiter 221 0 5’; Venus 358° 33'; Saturn 309° 29' ; Rahu 339° 33'; Ketu 159° 33'; and Lagna 221 ° 6'. Ayanamsa 20° 33'. Venus Rahu Mars Moon Venus Ketu Sun ~ Sun Saturn RAS1 NAVAMSA Mars Mercury Moon Mercury Lagna Jupiter Kelu Sat. Jupiter Lag",
+   "balance_of_dasa": "the Sun",
+   "latitude": 41.88333333333333,
+   "longitude": 12.466666666666667,
+   "sun_longitude": 321.1,
+   "stated_lagna": "",
+   "prose_chars": 5414,
+   "houses": {
+    "2": 4,
+    "5": 7,
+    "4": 3,
+    "10": 8,
+    "9": 6,
+    "11": 2,
+    "3": 1,
+    "6": 3,
+    "7": 1,
+    "1": 18
+   },
+   "grahas": {
+    "Sun": 5,
+    "Moon": 3,
+    "Mars": 5,
+    "Mercury": 4,
+    "Jupiter": 16,
+    "Venus": 5,
+    "Saturn": 11,
+    "Rahu": 5
+   },
+   "yogas": {
+    "Gajakesari": 1,
+    "Asatyavadi": 1,
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [],
+   "emphasised_grahas": [
+    "Mars",
+    "Jupiter"
+   ],
+   "split": "tune",
+   "computed_lagna": "Scorpio",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "27",
+   "name": "QUEEN VICTORIA",
+   "line_start": 11392,
+   "line_end": 11672,
+   "birth_details": "Bom on 23rd/24th May 1819 at 4-4 a.m. (L.M.T.). (Lat. 51° 30' N., Long. 0°5' W.) Planetary Positions. — The Sun 42° 13’; the Moon 43° 40' ; Mars 357° 42' ; Mercury 1 9° 2'; Jupiter 297°4' ; Venus 6°45' ; Saturn 338°53’ ; Rahu 358° 17' ; Ketu 168° 17'; and Lagna 41 0 19'. Ayanamsa 19°53’. Rahu Mars Saturn Mercury Venus SRI Mars Rahu Sun Lagna Moon Venus",
+   "positions_raw": "The Sun 42° 13’; the Moon 43° 40' ; Mars 357° 42' ; Mercury 1 9° 2'; Jupiter 297°4' ; Venus 6°45' ; Saturn 338°53’ ; Rahu 358° 17' ; Ketu 168° 17'; and Lagna 41 0 19'. Ayanamsa 19°53’. Rahu Mars Saturn Mercury Venus SRI Mars Rahu Sun Lagna Moon Venus RASI NAVAMSA Jupiter ■ Ketu Ketu Mercury Jupiter Saturn",
+   "balance_of_dasa": "the Moon's",
+   "latitude": 51.5,
+   "longitude": -0.08333333333333333,
+   "sun_longitude": 42.21666666666667,
+   "stated_lagna": "",
+   "prose_chars": 6112,
+   "houses": {
+    "12": 4,
+    "10": 7,
+    "2": 7,
+    "7": 5,
+    "5": 7,
+    "11": 6,
+    "9": 5,
+    "1": 14
+   },
+   "grahas": {
+    "Sun": 5,
+    "Moon": 6,
+    "Mars": 8,
+    "Mercury": 8,
+    "Jupiter": 14,
+    "Venus": 6,
+    "Saturn": 7,
+    "Rahu": 8,
+    "Ketu": 1
+   },
+   "yogas": {
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    5,
+    1
+   ],
+   "emphasised_grahas": [
+    "Mercury",
+    "Jupiter",
+    "Venus",
+    "Saturn"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Taurus",
+   "admitted": true,
+   "admit_median_deg": 0.68,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "35",
+   "name": "RABINDRANATH TAGORE",
+   "line_start": 13407,
+   "line_end": 13673,
+   "birth_details": "Born on 7th May 1861 at 2-51 a.m. (L.M.T.) (Lat 22° 40' N„ Long. 88° 30' E.) Planetary Positions.-The Sun 25° 48' ; the Moon 351 ° 59' ; Mars 61 °36' ; Mercury 9° 18’ ; Jupiter 11 7° 24' ; Venus 24° 32’ ; Saturn 132° 37' ; Rahu 266° 17' ; Ketu 86° 17’ ; and Lagna 336°9'. Ayanamsa 20° 28'. Moon Lagna Venus Sun Mercury Kclu Mars Jupit. Ketu [ J Mercury",
+   "positions_raw": "The Sun 25° 48' ; the Moon 351 ° 59' ; Mars 61 °36' ; Mercury 9° 18’ ; Jupiter 11 7° 24' ; Venus 24° 32’ ; Saturn 132° 37' ; Rahu 266° 17' ; Ketu 86° 17’ ; and Lagna 336°9'. Ayanamsa 20° 28'. Moon Lagna Venus Sun Mercury Kclu Mars Jupit. Ketu [ J Mercury RASJ Jupil. NAVAMSA Saturn Sat. Moon Lagna Rahu Rahu Sun",
+   "balance_of_dasa": "Mercury",
+   "latitude": 22.666666666666668,
+   "longitude": 88.5,
+   "sun_longitude": 25.8,
+   "stated_lagna": "",
+   "prose_chars": 6398,
+   "houses": {
+    "5": 9,
+    "2": 5,
+    "7": 9,
+    "6": 3,
+    "3": 2,
+    "8": 3,
+    "10": 4,
+    "4": 4,
+    "12": 3,
+    "9": 3,
+    "1": 11
+   },
+   "grahas": {
+    "Sun": 9,
+    "Moon": 11,
+    "Mars": 1,
+    "Mercury": 10,
+    "Jupiter": 21,
+    "Venus": 9,
+    "Saturn": 4,
+    "Rahu": 5,
+    "Ketu": 6
+   },
+   "yogas": {
+    "Parivarthana": 2,
+    "Saraswathi": 1
+   },
+   "emphasised_houses": [
+    5,
+    1,
+    7
+   ],
+   "emphasised_grahas": [
+    "Sun",
+    "Mercury",
+    "Jupiter",
+    "Venus",
+    "Moon"
+   ],
+   "split": "tune",
+   "computed_lagna": "Pisces",
+   "admitted": true,
+   "admit_median_deg": 0.02,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "53",
+   "name": "RAJENDRA PRASAD",
+   "line_start": 19088,
+   "line_end": 19456,
+   "birth_details": "‘Born on 3rd December 1884 at 8-45 a.m, (L.M.T.) (Lat. 25° 36' N., Long. 85° 10' E.) Planetary Positions. — The Sun 230° 47' ; the Moon 55 c 28' ; Mars 247° 30' ; Mercury 246° 7' ; Jupiter 134° 33'; Venus 194° 35' ; Saturn 60° 42' (R) ; Rahu 169° 59' ; Ketu 349° 59’ ; and Lagna 260° 10’. Ayanamsa 20° 47’. Ketu Moon Sat. Mercury Rahu Mars RASI Venus NAV",
+   "positions_raw": "The Sun 230° 47' ; the Moon 55 c 28' ; Mars 247° 30' ; Mercury 246° 7' ; Jupiter 134° 33'; Venus 194° 35' ; Saturn 60° 42' (R) ; Rahu 169° 59' ; Ketu 349° 59’ ; and Lagna 260° 10’. Ayanamsa 20° 47’. Ketu Moon Sat. Mercury Rahu Mars RASI Venus NAVAMSA Jupit. Sun Jupiter Moon Mars Mercury Lagna Sun Venus Rahu Ketu La",
+   "balance_of_dasa": "Mars",
+   "latitude": 25.6,
+   "longitude": 85.16666666666667,
+   "sun_longitude": 230.78333333333333,
+   "stated_lagna": "Sagittarius",
+   "prose_chars": 10566,
+   "houses": {
+    "6": 7,
+    "7": 8,
+    "2": 5,
+    "10": 6,
+    "4": 3,
+    "9": 1,
+    "11": 5,
+    "8": 5,
+    "5": 4,
+    "12": 1,
+    "1": 18
+   },
+   "grahas": {
+    "Sun": 9,
+    "Moon": 10,
+    "Mars": 12,
+    "Mercury": 24,
+    "Jupiter": 16,
+    "Venus": 9,
+    "Saturn": 11,
+    "Rahu": 4,
+    "Ketu": 7
+   },
+   "yogas": {
+    "Adhi": 9,
+    "Gajakesari": 1,
+    "Kesari": 1,
+    "Anapha": 1,
+    "Amala": 1,
+    "Obhayachari": 1,
+    "Parijatha": 1,
+    "Rajayoga": 3
+   },
+   "emphasised_houses": [
+    7,
+    1
+   ],
+   "emphasised_grahas": [
+    "Mercury",
+    "Jupiter",
+    "Rahu",
+    "Ketu"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Sagittarius",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.11,
+   "admit_reason": "ok (Lagna Sagittarius confirmed)"
+  },
+  {
+   "number": "62",
+   "name": "RAMAKRISHNA DALMIA",
+   "line_start": 22023,
+   "line_end": 22319,
+   "birth_details": "Born on 7th April 1893 at 9-31 a.m (L.M.T.) (Lat. 20° 56' N„ Long. 75° 55' E.) Planetary Positions. — The Sun 356° 39'; the Moon 241° 15' ; Mars 45° 14' ; Mercury 346° 2' ; Jupiter 12° 3' ; Venus 350° 7' ; Saturn 167°54' ; Rahu 8°30' ; and Lagna 60°49'. Ayanamsa 20°55'. Sun Venus Mercury Rahu Jupiter Mars Lagna ■ Moon Mars Saturn Rahu RASI ■ S",
+   "positions_raw": "The Sun 356° 39'; the Moon 241° 15' ; Mars 45° 14' ; Mercury 346° 2' ; Jupiter 12° 3' ; Venus 350° 7' ; Saturn 167°54' ; Rahu 8°30' ; and Lagna 60°49'. Ayanamsa 20°55'. Sun Venus Mercury Rahu Jupiter Mars Lagna ■ Moon Mars Saturn Rahu RASI ■ SuD NAVAMSA Jupiter Venus Moon Ketu Sat. Ketu Mercury Lagna Balan",
+   "balance_of_dasa": "Ketu",
+   "latitude": 20.933333333333334,
+   "longitude": 75.91666666666667,
+   "sun_longitude": 356.65,
+   "stated_lagna": "",
+   "prose_chars": 6213,
+   "houses": {
+    "10": 17,
+    "5": 5,
+    "12": 8,
+    "2": 12,
+    "9": 9,
+    "11": 7,
+    "3": 4,
+    "6": 6,
+    "7": 4,
+    "8": 1,
+    "1": 13
+   },
+   "grahas": {
+    "Sun": 3,
+    "Moon": 5,
+    "Mars": 7,
+    "Mercury": 4,
+    "Jupiter": 11,
+    "Venus": 7,
+    "Saturn": 11,
+    "Rahu": 9,
+    "Ketu": 2
+   },
+   "yogas": {
+    "Malavya": 1,
+    "Papakarthari": 1,
+    "Hamsa": 1,
+    "Karthari": 1,
+    "Rajayoga": 2
+   },
+   "emphasised_houses": [
+    5,
+    12,
+    1
+   ],
+   "emphasised_grahas": [
+    "Jupiter",
+    "Venus"
+   ],
+   "split": "tune",
+   "computed_lagna": "Taurus",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "5",
+   "name": "SRI ADI SANKARACHARYA",
+   "line_start": 3310,
+   "line_end": 3867,
+   "birth_details": "*Born on 25th March 44 BC. at about noon. (Lat. 8° 29'N., Long. 76° 59' E.) Planetary Positions. — The Sun 8° 12'; the Moon 69° 12'; Mars 332° 36'; Mercury 24° 6'; Jupiter 303° 36'; Venus 3°; Saturn 265° 30'; Rahu 41° 18'; and Lagna 99° 22'. Ayanamsa +6° 10'. Mars Sun Mercury Venus Ketu Moon Venus Rahu Sun Jupiter RASI Lagna NAVAMSA Mars",
+   "positions_raw": "The Sun 8° 12'; the Moon 69° 12'; Mars 332° 36'; Mercury 24° 6'; Jupiter 303° 36'; Venus 3°; Saturn 265° 30'; Rahu 41° 18'; and Lagna 99° 22'. Ayanamsa +6° 10'. Mars Sun Mercury Venus Ketu Moon Venus Rahu Sun Jupiter RASI Lagna NAVAMSA Mars Saturn Ketu Moon Saturn Mercury Jupiter Ketu Lagna Balance of R",
+   "balance_of_dasa": "Rahu",
+   "latitude": 8.483333333333333,
+   "longitude": 76.98333333333333,
+   "sun_longitude": 8.2,
+   "stated_lagna": "",
+   "prose_chars": 15685,
+   "houses": {
+    "12": 16,
+    "10": 7,
+    "2": 9,
+    "4": 15,
+    "7": 9,
+    "8": 8,
+    "9": 14,
+    "6": 7,
+    "1": 9
+   },
+   "grahas": {
+    "Sun": 11,
+    "Moon": 9,
+    "Mars": 10,
+    "Mercury": 16,
+    "Jupiter": 20,
+    "Venus": 16,
+    "Saturn": 13,
+    "Rahu": 11,
+    "Ketu": 6
+   },
+   "yogas": {
+    "Papakartari": 2
+   },
+   "emphasised_houses": [
+    12,
+    1,
+    7,
+    9,
+    10,
+    4
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Rahu",
+    "Jupiter",
+    "Mars",
+    "Sun",
+    "Mercury",
+    "Venus"
+   ],
+   "split": "holdout",
+   "admitted": false,
+   "admit_reason": "unparseable birth data"
+  },
+  {
+   "number": "2",
+   "name": "SRI GAUTAMA BUDDHA",
+   "line_start": 2093,
+   "line_end": 2574,
+   "birth_details": "*14th April 623 B.C, at about midday (Lat. 27°8' N., Long. 83° 5' E.) Planetary Positions.— The Sun 29° 3' ; the Moon 200' 45'; Mars 26° 54' ; Mercury 53° 6' ; Jupiter 11°; Venus 6° 12'; Saturn 24° 36'; Rahu 86° 54' ; and Lagoa 1 1 6° 45', Ayanamsa + 14° 16'. Jupiier Sun Sat 111**1 Venus Mars Mercury Moon Venus Rahu RASI Lagna I NAVAMSA Mercury",
+   "positions_raw": "The Sun 29° 3' ; the Moon 200' 45'; Mars 26° 54' ; Mercury 53° 6' ; Jupiter 11°; Venus 6° 12'; Saturn 24° 36'; Rahu 86° 54' ; and Lagoa 1 1 6° 45', Ayanamsa + 14° 16'. Jupiier Sun Sat 111**1 Venus Mars Mercury Moon Venus Rahu RASI Lagna I NAVAMSA Mercury Jupiter 1 1 Ketu Moon I Sun Mars Ketu Saturn Balance",
+   "balance_of_dasa": "Jupiter's",
+   "latitude": 27.133333333333333,
+   "longitude": 83.08333333333333,
+   "sun_longitude": 29.05,
+   "stated_lagna": "",
+   "prose_chars": 13370,
+   "houses": {
+    "10": 14,
+    "7": 13,
+    "2": 5,
+    "5": 6,
+    "9": 5,
+    "4": 4,
+    "12": 11,
+    "1": 10,
+    "6": 3
+   },
+   "grahas": {
+    "Sun": 12,
+    "Moon": 15,
+    "Mars": 18,
+    "Mercury": 11,
+    "Jupiter": 16,
+    "Venus": 14,
+    "Saturn": 14,
+    "Rahu": 7
+   },
+   "yogas": {
+    "Amala": 1,
+    "Pasa": 1,
+    "Hatha": 1,
+    "Parivraja": 1,
+    "Rajayoga": 4
+   },
+   "emphasised_houses": [
+    10,
+    2,
+    7,
+    5,
+    1,
+    12
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Mars",
+    "Venus",
+    "Rahu"
+   ],
+   "split": "tune",
+   "admitted": false,
+   "admit_reason": "unparseable birth data"
+  },
+  {
+   "number": "I",
+   "name": "SRI KRISHNA",
+   "line_start": 1596,
+   "line_end": 2092,
+   "birth_details": "*1 9th July 3228 B.C., at about midnight (Lat. 27° 25' N., long. 77° 41' E.) Planetary Positions —The Sun 139° 48'; the Moon 47° 42' ; Mars 91 ° 6' ; Mercury 1 52° 48' ; Jupiter 1 48° 54' ; Venus 102° 54'; Saturn 224° 42'; Rahu 106° 24'; and Lagna 50°. Ayanamsa + 50° 40'. Lagna Moon ■ ■ Ketu Moon Lagna RASI Mars Venus Rahu 1 NAVAMSA Mars",
+   "positions_raw": "The Sun 139° 48'; the Moon 47° 42' ; Mars 91 ° 6' ; Mercury 1 52° 48' ; Jupiter 1 48° 54' ; Venus 102° 54'; Saturn 224° 42'; Rahu 106° 24'; and Lagna 50°. Ayanamsa + 50° 40'. Lagna Moon ■ ■ Ketu Moon Lagna RASI Mars Venus Rahu 1 NAVAMSA Mars Kelu Sun Jupit. Merc Saturn Merc. Jupit. Rahu Saturn Venus Sun",
+   "balance_of_dasa": "the Moon's",
+   "latitude": 27.416666666666668,
+   "longitude": 77.68333333333334,
+   "sun_longitude": 139.8,
+   "stated_lagna": "Taurus",
+   "prose_chars": 14091,
+   "houses": {
+    "3": 4,
+    "8": 3,
+    "2": 5,
+    "5": 4,
+    "4": 4,
+    "10": 5,
+    "12": 2,
+    "1": 9,
+    "9": 6,
+    "7": 8,
+    "6": 3
+   },
+   "grahas": {
+    "Sun": 13,
+    "Moon": 12,
+    "Mars": 14,
+    "Mercury": 6,
+    "Jupiter": 12,
+    "Venus": 12,
+    "Saturn": 10,
+    "Rahu": 8,
+    "Ketu": 5
+   },
+   "yogas": {},
+   "emphasised_houses": [
+    8
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Mars"
+   ],
+   "split": "holdout",
+   "admitted": false,
+   "admit_reason": "unparseable birth data"
+  },
+  {
+   "number": "52",
+   "name": "SRI KRISHNARAJA WADIYAR IV",
+   "line_start": 18778,
+   "line_end": 19087,
+   "birth_details": "Born on 4th June 1884 at 10-18 a.m. (L.M.T.). (Lat. 12° N.. Long. 76°38' E.) Planetary Positions. — The Sun 53° 9'; the Moon 182° 56'; Mars 128° 54'; Mercury 32° 44'; Jupiter 101° 28'; Venus 92° 54'; Saturn 52° 52’; Rahu 179° 37'; Ketu 359° 37'; and Lagna 11 7° 40'. Ayanamsa 20° 47'. Ketu Sun Mercury Saturn Lagna Ketu Mars RASI Lagna Jupit. Venus",
+   "positions_raw": "The Sun 53° 9'; the Moon 182° 56'; Mars 128° 54'; Mercury 32° 44'; Jupiter 101° 28'; Venus 92° 54'; Saturn 52° 52’; Rahu 179° 37'; Ketu 359° 37'; and Lagna 11 7° 40'. Ayanamsa 20° 47'. Ketu Sun Mercury Saturn Lagna Ketu Mars RASI Lagna Jupit. Venus NAVAMSA Sun Venus Saturn Mars Mandi Mere. Mandi Moon Rahu",
+   "balance_of_dasa": "Mars",
+   "latitude": 12.0,
+   "longitude": 76.63333333333334,
+   "sun_longitude": 53.15,
+   "stated_lagna": "Cancer",
+   "prose_chars": 8053,
+   "houses": {
+    "4": 3,
+    "11": 5,
+    "10": 4,
+    "2": 10,
+    "9": 9,
+    "5": 3,
+    "7": 6,
+    "3": 5,
+    "6": 1,
+    "12": 1,
+    "8": 3,
+    "1": 14
+   },
+   "grahas": {
+    "Sun": 10,
+    "Moon": 8,
+    "Mars": 8,
+    "Mercury": 11,
+    "Jupiter": 9,
+    "Venus": 8,
+    "Saturn": 12,
+    "Rahu": 8
+   },
+   "yogas": {
+    "Hamsa": 2,
+    "Rajayoga": 6
+   },
+   "emphasised_houses": [
+    1,
+    10
+   ],
+   "emphasised_grahas": [
+    "Jupiter",
+    "Venus"
+   ],
+   "split": "tune",
+   "computed_lagna": "Cancer",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.02,
+   "admit_reason": "ok (Lagna Cancer confirmed)"
+  },
+  {
+   "number": "9",
+   "name": "SRI RAMANUJACHARYA",
+   "line_start": 4933,
+   "line_end": 5242,
+   "birth_details": "'Born on the 4th April 1017 A.D. (O.S.)at about 12 Noon. (Lat. 11° 14' N., Long. 78° 56' E.) Planetary Positions.— The Sun 1 1° 32'; the Moon 73 50'; Mars 1 21 c 24' ; Mercury 24° 42' ; Jupiter 63” ; Venus 1 6° 36' ; Saturn 260° 18'; Rahu 43° 42 ; and Lagna 102'* 2'. Ayanamsa 8° 40'. Venus Sun Mercury Rahu Moon Jupit. Mars Rahu RASI Lagna Moon N",
+   "positions_raw": "The Sun 1 1° 32'; the Moon 73 50'; Mars 1 21 c 24' ; Mercury 24° 42' ; Jupiter 63” ; Venus 1 6° 36' ; Saturn 260° 18'; Rahu 43° 42 ; and Lagna 102'* 2'. Ayanamsa 8° 40'. Venus Sun Mercury Rahu Moon Jupit. Mars Rahu RASI Lagna Moon NAVAMSA Sun Mars Venus Saturn Kclu _ Ketu Mercury Lagna Jupiter Saturn",
+   "balance_of_dasa": "Rahu",
+   "latitude": 11.233333333333333,
+   "longitude": 78.93333333333334,
+   "sun_longitude": null,
+   "stated_lagna": "",
+   "prose_chars": 7096,
+   "houses": {
+    "2": 3,
+    "4": 2,
+    "12": 15,
+    "10": 5,
+    "7": 12,
+    "6": 3,
+    "5": 3,
+    "9": 3,
+    "11": 1,
+    "8": 1,
+    "1": 9
+   },
+   "grahas": {
+    "Sun": 8,
+    "Moon": 3,
+    "Mars": 2,
+    "Mercury": 6,
+    "Jupiter": 11,
+    "Venus": 11,
+    "Saturn": 15,
+    "Rahu": 6,
+    "Ketu": 1
+   },
+   "yogas": {},
+   "emphasised_houses": [
+    10,
+    7,
+    12,
+    1,
+    8,
+    2
+   ],
+   "emphasised_grahas": [
+    "Sun",
+    "Venus",
+    "Saturn",
+    "Moon",
+    "Mercury",
+    "Rahu"
+   ],
+   "split": "holdout",
+   "admitted": false,
+   "admit_reason": "few positions"
+  },
+  {
+   "number": "36",
+   "name": "SRI SWAMI VIVEKANANDA",
+   "line_start": 13674,
+   "line_end": 14099,
+   "birth_details": "‘Born on 12th January 1863 at 6-33 p.m (L.M.T ) (Lat. 22° 40' N„ Long. 88° 30' E.) Plarutary Positions. — The Sun 270° 52' ; the Moon 168° 54'; Mars 7° 46' ; Mercury 283° 13\"; Jupiter 185° 28'; Venus 278° 32' ; Saturn 165° 2’ ; Rahu 233° 41' ; Ketu 53° 41' ; and Lagna 267° 31’. Ayanamsa 20° 30'. Mars Ketu Venus Mercury Saturn Moon Mars RASI Rahu NAVAM",
+   "positions_raw": "",
+   "balance_of_dasa": "the Moon",
+   "latitude": 22.666666666666668,
+   "longitude": 88.5,
+   "sun_longitude": 270.8666666666667,
+   "stated_lagna": "Sagittarius",
+   "prose_chars": 13165,
+   "houses": {
+    "10": 7,
+    "1": 21,
+    "5": 3,
+    "3": 3,
+    "4": 2,
+    "2": 9,
+    "9": 12,
+    "8": 7,
+    "6": 8,
+    "11": 2,
+    "7": 6,
+    "12": 9
+   },
+   "grahas": {
+    "Sun": 8,
+    "Moon": 12,
+    "Mars": 15,
+    "Mercury": 13,
+    "Jupiter": 28,
+    "Venus": 13,
+    "Saturn": 16,
+    "Rahu": 15,
+    "Ketu": 5
+   },
+   "yogas": {
+    "Papakarthari": 2,
+    "Parivraja": 3
+   },
+   "emphasised_houses": [
+    6,
+    11,
+    1
+   ],
+   "emphasised_grahas": [
+    "Mercury",
+    "Venus",
+    "Sun",
+    "Jupiter"
+   ],
+   "split": "tune",
+   "admitted": false,
+   "admit_reason": "few positions"
+  },
+  {
+   "number": "68",
+   "name": "SUBASH CHANDRA BOSE",
+   "line_start": 23864,
+   "line_end": 24225,
+   "birth_details": "*Born on 23rd January 1897 at about 12 noon (L.M.T.) (Long. 5° 44' E.,) Lat. 20° 38 N.) Planetary Positions. — The Sun 282° 23' ; the Moon 159° 16'; Mars 50° 55'; Mercury 279° 56'; Jupiter 137' 55 ; Venus 327° 59' ; Saturn 218° 5'; Rahu 295° ; Ketu 115° ; Lagna 8° 24' ; and Hora Lagna 171°. Ayanamsa 20° 59' . Lagna Mars ■ Moon Merc. Sun Venus Lagna Venus",
+   "positions_raw": "The Sun 282° 23' ; the Moon 159° 16'; Mars 50° 55'; Mercury 279° 56'; Jupiter 137' 55 ; Venus 327° 59' ; Saturn 218° 5'; Rahu 295° ; Ketu 115° ; Lagna 8° 24' ; and Hora Lagna 171°. Ayanamsa 20° 59' . Lagna Mars ■ Moon Merc. Sun Venus Lagna Venus RASI Ketu Ketu NAVAMSA Mars Sun Rahu Mercury Jup it. Rahu Saturn Hora Lag",
+   "balance_of_dasa": "Sun",
+   "latitude": 20.633333333333333,
+   "longitude": 5.733333333333333,
+   "sun_longitude": 282.3833333333333,
+   "stated_lagna": "Aries",
+   "prose_chars": 9749,
+   "houses": {
+    "2": 6,
+    "3": 5,
+    "5": 6,
+    "7": 8,
+    "8": 8,
+    "10": 8,
+    "4": 5,
+    "11": 2,
+    "6": 8,
+    "9": 5,
+    "1": 13
+   },
+   "grahas": {
+    "Sun": 9,
+    "Moon": 4,
+    "Mars": 16,
+    "Mercury": 10,
+    "Jupiter": 18,
+    "Venus": 6,
+    "Saturn": 16,
+    "Rahu": 15,
+    "Ketu": 2
+   },
+   "yogas": {
+    "Adhi": 1,
+    "Rajayoga": 1
+   },
+   "emphasised_houses": [
+    7
+   ],
+   "emphasised_grahas": [
+    "Sun",
+    "Mercury",
+    "Rahu",
+    "Moon"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Aries",
+   "lagna_confirmed": true,
+   "admitted": true,
+   "admit_median_deg": 0.02,
+   "admit_reason": "ok (Lagna Aries confirmed)"
+  },
+  {
+   "number": "69",
+   "name": "SUDDHANANDA BHARATHI",
+   "line_start": 24226,
+   "line_end": 24435,
+   "birth_details": "Born on 12th May 1897 at 10-19 a.m. (L.M.T.) (Lat. 9° 51' N„ Long. 78°37' E.) Planetary Positions. — The Sun 30°43’ ; the Moon 149°50'; Mars 95° 28’; Mercury 43° 25'; Jupiter 129° 36’; Venus 10° 46’; Saturn 216° 58'; Rahu 289° 13’ ; Ketu 19° 13' ; and Lagna 95° 50'. Ayanamsa 20° 59'. Venus Sun Mercury Mercury Jupiter Rahu RASf Ketu Lagna M a rs NAV",
+   "positions_raw": "The Sun 30°43’ ; the Moon 149°50'; Mars 95° 28’; Mercury 43° 25'; Jupiter 129° 36’; Venus 10° 46’; Saturn 216° 58'; Rahu 289° 13’ ; Ketu 19° 13' ; and Lagna 95° 50'. Ayanamsa 20° 59'. Venus Sun Mercury Mercury Jupiter Rahu RASf Ketu Lagna M a rs NAVAMSA Venus Rahu - Jupit. Moon Sun Lagna Mars Saturn Ketu Moon",
+   "balance_of_dasa": "Sun",
+   "latitude": 9.85,
+   "longitude": 78.61666666666666,
+   "sun_longitude": 30.716666666666665,
+   "stated_lagna": "",
+   "prose_chars": 4309,
+   "houses": {
+    "9": 3,
+    "7": 3,
+    "4": 2,
+    "10": 7,
+    "2": 1,
+    "1": 4
+   },
+   "grahas": {
+    "Sun": 5,
+    "Moon": 4,
+    "Mars": 7,
+    "Mercury": 3,
+    "Jupiter": 7,
+    "Venus": 5,
+    "Saturn": 6,
+    "Rahu": 1,
+    "Ketu": 5
+   },
+   "yogas": {
+    "Gajakesari": 1,
+    "Aditya": 1
+   },
+   "emphasised_houses": [
+    10,
+    1
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Venus",
+    "Sun",
+    "Jupiter",
+    "Saturn"
+   ],
+   "split": "tune",
+   "computed_lagna": "Cancer",
+   "admitted": true,
+   "admit_median_deg": 0.03,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "57",
+   "name": "SWAMI SIVANANDA",
+   "line_start": 20371,
+   "line_end": 20702,
+   "birth_details": "Born on 8/7th September 1887 at 4-16 a.m. (L.M.T.) (Lat. 8° 48' N., Long. 77° 40' E.) Planetary Positions. — The Sun 144° 8’; the Moon 24° 13'; Mars 106° 41'; Mercury 141° 32'; Jupiter 192° 46'; Venus 164° 18’; Saturn 101 0 28'; Rahu 116° 30'; Ketu 296° 30'; and Lagna 119°. Ayanamsa 20° 50'. Moon ■ ■ Ven us RASX Sat. Lagna Mars Rahu Rahu NAVAMSA",
+   "positions_raw": "The Sun 144° 8’; the Moon 24° 13'; Mars 106° 41'; Mercury 141° 32'; Jupiter 192° 46'; Venus 164° 18’; Saturn 101 0 28'; Rahu 116° 30'; Ketu 296° 30'; and Lagna 119°. Ayanamsa 20° 50'. Moon ■ ■ Ven us RASX Sat. Lagna Mars Rahu Rahu NAVAMSA Ketu Sun Merc. Jupit. Ketu ■ Mars Sun Moon Mercury Saturn Balance",
+   "balance_of_dasa": "Venus",
+   "latitude": 8.8,
+   "longitude": 77.66666666666667,
+   "sun_longitude": 144.13333333333333,
+   "stated_lagna": "",
+   "prose_chars": 8167,
+   "houses": {
+    "2": 4,
+    "4": 7,
+    "12": 4,
+    "3": 4,
+    "7": 8,
+    "5": 1,
+    "10": 7,
+    "9": 4,
+    "11": 2,
+    "1": 11,
+    "8": 1,
+    "6": 1
+   },
+   "grahas": {
+    "Sun": 4,
+    "Moon": 8,
+    "Mars": 13,
+    "Mercury": 6,
+    "Jupiter": 15,
+    "Venus": 7,
+    "Saturn": 10,
+    "Rahu": 15,
+    "Ketu": 3
+   },
+   "yogas": {
+    "Parivraja": 1,
+    "Amala": 1,
+    "Virinchi": 1,
+    "Pushkala": 1,
+    "Dhana": 1,
+    "Parvata": 1,
+    "Adhi": 1,
+    "Rajayoga": 3
+   },
+   "emphasised_houses": [
+    1
+   ],
+   "emphasised_grahas": [
+    "Saturn",
+    "Rahu"
+   ],
+   "split": "holdout",
+   "computed_lagna": "Cancer",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  },
+  {
+   "number": "49",
+   "name": "VINAYAK DAMODAR SAVARKAR",
+   "line_start": 17869,
+   "line_end": 18167,
+   "birth_details": "Born on 28th May 1883 at 9-25 p.m. (L.M.T.) (Lat. 18° 23' N., Long. 73°53' E.) Planetary Positions. — The Sun 46° 10'; the Moon 304° 28'; Mars 8° 5'; Mercury 60° 26'; Jupiter 74° ; Venus 15° 51 ; Saturn 39° 45’ ; Rahu 199° 20' ; Ketu 19° 20'; and Lagna 266° 45'. Ayanamsa 20° 43'. Mars Ketu Venus Sun Saturn Jupit. Merc. ! Rahu. Sat. | 1 Sun Mars Moo",
+   "positions_raw": "The Sun 46° 10'; the Moon 304° 28'; Mars 8° 5'; Mercury 60° 26'; Jupiter 74° ; Venus 15° 51 ; Saturn 39° 45’ ; Rahu 199° 20' ; Ketu 19° 20'; and Lagna 266° 45'. Ayanamsa 20° 43'. Mars Ketu Venus Sun Saturn Jupit. Merc. ! Rahu. Sat. | 1 Sun Mars Moon RAS1 ■ Jupit. NAVA MSA r i — j 1 Venus Lagna Rahu Lagna",
+   "balance_of_dasa": "Mars",
+   "latitude": 18.383333333333333,
+   "longitude": 73.88333333333334,
+   "sun_longitude": 46.166666666666664,
+   "stated_lagna": "",
+   "prose_chars": 6992,
+   "houses": {
+    "6": 6,
+    "2": 5,
+    "10": 5,
+    "3": 2,
+    "5": 1,
+    "7": 4,
+    "8": 4,
+    "11": 1,
+    "4": 3,
+    "9": 1,
+    "1": 13,
+    "12": 2
+   },
+   "grahas": {
+    "Sun": 4,
+    "Moon": 4,
+    "Mars": 10,
+    "Mercury": 8,
+    "Jupiter": 16,
+    "Venus": 4,
+    "Saturn": 11,
+    "Rahu": 7,
+    "Ketu": 7
+   },
+   "yogas": {},
+   "emphasised_houses": [
+    7,
+    10,
+    8,
+    1,
+    6,
+    12
+   ],
+   "emphasised_grahas": [
+    "Moon",
+    "Mars",
+    "Ketu",
+    "Jupiter",
+    "Venus"
+   ],
+   "split": "tune",
+   "computed_lagna": "Sagittarius",
+   "admitted": true,
+   "admit_median_deg": 0.01,
+   "admit_reason": "ok (no stated Lagna — time verified, place unverified)"
+  }
+ ]
+}

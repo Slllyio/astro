@@ -113,9 +113,11 @@ class TestPage:
         assert "What matters most" in html
         assert "/report/insights" in html
         assert "Read this as one story" in html
-        # the Pothi-manuscript book design: shared engine + 13 leaves + labels + cover
+        # The Pothi-manuscript book design: shared engine + labels + cover. v33 re-cut the
+        # chapter folios from eleven to one per reading movement, so the book is now
+        # cover, birth details, seven movements, colophon — pages 0..9, not 0..12.
         assert "/static/css/manuscript.css" in html and "/static/js/manuscript.js" in html
-        assert 'data-page="0"' in html and 'data-page="12"' in html   # cover..colophon
+        assert 'data-page="0"' in html and 'data-page="9"' in html    # cover..colophon
         assert "MANUSCRIPT_LABELS" in html
         assert "cover-deva-title" in html                              # the brushed-gold cover
 
@@ -133,9 +135,22 @@ class TestSource:
         assert "strength of the house" in body["text"].lower()
 
     @pytest.mark.asyncio
-    async def test_classical_noncitable_is_deferred_not_shown(self, client):
-        """A CLASSICAL_NONCITABLE token (BPHS) is not resolved — the firewall holds — and the
-        response says so truthfully rather than returning the verse."""
+    async def test_corroboration_citation_resolves(self, client):
+        """A `corroboration` classical citation (BPHS ch.7 — the varga domain sloka, admitted
+        2026-08-21) now resolves click-to-source. It is resolvable, NOT natal-citable; the natal
+        engine's Raman-only guarantee is held by test_natal_citations_are_raman_only, not here."""
+        resp = await client.get("/report/source", params={"cite": "BPHS-7:48"})
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        assert body["resolved"] is True
+        assert body["work"] == "BPHS-7" and body["start"] == 48
+        assert "divisions" in body["text"].lower()
+
+    @pytest.mark.asyncio
+    async def test_out_of_scope_citation_is_deferred_not_shown(self, client):
+        """An out-of-scope / un-ingested token still does not resolve — the firewall holds for
+        anything not in the resolvable registry — and the response says so rather than fabricating
+        a verse (BPHS ch.83 is not ingested; only the varga chapters ch.6-7 are)."""
         resp = await client.get("/report/source", params={"cite": "BPHS-83-iii:70"})
         assert resp.status_code == 200
         body = resp.json()

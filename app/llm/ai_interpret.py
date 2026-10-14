@@ -2,14 +2,20 @@
 
 This is the one sanctioned exception to the grounded explainer's no-interpretation rule,
 user-approved 2026-07-28: a clearly-separated panel where an LLM may offer *interpretive,
-non-authoritative* reflection on the chart facts, in two registers (gentle themes by
-default, a bolder voice on explicit opt-in). Its contract:
+non-authoritative* reflection on the chart facts, in three registers (gentle themes by
+default, a bolder voice on opt-in, and `instinct` — the leap — on explicit opt-in). Its
+contract:
 
 - **Labeled, always.** Every response carries ``DISCLAIMER`` verbatim; the frontend renders
   it as a persistent banner. The text must never be attributed to the engine or to Raman.
 - **Walled off from the engine's honesty guarantees.** It does NOT run `refusal_reason`
   (that guard protects the *grounded* voice); it reasons over the same engine facts but is
   allowed to interpret beyond them — which is exactly why it must be labeled.
+- **`instinct` is aimed at the engine's own declines.** `restraint` marks the houses whose
+  witnesses pull both ways with no factor strong enough to govern; that register is handed
+  those houses and asked to say what a practitioner might feel there, stating plainly that
+  the rules do not settle it. It is the only place in this project where an underivable claim
+  may be made, and it is bounded by being pointed exactly at where derivation stopped.
 - **Harmful categories are excluded IN CODE, not just in the prompt**: death, lifespan,
   timing of death, serious/terminal illness, suicide and self-harm. `excluded_topic(text)`
   scans the model's OUTPUT; any hit replaces the whole answer with ``TOPIC_DEFERRAL``.
@@ -22,11 +28,11 @@ Usage:
 from __future__ import annotations
 
 import re
-from typing import Literal, Optional
+from typing import Literal, Optional, Sequence
 
 from app.llm.report_explainer import Evidence
 
-Register = Literal["gentle", "bold"]
+Register = Literal["gentle", "bold", "instinct"]
 
 #: stamped verbatim on every /report/ai-interpret response and rendered as a banner.
 DISCLAIMER = ("AI interpretation — this text is written by a language model, NOT by the "
@@ -71,6 +77,9 @@ Soft modality ("may", "tends to", "invites").
 - bold: direct and vivid. Name the chart's strongest currents plainly and commit to your reading \
 of them ("this chart points hard at public work"), while still never decreeing a dated future \
 event and still respecting every hard limit above.
+- instinct: the leap. Speak ONLY to what the engine could not settle, and say plainly that you \
+are going beyond the rules ("nothing here proves it, but"). Never dress a hunch as doctrine, \
+never cite, and never claim the engine or Raman supports what you are adding.
 
 Write 3-5 flowing paragraphs. No headings, no lists, no fact-number citations — this is a \
 reflection, not the report."""
@@ -109,7 +118,23 @@ def _scrub_fact(text: str) -> Optional[str]:
     return None if _EXCLUDED_RE.search(cleaned) else cleaned
 
 
-def build_interp_prompt(ev: Evidence, register: Register) -> str:
+#: The `instinct` register — the one place in this project where a leap the doctrine cannot
+#: license is allowed to be made, and the reason it is safe to allow it is that the engine now
+#: says WHERE it declined. `restraint` marks houses whose witnesses pull against one another
+#: with no factor strong enough to govern; those are exactly the places a practitioner would
+#: back their instinct. So this register is pointed at them deliberately, and is required to
+#: say plainly that what it offers is not derivable.
+INSTINCT_ORDER = """This is the INSTINCT register. Speak to the places the engine could NOT settle.
+
+The facts include houses the engine has explicitly marked as not clearly decided — its witnesses pull both ways and no factor is strong enough to govern between them. A practitioner would linger exactly there. So: pick one or two of them, and say what a reader might FEEL about that area of life, as a hunch rather than a finding.
+
+Be explicit that you are leaping. Use plain phrasing like "the rules do not settle this, but" or "nothing here proves it, though". Do NOT dress a hunch in doctrine, do not cite, and do not claim the engine or Raman supports what you are adding — the whole value of this register is that the reader can see exactly where derivation stopped and instinct began.
+
+Two or three short paragraphs. If the facts mark nothing as unsettled, say so in one line and stop rather than manufacturing a hunch."""
+
+
+def build_interp_prompt(ev: Evidence, register: Register,
+                        unsettled: "Sequence[str]" = ()) -> str:
     """The user-turn prompt: the engine's computed facts (context) + the register order.
     Facts are scrubbed of excluded-category vocabulary first (see `_scrub_fact`) — the
     panel neither receives nor may produce that material."""
@@ -120,6 +145,13 @@ def build_interp_prompt(ev: Evidence, register: Register) -> str:
         cleaned = _scrub_fact(f.text)
         if cleaned is not None:
             lines.append(f"[Fact {f.n}] {cleaned}")
+    if register == "instinct":
+        # The engine's own declines, handed over explicitly. Without these the register has
+        # nothing to aim at and degenerates into the `bold` one.
+        if unsettled:
+            lines += ["", "HOUSES THE ENGINE MARKS AS NOT CLEARLY DECIDED:"]
+            lines += [f"- {u}" for u in unsettled]
+        lines += ["", INSTINCT_ORDER]
     lines += ["",
               "Write your clearly-labeled interpretive reflection now, in the register named "
               "above, honouring every hard limit."]

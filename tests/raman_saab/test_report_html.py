@@ -66,28 +66,22 @@ class TestReportHtml:
         first_house = body.find('class="house"')
         assert body.find("<b>Conclusion</b>") > first_house >= 0
 
-    def test_preponderance_renders_between_house_strength_and_longevity(self, body):
+    def test_preponderance_renders_after_house_strength(self, body, section_text):
         """v14: the testimony-ledger table sits right after the House strength cross-check it
         generalizes, before Longevity, with one row per house and the honesty rules printed."""
-        h_start = body.find('id="house-strength"')
-        p_start = body.find('id="preponderance"')
-        l_start = body.find('id="longevity"')
-        assert 0 <= h_start < p_start < l_start
-        section = body[p_start:l_start]
+        assert body.find('id="house-strength"') < body.find('id="preponderance"')
+        section = section_text(body, "preponderance", html=True)
         assert "HTJAH-I:983-991" in section and "HTJAH-I:8870" in section
         assert "NO numeric rule" in section
         assert "NOT counted among its own witnesses" in section
         assert section.count("<tr>") == 13    # header + 12 houses
 
-    def test_ruler_of_nativity_renders_after_header(self, body):
+    def test_ruler_of_nativity_renders_after_header(self, body, section_text):
         """v13: the Ruler of the nativity card sits right after the header (the chart signature
         chips live inside it) and before the Running-now box, citing the first-impression
         doctrine (HTJAH-I:16001-16002) and the strongest-planet passage (HTJAH-I:6248)."""
-        h_start = body.find('class="sig"')
-        r_start = body.find('id="ruler"')
-        n_start = body.find('id="now"')
-        assert 0 <= h_start < r_start < n_start
-        section = body[r_start:n_start]
+        assert 0 <= body.find('class="sig"') < body.find('id="ruler"')
+        section = section_text(body, "ruler", html=True)
         assert "HTJAH-I:16001-16002" in section
         assert "HTJAH-I:6248" in section
         assert "not a prediction" in section
@@ -249,45 +243,35 @@ class TestReportHtml:
         assert 'class="vsec vcore"' in nichod_section
         assert 'class="vrow"' in nichod_section
 
-    def test_gochara_outlook_svg_renders_in_the_gochara_section(self, body):
+    def test_gochara_outlook_svg_renders_in_the_gochara_section(self, body, section_text):
         """The multi-year outlook is an SVG nested inside the existing #gochara section, not a
         new top-level section (the split-status precedent: enrich in place, no contract row)."""
-        g_start = body.find('id="gochara"')
-        g_end = body.find('id="vargas"')          # the next section after Gochara
-        assert 0 <= g_start < g_end
-        section = body[g_start:g_end]
+        section = section_text(body, "gochara", html=True)
         assert 'id="gochara-outlook"' in section
         assert section.count("<svg") == 1
         assert section.count('class="gochara-bar"') > 0
 
-    def test_gochara_outlook_bars_carry_hover_detail_and_today_marker(self, body):
+    def test_gochara_outlook_bars_carry_hover_detail_and_today_marker(self, body, section_text):
         """Each bar exposes its exact dates/AV/Vedha via a native <title> tooltip, and a 'today'
         marker orients the reader on the 25-year span."""
-        g_start = body.find('id="gochara-outlook"')
-        section = body[g_start:body.find('id="vargas"')]
+        section = section_text(body, "gochara", html=True)
+        section = section[section.index('id="gochara-outlook"'):]
         assert "<title>" in section and "AV support" in section
         assert ">today<" in section
 
-    def test_dasha_transit_confluence_section_renders(self, body):
+    def test_dasha_transit_confluence_section_renders(self, body, section_text):
         """The Dasha x Transit confluence section sits between Gochara and Divisional deep-reads,
         with a row per confluence window."""
-        g_start = body.find('id="gochara"')
-        d_start = body.find('id="dasha-transit"')
-        v_start = body.find('id="vargas"')
-        assert 0 <= g_start < d_start < v_start
-        section = body[d_start:v_start]
+        assert 0 <= body.find('id="gochara"') < body.find('id="dasha-transit"')
+        section = section_text(body, "dasha_transit", html=True)
         assert "In simple terms:" in section
         assert "HTJAH-II:4679" in section
         assert section.count("<tr>") >= 2   # header + at least one confluence row
 
-    def test_yoga_dasha_timing_section_renders(self, body):
+    def test_yoga_dasha_timing_section_renders(self, body, section_text):
         """Yoga x Dasha timing sits right after Yogas and before Ashtakavarga, with a row per
         yoga-lord confluence, and states the 3-family coverage gap."""
-        y_start = body.find('id="yogas"')
-        t_start = body.find('id="yoga-timing"')
-        s_start = body.find('id="sav"')
-        assert 0 <= y_start < t_start < s_start
-        section = body[t_start:s_start]
+        section = section_text(body, "yoga_timing", html=True)
         assert "In simple terms:" in section
         assert "HTJAH-I:4324" in section
         assert "coverage gap" in section
@@ -464,7 +448,9 @@ class TestWave1CompletenessHtml:
         and adds no new section heading."""
         i = body.find("Today for you (Muhurtha)")
         assert i >= 0
-        assert body.find('id="gochara"') < i < body.find('id="vargas"')
+        # merged 2026-10-14: the arc places the divisionals (id="vargas") in Movement III, so
+        # the timing close is now bounded by the summing-up movement heading instead.
+        assert body.find('id="gochara"') < i < body.find('id="movement-vii"')
         assert "computed live at\n    view time" in body
 
     def test_stands_out_table_carries_degree_rarity_and_gloss(self, report, body):

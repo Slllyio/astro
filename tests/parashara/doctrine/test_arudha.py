@@ -1,0 +1,155 @@
+"""Arudha padas — BPHS ch.29-30.
+
+The load-bearing tests are Parashara's OWN worked examples: the base counting rule and both special
+exceptions (lord in the 1st -> 10th from house; lord in the 7th -> 4th from house) reproduce exactly.
+"""
+from __future__ import annotations
+
+from app.parashara.chart.cast import cast
+from app.parashara.doctrine.arudha import (
+    EXCEPTION_SOURCE,
+    FINANCE_SOURCE,
+    PADA_NAMES,
+    QUANTUM_SOURCE,
+    RULE_SOURCE,
+    UNINTERRUPTED_SOURCE,
+    UPAPADA_SPOUSE_SOURCE,
+    arudha_lagna,
+    arudha_pada,
+    bhava_arudhas,
+    pada_finance,
+    spouse_from_upapada,
+    upapada,
+)
+from app.parashara.doctrine.sources import verify
+
+
+class TestWorkedExamples:
+    def test_base_rule_scorpio_mars_cancer_to_pisces(self):
+        # Scorpio asc (8), lord Mars in Cancer (4) -> Pisces (12)
+        assert arudha_pada(8, 4) == 12
+
+    def test_exception_lord_in_first_is_tenth_from_house(self):
+        # Sagittarius (9), lord Jupiter in Sagittarius (9) -> Virgo (6)
+        assert arudha_pada(9, 9) == 6
+
+    def test_exception_lord_in_seventh_is_fourth_from_house(self):
+        # Aquarius (11), lord Saturn in Leo (5, the 7th) -> Taurus (2)
+        assert arudha_pada(11, 5) == 2
+
+    def test_lord_in_fourth_is_the_fourth(self):
+        # Leo (5), lord Sun in Scorpio (8, the 4th) -> Scorpio (the 4th itself), BPHS ex.3
+        assert arudha_pada(5, 8) == 8
+
+
+class TestProperties:
+    def test_pada_never_the_house_or_seventh(self):
+        # the whole point of the exceptions: no pada lands on the house itself or its 7th
+        for house in range(1, 13):
+            for lord in range(1, 13):
+                p = arudha_pada(house, lord)
+                seventh = ((house - 1 + 6) % 12) + 1
+                assert p != house and p != seventh, (house, lord, p)
+
+    def test_all_padas_in_range(self):
+        for house in range(1, 13):
+            for lord in range(1, 13):
+                assert 1 <= arudha_pada(house, lord) <= 12
+
+
+class TestChart:
+    def _chart(self):
+        return cast(year=1990, month=7, day=15, hour=12, minute=0,
+                    tz_offset=5.5, latitude=12.97, longitude=77.59)
+
+    def test_twelve_arudhas(self):
+        a = bhava_arudhas(self._chart())
+        assert set(a) == set(range(1, 13)) and all(1 <= s <= 12 for s in a.values())
+
+    def test_al_and_ul_are_the_first_and_twelfth(self):
+        ch = self._chart()
+        a = bhava_arudhas(ch)
+        assert arudha_lagna(ch) == a[1] and upapada(ch) == a[12]
+
+    def test_pada_names_cover_all_houses(self):
+        assert set(PADA_NAMES) == set(range(1, 13))
+
+
+class TestPadaFinance:
+    def _chart(self):
+        return cast(year=1990, month=7, day=15, hour=12, minute=0,
+                    tz_offset=5.5, latitude=12.97, longitude=77.59)
+
+    def test_eleventh_is_eleventh_from_al(self):
+        pf = pada_finance(self._chart())
+        assert pf.eleventh_sign == ((pf.arudha_lagna - 1 + 10) % 12) + 1
+
+    def test_nature_matches_related_planets(self):
+        pf = pada_finance(self._chart())
+        benefics = {"Jupiter", "Venus", "Mercury", "Moon"}
+        has_b = any(p in benefics for p in pf.related)
+        has_m = any(p not in benefics for p in pf.related)
+        expected = ("both" if has_b and has_m else "virtuous" if has_b
+                    else "questionable" if has_m else "none")
+        assert pf.nature == expected
+
+    def test_quantum_is_related_count(self):
+        pf = pada_finance(self._chart())
+        assert pf.quantum == len(pf.related)
+
+    def test_no_relation_gives_none_nature(self):
+        pf = pada_finance(self._chart())
+        if not pf.related:
+            assert pf.nature == "none" and not pf.uninterrupted
+
+    def test_finance_sources_resolve(self):
+        for c in (FINANCE_SOURCE, UNINTERRUPTED_SOURCE, QUANTUM_SOURCE):
+            assert verify(c) and c.work == "BPHS-29"
+
+
+class TestSpouseFromUpapada:
+    def _chart(self):
+        return cast(year=1990, month=7, day=15, hour=12, minute=0,
+                    tz_offset=5.5, latitude=12.97, longitude=77.59)
+
+    def test_second_is_second_from_upapada(self):
+        s = spouse_from_upapada(self._chart())
+        assert s.second_sign == (s.upapada % 12) + 1     # the 2nd from UL
+
+    def test_benefic_sign_gives_a_favourable_reading(self):
+        # canonical: 2nd-from-UL is Taurus, a benefic (Venus) sign
+        s = spouse_from_upapada(self._chart())
+        if s.benefic_sign and not s.afflicted:
+            assert s.verdict in ("favourable", "mixed")
+
+    def test_verdict_is_one_of_the_four(self):
+        assert spouse_from_upapada(self._chart()).verdict in (
+            "favourable", "afflicted", "mixed", "neutral")
+
+    def test_gemini_special_flag_tracks_the_sign(self):
+        s = spouse_from_upapada(self._chart())
+        assert s.gemini_special == (s.second_sign == 3)
+
+    def test_source_resolves(self):
+        assert verify(UPAPADA_SPOUSE_SOURCE) and UPAPADA_SPOUSE_SOURCE.work == "BPHS-30"
+
+
+class TestNodeSafety:
+    def test_node_has_no_debilitation(self):
+        """ch.3 gives Rahu/Ketu no exaltation, so they have no debilitation sign either."""
+        from app.parashara.doctrine.arudha import _debilitation
+        assert _debilitation("Rahu") is None and _debilitation("Ketu") is None
+        assert _debilitation("Sun") == 7                       # exalted Aries -> debilitated Libra
+
+    def test_rahu_second_from_upapada_does_not_crash(self):
+        """Raman golden HTJAH-I.chart_29 puts Rahu 2nd from the Upapada — read() used to KeyError."""
+        ch = cast(year=1903, month=3, day=18, hour=0, minute=0,
+                  tz_offset=5.0, latitude=15.5333, longitude=75.0)
+        s = spouse_from_upapada(ch)
+        assert "Rahu" in s.occupants
+
+
+class TestCitations:
+    def test_sources_resolve(self):
+        assert verify(RULE_SOURCE) and RULE_SOURCE.work == "BPHS-29"
+        assert verify(EXCEPTION_SOURCE) and EXCEPTION_SOURCE.work == "BPHS-29"

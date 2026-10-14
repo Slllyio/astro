@@ -325,11 +325,11 @@ class TestYogaTimingGrouping:
             assert list(rows) == sorted(rows, key=lambda t: t.period_start_jd)
 
     def test_markdown_renders_one_labelled_table_per_yoga_with_every_row(
-            self, report, markdown):
+            self, report, markdown, section_text):
         """Row count before == row count after; each group carries its own label."""
-        i = markdown.find("## Yoga x Dasha timing")
-        j = markdown.find("## Yoga deep-read")
-        section = markdown[i:j]
+        # merged 2026-10-14: sliced by the contract (the arc moved yoga_deep ahead of
+        # yoga_timing, so the old hard-coded neighbour produced an empty slice)
+        section = section_text(markdown, "yoga_timing")
         data = [ln for ln in section.splitlines()
                 if ln.startswith("| ") and "---" not in ln
                 and not ln.startswith("| Yoga | Period |")]
@@ -339,11 +339,9 @@ class TestYogaTimingGrouping:
             label = _ascii(f"**{name}** - {len(rows)} constituent-lord window")
             assert label in section, name
 
-    def test_html_renders_a_group_band_per_yoga_with_every_row(self, report, html):
+    def test_html_renders_a_group_band_per_yoga_with_every_row(self, report, html, section_text):
         """The HTML table keeps one row per window and adds a band row per yoga."""
-        i = html.find('id="yoga-timing"')
-        j = html.find('id="yoga-deep"')
-        section = html[i:j]
+        section = section_text(html, "yoga_timing", html=True)   # merged 2026-10-14, as above
         groups = yoga_timing_grouped(report)
         assert section.count('<tr class="yoga-group">') == len(groups)
         # header row + one band row per group + one row per window

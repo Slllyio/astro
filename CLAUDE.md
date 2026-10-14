@@ -198,6 +198,33 @@ rule below was EARNED by a caught mistake, with the receipts in `DOCTRINE_BACKLO
 - **Tab 3 (Medini)**: Leaflet + OSM (NOT Mapbox), axis-aligned bbox tiling (NOT PostGIS), safe DOM construction (`createElement` + `textContent`, never innerHTML).
 - Single source of truth for Kurma GeoJSON: `/medini/regions` is consumed by both the educational widget and the personalized cartography page.
 - **PRASNA + MUHURTHA + VARSHA firewalls LIFTED (user decisions 2026-08-03)**: horary (`app/raman_saab/horary/`) and electional (`app/raman_saab/electional/`) are walled subsystems — they may import natal primitives, natal verdict code NEVER imports them (tested both directions); their sources (PRASNA/MUHURTHA/VARSHA tags, + HPA-27/AFB-11/ASP-15:21-183 content) are citable by those subsystems only; outputs carry Measured-Truth framing; death/lifespan queries excluded in code. **JAIMINI lifted 2026-08-04** (karmic-evolution layer) — **NO book remains firewalled; the content-scope rule is now the ONLY wall**: each lifted book is citable by its own walled subsystem, natal verdict code imports none of them, and the golden ratchet is untouchable by construction. Full record: `DOCTRINE_BACKLOG.md` "PRASNA + MUHURTHA firewall LIFT" + the Jaimini addendum.
+- **THREE 3HC-COMPLETION DECISIONS (user-approved 2026-08-11, "do all three")**, each with
+  its record in the code: (1) **D60 cruel/benign class** = Phaladeepika ch.3's Krura table
+  (classical corroboration; `primitives/shashtiamsa.py` — CONSISTENCY-GATED, test-pinned, on
+  Raman's three applied rulings, which always win over the table); (2) **the two-ladder
+  finding**: Raman's GBB amsa ladder (Parvathamsa-3/Gopuramsam-8, shodasavarga) and 3HC's
+  ladder (Uttama-3/Gopura-4, SAPTAVARGA — the unique set reproducing both of Raman's worked
+  counts, incl. Chart 125 cast from its printed birth data) are DIFFERENT LADDERS; each is
+  citable only for its own book's yogas (`varga_attainment.THREE_HUNDRED_LADDER`; the
+  Sumukha-167 arm was fixed for borrowing GBB's rung); (3) **Gulika/Mandi natal scope**: the
+  engine's own HPA-cited upagraha layer (`chart/upagrahas.py`) serves natal yoga conditions
+  via `chart.upagrahas` — the Prasna Marga wall was never about these mechanics. With these,
+  **the 3HC far half (163-300) is FULLY encoded or consciously deferred**; the registry's
+  skip notes are the per-arm authority.
+- **SALIENCE: every modulation weight is ZERO, and that is a MEASURED RESULT, not a stub**
+  (`app/raman_saab/salience.py`, locked 2026-08-07). Eight chart-specific signals — surprisal,
+  extremity, graph centrality, occupancy, dignity, house-lord shadbala, lord-strength deviation,
+  yoga-by-kind — were ablated across two independent benchmarks at n=14 and n=95, and **none
+  beat the doctrinal prior alone**. Raman's attention follows doctrine and nothing else the
+  engine computes (`docs/raman_saab/SALIENCE_BASELINE.md`). The consequence to know before
+  editing: with the weights at zero, `house_salience` returns the SAME ranking for every chart
+  — `(1, 10, 7, 9, 4, 5, 2, 11, 8, 12, 6, 3)` — and that order drives the digest, the most-read
+  section of the report. `tests/raman_saab/test_salience.py` pins the weights, the constancy,
+  the hand-copied order AND the exact scores (an order-only test passes while a term fires too
+  weakly to reorder). **Raising a weight requires clearing the prior on the HOLDOUT split,
+  paired, with an interval excluding zero, recorded in SALIENCE_BASELINE.md — then update the
+  test deliberately.** Ranking behaviour is otherwise frozen; `why` may only ever cite a term
+  whose weight is live, `notable` carries the rest.
 
 ## ★ REPORT COMPLETENESS — do NOT omit anything (locked 2026-07-27, after a real error)
 
@@ -224,6 +251,92 @@ This is a standing user directive, confirmed twice and once violated — treat i
 - Self-contained only: the interactive page builds every visual with inline SVG/Canvas/CSS via safe
   DOM (`createElement`, namespaced SVG, `textContent` — never `innerHTML`, never an external chart
   library/CDN). Theme-aware through the page's CSS custom properties (light + dark).
+
+## ★ REPORT READING ARC — v33 movements, and the split contract (locked 2026-08-05)
+
+**The report's section SET is frozen and append-only; its ORDER is a design decision.** These
+were one invariant until v33 and conflating them is what made the document read as a pile of
+sections: `test_registry_is_append_only` asserted the whole registry *prefix* as an exact
+ordered tuple, so for 32 versions the only legal move was "append at the end" and each section
+landed where the contract allowed rather than where it reads best.
+
+- **`app/raman_saab/report_movements.py` is the single source of truth for the sequence.** Seven
+  movements — Who this is / How to read it honestly / The instrument / The twelve fields / The
+  matters of life / In time / The summing up. `SECTION_CONTRACT` and `HTML_SECTION_ORDER` are
+  both DERIVED from `flattened_order()`; never restate an order anywhere else.
+- **Two separate guards, both required.** `test_section_set_is_append_only` asserts SET equality
+  on the 53 `(id, md_marker, html_marker)` triples (completeness — REPORT COMPLETENESS still
+  stands, nothing is ever removed or hidden). `test_reading_order_is_the_reviewed_arc` asserts
+  the sequence against `_ORDER_V33`, **copied BY HAND into the test file** for exactly the
+  reason `_FROZEN` is: the registry derives its order from `MOVEMENTS`, so a test comparing only
+  those two passes silently when both are edited together. Re-sequencing means editing that
+  tuple, consciously, in the same commit.
+- **Two structural constraints, test-pinned.** `nichod` stays last. `title`/`plain_reading`/
+  `chart_signature` stay adjacent in that order — they are one `<header>` element in the HTML
+  and are emitted as a single chunk.
+- **Connective passages are deterministic**, composed from `raman_style` (`because`/`weighed`/
+  `conclusion` — Raman's own compositional habits) over facts the adjacent sections have already
+  judged. No model call, PREC-10 pure re-read, identical every run, and every passage is checked
+  against `_FORBIDDEN_RE`. The guard is a blunt denylist and has already caught an innocent
+  "brings to" here — **write around it, never widen it.**
+- **Both renderers are order-driven, not position-driven.** `to_markdown` routes its appends
+  through `_SectionedLines`; `to_html` assembles from a section-keyed `chunk` dict. Neither
+  hard-codes sequence any more. The interactive page keeps its own manuscript folios (a
+  different but coherent shape the page-turn depends on) and LAYERS the passages onto them via
+  the `movements` key in the report JSON.
+- **Tests must not slice content to a hardcoded neighbouring section** — that encodes order into
+  assertions about content, and a neighbour moving ahead yields an empty slice that fails
+  against `""`. Use the `section_text` fixture in `tests/raman_saab/conftest.py`; order
+  assertions belong only in `test_report_template_contract.py`.
+
+## ★ PLAINSPOKEN — the report speaks to the reader (v35, locked 2026-08-07)
+
+`app/raman_saab/plainspoken.py` gives each section a **person-facing lead**: one short paragraph,
+above the section's own tables, that says what the section means *for the reader*. Measured
+before and after — **12 of 54 sections addressed the reader at the start, 50 of 54 now.**
+
+- **It ADDS, never replaces.** REPORT COMPLETENESS is untouched: the lead sits above the full
+  data, never in place of it. PREC-10 holds — every lead re-voices a value already decided.
+- **Every lead is computed from its OWN section's data**, so it cannot drift from the table it
+  introduces. A lead that reads a different object than its section renders is the defect that
+  shipped once: `section_id="synthesis"` renders *Integrated insights*, while `r.synthesis` is a
+  different dataclass rendered under `houses`.
+- **Three surfaces, always in step**: markdown (`_plain_section`), standalone HTML
+  (`_plain_lead`), interactive page (`plainLead(sid)`). A lead added to one and not the others
+  is a bug.
+- **Every lead must pass `_FORBIDDEN_RE`.** Write around the guard, never widen it.
+- **`_join` vs `_join_all` is a correctness choice, not style.** `_join` caps at three so a lead
+  never becomes an inventory; use it ONLY where the phrasing signals a selection ("among them",
+  "most strongly"). Where the sentence reads as the complete set, use `_join_all`. The cap
+  silently dropped Mars from a four-planet maraka list, arishta from a four-kind yoga breakdown,
+  and 4 of 7 wealth channels — each in a sentence that read as exhaustive.
+- **A lead must agree with what sits beside it.** `rect_confidence` led with the count surviving
+  the full ±60 scan ("1 of 10") directly above its own label reading *"firm"*. Same class as a
+  plain line saying "reads strongly" under a heading saying AFFLICTED.
+- **Failures are swallowed but LOGGED.** A phrasing bug must never cost the reader a section, so
+  `plain_for_section` catches — but silently swallowing made a crash (`_SIGN_NAME` is a tuple,
+  not a dict) indistinguishable from "nothing to say" and blanked a whole lead unnoticed.
+- **Four sections stay in the engine's voice deliberately**: `positions`, `glossary`,
+  `info_content`, `career`. Reference apparatus; a lead there is padding.
+- **Three checks, none redundant** — the guard regex, a reader-address count
+  (`\byou\b|\byour\b` per section slice), and *reading the leads in document order*. The count
+  caught leads that existed and addressed nobody; only reading caught the truncations, the
+  contradiction, and untranslated jargon (`poorvapunya`). Run all three.
+- **THE SITTING (v35, user-requested "instinct and flow", 2026-08-07)** — `sitting.py` composes
+  the reading as ONE continuous piece in Raman's NH arc: the Grip (thesis, echoed by the
+  closing — pinned on `grip_key`), the Cast (2-3 census-ranked grahas with EARNED epithets,
+  clauses kept separately so a callback can drop the one that would be circular in its own
+  house), the life told forward (matters whose house is `unsettled` are HELD APART, never
+  counted either way — verdict and firmness are different axes and one continuous reading must
+  honour both), and event-first timing. The weave in `plain_for_house` calls back to cast
+  members ("the same Jupiter, the strongest planet…") — never circularly.
+- **HEDGE CONSOLIDATION (user decision 2026-08-07, sign-off recorded):** the
+  "not a prediction/never a forecast" family appears at most 8 times per reading (was 26) —
+  the header frame, the nichod/life-synthesis distillation line, and the longevity/maraka
+  family, where the subject demands it. Per-lead and per-row restatements were REMOVED as
+  framing repetition, not data. `test_sitting.py::TestTheHedgeCensus` pins both the cap and
+  that the guard trio still carries it. Do not re-add hedges to individual leads; do not
+  strip the trio.
 
 ## ★ REPORT LLM SURFACES — the four-voice contract (locked 2026-07-28, share-the-app arc)
 
@@ -264,6 +377,10 @@ This is a standing user directive, confirmed twice and once violated — treat i
   History: narrowed 2026-07-28 (doctrine-reviewed); death/lifespan wall lifted 2026-08-17 over
   the assistant's recorded recommendation to keep it — record in DOCTRINE_BACKLOG "prediction
   unblock". Do not re-widen OR re-narrow without a doctrine review + user sign-off.
+  **Lesson carried from main (2026-08-07 correction):** a summary of this guard once said it
+  refused "all death tokens" -- wrong, and it nearly muted the longevity/arishta/maraka leads.
+  Naming longevity, maraka or arishta is ALLOWED; only the decree voice and decree-dated death
+  are refused. **When this file summarises a regex, go read the regex.**
 - **`/report/ai-interpret` is the ONE walled speculation surface** (user-approved exception):
   always labeled ("AI, not the engine, not validated" — `DISCLAIMER` on every response), gentle/bold
   registers, and serious-illness/self-harm excluded IN CODE (`excluded_topic` on output + input
@@ -286,6 +403,23 @@ This is a standing user directive, confirmed twice and once violated — treat i
   Produces Mercury MD, Virgo Lagna ~173.99°, Moon at Revati pada 3, Saturn Avastha = Mrita/Swapna.
 - **Pin against externally-verifiable sources**, never engine self-output: Wikipedia, Prokerala, Jagannatha Hora, drikpanchang.com.
 - The PDF `Geo-Astrological Planetary Intelligence Engine.pdf` is the source of truth for the Kurma Chakra 27-nakshatra → region table.
+
+## Known-broken — do NOT rediscover these the hard way
+
+- **Pre-1906 charts crash the report.** `build_detailed_report` raises
+  `AttributeError: 'NoneType' object has no attribute 'maha'` for any nativity whose 120-year
+  Vimshottari span ended before today — there is no "currently running" period, and
+  `synthesize()` dereferences it. Verified on Queen Victoria (1819). **This bites the Prime
+  Directive directly: most of Raman's own worked nativities are 19th century, so the engine
+  cannot produce a report for the charts it is validated against.** The measurement tools work
+  around it with `on=(birth.year + 35, …)`; the report has no such escape. Fixing it needs a
+  product decision first — what "now" means for a chart whose life ended in 1939 (cast at a date
+  inside the life / cycle the sequence / state that the reference date is outside the span).
+- **`app/raman_saab/plainspoken.py` has no test file** (910 lines, 41 lead functions, the layer
+  with the most reader contact). Twelve defects were found in it on 2026-08-06/07 — all by
+  printing output by hand, none by CI. Every class is mechanically checkable: guard-clean,
+  subject-verb agreement at n=1, no truncated list in a sentence claiming completeness, no lead
+  that addresses nobody, no lead contradicting its own section's label.
 
 ## Style conventions
 

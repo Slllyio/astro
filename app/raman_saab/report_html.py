@@ -16,6 +16,7 @@ import re
 
 from app.raman_saab.detailed_report import (
     GLOSSARY,
+    HTML_SECTION_ORDER,
     ROLLUP_RULE,
     _HOUSE_NAME as _MD_HOUSE_NAME,
     _PLANET_THEME,
@@ -119,6 +120,20 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .fb-q-hi{color:var(--ink-soft);font-size:.92rem;margin:.15rem 0 .2rem;line-height:1.6}
 .fb-opts{list-style:none;padding:0;margin:.45rem 0 .2rem}
 .fb-opts li{margin:.3rem 0;padding-left:.1rem;line-height:1.55}
+/* v33 movements — the reading arc. A movement heading outranks a section heading, so it
+   carries the doctrine colour and a heavier rule; the passage under it is the connective
+   prose composed from Raman's own compositional rules (report_movements.movement_passage). */
+h2.movement{font-family:var(--serif);font-weight:600;font-size:2rem;line-height:1.15;
+  margin:4.5rem 0 .4rem;padding-top:2.2rem;border-top:3px solid var(--doctrine);
+  color:var(--doctrine);text-wrap:balance;display:flex;align-items:baseline;gap:.7rem}
+h2.movement:first-of-type{margin-top:2.6rem}
+.movement-num{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  font-family:var(--sans);color:var(--ink-soft);flex:none}
+.movement-passage{font-family:var(--serif);font-size:1.08rem;line-height:1.55;
+  color:var(--ink-soft);font-style:italic;margin:.1rem 0 2rem;max-width:62ch;
+  border-left:2px solid var(--instrument-soft);padding-left:1rem}
+h2.movement + .movement-passage{margin-top:.5rem}
+@media print{h2.movement{break-before:page;break-after:avoid}}
 .long{font-family:var(--serif);font-size:1.15rem}
 .long b{color:var(--doctrine)}
 .long-combos{list-style:none;padding:0;margin:.7rem 0 0}
@@ -581,12 +596,21 @@ def _house_strip(rows: tuple) -> str:
             'means the majority tenor agrees with the headline.</i></p>')
 
 
+def _house_plain(r: DetailedReport, house: int) -> str:
+    """The person-facing lead for one bhava, or "" — never lets phrasing cost the house card."""
+    try:
+        from app.raman_saab.plainspoken import plain_for_house
+        return plain_for_house(r, house)
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
                    conclusion: str = "", ht=None, frame_line: str = "",
                    tier_line: str = "", chief: tuple = (), cross_refs: tuple = (),
                    maintainer_notes: str = "", cal_rollup: str = "",
                    indications: tuple = (), further: tuple = (),
-                   on_record: tuple = (), general: tuple = ()) -> str:
+                   on_record: tuple = (), general: tuple = (), plain: str = "") -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
     `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
     closing device) — passed in, not computed here, so both renderers share one composer.
@@ -765,10 +789,12 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
         f'<h3><span class="house-num">H{mr.house}</span> &middot; {_esc(_HOUSE_NAME[mr.house])}</h3>'
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
-        f'{split_note_html}{inverted_note_html}{xref_html}{conclusion_html}'
-        f'{level_why}{level_chief}{level_general}{level_indications}'
-        f'{level_further}{level_on_record}'
-        f'{level_evidence}{level_calc}{level_classical}</section>')
+        # v35 — the person-facing lead, above the pillars that stay exactly as they were.
+        + (f'<p class="section-sub plainspoken"><i>{_esc(plain)}</i></p>' if plain else "")
+        + f'{split_note_html}{inverted_note_html}{xref_html}{conclusion_html}'
+          f'{level_why}{level_chief}{level_general}{level_indications}'
+          f'{level_further}{level_on_record}'
+          f'{level_evidence}{level_calc}{level_classical}</section>')
 
 
 def _house_chip(a, *, ring: bool = False, basis: str = "") -> str:
@@ -1208,6 +1234,7 @@ def _distinctive(r: DetailedReport) -> str:
         f'<td>{_esc(distinctive_gloss(e))}</td></tr>' for h, e in r.distinctive)
     return (
         '<h2 class="section" id="stands-out">What stands out</h2>'
+        + _plain_lead(r, "stands_out") + 
         '<p class="section-sub">The readings furthest from the population midpoint &mdash; where '
         'this chart is least like everyone else&rsquo;s. Rare readings first, then notable, '
         'then common; within each band, furthest from the midpoint first.</p>'
@@ -1260,6 +1287,7 @@ def _yoga_deep_section(r: DetailedReport) -> str:
                       f'<div class="vsec">{body}</div>')
     return (
         '<h2 class="section" id="yoga-deep">Yoga deep-read</h2>'
+        + _plain_lead(r, "yoga_deep") + 
         '<p class="section-sub"><b>In simple terms:</b> every yoga this chart fires, '
         'studied in full &mdash; the quoted definition, the exact computed rule, the '
         'participants and their state, measured strength (rupas &mdash; Raman assigns no '
@@ -1346,10 +1374,22 @@ def _planet_bios_section(r: DetailedReport) -> str:
             + vocation + modern + receipts)
     return (
         '<h2 class="section" id="planet-bios">Planet biographies (dominant grahas)</h2>'
-        '<p class="section-sub"><b>In simple terms:</b> the grahas that drive the most of '
+        + _plain_lead(r, "planet_bios")
+        + '<p class="section-sub"><b>In simple terms:</b> the grahas that drive the most of '
         'this chart&rsquo;s computed readings, counted over the judgment graph, each told '
         'as one story. Every line re-reads a value shown elsewhere; nothing here is a new '
         'judgment.</p>' + "".join(blocks))
+
+
+def _plain_lead(r: DetailedReport, section_id: str) -> str:
+    """The person-facing lead for a section, as an italic sub-paragraph. "" when there is none —
+    a phrasing failure must never cost the section its content."""
+    try:
+        from app.raman_saab.plainspoken import plain_for_section
+        text = plain_for_section(r, section_id)
+    except Exception:  # noqa: BLE001
+        return ""
+    return f'<p class="section-sub plainspoken"><i>{_esc(text)}</i></p>' if text else ""
 
 
 def _digest_section(r: DetailedReport) -> str:
@@ -1364,9 +1404,13 @@ def _digest_section(r: DetailedReport) -> str:
         f'<td>{_esc(", ".join(it.sections)) if it.sections else "&ndash;"}</td>'
         f'<td>{_esc(", ".join(it.cites)) if it.cites else "&ndash;"}</td></tr>'
         for it in r.digest.items)
+    plain = "".join(f"<li>{_esc(it.plain)}</li>" for it in r.digest.items if it.plain)
+    plain_block = (f'<p class="section-sub"><b>In plain terms</b></p>'
+                   f'<ul class="doclist plainspoken">{plain}</ul>') if plain else ""
     return (
         '<h2 class="section" id="digest">What matters most (ranked digest)</h2>'
         f'<p class="section-sub"><i>{_esc(r.digest.headline)}</i></p>'
+        f'{plain_block}'
         '<div class="tablewrap"><table class="grid"><thead><tr><th class="num">#</th>'
         '<th>kind</th><th>finding</th><th>lean</th><th>bridges</th><th>cites</th></tr>'
         f'</thead><tbody>{rows}</tbody></table></div>')
@@ -1467,6 +1511,7 @@ def _yogas(r: DetailedReport) -> str:
                   'comparison rank (strongest participants first).</i></p>'
                   if r.yoga_deep else "")
     return ('<h2 class="section" id="yogas">Yogas present in this chart</h2>'
+            + _plain_lead(r, "yogas") + 
             '<p class="section-sub">Each with its citation. A yoga&rsquo;s effect depends on the '
             'strength of the planets causing it (HTJAH-I:611).</p>'
             f'<ul class="yogalist">{items}</ul>'
@@ -1549,6 +1594,7 @@ def _preponderance_section(r: DetailedReport) -> str:
     picks_html = (f'<p class="plain">{_esc(" | ".join(picks))}</p>' if picks else "")
     return (
         '<h2 class="section" id="preponderance">Preponderance of testimonies</h2>'
+        + _plain_lead(r, "preponderance") + 
         '<p class="section-sub"><b>In simple terms:</b> Raman defines judgment itself as '
         '&ldquo;the summing up of the influence of planets&rdquo; &mdash; the house, its lord, '
         'its occupants and its karaka weighed together (HTJAH-I:983-991), with everything '
@@ -1746,6 +1792,7 @@ def _sav(r: DetailedReport) -> str:
             'RULES, anchored on HPA-26&rsquo;s own worked reduction, and records this '
             'delta.</p>')
     return ('<h2 class="section" id="sav">Ashtakavarga</h2>'
+            + _plain_lead(r, "ashtakavarga") + 
             '<p class="section-sub">Sarvashtakavarga bindus per sign; average 28 (total 337). '
             'Raman rates it corroborative, not decisive &mdash; <em>&ldquo;it does not seem to be '
             'quite reliable&rdquo;</em> (HTJAH-II:4453-4456).</p>'
@@ -2036,6 +2083,27 @@ def _judgment_graph_section(r: DetailedReport) -> str:
           f'&mdash; {rel_txt}.</p>')
 
 
+def _sitting_section(r: DetailedReport) -> str:
+    """v35 — the continuous reading. Safe markup only; every string escaped."""
+    st = getattr(r, "sitting", None)
+    if st is None:
+        return ""
+    paras = "".join(
+        f'<p class="sitting-para"><strong>{_esc(h)}.</strong> {_esc(x)}</p>'
+        for h, x in getattr(st, "paragraphs", ()) or ())
+    closing = (f'<p class="sitting-close">{_esc(st.closing)}</p>'
+               if getattr(st, "closing", "") else "")
+    return (
+        '<h2 class="section" id="sitting">The reading, as one sitting</h2>'
+        '<p class="section-sub">One continuous reading, in the arc Raman himself used in '
+        'Notable Horoscopes: the thesis, the striking feature, the cast, the life told '
+        'forward, and a close that answers the opening. Every sentence re-reads a value the '
+        'full report computes and cites; the honest frame in the header governs all of it '
+        '&mdash; how the method reads this chart, not a prediction.</p>'
+        f'<p class="sitting-grip">{_esc(st.grip)}</p>'
+        f'{paras}{closing}')
+
+
 def _ruler_section(r: DetailedReport) -> str:
     """Raman's first-impression card (v13): the ruler of the nativity (Lagna lord) and the
     strongest planet by Shadbala, with the HTJAH-I:3892-3897 nature/appearance comparison —
@@ -2145,7 +2213,8 @@ def _ruler_section(r: DetailedReport) -> str:
                     'place</div>')
     return (
         '<h2 class="section" id="ruler">Ruler of the nativity</h2>'
-        '<p class="section-sub">Raman&rsquo;s own opening move: &ldquo;in order to obtain a '
+        + _plain_lead(r, "ruler")
+        + '<p class="section-sub">Raman&rsquo;s own opening move: &ldquo;in order to obtain a '
         'first impression we must first of all consider the ruler of the nativity&rdquo; '
         '(HTJAH-I:16001-16002) &mdash; and separately, &ldquo;the strongest planet in the '
         'horoscope determines the predominance of the physical, mental and spiritual '
@@ -2185,6 +2254,7 @@ def _dashboard(r: DetailedReport) -> str:
         f'<td><span class="chip chip--{_vclass(en.verdict)}">{_esc(en.verdict)}</span></td></tr>'
         for en in r.dashboard.entries)
     return ('<h2 class="section" id="dashboard">The twelve matters at a glance</h2>'
+            + _plain_lead(r, "dashboard") + 
             '<p class="section-sub">Each matter&rsquo;s authoritative verdict from its dedicated '
             'deep reader (Raman&rsquo;s method decides; the divisional corroborates).</p>'
             '<div class="tablewrap"><table class="grid"><thead><tr><th>matter</th>'
@@ -2251,6 +2321,7 @@ def _shadbala(r: DetailedReport) -> str:
            f'style="max-width:100%;height:auto" role="img" '
            f'aria-label="Shadbala strength bars">{bars}</svg>')
     return ('<h2 class="section" id="shadbala">Shadbala &mdash; six-fold strength</h2>'
+            + _plain_lead(r, "shadbala") + 
             '<p class="section-sub"><b>Planetary strength &mdash; think of it as '
             'horsepower:</b> a powerful engine can pull a heavier load, and a strong '
             'planet tends to deliver its indications more effectively. Bars below the '
@@ -2301,6 +2372,7 @@ def _maraka(r: DetailedReport) -> str:
     from app.raman_saab.detailed_report import longevity_decanate_cause
     _dec_cause = longevity_decanate_cause(r)
     return ('<h2 class="section" id="maraka">The maraka scheme</h2>'
+            + _plain_lead(r, "maraka") + 
             '<p class="section-sub">Raman&rsquo;s second step after the longevity band '
             '(HTJAH-I:761-814): the 2nd and 7th are the houses of death; their lords, occupants '
             'and associates carry maraka power in their periods. A disclosure of the method, not '
@@ -2375,7 +2447,8 @@ def _health_readout_section(r: DetailedReport) -> str:
               else "carries no maraka-tier lord")
     return (
         '<h2 class="section" id="health-readout">Health &amp; vulnerability read-out</h2>'
-        f'{_method_preamble_html("health_readout")}'
+        + _plain_lead(r, "health_readout")
+        + f'{_method_preamble_html("health_readout")}'
         '<p class="section-sub"><b>In simple terms:</b> the health-adjacent verdicts this '
         'report already computed &mdash; the 1st/6th/8th/12th house readings, the Moon and '
         'Mercury karakas, the balarishta screen, the maraka tiers and the longevity band '
@@ -2409,6 +2482,7 @@ def _rect_confidence_section(r: DetailedReport) -> str:
         for pl in rc.pillars)
     return (
         '<h2 class="section" id="rect-confidence">Rectification confidence</h2>'
+        + _plain_lead(r, "rect_confidence") + 
         f'<p class="section-sub"><i>{_esc(rc.frame)}</i></p>'
         f'<p class="section-sub"><b>Verdict</b> &mdash; {_esc(rc.label)}</p>'
         f'<p class="section-sub"><b>Every pillar holds together</b> from '
@@ -2456,7 +2530,8 @@ def _decades_section(r: DetailedReport) -> str:
                       f'<table><thead>{head}</thead><tbody>{trs}</tbody></table>')
         blocks.append(f'<h3>{_esc(d.label)}</h3><div class="vsec">{body}</div>{grids}')
     return ('<h2 class="section" id="decades">Decade indication timeline</h2>'
-            f'<p class="section-sub"><i>{_esc(dt.frame)}</i></p>' + "".join(blocks))
+        + _plain_lead(r, "decades")
+        + f'<p class="section-sub"><i>{_esc(dt.frame)}</i></p>' + "".join(blocks))
 
 
 def _life_synthesis_section(r: DetailedReport) -> str:
@@ -2467,6 +2542,7 @@ def _life_synthesis_section(r: DetailedReport) -> str:
     paras = "".join(f'<p><b>{_esc(theme)}.</b> {_esc(para)}</p>'
                     for theme, para in ls.paragraphs)
     return ('<h2 class="section" id="life-synthesis">Full life synthesis</h2>'
+            + _plain_lead(r, "life_synthesis") + 
             '<p class="section-sub"><b>In simple terms:</b> the report&rsquo;s chapters '
             'read as one biography &mdash; every line a re-read of a section above, '
             'nothing judged anew.</p>'
@@ -2506,7 +2582,8 @@ def _psych_section(r: DetailedReport) -> str:
     body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                    f'<span class="vv">{v}</span></div>' for k, v in rows)
     return ('<h2 class="section" id="psych">Psychological profile</h2>'
-            f'{_method_preamble_html("psych")}'
+        + _plain_lead(r, "psych")
+        + f'{_method_preamble_html("psych")}'
             f'<p class="section-sub"><i>{_esc(ps.woven)}</i></p>'
             f'<div class="vsec">{body}</div>')
 
@@ -2808,6 +2885,7 @@ def _arishta_section(r: DetailedReport) -> str:
     body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                    f'<span class="vv">{v}</span></div>' for k, v in rows)
     return ('<h2 class="section" id="arishta">Arishta &amp; Bhanga</h2>'
+            + _plain_lead(r, "arishta") + 
             '<p class="section-sub"><b>In simple terms:</b> the afflictions Raman '
             'screens for and &mdash; equally doctrinal &mdash; the cancellations that '
             'neutralise them. Every row re-reads a computed state.</p>'
@@ -2838,7 +2916,8 @@ def _gochara_table(r: DetailedReport) -> str:
     # own columns, the way Raman narrates a transit; the table above stays in full.
     sentences = "".join(f'<li>{_esc(gochara_synthesis_sentence(g))}</li>' for g in r.gochara)
     return ('<h2 class="section" id="gochara">Current transits (Gochara) with Vedha</h2>'
-            '<p class="section-sub">From the natal Moon at the reference date. Raman: transits are '
+        + _plain_lead(r, "gochara")
+        + '<p class="section-sub">From the natal Moon at the reference date. Raman: transits are '
             'secondary, catalytic &mdash; conclusions rest on Dasa-vichara (HTJAH-II:4679-4687). '
             'The net column applies Vedha: an obstructed transit does not deliver.</p>'
             '<div class="tablewrap"><table class="grid"><thead><tr><th>planet</th><th>sign</th>'
@@ -3086,6 +3165,7 @@ def _synthesis_section(r: DetailedReport) -> str:
     """The integrated-insights section: fired cross-feature rules, banded by provenance."""
     from app.raman_saab.detailed_report import descriptive_rules
     parts = ['<h2 class="section" id="synthesis">Integrated insights</h2>'
+             + _plain_lead(r, "synthesis") + 
              '<p class="section-sub">Where the report&rsquo;s sections meet: encoded '
              'combination doctrine connecting Shadbala, yogas, dashas, transits, Ashtakavarga '
              'and the houses. Each insight leads with a plain-language reading, backed by the '
@@ -3187,6 +3267,7 @@ def _nichod_section(r: DetailedReport) -> str:
                    if n.caution else "")
     return (
         '<h2 class="section" id="nichod">Nichod</h2>'
+        + _plain_lead(r, "nichod") + 
         '<p class="section-sub">The distilled essence: every section above, squeezed into one. '
         'Nothing here is a new judgment &mdash; each clause selects, counts, or quotes what the '
         'report already showed. Not a prediction.</p>'
@@ -3388,6 +3469,7 @@ def _ishta_kashta_section(r: DetailedReport) -> str:
         for ik in r.ishta_kashta)
     return (
         '<h2 class="section" id="ishta-kashta">Ishta &amp; Kashta outlook</h2>'
+        + _plain_lead(r, "ishta_kashta") + 
         '<p class="section-sub"><b>In simple terms:</b> a planet with more Ishta Phala (its own '
         '&ldquo;good tendency&rdquo;) inclines to give good results in its Dasha or Bhukti; '
         'more Kashta Phala (&ldquo;hard tendency&rdquo;) inclines to harder ones (GBB-10:134). '
@@ -3409,6 +3491,7 @@ def _dasa_kakshya_section(r: DetailedReport) -> str:
         f'<td>{"yes" if k.donated else "no"}</td><td>{_esc(k.reading)}</td></tr>'
         for k in r.dasa_kakshya)
     return ('<h2 class="section" id="dasa-kakshya">Dasha Kakshya intervals</h2>'
+            + _plain_lead(r, "dasa_kakshya") + 
             '<p class="section-sub">Each Mahadasha split into 8 equal parts ruled in Kakshya order '
             '(ASP-12:174-182); a part whose ruler donated a bindu to the Dasha lord&rsquo;s natal sign '
             'inclines favourable, an undonated part runs adverse (ASP-12:211-214) unless relieved '
@@ -3433,6 +3516,7 @@ def _md_condition_section(r: DetailedReport) -> str:
         for c in r.md_condition)
     return (
         '<h2 class="section" id="md-condition">MD-lord condition outlook</h2>'
+        + _plain_lead(r, "md_condition") + 
         '<p class="section-sub"><b>In simple terms:</b> a Dasha delivers in proportion to how '
         'well-placed its own ruling planet actually is &mdash; its strength, and its Navamsa '
         'disposition &mdash; reaching its stated maximum only when strong in BOTH the main '
@@ -3459,6 +3543,7 @@ def _av_dasha_seat_section(r: DetailedReport) -> str:
         for a in r.av_dasha_seats)
     return (
         '<h2 class="section" id="av-dasha-seat">AV dasha-seat outlook</h2>'
+        + _plain_lead(r, "av_dasha_seat") + 
         '<p class="section-sub"><i>Raman&rsquo;s own caveat governs this section:</i> '
         '&ldquo;Ashtakavarga method is equally important. But, it does not seem to be quite '
         'reliable&rdquo; (HTJAH-II:4453-4456). This classical method never overrides the '
@@ -3489,7 +3574,8 @@ def _life_chapters_section(r: DetailedReport) -> str:
             f'<p class="doctrine">{_esc(ch.narrative)}</p>')
     return (
         '<h2 class="section" id="life-chapters">Life-chapters</h2>'
-        '<p class="section-sub"><b>In simple terms:</b> the Life-narrative above and its three '
+        + _plain_lead(r, "life_chapters")
+        + '<p class="section-sub"><b>In simple terms:</b> the Life-narrative above and its three '
         'companion tables (Ishta/Kashta, MD-lord condition, AV dasha-seat) each paint ONE lens '
         'across the same years. This section reads them TOGETHER, one chapter per Mahadasha '
         '&mdash; the way Raman himself narrates a nativity (his Chart No. 203 reads each dasha '
@@ -3585,7 +3671,8 @@ def to_html(r: DetailedReport) -> str:
                        indications=house_indications(r, mr.house),
                        further=house_further_combinations(r, mr.house),
                        on_record=descriptive_house_rules(mr.house),
-                       general=house_general_readings(r, mr.house))
+                       general=house_general_readings(r, mr.house),
+                       plain=_house_plain(r, mr.house))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'
@@ -3616,9 +3703,13 @@ def to_html(r: DetailedReport) -> str:
 
     vargas = "".join(_varga_card(label, body) for label, body in r.divisional)
 
-    extras = ""
+    # Each contracted section's HTML, keyed by section_id, so the document's ORDER is data
+    # (HTML_SECTION_ORDER / report_movements) rather than a property of where the code sits.
+    # These are built here rather than as module-level helpers because they close over locals
+    # computed above — sig_html, filters, houses, combos_html, vargas.
+    chunk: dict[str, str] = {}
     if s.career:
-        extras += (f'<h2 class="section" id="career">Career</h2><p class="section-sub">HTJAH-II '
+        chunk["career"] = (f'<h2 class="section" id="career">Career</h2><p class="section-sub">HTJAH-II '
                    f'&mdash; navamsa-dispositor of the 10th lord</p>'
                    f'<p class="doctrine">{_bold(s.career)}</p>')
     if r.profession is not None:
@@ -3683,9 +3774,10 @@ def to_html(r: DetailedReport) -> str:
         modes = ("" if not pf.mode_split else
                  '<p class="section-sub"><b>H10 mode split</b> &mdash; '
                  + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')
-        extras += (
+        chunk["profession"] = (
             '<h2 class="section" id="profession">Profession synthesis</h2>'
-            f'{_method_preamble_html("profession")}'
+            + _plain_lead(r, "profession")
+            + f'{_method_preamble_html("profession")}'
             '<p class="section-sub"><b>In simple terms:</b> every encoded derivation '
             'angle, then the deterministic convergence count &mdash; never a new '
             'judgment.</p>'
@@ -3716,9 +3808,10 @@ def to_html(r: DetailedReport) -> str:
         lords = "".join('<p class="section-sub"><b>Lord condition</b> &mdash; '
                         + _esc(lc) + '</p>'
                         for lc in getattr(wch, "lord_conditions", ()))
-        extras += (
+        chunk["wealth"] = (
             '<h2 class="section" id="wealth">Wealth chapter</h2>'
-            f'{_method_preamble_html("wealth")}'
+            + _plain_lead(r, "wealth")
+            + f'{_method_preamble_html("wealth")}'
             '<p class="section-sub"><b>In simple terms:</b> the CHANNELS, not one '
             'verdict &mdash; every row re-reads a judged signification or a cited '
             'source-of-gains table.</p>'
@@ -3773,6 +3866,10 @@ def to_html(r: DetailedReport) -> str:
         jup_html = ""
         # v36: the COMPUTED timing layer (giving lords, delay screens, Jupiter sphutas).
         _mt = getattr(m, "timing", None)
+        # merged 2026-10-14: collected here and appended to the marriage chunk below
+        # (on the empirical-engine branch it was appended to `extras` BEFORE the
+        # marriage heading, so it rendered under the preceding section).
+        _mtiming_html = ""
         if _mt is not None:
             _grows = "".join(
                 f'<tr><td>{_esc(g.planet)}'
@@ -3793,7 +3890,7 @@ def to_html(r: DetailedReport) -> str:
                 f'trines {_esc(tri)}. Jupiter transiting the resultant rasi or its trines '
                 f'is classically favourable for marriage (HTJAH-II:869-873).</li>'
                 for lbl, sgn, tri in _mt.jupiter_sphutas)
-            extras += (
+            _mtiming_html = (
                 '<h3>Marriage timing &mdash; the giving lords and the delay screens</h3>'
                 f'<p class="section-sub"><i>{_esc(_mt.caveat)}</i></p>'
                 '<table><thead><tr><th>Planet</th><th>Nominated by</th><th>Strength</th>'
@@ -3812,9 +3909,10 @@ def to_html(r: DetailedReport) -> str:
                 'windows (the Gochara outlook above) in which Jupiter occupies the '
                 '7th from the Moon: '
                 + _esc("; ".join(m.jupiter_h7_windows)) + '</p>')
-        extras += (
+        chunk["marriage"] = (
             '<h2 class="section" id="marriage">Marriage monograph</h2>'
-            f'{_method_preamble_html("marriage")}'
+            + _plain_lead(r, "marriage")
+            + f'{_method_preamble_html("marriage")}'
             f'<p class="section-sub"><b>The 7th house&rsquo;s scope (Raman verbatim):</b> '
             f'&ldquo;{_esc(m.seventh_covers)}&rdquo;</p>'
             f'<p class="section-sub"><b>Headline (unchanged H7 verdict)</b> &mdash; '
@@ -3844,6 +3942,7 @@ def to_html(r: DetailedReport) -> str:
               f'the method&rsquo;s own statements &mdash; quoted, not composed; a '
               f'statement of the method, not a prediction:</i> '
               f'&ldquo;{_esc(m.separation_quote)}&rdquo; (HTJAH-II:887)</p>')
+        chunk["marriage"] += _mtiming_html
     if r.children is not None:
         c = r.children
         pr_ = "".join(f'<li>({_esc(b)}) {_esc(t)} <i>({_esc(ci)})</i></li>'
@@ -3861,9 +3960,10 @@ def to_html(r: DetailedReport) -> str:
         reframe_html = ("" if not getattr(c, "reframe_note", "") else
                         '<p class="section-sub caveat"><i>'
                         + _esc(c.reframe_note) + '</i></p>')
-        extras += (
+        chunk["children"] = (
             '<h2 class="section" id="children">Children chapter</h2>'
-            f'{_method_preamble_html("children")}'
+            + _plain_lead(r, "children")
+            + f'{_method_preamble_html("children")}'
             f'<p class="section-sub"><b>Headline (unchanged H5 verdict)</b> &mdash; '
             f'{_esc(c.verdict)} &middot; {_esc(sig)}</p>'
             + jup_html + d7_html + reframe_html
@@ -3874,7 +3974,8 @@ def to_html(r: DetailedReport) -> str:
               f'verbatim (quoted whole so nothing is cherry-picked):</i> '
               f'&ldquo;{_esc(c.combos_quote)}&rdquo; (HTJAH-I:5179)</p>')
     if s.deeptadi:                       # parity: previously dropped from the HTML entirely
-        extras += ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
+        chunk["deeptadi"] = ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
+            + _plain_lead(r, "deeptadi") + 
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
                    f'<p class="doctrine">{_esc(", ".join(s.deeptadi))}</p>')
         # per-planet testimony table (2026-08-18 report-critique: from trivia to
@@ -3886,7 +3987,7 @@ def to_html(r: DetailedReport) -> str:
                 f'<tr><td><b>{_esc(n_)}</b></td><td>{_esc(st_)}</td>'
                 f'<td>{_esc(res_)}</td><td>{_esc(role_)}</td></tr>'
                 for n_, st_, res_, role_ in _dt_rows)
-            extras += (
+            chunk["deeptadi"] += (
                 '<p class="section-sub">Each state read as testimony &mdash; '
                 'Raman&rsquo;s stated result beside the houses the planet answers for. '
                 'Secondary states are disclosed in parentheses (the dignity-first '
@@ -3906,7 +4007,7 @@ def to_html(r: DetailedReport) -> str:
                 f'<tr><td><b>{_esc(n)}</b></td><td>{_esc(_bj[n]["baladi"])}</td>'
                 f'<td>{_esc(_bj[n]["jagradadi"])}</td></tr>'
                 for n, _p in planet_rows(r.chart) if n in _bj)
-            extras += (
+            chunk["deeptadi"] += (
                 '<p class="section-sub">Baladi (ageing, by degree-in-sign) and Jagradadi '
                 '(consciousness, by incoming drishti) states &mdash; the judge&rsquo;s '
                 'intensity dial: a house whose deliverers sit in Mrita/Sushupti has its '
@@ -3923,7 +4024,8 @@ def to_html(r: DetailedReport) -> str:
         # Karakamsa sign, re-read from the chart signature) + a purely navigational
         # cross-reference — the classical passage pairing the karakamsa reading with the
         # running chara period is corpus-gated and NOT composed here.
-        extras += (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
+        chunk["karakamsa"] = (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
+            + _plain_lead(r, "karakamsa") +
                    f'<p class="section-sub">the soul\'s inclination &mdash; context: the '
                    f'Atmakaraka (soul-planet) of this chart is <b>{_esc(s.atmakaraka)}</b>; '
                    f'its navamsa seat, the Karakamsa, is <b>{_esc(s.karakamsa)}</b> '
@@ -3934,7 +4036,7 @@ def to_html(r: DetailedReport) -> str:
                    f'in Soul &amp; destiny below &mdash; cross-references only; the '
                    f'classical passage pairing the two is corpus-gated and not composed '
                    f'here.</p>')
-    extras += _soul_section(r)
+    chunk["soul"] = _soul_section(r)
     if r.karmic is not None:
         kv = r.karmic
         krows = [("Atmakaraka", _esc(kv.atmakaraka) + " (the 7-karaka scheme, locked)")]
@@ -3956,26 +4058,23 @@ def to_html(r: DetailedReport) -> str:
                           _esc(kv.d60_core)))
         kbody = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                         f'<span class="vv">{v}</span></div>' for k, v in krows)
-        extras += ('<h2 class="section" id="karmic">Karmic evolution (Jaimini)</h2>'
+        chunk["karmic"] = ('<h2 class="section" id="karmic">Karmic evolution (Jaimini)</h2>'
+            + _plain_lead(r, "karmic") + 
                    f'<p class="section-sub"><i>{_esc(kv.frame)}</i></p>'
                    f'<div class="vsec">{kbody}</div>')
-    extras += _pitru_section(r)
+    chunk["pitru"] = _pitru_section(r)
 
-    body = f"""<style>{_CSS}</style>
-<div class="stickybar" id="stickybar">
-  <span class="sb-sec" id="sb-sec">{_esc(b.name)}</span>
-  <span class="sb-now">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD</span>
-</div>
-<main class="doc">
-  <header>
+    # The <header> physically contains three contracted sections — title, plain_reading and
+    # chart_signature — plus the legend and nav. They ride together as one chunk keyed "title";
+    # HTML_SECTION_ORDER must therefore keep those three adjacent, in that internal order.
+    chunk["title"] = f"""<header>
     <div class="eyebrow">Vedic reading &middot; Sri B. V. Raman's system</div>
     <h1 class="name">{_esc(b.name)}</h1>
     <div class="birth">Born {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d}
       (tz {b.tz_offset:+g}) &middot; {b.latitude:.4f}, {b.longitude:.4f} &middot; Lahiri sidereal</div>
-    {_simple_summary_section(r)}
-
     {_plain_reading_section(r)}
     <div class="sig">{sig_html}</div>
+    {_plain_lead(r, "chart_signature")}
     <div class="legend">This reading speaks in two voices. The
       <span class="v-serif">doctrine</span> (serif) is Raman's verdict, faithful to his texts and
       unchanged. Beneath it the <span class="v-sans">instrument</span> discloses how that verdict
@@ -3990,62 +4089,26 @@ def to_html(r: DetailedReport) -> str:
       <a href="#vargas">Divisionals</a><a href="#soul">Soul</a>
       <a href="#synthesis">Insights</a><a href="#glossary">Glossary</a>
       <a href="#nichod">Nichod</a></nav>
-  </header>
+  </header>"""
 
-  {_judgment_graph_section(r)}
+    chunk["chart_grids"] = (
+        '<h2 class="section" id="charts">The charts</h2>\n'
+        '  <p class="section-sub">South-Indian layout &mdash; signs are fixed, the ascendant '
+        'is marked.</p>\n'
+        f'  <div class="charts">{_chart_grid(r, navamsa=False)}{_chart_grid(r, navamsa=True)}'
+        '</div>')
 
-  {_ruler_section(r)}
-
-  {_planet_bios_section(r)}
-
-  {_psych_section(r)}
-
-  {_now_box(r)}
-
-  {_info_box(r)}
-
-  {_interpretation_guide_section(r)}
-
-  {_themes_section(r)}
-
-  {_distinctive(r)}
-
-  {_digest_section(r)}
-
-  {_dashboard(r)}
-
-  <h2 class="section" id="charts">The charts</h2>
-  <p class="section-sub">South-Indian layout &mdash; signs are fixed, the ascendant is marked.</p>
-  <div class="charts">{_chart_grid(r, navamsa=False)}{_chart_grid(r, navamsa=True)}</div>
-
-  {_positions(r)}
-
-  {_rect_confidence_section(r)}
-
-  {_shadbala(r)}
-
-  {_yogas(r)}
-
-  {_yoga_timing_section(r)}
-
-  {_yoga_deep_section(r)}
-
-  {_sav(r)}
-
-  <h2 class="section" id="houses">House by house</h2>
+    chunk["houses"] = f"""<h2 class="section" id="houses">House by house</h2>
   <p class="section-sub">Each bhava: Raman's pillars (lord, karaka, navamsa), his verdict, then the
     population context. {_esc(ROLLUP_RULE)} Where the majority of a house&rsquo;s significations
     disagree with that headline, a <b>split-status</b> badge says so &mdash; and where the
     headline is driven by an atlas-proven inverted channel, a warning is shown inline.</p>
   {house_strip}
   {filters}
-  <div class="houses">{houses}</div>
+  <div class="houses">{houses}</div>"""
 
-  {_house_strength_section(r)}
-
-  {_preponderance_section(r)}
-
-  <h2 class="section" id="longevity">Longevity</h2>
+    chunk["longevity"] = (f"""<h2 class="section" id="longevity">Longevity</h2>"""
+        + _plain_lead(r, "longevity") + f"""
   {_method_preamble_html("longevity")}
   <p class="section-sub">Raman's order: establish the band by combination first, then fix the period
     by the marakas (HTJAH-II:4465-4472). The numeric span is a cross-check, never a date.</p>
@@ -4053,17 +4116,10 @@ def to_html(r: DetailedReport) -> str:
   <p class="long"><b>3. Numeric cross-check (Ayurdaya)</b>: about
     <b>{round(r.longevity_years)} years</b> ({y}y {mo}m {d}d) &mdash;
     class <b>{_esc(longevity_band_label(r.longevity_class))}</b>. Treat as a band, not a date:
-    this report never converts the band into a date.</p>
+    this report never converts the band into a date.</p>""")
 
-  {_maraka(r)}
-
-  {_maraka_saturn_section(r)}
-
-  {_health_readout_section(r)}
-
-  {_arishta_section(r)}
-
-  <h2 class="section" id="timeline">Life-narrative</h2>
+    chunk["timeline"] = (f"""<h2 class="section" id="timeline">Life-narrative</h2>"""
+        + _plain_lead(r, "timeline") + f"""
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
     {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). A planet influences a house by owning,
@@ -4073,59 +4129,177 @@ def to_html(r: DetailedReport) -> str:
     <em>feeble</em> (HTJAH-I:1592-1640, 2588-2599). Verdicts are the unchanged natal readings.</p>
   <div class="grade-legend">{"".join(f"<div><b>{k}</b> &mdash; {v}</div>"
       for k, v in _TIER_MEANING.items())}</div>
-  {_timeline(r)}
+  {_timeline(r)}""")
 
-  {_pratyantar_block(r)}
+    # merged 2026-10-14: the empirical-engine timeline companions (the current bhukti's
+    # pratyantar drill-down and the dated Chara sequence) ride with the timeline, as they
+    # followed it directly on that branch.
+    chunk["timeline"] += _pratyantar_block(r) + _chara_sequence_block(r)
 
-  {_chara_sequence_block(r)}
+    chunk["divisional"] = (
+        '<h2 class="section" id="vargas">Divisional deep-reads</h2>\n'
+        + _plain_lead(r, "divisional") + 
+        '  <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one '
+        'matter (Raman core\n    authoritative; varga overlay report-only).</p>\n'
+        f'  {vargas}')
 
-  {_ishta_kashta_section(r)}
+    # ── v34 intuition layer ────────────────────────────────────────────────────────────────
+    # Always rendered, even empty — "the test settles no house here" is a finding.
+    _dom = getattr(r, "dominance", None) or {}
+    if True:
+        rows = "".join(
+            f'<div class="vrow"><span class="vk">House {d.house}</span>'
+            f'<span class="vv">{_esc(d.sentence)}</span></div>'
+            for _h, d in sorted(_dom.items())) or (
+            '<div class="vrow"><span class="vv">On this chart the test settles no house: '
+            'nowhere do a house&rsquo;s lord and its karaka differ in strength. That is an '
+            'answer, not a gap.</span></div>')
+        chunk["dominance"] = (
+            '<h2 class="section" id="dominance">What governs each house</h2>'
+            + _plain_lead(r, "dominance") + 
+            '<p class="section-sub">Where a house&rsquo;s lord and its karaka differ in '
+            'strength, Raman lets the stronger decide, and the weaker one&rsquo;s indication is '
+            'replaced rather than averaged with it (HTJAH-I:7152). These are the houses where '
+            'that test actually settles the matter.</p>'
+            f'<div class="vsec">{rows}</div>')
 
-  {_md_condition_section(r)}
+    _res = getattr(r, "restraint", None) or {}
+    if _res:
+        rows = "".join(
+            f'<div class="vrow"><span class="vk">House {x.house}</span>'
+            f'<span class="vv">{_esc(x.standing)}'
+            + ('<b> &mdash; held loosely</b>' if x.soften else '')
+            + f' &middot; {_esc(x.reason)}</span></div>'
+            for _h, x in sorted(_res.items()))
+        soft = [str(x.house) for _h, x in sorted(_res.items()) if x.soften]
+        note = (f'<p class="section-sub caveat">Houses {_esc(", ".join(soft))} are not clearly '
+                f'decided; their readings stand as reported rather than resolved into a single '
+                f'verdict.</p>' if soft else "")
+        chunk["restraint"] = (
+            '<h2 class="section" id="restraint">How firmly each house stands</h2>'
+            + _plain_lead(r, "restraint") + 
+            '<p class="section-sub">Not every house is equally decided, and saying so is part '
+            'of the method: <i>&ldquo;No slip-shod interpretation should be made and a '
+            'premature conclusion arrived at&rdquo;</i> (HTJAH-I:4299). A house that is '
+            'uniformly strong is a FIRM reading, not an uncertain one &mdash; only the '
+            'unsettled ones are held loosely.</p>'
+            f'<div class="vsec">{rows}</div>{note}')
 
-  {_av_dasha_seat_section(r)}
-  {_dasa_kakshya_section(r)}
+    _ana = getattr(r, "analogy", None) or ()
+    if True:
+        cards = ""
+        for m in _ana:
+            shared = "".join(f"<li>{_esc(s)}</li>" for s in m.shared)
+            houses = (f' &mdash; he pronounced on house'
+                      f'{"s" if len(m.pronounced_houses) > 1 else ""} '
+                      f'{_esc(", ".join(str(h) for h in m.pronounced_houses))}'
+                      if m.pronounced_houses else "")
+            cites = "".join(f'<cite class="src">{_esc(c)}</cite> ' for c in m.citations)
+            cards += (f'<div class="varga"><b>{_esc(m.book)} &mdash; {_esc(m.name)}</b>'
+                      f'{houses} {cites}<ul class="doclist">{shared}</ul></div>')
+        if not cards:
+            cards = ('<p class="caveat">No chart among his 190 worked examples resembles this '
+                     'one closely enough to be worth naming. A forced match would be a '
+                     'coincidence, not a recognition.</p>')
+        chunk["analogy"] = (
+            '<h2 class="section" id="analogy">Charts of Raman&rsquo;s this one recalls</h2>'
+            + _plain_lead(r, "analogy") + 
+            '<p class="section-sub">Raman compares one worked chart against another and names '
+            'the axis every time. These are his own published charts that this nativity '
+            'resembles, with the respects itemised so each can be checked. A resemblance points '
+            'at what he wrote; it carries none of his verdicts here.</p>'
+            f'{cards}')
 
-  {_life_chapters_section(r)}
-
-  {_decades_section(r)}
-
-  {_gochara_table(r)}
-
-  {_adverse_windows_table(r)}
-
-  {_sade_sati_strip(r)}
-
-  {_dasha_transit_section(r)}
-
+    # the 44 sections whose markup already lives in a dedicated helper (38 + the six merged 2026-10-14)
+    chunk.update({
+        # merged 2026-10-14: the six empirical-engine sections (v36-v41), placed by the arc.
+        "simple_summary": _simple_summary_section(r),
+        "themes": _themes_section(r),
+        "aptitude": _aptitude_section(r),
+        "medical": _medical_section(r),
+        "feedback": _feedback_section(r),
+        "indications": _indications_section(r),
+        "sitting": _sitting_section(r),
+        "judgment_graph": _judgment_graph_section(r),
+        "ruler": _ruler_section(r),
+        "planet_bios": _planet_bios_section(r),
+        "psych": _psych_section(r),
+        "now_box": _now_box(r),
+        "info_content": _info_box(r),
+        "interpretation_guide": _interpretation_guide_section(r),
+        "stands_out": _distinctive(r),
+        "digest": _digest_section(r),
+        "dashboard": _dashboard(r),
+        "positions": _positions(r),
+        "rect_confidence": _rect_confidence_section(r),
+        "shadbala": _shadbala(r),
+        "yogas": _yogas(r),
+        "yoga_timing": _yoga_timing_section(r),
+        "yoga_deep": _yoga_deep_section(r),
+        "ashtakavarga": _sav(r),
+        "house_strength": _house_strength_section(r),
+        "preponderance": _preponderance_section(r),
+        "maraka": _maraka(r),
+        "maraka_saturn": _maraka_saturn_section(r),
+        "health_readout": _health_readout_section(r),
+        "arishta": _arishta_section(r),
+        "ishta_kashta": _ishta_kashta_section(r),
+        "md_condition": _md_condition_section(r),
+        "av_dasha_seat": _av_dasha_seat_section(r),
+        "dasa_kakshya": _dasa_kakshya_section(r),
+        "life_chapters": _life_chapters_section(r),
+        "decades": _decades_section(r),
+        "gochara": _gochara_table(r),
+        "dasha_transit": _dasha_transit_section(r),
+        "synthesis": _synthesis_section(r),
+        "life_synthesis": _life_synthesis_section(r),
+        "glossary": _glossary(),
+        "nichod": _nichod_section(r),
+    })
+    # merged 2026-10-14: the empirical-engine transit companions ride where that branch
+    # rendered them — the adverse windows (the mirror of the favourable outlook table) and
+    # the dated Sade-Sati strip under the transits, the live-Muhurtha pointer after the
+    # Dasha x Transit confluence.
+    chunk["gochara"] += _adverse_windows_table(r) + _sade_sati_strip(r)
+    chunk["dasha_transit"] += """
   <p class="section-sub"><i>Live companion not reproducible here:</i> the interactive report
     page carries an on-demand &ldquo;Today for you (Muhurtha)&rdquo; panel &mdash;
     Raman&rsquo;s Muhurtha rules judging the CURRENT day (tarabala/chandrabala, Rahu Kalam,
     Durmuhurtha) against this native&rsquo;s own janma nakshatra and rasi, computed live at
     view time. A static report is cast once; that panel is recast
-    every day &mdash; open the interactive page for it.</p>
+    every day &mdash; open the interactive page for it.</p>"""
 
-  <h2 class="section" id="vargas">Divisional deep-reads</h2>
-  <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one matter (Raman core
-    authoritative; varga overlay report-only).</p>
-  {vargas}
+    # ORDER IS DATA: the document is assembled by walking the v33 reading arc, not by the
+    # position a fragment happens to occupy in this file. Each movement opens with a heading
+    # and its connective passage; every section still renders in full underneath. Empty
+    # sections (a conditional that did not fire) drop out as they always did.
+    from app.raman_saab.report_movements import MOVEMENTS, movement_passage
 
-  {extras}
+    parts: list[str] = []
+    for i, mv in enumerate(MOVEMENTS):
+        present = [sid for sid in mv.section_ids if chunk.get(sid, "").strip()]
+        if not present:
+            continue
+        # Movement I opens with the document <header>, so its heading follows that block.
+        lead = "title" if i == 0 and "title" in present else None
+        if lead:
+            parts.append(chunk[lead])
+        head = (f'<h2 class="movement" id="movement-{mv.numeral.lower()}">'
+                f'<span class="movement-num">{_esc(mv.numeral)}</span>{_esc(mv.title)}</h2>')
+        passage = movement_passage(r, i)
+        if passage:
+            head += f'\n  <p class="movement-passage">{_esc(passage)}</p>'
+        parts.append(head)
+        parts.extend(chunk[sid] for sid in present if sid != lead)
+    sections = "\n\n  ".join(parts)
 
-  {_synthesis_section(r)}
-
-  {_life_synthesis_section(r)}
-
-  {_glossary()}
-
-  {_nichod_section(r)}
-
-  {_aptitude_section(r)}
-
-  {_medical_section(r)}
-
-  {_feedback_section(r)}
-  {_indications_section(r)}
+    body = f"""<style>{_CSS}</style>
+<div class="stickybar" id="stickybar">
+  <span class="sb-sec" id="sb-sec">{_esc(b.name)}</span>
+  <span class="sb-now">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD</span>
+</div>
+<main class="doc">
+  {sections}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

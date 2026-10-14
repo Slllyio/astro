@@ -465,6 +465,2651 @@ class _DaridraYoga(C.Condition):
         return p is not None and p.rasi_house in (6, 8, 12)
 
 
+class _KendraFromLordOf(C.Condition):
+    """`planet` sits in a kendra (1/4/7/10 whole-sign distance) counted FROM the lord of
+    house `n` — the shape Brahma Yoga is built from (3HCH:1931)."""
+
+    def __init__(self, planet: str, n: int) -> None:
+        self.planet, self.n = planet, n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _house_lord(self.n, ctx.chart)
+        pp, pl = ctx.chart.planets.get(self.planet), ctx.chart.planets.get(lord)
+        if pp is None or pl is None:
+            return False
+        dist = ((pp.rasi_house - pl.rasi_house) % 12) + 1
+        return dist in _KENDRAS
+
+
+class _LordOfHouseInHouseWith(C.Condition):
+    """The lord of house `n` occupies whole-sign house `where`, conjoined (same house) with
+    `companion` — Ravi Yoga's second clause (3HCH:1982)."""
+
+    def __init__(self, n: int, where: int, companion: str) -> None:
+        self.n, self.where, self.companion = n, where, companion
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = ctx.chart.planets.get(_house_lord(self.n, ctx.chart))
+        comp = ctx.chart.planets.get(self.companion)
+        return (lord is not None and comp is not None
+                and lord.rasi_house == self.where
+                and comp.rasi_house == self.where)
+
+
+class _GauriNavamsaChain(C.Condition):
+    """Gauri Yoga (3HCH:1637): the lord of the navamsa occupied by the 10th lord must join
+    the 10th house, exalted, and conjoined with the lord of Lagna. One derived planet, three
+    simultaneous demands — naturally rare, no strength proxy involved."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        tenth_lord = chart.planets.get(_house_lord(10, chart))
+        if tenth_lord is None:
+            return False
+        nav = getattr(tenth_lord, "navamsa_sign", None)
+        y = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+        if y is None:
+            return False
+        if y.rasi_house != 10:
+            return False
+        if not C.HasDignity(y.name, "exalted").evaluate(ctx):
+            return False
+        lagna_lord = chart.planets.get(_house_lord(1, chart))
+        return lagna_lord is not None and lagna_lord.rasi_house == y.rasi_house
+
+
+class _LakshmiYoga(C.Condition):
+    """Lakshmi Yoga per Raman's OWN 3HC wording (3HCH:1557), which resolves the comma-parse
+    that deferred the HPA-20 form for months: the 9th lord "occupies own or exaltation sign
+    IDENTICAL WITH a Kendra or Thrikona" — dignity AND placement, conjunctive — while the
+    lord of Lagna is powerful.
+
+    MEASURED before registering (2026-08-09, the deferral's own bar): geometric arm 26/225
+    (11.6%) on the golden corpus; with the lagna-lord gate via `effective_strength` (the B1
+    measure, band strong and not decisively weak) 12/225 (5.3%) — an order of magnitude
+    tighter than the measured-common Shankha/Bheri pair (50%/38%)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        chart = ctx.chart
+        ninth_sign = ((chart.asc_sign - 1) + 8) % 12 + 1
+        lord9 = chart.planets.get(SIGN_LORDS[ninth_sign])
+        if lord9 is None:
+            return False
+        dig = dignity_state(lord9.name, lord9.sign)
+        if dig not in ("own", "exalted", "moolatrikona"):
+            return False
+        if lord9.rasi_house not in {1, 4, 7, 10, 5, 9}:
+            return False
+        es = effective_strength(SIGN_LORDS[chart.asc_sign], chart)
+        return getattr(es, "band", "") == "strong" and not getattr(es, "decisively_weak", False)
+
+
+class _LordsAllInLagnaOrNeechamsa(C.Condition):
+    """Netranasa Yoga (3HCC:5810): the lords of the 10th and 6th occupy Lagna with the 2nd
+    lord — Raman's remark states it plainly, "the lords of the 2nd, 6th and 10th should all
+    join the Lagna" — OR those lords stand in Neechamsa (debilitated navamsa)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        lords = [chart.planets.get(_house_lord(n, chart)) for n in (2, 6, 10)]
+        if any(l is None for l in lords):
+            return False
+        if all(l.rasi_house == 1 for l in lords):
+            return True
+        pair = [chart.planets.get(_house_lord(n, chart)) for n in (10, 6)]
+        return all(
+            l is not None and getattr(l, "navamsa_sign", None)
+            and dignity_state(l.name, l.navamsa_sign) == "debilitated"
+            for l in pair)
+
+
+class _NthLordInKendraAspectedByBenefic(C.Condition):
+    """Sumukha's first arm (3HCC:5853, combination 166): the 2nd lord in a kendra, aspected
+    by at least one natural benefic."""
+
+    def __init__(self, n: int) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _house_lord(self.n, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None or p.rasi_house not in _KENDRAS:
+            return False
+        from app.raman_saab.doctrine import drishti
+        return any(b != lord and b in ctx.chart.planets
+                   and drishti.aspects_planet(b, lord, ctx.chart)
+                   for b in ("Jupiter", "Venus", "Mercury", "Moon"))
+
+
+class _NthLordWithMaleficOrDebilitated(C.Condition):
+    """Durmukha's 168 arm (3HCC:5878): the lord of house `n` joins an evil planet (same
+    whole-sign house as a natural malefic) or stands debilitated."""
+
+    def __init__(self, n: int) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        lord = _house_lord(self.n, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None:
+            return False
+        if dignity_state(lord, p.sign) == "debilitated":
+            return True
+        return any(m != lord and (mp := ctx.chart.planets.get(m)) is not None
+                   and mp.rasi_house == p.rasi_house
+                   for m in ("Sun", "Mars", "Saturn", "Rahu", "Ketu"))
+
+
+class _Sumukha167(C.Condition):
+    """Sumukha's second printed arm (3HCC:5856, combination 167): the 2nd lord posited in a
+    kendra which is his exaltation, own or friendly sign, AND the lord of that kendra sign
+    attains Gopuramsa.
+
+    LADDER AUDIT APPLIED 2026-08-11: this arm originally used GBB's Gopuramsam (rung 8
+    over the shodasavarga) — but 167 is a 3HC combination, and the measured 3HC ladder
+    (see THREE_HUNDRED_LADDER) puts Gopura at count 4 over the SAPTAVARGA, per Raman's
+    own worked examples in combos 234 and 256. The arm now uses its OWN book's ladder."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.relationships import naisargika
+        from app.raman_saab.primitives.varga_attainment import three_hundred_count
+        chart = ctx.chart
+        lord2 = _house_lord(2, chart)
+        p = chart.planets.get(lord2)
+        if p is None or p.rasi_house not in _KENDRAS:
+            return False
+        dig = dignity_state(lord2, p.sign)
+        friendly = naisargika(lord2, SIGN_LORDS[p.sign]) == "friend"
+        if dig not in ("own", "exalted", "moolatrikona") and not friendly:
+            return False
+        kendra_lord = SIGN_LORDS[p.sign]
+        return three_hundred_count(chart, kendra_lord) == 4
+
+
+class _MutualHouseExchange(C.Condition):
+    """Parivartana between houses `a` and `b`: each lord stands in the other's house
+    (whole-sign from Lagna) — Indra Yoga's spine (3HCH:1978)."""
+
+    def __init__(self, a: int, b: int) -> None:
+        self.a, self.b = a, b
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        la = ctx.chart.planets.get(_house_lord(self.a, ctx.chart))
+        lb = ctx.chart.planets.get(_house_lord(self.b, ctx.chart))
+        return (la is not None and lb is not None
+                and la.rasi_house == self.b and lb.rasi_house == self.a)
+
+
+class _MutualTrines(C.Condition):
+    """Every pair of `planets` stands in trine (whole-sign distance 1/5/9) from each other —
+    Trilochana Yoga (3HCH:2073)."""
+
+    def __init__(self, planets: tuple[str, ...]) -> None:
+        self.planets = planets
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        hs = []
+        for name in self.planets:
+            pl = ctx.chart.planets.get(name)
+            if pl is None:
+                return False
+            hs.append(pl.rasi_house)
+        return all(((hs[j] - hs[i]) % 12) + 1 in {1, 5, 9}
+                   for i in range(len(hs)) for j in range(len(hs)) if i != j)
+
+
+class _AllSevenInFifthFrom(C.Condition):
+    """Kulavardhana (3HCH:2095): all seven planets in the 5th counted from `origin`
+    ("Lagna", "Sun" or "Moon"). Nodes excluded, as everywhere Raman counts 'all planets'."""
+
+    _SEVEN = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+
+    def __init__(self, origin: str) -> None:
+        self.origin = origin
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if self.origin == "Lagna":
+            seat = 1
+        else:
+            op = chart.planets.get(self.origin)
+            if op is None:
+                return False
+            seat = op.rasi_house
+        target = ((seat - 1) + 4) % 12 + 1
+        return all((pl := chart.planets.get(n)) is not None and pl.rasi_house == target
+                   for n in self._SEVEN)
+
+
+class _VishnuChain(C.Condition):
+    """Vishnu Yoga (3HCC:3495): the lord of the navamsa occupied by the 9th lord, AND the
+    10th lord, join the 2nd house in conjunction with the 9th lord — three named planets
+    together in the 2nd."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        l9 = chart.planets.get(_house_lord(9, chart))
+        l10 = chart.planets.get(_house_lord(10, chart))
+        if l9 is None or l10 is None:
+            return False
+        nav = getattr(l9, "navamsa_sign", None)
+        nd = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+        if nd is None:
+            return False
+        return l9.rasi_house == 2 and l10.rasi_house == 2 and nd.rasi_house == 2
+
+
+class _GoYoga(C.Condition):
+    """Go Yoga (3HCC:3787): STRONG Jupiter in his Moolatrikona with the 2nd lord, the lagna
+    lord in exaltation. The strength gate rides `effective_strength` (the B1 measure) — the
+    Lakshmi precedent, never the is_powerful proxy.
+
+    DEFECT FIXED 2026-08-09: this condition originally tested
+    ``dignity_state("Jupiter", sign) != "moolatrikona"`` — but ``dignity_state`` is
+    sign-only and BY DESIGN never returns "moolatrikona" (the range is degree-dependent;
+    see its docstring), so the gate ALWAYS refused and Y.GO was dead code whose
+    liveness-never had been rationalized as rarity. The Moolatrikona test must be the
+    longitude-aware ``is_moolatrikona`` (Jupiter: Sagittarius 0-10, lon 240-250)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state, is_moolatrikona
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None or not is_moolatrikona("Jupiter", jup.lon):
+            return False
+        l2 = chart.planets.get(_house_lord(2, chart))
+        if l2 is None or l2.rasi_house != jup.rasi_house:
+            return False
+        ll = chart.planets.get(SIGN_LORDS[chart.asc_sign])
+        if ll is None or dignity_state(ll.name, ll.sign) != "exalted":
+            return False
+        es = effective_strength("Jupiter", chart)
+        return getattr(es, "band", "") == "strong" and not getattr(es, "decisively_weak", False)
+
+
+class _Vakchalana(C.Condition):
+    """Vakchalana Yoga (3HCC:5991): a malefic owns the 2nd AND stands in a cruel navamsa
+    (a navamsa sign owned by a malefic) AND the 2nd is devoid of benefic aspect or
+    association."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        malefics = {"Sun", "Mars", "Saturn", "Rahu", "Ketu"}
+        benefics = ("Jupiter", "Venus", "Mercury", "Moon")
+        lord2 = _house_lord(2, chart)
+        if lord2 not in malefics:
+            return False
+        p = chart.planets.get(lord2)
+        nav = getattr(p, "navamsa_sign", None) if p else None
+        if not nav or SIGN_LORDS[nav] not in malefics:
+            return False
+        occupants = [n for n, pl in chart.planets.items() if pl.rasi_house == 2]
+        if any(b in occupants for b in benefics):
+            return False
+        return not any(drishti.aspects_house(b, 2, chart) for b in benefics
+                       if b in chart.planets)
+
+
+class _Vishaprayoga(C.Condition):
+    """Vishaprayoga Yoga (3HCC:6003): the 2nd house joined AND aspected by malefics, and the
+    2nd lord in a cruel navamsa aspected by a malefic."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        malefics = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
+        if not any((pl := chart.planets.get(m)) is not None and pl.rasi_house == 2
+                   for m in malefics):
+            return False
+        if not any(drishti.aspects_house(m, 2, chart) for m in malefics
+                   if m in chart.planets):
+            return False
+        lord2 = _house_lord(2, chart)
+        p = chart.planets.get(lord2)
+        nav = getattr(p, "navamsa_sign", None) if p else None
+        if not nav or SIGN_LORDS[nav] not in set(malefics):
+            return False
+        return any(m != lord2 and m in chart.planets
+                   and drishti.aspects_planet(m, lord2, chart) for m in malefics)
+
+
+class _Ekabhagini(C.Condition):
+    """Ekabhagini Yoga (3HCC:6100): Mercury, the 3rd lord, and Mars join the 3rd house, the
+    Moon, and Saturn RESPECTIVELY — a distributive triple."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        merc = chart.planets.get("Mercury")
+        if merc is None or merc.rasi_house != 3:
+            return False
+        l3 = chart.planets.get(_house_lord(3, chart))
+        moon = chart.planets.get("Moon")
+        if l3 is None or moon is None or l3.rasi_house != moon.rasi_house:
+            return False
+        mars, sat = chart.planets.get("Mars"), chart.planets.get("Saturn")
+        return mars is not None and sat is not None and mars.rasi_house == sat.rasi_house
+
+
+class _DwadasaSahodara(C.Condition):
+    """Dwadasa Sahodara Yoga (3HCC:6116): the 3rd lord in a kendra, and EXALTED Mars joins
+    Jupiter in a trikona counted from the 3rd lord."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        l3 = chart.planets.get(_house_lord(3, chart))
+        if l3 is None or l3.rasi_house not in _KENDRAS:
+            return False
+        mars, jup = chart.planets.get("Mars"), chart.planets.get("Jupiter")
+        if mars is None or jup is None or mars.rasi_house != jup.rasi_house:
+            return False
+        if dignity_state("Mars", mars.sign) != "exalted":
+            return False
+        dist = ((mars.rasi_house - l3.rasi_house) % 12) + 1
+        return dist in {1, 5, 9}
+
+
+class _Parakrama(C.Condition):
+    """Parakrama Yoga (3HCC:6194): the 3rd lord in a BENEFIC navamsa, aspected by (or
+    conjoined with) benefic planets, and Mars in benefic signs."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        benefics = ("Jupiter", "Venus", "Mercury", "Moon")
+        lord3 = _house_lord(3, chart)
+        p3 = chart.planets.get(lord3)
+        nav = getattr(p3, "navamsa_sign", None) if p3 else None
+        if not nav or SIGN_LORDS[nav] not in set(benefics):
+            return False
+        touched = any(
+            b != lord3 and (bp := chart.planets.get(b)) is not None
+            and (bp.rasi_house == p3.rasi_house or drishti.aspects_planet(b, lord3, chart))
+            for b in benefics)
+        if not touched:
+            return False
+        mars = chart.planets.get("Mars")
+        return mars is not None and SIGN_LORDS[mars.sign] in set(benefics)
+
+
+class _Satkathadisravana(C.Condition):
+    """Satkathadisravana Yoga (3HCC:6306): the 3rd house a benefic sign, aspected by
+    benefics, and the 3rd lord in a benefic amsa."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        benefics = ("Jupiter", "Venus", "Mercury", "Moon")
+        third_sign = ((chart.asc_sign - 1) + 2) % 12 + 1
+        if SIGN_LORDS[third_sign] not in set(benefics):
+            return False
+        if not any(drishti.aspects_house(b, 3, chart) for b in benefics
+                   if b in chart.planets):
+            return False
+        lord3 = _house_lord(3, chart)
+        p3 = chart.planets.get(lord3)
+        nav = getattr(p3, "navamsa_sign", None) if p3 else None
+        return bool(nav) and SIGN_LORDS[nav] in set(benefics)
+
+
+class _NthLordWithBeneficsInKendraTrikona(C.Condition):
+    """Uttama Griha Yoga (3HCC:6320): the lord of house `n` joins benefics in a kendra or
+    trikona — the lord conjoined with at least one benefic, standing in 1/4/7/10/5/9."""
+
+    def __init__(self, n: int) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        lord = _house_lord(self.n, chart)
+        p = chart.planets.get(lord)
+        if p is None or p.rasi_house not in {1, 4, 7, 10, 5, 9}:
+            return False
+        return any(b != lord and (bp := chart.planets.get(b)) is not None
+                   and bp.rasi_house == p.rasi_house
+                   for b in ("Jupiter", "Venus", "Mercury", "Moon"))
+
+
+class _FourPlanetConjunction4th10thSaturnMars(C.Condition):
+    """Vichitra Saudha Prakara Yoga (3HCC:6358): the 4th and 10th lords conjoined, and the
+    two together joining Saturn and Mars — Raman's own Remarks call it a four-planet
+    conjunction."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        l4 = chart.planets.get(_house_lord(4, chart))
+        l10 = chart.planets.get(_house_lord(10, chart))
+        mars, sat = chart.planets.get("Mars"), chart.planets.get("Saturn")
+        if any(x is None for x in (l4, l10, mars, sat)):
+            return False
+        seat = l4.rasi_house
+        return all(x.rasi_house == seat for x in (l10, mars, sat))
+
+
+_T5_BENEFICS = ("Jupiter", "Venus", "Mercury", "Moon")
+_T5_MALEFICS = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
+
+
+def _t5_afflicted(chart, planet_name: str) -> bool:
+    """A malefic conjoins (same whole-sign house) or aspects ``planet_name``."""
+    from app.raman_saab.doctrine import drishti
+    target = chart.planets.get(planet_name)
+    if target is None:
+        return False
+    for m in _T5_MALEFICS:
+        if m == planet_name:
+            continue
+        mp = chart.planets.get(m)
+        if mp is None:
+            continue
+        if mp.rasi_house == target.rasi_house:
+            return True
+        if drishti.aspects_planet(m, planet_name, chart):
+            return True
+    return False
+
+
+class _AyatnaGriha189(C.Condition):
+    """Ayatna Griha Prapta 189 (3HCC:6404): lords of Lagna and the 7th occupy Lagna or the
+    4th, aspected by benefics — Raman's own Chart 87 counts ASSOCIATION as satisfying the
+    benefic clause ("posited in the 4th in association with a benefic")."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        names = {SIGN_LORDS[chart.asc_sign], _house_lord(7, chart)}
+        lords = [chart.planets.get(n) for n in names]
+        if any(l is None or l.rasi_house not in {1, 4} for l in lords):
+            return False
+        for b in _T5_BENEFICS:
+            if b in names or b not in chart.planets:
+                continue
+            bp = chart.planets[b]
+            for l in lords:
+                if bp.rasi_house == l.rasi_house or drishti.aspects_planet(b, l.name, chart):
+                    return True
+        return False
+
+
+class _AyatnaGriha190(C.Condition):
+    """Ayatna Griha Prapta 190 (3HCC:6406): 9th lord in a kendra, 4th lord in exaltation,
+    Moolatrikona or own house. The Moolatrikona test is the longitude-aware
+    ``is_moolatrikona`` (the Y.GO lesson: dignity_state never returns it)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state, is_moolatrikona
+        chart = ctx.chart
+        l9 = chart.planets.get(_house_lord(9, chart))
+        if l9 is None or l9.rasi_house not in _KENDRAS:
+            return False
+        l4 = chart.planets.get(_house_lord(4, chart))
+        if l4 is None:
+            return False
+        return (dignity_state(l4.name, l4.sign) in ("exalted", "own")
+                or is_moolatrikona(l4.name, l4.lon))
+
+
+class _Grihanasa191(C.Condition):
+    """Grihanasa 191 (3HCC:6435): the printed definition says "the 12th", but Raman's own
+    Remarks correct it — "the 12th FROM THE 4TH and not from Lagna", i.e. the 3rd house.
+    Encoded per the Remarks: 4th lord in the 3rd, aspected by a malefic."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        l4 = chart.planets.get(_house_lord(4, chart))
+        if l4 is None or l4.rasi_house != 3:
+            return False
+        return any(m != l4.name and m in chart.planets
+                   and drishti.aspects_planet(m, l4.name, chart) for m in _T5_MALEFICS)
+
+
+class _Grihanasa192(C.Condition):
+    """Grihanasa 192 (3HCC:6437): the lord of the navamsa occupied by the 4th lord is
+    disposed in the 3rd (the same 12th-from-the-4th correction, stated in the Remarks:
+    "either the lord of the 4th OR the lord of the navamsa occupied by the 4th is
+    situated in the 3rd")."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        l4 = chart.planets.get(_house_lord(4, chart))
+        nav = getattr(l4, "navamsa_sign", None) if l4 else None
+        nd = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+        return nd is not None and nd.rasi_house == 3
+
+
+class _BandhuPujya193(C.Condition):
+    """Bandhu Pujya 193 (3HCC:6459): the BENEFIC lord of the 4th aspected by another
+    benefic, Mercury in Lagna. Raman's Remarks limit it to lagnas whose 4th lord is a
+    natural benefic (Mesha, Mithuna, Kataka, Dhanus, Meena) — the natural-benefic check
+    encodes exactly that."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        lord4 = _house_lord(4, chart)
+        if lord4 not in set(_T5_BENEFICS):
+            return False
+        merc = chart.planets.get("Mercury")
+        if merc is None or merc.rasi_house != 1:
+            return False
+        return any(b != lord4 and b in chart.planets
+                   and drishti.aspects_planet(b, lord4, chart) for b in _T5_BENEFICS)
+
+
+class _BandhuPujya194(C.Condition):
+    """Bandhu Pujya 194 (3HCC:6462): the 4th house OR the 4th lord has the association or
+    aspect of Jupiter (Raman's Gandhi remark applies both at once)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None:
+            return False
+        if jup.rasi_house == 4 or drishti.aspects_house("Jupiter", 4, chart):
+            return True
+        l4 = chart.planets.get(_house_lord(4, chart))
+        if l4 is None or l4.name == "Jupiter":
+            return False
+        return (jup.rasi_house == l4.rasi_house
+                or drishti.aspects_planet("Jupiter", l4.name, chart))
+
+
+class _Matrugami(C.Condition):
+    """Matrugami Yoga (3HCC:6666): the Moon or Venus in a kendra conjoined with or
+    aspected by a malefic, AND an evil planet in the 4th house."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if not any((mp := chart.planets.get(m)) is not None and mp.rasi_house == 4
+                   for m in _T5_MALEFICS):
+            return False
+        for name in ("Moon", "Venus"):
+            pl = chart.planets.get(name)
+            if pl is not None and pl.rasi_house in _KENDRAS and _t5_afflicted(chart, name):
+                return True
+        return False
+
+
+class _Kapata202(C.Condition):
+    """Kapata 202 (3HCC:6711): a malefic in the 4th, and the 4th lord associated with,
+    aspected by, or hemmed in between malefics (papakartari on the lord's house)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if not any((mp := chart.planets.get(m)) is not None and mp.rasi_house == 4
+                   for m in _T5_MALEFICS):
+            return False
+        lord4 = _house_lord(4, chart)
+        l4 = chart.planets.get(lord4)
+        if l4 is None:
+            return False
+        if _t5_afflicted(chart, lord4):
+            return True
+        prev_h = (l4.rasi_house - 2) % 12 + 1
+        next_h = l4.rasi_house % 12 + 1
+        def _malefic_in(h: int) -> bool:
+            return any((mp := chart.planets.get(m)) is not None and mp.rasi_house == h
+                       for m in _T5_MALEFICS)
+        return _malefic_in(prev_h) and _malefic_in(next_h)
+
+
+class _Kapata203(C.Condition):
+    """Kapata 203 (3HCC:6715): Saturn, Mars, Rahu AND the malefic 10th lord all in the
+    4th, the 10th lord aspected by malefics."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        for m in ("Saturn", "Mars", "Rahu"):
+            mp = chart.planets.get(m)
+            if mp is None or mp.rasi_house != 4:
+                return False
+        lord10 = _house_lord(10, chart)
+        if lord10 not in set(_T5_MALEFICS):
+            return False
+        l10 = chart.planets.get(lord10)
+        if l10 is None or l10.rasi_house != 4:
+            return False
+        return any(m != lord10 and m in chart.planets
+                   and drishti.aspects_planet(m, lord10, chart) for m in _T5_MALEFICS)
+
+
+class _MatruSatrutwa(C.Condition):
+    """Matru Satrutwa Yoga (3HCC:6798): Mercury as lord of Lagna AND the 4th (Raman's
+    Remarks: only Mithuna Lagna), joined with or aspected by a malefic."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if chart.asc_sign != 3:
+            return False
+        return _t5_afflicted(chart, "Mercury")
+
+
+class _Vahana209(C.Condition):
+    """Vahana 209 (3HCC:6830): the lord of Lagna joins the 4th, 11th or the 9th."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        l1 = ctx.chart.planets.get(SIGN_LORDS[ctx.chart.asc_sign])
+        return l1 is not None and l1.rasi_house in {4, 9, 11}
+
+
+class _Vahana210(C.Condition):
+    """Vahana 210 (3HCC:6832): the 4th lord exalted, and the lord of the exaltation sign
+    (its dispositor) in a kendra or trikona."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        l4 = chart.planets.get(_house_lord(4, chart))
+        if l4 is None or dignity_state(l4.name, l4.sign) != "exalted":
+            return False
+        disp = chart.planets.get(SIGN_LORDS[l4.sign])
+        return disp is not None and disp.rasi_house in {1, 4, 7, 10, 5, 9}
+
+
+def _t6_b1_strong(chart, planet: str) -> bool:
+    """The B1 strength reading (Lakshmi/Go precedent): band strong AND not decisively weak."""
+    from app.raman_saab.primitives.effective_strength import effective_strength
+    es = effective_strength(planet, chart)
+    return getattr(es, "band", "") == "strong" and not getattr(es, "decisively_weak", False)
+
+
+class _Matrudeerghayur196(C.Condition):
+    """Matrudeerghayur 196 (3HCC:6535): a benefic in the 4th, the 4th lord exalted, and the
+    Moon STRONG — the strength clause rides B1 effective_strength."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        if not any((bp := chart.planets.get(b)) is not None and bp.rasi_house == 4
+                   for b in _T5_BENEFICS):
+            return False
+        l4 = chart.planets.get(_house_lord(4, chart))
+        if l4 is None or dignity_state(l4.name, l4.sign) != "exalted":
+            return False
+        return _t6_b1_strong(chart, "Moon")
+
+
+class _Matrudeerghayur197(C.Condition):
+    """Matrudeerghayur 197 (3HCC:6538): the lord of the navamsa occupied by the 4th lord is
+    STRONG and stands in a kendra from Lagna AS WELL AS from Chandra Lagna."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        l4 = chart.planets.get(_house_lord(4, chart))
+        nav = getattr(l4, "navamsa_sign", None) if l4 else None
+        nd = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+        moon = chart.planets.get("Moon")
+        if nd is None or moon is None:
+            return False
+        if nd.rasi_house not in _KENDRAS:
+            return False
+        from_moon = ((nd.rasi_house - moon.rasi_house) % 12) + 1
+        if from_moon not in {1, 4, 7, 10}:
+            return False
+        return _t6_b1_strong(chart, nd.name)
+
+
+class _Matrunasa198(C.Condition):
+    """Matrunasa 198 (3HCC:6554): the Moon hemmed in between (Papakartari), associated
+    with, OR aspected by evil planets — Raman: "One of the three conditions must
+    prevail". Papakartari = a malefic in each house adjacent to the Moon's."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return False
+        if _t5_afflicted(chart, "Moon"):
+            return True
+        prev_h = (moon.rasi_house - 2) % 12 + 1
+        next_h = moon.rasi_house % 12 + 1
+        def _malefic_in(h: int) -> bool:
+            return any((mp := chart.planets.get(m)) is not None and mp.rasi_house == h
+                       for m in _T5_MALEFICS)
+        return _malefic_in(prev_h) and _malefic_in(next_h)
+
+
+class _Matrunasa199(C.Condition):
+    """Matrunasa 199 (3HCC:6559), encoded to Raman's own worked procedure (charts 90/91):
+    (a) the 4th lord occupies some navamsa; (b) that navamsa's lord occupies some navamsa;
+    (c) THAT navamsa's lord stands, in the Rasi chart, in the 6th, 8th or 12th from Lagna.
+    Chart 90 shows the self-dispositor collapse ("the third condition becomes merged with
+    the 2nd") — the chain handles it without special-casing."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        l4 = chart.planets.get(_house_lord(4, chart))
+        nav1 = getattr(l4, "navamsa_sign", None) if l4 else None
+        x = chart.planets.get(SIGN_LORDS.get(nav1)) if nav1 else None
+        nav2 = getattr(x, "navamsa_sign", None) if x else None
+        z = chart.planets.get(SIGN_LORDS.get(nav2)) if nav2 else None
+        return z is not None and z.rasi_house in {6, 8, 12}
+
+
+class _Nishkapata206(C.Condition):
+    """Nishkapata 206 (3HCC:6770), unlocked by the measured 3HC ladder: the Lagna lord
+    in the 4th in conjunction with or aspected by a benefic, OR occupying Parvata (count
+    6, reachable only for Mars) or Uttamamsa (count 3) over the saptavarga."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        from app.raman_saab.primitives.varga_attainment import three_hundred_count
+        chart = ctx.chart
+        l1name = SIGN_LORDS[chart.asc_sign]
+        l1 = chart.planets.get(l1name)
+        if l1 is None:
+            return False
+        if l1.rasi_house == 4:
+            for b in _T5_BENEFICS:
+                if b == l1name or b not in chart.planets:
+                    continue
+                bp = chart.planets[b]
+                if bp.rasi_house == 4 or drishti.aspects_planet(b, l1name, chart):
+                    return True
+        return three_hundred_count(chart, l1name) in {3, 6}
+
+
+class _Nishkapata205(C.Condition):
+    """Nishkapata 205 (3HCC:6767): the 4th occupied by a benefic, OR by a planet in
+    exaltation, friendly or own house, OR the 4th a benefic sign. Raman's own remark
+    ("very flexible... given for what they are worth") is on the record."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        # the benefic-sign arm is a lagna-only fact — without the planet guard it fires
+        # on an EMPTY chart, which the detection contract forbids
+        if not chart.planets:
+            return False
+        fourth_sign = ((chart.asc_sign - 1) + 3) % 12 + 1
+        if SIGN_LORDS[fourth_sign] in set(_T5_BENEFICS):
+            return True
+        for name, pl in chart.planets.items():
+            if pl.rasi_house != 4:
+                continue
+            if name in _T5_BENEFICS:
+                return True
+            if dignity_state(name, pl.sign) in ("exalted", "own", "friendly"):
+                return True
+        return False
+
+
+class _MatruSneha(C.Condition):
+    """Matru Sneha Yoga (3HCC:6812): the 1st and 4th houses share a lord (Mithuna and
+    Dhanus, per Raman's Remarks), OR the two lords are natural or TEMPORAL (Tatkalika)
+    friends, OR both lords are aspected by benefics. Mutuality is required for the
+    friendship arms (Raman: "mutual friends or Tatkalika friends")."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import naisargika_relation, temporal_relation
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        n1, n4 = SIGN_LORDS[chart.asc_sign], _house_lord(4, chart)
+        if n1 == n4:
+            return True
+        p1, p4 = chart.planets.get(n1), chart.planets.get(n4)
+        if p1 is None or p4 is None:
+            return False
+        if (naisargika_relation(n1, n4) == "friend"
+                and naisargika_relation(n4, n1) == "friend"):
+            return True
+        signs = {name: {"sign": pl.sign} for name, pl in chart.planets.items()}
+        if (temporal_relation(signs, n1, n4) == "friend"
+                and temporal_relation(signs, n4, n1) == "friend"):
+            return True
+        def _benefic_touched(lord_name: str, lord) -> bool:
+            return any(b != lord_name and (bp := chart.planets.get(b)) is not None
+                       and (bp.rasi_house == lord.rasi_house
+                            or drishti.aspects_planet(b, lord_name, chart))
+                       for b in _T5_BENEFICS)
+        return _benefic_touched(n1, p1) and _benefic_touched(n4, p4)
+
+
+class _Anapathya(C.Condition):
+    """Anapathya Yoga (3HCC:6872): Jupiter and the lords of Lagna, the 7th and the 5th all
+    WEAK. Weakness is B1 ``decisively_weak`` — the mirror of the Lakshmi/Go strong gate;
+    Raman's modifying remark (strong Jupiter/5th lord softens the yoga) is carried by the
+    conjunctive ALL-four requirement."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        chart = ctx.chart
+        names = {"Jupiter", SIGN_LORDS[chart.asc_sign],
+                 _house_lord(7, chart), _house_lord(5, chart)}
+        for n in names:
+            if n not in chart.planets:
+                return False
+            if not getattr(effective_strength(n, chart), "decisively_weak", False):
+                return False
+        return True
+
+
+def _t7_papakartari(chart, house: int) -> bool:
+    """A malefic in each whole-sign house adjacent to ``house``."""
+    prev_h = (house - 2) % 12 + 1
+    next_h = house % 12 + 1
+    def _malefic_in(h: int) -> bool:
+        return any((mp := chart.planets.get(m)) is not None and mp.rasi_house == h
+                   for m in _T5_MALEFICS)
+    return _malefic_in(prev_h) and _malefic_in(next_h)
+
+
+class _Sarpasapa212(C.Condition):
+    """Sarpasapa 212 (3HCC:6891), per Raman's Remarks disambiguation: EITHER Rahu in the
+    5th aspected by Mars, OR the 5th sign being Aries/Scorpio (Kataka and Dhanus lagnas)
+    with Rahu's association."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        rahu = chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 5:
+            return False
+        fifth_sign = ((chart.asc_sign - 1) + 4) % 12 + 1
+        if fifth_sign in {1, 8}:
+            return True
+        return drishti.aspects_planet("Mars", "Rahu", chart)
+
+
+class _Sarpasapa213(C.Condition):
+    """Sarpasapa 213 (3HCC:6894): the 5th lord conjunct Rahu, Saturn in the 5th aspected
+    by or associated with the Moon."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        l5 = chart.planets.get(_house_lord(5, chart))
+        rahu = chart.planets.get("Rahu")
+        if l5 is None or rahu is None or l5.rasi_house != rahu.rasi_house:
+            return False
+        sat, moon = chart.planets.get("Saturn"), chart.planets.get("Moon")
+        if sat is None or moon is None or sat.rasi_house != 5:
+            return False
+        return (moon.rasi_house == 5
+                or drishti.aspects_planet("Moon", "Saturn", chart))
+
+
+class _Sarpasapa214(C.Condition):
+    """Sarpasapa 214 (3HCC:6897): Jupiter (putrakaraka) with Mars, Rahu in Lagna, the 5th
+    lord in a dusthana — AND Raman's own nullifier from the Remarks encoded: "if he
+    [Jupiter] has sufficient Shadbala strength, the yoga becomes null and void" (his
+    worked example: ~8 rupas -> defunct). The gate is NOT-B1-strong."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        jup, mars = chart.planets.get("Jupiter"), chart.planets.get("Mars")
+        if jup is None or mars is None or jup.rasi_house != mars.rasi_house:
+            return False
+        rahu = chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 1:
+            return False
+        l5 = chart.planets.get(_house_lord(5, chart))
+        if l5 is None or l5.rasi_house not in {6, 8, 12}:
+            return False
+        return not _t6_b1_strong(chart, "Jupiter")
+
+
+class _Sarpasapa215(C.Condition):
+    """Sarpasapa 215 (3HCC:6900): the 5th a sign of Mars, conjoined by Rahu, aspected by
+    or associated with Mercury."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        fifth_sign = ((chart.asc_sign - 1) + 4) % 12 + 1
+        if fifth_sign not in {1, 8}:
+            return False
+        rahu = chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 5:
+            return False
+        merc = chart.planets.get("Mercury")
+        if merc is None:
+            return False
+        return (merc.rasi_house == 5
+                or drishti.aspects_planet("Mercury", "Rahu", chart))
+
+
+class _PitrusapaSutakshaya(C.Condition):
+    """Pitrusapa Sutakshaya 216 (3HCC:7013), Raman's three-way disambiguation from the
+    Remarks: the Sun in the 5th house AND (debilitated, OR in the amsas of Makara/Kumbha,
+    OR hemmed in between malefics)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        sun = chart.planets.get("Sun")
+        if sun is None or sun.rasi_house != 5:
+            return False
+        if dignity_state("Sun", sun.sign) == "debilitated":
+            return True
+        if getattr(sun, "navamsa_sign", None) in (10, 11):
+            return True
+        return _t7_papakartari(chart, 5)
+
+
+class _MatrusapaSutakshaya(C.Condition):
+    """Matrusapa Sutakshaya 217 (3HCC:7155): Parivartana between the 5th and 8th lords
+    (8th lord in the 5th, 5th lord in the 8th), the Moon AND the 4th lord in the 6th.
+    Raman: cannot operate for Simha/Kumbha (one planet owns both houses) — the geometry
+    excludes them without a special case."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        l8 = chart.planets.get(_house_lord(8, chart))
+        l5 = chart.planets.get(_house_lord(5, chart))
+        if l8 is None or l5 is None or l8.rasi_house != 5 or l5.rasi_house != 8:
+            return False
+        moon = chart.planets.get("Moon")
+        l4 = chart.planets.get(_house_lord(4, chart))
+        return (moon is not None and l4 is not None
+                and moon.rasi_house == 6 and l4.rasi_house == 6)
+
+
+class _BhratrusapaSutakshaya(C.Condition):
+    """Bhratrusapa Sutakshaya 218 (3HCC:7200): the lords of Lagna and the 5th in the 8th,
+    the 3rd lord combining with Mars and Rahu in the 5th."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        l1 = chart.planets.get(SIGN_LORDS[chart.asc_sign])
+        l5 = chart.planets.get(_house_lord(5, chart))
+        if l1 is None or l5 is None or l1.rasi_house != 8 or l5.rasi_house != 8:
+            return False
+        l3 = chart.planets.get(_house_lord(3, chart))
+        mars, rahu = chart.planets.get("Mars"), chart.planets.get("Rahu")
+        return all(x is not None and x.rasi_house == 5 for x in (l3, mars, rahu))
+
+
+class _Pretasapa(C.Condition):
+    """Pretasapa 219 (3HCC:7219): the Sun and Saturn in the 5th, WEAK Moon in the 7th,
+    Rahu in Lagna, Jupiter in the 12th. "Weak" rides B1 ``decisively_weak`` — the same
+    reading as Anapathya; Raman does not define the term here and B1 is the project's
+    accepted weakness measure."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        chart = ctx.chart
+        pos = {"Sun": 5, "Saturn": 5, "Moon": 7, "Rahu": 1, "Jupiter": 12}
+        for name, house in pos.items():
+            pl = chart.planets.get(name)
+            if pl is None or pl.rasi_house != house:
+                return False
+        return getattr(effective_strength("Moon", chart), "decisively_weak", False)
+
+
+class _Bahuputra220(C.Condition):
+    """Bahuputra 220 (3HCC:7285): Rahu in the 5th in a navamsa OTHER than Saturn's —
+    Raman: the exception to the rule that Rahu in the 5th is harmful."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        rahu = ctx.chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 5:
+            return False
+        nav = getattr(rahu, "navamsa_sign", None)
+        return nav is not None and SIGN_LORDS[nav] != "Saturn"
+
+
+class _Bahuputra221(C.Condition):
+    """Bahuputra 221 (3HCC:7288), per Raman's own untangling and Chart 100: some planet
+    associates with the 7th lord; the lord of the navamsa THAT PLANET occupies stands in
+    the 1st, 2nd or 5th house."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        l7name = _house_lord(7, chart)
+        l7 = chart.planets.get(l7name)
+        if l7 is None:
+            return False
+        for name, pl in chart.planets.items():
+            if name == l7name or pl.rasi_house != l7.rasi_house:
+                continue
+            nav = getattr(pl, "navamsa_sign", None)
+            nd = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+            if nd is not None and nd.rasi_house in {1, 2, 5}:
+                return True
+        return False
+
+
+class _Dattaputra222(C.Condition):
+    """Dattaputra 222 (3HCC:7341): Mars AND Saturn in the 5th; the Lagna lord in a sign of
+    Mercury, aspected by or associated with Mercury."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        mars, sat = chart.planets.get("Mars"), chart.planets.get("Saturn")
+        if mars is None or sat is None or mars.rasi_house != 5 or sat.rasi_house != 5:
+            return False
+        l1name = SIGN_LORDS[chart.asc_sign]
+        l1 = chart.planets.get(l1name)
+        if l1 is None or l1.sign not in {3, 6}:
+            return False
+        if l1name == "Mercury":
+            return True
+        merc = chart.planets.get("Mercury")
+        if merc is None:
+            return False
+        return (merc.rasi_house == l1.rasi_house
+                or drishti.aspects_planet("Mercury", l1name, chart))
+
+
+class _Dattaputra223(C.Condition):
+    """Dattaputra 223 (3HCC:7345): the 7th lord in the 11th, the 5th lord joining a
+    benefic, the 5th occupied by Mars or Saturn — Chart 101's shape."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        l7 = chart.planets.get(_house_lord(7, chart))
+        if l7 is None or l7.rasi_house != 11:
+            return False
+        l5name = _house_lord(5, chart)
+        l5 = chart.planets.get(l5name)
+        if l5 is None:
+            return False
+        if not any(b != l5name and (bp := chart.planets.get(b)) is not None
+                   and bp.rasi_house == l5.rasi_house for b in _T5_BENEFICS):
+            return False
+        return any((mp := chart.planets.get(m)) is not None and mp.rasi_house == 5
+                   for m in ("Mars", "Saturn"))
+
+
+class _Aputra(C.Condition):
+    """Aputra 224 (3HCC:7388): the 5th lord in a dusthana. The printed Remarks read
+    "Dusthanas are the 5th, 8th and 12th" — an OCR garble of the classical 6/8/12 (the
+    5th lord IN the 5th is own-house, the opposite of a dusthana; Raman's own 214 spells
+    the same trio as 6th/8th/12th). Encoded 6/8/12."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        l5 = ctx.chart.planets.get(_house_lord(5, ctx.chart))
+        return l5 is not None and l5.rasi_house in {6, 8, 12}
+
+
+class _Ekaputra(C.Condition):
+    """Ekaputra 225 (3HCC:7423): the 5th lord in a kendra or trikona. Broad as printed —
+    Raman's own Remarks caution that these 5th-house yogas "cannot be applied verbatim"."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        l5 = ctx.chart.planets.get(_house_lord(5, ctx.chart))
+        return l5 is not None and l5.rasi_house in {1, 4, 7, 10, 5, 9}
+
+
+class _KalanirdesatPutra227(C.Condition):
+    """Kalanirdesat Putra 227 (3HCC:7466): Jupiter in the 5th, the 5th lord in
+    conjunction with Venus. When Venus IS the 5th lord (Mithuna/Makara lagnas) the
+    conjunction clause is degenerate — treated as unsatisfied (strict under-fire, never
+    a generous over-fire)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None or jup.rasi_house != 5:
+            return False
+        l5name = _house_lord(5, chart)
+        l5 = chart.planets.get(l5name)
+        ven = chart.planets.get("Venus")
+        if l5 is None or ven is None or l5name == "Venus":
+            return False
+        return l5.rasi_house == ven.rasi_house
+
+
+class _KalanirdesatPutra228(C.Condition):
+    """Kalanirdesat Putra 228 (3HCC:7468): Jupiter in the 9th, Venus in the 9th from
+    Jupiter (Raman's own simplification: the 5th from Lagna) in conjunction with the
+    Lagna lord."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None or jup.rasi_house != 9:
+            return False
+        ven = chart.planets.get("Venus")
+        if ven is None or ((ven.rasi_house - jup.rasi_house) % 12) + 1 != 9:
+            return False
+        # Venus-lagna charts (Vrishabha/Thula) make the Venus-conjunct-Lagna-lord clause
+        # degenerate — unsatisfied, same strict rule as 227.
+        l1name = SIGN_LORDS[chart.asc_sign]
+        if l1name == "Venus":
+            return False
+        l1 = chart.planets.get(l1name)
+        return l1 is not None and l1.rasi_house == ven.rasi_house
+
+
+class _KalanirdesatPutranasa229(C.Condition):
+    """Kalanirdesat Putranasa 229 (3HCC:7487): Rahu in the 5th, the 5th lord conjunct a
+    malefic, Jupiter debilitated — Raman: all three factors of the house of children
+    (house, lord, karaka) afflicted at once."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        rahu = chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 5:
+            return False
+        jup = chart.planets.get("Jupiter")
+        if jup is None or dignity_state("Jupiter", jup.sign) != "debilitated":
+            return False
+        l5name = _house_lord(5, chart)
+        l5 = chart.planets.get(l5name)
+        if l5 is None:
+            return False
+        return any(m != l5name and (mp := chart.planets.get(m)) is not None
+                   and mp.rasi_house == l5.rasi_house for m in _T5_MALEFICS)
+
+
+class _KalanirdesatPutranasa230(C.Condition):
+    """Kalanirdesat Putranasa 230 (3HCC:7494): malefics in the 5th from Jupiter AND from
+    Lagna."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None:
+            return False
+        fifth_from_jup = ((jup.rasi_house - 1) + 4) % 12 + 1
+        def _malefic_in(h: int) -> bool:
+            return any((mp := chart.planets.get(m)) is not None and mp.rasi_house == h
+                       for m in _T5_MALEFICS)
+        return _malefic_in(5) and _malefic_in(fifth_from_jup)
+
+
+class _Buddhimaturya(C.Condition):
+    """Buddhimaturya 231 (3HCC:7544): the printed definition (a BENEFIC 5th lord aspected
+    by another benefic or in a benefic sign) Or Raman's own Remarks extension for the five
+    lagnas the definition excludes ("the yoga may be deemed present in case the 5th
+    house... is occupied by benefics and the 5th lord is in association with" the
+    benefics) — both his, both encoded."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        l5name = _house_lord(5, chart)
+        l5 = chart.planets.get(l5name)
+        if l5 is None:
+            return False
+        if l5name in set(_T5_BENEFICS):
+            if SIGN_LORDS[l5.sign] in set(_T5_BENEFICS):
+                return True
+            if any(b != l5name and b in chart.planets
+                   and drishti.aspects_planet(b, l5name, chart) for b in _T5_BENEFICS):
+                return True
+        occupied = any((bp := chart.planets.get(b)) is not None and bp.rasi_house == 5
+                       for b in _T5_BENEFICS)
+        conj = any(b != l5name and (bp := chart.planets.get(b)) is not None
+                   and bp.rasi_house == l5.rasi_house for b in _T5_BENEFICS)
+        return occupied and conj
+
+
+class _Theevrabuddhi(C.Condition):
+    """Theevrabuddhi 232 (3HCC:7625), encoded to Raman's own CORRECTION: the lord of the
+    navamsa occupied by the 5th lord aspected by (or, per his extension, conjoined with) a
+    benefic. The definition's second clause — that the 5th lord himself be a benefic — is
+    the clause Raman explicitly rejects ("the suggestion... is not warranted... irrespective
+    of his being a natural malefic or natural benefic"), and it is deliberately absent."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        l5 = chart.planets.get(_house_lord(5, chart))
+        nav = getattr(l5, "navamsa_sign", None) if l5 else None
+        ndname = SIGN_LORDS.get(nav) if nav else None
+        nd = chart.planets.get(ndname) if ndname else None
+        if nd is None:
+            return False
+        return any(b != ndname and (bp := chart.planets.get(b)) is not None
+                   and (bp.rasi_house == nd.rasi_house
+                        or drishti.aspects_planet(b, ndname, chart))
+                   for b in _T5_BENEFICS)
+
+
+class _BuddhiJada(C.Condition):
+    """Buddhi Jada 233 (3HCC:7657): the Lagna lord conjoined with or aspected by evil
+    planets, Saturn in the 5th, and the Lagna lord aspected by Saturn."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        sat = chart.planets.get("Saturn")
+        if sat is None or sat.rasi_house != 5:
+            return False
+        l1name = SIGN_LORDS[chart.asc_sign]
+        if not _t5_afflicted(chart, l1name):
+            return False
+        return (l1name != "Saturn"
+                and drishti.aspects_planet("Saturn", l1name, chart))
+
+
+class _PutraSukha(C.Condition):
+    """Putra Sukha 235 (3HCC:7787): Jupiter AND Venus in the 5th, or Mercury in the 5th,
+    or the 5th a benefic sign occupied by benefics."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        def _in5(name: str) -> bool:
+            pl = chart.planets.get(name)
+            return pl is not None and pl.rasi_house == 5
+        if _in5("Jupiter") and _in5("Venus"):
+            return True
+        if _in5("Mercury"):
+            return True
+        fifth_sign = ((chart.asc_sign - 1) + 4) % 12 + 1
+        return (SIGN_LORDS[fifth_sign] in set(_T5_BENEFICS)
+                and any(_in5(b) for b in _T5_BENEFICS))
+
+
+class _Jara(C.Condition):
+    """Jara 236 (3HCC:7805): the 10th occupied by the lords of the 10th, 2nd and 7th —
+    NARROWED per Raman's own Remarks, which refuse the sages' bare form: "unless the 7th
+    lord happens to be Mars or Venus... it is not advisable to conclude". Raman wins over
+    the source he quotes; the narrowing is part of the yoga."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if _house_lord(7, chart) not in ("Mars", "Venus"):
+            return False
+        for h in (10, 2, 7):
+            lord = chart.planets.get(_house_lord(h, chart))
+            if lord is None or lord.rasi_house != 10:
+                return False
+        return True
+
+
+class _Jarajaputra(C.Condition):
+    """Jarajaputra 237 (3HCC:7848): POWERFUL lords of the 5th and 7th joined with the
+    lord of the 6th, aspected by benefics. "Powerful" rides B1 effective_strength on both
+    lords (the Lakshmi/Go precedent, patched-gate fire test per the Y.GO discipline)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        n5, n7, n6 = (_house_lord(5, chart), _house_lord(7, chart),
+                      _house_lord(6, chart))
+        l5, l7, l6 = (chart.planets.get(n5), chart.planets.get(n7),
+                      chart.planets.get(n6))
+        if any(x is None for x in (l5, l7, l6)):
+            return False
+        if not (l5.rasi_house == l6.rasi_house and l7.rasi_house == l6.rasi_house):
+            return False
+        touched = any(b not in {n5, n6, n7} and b in chart.planets
+                      and (chart.planets[b].rasi_house == l6.rasi_house
+                           or drishti.aspects_house(b, l6.rasi_house, chart))
+                      for b in _T5_BENEFICS)
+        if not touched:
+            return False
+        return _t6_b1_strong(chart, n5) and _t6_b1_strong(chart, n7)
+
+
+class _BahuStree(C.Condition):
+    """Bahu Stree 238 (3HCC:7866): the lords of Lagna and the 7th in conjunction or in
+    MUTUAL aspect (Chart 110's reading), Or the variant Raman reports in the Remarks (9th
+    lord in the 7th, 7th lord in the 4th, the Lagna lord or 11th lord in a kendra)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        n1, n7 = SIGN_LORDS[chart.asc_sign], _house_lord(7, chart)
+        l1, l7 = chart.planets.get(n1), chart.planets.get(n7)
+        if l1 is not None and l7 is not None and n1 != n7:
+            if l1.rasi_house == l7.rasi_house:
+                return True
+            if (drishti.aspects_planet(n1, n7, chart)
+                    and drishti.aspects_planet(n7, n1, chart)):
+                return True
+        l9 = chart.planets.get(_house_lord(9, chart))
+        if l9 is None or l9.rasi_house != 7:
+            return False
+        if l7 is None or l7.rasi_house != 4:
+            return False
+        l11 = chart.planets.get(_house_lord(11, chart))
+        return ((l1 is not None and l1.rasi_house in _KENDRAS)
+                or (l11 is not None and l11.rasi_house in _KENDRAS))
+
+
+class _Satkalatra(C.Condition):
+    """Satkalatra 239 (3HCC:7917): the 7th lord or Venus joined with or aspected by
+    Jupiter or Mercury."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        targets = {_house_lord(7, chart), "Venus"}
+        for tname in targets:
+            tp = chart.planets.get(tname)
+            if tp is None:
+                continue
+            for b in ("Jupiter", "Mercury"):
+                if b == tname:
+                    continue
+                bp = chart.planets.get(b)
+                if bp is None:
+                    continue
+                if bp.rasi_house == tp.rasi_house or drishti.aspects_planet(b, tname, chart):
+                    return True
+        return False
+
+
+class _BhagaChumbana(C.Condition):
+    """Bhaga Chumbana 240 (3HCC:7981): the 7th lord in the 4th conjunct Venus, Or the
+    Remarks' own alternative (the Lagna lord debilitated in Rasi or in Navamsa)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        n7 = _house_lord(7, chart)
+        l7 = chart.planets.get(n7)
+        ven = chart.planets.get("Venus")
+        if (l7 is not None and ven is not None and n7 != "Venus"
+                and l7.rasi_house == 4 and ven.rasi_house == 4):
+            return True
+        l1 = chart.planets.get(SIGN_LORDS[chart.asc_sign])
+        if l1 is None:
+            return False
+        if dignity_state(l1.name, l1.sign) == "debilitated":
+            return True
+        nav = getattr(l1, "navamsa_sign", None)
+        return nav is not None and dignity_state(l1.name, nav) == "debilitated"
+
+
+class _Bhagya(C.Condition):
+    """Bhagya 241 (3HCC:7989): a STRONG benefic in Lagna, the 3rd or the 5th,
+    simultaneously aspecting the 9th. The whole-sign drishti table carries Raman's own
+    observation naturally (only Jupiter reaches the 9th from Lagna or the 5th; any
+    benefic reaches it from the 3rd); strength rides B1."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        for b in _T5_BENEFICS:
+            bp = chart.planets.get(b)
+            if bp is None or bp.rasi_house not in {1, 3, 5}:
+                continue
+            if not drishti.aspects_house(b, 9, chart):
+                continue
+            if _t6_b1_strong(chart, b):
+                return True
+        return False
+
+
+class _JananatpurvamPitruMarana(C.Condition):
+    """Jananatpurvam Pitru Marana 242 (3HCC:8018): the Sun in 6/8/12, the 8th lord in the
+    9th, the 12th lord in Lagna, the 6th lord in the 5th — Raman: "the ENTIRE yoga, and
+    not a part of it, should be present" (Chart 113 holds it in toto)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        sun = chart.planets.get("Sun")
+        if sun is None or sun.rasi_house not in {6, 8, 12}:
+            return False
+        for house, target in ((8, 9), (12, 1), (6, 5)):
+            lord = chart.planets.get(_house_lord(house, chart))
+            if lord is None or lord.rasi_house != target:
+                return False
+        return True
+
+
+class _Dhatrutwa(C.Condition):
+    """Dhatrutwa 243 (3HCC:8044): the 9th lord exalted, aspected by a benefic, and the
+    9th occupied by a benefic."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        l9name = _house_lord(9, chart)
+        l9 = chart.planets.get(l9name)
+        if l9 is None or dignity_state(l9name, l9.sign) != "exalted":
+            return False
+        if not any(b != l9name and b in chart.planets
+                   and drishti.aspects_planet(b, l9name, chart) for b in _T5_BENEFICS):
+            return False
+        return any((bp := chart.planets.get(b)) is not None and bp.rasi_house == 9
+                   for b in _T5_BENEFICS)
+
+
+class _Apakeerti(C.Condition):
+    """Apakeerti 244 (3HCC:8126): the Sun AND Saturn in the 10th, both in malefic amsas
+    OR aspected by malefics. Raman's converse is preserved: their mere presence,
+    unaspected and in benefic navamsas, does NOT constitute the yoga."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        sun, sat = chart.planets.get("Sun"), chart.planets.get("Saturn")
+        if sun is None or sat is None or sun.rasi_house != 10 or sat.rasi_house != 10:
+            return False
+        malefics = set(_T5_MALEFICS)
+        def _cruel_amsa(pl) -> bool:
+            nav = getattr(pl, "navamsa_sign", None)
+            return nav is not None and SIGN_LORDS[nav] in malefics
+        if _cruel_amsa(sun) and _cruel_amsa(sat):
+            return True
+        return any(m not in ("Sun", "Saturn") and m in chart.planets
+                   and (drishti.aspects_planet(m, "Sun", chart)
+                        or drishti.aspects_planet(m, "Saturn", chart))
+                   for m in _T5_MALEFICS)
+
+
+class _Raja245(C.Condition):
+    """Raja 245 (3HCC:8154): three or more planets exalted or in own house occupying
+    kendras — WITH Raman's own practice extension ("in actual practice... need not
+    necessarily be in kendras. Even trikonas will do")."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        count = 0
+        for name in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+            pl = chart.planets.get(name)
+            if pl is None or pl.rasi_house not in {1, 4, 7, 10, 5, 9}:
+                continue
+            if dignity_state(name, pl.sign) in ("exalted", "own"):
+                count += 1
+        return count >= 3
+
+
+class _Raja246(C.Condition):
+    """Raja 246 (3HCC:8157), operationalized by Raman's own Remarks: a debilitated planet
+    "of bright rays, i.e., free from combustion; or retrograde", occupying a house that
+    is not a dusthana (6/8/12). Chart 116: Venus neecha in the 10th, bright AND
+    retrograde."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        for name in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+            pl = chart.planets.get(name)
+            if pl is None or pl.rasi_house in {6, 8, 12}:
+                continue
+            if dignity_state(name, pl.sign) != "debilitated":
+                continue
+            bright = getattr(pl, "combust_fraction", 0.0) == 0.0
+            if bright or getattr(pl, "retrograde", False):
+                return True
+        return False
+
+
+class _Raja247(C.Condition):
+    """Raja 247 (3HCC:8168): two or more planets possessing Digbala, per Raman's own
+    mapping in the Remarks: Mercury and Jupiter in Lagna, the Sun and Mars in the 10th,
+    Saturn in the 7th, the Moon and Venus in the 4th."""
+
+    _DIGBALA = {"Mercury": 1, "Jupiter": 1, "Sun": 10, "Mars": 10,
+                "Saturn": 7, "Moon": 4, "Venus": 4}
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        count = sum(1 for name, house in self._DIGBALA.items()
+                    if (pl := chart.planets.get(name)) is not None
+                    and pl.rasi_house == house)
+        return count >= 2
+
+
+class _Raja249(C.Condition):
+    """Raja 249 (3HCC:8315): the Moon in Lagna, Jupiter in the 4th, Venus in the 10th,
+    Saturn exalted or in own house (Chart 118 holds it in toto)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        for name, house in (("Moon", 1), ("Jupiter", 4), ("Venus", 10)):
+            pl = chart.planets.get(name)
+            if pl is None or pl.rasi_house != house:
+                return False
+        sat = chart.planets.get("Saturn")
+        return sat is not None and dignity_state("Saturn", sat.sign) in ("exalted", "own")
+
+
+class _Raja250(C.Condition):
+    """Neechabhanga Raja 250 (3HCC:8318): for a debilitated planet, the LORD of its sign
+    or the planet EXALTED in that sign (thaduchchanatha — the contested term, resolved by
+    Raman via Prof. B. Suryanarain Rao and applied so in Chart 119) stands in a kendra
+    from the Moon or from Lagna. The definition carries both readings with "or"; both
+    arms are encoded."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import EXALTATION, dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        exalted_in = {sign: name for name, sign in EXALTATION.items()}
+        def _in_kendra_from(pl, seat_house: int) -> bool:
+            return ((pl.rasi_house - seat_house) % 12) + 1 in {1, 4, 7, 10}
+        for name in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+            pl = chart.planets.get(name)
+            if pl is None or dignity_state(name, pl.sign) != "debilitated":
+                continue
+            cands = {SIGN_LORDS[pl.sign], exalted_in.get(pl.sign)}
+            for cand in cands:
+                if not cand or cand == name:
+                    continue
+                cp = chart.planets.get(cand)
+                if cp is None:
+                    continue
+                if cp.rasi_house in {1, 4, 7, 10}:
+                    return True
+                if moon is not None and _in_kendra_from(cp, moon.rasi_house):
+                    return True
+        return False
+
+
+_CHARA_SIGNS = {1, 4, 7, 10}
+_STHIRA_SIGNS = {2, 5, 8, 11}
+
+
+class _Raja251(C.Condition):
+    """Raja 251 (3HCC:8416): the Moon in a kendra OTHER than Lagna, aspected by Jupiter,
+    and "otherwise powerful" — the strength clause rides B1."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None or moon.rasi_house not in {4, 7, 10}:
+            return False
+        if not drishti.aspects_planet("Jupiter", "Moon", chart):
+            return False
+        return _t6_b1_strong(chart, "Moon")
+
+
+class _Raja252(C.Condition):
+    """Raja 252 (3HCC:8419): planets in debilitated rasis occupy EXALTED navamsas.
+    Chart 122's reading is total ("ALL the neecha planets in Rasi are exalted in Amsa")
+    — at least one debilitated planet, and every one of them exalted in amsa."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import EXALTATION, dignity_state
+        chart = ctx.chart
+        neecha = [pl for name, pl in chart.planets.items()
+                  if name in EXALTATION
+                  and dignity_state(name, pl.sign) == "debilitated"]
+        if not neecha:
+            return False
+        return all(getattr(pl, "navamsa_sign", None) == EXALTATION[pl.name]
+                   for pl in neecha)
+
+
+class _Raja253(C.Condition):
+    """Raja 253 (3HCC:8421): Jupiter in Lagna aspected by the 9th lord; Mercury in a
+    kendra aspected by the 11th lord — with Raman's own Chart 123 relaxation: when
+    Mercury IS the 11th lord, that clause is satisfied by self-lordship."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None or jup.rasi_house != 1:
+            return False
+        l9name = _house_lord(9, chart)
+        # Chart 123's principle applied to both clauses: self-lordship satisfies.
+        if l9name != "Jupiter" and not drishti.aspects_planet(l9name, "Jupiter", chart):
+            return False
+        merc = chart.planets.get("Mercury")
+        if merc is None or merc.rasi_house not in _KENDRAS:
+            return False
+        l11name = _house_lord(11, chart)
+        if l11name == "Mercury":
+            return True
+        return drishti.aspects_planet(l11name, "Mercury", chart)
+
+
+class _Raja254(C.Condition):
+    """Raja 254 (3HCC:8548): Saturn in Thula (exaltation) or Kumbha (Moolatrikona,
+    SIGN-level per Raman's own Remark "Saturn must occupy either Thula or Kumbha"),
+    standing in a kendra or trikona, aspected by the 10th lord."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        sat = chart.planets.get("Saturn")
+        if sat is None or sat.sign not in {7, 11}:
+            return False
+        if sat.rasi_house not in {1, 4, 7, 10, 5, 9}:
+            return False
+        l10name = _house_lord(10, chart)
+        if l10name == "Saturn":
+            return False
+        return drishti.aspects_planet(l10name, "Saturn", chart)
+
+
+class _Raja255(C.Condition):
+    """Raja 255 (3HCC:8555): the Moon joining Mars in the 2nd or 3rd, Rahu in the 5th."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon, mars = chart.planets.get("Moon"), chart.planets.get("Mars")
+        if (moon is None or mars is None or moon.rasi_house != mars.rasi_house
+                or moon.rasi_house not in {2, 3}):
+            return False
+        rahu = chart.planets.get("Rahu")
+        return rahu is not None and rahu.rasi_house == 5
+
+
+class _Raja257(C.Condition):
+    """Raja 257 (3HCC:8560): a fixed-sign Lagna whose lord occupies the 10th, Jupiter in
+    the 5th from Lagna and the Moon in a kendra from Jupiter (Gajakesari implied, as
+    Raman notes)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        if chart.asc_sign not in _STHIRA_SIGNS:
+            return False
+        jup = chart.planets.get("Jupiter")
+        if jup is None or jup.rasi_house != 5:
+            return False
+        moon = chart.planets.get("Moon")
+        if moon is None or ((moon.rasi_house - jup.rasi_house) % 12) + 1 not in {1, 4, 7, 10}:
+            return False
+        l1 = chart.planets.get(SIGN_LORDS[chart.asc_sign])
+        return l1 is not None and l1.rasi_house == 10
+
+
+class _Raja258(C.Condition):
+    """Raja 258 (3HCC:8563): the lord of the navamsa occupied by the Moon in a quadrant
+    or trine from Lagna or from Mercury. Raman's own remark — "quite a common
+    combination" — is on the record."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        nav = getattr(moon, "navamsa_sign", None) if moon else None
+        nd = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+        if nd is None:
+            return False
+        if nd.rasi_house in {1, 4, 7, 10, 5, 9}:
+            return True
+        merc = chart.planets.get("Mercury")
+        if merc is None:
+            return False
+        return ((nd.rasi_house - merc.rasi_house) % 12) + 1 in {1, 4, 7, 10, 5, 9}
+
+
+class _Raja259(C.Condition):
+    """Raja 259 (3HCC:8723): Taurus Lagna with the Moon in it; Saturn, the Sun and
+    Jupiter in the 10th, 4th and 7th. From Sambhu Hora Prakasha, with Raman's own
+    skeptical gloss recorded in the effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if chart.asc_sign != 2:
+            return False
+        for name, house in (("Moon", 1), ("Saturn", 10), ("Sun", 4), ("Jupiter", 7)):
+            pl = chart.planets.get(name)
+            if pl is None or pl.rasi_house != house:
+                return False
+        return True
+
+
+class _Raja260(C.Condition):
+    """Raja 260 (3HCC:8743): a movable-sign Lagna whose lord occupies a movable sign; the
+    lord of the navamsa held by a debilitated planet in a kendra or trikona from Lagna
+    (Chart 128: Makara Lagna, Saturn in Thula, Jupiter neecha, dispositor Saturn)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        if chart.asc_sign not in _CHARA_SIGNS:
+            return False
+        l1 = chart.planets.get(SIGN_LORDS[chart.asc_sign])
+        if l1 is None or l1.sign not in _CHARA_SIGNS:
+            return False
+        for name, pl in chart.planets.items():
+            if name in ("Rahu", "Ketu"):
+                continue
+            if dignity_state(name, pl.sign) != "debilitated":
+                continue
+            nav = getattr(pl, "navamsa_sign", None)
+            nd = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+            if nd is not None and nd.rasi_house in {1, 4, 7, 10, 5, 9}:
+                return True
+        return False
+
+
+class _Raja261(C.Condition):
+    """Raja 261 (3HCC:8748): the Lagna lord joined with a debilitated planet; Rahu and
+    Saturn in the 10th, aspected by the 9th lord (Chart 129 holds it completely)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        rahu, sat = chart.planets.get("Rahu"), chart.planets.get("Saturn")
+        if rahu is None or sat is None or rahu.rasi_house != 10 or sat.rasi_house != 10:
+            return False
+        l9name = _house_lord(9, chart)
+        if l9name not in chart.planets or not drishti.aspects_house(l9name, 10, chart):
+            return False
+        l1name = SIGN_LORDS[chart.asc_sign]
+        l1 = chart.planets.get(l1name)
+        if l1 is None:
+            return False
+        return any(name != l1name and name not in ("Rahu", "Ketu")
+                   and pl.rasi_house == l1.rasi_house
+                   and dignity_state(name, pl.sign) == "debilitated"
+                   for name, pl in chart.planets.items())
+
+
+class _Raja262(C.Condition):
+    """Raja 262 (3HCC:8828): at least one of the lords of the 11th, 9th and 2nd in a
+    kendra from the Moon, Jupiter owning the 2nd, 5th or 11th (Kumbha, Simha, Vrishabha
+    or Vrischika lagnas, as Raman spells out)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if not any(_house_lord(h, chart) == "Jupiter" for h in (2, 5, 11)):
+            return False
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return False
+        for h in (11, 9, 2):
+            lord = chart.planets.get(_house_lord(h, chart))
+            if lord is None:
+                continue
+            if ((lord.rasi_house - moon.rasi_house) % 12) + 1 in {1, 4, 7, 10}:
+                return True
+        return False
+
+
+class _Raja263(C.Condition):
+    """Raja 263 (3HCC:8829): Jupiter, Mercury, Venus or the Moon in the 9th, free from
+    combustion, aspected by or associated with FRIENDLY planets (naisargika friends of
+    the occupant)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import naisargika_relation
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        for b in ("Jupiter", "Mercury", "Venus", "Moon"):
+            bp = chart.planets.get(b)
+            if bp is None or bp.rasi_house != 9:
+                continue
+            if getattr(bp, "combust_fraction", 0.0) > 0.0:
+                continue
+            for name, pl in chart.planets.items():
+                if name == b or name in ("Rahu", "Ketu"):
+                    continue
+                if naisargika_relation(b, name) != "friend":
+                    continue
+                if pl.rasi_house == bp.rasi_house or drishti.aspects_planet(name, b, chart):
+                    return True
+        return False
+
+
+class _Vrana(C.Condition):
+    """Vrana 265 (3HCC:8914): the 6th lord, being a malefic, in Lagna, the 8th or the
+    10th — with Raman's own exception encoded: Scorpio is excepted ("the 6th lord happens
+    to be Lagnadhipathi himself")."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if chart.asc_sign == 8:
+            return False
+        l6name = _house_lord(6, chart)
+        if l6name not in set(_T5_MALEFICS):
+            return False
+        l6 = chart.planets.get(l6name)
+        return l6 is not None and l6.rasi_house in {1, 8, 10}
+
+
+class _Sisnavyadhi(C.Condition):
+    """Sisnavyadhi 266 (3HCC:8987): Mercury in Lagna in association with the lords of the
+    6th and the 8th. Self-lordship (Mercury owning the 6th or 8th) satisfies its clause —
+    the Chart 123 precedent, and Chart 132's own loose bhava reading supports it."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        merc = chart.planets.get("Mercury")
+        if merc is None or merc.rasi_house != 1:
+            return False
+        for h in (6, 8):
+            lord = _house_lord(h, chart)
+            if lord == "Mercury":
+                continue
+            pl = chart.planets.get(lord)
+            if pl is None or pl.rasi_house != 1:
+                return False
+        return True
+
+
+class _Kalatrashanda(C.Condition):
+    """Kalatrashanda 267 (3HCC:9026): the 7th lord in the 6th with Venus. Venus as the
+    7th lord itself is the degenerate case — strict-unsatisfied (the 227 rule). Raman's
+    own I-have-not-tested caveat is recorded in the effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        n7 = _house_lord(7, chart)
+        if n7 == "Venus":
+            return False
+        l7 = chart.planets.get(n7)
+        ven = chart.planets.get("Venus")
+        return (l7 is not None and ven is not None
+                and l7.rasi_house == 6 and ven.rasi_house == 6)
+
+
+class _Kushtaroga268(C.Condition):
+    """Kushtaroga 268 (3HCC:9044): the Lagna lord with Mars and Mercury together in the
+    4th or the 12th (the set collapses naturally when the Lagna lord IS Mars or
+    Mercury)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        names = {SIGN_LORDS[chart.asc_sign], "Mars", "Mercury"}
+        planets = [chart.planets.get(n) for n in names]
+        if any(pl is None for pl in planets):
+            return False
+        houses = {pl.rasi_house for pl in planets}
+        return len(houses) == 1 and houses.pop() in {4, 12}
+
+
+class _Kushtaroga269(C.Condition):
+    """Kushtaroga 269 (3HCC:9046): Jupiter in the 6th in association with Saturn and the
+    Moon — all three in the 6th."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        return all((pl := chart.planets.get(n)) is not None and pl.rasi_house == 6
+                   for n in ("Jupiter", "Saturn", "Moon"))
+
+
+class _Bandhana(C.Condition):
+    """Bandhana 271 (3HCC:9302): the lords of Lagna and the 6th in a kendra or trikona
+    with Saturn, Rahu or Ketu — both lords seated in kendra/trikona houses, at least one
+    of the three shadow-heavy malefics conjunct either lord. Raman's note (Saturn as
+    Lagna lord lessens or neutralizes the evil) is recorded in the effect, not gated."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        names = {SIGN_LORDS[chart.asc_sign], _house_lord(6, chart)}
+        lords = [chart.planets.get(n) for n in names]
+        if any(l is None or l.rasi_house not in {1, 4, 7, 10, 5, 9} for l in lords):
+            return False
+        return any(m not in names and (mp := chart.planets.get(m)) is not None
+                   and any(mp.rasi_house == l.rasi_house for l in lords)
+                   for m in ("Saturn", "Rahu", "Ketu"))
+
+
+class _Durmarana(C.Condition):
+    """Durmarana 274 (3HCC:9387): the Moon, aspected by the Lagna lord, in 6/8/12 in
+    association with Saturn or Rahu. The definition's third associate — Mandi — is an
+    OR-arm deliberately omitted pending the Gulika scope ruling (omission only
+    under-fires); recorded here so the arm is restored when Gulika lands."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None or moon.rasi_house not in {6, 8, 12}:
+            return False
+        l1name = SIGN_LORDS[chart.asc_sign]
+        if l1name != "Moon" and not drishti.aspects_planet(l1name, "Moon", chart):
+            return False
+        return any((mp := chart.planets.get(m)) is not None
+                   and mp.rasi_house == moon.rasi_house for m in ("Saturn", "Rahu"))
+
+
+class _Peenasaroga(C.Condition):
+    """Peenasaroga 278 (3HCC:9495): the Moon in the 6th, Saturn in the 8th, a malefic in
+    the 12th, and the Lagna lord in a malefic (cruel) navamsa."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        moon, sat = chart.planets.get("Moon"), chart.planets.get("Saturn")
+        if moon is None or sat is None or moon.rasi_house != 6 or sat.rasi_house != 8:
+            return False
+        if not any(m != "Saturn" and (mp := chart.planets.get(m)) is not None
+                   and mp.rasi_house == 12 for m in _T5_MALEFICS):
+            return False
+        l1 = chart.planets.get(SIGN_LORDS[chart.asc_sign])
+        nav = getattr(l1, "navamsa_sign", None) if l1 else None
+        return nav is not None and SIGN_LORDS[nav] in set(_T5_MALEFICS)
+
+
+class _Thrikalagnana(C.Condition):
+    """Thrikalagnana 234 (3HCC:7729), the Mrudwamsa arm: Jupiter in his OWN navamsa
+    having obtained Mridwamsa (the D60's 19th part). MEASURED (0.05-deg scan): the
+    engine's classical navamsa plus the Manual's D60 rule reproduce Raman's printed
+    arithmetic exactly — the arm is reachable only at 9-9.5 deg of Mithuna, Thula and
+    Kumbha, precisely the three signs and the half-degree he names. The Gopuramsa arm
+    stays deferred on the varga-set audit (see the tranche-11 skip note); its omission
+    only under-fires."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.shashtiamsa import shashtiamsa_index
+        jup = ctx.chart.planets.get("Jupiter")
+        if jup is None:
+            return False
+        nav = getattr(jup, "navamsa_sign", None)
+        if nav is None or SIGN_LORDS[nav] != "Jupiter":
+            return False
+        return shashtiamsa_index(jup.lon) == 19
+
+
+class _ThrikalagnanaGopura(C.Condition):
+    """Thrikalagnana 234's second arm, unlocked by the measured 3HC ladder: Jupiter in
+    Gopuramsa (saptavarga count 4 — the very count Raman's worked example in this
+    combo's Remark walks through) aspected by a benefic."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        from app.raman_saab.primitives.varga_attainment import three_hundred_count
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None or three_hundred_count(chart, "Jupiter") != 4:
+            return False
+        return any(b != "Jupiter" and b in chart.planets
+                   and drishti.aspects_planet(b, "Jupiter", chart)
+                   for b in _T5_BENEFICS)
+
+
+class _Galakarna(C.Condition):
+    """Galakarna 264 (3HCC:8901), the Preta-Puriha arm: Mars in the 3rd house in the
+    shashtiamsa of Preta Puriha (the D60's 12th part, Manual Art. 127). The Mandi+Rahu
+    arm stays in the Gulika queue; its omission only under-fires."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.shashtiamsa import shashtiamsa_index
+        mars = ctx.chart.planets.get("Mars")
+        if mars is None or mars.rasi_house != 3:
+            return False
+        return shashtiamsa_index(mars.lon) == 12
+
+
+class _Bandhubhisthyaktha(C.Condition):
+    """Bandhubhisthyaktha 195 (3HCC:6515): the 4th lord associated with malefics, OR in
+    an evil shashtiamsa, OR in an inimical or debilitation sign — the three-arm Or of
+    Raman's own Remark, with his caution ("much reliance cannot be placed... very
+    general") in the effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        l4name = _house_lord(4, chart)
+        l4 = chart.planets.get(l4name)
+        if l4 is None:
+            return False
+        if _t5_afflicted(chart, l4name):
+            return True
+        if is_cruel_shashtiamsa(l4.lon):
+            return True
+        return dignity_state(l4name, l4.sign) in ("inimical", "debilitated")
+
+
+class _Sahodareesangama(C.Condition):
+    """Sahodareesangama 201 (3HCC:6696): the 7th lord and Venus conjunct in the 4th,
+    aspected by or associated with malefics OR in cruel shashtiamsas."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        n7 = _house_lord(7, chart)
+        if n7 == "Venus":
+            return False
+        from app.raman_saab.doctrine import drishti
+        l7, ven = chart.planets.get(n7), chart.planets.get("Venus")
+        if l7 is None or ven is None or l7.rasi_house != 4 or ven.rasi_house != 4:
+            return False
+        # the afflicting malefic must be EXTERNAL to the pair — a malefic 7th lord (Mars)
+        # does not afflict its own partner into the yoga
+        for m in _T5_MALEFICS:
+            if m in (n7, "Venus") or m not in chart.planets:
+                continue
+            mp = chart.planets[m]
+            if mp.rasi_house == 4:
+                return True
+            if (drishti.aspects_planet(m, n7, chart)
+                    or drishti.aspects_planet(m, "Venus", chart)):
+                return True
+        return is_cruel_shashtiamsa(l7.lon) and is_cruel_shashtiamsa(ven.lon)
+
+
+class _Raja248(C.Condition):
+    """Raja 248 (3HCC:8312): Kumbha Lagna with Venus in it, four planets exalted WITHOUT
+    occupying evil navamsas or shashtiamsas — the negative D60/navamsa filter that made
+    the bare form unencodable is now live; Raman's own warning (in evil amsas "the
+    native may become a tyrant") is what the filter enforces."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        if chart.asc_sign != 11:
+            return False
+        ven = chart.planets.get("Venus")
+        if ven is None or ven.rasi_house != 1:
+            return False
+        malefics = set(_T5_MALEFICS)
+        exalted = [pl for name, pl in chart.planets.items()
+                   if name not in ("Rahu", "Ketu")
+                   and dignity_state(name, pl.sign) == "exalted"]
+        if len(exalted) < 4:
+            return False
+        def _clean(pl) -> bool:
+            nav = getattr(pl, "navamsa_sign", None)
+            if nav is not None and SIGN_LORDS[nav] in malefics:
+                return False
+            return not is_cruel_shashtiamsa(pl.lon)
+        return all(_clean(pl) for pl in exalted)
+
+
+class _Karascheda(C.Condition):
+    """Karascheda 272 (3HCC:9315), encoded to Raman's own CORRECTION, not the bare
+    definition he refuses: Saturn in the 9th and Jupiter in the 3rd, BOTH "highly
+    afflicted and occupying cruel shashtiamsas"."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        sat, jup = chart.planets.get("Saturn"), chart.planets.get("Jupiter")
+        if sat is None or jup is None or sat.rasi_house != 9 or jup.rasi_house != 3:
+            return False
+        if not (is_cruel_shashtiamsa(sat.lon) and is_cruel_shashtiamsa(jup.lon)):
+            return False
+        return _t5_afflicted(chart, "Saturn") and _t5_afflicted(chart, "Jupiter")
+
+
+class _Sirachchheda(C.Condition):
+    """Sirachchheda 273 (3HCC:9341): Venus with the 6th lord (Chart 135 counts Venus AS
+    the 6th lord as fulfilling this — self-lordship satisfies); the Sun or Saturn in
+    conjunction with Rahu occupying a cruel shashtiamsa — the original's reading, which
+    Raman quotes and Chart 135 applies (there with Ketu, so the node clause admits
+    either node per his own application)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        n6 = _house_lord(6, chart)
+        if n6 != "Venus":
+            l6, ven = chart.planets.get(n6), chart.planets.get("Venus")
+            if l6 is None or ven is None or l6.rasi_house != ven.rasi_house:
+                return False
+        for luminary in ("Sun", "Saturn"):
+            lp = chart.planets.get(luminary)
+            if lp is None or not is_cruel_shashtiamsa(lp.lon):
+                continue
+            for node in ("Rahu", "Ketu"):
+                np_ = chart.planets.get(node)
+                if np_ is not None and np_.rasi_house == lp.rasi_house:
+                    return True
+        return False
+
+
+class _YuddheMarana(C.Condition):
+    """Yuddhe Marana 275 (3HCC:9418), per Raman's own broadening: the 6th OR 8th lord in
+    conjunction with the 3rd lord and one of Saturn/Rahu/Mandi, the conjoined lords
+    occupying cruel amsas (read as shashtiamsas — the chapter's idiom, 273's usage).
+    Both named lords must hold cruel amsas; over-strictness only under-fires."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        n3 = _house_lord(3, chart)
+        l3 = chart.planets.get(n3)
+        if l3 is None or not is_cruel_shashtiamsa(l3.lon):
+            return False
+        for h in (6, 8):
+            nl = _house_lord(h, chart)
+            if nl == n3:
+                continue
+            lord = chart.planets.get(nl)
+            if lord is None or lord.rasi_house != l3.rasi_house:
+                continue
+            if not is_cruel_shashtiamsa(lord.lon):
+                continue
+            house = lord.rasi_house
+            third = None
+            for m in ("Saturn", "Rahu"):
+                if m in (nl, n3):
+                    continue
+                mp = chart.planets.get(m)
+                if mp is not None and mp.rasi_house == house:
+                    third = m
+                    break
+            if third is None:
+                ug = getattr(chart, "upagrahas", None) or {}
+                mandi = ug.get("Mandi")
+                seat = ((getattr(mandi, "sign", 0) - chart.asc_sign) % 12) + 1 if mandi else 0
+                if mandi is not None and seat == house:
+                    third = "Mandi"
+            if third is not None:
+                return True
+        return False
+
+
+class _Sanghataka276(C.Condition):
+    """Sanghataka Marana 276 (3HCC:9463): many (two or more) evil planets in the 8th,
+    each in a martian rasi or navamsa AND in an evil sub-division (cruel
+    shashtiamsa)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        count = 0
+        for m in _T5_MALEFICS:
+            mp = chart.planets.get(m)
+            if mp is None or mp.rasi_house != 8:
+                continue
+            martian = mp.sign in {1, 8} or getattr(mp, "navamsa_sign", None) in {1, 8}
+            if martian and is_cruel_shashtiamsa(mp.lon):
+                count += 1
+        return count >= 2
+
+
+class _Sanghataka277(C.Condition):
+    """Sanghataka Marana 277 (3HCC:9477): the Sun, Rahu and Saturn, aspected by the 8th
+    lord, joining evil amsas (cruel shashtiamsas). Self-lordship on the aspect clause
+    satisfies (the Chart 123 precedent)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        from app.raman_saab.primitives.shashtiamsa import is_cruel_shashtiamsa
+        chart = ctx.chart
+        l8name = _house_lord(8, chart)
+        if l8name not in chart.planets:
+            return False
+        for name in ("Sun", "Rahu", "Saturn"):
+            pl = chart.planets.get(name)
+            if pl is None or not is_cruel_shashtiamsa(pl.lon):
+                return False
+            if l8name != name and not drishti.aspects_planet(l8name, name, chart):
+                return False
+        return True
+
+
+class _Raja256(C.Condition):
+    """Raja 256 (3HCC:8557), unlocked by the measured 3HC ladder: the 10th lord in the
+    9th occupying an exalted or friendly navamsa — Chart 125's own application ALSO
+    accepts the own navamsa ("occupying his own (instead of exalted or friendly)
+    Navamsa... the yoga is illustrated"), so own is admitted per Raman's practice — and
+    having attained Uttamamsa (saptavarga count 3, "his own vargas thrice")."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.primitives.varga_attainment import three_hundred_count
+        chart = ctx.chart
+        l10name = _house_lord(10, chart)
+        l10 = chart.planets.get(l10name)
+        if l10 is None or l10.rasi_house != 9:
+            return False
+        nav = getattr(l10, "navamsa_sign", None)
+        if nav is None:
+            return False
+        if dignity_state(l10name, nav) not in ("exalted", "friendly", "own"):
+            return False
+        return three_hundred_count(chart, l10name) == 3
+
+
+def _upagraha_house(chart, name: str) -> int | None:
+    """Whole-sign house of an upagraha (Gulika/Mandi) from chart.upagrahas, or None.
+
+    The computation itself is the engine's HPA-cited ephemeris layer
+    (chart/upagrahas.py); natal-yoga use is the USER-APPROVED scope ruling of
+    2026-08-11 (the mechanics are Raman's own, published in HPA — the Prasna Marga
+    wall was never about them). Stated-position charts carry no upagrahas and these
+    conditions stay silent there; the golden corpus computes them from birth data."""
+    ug = getattr(chart, "upagrahas", None)
+    if not ug or name not in ug:
+        return None
+    return ((ug[name].sign - chart.asc_sign) % 12) + 1
+
+
+class _Sarpaganda(C.Condition):
+    """Sarpaganda 174 (3HCC:5975): Rahu in the 2nd house with Mandi."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        rahu = chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 2:
+            return False
+        return _upagraha_house(chart, "Mandi") == 2
+
+
+class _Durmukha169(C.Condition):
+    """Durmukha 169 (3HCC:5881): the 2nd lord, being evil, joins Gulika OR occupies an
+    unfriendly-and-debilitated navamsa with malefics."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        l2name = _house_lord(2, chart)
+        if l2name not in set(_T5_MALEFICS):
+            return False
+        l2 = chart.planets.get(l2name)
+        if l2 is None:
+            return False
+        gh = _upagraha_house(chart, "Gulika")
+        if gh is not None and gh == l2.rasi_house:
+            return True
+        nav = getattr(l2, "navamsa_sign", None)
+        if nav is None or dignity_state(l2name, nav) not in ("inimical", "debilitated"):
+            return False
+        return any(m != l2name and (mp := chart.planets.get(m)) is not None
+                   and mp.rasi_house == l2.rasi_house for m in _T5_MALEFICS)
+
+
+class _Kapata204(C.Condition):
+    """Kapata 204 (3HCC:6718): the 4th lord joining Saturn, Mandi and Rahu, aspected by
+    malefics."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        l4name = _house_lord(4, chart)
+        l4 = chart.planets.get(l4name)
+        if l4 is None or l4name == "Saturn":
+            return False
+        sat, rahu = chart.planets.get("Saturn"), chart.planets.get("Rahu")
+        if (sat is None or rahu is None or sat.rasi_house != l4.rasi_house
+                or rahu.rasi_house != l4.rasi_house):
+            return False
+        if _upagraha_house(chart, "Mandi") != l4.rasi_house:
+            return False
+        return any(m not in (l4name, "Saturn", "Rahu") and m in chart.planets
+                   and drishti.aspects_planet(m, l4name, chart) for m in _T5_MALEFICS)
+
+
+class _Galakarna264a(C.Condition):
+    """Galakarna 264's first arm (3HCC:8901): the 3rd house occupied by Mandi and
+    Rahu."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        rahu = chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 3:
+            return False
+        return _upagraha_house(chart, "Mandi") == 3
+
+
+class _Kshayaroga(C.Condition):
+    """Kshayaroga 270 (3HCC:9089): Rahu in the 6th, Mandi in a kendra from Lagna, the
+    Lagna lord in the 8th."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        rahu = chart.planets.get("Rahu")
+        if rahu is None or rahu.rasi_house != 6:
+            return False
+        mh = _upagraha_house(chart, "Mandi")
+        if mh not in {1, 4, 7, 10}:
+            return False
+        l1 = chart.planets.get(SIGN_LORDS[chart.asc_sign])
+        return l1 is not None and l1.rasi_house == 8
+
+
+class _DurmaranaMandi(C.Condition):
+    """Durmarana 274's Mandi associate (3HCC:9387) — the arm documented as omitted in
+    tranche 12, restored now that the scope ruling landed: the Moon, aspected by the
+    Lagna lord, in 6/8/12 in association with Mandi."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None or moon.rasi_house not in {6, 8, 12}:
+            return False
+        l1name = SIGN_LORDS[chart.asc_sign]
+        if l1name != "Moon" and not drishti.aspects_planet(l1name, "Moon", chart):
+            return False
+        return _upagraha_house(chart, "Mandi") == moon.rasi_house
+
+
+def _t14_waning(chart) -> bool:
+    """Waning Moon: elongation Sun->Moon beyond 180 deg (Krishna paksha)."""
+    sun, moon = chart.planets.get("Sun"), chart.planets.get("Moon")
+    if sun is None or moon is None:
+        return False
+    return ((moon.lon - sun.lon) % 360.0) > 180.0
+
+
+class _Pittaroga(C.Condition):
+    """Pittaroga 279 (3HCC:9544): the 6th occupied by the Sun conjunct a malefic,
+    further aspected by another malefic."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        sun = chart.planets.get("Sun")
+        if sun is None or sun.rasi_house != 6:
+            return False
+        joined = [m for m in _T5_MALEFICS if m != "Sun"
+                  and (mp := chart.planets.get(m)) is not None
+                  and mp.rasi_house == 6]
+        if not joined:
+            return False
+        return any(m != "Sun" and m not in joined and m in chart.planets
+                   and drishti.aspects_planet(m, "Sun", chart) for m in _T5_MALEFICS)
+
+
+class _Vikalangapatni(C.Condition):
+    """Vikalangapatni 280 (3HCC:9588): Venus and the Sun in the 7th, 9th or 5th — with
+    Raman's caution (mere presence cannot cause it; further affliction needed) in the
+    effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        ven, sun = chart.planets.get("Venus"), chart.planets.get("Sun")
+        return (ven is not None and sun is not None
+                and ven.rasi_house in {5, 7, 9} and sun.rasi_house in {5, 7, 9})
+
+
+class _Putrakalatraheena(C.Condition):
+    """Putrakalatraheena 281 (3HCC:9601): the WANING Moon in the 5th, with malefics in
+    the 12th, the 7th and Lagna — one in each, Raman's 36-variation reading."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None or moon.rasi_house != 5 or not _t14_waning(chart):
+            return False
+        def _malefic_in(h: int) -> bool:
+            return any((mp := chart.planets.get(m)) is not None and mp.rasi_house == h
+                       for m in _T5_MALEFICS)
+        return _malefic_in(12) and _malefic_in(7) and _malefic_in(1)
+
+
+class _Bharyasahavyabhichara(C.Condition):
+    """Bharyasahavyabhichara 282 (3HCC:9621): Venus, Saturn and Mars joining the Moon in
+    the 7th house."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        return all((pl := chart.planets.get(n)) is not None and pl.rasi_house == 7
+                   for n in ("Venus", "Saturn", "Mars", "Moon"))
+
+
+class _Vamsacheda(C.Condition):
+    """Vamsacheda 283 (3HCC:9701): the Moon, Venus and malefics in the 10th, 7th and 4th
+    respectively — Or Raman's own experience form ("the Moon and Venus in the 7th and
+    malefics in the 4th and 10th")."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon, ven = chart.planets.get("Moon"), chart.planets.get("Venus")
+        if moon is None or ven is None:
+            return False
+        def _malefic_in(h: int) -> bool:
+            return any((mp := chart.planets.get(m)) is not None and mp.rasi_house == h
+                       for m in _T5_MALEFICS)
+        if moon.rasi_house == 10 and ven.rasi_house == 7 and _malefic_in(4):
+            return True
+        return (moon.rasi_house == 7 and ven.rasi_house == 7
+                and _malefic_in(4) and _malefic_in(10))
+
+
+class _Guhyaroga(C.Condition):
+    """Guhyaroga 284 (3HCC:9717): the Moon joining malefics, in the navamsa of Cancer or
+    Scorpio — with Raman's own caution (so general a definition is not warranted by
+    experience) in the effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None or getattr(moon, "navamsa_sign", None) not in {4, 8}:
+            return False
+        return any(m != "Moon" and (mp := chart.planets.get(m)) is not None
+                   and mp.rasi_house == moon.rasi_house for m in _T5_MALEFICS)
+
+
+class _Angaheena(C.Condition):
+    """Angaheena 285 (3HCC:9748): the Moon in the 10th, Mars in the 7th and Saturn in
+    the 2nd — all counted FROM THE SUN."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        sun = chart.planets.get("Sun")
+        if sun is None:
+            return False
+        def _from_sun(name: str, want: int) -> bool:
+            pl = chart.planets.get(name)
+            return (pl is not None
+                    and ((pl.rasi_house - sun.rasi_house) % 12) + 1 == want)
+        return _from_sun("Moon", 10) and _from_sun("Mars", 7) and _from_sun("Saturn", 2)
+
+
+class _Swetakushta(C.Condition):
+    """Swetakushta 286 (3HCC:9769): Mars in the 2nd, Saturn in the 12th (Chart 140's own
+    reading of the garbled print), the Moon in Lagna, the Sun in the 7th. Raman's
+    mitigation (Jupiter's aspect on Mars or Saturn checks the disease) is in the
+    effect, not gated."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        for name, house in (("Mars", 2), ("Saturn", 12), ("Moon", 1), ("Sun", 7)):
+            pl = chart.planets.get(name)
+            if pl is None or pl.rasi_house != house:
+                return False
+        return True
+
+
+class _PisachaGrastha(C.Condition):
+    """Pisacha Grastha 287 (3HCC:9792): Rahu in Lagna conjunct the Moon, malefics in
+    trines."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        rahu, moon = chart.planets.get("Rahu"), chart.planets.get("Moon")
+        if (rahu is None or moon is None or rahu.rasi_house != 1
+                or moon.rasi_house != 1):
+            return False
+        return any(m != "Rahu" and (mp := chart.planets.get(m)) is not None
+                   and mp.rasi_house in {5, 9} for m in _T5_MALEFICS)
+
+
+class _Vatharoga(C.Condition):
+    """Vatharoga 290 (3HCC:9879): Jupiter in Lagna and Saturn in the 7th."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        jup, sat = chart.planets.get("Jupiter"), chart.planets.get("Saturn")
+        return (jup is not None and sat is not None
+                and jup.rasi_house == 1 and sat.rasi_house == 7)
+
+
+class _Matibhramana(C.Condition):
+    """Matibhramana 291-294 (3HCC:9941): the four insanity dispositions — 291 Jupiter in
+    Lagna with Mars in the 7th; 292 Saturn in Lagna with Mars in 9/5/7; 293 Saturn in
+    the 12th with the waning Moon; 294 the Moon and Mercury in a kendra aspected by or
+    conjoined with any other planet. Raman's own reservations (291 "does not seem as
+    harmful"; his conviction that the Moon and Mercury must be heavily afflicted) ride
+    in the effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        jup, mars = chart.planets.get("Jupiter"), chart.planets.get("Mars")
+        sat, moon = chart.planets.get("Saturn"), chart.planets.get("Moon")
+        merc = chart.planets.get("Mercury")
+        if (jup is not None and mars is not None
+                and jup.rasi_house == 1 and mars.rasi_house == 7):
+            return True
+        if (sat is not None and mars is not None
+                and sat.rasi_house == 1 and mars.rasi_house in {9, 5, 7}):
+            return True
+        if (sat is not None and moon is not None and sat.rasi_house == 12
+                and moon.rasi_house == 12 and _t14_waning(chart)):
+            return True
+        if (moon is not None and merc is not None
+                and moon.rasi_house in _KENDRAS and merc.rasi_house in _KENDRAS):
+            for name, pl in chart.planets.items():
+                if name in ("Moon", "Mercury"):
+                    continue
+                for target in ("Moon", "Mercury"):
+                    tp = chart.planets[target]
+                    if (pl.rasi_house == tp.rasi_house
+                            or drishti.aspects_planet(name, target, chart)):
+                        return True
+        return False
+
+
+class _Khalwata(C.Condition):
+    """Khalwata 295 (3HCC:10185): the ascendant a malefic sign (Aries, Leo, Scorpio,
+    Capricorn, Aquarius — Raman's own enumeration) or Sagittarius or Taurus, aspected by
+    malefic planets."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        if chart.asc_sign not in {1, 5, 8, 10, 11, 9, 2}:
+            return False
+        if not chart.planets:
+            return False
+        return any(m in chart.planets and drishti.aspects_house(m, 1, chart)
+                   for m in _T5_MALEFICS)
+
+
+class _Rajabhrashta(C.Condition):
+    """Rajabhrashta 297 (3HCC:10213): the lords of Arudha Lagna and Arudha Dwadasa in
+    conjunction — the Arudhas computed by Raman's own plain-counting formula, with his
+    two worked examples in the Remark reproduced in the tests."""
+
+    @staticmethod
+    def _arudha_sign(chart, house_sign: int) -> int | None:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        lord = chart.planets.get(SIGN_LORDS[house_sign])
+        if lord is None:
+            return None
+        n = ((lord.sign - house_sign) % 12) + 1
+        return ((lord.sign - 1) + (n - 1)) % 12 + 1
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        al = self._arudha_sign(chart, chart.asc_sign)
+        twelfth = ((chart.asc_sign - 1) + 11) % 12 + 1
+        a12 = self._arudha_sign(chart, twelfth)
+        if al is None or a12 is None:
+            return False
+        n_al, n_a12 = SIGN_LORDS[al], SIGN_LORDS[a12]
+        if n_al == n_a12:
+            return False
+        p1, p2 = chart.planets.get(n_al), chart.planets.get(n_a12)
+        return p1 is not None and p2 is not None and p1.rasi_house == p2.rasi_house
+
+
+class _RajaYogaBhanga298(C.Condition):
+    """Raja Yoga Bhanga 298 (3HCC:10246): Leo ascendant with Saturn exalted (Libra)
+    occupying a DEBILITATED navamsa — Raman's Remark fixes the window (Libra 20 to
+    23-20, the first pada of Visakha) and Chart 143 applies it. The definition's trailing
+    "or aspected by benefics" clause is print-garbled (Chart 143's Saturn is aspected by
+    MARS) and is deliberately not encoded."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        if chart.asc_sign != 5:
+            return False
+        sat = chart.planets.get("Saturn")
+        if sat is None or sat.sign != 7:
+            return False
+        nav = getattr(sat, "navamsa_sign", None)
+        return nav is not None and dignity_state("Saturn", nav) == "debilitated"
+
+
+class _RajaYogaBhanga299(C.Condition):
+    """Raja Yoga Bhanga 299 (3HCC:10249): the Sun in the 10th degree of Libra — deep
+    debilitation (lon 189-190). Raman's own doubt (mere debilitation cannot destroy all
+    Raja yogas) rides in the effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        sun = ctx.chart.planets.get("Sun")
+        return sun is not None and 189.0 <= sun.lon < 190.0
+
+
+class _Gohanta(C.Condition):
+    """Gohanta 300 (3HCC:10286): a malefic in a kendra devoid of benefic aspect, Jupiter
+    in the 8th — with Raman's I-have-not-tested caveat in the effect."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        jup = chart.planets.get("Jupiter")
+        if jup is None or jup.rasi_house != 8:
+            return False
+        for m in _T5_MALEFICS:
+            mp = chart.planets.get(m)
+            if mp is None or mp.rasi_house not in _KENDRAS:
+                continue
+            aspected = any(b in chart.planets
+                           and (drishti.aspects_planet(b, m, chart)
+                                or chart.planets[b].rasi_house == mp.rasi_house)
+                           for b in _T5_BENEFICS)
+            if not aspected:
+                return True
+        return False
+
+
+class _SaturnOwnsJoinsOrAfflictsSecond(C.Condition):
+    """Sraddhannabhuktha (3HCC:5963): Saturn owns the 2nd, OR joins the 2nd lord, OR the 2nd
+    is aspected by a debilitated Saturn."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        lord2 = _house_lord(2, chart)
+        if lord2 == "Saturn":
+            return True
+        sat, l2 = chart.planets.get("Saturn"), chart.planets.get(lord2)
+        if sat is None:
+            return False
+        if l2 is not None and sat.rasi_house == l2.rasi_house:
+            return True
+        return (dignity_state("Saturn", sat.sign) == "debilitated"
+                and drishti.aspects_house("Saturn", 2, chart))
+
+
 # ── the encoded yogas ────────────────────────────────────────────────────────
 YOGAS: tuple[YogaRecord, ...] = (
     # — Pancha Mahapurusha (the five 'great men' yogas; Varahamihira, 3HC:3432-4060) —
@@ -923,7 +3568,841 @@ YOGAS: tuple[YogaRecord, ...] = (
         condition=_DispositorOfNthLordIs(2, "Saturn"),
         effect=("Always loving falsehood and indulging in fraudulent schemes."),
         source=Citation("HPA-20", 225)),
+    # — first 3HC tranche against the clean copies (2026-08-08). Selection governed by the
+    # deferral precedent above: nothing strength-gated, nothing measured-common, nothing whose
+    # parse Raman leaves ambiguous. Skips recorded below the registry. —
+    YogaRecord(
+        id="Y.MATSYA", name="Matsya Yoga", kind="other",
+        # 3HCH:1814: "Malefics should be disposed in Lagna and the 9th; the fifth house should
+        # contain both malefics and benefics; and the fourth and 8th should be occupied by
+        # malefics." Pure occupancy, six clauses, all whole-sign.
+        condition=C.And(
+            C.CountInHouse(1, 1, "malefic"), C.CountInHouse(9, 1, "malefic"),
+            C.CountInHouse(5, 1, "malefic"), C.CountInHouse(5, 1, "benefic"),
+            C.CountInHouse(4, 1, "malefic"), C.CountInHouse(8, 1, "malefic")),
+        effect=("A clever prophet, an ocean of kindness, intelligent, well-behaving, famous "
+                "and learned."),
+        source=Citation("3HCH", 1814)),
+    YogaRecord(
+        id="Y.RAVI", name="Ravi Yoga", kind="other",
+        # 3HCH:1982: "The Sun should join the 10th and the lord of the 10th must be in the 3rd
+        # in conjunction with Saturn."
+        condition=C.And(
+            C.InRashiHouse("Sun", 10),
+            _LordOfHouseInHouseWith(10, 3, "Saturn")),
+        effect=("Respected by rulers, well-versed in sciences, famous after the fifteenth "
+                "year, highly passionate, simple in food, lotus-eyed."),
+        source=Citation("3HCH", 1982)),
+    YogaRecord(
+        id="Y.GAURI", name="Gauri Yoga", kind="other",
+        condition=_GauriNavamsaChain(),
+        effect=("Belongs to a respectable family, owns lands, charitable, performs religious "
+                "rites; sons of good character; praised by all."),
+        source=Citation("3HCH", 1637)),
+    YogaRecord(
+        id="Y.BRAHMA", name="Brahma Yoga", kind="other",
+        # 3HCH:1931: "Jupiter and Venus are in Kendras respectively from the lords of the 9th
+        # and 11th, and Mercury is in a similar position from the lord of either Lagna or the
+        # 10th." All natural benefics involved — Raman remarks so himself.
+        condition=C.And(
+            _KendraFromLordOf("Jupiter", 9),
+            _KendraFromLordOf("Venus", 11),
+            C.Or(_KendraFromLordOf("Mercury", 1), _KendraFromLordOf("Mercury", 10))),
+        effect=("Luxurious living; respected by the learned; highly learned, long-lived, "
+                "charitable and bent on good deeds."),
+        source=Citation("3HCH", 1931)),
+    YogaRecord(
+        id="Y.NISHTURABHASHI", name="Nishturabhashi Yoga", kind="other",
+        # 3HCC:10205 — the FIRST yoga encoded from the complete edition (163-300): "The Moon
+        # must be in conjunction with Saturn." Raman neutralises it under Jupiter aspect in the
+        # same passage; the Not() arm is his cancellation, not an invention.
+        condition=C.And(C.Conjunct("Moon", "Saturn"),
+                        C.Not(C.Aspects("Jupiter", "Moon"))),
+        effect=("Harsh in speech."),
+        source=Citation("3HCC", 10205)),
+    # — tranche 2 (2026-08-09): Lakshmi unlocked by measurement; a far-half block on the 2nd
+    # house (speech/face/eyes) and the Andha pair. Skips recorded below. —
+    YogaRecord(
+        id="Y.LAKSHMI", name="Lakshmi Yoga", kind="dhana",
+        condition=_LakshmiYoga(),
+        effect=("Wealthy, noble, learned; high integrity and reputation, handsome; a good "
+                "ruler enjoying the pleasures and comforts of life."),
+        source=Citation("3HCH", 1557)),
+    YogaRecord(
+        id="Y.MOOKA", name="Mooka Yoga", kind="other",
+        # 3HCC:5801: "The 2nd lord should join the 8th with Jupiter."
+        condition=_LordOfHouseInHouseWith(2, 8, "Jupiter"),
+        effect=("The person becomes dumb."),
+        source=Citation("3HCC", 5801)),
+    YogaRecord(
+        id="Y.NETRANASA", name="Netranasa Yoga", kind="other",
+        condition=_LordsAllInLagnaOrNeechamsa(),
+        effect=("Loses eyesight owing to the displeasure of the rulers."),
+        source=Citation("3HCC", 5810)),
+    YogaRecord(
+        id="Y.SUMUKHA", name="Sumukha Yoga", kind="other",
+        # combination 166 (2nd lord in a kendra aspected by benefics, OR benefics in the 2nd)
+        # PLUS combination 167 (graduated 2026-08-09: the Gopuramsa primitive now exists —
+        # 2nd lord in a dignified/friendly kendra whose sign-lord attains rung 8).
+        condition=C.Or(_NthLordInKendraAspectedByBenefic(2),
+                       C.CountInHouse(2, 1, "benefic"),
+                       _Sumukha167()),
+        effect=("An attractive and smiling face."),
+        source=Citation("3HCC", 5853)),
+    YogaRecord(
+        id="Y.DURMUKHA", name="Durmukha Yoga", kind="other",
+        # combination 168 Or 169 (graduated 2026-08-11 on the Gulika scope ruling).
+        condition=C.Or(C.And(C.CountInHouse(2, 1, "malefic"),
+                             _NthLordWithMaleficOrDebilitated(2)),
+                       _Durmukha169()),
+        effect=("An ugly or repulsive face; angry and irritable."),
+        source=Citation("3HCC", 5878)),
+    YogaRecord(
+        id="Y.SRADDHANNABHUKTHA", name="Sraddhannabhuktha Yoga", kind="other",
+        condition=_SaturnOwnsJoinsOrAfflictsSecond(),
+        effect=("Gets food offered at obsequial rites."),
+        source=Citation("3HCC", 5963)),
+    YogaRecord(
+        id="Y.ANDHA", name="Andha Yoga", kind="other",
+        # both printed forms (3HCC:9829): 288 — the Sun rising in Lagna with Rahu, malefics in
+        # the trikonas; 289 — Mars, Moon, Saturn, Sun in the 2nd, 6th, 12th, 8th respectively.
+        condition=C.Or(
+            C.And(C.InRashiHouse("Sun", 1), C.InRashiHouse("Rahu", 1),
+                  C.CountInHouse(5, 1, "malefic"), C.CountInHouse(9, 1, "malefic")),
+            C.And(C.InRashiHouse("Mars", 2), C.InRashiHouse("Moon", 6),
+                  C.InRashiHouse("Saturn", 12), C.InRashiHouse("Sun", 8))),
+        effect=("Born stone-blind."),
+        source=Citation("3HCC", 9829)),
+    # — tranche 3 (2026-08-09). NOTE the editions NUMBER these differently (Vishnu is 62 in
+    # the complete ed., 64 in the truncated scans; Go 67 vs 69; Indra 64 vs 66) — citations
+    # are by LINE in the edition actually quoted, which is what the source lock freezes. —
+    YogaRecord(
+        id="Y.INDRA", name="Indra Yoga", kind="raja",
+        # 3HCH:1978: "the lords of the 5th and 11th interchange their houses and the Moon is
+        # in the 5th."
+        condition=C.And(_MutualHouseExchange(5, 11), C.InRashiHouse("Moon", 5)),
+        effect=("Highly courageous, lasting fame, a king of kings, good enjoyments."),
+        source=Citation("3HCH", 1978)),
+    YogaRecord(
+        id="Y.TRILOCHANA", name="Trilochana Yoga", kind="other",
+        # 3HCH:2073: "The Sun, the Moon and Mars should be in trines from each other."
+        condition=_MutualTrines(("Sun", "Moon", "Mars")),
+        effect=("Great wealth, a terror to his enemies, highly intelligent, good longevity."),
+        source=Citation("3HCH", 2073)),
+    YogaRecord(
+        id="Y.KULAVARDHANA", name="Kulavardhana Yoga", kind="other",
+        # 3HCH:2095: "All planets should be in the 5th from Lagna, the Sun and the Moon" —
+        # three variants, one per reference point, per Raman's remark.
+        condition=C.Or(_AllSevenInFifthFrom("Lagna"), _AllSevenInFifthFrom("Sun"),
+                       _AllSevenInFifthFrom("Moon")),
+        effect=("Unbroken line of successors; wealthy, healthy and long-lived."),
+        source=Citation("3HCH", 2095)),
+    YogaRecord(
+        id="Y.VISHNU", name="Vishnu Yoga", kind="dhana",
+        condition=_VishnuChain(),
+        effect=("Leads an enjoyable life; wealthy, famous, learned in many arts."),
+        source=Citation("3HCC", 3495)),
+    YogaRecord(
+        id="Y.GO", name="Go Yoga", kind="other",
+        condition=_GoYoga(),
+        effect=("Hails from a respectable family; wealthy, of good conduct."),
+        source=Citation("3HCC", 3787)),
+    YogaRecord(
+        id="Y.VAKCHALANA", name="Vakchalana Yoga", kind="other",
+        condition=_Vakchalana(),
+        effect=("A stammerer."),
+        source=Citation("3HCC", 5991)),
+    YogaRecord(
+        id="Y.VISHAPRAYOGA", name="Vishaprayoga Yoga", kind="other",
+        condition=_Vishaprayoga(),
+        effect=("Subjected to poisoning."),
+        source=Citation("3HCC", 6003)),
+    # — tranche 4 (2026-08-09): the 3rd/4th-house block, complete-edition citations. —
+    YogaRecord(
+        id="Y.EKABHAGINI", name="Ekabhagini Yoga", kind="other",
+        condition=_Ekabhagini(),
+        effect=("Has only one sister."),
+        source=Citation("3HCC", 6100)),
+    YogaRecord(
+        id="Y.DWADASA_SAHODARA", name="Dwadasa Sahodara Yoga", kind="other",
+        condition=_DwadasaSahodara(),
+        effect=("The third of twelve siblings — Raman's own remark: the yoga is typical "
+                "inasmuch as it is rare."),
+        source=Citation("3HCC", 6116)),
+    YogaRecord(
+        id="Y.PARAKRAMA", name="Parakrama Yoga", kind="other",
+        condition=_Parakrama(),
+        effect=("Possesses much courage."),
+        source=Citation("3HCC", 6194)),
+    YogaRecord(
+        id="Y.SATKATHADISRAVANA", name="Satkathadisravana Yoga", kind="other",
+        condition=_Satkathadisravana(),
+        effect=("Interested in high-class literature and religious discourse."),
+        source=Citation("3HCC", 6306)),
+    YogaRecord(
+        id="Y.UTTAMA_GRIHA", name="Uttama Griha Yoga", kind="other",
+        condition=_NthLordWithBeneficsInKendraTrikona(4),
+        effect=("Possesses good houses."),
+        source=Citation("3HCC", 6320)),
+    YogaRecord(
+        id="Y.VICHITRA_SAUDHA", name="Vichitra Saudha Prakara Yoga", kind="other",
+        condition=_FourPlanetConjunction4th10thSaturnMars(),
+        effect=("Acquires innumerable mansions."),
+        source=Citation("3HCC", 6358)),
+    # — tranche 5 (2026-08-09): the 4th-house/mother block (189-210, the mechanical
+    #   dozen). Paired combos with IDENTICAL printed results merge as Or-arms (the
+    #   Sumukha-166/167 precedent); Bandhu Pujya 193/194 stay separate because Raman's
+    #   Remarks distinguish their results (respected vs loved). —
+    YogaRecord(
+        id="Y.AYATNA_GRIHA", name="Ayatna Griha Prapta Yoga", kind="other",
+        # 189 @3HCC:6404 Or 190 @3HCC:6406 — same printed result.
+        condition=C.Or(_AyatnaGriha189(), _AyatnaGriha190()),
+        effect=("Acquires substantial house property with hardly any effort."),
+        source=Citation("3HCC", 6404)),
+    YogaRecord(
+        id="Y.GRIHANASA", name="Grihanasa Yoga", kind="other",
+        # 191 @3HCC:6435 Or 192 @3HCC:6437 — both re-read per Raman's Remarks: the
+        # "12th" is the 12th FROM THE 4TH, i.e. the 3rd house.
+        condition=C.Or(_Grihanasa191(), _Grihanasa192()),
+        effect=("Loses the house property."),
+        source=Citation("3HCC", 6435)),
+    YogaRecord(
+        id="Y.BANDHU_PUJYA_193", name="Bandhu Pujya Yoga", kind="other",
+        condition=_BandhuPujya193(),
+        effect=("Respected by relatives and friends."),
+        source=Citation("3HCC", 6459)),
+    YogaRecord(
+        id="Y.BANDHU_PUJYA_194", name="Bandhu Pujya Yoga", kind="other",
+        condition=_BandhuPujya194(),
+        effect=("Loved by relatives and friends."),
+        source=Citation("3HCC", 6462)),
+    YogaRecord(
+        id="Y.MATRUGAMI", name="Matrugami Yoga", kind="other",
+        condition=_Matrugami(),
+        effect=("Raman's printed verdict: guilty of adultery with the mother — he "
+                "extends 'mother' to women held in equal esteem."),
+        source=Citation("3HCC", 6666)),
+    YogaRecord(
+        id="Y.KAPATA", name="Kapata Yoga", kind="other",
+        # 202 @3HCC:6711 Or 203 @3HCC:6715 Or 204 @3HCC:6718 (graduated 2026-08-11 on
+        # the Gulika scope ruling) — same printed result (hypocrisy).
+        condition=C.Or(_Kapata202(), _Kapata203(), _Kapata204()),
+        effect=("Becomes a hypocrite — Raman: common in the charts of diplomats, "
+                "'diplomacy always implies dignified hypocrisy'."),
+        source=Citation("3HCC", 6711)),
+    YogaRecord(
+        id="Y.MATRU_SATRUTWA", name="Matru Satrutwa Yoga", kind="other",
+        condition=_MatruSatrutwa(),
+        effect=("Hates his mother."),
+        source=Citation("3HCC", 6798)),
+    YogaRecord(
+        id="Y.VAHANA", name="Vahana Yoga", kind="other",
+        # 209 @3HCC:6830 Or 210 @3HCC:6832 — same printed result.
+        condition=C.Or(_Vahana209(), _Vahana210()),
+        effect=("Acquires material comforts and conveyances."),
+        source=Citation("3HCC", 6830)),
+    # — tranche 6 (2026-08-09): clearing the queued bars — the strength-gated pair, the
+    #   Matrunasa pair, Nishkapata-205, Matru Sneha, Anapathya. —
+    YogaRecord(
+        id="Y.MATRUDEERGHAYUR", name="Matrudeerghayur Yoga", kind="other",
+        # 196 @3HCC:6535 Or 197 @3HCC:6538 — same printed result.
+        condition=C.Or(_Matrudeerghayur196(), _Matrudeerghayur197()),
+        effect=("The native's mother lives long."),
+        source=Citation("3HCC", 6535)),
+    YogaRecord(
+        id="Y.MATRUNASA", name="Matrunasa Yoga", kind="other",
+        # 198 @3HCC:6554 Or 199 @3HCC:6559 — same printed result.
+        condition=C.Or(_Matrunasa198(), _Matrunasa199()),
+        effect=("Early death of the mother — Raman grades it: all three afflictions of "
+                "198 at once kill immediately after birth; Jupiter's aspect delays."),
+        source=Citation("3HCC", 6554)),
+    YogaRecord(
+        id="Y.NISHKAPATA", name="Nishkapata Yoga", kind="other",
+        # 205 @3HCC:6767 Or 206 @3HCC:6770 — 206 graduated 2026-08-11 on the measured
+        # 3HC ladder (Uttama=3/Parvata=6 over the saptavarga).
+        condition=C.Or(_Nishkapata205(), _Nishkapata206()),
+        effect=("Pure-hearted; hates secrecy and hypocrisy."),
+        source=Citation("3HCC", 6767)),
+    YogaRecord(
+        id="Y.MATRU_SNEHA", name="Matru Sneha Yoga", kind="other",
+        condition=_MatruSneha(),
+        effect=("Cordial relations prevail between mother and son."),
+        source=Citation("3HCC", 6812)),
+    YogaRecord(
+        id="Y.ANAPATHYA", name="Anapathya Yoga", kind="other",
+        condition=_Anapathya(),
+        effect=("Remains without issues."),
+        source=Citation("3HCC", 6872)),
+    # — tranche 7 (2026-08-09): the sapa (curse) block + Bahuputra, 212-221. —
+    YogaRecord(
+        id="Y.SARPASAPA", name="Sarpasapa Yoga", kind="arishta",
+        # 212 @6891 Or 213 @6894 Or 214 @6897 Or 215 @6900 — one printed result; Raman's
+        # common factor: "affliction of the 5th bhava, karaka or the lord of children by
+        # Rahu". 214 carries his own Shadbala nullifier from the Remarks.
+        condition=C.Or(_Sarpasapa212(), _Sarpasapa213(), _Sarpasapa214(), _Sarpasapa215()),
+        effect=("Death of children attributed to the curse of serpents."),
+        source=Citation("3HCC", 6891)),
+    YogaRecord(
+        id="Y.PITRUSAPA_SUTAKSHAYA", name="Pitrusapa Sutakshaya Yoga", kind="arishta",
+        condition=_PitrusapaSutakshaya(),
+        effect=("Loses issues on account of the father's wrath."),
+        source=Citation("3HCC", 7013)),
+    YogaRecord(
+        id="Y.MATRUSAPA_SUTAKSHAYA", name="Matrusapa Sutakshaya Yoga", kind="arishta",
+        condition=_MatrusapaSutakshaya(),
+        effect=("Loss of children attributed to the mother's curse."),
+        source=Citation("3HCC", 7155)),
+    YogaRecord(
+        id="Y.BHRATRUSAPA_SUTAKSHAYA", name="Bhratrusapa Sutakshaya Yoga", kind="arishta",
+        condition=_BhratrusapaSutakshaya(),
+        effect=("Death of children attributed to curses from brothers."),
+        source=Citation("3HCC", 7200)),
+    YogaRecord(
+        id="Y.PRETASAPA", name="Pretasapa Yoga", kind="arishta",
+        condition=_Pretasapa(),
+        effect=("Death of children attributed to the curses of the departed (Pretas)."),
+        source=Citation("3HCC", 7219)),
+    YogaRecord(
+        id="Y.BAHUPUTRA", name="Bahuputra Yoga", kind="other",
+        # 220 @7285 Or 221 @7288 — same printed result.
+        condition=C.Or(_Bahuputra220(), _Bahuputra221()),
+        effect=("Has a large number of children."),
+        source=Citation("3HCC", 7285)),
+    # — tranche 8 (2026-08-09): the progeny block, 222-230 (226 deferred). —
+    YogaRecord(
+        id="Y.DATTAPUTRA", name="Dattaputra Yoga", kind="other",
+        # 222 @7341 Or 223 @7345 — same printed result.
+        condition=C.Or(_Dattaputra222(), _Dattaputra223()),
+        effect=("Has adopted children."),
+        source=Citation("3HCC", 7341)),
+    YogaRecord(
+        id="Y.APUTRA", name="Aputra Yoga", kind="other",
+        condition=_Aputra(),
+        effect=("Has no issues — Raman: a very general combination, never to be applied "
+                "without a thorough examination of the 5th house."),
+        source=Citation("3HCC", 7388)),
+    YogaRecord(
+        id="Y.EKAPUTRA", name="Ekaputra Yoga", kind="other",
+        condition=_Ekaputra(),
+        effect=("Has only one son."),
+        source=Citation("3HCC", 7423)),
+    YogaRecord(
+        id="Y.KALANIRDESAT_PUTRA", name="Kalanirdesat Putra Yoga", kind="other",
+        # 227 @7466 Or 228 @7468 — one printed result (the son's timing differs by arm:
+        # 32nd/33rd year for 227, the 40th for 228, both CONDITIONAL on the directional
+        # influences per Raman's Remarks).
+        condition=C.Or(_KalanirdesatPutra227(), _KalanirdesatPutra228()),
+        effect=("Raman assigns a season for the birth of a son (the 32nd/33rd year by "
+                "227, the 40th by 228) — conditional, per his own Remarks, on the "
+                "appropriate Dasa and Bhukthi operating."),
+        source=Citation("3HCC", 7466)),
+    YogaRecord(
+        id="Y.KALANIRDESAT_PUTRANASA", name="Kalanirdesat Putranasa Yoga", kind="arishta",
+        # 229 @7487 Or 230 @7494 — one printed result; Raman notes 229 in practice has
+        # shown still-births or loss within the first year, 230 a few dying and a few
+        # surviving.
+        condition=C.Or(_KalanirdesatPutranasa229(), _KalanirdesatPutranasa230()),
+        effect=("Loss of issues — Raman assigns the 32nd year (229) and the 32nd or 40th "
+                "(230), and records that 229 in his own collection has shown the severer "
+                "form."),
+        source=Citation("3HCC", 7487)),
+    # — tranche 9 (2026-08-09): the buddhi + marriage block, 231-240 (234 deferred). —
+    YogaRecord(
+        id="Y.BUDDHIMATURYA", name="Buddhimaturya Yoga", kind="other",
+        condition=_Buddhimaturya(),
+        effect=("A person of great intelligence and character."),
+        source=Citation("3HCC", 7544)),
+    YogaRecord(
+        id="Y.THEEVRABUDDHI", name="Theevrabuddhi Yoga", kind="other",
+        condition=_Theevrabuddhi(),
+        effect=("Precociously intelligent — Raman: usually found in the horoscopes of "
+                "geniuses."),
+        source=Citation("3HCC", 7625)),
+    YogaRecord(
+        id="Y.BUDDHI_JADA", name="Buddhi Jada Yoga", kind="other",
+        condition=_BuddhiJada(),
+        effect=("Dullness of intellect."),
+        source=Citation("3HCC", 7657)),
+    YogaRecord(
+        id="Y.PUTRA_SUKHA", name="Putra Sukha Yoga", kind="other",
+        condition=_PutraSukha(),
+        effect=("Happiness on account of children."),
+        source=Citation("3HCC", 7787)),
+    YogaRecord(
+        id="Y.JARA", name="Jara Yoga", kind="other",
+        condition=_Jara(),
+        effect=("Extra-marital attachments — encoded WITH Raman's own narrowing (the "
+                "7th lord must be Mars or Venus) without which he refuses the "
+                "conclusion."),
+        source=Citation("3HCC", 7805)),
+    YogaRecord(
+        id="Y.JARAJAPUTRA", name="Jarajaputra Yoga", kind="other",
+        condition=_Jarajaputra(),
+        effect=("Raman's printed verdict on the 5th/6th/7th-lord conjunction: issues "
+                "not of the native's own line."),
+        source=Citation("3HCC", 7848)),
+    YogaRecord(
+        id="Y.BAHU_STREE", name="Bahu Stree Yoga", kind="other",
+        condition=_BahuStree(),
+        effect=("Intimacy with a number of women — Raman's own practical reading of "
+                "'any number of wives'."),
+        source=Citation("3HCC", 7866)),
+    YogaRecord(
+        id="Y.SATKALATRA", name="Satkalatra Yoga", kind="other",
+        condition=_Satkalatra(),
+        effect=("The spouse is noble and virtuous."),
+        source=Citation("3HCC", 7917)),
+    YogaRecord(
+        id="Y.BHAGA_CHUMBANA", name="Bhaga Chumbana Yoga", kind="other",
+        condition=_BhagaChumbana(),
+        effect=("Raman's printed verdict: indulges in intimate caressing of the "
+                "partner."),
+        source=Citation("3HCC", 7981)),
+    # — tranche 10 (2026-08-09): fortune + the Raja group opening, 241-250 (248 deferred). —
+    YogaRecord(
+        id="Y.BHAGYA", name="Bhagya Yoga", kind="dhana",
+        condition=_Bhagya(),
+        effect=("Extremely fortunate, pleasure-loving and rich."),
+        source=Citation("3HCC", 7989)),
+    YogaRecord(
+        id="Y.JANANATPURVAM_PITRU_MARANA", name="Jananatpurvam Pitru Marana Yoga",
+        kind="other",
+        condition=_JananatpurvamPitruMarana(),
+        effect=("Born a posthumous child."),
+        source=Citation("3HCC", 8018)),
+    YogaRecord(
+        id="Y.DHATRUTWA", name="Dhatrutwa Yoga", kind="other",
+        condition=_Dhatrutwa(),
+        effect=("An embodiment of generosity — Raman reserves the yoga for the "
+                "sincerely humanitarian."),
+        source=Citation("3HCC", 8044)),
+    YogaRecord(
+        id="Y.APAKEERTI", name="Apakeerti Yoga", kind="other",
+        condition=_Apakeerti(),
+        effect=("Suffers a bad reputation."),
+        source=Citation("3HCC", 8126)),
+    YogaRecord(
+        id="Y.RAJA_245", name="Raja Yoga", kind="raja",
+        condition=_Raja245(),
+        effect=("Becomes a famous ruler."),
+        source=Citation("3HCC", 8154)),
+    YogaRecord(
+        id="Y.RAJA_246", name="Raja Yoga", kind="raja",
+        condition=_Raja246(),
+        effect=("Attains a position equal to a ruler, with the insignia of royalty."),
+        source=Citation("3HCC", 8157)),
+    YogaRecord(
+        id="Y.RAJA_247", name="Raja Yoga", kind="raja",
+        condition=_Raja247(),
+        effect=("Though born in an ordinary family, rises to rule."),
+        source=Citation("3HCC", 8168)),
+    YogaRecord(
+        id="Y.RAJA_249", name="Raja Yoga", kind="raja",
+        condition=_Raja249(),
+        effect=("Becomes a ruler or an equal to one."),
+        source=Citation("3HCC", 8315)),
+    YogaRecord(
+        id="Y.RAJA_250", name="Neechabhanga Raja Yoga", kind="raja",
+        condition=_Raja250(),
+        effect=("Becomes a ruler or an equal to one — elevation from ordinary birth, "
+                "per Raman functioning much like the other Raja yogas."),
+        source=Citation("3HCC", 8318)),
+    # — tranche 11 (2026-08-10): the Raja group completes, 251-263 (256 deferred). —
+    YogaRecord(
+        id="Y.RAJA_251", name="Raja Yoga", kind="raja",
+        condition=_Raja251(),
+        effect=("A ruler or an equal in wealth, power and influence."),
+        source=Citation("3HCC", 8416)),
+    YogaRecord(
+        id="Y.RAJA_252", name="Raja Yoga", kind="raja",
+        condition=_Raja252(),
+        effect=("A ruler or an equal in wealth, power and influence."),
+        source=Citation("3HCC", 8419)),
+    YogaRecord(
+        id="Y.RAJA_253", name="Raja Yoga", kind="raja",
+        condition=_Raja253(),
+        effect=("A ruler or an equal in wealth, power and influence."),
+        source=Citation("3HCC", 8421)),
+    YogaRecord(
+        id="Y.RAJA_254", name="Raja Yoga", kind="raja",
+        condition=_Raja254(),
+        effect=("Becomes a ruler or an equal to one."),
+        source=Citation("3HCC", 8548)),
+    YogaRecord(
+        id="Y.RAJA_255", name="Raja Yoga", kind="raja",
+        condition=_Raja255(),
+        effect=("Becomes a ruler or an equal to one — though Raman records that in the "
+                "dozen charts of his own collection the yoga proved nominal."),
+        source=Citation("3HCC", 8555)),
+    YogaRecord(
+        id="Y.RAJA_257", name="Raja Yoga", kind="raja",
+        condition=_Raja257(),
+        effect=("Becomes a ruler or an equal to one — Gajakesari plus Jupiter's aspect "
+                "on Lagna, as Raman reads it."),
+        source=Citation("3HCC", 8560)),
+    YogaRecord(
+        id="Y.RAJA_258", name="Raja Yoga", kind="raja",
+        condition=_Raja258(),
+        effect=("Becomes a ruler or an equal to one — Raman's own caveat: not a "
+                "powerful Raja yoga, quite a common combination."),
+        source=Citation("3HCC", 8563)),
+    YogaRecord(
+        id="Y.RAJA_259", name="Raja Yoga", kind="raja",
+        condition=_Raja259(),
+        effect=("Becomes a commander or an equal to a ruler — from Sambhu Hora "
+                "Prakasha; Raman muses a democratic tyrant may be born under it."),
+        source=Citation("3HCC", 8723)),
+    YogaRecord(
+        id="Y.RAJA_260", name="Raja Yoga", kind="raja",
+        condition=_Raja260(),
+        effect=("Becomes a ruler or an equal to one."),
+        source=Citation("3HCC", 8743)),
+    YogaRecord(
+        id="Y.RAJA_261", name="Raja Yoga", kind="raja",
+        condition=_Raja261(),
+        effect=("Becomes a ruler or an equal to one — Raman suspects the double evils "
+                "cancel mutually, and asks his readers for tested charts."),
+        source=Citation("3HCC", 8748)),
+    YogaRecord(
+        id="Y.RAJA_262", name="Raja Yoga", kind="raja",
+        condition=_Raja262(),
+        effect=("A great man or a respected ruler."),
+        source=Citation("3HCC", 8828)),
+    YogaRecord(
+        id="Y.RAJA_263", name="Raja Yoga", kind="raja",
+        condition=_Raja263(),
+        effect=("A great man or a respected ruler."),
+        source=Citation("3HCC", 8829)),
+    # — tranche 12 (2026-08-11): the Arishta chapter's mechanical half, 265-278. —
+    YogaRecord(
+        id="Y.VRANA", name="Vrana Yoga", kind="arishta",
+        condition=_Vrana(),
+        effect=("Raman's printed verdict: suffers from malignant disease — he cautions "
+                "a literal application is not recommended, and the planet involved "
+                "locates the seat."),
+        source=Citation("3HCC", 8914)),
+    YogaRecord(
+        id="Y.SISNAVYADHI", name="Sisnavyadhi Yoga", kind="arishta",
+        condition=_Sisnavyadhi(),
+        effect=("Suffers from diseases of the sexual organs."),
+        source=Citation("3HCC", 8987)),
+    YogaRecord(
+        id="Y.KALATRASHANDA", name="Kalatrashanda Yoga", kind="arishta",
+        condition=_Kalatrashanda(),
+        effect=("Raman's printed verdict on the spouse's frigidity — with his own "
+                "caveat that he has not tested the yoga and cannot endorse its "
+                "applicability."),
+        source=Citation("3HCC", 9026)),
+    YogaRecord(
+        id="Y.KUSHTAROGA", name="Kushtaroga Yoga", kind="arishta",
+        # 268 @9044 Or 269 @9046 — same printed result.
+        condition=C.Or(_Kushtaroga268(), _Kushtaroga269()),
+        effect=("Raman's printed verdict: suffers from leprosy — to be applied only "
+                "with the 6th bhava carefully weighed, per his own caution."),
+        source=Citation("3HCC", 9044)),
+    YogaRecord(
+        id="Y.BANDHANA", name="Bandhana Yoga", kind="arishta",
+        condition=_Bandhana(),
+        effect=("Incarceration — Raman: Saturn as Lagna lord lessens or neutralizes "
+                "the evil, and benefic aspects lessen it."),
+        source=Citation("3HCC", 9302)),
+    YogaRecord(
+        id="Y.DURMARANA", name="Durmarana Yoga", kind="arishta",
+        # Saturn/Rahu associates Or the Mandi associate (restored 2026-08-11).
+        condition=C.Or(_Durmarana(), _DurmaranaMandi()),
+        effect=("Raman's printed verdict: an unnatural manner of death is indicated."),
+        source=Citation("3HCC", 9387)),
+    YogaRecord(
+        id="Y.PEENASAROGA", name="Peenasaroga Yoga", kind="arishta",
+        condition=_Peenasaroga(),
+        effect=("Suffers from disease of the nose (inflammation of the Schneiderian "
+                "membrane)."),
+        source=Citation("3HCC", 9495)),
+    # — tranche 14d (2026-08-11): the far half COMPLETES — 279-300 (288/289 already in
+    #   Y.ANDHA, 296 already in Y.NISHTURABHASHI, both since tranches 1-2). —
+    YogaRecord(
+        id="Y.PITTAROGA", name="Pittaroga Yoga", kind="arishta",
+        condition=_Pittaroga(),
+        effect=("Suffers from bilious complaints."),
+        source=Citation("3HCC", 9544)),
+    YogaRecord(
+        id="Y.VIKALANGAPATNI", name="Vikalangapatni Yoga", kind="arishta",
+        condition=_Vikalangapatni(),
+        effect=("Raman's printed verdict on the spouse's deformity — with his caution "
+                "that mere presence cannot cause it without further affliction."),
+        source=Citation("3HCC", 9588)),
+    YogaRecord(
+        id="Y.PUTRAKALATRAHEENA", name="Putrakalatraheena Yoga", kind="arishta",
+        condition=_Putrakalatraheena(),
+        effect=("Deprived of family and children."),
+        source=Citation("3HCC", 9601)),
+    YogaRecord(
+        id="Y.BHARYASAHAVYABHICHARA", name="Bharyasahavyabhichara Yoga", kind="other",
+        condition=_Bharyasahavyabhichara(),
+        effect=("Raman's printed verdict: both spouses stray."),
+        source=Citation("3HCC", 9621)),
+    YogaRecord(
+        id="Y.VAMSACHEDA", name="Vamsacheda Yoga", kind="arishta",
+        condition=_Vamsacheda(),
+        effect=("Raman's printed verdict: the family line ends with the native."),
+        source=Citation("3HCC", 9701)),
+    YogaRecord(
+        id="Y.GUHYAROGA", name="Guhyaroga Yoga", kind="arishta",
+        condition=_Guhyaroga(),
+        effect=("Suffers from diseases of the private parts — with Raman's caution "
+                "that so general a definition is not warranted by experience."),
+        source=Citation("3HCC", 9717)),
+    YogaRecord(
+        id="Y.ANGAHEENA", name="Angaheena Yoga", kind="arishta",
+        condition=_Angaheena(),
+        effect=("Raman's printed verdict: loss of the use of limbs."),
+        source=Citation("3HCC", 9748)),
+    YogaRecord(
+        id="Y.SWETAKUSHTA", name="Swetakushta Yoga", kind="arishta",
+        condition=_Swetakushta(),
+        effect=("Suffers from white leprosy — Jupiter's aspect on Mars or Saturn, "
+                "Raman writes, lets the disease be checked."),
+        source=Citation("3HCC", 9769)),
+    YogaRecord(
+        id="Y.PISACHA_GRASTHA", name="Pisacha Grastha Yoga", kind="arishta",
+        condition=_PisachaGrastha(),
+        effect=("Raman's printed verdict: suffers the attacks of spirits — mental "
+                "unsoundness in his own gloss."),
+        source=Citation("3HCC", 9792)),
+    YogaRecord(
+        id="Y.VATHAROGA", name="Vatharoga Yoga", kind="arishta",
+        condition=_Vatharoga(),
+        effect=("Suffers from windy complaints (rheumatism, per Chart 142) — the same "
+                "digbala pair, Raman notes, can also give Raja yoga."),
+        source=Citation("3HCC", 9879)),
+    YogaRecord(
+        id="Y.MATIBHRAMANA", name="Matibhramana Yoga", kind="arishta",
+        # 291|292|293|294 @9941-9948 — one printed result.
+        condition=_Matibhramana(),
+        effect=("Raman's printed verdict: insanity — though he records his own "
+                "conviction that without heavy affliction of the Moon and Mercury "
+                "it cannot be present."),
+        source=Citation("3HCC", 9941)),
+    YogaRecord(
+        id="Y.KHALWATA", name="Khalwata Yoga", kind="other",
+        condition=_Khalwata(),
+        effect=("Bald-headed."),
+        source=Citation("3HCC", 10185)),
+    YogaRecord(
+        id="Y.RAJABHRASHTA", name="Rajabhrashta Yoga", kind="other",
+        condition=_Rajabhrashta(),
+        effect=("Suffers a fall from high position — the Rajabhanga that, when "
+                "stronger than the Raja yogas, defeats them (Raman's own framing)."),
+        source=Citation("3HCC", 10213)),
+    YogaRecord(
+        id="Y.RAJA_YOGA_BHANGA", name="Raja Yoga Bhanga", kind="other",
+        # 298 @10246 Or 299 @10249 — same printed result.
+        condition=C.Or(_RajaYogaBhanga298(), _RajaYogaBhanga299()),
+        effect=("Though born to fortune, bereft of it — with Raman's own doubt on 299 "
+                "(mere debilitation of the Sun cannot destroy all Raja yogas)."),
+        source=Citation("3HCC", 10246)),
+    YogaRecord(
+        id="Y.GOHANTA", name="Gohanta Yoga", kind="other",
+        condition=_Gohanta(),
+        effect=("Raman's printed verdict: takes to butchery — he adds he has not been "
+                "able to test the yoga adequately."),
+        source=Citation("3HCC", 10286)),
+    # — tranche 13 (2026-08-11): the shashtiamsa (D60) unlocks — the primitive built from
+    #   the Manual (Raman's own pointer in 264's Remark), two queued yogas graduate. —
+    YogaRecord(
+        id="Y.THRIKALAGNANA", name="Thrikalagnana Yoga", kind="other",
+        # Mrudwamsa arm Or the Gopura arm (graduated 2026-08-11 on the measured ladder).
+        condition=C.Or(_Thrikalagnana(), _ThrikalagnanaGopura()),
+        effect=("Capable of reading past, present and future — the faculty of "
+                "seership, as Raman frames it."),
+        source=Citation("3HCC", 7729)),
+    YogaRecord(
+        id="Y.GALAKARNA", name="Galakarna Yoga", kind="arishta",
+        # Mandi+Rahu arm Or the Preta-Puriha arm (the Mandi arm graduated 2026-08-11).
+        condition=C.Or(_Galakarna264a(), _Galakarna()),
+        effect=("Suffers from ear troubles."),
+        source=Citation("3HCC", 8901)),
+    # — tranche 14c (2026-08-11): the Gulika/Mandi unlocks (user-approved scope ruling;
+    #   the engine's own HPA-cited upagraha layer serves the conditions). —
+    YogaRecord(
+        id="Y.SARPAGANDA", name="Sarpaganda Yoga", kind="arishta",
+        condition=_Sarpaganda(),
+        effect=("Raman's printed verdict: liable to snake-bite — and when the 2nd is "
+                "free of the Rahu-Mandi affliction, he writes, one need not fear it."),
+        source=Citation("3HCC", 5975)),
+    YogaRecord(
+        id="Y.KSHAYAROGA", name="Kshayaroga Yoga", kind="arishta",
+        condition=_Kshayaroga(),
+        effect=("Suffers from tuberculosis."),
+        source=Citation("3HCC", 9089)),
+    # — tranche 14a (2026-08-11): the D60 cruel-class unlocks (user-approved band
+    #   decision; Phaladeepika Krura table, consistency-gated on Raman's own rulings). —
+    YogaRecord(
+        id="Y.BANDHUBHISTHYAKTHA", name="Bandhubhisthyaktha Yoga", kind="other",
+        condition=_Bandhubhisthyaktha(),
+        effect=("Deserted by relatives — with Raman's own caution that much reliance "
+                "cannot be placed on so general a yoga."),
+        source=Citation("3HCC", 6515)),
+    YogaRecord(
+        id="Y.SAHODAREESANGAMA", name="Sahodareesangama Yoga", kind="other",
+        condition=_Sahodareesangama(),
+        effect=("Raman's printed verdict on incestuous conduct with sisters — an "
+                "unafflicted Venus, he writes, is the best safeguard."),
+        source=Citation("3HCC", 6696)),
+    YogaRecord(
+        id="Y.RAJA_248", name="Raja Yoga", kind="raja",
+        condition=_Raja248(),
+        effect=("Becomes a ruler or an equal to one — Raman: of rare occurrence; in "
+                "evil amsas the same placements make a tyrant instead."),
+        source=Citation("3HCC", 8312)),
+    YogaRecord(
+        id="Y.KARASCHEDA", name="Karascheda Yoga", kind="arishta",
+        condition=_Karascheda(),
+        effect=("Raman's printed verdict: mutilation of the hands as punishment — "
+                "encoded only in his corrected, heavily-afflicted form."),
+        source=Citation("3HCC", 9315)),
+    YogaRecord(
+        id="Y.SIRACHCHHEDA", name="Sirachchheda Yoga", kind="arishta",
+        condition=_Sirachchheda(),
+        effect=("Raman's printed verdict: capital punishment (in modern terms, death "
+                "by hanging) — Chart 135's war-crimes tribunal case."),
+        source=Citation("3HCC", 9341)),
+    YogaRecord(
+        id="Y.YUDDHE_MARANA", name="Yuddhe Marana Yoga", kind="arishta",
+        condition=_YuddheMarana(),
+        effect=("Raman's printed verdict: death in battle."),
+        source=Citation("3HCC", 9418)),
+    YogaRecord(
+        id="Y.RAJA_256", name="Raja Yoga", kind="raja",
+        condition=_Raja256(),
+        effect=("Becomes a ruler or an equal to one."),
+        source=Citation("3HCC", 8557)),
+    YogaRecord(
+        id="Y.SANGHATAKA_MARANA", name="Sanghataka Marana Yoga", kind="arishta",
+        # 276 @9463 Or 277 @9477 — same printed result (collective death).
+        condition=C.Or(_Sanghataka276(), _Sanghataka277()),
+        effect=("Raman's printed verdict: shares in a collective calamity — his own "
+                "remark: whether the same combinations mark all who die together, "
+                "nobody has tested; a field for research."),
+        source=Citation("3HCC", 9463)),
 )
+
+# ── first-tranche skips (2026-08-08), each with the reason, so the next encoder does not
+# re-tread. MAHABHAGYA (3HCH:1490): needs the native's GENDER and day/night birth — gender is
+# not modelled on RamanChart, and a gender-blind approximation is the silent approximation the
+# Prime Directive forbids. PUSHKALA (3HCH:1527): "house of an intimate friend" (compound
+# relations) plus two strength gates in one sentence. SANKHA (3HCH:1735) and BHERI
+# (3HCH:1776): the SAME yogas as the measured-deferred HPA-20 pair above (50%/38% fire rates
+# on the golden corpus — common by construction; the 3HC wording changes nothing about the
+# base rate). BHARATHI (3HCH:1678): "the lords of the navamsas occupied by the lords of the
+# 2nd, 5th and 11th should be exalted" — ALL-three vs ANY-one is undisambiguated and the
+# readings differ by orders of magnitude (the Lakshmi precedent exactly).
+#
+# Tranche-2 skips (2026-08-09): DURMUKHA-169 needs Gulika (not computed); PARANNABHOJANA
+# (172) has its definition split across a page-break chart figure in the complete-edition
+# OCR — needs the manual audit before its clauses can be trusted. LAKSHMI GRADUATED tranche
+# 2 (26/225 geometric, 12/225 gated, 5.3%); SUMUKHA-167 GRADUATED tranche 3 when the
+# varga-attainment primitive landed.
+#
+# Tranche-3 skips (2026-08-09): SARPAGANDA (174) needs Mandi/Gulika — parked pending a
+# scope ruling (the only Raman-citable computation is in his Prasna Marga translation, which
+# is walled-horary; using its mechanics for a natal yoga is a decision, not a default).
+# SODARANASA (178): "occupy the 8th (3rd, 5th or 7th) house" — the parenthetical is
+# OCR-garbled and the candidate readings differ materially; manual audit first.
+# Tranche-13 UPDATE (2026-08-11): the shashtiamsa PRIMITIVE is BUILT
+# (primitives/shashtiamsa.py — the Manual Art. 127 verbatim, cross-pinned against 3HC
+# 234's own degree arithmetic). THRIKALAGNANA (234, Mrudwamsa arm) and GALAKARNA (264,
+# Preta-Puriha arm) graduate on it. What remains deferred is the cruel/benign CLASS:
+# Raman's corpus names the sixty but never tabulates their natures (only pointwise
+# applied rulings exist — RAMAN_APPLIED_NATURE), and importing a classical table is a
+# band decision for the user, not a default. Still gated on the class: 195, 201, 248,
+# 272, 273, 275, 276, 277 (+ the Gulika/Mandi overlaps: 264's first arm, 270, 274's
+# Mandi associate, 204).
+# Tranche-12 skips (2026-08-11) — the Arishta chapter was D60-HEAVY:
+#   GALAKARNA (264): the Mandi+Rahu arm remains in the Gulika queue.
+#   KSHAYAROGA (270): Mandi in a kendra — the Gulika queue.
+#   KARASCHEDA (272): Raman's own Remark REFUSES the bare Saturn-9/Jupiter-3 form ("the
+#     mere presence... cannot make one lose one's limbs") and requires heavy affliction
+#     in cruel shashtiamsas — encoding bare would over-fire against his explicit word.
+#   SIRACHCHEDA (273): Sun/Saturn joined with Rahu IN a cruel shashtiamsa (the same-D60
+#     reading Raman quotes from the original with his footnote).
+#   YUDDHE MARANA (275): "cruel amsas" ambiguous (navamsa vs shashtiamsa) + Mandi.
+#   SANGHATAKA MARANA (276/277): "evil sub-divisions" / "evil amsas" — same ambiguity.
+#   The D60 build has its source named by Raman himself in 264's Remark: "For details
+#   about shashtiamsas, see my book A MANUAL OF HINDU ASTROLOGY" — the MANUAL tag is on
+#   disk and registered. Bar: build the D60 table from the Manual, with the cruel/benign
+#   classification cited to it, and a reachability measurement (the varga_attainment
+#   precedent).
+# Tranche-11 skip (2026-08-10): RAJA-256 (10th lord in the 9th in exalted/friendly
+# navamsa "having attained Uttamamsa"). ITS OWN REMARK SETTLES THE COUNT: "If a planet is
+# in its own varga three times, it is said to be in Uttamamsa" — so with 234's Gopura=4,
+# the 3HC ladder is confirmed as the Uttama-3/Gopura-4 (shadvarga-style) ladder, NOT the
+# GBB table (Parvatha-3/Gopuram-8) in primitives/varga_attainment.py. What remains open is
+# the VARGA SET the count runs over (234's worked example counts rasi/drekkana/
+# chaturthamsa/saptamsa — chaturthamsa is not a shadvarga member). Bar: fix the set from
+# the texts, then 206/234/256 all unlock together and Sumukha-167's GBB-based arm gets
+# audited against its own source.
+# Tranche-10 skip (2026-08-09): RAJA-248 (Kumbha lagna, Venus in it, four planets exalted
+# "without occupying evil navamsas or shastiamsas") carries the D60 clause as a NEGATIVE
+# filter on an AND — omitting it would fire where Raman would not (his own Remark: in evil
+# navamsas/shashtiamsas "the yoga does not function and the native may become a tyrant").
+# Over-firing is the bad direction; parked on the same D60 bar as 195/201/234.
+# Tranche-9 skip (2026-08-09): THRIKALAGNANA (234) needs the SHASHTIAMSA (D60) —
+# Mrudwamsa is its 19th part in odd signs / 42nd in even — which is unmodelled (same bar
+# as 195/201). Its second arm carries MATERIAL EVIDENCE for the 206 ladder question:
+# Raman here defines Gopuramsa as own-varga FOUR times, worked over rasi/drekkana/
+# chaturthamsa/saptamsa ("Suppose Jupiter is in the first degree of Dhanus... having
+# attained his Swavarga four times") — 3HC's ladder is therefore NOT the GBB table
+# (Gopuramsam at count 8) that primitives/varga_attainment.py encodes, and the two
+# Gopuramsa-consuming sites (Sumukha-167 via attains_gopuramsa, and any future 206/234
+# encoding) now face a measured identity question: which ladder does WHICH Raman text
+# mean. Settle before touching either; the varga-set he counts over (chaturthamsa is not
+# a shadvarga member) is part of the same audit.
+# Tranche-8 skip (2026-08-09): SUPUTRA (226) requires Jupiter as 5th lord (Simha/
+# Vrischika only, per Raman) AND "the Sun occupies a favourable position" — the text never
+# defines "favourable" (dignity? kendra/trikona? benefic vargas?), and Raman's Remarks
+# muse about benefic vargas without fixing a criterion. Bar: a doctrine reading that
+# settles what Raman means by the Sun's favourable position, with a citation.
+# Tranche-7 note (2026-08-09): PITRUSAPA-216's Remarks list three FURTHER variant
+# dispositions ("The following dispositions of planets also constitute Yoga No. 216"):
+# (a) Sun as 5th lord in a trine hemmed/aspected by malefics (Mesha only), (b) Jupiter in
+# Leo + 5th lord with the Sun + malefics in the 5th and Lagna, (c) Mars as 9th lord with
+# the 5th lord + malefics in Lagna and the trikonas. Queued as Or-arm extensions — the
+# definition's three arms are encoded; the variants await their own fire/silent pairs.
+# Tranche-6 note (2026-08-09): NISHKAPATA-206 defers on a LADDER-IDENTITY question, not a
+# missing primitive. Its "occupy Parvata or Uttamamsa" names amsa-attainment rungs, but
+# Raman's own GBB table (encoded verbatim in primitives/varga_attainment.py) has
+# Parvathamsa at count 3 and NO "Uttamamsa" rung at all — while the BPHS shadvarga ladder
+# names Uttama at 3 and Paravata at 6. Which ladder 3HC-206 means is a doctrine reading,
+# and encoding the wrong one would misattribute Raman. Bar: settle the ladder identity
+# from the 3HC text or GBB cross-reference, then map the two titles to counts.
+# Tranche-5 skips (2026-08-09), each with its bar:
+#   KAPATA-204 needs Mandi/Gulika -> the Gulika queue (scope ruling pending, user's call).
+#   BANDHUBHISTHYAKTHA (195) and SAHODAREESANGAMA (201) carry an evil/cruel-SHASHTIAMSA
+#     (D60) arm — the varga is unmodelled; Raman himself cautions on 195 ("much reliance
+#     cannot be placed... very general nature"). Bar: a D60 primitive, built and measured.
+#   MATRUDEERGHAYUR (196/197) and ANAPATHYA (211) are STRENGTH-gated ("strong Moon",
+#     "weak" Jupiter/lords) — encoding needs the deliberate B1 effective_strength
+#     treatment (Lakshmi/Go precedent) plus a patched-gate fire test; queued, not grey.
+#   MATRUNASA (198/199): 198 needs Papakartari on the Moon (encodable next tranche);
+#     199's double navamsa chain has Raman's worked examples (charts 90/91) as its spec.
+#   NISHKAPATA (205/206): 206 turns on Parvata/Uttamamsa — varga_attainment's ladder is
+#     built, so the bar is only mapping Raman's amsa titles to counts; queued.
+#   MATRU SNEHA (208) needs TATKALIKA (temporal) friendship — dignity_state_compound
+#     models it; queued pending a fixture design that exercises both friendship layers.
+# Tranche-4 skips: SAPTHASANKHYA SAHODARA (181) and the YUDDHAT pair (184/185) read on
+# from clauses the page-break OCR interleaves with chart figures; YUDDHA PRAVEENA (183) is a
+# navamsa-of-navamsa double chain whose antecedent ("the planet who owns the navamsa in
+# which...") is ambiguous in the printed sentence — manual audit before encoding.
+#
+# BHOJANA SOUKHYA (170) and ANNADANA (171) are now a MEASURED deferral, the sharpest kind:
+# both demand the 2nd lord in VAISESHIKAMSA — rung 12 of Raman's GBB amsa ladder — and a
+# 0.05-degree longitude scan over the engine's shodasavarga shows rung 12 is unreachable for
+# most planets under EVERY counting basis measured (own-sign: only Mars; own+exalted+moola:
+# only Sun and Mars). Raman's worked example demonstrates the count on the saptavarga, where
+# twelve is arithmetically impossible. Encoding any reading would either be dead code or a
+# silent redefinition of his count. Full record: primitives/varga_attainment.py, which
+# deliberately does not export a vaiseshikamsa predicate.
 # DEFERRED HPA-20 yogas — RE-ATTEMPTED 2026-08-03 with the B1 effective-strength measure and
 # still deferred, now for a MEASURED reason. The original deferral blamed the is_powerful proxy
 # ("re-attempt once an effective-strength measure exists"); the re-attempt disproves that
@@ -942,6 +4421,11 @@ YOGAS: tuple[YogaRecord, ...] = (
 #     lord" — kendra AND dignity? or kendra OR dignity?). Raman does not disambiguate, the two
 #     readings differ by an order of magnitude in fire rate, and registering one would be
 #     choosing doctrine for him. Deferred on parse ambiguity, not on strength.
+#     UPDATE 2026-08-08: Raman's OWN 3HC wording resolves the parse — "the lord of the 9th
+#     occupies own or exaltation sign IDENTICAL WITH a Kendra or Thrikona" (3HCH:1557):
+#     dignity AND placement, conjunctive, unambiguous. What remains before encoding is only
+#     the fire-rate measurement on the golden corpus with the lagna-lord strength gate — the
+#     same measurement discipline the SHANKHA/KAHALA/BHERI re-attempt used.
 
 
 # ── family taxonomy (ADDITIVE metadata, 2026-08-18 — Wave-2 coverage honesty) ─

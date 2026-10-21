@@ -57,16 +57,23 @@ class GeneralVargaSpec:
 #: shodasavarga scheme and defers the rest to Parashara. If a mounted corpus later shows the
 #: per-varga definition lines are real, restoring them is a one-line change (git history keeps
 #: them) — but the pointer is the honest anchor for a reading rule Raman never gave.
+#:
+#: SUPERSEDED 2026-10-21 (user decision B, after the merge of main): these four now cite the
+#: classical domain sloka that `varga_domains.py` adopted under the user's Option B
+#: (2026-08-21) — BPHS/Phaladeepika admitted as RESOLVABLE corroboration, still NOT
+#: natal-citable. Each line re-read on the corpus: BPHS-7:96 "Bhamsa for strength and
+#: weakness", :100 Khavedamsa, :102 Akshavedamsa, PHALA:112 the Krura/Saumya shashtiamsa table.
+#: Raman's HPA-11:195 pointer still stands behind them in the varga_domains notes.
 _SPECS: Final[dict[int, GeneralVargaSpec]] = {
     27: GeneralVargaSpec(27, "Bhāṁśa", "general strength & weakness (bala/abala)",
-                         "RAMAN_GENERAL_PRINCIPLE", "HPA-11:195"),
+                         "RAMAN_GENERAL_PRINCIPLE", "BPHS-7:96"),
     40: GeneralVargaSpec(40, "Khavedāṁśa", "auspicious & inauspicious general effects; the "
-                         "mother's-lineage karma (Rath)", "CLASSICAL_NONCITABLE", "HPA-11:195"),
+                         "mother's-lineage karma (Rath)", "CLASSICAL_NONCITABLE", "BPHS-7:100"),
     45: GeneralVargaSpec(45, "Akṣavedāṁśa", "general character & conduct; the father's-lineage "
-                         "karma (Rath)", "CLASSICAL_NONCITABLE", "HPA-11:195"),
+                         "karma (Rath)", "CLASSICAL_NONCITABLE", "BPHS-7:102"),
     60: GeneralVargaSpec(60, "Ṣaṣṭyāṁśa", "all matters; the accumulated karma of past births "
                          "(Rath gives it the highest weightage)", "CLASSICAL_NONCITABLE",
-                         "HPA-11:195"),
+                         "PHALA:112"),
 }
 
 #: The general (matterless) vargas this reader covers.

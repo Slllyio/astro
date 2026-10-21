@@ -1300,8 +1300,11 @@ class TestThemeSynthesisContract:
         for b in ts.background_vargas:
             assert "RAMAN_GENERAL_PRINCIPLE" in b.provenance
             assert "CLASSICAL_NONCITABLE" in b.provenance and "not Raman" in b.provenance
-            # the citation is the POINTER, which is the anchor varga_domains.py itself uses
-            assert b.citation.startswith("HPA-11:")
+            # the citation is the anchor varga_domains.py itself uses — since user decision B
+            # (2026-10-21) the classical domain sloka, not Raman's HPA-11:195 pointer
+            from app.raman_saab.doctrine.varga_domains import domain_for
+            dom = domain_for(b.varga)
+            assert b.citation == f"{dom.source.work}:{dom.source.line}"
 
     def test_a_division_with_no_signal_says_so_instead_of_narrating(self, mainpuri):
         """D-40 on this chart has nothing exalted, nothing own and nothing debilitated. An

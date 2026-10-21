@@ -2347,19 +2347,21 @@ class TestWave2TimingDivisionalSoul:
 
     def test_general_varga_domain_sentences_present(self, report, markdown):
         """D-27/40/45/60 each carry one domain-verdict sentence tying the varga lagna-lord's
-        condition to the domain word, citing Raman's shodasavarga POINTER.
+        condition to the domain word, citing the classical domain sloka.
 
-        The anchor is HPA-11:195 for all four (corrected 2026-08-19). It was previously a
+        2026-10-21 (user decision B, merge of main): the four now cite the BPHS-7 / PHALA sloka
+        `varga_domains.py` adopted under Option B (BPHS-7:96/100/102, PHALA:112). History: the
+        anchor was HPA-11:195 for all four (corrected 2026-08-19). It was previously a
         per-varga line (:100/:110/:113/:116) that contradicted `varga_domains.py` — which cites
         the pointer for these same four and states the policy in its module docstring: the
         divisions Raman teaches in full cite their own definition lines, "the remaining divisions
         cite RAMAN'S OWN POINTER at HPA-11:195-201". This test previously asserted only that
         *some* string was printed, which is why the discrepancy survived."""
         bodies = {lbl.split(" ", 1)[0]: body for lbl, body in report.divisional}
-        for dtag, cite, word in (("D-27", "HPA-11:195", "general strength"),
-                                 ("D-40", "HPA-11:195", "auspiciousness"),
-                                 ("D-45", "HPA-11:195", "character and conduct"),
-                                 ("D-60", "HPA-11:195", "totality")):
+        for dtag, cite, word in (("D-27", "BPHS-7:96", "general strength"),
+                                 ("D-40", "BPHS-7:100", "auspiciousness"),
+                                 ("D-45", "BPHS-7:102", "character and conduct"),
+                                 ("D-60", "PHALA:112", "totality")):
             body = bodies[dtag]
             assert "domain reading :" in body, dtag
             line = next(ln for ln in body.splitlines() if "domain reading :" in ln)

@@ -4495,6 +4495,56 @@ YOGA_FAMILIES: Final[dict[str, str]] = {
     "Y.KHADGA": "named (HPA-20)", "Y.SARADA": "named (HPA-20)",
     "Y.KUSUMA": "named (HPA-20)", "Y.BRIHADBIJA": "named (HPA-20)",
     "Y.ASATYAVADI": "named (HPA-20)",
+    # ── the completed 3HC (merged from main, 2026-10-14). Placed by each record's own
+    #    `kind`, as the entries above are: raja/dhana/arishta to those families, every
+    #    `kind="other"` record to the named 3HC set. No new family is introduced.
+    # named (3HC): 60 records
+    "Y.MATSYA": "named (3HC)", "Y.RAVI": "named (3HC)", "Y.GAURI": "named (3HC)",
+    "Y.BRAHMA": "named (3HC)", "Y.NISHTURABHASHI": "named (3HC)", "Y.MOOKA": "named (3HC)",
+    "Y.NETRANASA": "named (3HC)", "Y.SUMUKHA": "named (3HC)", "Y.DURMUKHA": "named (3HC)",
+    "Y.SRADDHANNABHUKTHA": "named (3HC)", "Y.ANDHA": "named (3HC)",
+    "Y.TRILOCHANA": "named (3HC)", "Y.KULAVARDHANA": "named (3HC)", "Y.GO": "named (3HC)",
+    "Y.VAKCHALANA": "named (3HC)", "Y.VISHAPRAYOGA": "named (3HC)",
+    "Y.EKABHAGINI": "named (3HC)", "Y.DWADASA_SAHODARA": "named (3HC)",
+    "Y.PARAKRAMA": "named (3HC)", "Y.SATKATHADISRAVANA": "named (3HC)",
+    "Y.UTTAMA_GRIHA": "named (3HC)", "Y.VICHITRA_SAUDHA": "named (3HC)",
+    "Y.AYATNA_GRIHA": "named (3HC)", "Y.GRIHANASA": "named (3HC)",
+    "Y.BANDHU_PUJYA_193": "named (3HC)", "Y.BANDHU_PUJYA_194": "named (3HC)",
+    "Y.MATRUGAMI": "named (3HC)", "Y.KAPATA": "named (3HC)", "Y.MATRU_SATRUTWA": "named (3HC)",
+    "Y.VAHANA": "named (3HC)", "Y.MATRUDEERGHAYUR": "named (3HC)", "Y.MATRUNASA": "named (3HC)",
+    "Y.NISHKAPATA": "named (3HC)", "Y.MATRU_SNEHA": "named (3HC)", "Y.ANAPATHYA": "named (3HC)",
+    "Y.BAHUPUTRA": "named (3HC)", "Y.DATTAPUTRA": "named (3HC)", "Y.APUTRA": "named (3HC)",
+    "Y.EKAPUTRA": "named (3HC)", "Y.KALANIRDESAT_PUTRA": "named (3HC)",
+    "Y.BUDDHIMATURYA": "named (3HC)", "Y.THEEVRABUDDHI": "named (3HC)",
+    "Y.BUDDHI_JADA": "named (3HC)", "Y.PUTRA_SUKHA": "named (3HC)", "Y.JARA": "named (3HC)",
+    "Y.JARAJAPUTRA": "named (3HC)", "Y.BAHU_STREE": "named (3HC)",
+    "Y.SATKALATRA": "named (3HC)", "Y.BHAGA_CHUMBANA": "named (3HC)",
+    "Y.JANANATPURVAM_PITRU_MARANA": "named (3HC)", "Y.DHATRUTWA": "named (3HC)",
+    "Y.APAKEERTI": "named (3HC)", "Y.BHARYASAHAVYABHICHARA": "named (3HC)",
+    "Y.KHALWATA": "named (3HC)", "Y.RAJABHRASHTA": "named (3HC)",
+    "Y.RAJA_YOGA_BHANGA": "named (3HC)", "Y.GOHANTA": "named (3HC)",
+    "Y.THRIKALAGNANA": "named (3HC)", "Y.BANDHUBHISTHYAKTHA": "named (3HC)",
+    "Y.SAHODAREESANGAMA": "named (3HC)",
+    # dhana: 3 records
+    "Y.LAKSHMI": "dhana", "Y.VISHNU": "dhana", "Y.BHAGYA": "dhana",
+    # raja: 20 records
+    "Y.INDRA": "raja", "Y.RAJA_245": "raja", "Y.RAJA_246": "raja", "Y.RAJA_247": "raja",
+    "Y.RAJA_248": "raja", "Y.RAJA_249": "raja", "Y.RAJA_250": "raja", "Y.RAJA_251": "raja",
+    "Y.RAJA_252": "raja", "Y.RAJA_253": "raja", "Y.RAJA_254": "raja", "Y.RAJA_255": "raja",
+    "Y.RAJA_256": "raja", "Y.RAJA_257": "raja", "Y.RAJA_258": "raja", "Y.RAJA_259": "raja",
+    "Y.RAJA_260": "raja", "Y.RAJA_261": "raja", "Y.RAJA_262": "raja", "Y.RAJA_263": "raja",
+    # arishta: 30 records
+    "Y.SARPASAPA": "arishta", "Y.PITRUSAPA_SUTAKSHAYA": "arishta",
+    "Y.MATRUSAPA_SUTAKSHAYA": "arishta", "Y.BHRATRUSAPA_SUTAKSHAYA": "arishta",
+    "Y.PRETASAPA": "arishta", "Y.KALANIRDESAT_PUTRANASA": "arishta", "Y.VRANA": "arishta",
+    "Y.SISNAVYADHI": "arishta", "Y.KALATRASHANDA": "arishta", "Y.KUSHTAROGA": "arishta",
+    "Y.BANDHANA": "arishta", "Y.DURMARANA": "arishta", "Y.PEENASAROGA": "arishta",
+    "Y.PITTAROGA": "arishta", "Y.VIKALANGAPATNI": "arishta", "Y.PUTRAKALATRAHEENA": "arishta",
+    "Y.VAMSACHEDA": "arishta", "Y.GUHYAROGA": "arishta", "Y.ANGAHEENA": "arishta",
+    "Y.SWETAKUSHTA": "arishta", "Y.PISACHA_GRASTHA": "arishta", "Y.VATHAROGA": "arishta",
+    "Y.MATIBHRAMANA": "arishta", "Y.GALAKARNA": "arishta", "Y.SARPAGANDA": "arishta",
+    "Y.KSHAYAROGA": "arishta", "Y.KARASCHEDA": "arishta", "Y.SIRACHCHHEDA": "arishta",
+    "Y.YUDDHE_MARANA": "arishta", "Y.SANGHATAKA_MARANA": "arishta",
 }
 
 #: The five Pancha Mahapurusha record ids (notable-absence checks read this).

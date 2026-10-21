@@ -616,6 +616,9 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         translator="",
         classical_ref_prefix="ThreeHundredCombinations",
         header_regex=_DEFAULT_HEADER_REGEX,
+        # The registry pins 3HCC to `chapter_001_full-text-unsplit.md` and every 3HCC citation
+        # is a line offset into that one document; a chapter split would orphan all of them.
+        never_split=True,
     ),
     _Book(
         identifier="ThreeHundredImportantCombinations_hocr",
@@ -626,6 +629,8 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         translator="",
         classical_ref_prefix="ThreeHundredCombinations",
         header_regex=_DEFAULT_HEADER_REGEX,
+        # Pinned unsplit in the registry like 3HCC: one document, line-offset citations.
+        never_split=True,
     ),
     _Book(
         # Registered live 2026-08-08 (SOURCE_EXPANSION_RESEARCH.md) — Raman's first book;

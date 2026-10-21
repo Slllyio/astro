@@ -37,7 +37,7 @@ _DIGNITY_VIRUPAS: Final[dict[str, float]] = {
 _ODD_FAVOURED: Final[frozenset[str]] = frozenset({"Sun", "Mars", "Jupiter", "Mercury", "Saturn"})
 _EVEN_FAVOURED: Final[frozenset[str]] = frozenset({"Venus", "Moon"})
 
-#: Drekkana: which decanate (1/2/3) each planet-sex gains 15 virupas in (BPHS-27:163).
+#: Drekkana: which decanate (1/2/3) each planet-sex gains 15 virupas in (BPHS-27:164).
 _DREKKANA_PART: Final[dict[str, int]] = {
     "Sun": 1, "Mars": 1, "Jupiter": 1,        # male -> 1st
     "Venus": 2, "Moon": 2,                     # female -> 2nd

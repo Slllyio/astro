@@ -5751,3 +5751,33 @@ nichod by user request). Contract test now `_ORDER_V41`.
 Also: the merged interactive page (report.html) passes a JS syntax check but has NOT been opened in
 a browser. The digest now pins governing_factor/foundation first, salience orders the rest (merge
 judgement call, review it).
+
+**2026-10-21 follow-up (branch claude/merge-fix, on top of the NH re-anchor d004f1f5): 12 -> 4
+failing (7231 -> 7239 passed). Golden ratchet unmoved: 286/397, 362/397, 35.**
+- FIXED 1. 3HCC and 3HC-HOCR carry `never_split=True` in the ETL bundle (both pinned unsplit).
+- FIXED 2. Five blank anchors re-read on the corpus: BPHS-27:163->164 (Drekkana Bala),
+  BPHS-27:19->3609 (sloka 19, Drig Bala; "19" was the sloka number), BPHS-45:66->71 (Results
+  sloka), BPHS-7:300->301 (table head), NH:2556->1505 ("natural Atmakaraka", the Sun). Each line
+  checked identical in both local corpus copies (E:\astro and the varga worktree).
+- FIXED 4. Source lock re-locked. Every raman_saab citation into the 5 files lands on identical
+  text in both corpora. Phala/3HCC/3HC-HOCR: bytes unchanged; the diff was only this branch's
+  front-matter-excluding body hash vs main's whole-file hash. BPHS-7 and HPA-11 DO differ between
+  copies (E:\astro BPHS-7 is 883 lines, main locked 1028) -- the cited lines agree, the files do
+  not. Which corpus copy is canonical is an open question.
+- FIXED 5-6. Fixture bugs, not yoga bugs: Matrunasa-199 put Venus on the exact 10d00' navamsa
+  cusp and only passed through the old `deg // (30/9)` off-by-one; Raja-263 put the Sun 5d from
+  Jupiter and only read un-combust before stated charts got a combustion pass (c5706858).
+- FIXED 9. Hedge census 13 -> 8 by trimming the SECOND hedge in five places where one section
+  carried two (span honesty line, marriage separation caveat on all three surfaces, the
+  longevity and maraka subtitles, and SYN_R9's doctrine text, whose simple_meaning already
+  discloses the null). Cap unchanged at 8; every section still states its limits.
+- FIXED 11-12. 113 main yogas added to YOGA_FAMILIES by their own `kind` (no new family).
+- HELD 3 + 8 (DECISION NEEDED). The doctrine snapshot shows 78 VERDICT changes vs the freeze at
+  2d65fe57 -- introduced by the merge itself (same 78 before any fix). Unscored houses/sub-matters
+  only (ratchet held), but not zero, so neither the snapshot nor yoga liveness (20 -> 54
+  never-fire, all main's new yogas) was re-frozen.
+- HELD 7 + 10 (DECISION NEEDED). D-27/40/45/60 anchor: main moved varga_domains to the classical
+  sloka (BPHS-7:96/100/102, PHALA:112 -- verified on the corpus); this branch's judge and two
+  tests pin Raman's pointer HPA-11:195. The tests contradict each other; one side must change.
+- NOT RUN: test_astrobank_ratchet skips (engine fingerprint changed; needs a feature-store
+  rebuild). data/private was not mounted in the worktree.

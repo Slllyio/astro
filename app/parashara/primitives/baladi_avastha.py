@@ -4,7 +4,7 @@
      order at the rate of six degrees in odd signs. This arrangement is reverse in the case of
      even signs." (BPHS-45:45)
     "One fourth, half, full, negligible and nil are the grades of results due to a planet in
-     infant, youthful, adolescent, old and dead states." (BPHS-45:66)
+     infant, youthful, adolescent, old and dead states." (BPHS-45:71)
 
 Odd sign, by degree-in-sign:
     0-6 bala (infant) · 6-12 kumara (youthful) · 12-18 yuva (adolescent) ·

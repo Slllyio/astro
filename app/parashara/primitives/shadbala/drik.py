@@ -40,7 +40,7 @@ def _is_benefic(planet: str, planet_signs: Mapping[str, int], *, moon_waxing: bo
 
 
 def drik_bala(target: str, planet_signs: Mapping[str, int], *, moon_waxing: bool) -> float:
-    """Aspectual strength of `target` in virupas (may be negative), BPHS-27:19."""
+    """Aspectual strength of `target` in virupas (may be negative), BPHS-27:3609."""
     if target not in planet_signs:
         raise ValueError(f"{target} not in the chart")
     tsign = planet_signs[target]

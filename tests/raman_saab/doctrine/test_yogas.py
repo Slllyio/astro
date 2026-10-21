@@ -1071,11 +1071,13 @@ class TestMatrunasaYoga:
         assert _yoga("Y.MATRUNASA").fires(c)
 
     def test_fires_on_the_199_navamsa_chain(self):
-        """Moon (l4) at 103.3 -> Libra navamsa -> Venus; Venus at 130 -> a navamsa owned by
-        Mercury; Mercury stands in H6 — the chain's terminal in a dusthana, with the Moon
-        itself UNAFFLICTED so only the 199 arm carries it. Engine-scanned, not head-math."""
+        """Moon (l4) at 103.3 -> Libra navamsa -> Venus; Venus at 129 (Leo 9d) -> Gemini
+        navamsa, owned by Mercury; Mercury stands in H6 — the chain's terminal in a dusthana,
+        with the Moon itself UNAFFLICTED so only the 199 arm carries it. Engine-scanned, not
+        head-math. Venus was at 130.0 (Leo 10d00', the 3rd/4th navamsa cusp) and only reached
+        Gemini through the off-by-one `deg // (30/9)` bug fixed in `varga.navamsa_sign`."""
         c = _chart({"Moon": 103.3, "Mars": 40.0, "Sun": 340.0, "Mercury": 160.0,
-                    "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0})
+                    "Jupiter": 250.0, "Venus": 129.0, "Saturn": 310.0})
         assert _yoga("Y.MATRUNASA").fires(c)
 
     def test_silent_when_moon_is_clean_and_the_chain_lands_well(self):
@@ -1815,9 +1817,10 @@ class TestRaja262:
 
 class TestRaja263:
     def test_fires_on_uncombust_jupiter_in_ninth_with_a_friend(self):
-        # Jupiter in H9 joined by the Sun — a naisargika friend — and free of combustion
-        # on a stated chart.
-        c = _chart({"Jupiter": 250.0, "Sun": 255.0, "Moon": 40.0, "Mars": 100.0,
+        # Jupiter in H9 joined by the Sun — a naisargika friend — and free of combustion:
+        # the Sun sits 15d away, outside Jupiter's 11d orb. (At 255 it was 5d away; that only
+        # read un-combust before stated charts got their combustion pass, c5706858.)
+        c = _chart({"Jupiter": 250.0, "Sun": 265.0, "Moon": 40.0, "Mars": 100.0,
                     "Mercury": 130.0, "Venus": 190.0, "Saturn": 310.0})
         assert _yoga("Y.RAJA_263").fires(c)
 

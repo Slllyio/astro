@@ -504,8 +504,7 @@ RAMAN_RULES: Final[tuple[SynthesisRule, ...]] = (
         "SYN_R9_MARAKA_SATURN_SIGNAL", "raman", "R9",
         "Maraka period x Saturn's transit signal", "evaluable", _R,
         "When a maraka Dasha operates, the last signal is given by Ayushkaraka Saturn "
-        "transiting the Rasi/Amsa he occupied at birth, or its trines. A statement of the "
-        "method, not a prediction — the validation program measured no death-timing signal.",
+        "transiting the Rasi/Amsa he occupied at birth, or its trines.",
         "The classical death-timing test needs BOTH the period and Saturn's specific transit — "
         "and this project measured that it does not predict real outcomes.",
         ("The maraka scheme", "Current transits", "Life-narrative"), Citation("HTJAH-II", 4846)),

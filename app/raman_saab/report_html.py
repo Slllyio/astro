@@ -3939,8 +3939,8 @@ def to_html(r: DetailedReport) -> str:
                f'{_esc("; ".join(m.timing_windows))}</p>' if m.timing_windows else "")
             + jup_html
             + f'<p class="section-sub caveat"><i>On separation and loss of the partner, '
-              f'the method&rsquo;s own statements &mdash; quoted, not composed; a '
-              f'statement of the method, not a prediction:</i> '
+              f'the method&rsquo;s own statements &mdash; quoted, not composed (this '
+              f'project&rsquo;s validation measured no real-outcome signal):</i> '
               f'&ldquo;{_esc(m.separation_quote)}&rdquo; (HTJAH-II:887)</p>')
         chunk["marriage"] += _mtiming_html
     if r.children is not None:

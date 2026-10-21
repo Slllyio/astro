@@ -1888,7 +1888,7 @@ def _transit_notes(r, houses, dom_planets) -> tuple[TransitNote, ...]:
 _MEASURED_TRUTH_SPAN = (
     "The numeric span is a cross-check on the band, never a forecast: the validation program "
     "measured no chart-specific death-timing signal on 22,177 verified charts "
-    "(REAL_OUTCOME_GENERALIZATION.md). This is a disclosure of Raman's method, not a prediction.")
+    "(REAL_OUTCOME_GENERALIZATION.md). This is a disclosure of Raman's method.")
 
 
 def _birth_year(r) -> int:

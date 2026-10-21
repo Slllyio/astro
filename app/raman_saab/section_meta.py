@@ -137,14 +137,14 @@ SECTION_META: Final[dict[str, SectionMeta]] = {
         "कुंडली किस स्वभाव का वर्णन करती है?",
         2, "section:psych"),
     "longevity": SectionMeta(
-        "The classical span computation — a method Raman teaches, not a prediction",
-        "आयु की शास्त्रीय गणना — रामन की सिखाई विधि, भविष्यवाणी नहीं",
+        "The classical span computation — a method Raman teaches",
+        "आयु की शास्त्रीय गणना — रामन की सिखाई विधि",
         "How does the classical Ayurdaya method grade this chart's span class?",
         "शास्त्रीय आयुर्दाय विधि इस कुंडली का आयु-वर्ग कैसे आँकती है?",
         2),
     "maraka": SectionMeta(
-        "Which planets classical doctrine designates as determinants — method, not a prediction",
-        "शास्त्र किन ग्रहों को मारक-निर्धारक कहता है — विधि मात्र, भविष्यवाणी नहीं",
+        "Which planets classical doctrine designates as determinants — the method",
+        "शास्त्र किन ग्रहों को मारक-निर्धारक कहता है — विधि मात्र",
         "Which planets does the doctrine mark, and why?",
         "शास्त्र किन ग्रहों को चिह्नित करता है, और क्यों?",
         2),

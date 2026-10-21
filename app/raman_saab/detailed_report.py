@@ -7446,8 +7446,8 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- _{_md_cell(_mt.subordination)} (HTJAH-II:881-883)_")
         L.append("")
         L.append("_On separation and loss of the partner, the method's own statements — "
-                 "quoted, not composed; A STATEMENT OF THE METHOD, NOT A PREDICTION "
-                 "(this project's validation measured no real-outcome signal):_")
+                 "quoted, not composed (this project's validation measured no real-outcome "
+                 "signal):_")
         L.append("")
         L.append(f"> {_quote_or_absent(m.separation_quote, 'HTJAH-II:887')}")
         L.append("")

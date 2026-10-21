@@ -78,18 +78,16 @@ YOGA_ROUTES: Final[dict[str, Route]] = {
     "Y.MATRUSAPA_SUTAKSHAYA": _PROGENY, "Y.BHRATRUSAPA_SUTAKSHAYA": _PROGENY,
     "Y.PRETASAPA": _PROGENY, "Y.KALANIRDESAT_PUTRANASA": _PROGENY,
     "Y.PUTRAKALATRAHEENA": _PROGENY, "Y.VAMSACHEDA": _PROGENY,
-    # PENDING USER DECISION (review group 4): the bodily-affliction and manner-of-death yogas keep
-    # the H1 reach they had before this table, unchanged, until the user rules on whether a
-    # disease yoga may drop H1. Vrana's Remarks support it ("deplete the vitality", 3HCC:8930-8935)
-    # but also caution "A literal application of the yoga is not at all recommended" (8923-8924).
-    "Y.VRANA": _SELF, "Y.GUHYAROGA": _SELF, "Y.SIRACHCHHEDA": _SELF,
-    "Y.SISNAVYADHI": _SELF, "Y.KUSHTAROGA": _SELF, "Y.BANDHANA": _SELF, "Y.DURMARANA": _SELF,
-    "Y.PEENASAROGA": _SELF, "Y.PITTAROGA": _SELF, "Y.ANGAHEENA": _SELF, "Y.SWETAKUSHTA": _SELF,
-    "Y.PISACHA_GRASTHA": _SELF, "Y.VATHAROGA": _SELF, "Y.MATIBHRAMANA": _SELF,
-    "Y.GALAKARNA": _SELF, "Y.SARPAGANDA": _SELF, "Y.KSHAYAROGA": _SELF, "Y.KARASCHEDA": _SELF,
-    "Y.YUDDHE_MARANA": _SELF, "Y.SANGHATAKA_MARANA": _SELF,
-    # Not routed (modulate nothing): Kalatrashanda (3HCC:9026) and Vikalangapatni (3HCC:9588)
-    # name the SPOUSE, a matter the yoga step has no wiring for; Raman cautions on both.
+    # Not routed (REPORT ONLY — detected, cited and shown in the reading, never moving a
+    # verdict):
+    # * The bodily-affliction and manner-of-death yogas — Vrana, Guhyaroga, Sirachchheda and the
+    #   rest of that class (Sisnavyadhi, Kushtaroga, Bandhana, Durmarana, Peenasaroga, Pittaroga,
+    #   Angaheena, Swetakushta, Pisacha Grastha, Vatharoga, Matibhramana, Galakarna, Sarpaganda,
+    #   Kshayaroga, Karascheda, Yuddhe Marana, Sanghataka Marana). USER DECISION 2026-10-21
+    #   ("No, report only"): Raman's own Remarks on Vrana caution "A literal application of the
+    #   yoga is not at all recommended" (3HCC:8923-8924), so a disease yoga does not drop H1.
+    # * Kalatrashanda (3HCC:9026) and Vikalangapatni (3HCC:9588) name the SPOUSE, a matter the
+    #   yoga step has no wiring for; Raman cautions on both.
 }
 
 

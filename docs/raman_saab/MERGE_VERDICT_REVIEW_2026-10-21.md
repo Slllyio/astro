@@ -197,6 +197,35 @@ liveness was re-frozen. Once decision 3 is made, both can be re-frozen in one st
 5. **"H11 gains" includes acquisitions**, the key set the dhana floor has always used.
    Confirm or narrow to gains alone.
 
+## Closed (2026-10-21): decision 3 applied, baselines re-frozen
+
+**User decision 3: "No, report only."** Vrana, Guhyaroga and Sirachchheda, and with them the
+whole bodily-affliction / manner-of-death class the review grouped under that question, are
+removed from `yoga_routes`. They are still detected, cited and shown in the reading, but they
+shift no verdict. Basis is Raman's own caution in the Vrana Remarks: "A literal application of
+the yoga is not at all recommended" (3HCC:8923-8924). No other yoga of that class moved a golden
+verdict, so applying the rule to the class changes nothing beyond the 4 h12_01 keys.
+
+**Snapshot diff vs the 2d65fe57 freeze: exactly 13, all accepted and re-frozen.**
+
+| # | Chart | Key | Old → new | Cause | Citation |
+|---|---|---|---|---|---|
+| 1-2 | HTJAH-I x65 | H11 gains, acquisitions | afflicted → mixed | Vishnu (dhana floor, weak pillar) | 3HCC:3499-3500 "earn in lakhs" |
+| 3-4 | HTJAH-II h12_14 | H11 gains, acquisitions | afflicted → mixed | Vishnu | 3HCC:3499-3500 |
+| 5-6 | HTJAH-II x164 | H11 gains, acquisitions | mixed → favourable | Lakshmi | 3HCH:1563 "predominantly to do with wealth" |
+| 7-9 | HTJAH-I chart_44 | H11 headline, friends, elder siblings | favourable → mixed | Dhana-Chain / Lakshmi no longer reach non-wealth keys | HTJAH-I:2480 "acquires great wealth" |
+| 10-13 | HTJAH-I x7 | H2 headline, family, speech, vision | favourable → mixed | Dhana-Exch / Dhana-Chain no longer reach non-wealth keys | HTJAH-I:2709 "Financial prosperity"; HTJAH-I:2480 |
+
+None of the 13 is on a scored house. Golden ratchet: 286/397 exact, 362/397 within-1,
+35 real errors, unchanged from before the merge. The doctrine snapshot was re-frozen with a
+lineage note, and `rule_liveness_baseline.json` was re-based: yogas 72 → 185, never 20 → 54. All
+34 additional never-firing yogas are merged 3HC combinations no golden exercises, and no
+pre-merge yoga stopped firing.
+
+**Still open (not acted on):** the vitality rule for the pre-merge HTJAH raja yogas; a cited
+raja vitality test for 3HC 245-263; wiring H7 for the spouse yogas; the `_rollup` masking; the
+canonical BPHS ch.7 corpus copy (decision C).
+
 ## Reproduction
 
 The scratch scripts used (not committed) were: snapshot diff dump; global toggle (`YOGAS`

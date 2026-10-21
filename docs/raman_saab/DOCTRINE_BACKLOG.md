@@ -5781,3 +5781,20 @@ failing (7231 -> 7239 passed). Golden ratchet unmoved: 286/397, 362/397, 35.**
   tests pin Raman's pointer HPA-11:195. The tests contradict each other; one side must change.
 - NOT RUN: test_astrobank_ratchet skips (engine fingerprint changed; needs a feature-store
   rebuild). data/private was not mounted in the worktree.
+
+**CLOSED 2026-10-21 (branch claude/merge-fix). pytest tests/raman_saab green. Golden ratchet
+unmoved throughout: 286/397, 362/397, 35.**
+- HELD 7 + 10 resolved by user decision B: D-27/40/45/60 cite the classical sloka
+  (BPHS-7:96/100/102, PHALA:112); the judge and both tests follow varga_domains.
+- HELD 3 + 8 resolved by user decision A: the 78 verdict moves were reviewed against Raman, not
+  waved through. All 78 came from main's new yogas acting through the kind-only yoga step in
+  house_template. Fixed: `doctrine/yoga_routes.py` gives each yoga the house its own text names
+  (HTJAH-I:480-482). Bhagya -> H9 fortune plus its ownership clause (3HCC:8003-8010); progeny
+  curses -> H5; wealth yogas -> H2 wealth / H11 gains+acquisitions; 3HC raja 245-263 shift nothing
+  (3HCC:8580-8584 names "inherent vitality" but no test); disease/death arishtas report-only
+  (user decision 3, 3HCC:8923-8924). 78 -> 13 diffs, all faithful, re-frozen with lineage;
+  rule liveness re-based (yogas 72 -> 185, never 20 -> 54, all 34 new dormant ones merged 3HC).
+  Full record: docs/raman_saab/MERGE_VERDICT_REVIEW_2026-10-21.md.
+- Still open: decision C (canonical BPHS ch.7 copy); the vitality rule for pre-merge HTJAH raja
+  yogas; H7 spouse yogas; `_rollup` masking an afflicted sub-matter; the real-outcome ratchet
+  (needs a feature-store rebuild).

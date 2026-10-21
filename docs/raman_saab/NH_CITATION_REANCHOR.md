@@ -178,7 +178,7 @@ auto content match: 146; manual: 6; unresolvable: 1; new line outside own live c
 | NH.chart_71 | NH:10856 | NH:14522 | content11 | Mark Bhratrukaraka Mars in the 3rd and Bhratrusthana from the Moon | Mark Bhratrukaraka Mars in the 3rd and Bhratrusthana from the Moon |
 | NH.chart_71 | NH:10888 | NH:14554 | content12 | Powerful afflictions to the lord of the 7th and Venus—the Kalatrakaraka. | Powerful afflictions to the lord of the 7th and Venus — the Kalatrakaraka. |
 | NH.chart_71 | NH:10892 | NH:14558 | content10 | idealistic and imaginative. The house of intelligence is well fortified. | idealistic and imaginative. The house of intelligence is well fortified. |
-| NH.chart_75 | NH:11313 | NH:15157 | manual: old line was the printed page number '397' after the 'Ex-King Farouk' ru | 397 |  |
+| NH.chart_75 | NH:11313 | NH:15158 | manual: page number '397' split the sentence; same slot 15157 is blank live, moved to continuation (approved 2026-10-21) | 397 | malefics on Lagna is highly significant suggesting Farouk's instinctive |
 | NH.chart_75 | NH:11351 | NH:15193 | content12 | observe that whilst Jupiter's exaltation in the 10th would no doubt | observe that whilst Jupiter's exaltation in the 10th would no doubt |
 | NH.chart_75 | NH:11354 | NH:15196 | content10 | aspect, involving the 7th and 8th houses, emphasises the unhappiness | aspect, involving the 7th and 8th houses, emphasises the unhappiness |
 | NH.chart_75 | NH:11385 | NH:15229 | content12 | controversy. Besides, lord of the 9th is spoilt by his association, rather | controversy. Besides, lord of the 9th is spoilt by his association, rather |

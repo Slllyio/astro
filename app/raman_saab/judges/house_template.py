@@ -50,6 +50,7 @@ from app.raman_saab.doctrine.conditions import EvalContext, HemmedBy
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
 from app.raman_saab.doctrine.significations import Signification, significations_of
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.doctrine.yoga_routes import routes_to
 from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
 from app.raman_saab.judges import rule_firing as rf
 from app.raman_saab.judges.house_judge import HouseVerdict
@@ -102,15 +103,8 @@ _SIGN_NAMES: Final[tuple[str, ...]] = (
 #: Canonical graha iteration order — keeps occupant metadata deterministic.
 _PLANET_ORDER: Final[tuple[str, ...]] = (
     "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
-# Yoga modifier scopes (HTJAH-I consideration #4, :480-482), kind -> matters:
-#   dhana   supports wealth/gains matters (H2 / H11);
-#   arishta (Sakata, uncancelled Kemadruma, et al.) weighs on H1 self/Moon-matters;
-#   raja    supports fortune/career matters (H9 / H10).
-_DHANA_HOUSES: Final[frozenset[int]] = frozenset({2, 11})
-_DHANA_TAGS: Final[frozenset[str]] = frozenset({"wealth", "gains"})
-_ARISHTA_TAGS: Final[frozenset[str]] = frozenset({"self"})
-_RAJA_HOUSES: Final[frozenset[int]] = frozenset({9, 10})
-_RAJA_TAGS: Final[frozenset[str]] = frozenset({"fortune", "career"})
+# Yoga modifier reach (HTJAH-I consideration #4, :480-482) is per YOGA, not per kind:
+# `doctrine.yoga_routes.YOGA_ROUTES` names the house and sub-matter each yoga's text concerns.
 # H5 fertility gate scope (HTJAH-I:5517-5527): children/progeny matters only —
 # intellect/poorvapunya share the H5 'children' rule bucket but are not begetting
 # matters, so the sphuta gate deliberately does NOT touch them.
@@ -1339,25 +1333,19 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
 # one step, and a decisive verdict is NEVER overturned.
 # ---------------------------------------------------------------------------
 
-def _yoga_scope_kinds(sig: Signification) -> frozenset[str]:
-    """The yoga kinds that may bear on this signification (kind-scoped wiring).
+#: The yoga kinds that may move a borderline verdict. 'lunar'-kind yogas (Sunapha / Anapha /
+#: Durudhura et al.) are DELIBERATELY excluded: a conservative encoding of consideration #4
+#: (HTJAH-I:480-482) that lets only dhana/arishta/raja move a verdict.
+_MODULATING_KINDS: Final[frozenset[str]] = frozenset({"dhana", "raja", "arishta"})
 
-    'lunar'-kind yogas (Sunapha / Anapha / Durudhura et al.) are DELIBERATELY
-    excluded from modulation scope in this phase: a conservative encoding of
-    consideration #4 (HTJAH-I:480-482) that lets only dhana/arishta/raja move a
-    borderline verdict. Lunar yogas will be surfaced as ':noted' metadata at
-    Phase G; until then the asymmetry (lunar yogas neither shift a verdict nor
-    appear in metadata) is intentional, not an omission.
-    """
-    tags = set(sig.rule_tags)
-    kinds: set[str] = set()
-    if sig.house in _DHANA_HOUSES and tags & _DHANA_TAGS:
-        kinds.add("dhana")
-    if sig.house == 1 and tags & _ARISHTA_TAGS:
-        kinds.add("arishta")
-    if sig.house in _RAJA_HOUSES and tags & _RAJA_TAGS:
-        kinds.add("raja")
-    return frozenset(kinds)
+
+def _routed_yogas(sig: Signification, fired: tuple[FiredYoga, ...]) -> tuple[FiredYoga, ...]:
+    """The fired yogas that bear on THIS signification: a modulating kind AND a route
+    (`doctrine.yoga_routes`) naming this house and sub-matter. Consideration #4 ties a yoga to
+    "any particular house or houses" (HTJAH-I:480-482) — the matter its own text names — never
+    to every house that shares its kind tag (the pre-2026-10-21 wiring)."""
+    return tuple(y for y in fired
+                 if y.kind in _MODULATING_KINDS and routes_to(y.id, sig.house, sig.key))
 
 
 def _yoga_modulate(
@@ -1366,9 +1354,13 @@ def _yoga_modulate(
 ) -> tuple[Verdict, bool, Metadata]:
     """Consideration #4 (HTJAH-I:480-482): fired yogas modulate a BORDERLINE 'mixed'.
 
-    * dhana on H2/H11 wealth/gains: mixed -> favourable, only when no malefic
+    Only yogas ROUTED to this signification take part (`_routed_yogas`); the kind then sets
+    the direction:
+
+    * dhana on its routed wealth/fortune matter: mixed -> favourable, only when no malefic
       fired (a contradiction is never painted over);
-    * arishta (Sakata, uncancelled Kemadruma, et al.) on H1 self: mixed ->
+    * arishta (Sakata, uncancelled Kemadruma, et al.) on its routed matter (H1 self, or H5
+      children for the progeny curses): mixed ->
       afflicted — but only a STRENGTH-SPLIT mixed. A clause-2 contradiction-mixed
       (benefic AND malefic both fired) is never dropped: that would hide live
       benefic testimony behind a chart-level yoga. The pinned HTJAH-I chart_33
@@ -1384,14 +1376,13 @@ def _yoga_modulate(
     direction is 'lift'/'drop' for the kind that drove a shift, else 'noted'.
 
     LONGEVITY_GUARD note: the ``not guarded`` arm of the arishta branch is
-    currently UNREACHABLE in production wiring — arishta scope is H1 'self'
-    (_ARISHTA_TAGS) while the guard flag is set only on H8 longevity/death
+    currently UNREACHABLE in production wiring — arishta routes reach H1 self/body/health
+    and H5 children (`yoga_routes`) while the guard flag is set only on H8 longevity/death
     matters, two disjoint sets. It is kept as defensive code (unit-pinned by
     test_arishta_noted_not_dropped_under_longevity_guard) in case a future
     signification carries both an arishta scope and the guard.
     """
-    scope = _yoga_scope_kinds(sig)
-    relevant = tuple(y for y in fired if y.kind in scope)
+    relevant = _routed_yogas(sig, fired)
     if not relevant:
         return verdict, False, ()
     guarded = "LONGEVITY_GUARD" in lead.flags
@@ -1548,7 +1539,7 @@ def _dhana_floor(
     if sig.house != 11 or sig.key not in _DHANA_FLOOR_KEYS \
             or "LONGEVITY_GUARD" in lead.flags:
         return verdict, False, ()
-    dhana_ids = tuple(y.id for y in fired if y.kind == "dhana")
+    dhana_ids = tuple(y.id for y in _routed_yogas(sig, fired) if y.kind == "dhana")
     if not dhana_ids:
         return verdict, False, ()
     all_strong = (lead.lord_strong is True and lead.karaka_strong is True

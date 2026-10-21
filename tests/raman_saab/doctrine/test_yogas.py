@@ -1538,6 +1538,32 @@ class TestBhagyaYoga:
                     "Mercury": 160.0, "Venus": 220.0, "Saturn": 310.0})
         assert not _yoga("Y.BHAGYA").fires(c)
 
+    @staticmethod
+    def _patch_strong(monkeypatch):
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Strong:
+            band = "strong"
+            decisively_weak = False
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Strong())
+
+    def test_cancer_lagna_jupiter_forms_it(self, monkeypatch):
+        """Raman's powerful case (3HCC:8005-8008): Cancer Lagna, Jupiter there exalted, lord
+        of the 9th aspecting the 9th — no Kendradhipatya dosha (Jupiter owns 6 and 9)."""
+        self._patch_strong(monkeypatch)
+        c = _chart({"Jupiter": 95.0, "Sun": 40.0, "Moon": 160.0, "Mars": 190.0,
+                    "Mercury": 220.0, "Venus": 250.0, "Saturn": 310.0}, asc_lon=90.0)
+        assert _yoga("Y.BHAGYA").fires(c)
+
+    def test_mithuna_lagna_jupiter_does_not(self, monkeypatch):
+        """Raman (3HCC:8008-8010): from Mithuna the yoga "becomes almost ineffective because
+        of Kendradhipatya dosha for Jupiter" (lord of the 7th and 10th), even when strong."""
+        self._patch_strong(monkeypatch)
+        c = _chart({"Jupiter": 70.0, "Sun": 40.0, "Moon": 160.0, "Mars": 190.0,
+                    "Mercury": 220.0, "Venus": 250.0, "Saturn": 310.0}, asc_lon=60.0)
+        assert not _yoga("Y.BHAGYA").fires(c)
+
 
 class TestJananatpurvamPitruMaranaYoga:
     def test_fires_when_the_entire_yoga_is_present(self):

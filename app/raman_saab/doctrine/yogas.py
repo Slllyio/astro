@@ -1853,16 +1853,26 @@ class _Bhagya(C.Condition):
     """Bhagya 241 (3HCC:7989): a STRONG benefic in Lagna, the 3rd or the 5th,
     simultaneously aspecting the 9th. The whole-sign drishti table carries Raman's own
     observation naturally (only Jupiter reaches the 9th from Lagna or the 5th; any
-    benefic reaches it from the 3rd); strength rides B1."""
+    benefic reaches it from the 3rd); strength rides B1.
+
+    OWNERSHIP (encoded 2026-10-21): "due consideration must be given to the nature of the
+    ownership of the benefic concerned before actually evaluating the yoga. Cancer Lagna with
+    Jupiter there constitutes a powerful Bhagya Yoga … The same yoga forming from Mithuna
+    becomes almost ineffective because of Kendradhipatya dosha for Jupiter" (3HCC:8003-8010).
+    A benefic carrying Kendradhipati dosha (HTJAH-I:583, `functional_nature`) does not form
+    it — Raman's "almost ineffective" read as not formed, the conservative variant."""
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
         from app.raman_saab.doctrine import drishti
+        from app.raman_saab.primitives.functional_nature import kendradhipati_dosha
         chart = ctx.chart
         for b in _T5_BENEFICS:
             bp = chart.planets.get(b)
             if bp is None or bp.rasi_house not in {1, 3, 5}:
                 continue
             if not drishti.aspects_house(b, 9, chart):
+                continue
+            if kendradhipati_dosha(b, chart.asc_sign):
                 continue
             if _t6_b1_strong(chart, b):
                 return True

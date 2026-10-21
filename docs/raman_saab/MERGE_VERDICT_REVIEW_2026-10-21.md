@@ -139,6 +139,64 @@ tag scope is a (c) call.
 4. **Friends scope (2 keys in groups 1 and 6):** should a wealth yoga reach H11/friends?
 5. **Groups 5–6 (7 diffs)** are faithful and can be re-frozen as they stand.
 
+## Fix applied (2026-10-21, user decision "fix the yoga step before re-freezing")
+
+**78 → 17 snapshot diffs. Golden ratchet unchanged: 286/397, 362/397, 35.**
+`pytest tests/raman_saab`: 2 failed / 7250 passed. The two failures are the held re-freezes.
+
+- `doctrine/yoga_routes.py` (new): each yoga that may modulate names the house and sub-matter
+  its own text concerns. **A yoga not in the table modulates nothing.** `house_template`
+  (`_yoga_modulate` and the H11 dhana floor) now routes by yoga, not by kind; the kind still
+  sets the direction. Pre-merge HTJAH/3HC/HPA-20 yogas keep exactly the reach they were
+  calibrated on, except that wealth is narrowed (below).
+- **Bhagya** → H9 fortune only. Raman's ownership clause is now encoded in `_Bhagya`: a benefic
+  with Kendradhipati dosha (HTJAH-I:583) does not form it (3HCC:8003-8010; "almost ineffective"
+  is read as not formed, the conservative variant). Pinned on both of Raman's examples
+  (Cancer Jupiter forms it, Mithuna Jupiter does not).
+- **Progeny curses** (Sarpasapa, Pitru/Matru/Bhratru-sapa, Pretasapa, Kalanirdesat Putranasa,
+  Putrakalatraheena, Vamsacheda) → H5 children only, never H1.
+- **Wealth yogas** (Vishnu, Lakshmi, and the pre-merge Dhana yogas) → H2 wealth and H11
+  gains/acquisitions only. They no longer reach friends, elder siblings, family, speech or
+  vision, which carry a `wealth`/`gains` rule tag but are not wealth.
+- **Raja yogas of the completed 3HC (245-263) and Indra** modulate nothing.
+  3HCC:8580-8584 makes them conditional on "inherent vitality" but **defines no test** that
+  could be encoded without inventing one. FLAGGED: they surface as metadata only until a cited
+  vitality test exists. The pre-merge HTJAH lordship raja yogas keep their reach. Whether the
+  vitality remark also governs them is open (see below).
+- **Unchanged by instruction:** the bodily-affliction / manner-of-death arishtas (Vrana,
+  Guhyaroga, Sirachchheda and the rest of that class) keep the H1 reach, pending decision 3;
+  `_rollup` is unchanged. Spouse yogas (Kalatrashanda, Vikalangapatni) name H7, which the yoga
+  step does not wire, so they modulate nothing (flagged).
+
+### The 17 remaining diffs, re-reviewed
+
+| Cause | Diffs | Charts | Class |
+|---|---|---|---|
+| Vishnu → H11 gains/acquisitions | 4 | HTJAH-I x65, HTJAH-II h12_14 | (a) "earn in lakhs" (3HCC:3499-3500) |
+| Lakshmi → H11 gains/acquisitions | 2 | HTJAH-II x164 | (a) "predominantly to do with wealth" (3HCH:1563) |
+| Wealth reach narrowed: Dhana-Chain / Lakshmi no longer lift H11 friends/elder siblings | 3 | HTJAH-I chart_44 | (a) HTJAH-I:2480 names only wealth: "acquires great wealth" |
+| Wealth reach narrowed: Dhana-Exch / Dhana-Chain no longer lift H2 family/speech/vision | 4 | HTJAH-I x7 | (a) HTJAH-I:2709 "Financial prosperity"; HTJAH-I:2480 |
+| Vrana / Guhyaroga / Sirachchheda → H1 | 4 | HTJAH-II h12_01 | **(c) pending decision 3, left as is** |
+
+None of the 6 moved (chart, house) pairs carries a confirmed Raman expectation.
+
+**Not re-frozen.** 13 of the 17 are faithful. The 4 h12_01 keys are pending decision 3, so
+"every remaining change is faithful" does not hold yet. Neither the doctrine snapshot nor yoga
+liveness was re-frozen. Once decision 3 is made, both can be re-frozen in one step.
+
+### Open for the user
+
+1. **Decision 3** (Vrana-class arishtas on H1): it unblocks the re-freeze.
+2. **Pre-merge raja yogas:** does Raman's "inherent vitality" remark (3HCC:8580-8584) also govern
+   the HTJAH-I lordship raja yogas (Raja-KT/910X/910A, Vipareeta, HPA-20 Chamara et al.)? They
+   still lift H9/H10 on presence. Turning them off is a verdict change and would need its own
+   ratchet measurement.
+3. **A cited raja vitality test:** if one exists elsewhere in Raman (HTJAH, HPA), encoding it
+   would let the 3HC raja yogas modulate again.
+4. **Spouse yogas → H7:** wire them, or keep them non-modulating?
+5. **"H11 gains" includes acquisitions**, the key set the dhana floor has always used.
+   Confirm or narrow to gains alone.
+
 ## Reproduction
 
 The scratch scripts used (not committed) were: snapshot diff dump; global toggle (`YOGAS`

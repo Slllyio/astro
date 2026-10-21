@@ -1510,15 +1510,15 @@
  {
   "id": "NH.chart_75",
   "old": "NH:11313",
-  "new": "NH:15157",
-  "how": "manual: old line was the printed page number '397' after the 'Ex-King Farouk' running head; mapped to the same slot",
+  "new": "NH:15158",
+  "how": "manual: old line was the printed page number '397' after the 'Ex-King Farouk' running head; that slot (15157) is blank in the live file, so moved to the sentence's continuation 15158 (user-approved 2026-10-21)",
   "in_block": true,
   "live_block": [
    15091,
    15270
   ],
   "old_text": "397",
-  "new_text": ""
+  "new_text": "malefics on Lagna is highly significant suggesting Farouk's instinctive"
  },
  {
   "id": "NH.chart_75",

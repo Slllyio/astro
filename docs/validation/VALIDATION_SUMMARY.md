@@ -55,6 +55,14 @@ C1 stays unread. Full reading: `PHASE3R_READING.md`.
 +0.009 (−0.010..+0.029) and MD+AD+PD convergence −0.005 (−0.022..+0.012), both BOUNDED_NULL, with the
 within-person effect null too. The placebo is indistinguishable. See `PHASE3P_READING.md`.
 
+## Addendum (2026-10-21): Phase 3Y, Yogini dasha (user-approved open option)
+Pre-registered (`PHASE3Y_YOGINI_PREREG.md`, c4c5f710) and run on the same 13,034 risk sets. The Parashara
+engine's Yogini (BPHS-46:199, cycle repeated past 36 years, ADs from BPHS-46:110) was used with Phase 3's
+activation instrument. **AD level −0.010 (−0.029..+0.010), within-person −0.004; MD level +0.001
+(−0.010..+0.011), within-person +0.005. Both BOUNDED_NULL.** All gates passed. The placebo (+1 nakshatra)
+does as well as the real sequence, and Raman ayanamsa and Rodden AA agree. C1 stays unread. A second
+dasha system now joins Vimshottari as a bounded null. Full reading: `PHASE3Y_READING.md`.
+
 ## Stopping rule: triggered, and honoured
 No new outcome questions are opened. Not run, by design: 4.4 vocation, 4.5 lifespan, 4.6 H5 codings,
 4.7 time twins, Phase 5 composite/ML. Holdouts C1 (11,542), C2 (11,404), Gauquelin (25%) and
@@ -82,7 +90,7 @@ PHASE4_READING. Code: `tools/validation/`. Result records: `E:/astro/data/valida
   is at `E:/astro/data/astro_databank/derived/parashara_ext/`.
 - **Holdouts, all unread:** C1 / C2 (manifest `tools/validation/holdout_manifest_tierC1.json`), Gauquelin
   25% (salt `gauquelin-screening-v1`), Wikidata. The ledger `data/empirical/holdout_ledger.json` has no claims.
-- **Open, by user choice only:** Yogini dasha or Jaimini chara dasha timing, each needing its own
+- **Open, by user choice only:** Jaimini chara dasha timing (Yogini done: Phase 3Y, bounded null), needing its own
   prereg. Any new risk-set test must match on latitude band, or report within-person E (Phase 3R lesson).
 - **Leftover, harmless:** varga worktree has an uncommitted partial `build_store.py` edit; its finished
   version is committed here (64721b38). It can be discarded.

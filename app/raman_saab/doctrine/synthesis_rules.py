@@ -470,7 +470,9 @@ RAMAN_RULES: Final[tuple[SynthesisRule, ...]] = (
         "indications are enjoyed fully; ranking houses strongest to weakest prepares the ground "
         "for prediction. Raman gives a ranking, never a numeric cutoff.",
         "The chart's houses are not equal — the strongest deliver most fully.",
-        ("House-by-house", "Shadbala"), Citation("GBB-9", 332)),
+        # GBB-9:332 until 2026-10-21: the 2026-08-23 re-derivation shortened ch.9 by two
+        # lines, so "134. Concluding Remarks" moved 332 -> 330 (NH_CITATION_REANCHOR.md).
+        ("House-by-house", "Shadbala"), Citation("GBB-9", 330)),
     SynthesisRule(
         "SYN_R7_RESIDENTIAL_QUANTITY", "raman", "R7",
         "Residential strength quantifies the period's yield", "evaluable", _R,

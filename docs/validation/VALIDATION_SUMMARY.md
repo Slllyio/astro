@@ -63,6 +63,17 @@ activation instrument. **AD level −0.010 (−0.029..+0.010), within-person −
 does as well as the real sequence, and Raman ayanamsa and Rodden AA agree. C1 stays unread. A second
 dasha system now joins Vimshottari as a bounded null. Full reading: `PHASE3Y_READING.md`.
 
+## Addendum (2026-10-24): Phase 3J, Jaimini chara dasha (owner option A)
+Chara dasha was first encoded in the Parashara engine from BPHS-46 sl.155-167 (13087d3f). The owner's instruction
+was "find answers in ancient texts", and the rulings are in `docs/parashara/CHARA_DASHA_RULINGS.md`. A doctrine review
+was applied, and the engine reproduces Raman's Example 20 table 12/12. Antardashas are deferred (BPHS-51 conflicts).
+Phase 3J was pre-registered (7d9e4402) and run on Phase 3's risk sets minus deaths (8,165). Activation, a convention
+from Raman's *Studies in Jaimini* art.159: the dasa sign is the house's sign from the Lagna.
+- **Year-dated: +0.001 (−0.007..+0.010), BOUNDED_NULL.**
+- **Day-dated: −0.014 (−0.033..+0.007), UNDERPOWERED** (TOST p 0.059).
+- The year-dated within-person +0.011 is matched by the placebo (+0.013), so it is structural, not timing.
+- C1 stays unread. Three dasha systems are now null. Full reading: `PHASE3J_READING.md`.
+
 ## Stopping rule: triggered, and honoured
 No new outcome questions are opened. Not run, by design: 4.4 vocation, 4.5 lifespan, 4.6 H5 codings,
 4.7 time twins, Phase 5 composite/ML. Holdouts C1 (11,542), C2 (11,404), Gauquelin (25%) and
@@ -90,7 +101,7 @@ PHASE4_READING. Code: `tools/validation/`. Result records: `E:/astro/data/valida
   is at `E:/astro/data/astro_databank/derived/parashara_ext/`.
 - **Holdouts, all unread:** C1 / C2 (manifest `tools/validation/holdout_manifest_tierC1.json`), Gauquelin
   25% (salt `gauquelin-screening-v1`), Wikidata. The ledger `data/empirical/holdout_ledger.json` has no claims.
-- **Open, by user choice only:** Jaimini chara dasha timing (Yogini done: Phase 3Y, bounded null), needing its own
+- **Open, by user choice only:** chara dasha ANTARDASHAS (BPHS-51 sl.6 vs sl.7-12, owner decision; Yogini 3Y and chara MD 3J done), needing its own
   prereg. Any new risk-set test must match on latitude band, or report within-person E (Phase 3R lesson).
 - **Leftover, harmless:** varga worktree has an uncommitted partial `build_store.py` edit; its finished
   version is committed here (64721b38). It can be discarded.

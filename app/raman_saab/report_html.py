@@ -48,6 +48,7 @@ from app.raman_saab.detailed_report import (
 )
 from app.raman_saab.primitives import nakshatra_signature
 from app.raman_saab.primitives.vimshottari import maraka_running_phrase
+from app.raman_saab.chart.ayanamsa import ayanamsa_label
 from app.raman_saab.render import _jd_to_date
 
 _HOUSE_NAME = {1: "Self / Body", 2: "Wealth / Family", 3: "Siblings / Courage", 4: "Mother / Home",
@@ -4069,7 +4070,7 @@ def to_html(r: DetailedReport) -> str:
     <div class="eyebrow">Vedic reading &middot; Sri B. V. Raman's system</div>
     <h1 class="name">{_esc(b.name)}</h1>
     <div class="birth">Born {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d}
-      (tz {b.tz_offset:+g}) &middot; {b.latitude:.4f}, {b.longitude:.4f} &middot; Lahiri sidereal</div>
+      (tz {b.tz_offset:+g}) &middot; {b.latitude:.4f}, {b.longitude:.4f} &middot; {_esc(ayanamsa_label(r.chart.ayanamsa))}</div>
     {_plain_reading_section(r)}
     <div class="sig">{sig_html}</div>
     {_plain_lead(r, "chart_signature")}

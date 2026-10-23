@@ -543,7 +543,7 @@
             </div>
             <div style="margin-top:.45rem"><label class="leaf-label" data-i18n="TIMEZONE (HRS FROM UTC)">TIMEZONE (HRS FROM UTC)</label><input class="leaf-input" id="tz_offset" type="number" step="0.25" value="5.5"></div>
           </details>
-          <div style="margin-bottom:.9rem"><label class="leaf-label" data-i18n="AYANAMSA">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
+          <div style="margin-bottom:.9rem"><label class="leaf-label" data-i18n="AYANAMSA">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>raman</option><option>lahiri</option></select></div>
           <div style="text-align:center"><button class="leaf-button" id="go" type="button" onclick="run()" data-i18n="Cast the Reading">Cast the Reading</button></div>
           <div style="text-align:center;margin-top:.5rem;font-size:.76rem;color:var(--ink-faded);font-style:italic" data-i18n="a few seconds to cast & compose">a few seconds to cast &amp; compose</div>
         </div>
@@ -3851,7 +3851,7 @@ function render(R, S, FQ){
       +p2(_b.hour)+':'+p2(_b.minute)+' (tz '+(_b.tz_offset>=0?'+':'')+_b.tz_offset+')','lede'));
     add(para(t('Latitude')+' '+Number(_b.latitude).toFixed(4)+' · '+t('longitude')+' '
       +Number(_b.longitude).toFixed(4)+' · '+t('ayanamsa')+' '
-      +((R.window&&R.window.ayanamsa)||'Lahiri sidereal'),'muted')); }
+      +((R.window&&R.window.ayanamsa)||'sidereal'),'muted')); }
 
   // the running period lives on R.synthesis; the `summary` object carries only a prebuilt
   // `running_period` string, which is why reading S.running_md here rendered nothing.

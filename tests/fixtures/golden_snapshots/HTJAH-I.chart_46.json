@@ -18,27 +18,27 @@
       "H2.L.5",
       "H2.P.Moon"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "speech": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "wealth": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

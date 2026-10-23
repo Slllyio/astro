@@ -86,7 +86,7 @@ class ElectionalQuery(BaseModel):
     longitude: float = Field(..., ge=-180.0, le=180.0)
     tz_offset: float = Field(..., ge=-12.0, le=14.0)
     name: str = Field("api", max_length=120)
-    ayanamsa: Literal["raman", "lahiri"] = "lahiri"
+    ayanamsa: Literal["raman", "lahiri"] = "raman"
     # The day being elected; defaults to today. The election is judged at `election_hour`
     # local time (noon by default) — the moment decides which negative window it falls in.
     date: Optional[date_cls] = None

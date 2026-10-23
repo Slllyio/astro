@@ -29,13 +29,13 @@ _ON = (2026, 8, 18)
 
 @pytest.fixture(scope="module")
 def mainpuri():
-    r = build_detailed_report(_MAINPURI, on=_ON)
+    r = build_detailed_report(_MAINPURI, on=_ON, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
     return r, build_theme_synthesis(r)
 
 
 @pytest.fixture(scope="module")
 def canonical():
-    r = build_detailed_report(_CANONICAL, on=_ON)
+    r = build_detailed_report(_CANONICAL, on=_ON, ayanamsa="lahiri")
     return r, build_theme_synthesis(r)
 
 
@@ -795,7 +795,7 @@ class TestThemeSynthesisContract:
             raise RuntimeError("synthesis blew up")
 
         monkeypatch.setattr(ths, "build_theme_synthesis", _boom)
-        rep = dr.build_detailed_report(_CANONICAL, on=_ON)     # must NOT raise
+        rep = dr.build_detailed_report(_CANONICAL, on=_ON, ayanamsa="lahiri")     # must NOT raise
         assert rep is not None
         assert rep.themes is None                              # degraded, as designed
         assert "not available" in dr.to_markdown(rep)          # and the fallback prose renders

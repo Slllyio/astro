@@ -45,7 +45,13 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
   mismatches parked. The gate was removed and the ENTIRE adjudicable DRAFT queue (94 rows) was
   then reviewed by four parallel engine-blind `bphs-doctrine-reviewer` agents against Raman's
   printed text — 59 CONFIRM, 17 REVISE, 18 REJECT.
-- **★ THE HONEST FIGURE, and the only one to quote: 269/381 = 70.6% exact, 329/381 = 86.4%
+- **★ CURRENT FIGURE (2026-10-23, after the engine-audit fixes — quote this one): 276/396 = 69.7%
+  exact, 366/396 = 92.4% within one ordinal step, 30 real errors (distance ≥ 2).** Lineage and the
+  per-step measurements: `golden_accuracy_baseline.json` `_comment`; the 30 rows, pinned by key:
+  its `real_errors` + `docs/raman_saab/REAL_ERRORS_2026-10-23.md`. Two of the steps were user
+  decisions: the Bhava Bala pillar no longer votes (`house_template.BHAVA_BALA_PILLAR_VOTES`) and
+  the Raman engine defaults to Raman's ayanamsa. The figures below are the history.
+- **★ THE HONEST FIGURE (2026-08-23 adjudication): 269/381 = 70.6% exact, 329/381 = 86.4%
   within one ordinal step, 52 real errors (distance ≥ 2).** Nothing regressed in the engine
   between 88.8% and 70.6% — not one line of judge or doctrine code changed. The old number
   measured a pool that could only admit verdicts the engine already agreed with; this measures
@@ -176,7 +182,7 @@ rule below was EARNED by a caught mistake, with the receipts in `DOCTRINE_BACKLO
 
 | Rule | Why |
 |---|---|
-| **Lahiri sidereal ayanamsa** for all Vedic calculations | Not tropical, not Raman, not KP. |
+| **Lahiri sidereal ayanamsa** for Vedic calculations — EXCEPT the Raman engine (`app/raman_saab`), whose reports, CLI and API default to **Raman's ayanamsa** (Lahiri still selectable) | Not tropical, not KP. Raman-engine exception = USER DECISION 2026-10-23 (engine audit): fidelity is measured with Raman's ayanamsa (the golden harness pins it), and Raman vs Lahiri changed ~24% of sub-matter verdicts, so a Lahiri default meant users got readings whose fidelity was never measured. Canonical-chart tests pinned to Lahiri-based external sources pass `ayanamsa="lahiri"` explicitly. |
 | `DAYS_PER_VEDIC_YEAR = 365.2425` for Vimshottari math | Gregorian mean year; 365.25 (Julian) drifts ~5 days over a 19-yr Saturn MD. |
 | **Whole-sign Vedic aspects (drishti)** | Conjunction/opposition fire by sign membership; orb only sets `is_exact=True`. |
 | **Circular orb distance**: `min(diff, 360 - diff)` where `diff = abs(lon1 - lon2) % 360` | Naive `abs()` silently fails at the 359°/2° Pisces/Aries cusp. |

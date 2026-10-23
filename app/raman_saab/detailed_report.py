@@ -39,6 +39,7 @@ from app.raman_saab.chart.constants import SIGN_LORDS
 logger = logging.getLogger(__name__)
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.primitives.vimshottari import maraka_running_phrase
+from app.raman_saab.chart.ayanamsa import ayanamsa_label
 from app.raman_saab.judges.calibrated_reading import (
     _VALIDITY,
     CalibratedHouseReading,
@@ -4403,7 +4404,7 @@ def _windowed_timeline(
 
 
 def build_detailed_report(
-    birth: BirthData, *, on: Optional[tuple[int, int, int]] = None, ayanamsa: str = "lahiri",
+    birth: BirthData, *, on: Optional[tuple[int, int, int]] = None, ayanamsa: str = "raman",
     years_back: int = 10, years_forward: int = 20,
 ) -> DetailedReport:
     """Assemble the full reading + calibration for one chart (no verdict is re-judged).
@@ -5182,7 +5183,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.append(f"**Born** {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d} "
              f"(tz {b.tz_offset:+g}) at lat {b.latitude:.4f}, lon {b.longitude:.4f}  |  "
-             f"ayanamsa Lahiri sidereal")
+             f"ayanamsa {ayanamsa_label(r.chart.ayanamsa)}")
     L.append("")
 
     # ── the two-voice preamble ────────────────────────────────────────────────

@@ -74,7 +74,12 @@ class TestSessionConclusion:
         _, report = outcome
         raman_best = next(cs for cs in report.ranked
                           if cs.candidate.ayanamsa == "raman" and cs.fact_scores)
-        assert raman_best.channels.facts == pytest.approx(1.0)
+        # 2026-10-23: raman's property now reads mixed (0) after the Bhava Bala pillar was
+        # withdrawn from verdicts; the margin over lahiri (-1) is what picks the frame.
+        assert raman_best.channels.facts == pytest.approx(0.0)
+        lahiri_best = next(cs for cs in report.ranked
+                           if cs.candidate.ayanamsa == "lahiri" and cs.fact_scores)
+        assert raman_best.channels.facts > lahiri_best.channels.facts
 
 
 class TestHonestFraming:

@@ -11,7 +11,7 @@ _MAINPURI = BirthData(name="M", year=1989, month=10, day=12, hour=10, minute=2,
 
 
 def test_synthesize_has_twelve_matters_and_header():
-    s = synthesize(_MAINPURI, on=(2026, 6, 28))
+    s = synthesize(_MAINPURI, on=(2026, 6, 28), ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
     assert len(s.matters) == 12
     assert s.lagna == "Scorpio" and s.atmakaraka == "Sun" and s.arudha_lagna == "Cancer"
     assert s.navamsa_lagna == "Scorpio"            # vargottama
@@ -28,13 +28,13 @@ def test_synthesize_has_twelve_matters_and_header():
 
 def test_synthesis_verdicts_match_read_chart():
     """The synthesis must REPORT the D1 verdicts, never alter them."""
-    s = synthesize(_MAINPURI, on=(2026, 6, 28))
+    s = synthesize(_MAINPURI, on=(2026, 6, 28), ayanamsa="lahiri")
     r = read_chart(_MAINPURI, ayanamsa="lahiri")
     assert [mr.verdict for mr in s.matters] == [pf.rollup for pf in r.proformas]
 
 
 def test_to_text_renders():
-    txt = to_text(synthesize(_MAINPURI, on=(2026, 6, 28)))
+    txt = to_text(synthesize(_MAINPURI, on=(2026, 6, 28), ayanamsa="lahiri"))
     assert "SYNTHESIS" in txt and "Lagna Scorpio" in txt
     assert "Ashtakavarga" in txt and "navamsa" in txt
 
@@ -48,7 +48,7 @@ def test_navamsa_clause_names_both_frames_when_they_differ():
     LAGNA ledger — which the report's pillar line prints as 'Navamsa neutral' — differs. The
     reading line must DISCLOSE the frame so both lines are true statements about named frames
     (REPORT_CRITIQUE_2026-08-17 P0: the H3 self-contradiction)."""
-    s = synthesize(_CANONICAL, on=(2026, 8, 17))
+    s = synthesize(_CANONICAL, on=(2026, 8, 17), ayanamsa="lahiri")
     h3 = next(mr for mr in s.matters if mr.house == 3)
     assert "and the navamsa confirms it (delivered)" in h3.reading
     assert "read from the Moon-frame" in h3.reading

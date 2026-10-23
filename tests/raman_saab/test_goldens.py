@@ -437,6 +437,22 @@ def track_b_ordinal_scoreboard() -> tuple[int, int, list[str]]:
 
 
 @pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")
+def test_no_new_real_errors() -> None:
+    """Per-row guard beside the ratio ratchets (audit 2026-10-23). The ratio can stay level while
+    an old row inverts, if newly confirmed goldens add hits. Every distance-2 error must be one
+    already listed in golden_accuracy_baseline.json `real_errors`; fixing one is welcome (drop its
+    key in the same commit), a new one fails here by name."""
+    pinned = set(json.loads(_BASELINE_PATH.read_text(encoding="utf-8")).get("real_errors", ()))
+    if not pinned:
+        pytest.skip("no real_errors pin yet")
+    _, _, real = track_b_ordinal_scoreboard()
+    keys = {line.split(":")[0].strip() for line in real}
+    new = sorted(keys - pinned)
+    assert not new, "new real (distance-2) errors not in the pinned list:\n" + "\n".join(
+        line for line in real if line.split(":")[0].strip() in new)
+
+
+@pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")
 def test_track_b_accuracy_ratchet() -> None:
     """Engine accuracy vs Raman's confirmed verdicts must never drop below the
     committed baseline (tests/fixtures/golden_accuracy_baseline.json).

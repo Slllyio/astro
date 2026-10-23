@@ -20,6 +20,13 @@ must first learn to pick up Raja yogas and then weigh their relative strengths a
 (3HCC:8580-8584) — and the passage gives no test of that vitality that could be encoded without
 inventing one. Until a cited test exists they surface as metadata only.
 
+The same caveat binds the HTJAH lordship raja yogas routed below (audit 2026-10-23), and for
+those Raman DOES state a test: "wherever Raja yoga is noticed, the extent to which it will be
+realised depends upon the inherent strength ... The Yoga can really be of some substantial
+effect provided the planets causing the yoga are within 12° of each other" (HTJAH-I:641-645).
+So a routed raja yoga lifts a verdict only when `yogas.raja_yoga_vital` passes — today only the
+association yoga Y.RAJA.KT has a measurable causing pair; the others are noted, not lifting.
+
 Usage:
     from app.raman_saab.doctrine.yoga_routes import routes_to
     routes_to("Y.BHAGYA", 9, "fortune")      # True

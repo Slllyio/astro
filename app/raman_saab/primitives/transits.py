@@ -92,7 +92,7 @@ class TransitRow:
     bav_proportion: float | None = None
 
 
-def transit_chart(year: int, month: int, day: int, *, ayanamsa: str = "lahiri") -> RamanChart:
+def transit_chart(year: int, month: int, day: int, *, ayanamsa: str = "raman") -> RamanChart:
     """Sidereal planet positions at noon UT on the given date (location-independent for signs)."""
     return cast_chart(BirthData(name="transit", year=year, month=month, day=day, hour=12,
                                 minute=0, tz_offset=0.0, latitude=0.0, longitude=0.0),
@@ -104,7 +104,7 @@ def gochara(natal: RamanChart, year: int, month: int, day: int, *,
     """Transit rows for `planets` on the date, judged from the natal Moon + natal Lagna + each
     planet's own Ashtakavarga support. Default ayanamsa = the natal chart's (so a Raman-cast natal is
     not mixed with a Lahiri-cast transit)."""
-    tc = transit_chart(year, month, day, ayanamsa=ayanamsa or getattr(natal, "ayanamsa", "lahiri"))
+    tc = transit_chart(year, month, day, ayanamsa=ayanamsa or getattr(natal, "ayanamsa", "raman"))
     moon = natal.planets.get("Moon")
     moon_sign = moon.sign if moon else natal.asc_sign
     # house-from-Moon of EVERY transiting graha — needed to detect Vedha obstruction.
@@ -154,7 +154,7 @@ def sade_sati(natal: RamanChart, year: int, month: int, day: int, *,
               ayanamsa: str | None = None) -> str | None:
     """Saturn's Sade-Sati phase if active (transit of the 12th/1st/2nd from the natal Moon). Default
     ayanamsa = the natal chart's."""
-    tc = transit_chart(year, month, day, ayanamsa=ayanamsa or getattr(natal, "ayanamsa", "lahiri"))
+    tc = transit_chart(year, month, day, ayanamsa=ayanamsa or getattr(natal, "ayanamsa", "raman"))
     moon = natal.planets.get("Moon")
     sat = tc.planets.get("Saturn")
     if moon is None or sat is None:
@@ -262,7 +262,7 @@ def gochara_timeline(
     boundary can fall anywhere in the sampling gap either side of what's reported; that is stated
     explicitly wherever this is rendered, per the project's no-silent-approximation rule.
     """
-    az = ayanamsa or getattr(natal, "ayanamsa", "lahiri")
+    az = ayanamsa or getattr(natal, "ayanamsa", "raman")
     moon = natal.planets.get("Moon")
     moon_sign = moon.sign if moon else natal.asc_sign
     start_jd = ref_jd - years_back * DAYS_PER_VEDIC_YEAR

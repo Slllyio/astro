@@ -12,7 +12,7 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 
 @pytest.fixture(scope="module")
 def report():
-    return build_detailed_report(_CANONICAL)
+    return build_detailed_report(_CANONICAL, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
 
 
 @pytest.fixture(scope="module")
@@ -243,13 +243,15 @@ class TestDetailedReport:
         assert "Nav?" not in markdown and "k?raka" not in markdown
 
     def test_split_status_note_when_majority_disagrees_with_headline(self, report, markdown):
-        """H10/H12 on the canonical chart are afflicted headlines driven by one signification
+        """H10 on the canonical chart is an afflicted headline driven by one signification
         while the majority reads favourable — the split status must say so, without touching
-        the verdict itself."""
+        the verdict itself. (H12 was pinned here too until 2026-10-23: the one-sided-rasi
+        navamsa guard stopped the D9 lifting three malefic-only H12 matters to favourable, so
+        its majority now reads mixed.)"""
         from app.raman_saab.detailed_report import (
             driver_entry, signification_tenor_split, tenor_note,
         )
-        for house in (10, 12):
+        for house in (10,):
             mr = next(m for m in report.synthesis.matters if m.house == house)
             cal = report.calibration[house]
             split = signification_tenor_split(cal)
@@ -259,19 +261,17 @@ class TestDetailedReport:
         assert "Split status" in markdown
         assert "the headline follows the single weakest decided matter" in markdown
 
-    def test_split_status_notes_headline_minority_on_canonical_h6(self, report):
-        """The canonical chart's H6 headline diverged from its majority on 2026-08-23 when
-        the doctrine-reviewed H6.C.19 (HTJAH-I:6105, 6th lord in a benefic's sign aspected by
-        a benefic -> many friends) began firing here, lifting `enemies` to favourable: the
-        matter headline reads mixed while 3 of 5 sub-readings stay afflicted — exactly the
-        false-alarm case the tenor note EXISTS to annotate, so the pin now asserts the note
-        is PRESENT (previously: majority==headline and no note)."""
+    def test_canonical_h6_headline_follows_its_afflicted_majority(self, report):
+        """The canonical chart's H6 has 3 of 5 sub-readings afflicted, 1 favourable, 1 mixed.
+        Until 2026-10-23 the rollup's mixed+favourable rule fired first and the headline read
+        mixed over three afflicted sub-matters (the masking the audit found); an afflicted
+        sub-matter now always reaches the headline, so headline and majority agree and no
+        tenor note is needed."""
         from app.raman_saab.detailed_report import signification_tenor_split, tenor_note
         mr6 = next(m for m in report.synthesis.matters if m.house == 6)
         split = signification_tenor_split(report.calibration[6])
-        assert split.majority == "afflicted" and mr6.verdict == "mixed"
-        note = tenor_note(split, mr6.verdict)
-        assert note is not None and "3 of 5" in note
+        assert split.majority == "afflicted" and mr6.verdict == "afflicted"
+        assert tenor_note(split, mr6.verdict) is None
 
     def test_tenor_split_tie_reads_as_even_split_not_zero_mixed(self):
         """A 2-favourable/2-afflicted tie must read as 'an even split', never as a nonsensical

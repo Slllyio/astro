@@ -47,6 +47,7 @@ from app.raman_saab.detailed_report import (
     tenor_note,
 )
 from app.raman_saab.primitives import nakshatra_signature
+from app.raman_saab.primitives.vimshottari import maraka_running_phrase
 from app.raman_saab.render import _jd_to_date
 
 _HOUSE_NAME = {1: "Self / Body", 2: "Wealth / Family", 3: "Siblings / Courage", 4: "Mother / Home",
@@ -877,8 +878,7 @@ def _themes_section(r: DetailedReport) -> str:
                        + ('inside the span.' if lf.within_span
                           else 'OUTSIDE the span, disclosed where it appears.') + '</li>')
         out.append('<li><b>Running period</b> &mdash; '
-                   + ('carries a maraka-tier lord.' if lf.maraka_now
-                      else 'carries no maraka-tier lord.') + '</li>')
+                   + maraka_running_phrase(lf.maraka_now) + '.</li>')
         out.append('</ul>')
         if lf.maraka_windows:
             out.append('<p class="section-sub"><b>Maraka-tier bhuktis ahead carrying the '
@@ -2367,8 +2367,7 @@ def _maraka(r: DetailedReport) -> str:
             tiers += (f'<div class="vrow"><span class="vk">{tier}</span>'
                       f'<span class="vv">{_esc(", ".join(names))}</span></div>')
     s = r.synthesis
-    running = ("carries a maraka-tier lord" if r.maraka_period_now
-               else "carries no maraka-tier lord")
+    running = maraka_running_phrase(r.maraka_period_now)
     from app.raman_saab.detailed_report import longevity_decanate_cause
     _dec_cause = longevity_decanate_cause(r)
     return ('<h2 class="section" id="maraka">The maraka scheme</h2>'
@@ -2443,8 +2442,7 @@ def _health_readout_section(r: DetailedReport) -> str:
             f'<p class="section-sub"><b>Maraka tiers</b> (re-read from The maraka scheme): '
             f'{tier_txt} &mdash; <b>22nd drekkana lord</b>: {_esc(h.drekkana22_lord)}, '
             f'<b>64th navamsa lord</b>: {_esc(h.navamsa64_lord)}.</p>')
-    period = ("carries a maraka-tier lord" if h.maraka_period_now
-              else "carries no maraka-tier lord")
+    period = maraka_running_phrase(h.maraka_period_now)
     return (
         '<h2 class="section" id="health-readout">Health &amp; vulnerability read-out</h2>'
         + _plain_lead(r, "health_readout")

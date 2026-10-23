@@ -38,6 +38,7 @@ from app.raman_saab.chart.constants import SIGN_LORDS
 #: would have died of NameError inside the very handler meant to keep it alive.
 logger = logging.getLogger(__name__)
 from app.raman_saab.chart.model import BirthData, RamanChart
+from app.raman_saab.primitives.vimshottari import maraka_running_phrase
 from app.raman_saab.judges.calibrated_reading import (
     _VALIDITY,
     CalibratedHouseReading,
@@ -2005,11 +2006,13 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
         from app.raman_saab.primitives.vargavisesha import vargavisesha
         vv = vargavisesha(chart)
     except Exception:  # noqa: BLE001 — Track-B sparse
+        logger.info("report section skipped (Track-B sparse)", exc_info=True)
         vv = ()
     for label, build, render in _DIVISIONAL:
         try:
             body = _clean_box(render(build(chart)))
         except Exception:  # noqa: BLE001 — same silent-skip contract as synthesis
+            logger.info("report section skipped (same silent-skip contract as synthesis)", exc_info=True)
             continue
         dtag = label.split(" ", 1)[0]                 # e.g. "D-9"
         own = [v.planet for v in vv
@@ -2101,6 +2104,7 @@ def _dasha_transit_adverse(
                 try:
                     bav = ashtakavarga.bhinnashtakavarga(chart, planet)[sign]
                 except Exception:  # noqa: BLE001 — sparse chart
+                    logger.info("report section skipped (sparse chart)", exc_info=True)
                     bav = None
             bav_of[key] = bav
         return bav_of[key]
@@ -2590,6 +2594,7 @@ def _pratyantar_rows(chart: RamanChart, ref_jd: float) -> tuple[vd.DashaPeriod, 
     try:
         bh = vd.dasha_on(chart, ref_jd)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         return ()
     if bh is None or bh.antar is None:
         return ()
@@ -2617,6 +2622,7 @@ def adverse_transit_windows(
                 try:
                     bav = ashtakavarga.bhinnashtakavarga(r.chart, seg.planet)[seg.sign]
                 except Exception:  # noqa: BLE001 — sparse chart
+                    logger.info("report section skipped (sparse chart)", exc_info=True)
                     bav = None
             rows.append((seg.planet, seg, bav))
     rows.sort(key=lambda t: t[1].start_jd)
@@ -2651,6 +2657,7 @@ def _av_dasha_seats(chart: RamanChart, timeline: DashaTimeline) -> tuple[AvDasha
         try:
             bav = ashtakavarga.bhinnashtakavarga(chart, maha)
         except Exception:  # noqa: BLE001 — nodes have no BAV
+            logger.info("report section skipped (nodes have no BAV)", exc_info=True)
             bav = None
         bindus = bav.get(pos.sign) if bav else None
         read = ("no data" if bindus is None else
@@ -2787,7 +2794,7 @@ class DetailedReport:
     gochara: tuple[tr.TransitRow, ...]               # transits at ref date, WITH Vedha/net
     gochara_outlook: dict[str, tuple[tr.GocharaSegment, ...]]  # Jupiter/Saturn/Rahu/Ketu, over time
     dasha_transit: tuple[ConfluenceWindow, ...]      # MD/AD lord x its own favourable transit
-    maraka_period_now: bool                          # is the running period maraka-tier?
+    maraka_period_now: bool | None                   # is the running period maraka-tier? None = undetermined
     insights: tuple[FiredInsight, ...]               # fired cross-feature synthesis rules
     longevity_years: float
     longevity_ymd: tuple[int, int, int]
@@ -2919,7 +2926,7 @@ class HealthReadout:
     maraka_tiers: tuple[tuple[str, str], ...]    # (graha, tier), primary/secondary/tertiary
     drekkana22_lord: str
     navamsa64_lord: str
-    maraka_period_now: bool
+    maraka_period_now: bool | None
     longevity_band: str                          # e.g. "Madhyayu — a band, not a date"
     caveat: str
 
@@ -2965,6 +2972,7 @@ def build_health_readout(r: DetailedReport) -> HealthReadout:
     try:
         core = build_trimsamsa_health_reading(r.chart).core
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         return _EMPTY_HEALTH_READOUT
 
     rows: list[HealthIndicatorRow] = [
@@ -3179,6 +3187,7 @@ def build_ruler(r: DetailedReport) -> RulerOfNativity:
             ll_dignity = _dignity_of(lagna_lord, chart)
             ll_avastha = _deeptadi_state(lagna_lord, chart)
         except Exception:  # noqa: BLE001 — Track-B sparse chart
+            logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
             pass
         ll_aspects = tuple(_drishti.aspecting_planets(lagna_lord, chart))
         ll_dispositor = SIGN_LORDS[ll_pos.sign]
@@ -3226,6 +3235,7 @@ def build_ruler(r: DetailedReport) -> RulerOfNativity:
                 _parts.append(f"{_dignity_of(ch_lord, chart)} sign")
                 _parts.append(f"{_deeptadi_state(ch_lord, chart)} avastha")
             except Exception:  # noqa: BLE001 — Track-B sparse chart
+                logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
                 pass
             if _cp.shadbala_rupas is not None:
                 _parts.append(f"{_cp.shadbala_rupas.total / 60.0:.2f} rupas")
@@ -3370,6 +3380,7 @@ def signature_first_glance(r: DetailedReport) -> tuple[tuple[str, str], ...]:
         rows.append(("Balance of dasha at birth (HPA-13:130-160)",
                      f"{_first.maha} {_y}y {_m}m {_d}d"))
     except Exception:  # noqa: BLE001 — Track-B sparse chart (no jd_ut)
+        logger.info("report section skipped (Track-B sparse chart (no jd_ut))", exc_info=True)
         pass
     # exact degrees — the same sign-degree form the Planetary positions table prints
     if getattr(chart, "asc_lon", None) is not None:
@@ -3412,6 +3423,7 @@ def signature_first_glance(r: DetailedReport) -> tuple[tuple[str, str], ...]:
             _bits.append(f"{_dignity_of(_ll, chart)} sign")
             _bits.append(f"{_deeptadi_state(_ll, chart)} avastha")
         except Exception:  # noqa: BLE001 — Track-B sparse chart
+            logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
             pass
         rows.append(("Lagna lord at a glance", f"{_ll} " + ", ".join(_bits)))
     # day-lord observation — only when the weekday lord IS the strongest planet
@@ -4408,12 +4420,14 @@ def build_detailed_report(
     try:
         sav = ashtakavarga.sarvashtakavarga(chart)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         sav = {}
     try:
         bav_matrix = _bav_matrix_rows(chart)
         bav_reduced = _bav_reduced_rows(chart)
         sodya_pinda = _sodya_pinda_rows(chart)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         bav_matrix, bav_reduced, sodya_pinda = (), (), ()
     import swisseph as swe
 
@@ -4422,16 +4436,20 @@ def build_detailed_report(
     try:
         gochara_rows = tr.gochara(chart, int(ry), int(rm), int(rd), ayanamsa=ayanamsa)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         gochara_rows = ()
     try:
         gochara_outlook = tr.gochara_timeline(
             chart, ref_jd, years_back, years_forward, ayanamsa=ayanamsa)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         gochara_outlook = {}
     try:
-        maraka_now = is_maraka_period(chart, ref_jd)
+        maraka_now: bool | None = is_maraka_period(chart, ref_jd)
     except Exception:  # noqa: BLE001
-        maraka_now = False
+        # Unknown is reported as unknown — never as "no maraka-tier lord".
+        logger.warning("maraka check failed; reporting it as undetermined", exc_info=True)
+        maraka_now = None
     dasha_transit = _dasha_transit_confluences(timeline, gochara_outlook)
     # Wave-2 (2026-08-18): the adverse mirror — a separate builder so the favourable rows
     # stay byte-identical (see _dasha_transit_adverse's docstring).
@@ -4451,6 +4469,7 @@ def build_detailed_report(
     try:
         maraka_saturn = _maraka_saturn_confluences(chart, ref_jd, ayanamsa)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         maraka_saturn = ()
     av_dasha_seats = _av_dasha_seats(chart, timeline)
     provisional = DetailedReport(
@@ -4500,10 +4519,12 @@ def build_detailed_report(
     try:
         _graph = build_judgment_graph(enriched)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         _graph = None
     try:
         _recs = narrate_tensions(enriched)
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         _recs = ()
     _bios: tuple = ()
     _deep: tuple = ()
@@ -4511,11 +4532,13 @@ def build_detailed_report(
         try:
             _bios = build_planet_biographies(enriched, _graph)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _bios = ()
         try:
             from app.raman_saab.yoga_deep_read import build_yoga_deep_reads
             _deep = build_yoga_deep_reads(enriched, _graph)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _deep = ()
     enriched = _dc_replace(enriched, planet_bios=_bios, yoga_deep=_deep,
                            life_chapters=build_life_chapters(
@@ -4540,6 +4563,7 @@ def build_detailed_report(
         try:
             enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
         except Exception:  # noqa: BLE001 — sparse/Track-B chart
+            logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
             pass
     # v35: the HPA-29 medical read. Its own try, like every chapter above — and it is
     # report-only: `medical_reading` is imported by nothing in the verdict path.
@@ -4547,22 +4571,26 @@ def build_detailed_report(
         from app.raman_saab.judges.medical_reading import build_medical_reading
         enriched = _dc_replace(enriched, medical=build_medical_reading(enriched.chart))
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         pass
     from app.raman_saab.life_arc import build_decade_timeline
     try:
         enriched = _dc_replace(enriched, decades=build_decade_timeline(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     from app.raman_saab.karmic_evolution import build_karmic_evolution
     try:
         enriched = _dc_replace(enriched, karmic=build_karmic_evolution(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     from app.raman_saab.rect_confidence import build_rect_confidence
     try:
         enriched = _dc_replace(
             enriched, rect_confidence=build_rect_confidence(enriched, ayanamsa=ayanamsa))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     # v34 intuition layer — dominance must precede restraint (restraint reads which houses
     # dominance settled), and all three are best-effort: a failure here must never cost the
@@ -4571,16 +4599,19 @@ def build_detailed_report(
         from app.raman_saab.dominance import house_dominance
         enriched = _dc_replace(enriched, dominance=house_dominance(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     try:
         from app.raman_saab.restraint import house_restraint
         enriched = _dc_replace(enriched, restraint=house_restraint(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     try:
         from app.raman_saab.analogy import resembles
         enriched = _dc_replace(enriched, analogy=resembles(enriched.chart))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
 
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
@@ -4593,6 +4624,7 @@ def build_detailed_report(
     try:
         final = _dc_replace(final, life_synthesis=build_life_synthesis(final))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     # Wave-1 timing additions (2026-08-17): the pratyantar drill-down for the current
     # bhukti, the dated Sade-Sati phase spans, and the dated Chara dasha sequence —
@@ -4604,6 +4636,7 @@ def build_detailed_report(
             sade_sati_phases=_sade_sati_phases(chart, ref_jd, ayanamsa),
             chara_sequence=_chara_sequence(chart, ref_jd))
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         pass
     # v34 — the integrated interpretation layer reads the FULLY-built report (every section
     # above) and judges nothing anew; it re-reads finished verdicts into one coherent theme
@@ -4622,6 +4655,7 @@ def build_detailed_report(
     try:
         final = _dc_replace(final, sitting=build_sitting(final))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     return final
 
@@ -4748,9 +4782,7 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                      f"this reading names is {lf.reading_reaches or 'none'} — "
                      + ("inside the span." if lf.within_span else "OUTSIDE the span, disclosed "
                         "where it appears."))
-        L.append("- **Running period** — "
-                 + ("carries a maraka-tier lord." if lf.maraka_now
-                    else "carries no maraka-tier lord."))
+        L.append("- **Running period** — " + maraka_running_phrase(lf.maraka_now) + ".")
         if lf.maraka_windows:
             L.append("- **Maraka-tier bhuktis ahead carrying the classical Saturn signal** "
                      "(Raman's step two, after the band):")
@@ -5129,6 +5161,7 @@ def _plain_section(section_id: str, r: "DetailedReport") -> str:
         from app.raman_saab.plainspoken import plain_for_section
         return plain_for_section(r, section_id)
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         return ""
 
 
@@ -5168,6 +5201,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         from app.raman_saab.report_json import simple_summary_for
         _ss = simple_summary_for(r)
     except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        logger.info("report section skipped (a sparse chart must not lose the whole reading)", exc_info=True)
         _ss = None
     if _ss:
         L.append("")
@@ -5247,6 +5281,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  ", ".join(f"{k} {v}" for k, v in sorted(_by_rel.items())) + ".")
         L.append("")
     except Exception:  # noqa: BLE001 — sparse/Track-B chart; the graph is a re-read, not a verdict
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         L.append("_Graph unavailable for this chart (sparse data) — the readings above stand "
                  "on their own evidence regardless._")
         L.append("")
@@ -6160,6 +6195,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             from app.raman_saab.plainspoken import plain_for_house
             _hp = plain_for_house(r, mr.house)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _hp = ""
         if _hp:
             L.append("")
@@ -6511,8 +6547,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- **22nd drekkana class (the cause Raman reads the manner from)**: "
                      f"{_dc}")
         L.append(f"- **Running period ({s.running_md} MD / {s.running_ad} AD)**: "
-                 + ("carries a maraka-tier lord" if r.maraka_period_now
-                    else "carries no maraka-tier lord")
+                 + maraka_running_phrase(r.maraka_period_now)
                  + " (broad, low-discrimination flag by design)")
         L.append("")
 
@@ -6577,8 +6612,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- **22nd drekkana lord**: {h.drekkana22_lord}  |  "
                      f"**64th navamsa lord**: {h.navamsa64_lord}")
         L.append(f"- **Running period**: "
-                 + ("carries a maraka-tier lord" if h.maraka_period_now
-                    else "carries no maraka-tier lord")
+                 + maraka_running_phrase(h.maraka_period_now)
                  + " (broad, low-discrimination flag by design)")
         L.append(f"- **Longevity band** (re-read from Longevity): {h.longevity_band}")
         L.append("")
@@ -7898,6 +7932,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         from app.raman_saab.report_json import feedback_instrument_for
         inst = feedback_instrument_for(r)
     except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        logger.info("report section skipped (a sparse chart must not lose the whole reading)", exc_info=True)
         inst = None
     if inst:
         L.append("")

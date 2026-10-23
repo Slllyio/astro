@@ -36,6 +36,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Final, Optional
 
 from app.raman_saab.doctrine.sources import passage
+from app.raman_saab.primitives.vimshottari import maraka_running_phrase
 
 if TYPE_CHECKING:  # pragma: no cover
     from app.raman_saab.detailed_report import DetailedReport
@@ -115,9 +116,8 @@ def build_arishta_chapter(r: "DetailedReport") -> Optional[ArishtaChapter]:
         bhangas=tuple(changed), kemadruma_note=kem, protections=prot,
         band=f"{longevity_band_label(r.longevity_class)} (Ayurdaya cross-check "
              f"~{round(r.longevity_years)}y — a band, not a date)",
-        maraka_note=("the running period carries a maraka-tier lord (broad flag)"
-                     if r.maraka_period_now else
-                     "the running period carries no maraka-tier lord"),
+        maraka_note=("the running period " + maraka_running_phrase(r.maraka_period_now)
+                     + (" (broad flag)" if r.maraka_period_now else "")),
         uncancelled_debilities=tuple(uncancelled))
 
 

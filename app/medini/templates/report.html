@@ -1262,6 +1262,8 @@ let CUR_LEAF = 2;      // leaf recorded on each PAGE_TOC entry; corrected after 
 let PAGE_TOC = [];     // {label,id,leaf,step} for every rendered H2 — drives the TOC   // the current report JSON — set at render() entry so top-level
                   // helpers (H2's plain-language layer) can read section_meta.
 function t(s){ return LANG==='hi' ? (I18N_HI[s] || s) : s; }
+// Mirrors primitives.vimshottari.maraka_running_phrase: null = the check could not be made, said so.
+function maraka_phrase(v){ return v==null ? 'could not be determined for this chart' : (v ? 'carries a maraka-tier lord' : 'carries no maraka-tier lord'); }
 // Re-apply translation to every [data-i18n] element (static HTML chrome) — called on load
 // and whenever the toggle changes. JS-CONSTRUCTED content (headings, cards) calls t()
 // directly at render time instead, so it's already correct whenever it's (re)built.
@@ -3473,7 +3475,7 @@ function render(R, S, FQ){
       PARITY_NOTES.maraka));
     add(para(t('22nd drekkana lord')+': '+(R.maraka.drekkana22_lord||'—')+' · '+
       t('64th navamsa lord')+': '+(R.maraka.navamsa64_lord||'—')+' · '+
-      t('Running period')+' '+(R.maraka_period_now?t('carries a maraka-tier lord'):t('carries no maraka-tier lord'))+
+      t('Running period')+' '+t(maraka_phrase(R.maraka_period_now))+
       ' '+t('(broad, low-discrimination flag by design)'),'muted')); }
   add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn, [],
     'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast. The "tier addends" column spells the score out per lord (primary=3 / secondary=2 / tertiary=1), so the number is checkable.'));
@@ -3486,7 +3488,7 @@ function render(R, S, FQ){
     if((hr.maraka_tiers||[]).length)
       add(para('Maraka tiers: '+hr.maraka_tiers.map(t=>t[0]+' ('+t[1]+')').join(', ')+
         ' — 22nd drekkana lord: '+hr.drekkana22_lord+', 64th navamsa lord: '+hr.navamsa64_lord+'.','muted'));
-    add(para('Running period '+(hr.maraka_period_now?'carries a maraka-tier lord':'carries no maraka-tier lord')+
+    add(para('Running period '+maraka_phrase(hr.maraka_period_now)+
       ' (broad, low-discrimination flag by design). Longevity band: '+hr.longevity_band+'.','muted')); }
 
   // ===== Arishta & Bhanga (v22) — completeness repair 2026-08-14 =====
@@ -3857,8 +3859,7 @@ function render(R, S, FQ){
   sec('now_box');
   if(_sy.running_md||_sy.running_ad){ add(H2('Running now'));
     add(para('Mahadasha '+(_sy.running_md||'—')+' · Antardasha '+(_sy.running_ad||'—')
-      +(R.maraka_period_now?' · the running period carries a maraka-tier lord'
-                           :' · the running period carries no maraka-tier lord'),'lede'));
+      +' · the running period '+maraka_phrase(R.maraka_period_now),'lede'));
     if(_sy.chara) add(para(t('Chara dasha')+': '+_sy.chara,'muted'));
     if(_sy.sade_sati) add(para(_sy.sade_sati,'muted'));
     if(_sy.panchanga) add(para(t('Panchanga')+': '+_sy.panchanga,'muted')); }

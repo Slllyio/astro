@@ -524,7 +524,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
 
     # #48 — the Matru-Karaka Moon under the COMBINED contact of two first-rate malefics ->
     # the mother's significator is considerably afflicted. The exact H4 twin of H5.C.40 —
-    # SAME idiom, SAME >= 2 gradient, stated on Chart 68 (HTJAH-I:4550-4560): "This benefice
+    # SAME idiom, SAME >= 2 gradient, stated on Chart 68 (HTJAH-I:4551-4560): "This benefice
     # disposition is more than counterbalanced by the combined aspect of two first-rate
     # malefic, viz., Saturn and Mars ... Consequently Matru-Karaka is considerably afflicted"
     # -> Conclusion "the fourth house is considerably afflicted"; the mother died in the
@@ -561,10 +561,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified=None,
         afflicted="the Matru-Karaka Moon carries the combined contact of two or more "
                   "first-rate malefics → the mother's significator is considerably afflicted",
-        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4550)),
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4551)),
 
     # C.49 — the 4th house hemmed by papakartari -> book-learning impaired. Shivaji verbatim
-    # (NH:4961-4963): "the 4th house is subjected to Papakarthari Yoga. Evidently Shivaji
+    # (NH:4963-4964): "the 4th house is subjected to Papakarthari Yoga. Evidently Shivaji
     # was unlettered." NON-decisive testimony: Raman's own next sentence supplies the
     # compensation (C.50 below), and his conclusion for Shivaji is two-sided — under the
     # sparse-contradiction rule the pair correctly lands MIXED there. Independent
@@ -576,7 +576,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=_FourthHouseHemmedByMalefics(),
         fortified=None,
         afflicted="the 4th house subjected to Papakartari Yoga → book-learning is impaired",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 4961)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 4963)),
 
     # C.50 — the Gnanakaraka Jupiter aspecting the 4th LORD -> learning fortified. Shivaji
     # verbatim (NH:4963-4966): "since Gnanakaraka Jupiter is strongly placed aspecting as he

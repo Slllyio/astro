@@ -1,0 +1,1709 @@
+{
+ "_comment": "Reviewed, line-preserving OCR corrections to the Raman book corpus (2026-10-23). Scope: every line the engine cites (code Citation objects, WORK:line tokens, golden citations) plus a whole-book pass over Notable Horoscopes. Each change is a whole-word fix from a hand-reviewed map: unambiguous OCR garbles only (h/b, F/L, E/F confusions, broken planet names, run-together words). Valid Sanskrit terms are never touched, digits never change, and no line is added or removed, so every citation keeps its line number. Apply with tools/raman_saab/apply_ocr_corrections.py, then re-lock the sources.",
+ "corrections": [
+  {
+   "file": "ashtakavarga_system_raman/chapter_012_timing-events.md",
+   "line": 64,
+   "before": "Kakshya (in the Dasa lord 's Ashtakavarga) , tbe",
+   "after": "Kakshya (in the Dasa lord 's Ashtakavarga) , the"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_012_timing-events.md",
+   "line": 76,
+   "before": "by tbe sub-",
+   "after": "by the sub-"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_012_timing-events.md",
+   "line": 213,
+   "before": "f Jupiter covered by Saturn'$ Kaksbya) should",
+   "after": "f Jupiter covered by Saturn'$ Kakshya) should"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_012_timing-events.md",
+   "line": 306,
+   "before": "It bas also been found that if a Sub-period",
+   "after": "It has also been found that if a Sub-period"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_012_timing-events.md",
+   "line": 308,
+   "before": "Ashtakavarga (see p. 11S) the planet, tbat has",
+   "after": "Ashtakavarga (see p. 11S) the planet, that has"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 267,
+   "before": "place , but bas bindus in it, the malefic eflects are",
+   "after": "place , but has bindus in it, the malefic effects are"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 274,
+   "before": "tbe benefic effects while an unfavourable transit",
+   "after": "the benefic effects while an unfavourable transit"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 277,
+   "before": "For example, in tbe Standard Horoscope,",
+   "after": "For example, in the Standard Horoscope,"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 279,
+   "before": "prove favourable. In tbe Sun's own Ashtaka-",
+   "after": "prove favourable. In the Sun's own Ashtaka-"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 284,
+   "before": "corn bas no bindus. Therefore the evil results",
+   "after": "corn has no bindus. Therefore the evil results"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 416,
+   "before": "leutralises the evil to the extent of 75% and",
+   "after": "neutralises the evil to the extent of 75% and"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 423,
+   "before": "zodiac stands divided ioto 8 parts or Kakshyas",
+   "after": "zodiac stands divided into 8 parts or Kakshyas"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 425,
+   "before": "Venus, Meicury, Moon and the Lagna In its",
+   "after": "Venus, Mercury, Moon and the Lagna In its"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 426,
+   "before": "~ach transit of a sign, a planet bas to pass",
+   "after": "~ach transit of a sign, a planet has to pass"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 427,
+   "before": "tbrough each Kaksbya in ibe above order. Tbe",
+   "after": "through each Kakshya in the above order. The"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 430,
+   "before": "number of bindus In a Rasi (in regard to tbe",
+   "after": "number of bindus In a Rasi (in regard to the"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 432,
+   "before": "the contribution of each planetand the Prasthara",
+   "after": "the contribution of each planet and the Prasthara"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 433,
+   "before": "Chakra reveals the planets that make tbe",
+   "after": "Chakra reveals the planets that make the"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 435,
+   "before": "In tbe Standard Horoscope, there are",
+   "after": "In the Standard Horoscope, there are"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 444,
+   "before": "1_ Saturp 3008 0' to 3030 45' 19-2-1962 to 4-4-1962",
+   "after": "1_ Saturn 3008 0' to 3030 45' 19-2-1962 to 4-4-1962"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 448,
+   "before": "S_ Vedus 3158 0' to 3189 45' 19-9-1962 to 411-1962",
+   "after": "S_ Venus 3158 0' to 3189 45' 19-9-1962 to 411-1962"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 455,
+   "before": "Here the sign bappens to be the Lagna and tbe",
+   "after": "Here the sign bappens to be the Lagna and the"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 457,
+   "before": "But there are 4 bindus in Aquarius so tbat the",
+   "after": "But there are 4 bindus in Aquarius so that the"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 460,
+   "before": "tbe Kakshya of Saturn (19-2-1962 to 4 4-1962)",
+   "after": "the Kakshya of Saturn (19-2-1962 to 4 4-1962)"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 463,
+   "before": "lere will be sickness (because  Saturo bas dot",
+   "after": "lere will be sickness (because  Saturo has dot"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 469,
+   "before": "be 3rd and 2th but bas contributed no bindu.",
+   "after": "be 3rd and 2th but has contributed no bindu."
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 470,
+   "before": "Jood income can be   predicted when Jupiter",
+   "after": "Good income can be   predicted when Jupiter"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 473,
+   "before": "vorry on account of  children. Mars has also",
+   "after": "worry on account of  children. Mars has also"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_013_transits-or-gochara.md",
+   "line": 474,
+   "before": "ontributed a bindu and bence, tbe evils get",
+   "after": "ontributed a bindu and hence, the evils get"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_014_longevity-determination.md",
+   "line": 201,
+   "before": "represents the gross years oflongevity contributed",
+   "after": "represents the gross years of longevity contributed"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 55,
+   "before": "5_ When tbe Moon transits  signs having",
+   "after": "5_ When the Moon transits  signs having"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 59,
+   "before": "6_ The above actions done when tbe Moon",
+   "after": "6_ The above actions done when the Moon"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 83,
+   "before": "tbe martian",
+   "after": "the martian"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 92,
+   "before": "numher of bindus will be",
+   "after": "number of bindus will be"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 101,
+   "before": "Mcrcery",
+   "after": "Mercury"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 102,
+   "before": "H1_ Education , litcrary work, debates,",
+   "after": "H1_ Education , literary work, debates,"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 104,
+   "before": "commenced when Mercuty transits a Rasi ass0-",
+   "after": "commenced when Mercury transits a Rasi ass0-"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 119,
+   "before": "which has the maximum numher of bindus in his",
+   "after": "which has the maximum number of bindus in his"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 120,
+   "before": "Asktakavarga , the period",
+   "after": "Ashtakavarga , the period"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 123,
+   "before": "penauce, for initiating   studies",
+   "after": "penance, for initiating   studies"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 125,
+   "before": "earnirg money,",
+   "after": "earning money,"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 147,
+   "before": "Ashtakavarga, associated with tbe largest numbcr",
+   "after": "Ashtakavarga, associated with the largest number"
+  },
+  {
+   "file": "ashtakavarga_system_raman/chapter_015_miscellaneous.md",
+   "line": 157,
+   "before": "begin agricultural operations wben Saturn tran-",
+   "after": "begin agricultural operations when Saturn tran-"
+  },
+  {
+   "file": "astrology_for_beginners_raman/chapter_010_timing-events.md",
+   "line": 450,
+   "before": "expect success to the family, marrige if not already ",
+   "after": "expect success to the family, marriage if not already "
+  },
+  {
+   "file": "astrology_for_beginners_raman/chapter_010_timing-events.md",
+   "line": 465,
+   "before": "house lord. One may prodict enjoyment of good ",
+   "after": "house lord. One may predict enjoyment of good "
+  },
+  {
+   "file": "bphs/chapter_007_divisional-consideration.md",
+   "line": 48,
+   "before": "1-8. USE OF THE 16 DIVISIONS : I now explain tbe ",
+   "after": "1-8. USE OF THE 16 DIVISIONS : I now explain the "
+  },
+  {
+   "file": "graha_bhava_balas_raman/chapter_003_sthana-bala.md",
+   "line": 467,
+   "before": "sas, andin Adhi Satruvarga 1.875 Shashtiamsas. ",
+   "after": "sas, and in Adhi Satruvarga 1.875 Shashtiamsas. "
+  },
+  {
+   "file": "graha_bhava_balas_raman/chapter_003_sthana-bala.md",
+   "line": 547,
+   "before": "acquired on account of the occapancy of odd and ",
+   "after": "acquired on account of the occupancy of odd and "
+  },
+  {
+   "file": "graha_bhava_balas_raman/chapter_003_sthana-bala.md",
+   "line": 654,
+   "before": "Masculine (purusha), Femenine (stree) and ",
+   "after": "Masculine (purusha), Feminine (stree) and "
+  },
+  {
+   "file": "graha_bhava_balas_raman/chapter_003_sthana-bala.md",
+   "line": 656,
+   "before": "planet in the first Drekkana gets 15 Shashtiamas ",
+   "after": "planet in the first Drekkana gets 15 Shashtiamsas "
+  },
+  {
+   "file": "graha_bhava_balas_raman/chapter_003_sthana-bala.md",
+   "line": 659,
+   "before": "Drekkana Bala, and a femenine planet in the ",
+   "after": "Drekkana Bala, and a feminine planet in the "
+  },
+  {
+   "file": "graha_bhava_balas_raman/chapter_005_kala-bala-or-temporal-strength.md",
+   "line": 267,
+   "before": "sacond part Ravi gets a similar quantity; and in ",
+   "after": "second part Ravi gets a similar quantity; and in "
+  },
+  {
+   "file": "graha_bhava_balas_raman/chapter_006_chesta-bala-or-motional-strength.md",
+   "line": 90,
+   "before": "rise before that Juminary in the morning and ",
+   "after": "rise before that luminary in the morning and "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_020_special-yogas.md",
+   "line": 111,
+   "before": "ladies, respector of preceptors and religiously ",
+   "after": "ladies, respecter of preceptors and religiously "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_026_the-ashtakavarga-system.md",
+   "line": 423,
+   "before": "* In the matter of Thrikona Sodliana (Triangular Reduction) there ",
+   "after": "* In the matter of Thrikona Sodhana (Triangular Reduction) there "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_026_the-ashtakavarga-system.md",
+   "line": 425,
+   "before": "in the three trianguiar signs are not alike, then the least of the three ",
+   "after": "in the three triangular signs are not alike, then the least of the three "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_034_gocharaphala-or-results-of-transits.md",
+   "line": 377,
+   "before": "the fact that the birth horoscope directly affectd ",
+   "after": "the fact that the birth horoscope directly affected "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 470,
+   "before": "In examining a house due importance should he given not only to the Rashi hut also to the ",
+   "after": "In examining a house due importance should be given not only to the Rashi but also to the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 480,
+   "before": "4. Whether the influence has been altered hy any yogas occurring in any particular house or ",
+   "after": "4. Whether the influence has been altered by any yogas occurring in any particular house or "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 506,
+   "before": "the Bhava in question will be realised. For instance, lord of Fagna is weak and is in the 7th house as ",
+   "after": "the Bhava in question will be realised. For instance, lord of Lagna is weak and is in the 7th house as "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 525,
+   "before": "If Ascendant or Fagna is: Aries (Mesha)—Jupiter, the Sun and Mars are benefice. Jupiter is ",
+   "after": "If Ascendant or Lagna is: Aries (Mesha)—Jupiter, the Sun and Mars are benefice. Jupiter is "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 599,
+   "before": "malefic if they own quadrangular houses. It is also to he noted that a natural henefice, who becomes a ",
+   "after": "malefic if they own quadrangular houses. It is also to be noted that a natural benefice, who becomes a "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 600,
+   "before": "malefic hy virtue of quadrangle ownership, will cease to act as a malefic, when he occupies the ",
+   "after": "malefic by virtue of quadrangle ownership, will cease to act as a malefic, when he occupies the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 602,
+   "before": "cease to he a malefic just because Libra happens to be his own. Similarly, a natural malefic, viz.. Mars ",
+   "after": "cease to be a malefic just because Libra happens to be his own. Similarly, a natural malefic, viz.. Mars "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 763,
+   "before": "Before the period of death is actually determined one should he able to find whether the ",
+   "after": "Before the period of death is actually determined one should be able to find whether the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 976,
+   "before": "he horn are supposed to influence all his activities throughout life, subject to modifications according ",
+   "after": "he born are supposed to influence all his activities throughout life, subject to modifications according "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 984,
+   "before": "required forjudging a horoscope, viz-, (a) the house, (b) its lord, (c) its occupants, and (d) its Karaka ",
+   "after": "required for judging a horoscope, viz-, (a) the house, (b) its lord, (c) its occupants, and (d) its Karaka "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 986,
+   "before": "him. Apart from this, each lord has his own Karaka or inherent functions. Eor example, if we take ",
+   "after": "him. Apart from this, each lord has his own Karaka or inherent functions. For example, if we take "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1005,
+   "before": "upon the house lord. If Lagnadhipati is in Eagna and aspected by evil planets, the results produced ",
+   "after": "upon the house lord. If Lagnadhipati is in Lagna and aspected by evil planets, the results produced "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1231,
+   "before": "The mental disposition should always he judged hy reference to the Moon and his disposition. ",
+   "after": "The mental disposition should always he judged by reference to the Moon and his disposition. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1232,
+   "before": "The dispositions given helow are of a general nature. In actual practice, however, they will he seen to ",
+   "after": "The dispositions given below are of a general nature. In actual practice, however, they will be seen to "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1237,
+   "before": "configurated with the Moon. When the Sun, the Moon and the ascendant are afflicted hy more than ",
+   "after": "configurated with the Moon. When the Sun, the Moon and the ascendant are afflicted by more than "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1238,
+   "before": "one of the malefic, liahility to accidents and a violent or sudden death is indicated. Should Rahu and ",
+   "after": "one of the malefic, liability to accidents and a violent or sudden death is indicated. Should Rahu and "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1369,
+   "before": "Mental Tendencies. —Sarcastic and impulsive, a ferhale horn in this sign will he masculine in ",
+   "after": "Mental Tendencies. —Sarcastic and impulsive, a female born in this sign will be masculine in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1428,
+   "before": "Mental Tendencies. —Aquarius being a philosophica sign, people born in it become great ",
+   "after": "Mental Tendencies. —Aquarius being a philosophical sign, people born in it become great "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1587,
+   "before": "posited in the 1st house, (d) planets aspecting the lord of the 1st house and fej planet or planets in ",
+   "after": "posited in the 1st house, (d) planets aspecting the lord of the 1st house and (e) planet or planets in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 1786,
+   "before": "will stare him-He will roam about in exile. He will he subject to all sorts of financial difficulties. If, ",
+   "after": "will stare him-He will roam about in exile. He will be subject to all sorts of financial difficulties. If, "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2080,
+   "before": "In Chart No. 24, Lagna is Simha and it is occupied hy the Sun, its lord, and Mercury. The ",
+   "after": "In Chart No. 24, Lagna is Simha and it is occupied by the Sun, its lord, and Mercury. The "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2081,
+   "before": "Lagna is aspected hy Saturn. This is slightly evil. The Lagna and lord of Lagna, who of course is the ",
+   "after": "Lagna is aspected by Saturn. This is slightly evil. The Lagna and lord of Lagna, who of course is the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2250,
+   "before": "native is not an entity and is at present in humhle circumstances. Lagna is aspected hy two malefic ",
+   "after": "native is not an entity and is at present in humble circumstances. Lagna is aspected by two malefic "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2252,
+   "before": "Lagna is aspected hy debilitated Sun (lord of 8), Jupiter’s (lord of 3 and 12), Ketu, Mercury (lord ",
+   "after": "Lagna is aspected by debilitated Sun (lord of 8), Jupiter’s (lord of 3 and 12), Ketu, Mercury (lord "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2254,
+   "before": "aspected hy Rahu and Mars as also Jupiter and Venus. All the three factors pertaining to the 1st ",
+   "after": "aspected by Rahu and Mars as also Jupiter and Venus. All the three factors pertaining to the 1st "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2255,
+   "before": "house are rather unfortunately disposed. The native is tall, lean and reddish- hrown in colour. The ",
+   "after": "house are rather unfortunately disposed. The native is tall, lean and reddish- brown in colour. The "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2272,
+   "before": "Chart No. 35 is the horoscope of a fortunate but self- made man. Though Eagna is hemmed ",
+   "after": "Chart No. 35 is the horoscope of a fortunate but self- made man. Though Lagna is hemmed "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2274,
+   "before": "influences. Jupiter is in Eagna. Saturn, lord of Eagna, is in his own sign. In the Navamsha also ",
+   "after": "influences. Jupiter is in Lagna. Saturn, lord of Lagna, is in his own sign. In the Navamsha also "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2282,
+   "before": "Saturn is in a friendly sign with the henefice Jupiter. The Sun of course is middling in ",
+   "after": "Saturn is in a friendly sign with the benefice Jupiter. The Sun of course is middling in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2286,
+   "before": "eyes and dignified stature. The lips are flushy, cheeks are hroad and has prominent temples. He ",
+   "after": "eyes and dignified stature. The lips are flushy, cheeks are broad and has prominent temples. He "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2287,
+   "before": "makes friends of others very soon. He is somewhat short-tempered hut becomes easily subsided. ",
+   "after": "makes friends of others very soon. He is somewhat short-tempered but becomes easily subsided. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2325,
+   "before": "In the First House —The native becomes no douht wealthy hut he hates his own family, lacks ",
+   "after": "In the First House —The native becomes no douht wealthy but he hates his own family, lacks "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2439,
+   "before": "of Mercury in the 2nd with another evil planet aspected by the Moon is bad for saving money. Eevn if ",
+   "after": "of Mercury in the 2nd with another evil planet aspected by the Moon is bad for saving money. Even if "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2526,
+   "before": "Extreme poverty is caused if lord of Lagna is in the 12th with or aspected by aMaraka ",
+   "after": "Extreme poverty is caused if lord of Lagna is in the 12th with or aspected by a Maraka "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2731,
+   "before": "Balance of the Moon Dasha at hirth: Years 6-0-0. ",
+   "after": "Balance of the Moon Dasha at birth: Years 6-0-0. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2733,
+   "before": "From the Moon, the 2nd is occupied hy Rahu. Lagnadhipati aspecting the 2nd lord is not ",
+   "after": "From the Moon, the 2nd is occupied by Rahu. Lagnadhipati aspecting the 2nd lord is not "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2734,
+   "before": "conducive to good eye-sight in later life. Netra-Karaka (lord of eyes) is hemmed in-hetween Mars ",
+   "after": "conducive to good eye-sight in later life. Netra-Karaka (lord of eyes) is hemmed in-between Mars "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2829,
+   "before": "Second House. —The second house is Virgo or Kanya. It is occupied hy the Sun, lord of ",
+   "after": "Second House. —The second house is Virgo or Kanya. It is occupied by the Sun, lord of "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2830,
+   "before": "Lagna, and aspected hy Saturn, lord of the 6th and the 7th. The second house is ordinarily ",
+   "after": "Lagna, and aspected by Saturn, lord of the 6th and the 7th. The second house is ordinarily "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2834,
+   "before": "Venus being lord of the 3rd and the 10th has hecome a malefic. The second lord has no other ",
+   "after": "Venus being lord of the 3rd and the 10th has become a malefic. The second lord has no other "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 2871,
+   "before": "the financial position of the native quite favourable. It may he noted that during Saturn Dasa he ",
+   "after": "the financial position of the native quite favourable. It may be noted that during Saturn Dasa he "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3364,
+   "before": "Fifth House. —Much pleasure will not be derived from children. Einancially well off in life. ",
+   "after": "Fifth House. —Much pleasure will not be derived from children. Financially well off in life. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3365,
+   "before": "Eriction will prevail in the domestic life. ",
+   "after": "Friction will prevail in the domestic life. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3687,
+   "before": "The Third House is Taurus (Chart No. 53). Rahu occupies it. The third is aspected hy the ",
+   "after": "The Third House is Taurus (Chart No. 53). Rahu occupies it. The third is aspected by the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3691,
+   "before": "cancellation of debility. Venus is aspected hy Jupiter. Mars, Bhratru- Karaka, is in the 9th in his own ",
+   "after": "cancellation of debility. Venus is aspected by Jupiter. Mars, Bhratru- Karaka, is in the 9th in his own "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3698,
+   "before": "powerful than the planets aspeeting the third. Venus is in the 8th Navamsha—indieating the native ",
+   "after": "powerful than the planets aspecting the third. Venus is in the 8th Navamsha—indicating the native "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3713,
+   "before": "and Rahu. Mars is in the 8th (9th Bhava) and aspected hy Jupiter. Of the three elements, the third ",
+   "after": "and Rahu. Mars is in the 8th (9th Bhava) and aspected by Jupiter. Of the three elements, the third "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3802,
+   "before": "The Third House. —The third is Sagittarius, a henefice sign, and is occupied hy Mandi and ",
+   "after": "The Third House. —The third is Sagittarius, a benefice sign, and is occupied by Mandi and "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3803,
+   "before": "aspected hy two evil planets. Mars and Saturn. This is had. Jupiter aspects the third house from the ",
+   "after": "aspected by two evil planets. Mars and Saturn. This is had. Jupiter aspects the third house from the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3807,
+   "before": "Rashi and is exalted in Navamsha. This is good. But in ohava there is Jupiter-Ketu association, and ",
+   "after": "Rashi and is exalted in Navamsha. This is good. But in Bhava there is Jupiter-Ketu association, and "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3808,
+   "before": "thus Jupiter is rendered weak. Even otherwise he is afflicted hy the powerful aspect of Mars in ",
+   "after": "thus Jupiter is rendered weak. Even otherwise he is afflicted by the powerful aspect of Mars in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3811,
+   "before": "Lord of Brothers. —The lord of brothers Mars is posited in the ninth a good house, hut is in ",
+   "after": "Lord of Brothers. —The lord of brothers Mars is posited in the ninth a good house, but is in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3812,
+   "before": "the sign of an enemy. Though in a henefice Navamsha, he is with the Sun aspected hy Saturn which is ",
+   "after": "the sign of an enemy. Though in a benefice Navamsha, he is with the Sun aspected by Saturn which is "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3821,
+   "before": "planet, Saturn. Though the latter is the Eagna lord, he is debilitated. This makes the house weak in ",
+   "after": "planet, Saturn. Though the latter is the Lagna lord, he is debilitated. This makes the house weak in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 3837,
+   "before": "afflictions. The strength of the 'Karaka' is not much. These are adverse indications denying the hirth ",
+   "after": "afflictions. The strength of the 'Karaka' is not much. These are adverse indications denying the birth "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4245,
+   "before": "The Moon .—Possesses house; derives happiness from relatives; will he cheerful and contented ",
+   "after": "The Moon .—Possesses house; derives happiness from relatives; will be cheerful and contented "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4303,
+   "before": "Time of Fructification of the Results of the Fourth Flouse Each Bhava must he studied not in ",
+   "after": "Time of Fructification of the Results of the Fourth House Each Bhava must be studied not in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4386,
+   "before": "Vaidyanatha Deekshitar wants us to look to the fourth house and Jupiter forjudging ",
+   "after": "Vaidyanatha Deekshitar wants us to look to the fourth house and Jupiter for judging "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4504,
+   "before": "MatruKaraka .—The Moon is in MatruBhava (4th house). This is dennitelv injurious to the ",
+   "after": "MatruKaraka .—The Moon is in MatruBhava (4th house). This is definitely injurious to the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4551,
+   "before": "Matru-Karaka. —The Moon is in the third, a henefice sign, un-associated hut aspected hy ",
+   "after": "Matru-Karaka. —The Moon is in the third, a benefice sign, un-associated but aspected by "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4552,
+   "before": "Jupiter lord of the third. This henefice disposition is more than counterhalanced hy the combined ",
+   "after": "Jupiter lord of the third. This benefice disposition is more than counterbalanced by the combined "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4617,
+   "before": "hy Saturn and hence considerably afflicted. ",
+   "after": "by Saturn and hence considerably afflicted. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4702,
+   "before": "should he ascertained hy a consideration of the fourth house and Jupiter. It must he noted that ",
+   "after": "should be ascertained by a consideration of the fourth house and Jupiter. It must be noted that "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4919,
+   "before": "from Eagna or Chandra Eagna. Great learning in Vedas and other scriptures, consistent with the ",
+   "after": "from Lagna or Chandra Lagna. Great learning in Vedas and other scriptures, consistent with the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4930,
+   "before": "acquisition or possession of a vehicle is the association of the lords of the fourth and ninth in Eagna ",
+   "after": "acquisition or possession of a vehicle is the association of the lords of the fourth and ninth in Lagna "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4931,
+   "before": "or the seventh from Eagna. Venus in the fourth with the lord of the fourth or in the eleventh ",
+   "after": "or the seventh from Lagna. Venus in the fourth with the lord of the fourth or in the eleventh "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4933,
+   "before": "fourth (which is possible if Eagna is Aquarius or Cancer) in the eleventh, tenth or ninth indicates ",
+   "after": "fourth (which is possible if Lagna is Aquarius or Cancer) in the eleventh, tenth or ninth indicates "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 4946,
+   "before": "would acquire a hut or a palace. The following combinations indicate possession of houses. Eord of ",
+   "after": "would acquire a but or a palace. The following combinations indicate possession of houses. Eord of "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5018,
+   "before": "In analysing the fifth Bhava, due consideration must he given to the three important factors, ",
+   "after": "In analysing the fifth Bhava, due consideration must be given to the three important factors, "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5232,
+   "before": "The Sun .—This combination deprises the person of children, riches and happiness. His life ",
+   "after": "The Sun .—This combination deprives the person of children, riches and happiness. His life "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5641,
+   "before": "PutraKaraka. —The Karaka, Jupiter, is in Scorpio, a malefic sign aspected hy Saturn. ",
+   "after": "PutraKaraka. —The Karaka, Jupiter, is in Scorpio, a malefic sign aspected by Saturn. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5668,
+   "before": "hy Saturn the lord, while in the Navamsha the fifth from Chandra is strongly afflicted hy the ",
+   "after": "by Saturn the lord, while in the Navamsha the fifth from Chandra is strongly afflicted by the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5694,
+   "before": "The Fifth House. — Lihra is the 5th house in Chart No. 95 and it is not occupied hy any ",
+   "after": "The Fifth House. — Lihra is the 5th house in Chart No. 95 and it is not occupied by any "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5730,
+   "before": "moderately henefice disposition should he ignored. The native, though married in 1930, has had no ",
+   "after": "moderately benefice disposition should be ignored. The native, though married in 1930, has had no "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5733,
+   "before": "The Fifth House.—In Chart No. 97. the 5th is Kumhha. Rahu's presence there, and ",
+   "after": "The Fifth House.—In Chart No. 97. the 5th is Kumbha. Rahu's presence there, and "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5804,
+   "before": "The Fifth House .—Virgo happens to be the 5th house. It is free from affliction. Erom ",
+   "after": "The Fifth House .—Virgo happens to be the 5th house. It is free from affliction. From "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5805,
+   "before": "Chandra Eagna the 5th house happens to be Eibra and it is aspected by Mars. In the Navamsha ",
+   "after": "Chandra Lagna the 5th house happens to be Libra and it is aspected by Mars. In the Navamsha "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5956,
+   "before": "Here is another typical case (Chart No. 108) of the hirth of a number of children and the ",
+   "after": "Here is another typical case (Chart No. 108) of the birth of a number of children and the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 5957,
+   "before": "loss of all hut one. PutraKaraka in the 5th house aspected hy Mars and the 5th house from the ",
+   "after": "loss of all but one. PutraKaraka in the 5th house aspected by Mars and the 5th house from the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 6104,
+   "before": "If the lord of the 6th is in a Kendra aspected hy evil planets or many evil planets are in ",
+   "after": "If the lord of the 6th is in a Kendra aspected by evil planets or many evil planets are in "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 6105,
+   "before": "the 6th, the person will he vexed hy enemies. If the 6th lord is in the house of a henefice planet ",
+   "after": "the 6th, the person will be vexed by enemies. If the 6th lord is in the house of a benefice planet "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 6106,
+   "before": "and aspected hy good planets, he will have many friends. When lord of Lagna is in the 6th aspected ",
+   "after": "and aspected by good planets, he will have many friends. When lord of Lagna is in the 6th aspected "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 6107,
+   "before": "hy lord of the 6th or if they both remain in Lagna or in the 4th, the person will he constantly troubled ",
+   "after": "by lord of the 6th or if they both remain in Lagna or in the 4th, the person will be constantly troubled "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 6255,
+   "before": "is represented. The blood is rich. Apoplexy, skin disease, inflammation of the inner orgnas are the ",
+   "after": "is represented. The blood is rich. Apoplexy, skin disease, inflammation of the inner organs are the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 6261,
+   "before": "excessive indulgeace in eating and drinking. The Venus person is strong, healthy and happy, sensual, ",
+   "after": "excessive indulgence in eating and drinking. The Venus person is strong, healthy and happy, sensual, "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 6694,
+   "before": "In Venus Dasha, Rahu Bhukti the native had a serious attack of typhoid. (Chajt No. 115) ",
+   "after": "In Venus Dasha, Rahu Bhukti the native had a serious attack of typhoid. (Chart No. 115) "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 8434,
+   "before": "Venus he fortified and occupy the 7th house and if the 7th house he strong and not afflicted, hy ",
+   "after": "Venus he fortified and occupy the 7th house and if the 7th house he strong and not afflicted, by "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 8493,
+   "before": "The 7th House: The 7th house in Chart No. 1 is Pisces occupied hy 5th and 6th lord ",
+   "after": "The 7th House: The 7th house in Chart No. 1 is Pisces occupied by 5th and 6th lord "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 8497,
+   "before": "7th house. He is aspected hy Karaka Venus and malefic Saturn. Jupiter occu ",
+   "after": "7th house. He is aspected by Karaka Venus and malefic Saturn. Jupiter occu "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 8501,
+   "before": "pies his moolatrikona sign Sagittarius both in Rashi andNavamsha. But in Navamsha he is ",
+   "after": "pies his moolatrikona sign Sagittarius both in Rashi and Navamsha. But in Navamsha he is "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 8502,
+   "before": "afflicted hy Rahu and exalted Saturn. ",
+   "after": "afflicted by Rahu and exalted Saturn. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 8504,
+   "before": "KalatraKaraka: Venus as 2nd and 9th lord is heneficially disposed in a friendly sign in a ",
+   "after": "KalatraKaraka: Venus as 2nd and 9th lord is beneficially disposed in a friendly sign in a "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 8505,
+   "before": "quadrant. He is aspected hy a henefice as well as 7th lord Jupiter and hy Mars, a malefic being the ",
+   "after": "quadrant. He is aspected by a benefice as well as 7th lord Jupiter and by Mars, a malefic being the "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 9813,
+   "before": "other afflictions to the chart. Rahu in the 3rd, 6th or the 11th house from Lagna counteracrs other ",
+   "after": "other afflictions to the chart. Rahu in the 3rd, 6th or the 11th house from Lagna counteracts other "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 10162,
+   "before": "Lagna, the native kills himselfhanging. ",
+   "after": "Lagna, the native kills himself hanging. "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 13958,
+   "before": "planets are more or less of equal strength, then there will he a blending of influences and more ",
+   "after": "planets are more or less of equal strength, then there will be a blending of influences and more "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 13959,
+   "before": "than one occupation may he indicated. These principles are very general and must he adapted ",
+   "after": "than one occupation may be indicated. These principles are very general and must be adapted "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 15989,
+   "before": "The native abdicated in Juipter Dasha, Venus Bhukti. Usually under Jupiter's major period ",
+   "after": "The native abdicated in Jupiter Dasha, Venus Bhukti. Usually under Jupiter's major period "
+  },
+  {
+   "file": "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+   "line": 15995,
+   "before": "Waterloo during the Sun's sub-period. The Sun is rendered evil by association withMars. ",
+   "after": "Waterloo during the Sun's sub-period. The Sun is rendered evil by association with Mars. "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 257,
+   "before": "gives misfortunes to co-boms. Female issues servive. ",
+   "after": "gives misfortunes to co-boms. Female issues survive. "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 366,
+   "before": "or otherwise weak, the person will have a gooi wife and children. ",
+   "after": "or otherwise weak, the person will have a good wife and children. "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 489,
+   "before": "7th, or Venus in depression, eciipsed or inimical sign with a ",
+   "after": "7th, or Venus in depression, eclipsed or inimical sign with a "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 514,
+   "before": "The Sun-.—The native will be fair and have thining hair. He ",
+   "after": "The Sun-.—The native will be fair and have thinning hair. He "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 974,
+   "before": "house is aspected by malefics, it also ieads to widowhood. If the ",
+   "after": "house is aspected by malefics, it also leads to widowhood. If the "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 2886,
+   "before": "The Eighth House deals with iongevity, legacies, gifts and ",
+   "after": "The Eighth House deals with longevity, legacies, gifts and "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 2974,
+   "before": "nor wealth ; he is hostile, lustful and ill-temprered. He tends to ",
+   "after": "nor wealth ; he is hostile, lustful and ill-tempered. He tends to "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 3074,
+   "before": "predictians must be made only after taking into account the ",
+   "after": "predictions must be made only after taking into account the "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 3491,
+   "before": "associated withthe 8th or 11th lordhe may gain monetary ",
+   "after": "associated with the 8th or 11th lord he may gain monetary "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 4253,
+   "before": "Lagna which is Aquaruis 9° 42\". It has passed 2 Navamsas (6° ",
+   "after": "Lagna which is Aquarius 9° 42\". It has passed 2 Navamsas (6° "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 4682,
+   "before": "always secondary inimportance. They are like ",
+   "after": "always secondary in importance. They are like "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 6676,
+   "before": "case the 22nd Drekkana is the first of Capricorn and hencea ",
+   "after": "case the 22nd Drekkana is the first of Capricorn and hence a "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 6814,
+   "before": "assassinated by a fanatic communailist. ",
+   "after": "assassinated by a fanatic communalist. "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 6866,
+   "before": "death. Hediedin Saturn Bhukti, Jupiter Dasa. Jupiter is ",
+   "after": "death. He died in Saturn Bhukti, Jupiter Dasa. Jupiter is "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 7303,
+   "before": "money througn his own efforts. If the 9th lord combines with the ",
+   "after": "money through his own efforts. If the 9th lord combines with the "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 9415,
+   "before": "aspect the 9th house and 9th lord occupies a trine or guadrant ",
+   "after": "aspect the 9th house and 9th lord occupies a trine or quadrant "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 9530,
+   "before": "Concernirg the Tenth House 241 ",
+   "after": "Concerning the Tenth House 241 "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 13503,
+   "before": "Chart No. 198 is of Jawaharlal Nehru. It is in direct constrast ",
+   "after": "Chart No. 198 is of Jawaharlal Nehru. It is in direct contrast "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 14311,
+   "before": "from the depracies of thieves, cheats and swindlers. If the 11th ",
+   "after": "from the depredations of thieves, cheats and swindlers. If the 11th "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 15155,
+   "before": "Jupiter, Dnanakaraka, can also be taken as the karaka for labha ",
+   "after": "Jupiter, Dhanakaraka, can also be taken as the karaka for labha "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 15278,
+   "before": "exalted Lagna lord. His malefic iordshin is turned into a benefic ",
+   "after": "exalted Lagna lord. His malefic lordship is turned into a benefic "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 16544,
+   "before": "Bhavartha Ratnakara bearing on the twefth house. According to ",
+   "after": "Bhavartha Ratnakara bearing on the twelfth house. According to "
+  },
+  {
+   "file": "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md",
+   "line": 16568,
+   "before": "if Venus isinthe 12th house, in respect of the 7th house ",
+   "after": "if Venus is in the 12th house, in respect of the 7th house "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 983,
+   "before": "Kelu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1231,
+   "before": "benefics and maiefics are disposed in His horoscope and the ",
+   "after": "benefics and malefics are disposed in His horoscope and the "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1247,
+   "before": "6° 12'; Saturn 24° 36'; Rahu 86° 54' ; and Lagoa 1 1 6° 45', ",
+   "after": "6° 12'; Saturn 24° 36'; Rahu 86° 54' ; and Lagna 1 1 6° 45', "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1250,
+   "before": "Jupiier ",
+   "after": "Jupiter "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1746,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1760,
+   "before": "Kelu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1828,
+   "before": "introduced by Augustus whjch added to the comfort and ",
+   "after": "introduced by Augustus which added to the comfort and "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2079,
+   "before": "Ketu's censtellation and subjected to Papakartari Yoga. ",
+   "after": "Ketu's constellation and subjected to Papakartari Yoga. "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2283,
+   "before": "Kelu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2670,
+   "before": "and exaltad Saturn in Vargottama, the presence of the lords of ",
+   "after": "and exalted Saturn in Vargottama, the presence of the lords of "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2946,
+   "before": "Kclu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3116,
+   "before": "NAYAMSA ",
+   "after": "NAVAMSA "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3274,
+   "before": "Venui ",
+   "after": "Venus "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3418,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3911,
+   "before": "fCetu ",
+   "after": "ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4058,
+   "before": "Jupiter and Mercury is of supreme importanse. ",
+   "after": "Jupiter and Mercury is of supreme importance. "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4078,
+   "before": "Kctu „ ",
+   "after": "Ketu „ "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4103,
+   "before": "Veous ",
+   "after": "Venus "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4109,
+   "before": "Laena ",
+   "after": "Lagna "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4594,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4895,
+   "before": "Jupiter on Lagna plus Sagitturius rising in Navamsa with Jupiter Lagna ",
+   "after": "Jupiter on Lagna plus Sagittarius rising in Navamsa with Jupiter Lagna "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 5479,
+   "before": "favourably disposed. In the Navasmsa also the 7th is considerably ",
+   "after": "favourably disposed. In the Navamsa also the 7th is considerably "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 5801,
+   "before": "Rabu ",
+   "after": "Rahu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 6636,
+   "before": "Jupiter, Mercury or unadulterated Rahu. All the maiefics aspect the 9th ",
+   "after": "Jupiter, Mercury or unadulterated Rahu. All the malefics aspect the 9th "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7402,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7728,
+   "before": "Lagoa ",
+   "after": "Lagna "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7838,
+   "before": "Kclu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7850,
+   "before": "RASJ ",
+   "after": "RASI "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7935,
+   "before": "the 12th from Pitrukaraka and as placed in the constellation of Marcury, ",
+   "after": "the 12th from Pitrukaraka and as placed in the constellation of Mercury, "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8220,
+   "before": "principles admitted by modern science. The Moon-Saturn conjuuction ",
+   "after": "principles admitted by modern science. The Moon-Saturn conjunction "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8672,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8771,
+   "before": "1925 as soon as the sub-period of Saturn commenced in Jupitir Dasa. ",
+   "after": "1925 as soon as the sub-period of Saturn commenced in Jupiter Dasa. "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9132,
+   "before": "aspected by Jupiter, who though a natural benefic, is iord of the 3rd and ",
+   "after": "aspected by Jupiter, who though a natural benefic, is lord of the 3rd and "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9160,
+   "before": "sacrificing everything rather tnan bear restraint. The presence of ",
+   "after": "sacrificing everything rather than bear restraint. The presence of "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9239,
+   "before": "the sacred texts, viz., Ahimsa Paramo Dharrna (ahimsa is the supreme ",
+   "after": "the sacred texts, viz., Ahimsa Paramo Dharma (ahimsa is the supreme "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9348,
+   "before": "the 8th Mercury in the 12th from Lagna and lord of the 3rd Scturn, who ",
+   "after": "the 8th Mercury in the 12th from Lagna and lord of the 3rd Saturn, who "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9619,
+   "before": "Kelu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9705,
+   "before": "and sub-lords are disposed in mutual kandras, thus enabling the native ",
+   "after": "and sub-lords are disposed in mutual kendras, thus enabling the native "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9714,
+   "before": "Moon in mutual kendres plus the presence of Asatyavadi Yoga has ",
+   "after": "Moon in mutual kendras plus the presence of Asatyavadi Yoga has "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9741,
+   "before": "Rahil ",
+   "after": "Rahu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10019,
+   "before": "10th respectively from Chandra Lagna. This Dhartna-Karmadhipa Yoga ",
+   "after": "10th respectively from Chandra Lagna. This Dharma-Karmadhipa Yoga "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10127,
+   "before": "jnpitcr ",
+   "after": "jupiter "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10128,
+   "before": "Ruhu ",
+   "after": "Rahu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10363,
+   "before": "2nd (family) from Legna and is in the 12th ; while from the Moon, Mars ",
+   "after": "2nd (family) from Lagna and is in the 12th ; while from the Moon, Mars "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10732,
+   "before": "Yoga. Moreover from the Moon, Sarurn is a yogakaraka and hence, ",
+   "after": "Yoga. Moreover from the Moon, Saturn is a yogakaraka and hence, "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10825,
+   "before": "Planetary Positions. — The Sun 27° 54' ; the Meon 194° ",
+   "after": "Planetary Positions. — The Sun 27° 54' ; the Moon 194° "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10832,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10885,
+   "before": "Notable Horoscopei ",
+   "after": "Notable Horoscope "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10925,
+   "before": "though the evil due to lordsip could manifest in terms of ",
+   "after": "though the evil due to lordship could manifest in terms of "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 11305,
+   "before": "has caused Adhi Yvga besides being placed in the 7th from the major ",
+   "after": "has caused Adhi Yoga besides being placed in the 7th from the major "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 11315,
+   "before": "Notable Horoscopej ",
+   "after": "Notable Horoscope "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 11775,
+   "before": "disposition of Venus and Jupitar in the 7th and 8th from the Moon. The ",
+   "after": "disposition of Venus and Jupiter in the 7th and 8th from the Moon. The "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 11923,
+   "before": "RASX ",
+   "after": "RASI "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12135,
+   "before": "Lagoa ",
+   "after": "Lagna "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12317,
+   "before": "Rabu ",
+   "after": "Rahu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12474,
+   "before": "planets-Jupiter, the Sun, Mercury, Venus and Mars — aspecsing the ",
+   "after": "planets-Jupiter, the Sun, Mercury, Venus and Mars — aspecting the "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12519,
+   "before": "Lagoa ",
+   "after": "Lagna "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12676,
+   "before": "the election campaign. This happened just at the fag end of Murcury ",
+   "after": "the election campaign. This happened just at the fag end of Mercury "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12701,
+   "before": "Kahu ",
+   "after": "Rahu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12707,
+   "before": "Mereurv ",
+   "after": "Mercury "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12773,
+   "before": "However, it was only after Satrun's Dasa commenced that Franco was ",
+   "after": "However, it was only after Saturn's Dasa commenced that Franco was "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12777,
+   "before": "born in Libra becomes forunate during Saturn Dasa, provided Jupiter is ",
+   "after": "born in Libra becomes fortunate during Saturn Dasa, provided Jupiter is "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13228,
+   "before": "of Marcury in the 6th is suggestive of the presence of a trace of Adhi ",
+   "after": "of Mercury in the 6th is suggestive of the presence of a trace of Adhi "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13391,
+   "before": "is Taurus aspectad powerfully by ",
+   "after": "is Taurus aspected powerfully by "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13642,
+   "before": "Rahu and somewhat afficted in Navamsa, during Venus Dasa, the ",
+   "after": "Rahu and somewhat afflicted in Navamsa, during Venus Dasa, the "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13672,
+   "before": "by the lords of the 2nd, 9th (and 11th) are outstanding features vhich ",
+   "after": "by the lords of the 2nd, 9th (and 11th) are outstanding features which "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13697,
+   "before": "Raliu ",
+   "after": "Rahu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13725,
+   "before": "Saiurn ",
+   "after": "Saturn "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14107,
+   "before": "RASf ",
+   "after": "Rasi "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14321,
+   "before": "otherwise unaffiicted. The Sun ruler of the heart is in the 4th house ",
+   "after": "otherwise unafflicted. The Sun ruler of the heart is in the 4th house "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14491,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14764,
+   "before": "Kctu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14849,
+   "before": "mutual aspect of two debilitatad planets, lord of Lagna and the 2nd in ",
+   "after": "mutual aspect of two debilitated planets, lord of Lagna and the 2nd in "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14991,
+   "before": "in Jupiter Dasa own Bhukti, by virtue of the fact that Irom Kalatrakaraka- ",
+   "after": "in Jupiter Dasa own Bhukti, by virtue of the fact that From Kalatrakaraka- "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 15012,
+   "before": "are in the constellation of the 5th lord from the Moon. In Sarurn Dasa ",
+   "after": "are in the constellation of the 5th lord from the Moon. In Saturn Dasa "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 15329,
+   "before": "Keiu ",
+   "after": "Ketu "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 15540,
+   "before": "planet must be in a kendra from the Moon and Jupiter must be iord of ",
+   "after": "planet must be in a kendra from the Moon and Jupiter must be lord of "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 15578,
+   "before": "Western text-books have given the characteristics of Acquarius ",
+   "after": "Western text-books have given the characteristics of Aquarius "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 15675,
+   "before": "beneflcs. It will be readily seen that Saturn is in Rohini an asterism ruled ",
+   "after": "benefics. It will be readily seen that Saturn is in Rohini an asterism ruled "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 16283,
+   "before": "Saiura ",
+   "after": "Saturn "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 16287,
+   "before": "A scendant ",
+   "after": "A ascendant "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 16315,
+   "before": "Jupite ",
+   "after": "Jupiter "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 16337,
+   "before": "Raliu ",
+   "after": "Rahu "
+  },
+  {
+   "file": "prasna_tantra_raman/chapter_002_bhava-prasna.md",
+   "line": 291,
+   "before": "Progressed Horoscope. Yt deals fuly with the Tajaka system: ",
+   "after": "Progressed Horoscope. Yt deals fully with the Tajaka system: "
+  },
+  {
+   "file": "prasna_tantra_raman/chapter_049_bhava-prasna.md",
+   "line": 162,
+   "before": "The above four stunzas give combinations indicative ",
+   "after": "The above four stanzas give combinations indicative "
+  },
+  {
+   "file": "prasna_tantra_raman/chapter_049_bhava-prasna.md",
+   "line": 170,
+   "before": "(i) The rising sign is devoid of tlre aspect ",
+   "after": "(i) The rising sign is devoid of the aspect "
+  },
+  {
+   "file": "studies_jaimini_raman/chapter_009_summary.md",
+   "line": 809,
+   "before": "Sagittarius, theie will be accidents from conveyances, falls ",
+   "after": "Sagittarius, there will be accidents from conveyances, falls "
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 5975,
+   "before": "Definitiqr.-Rahu should join the 2nd house with",
+   "after": "Definition.-Rahu should join the 2nd house with"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 5991,
+   "before": "Definition.-If a maleflc happens to own the 2nd",
+   "after": "Definition.-If a malefic happens to own the 2nd"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 6666,
+   "before": "Deftnition.-The Moon or Venus should join a",
+   "after": "Definition.-The Moon or Venus should join a"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 8018,
+   "before": "Difinition.-The Sun must be in the 6th, gth or",
+   "after": "Definition.-The Sun must be in the 6th, gth or"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 8154,
+   "before": "Definition.-Three or more planets shculd bc inexaltation or own house occupying kendras.",
+   "after": "Definition.-Three or more planets should bc in exaltation or own house occupying kendras."
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 8157,
+   "before": "Drftirition.-When a planet is in debilitation butwith bright rays, or retrograde, and occupies",
+   "after": "Definition.-When a planet is in debilitation but with bright rays, or retrograde, and occupies"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 8829,
+   "before": "Jupiter, Mercury, Venus or the Moon shouldjoin the 9th, free from combustion and be aspected",
+   "after": "Jupiter, Mercury, Venus or the Moon should join the 9th, free from combustion and be aspected"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 9026,
+   "before": "Definiticn.-The lord of the 7th should join the",
+   "after": "Definition.-The lord of the 7th should join the"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 9044,
+   "before": "Definitton.-The lord of Lagna must join the 4th",
+   "after": "Definition.-The lord of Lagna must join the 4th"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 9089,
+   "before": "^ Definilion.-Rahu in the 6th, Mandi in a kendrafrom Lagna, and the lord of Lagna in ine gth givesrise to this yoga.",
+   "after": "^ Definition.-Rahu in the 6th, Mandi in a kendrafrom Lagna, and the lord of Lagna in ine gth gives rise to this yoga."
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 9341,
+   "before": "Definilion.-The lord of thc 6th must be in con-",
+   "after": "Definition.-The lord of thc 6th must be in con-"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 9387,
+   "before": "Definnion.-The Moon being aspected by lord",
+   "after": "Definition.-The Moon being aspected by lord"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 9463,
+   "before": "Definilion.-If there are many evil planets in the",
+   "after": "Definition.-If there are many evil planets in the"
+  },
+  {
+   "file": "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md",
+   "line": 9701,
+   "before": "Defhition.-The l0th, 7th and 4th must be",
+   "after": "Definition.-The l0th, 7th and 4th must be"
+  },
+  {
+   "file": "three_hundred_combinations_hocr/chapter_001_full-text-unsplit.md",
+   "line": 1931,
+   "before": "Definition.— Jupiter  and  Venus  are  in Kendras  resphfctively  from  the  lords  of  the  9th and  11th,  and  Mercury  is  mb.  similar  position from  the  lord  of  eiftief'lagna  or  the  10th,  Brahma Yoga  IS  caused.  '   ’   '",
+   "after": "Definition.— Jupiter  and  Venus  are  in Kendras  respectively  from  the  lords  of  the  9th and  11th,  and  Mercury  is  mb.  similar  position from  the  lord  of  eiftief'lagna  or  the  10th,  Brahma Yoga  IS  caused.  '   ’   '"
+  },
+  {
+   "file": "three_hundred_combinations_hocr/chapter_001_full-text-unsplit.md",
+   "line": 2095,
+   "before": "Defimiion. — All  planets  should  be  in  the  5th from  Lagna,  the  Sun  and  the  Moon.",
+   "after": "Definition. — All  planets  should  be  in  the  5th from  Lagna,  the  Sun  and  the  Moon."
+  },
+  {
+   "file": "three_hundred_combinations_raman/chapter_001_full-text-unsplit.md",
+   "line": 5959,
+   "before": "81. Chhalra Yoga, ",
+   "after": "81. Chhatra Yoga, "
+  },
+  {
+   "file": "varshaphal_raman/chapter_007_yogas-sahams-etc.md",
+   "line": 102,
+   "before": "aluays added to the abwe result ",
+   "after": "always added to the above result "
+  }
+ ]
+}

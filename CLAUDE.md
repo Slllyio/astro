@@ -412,20 +412,16 @@ before and after — **12 of 54 sections addressed the reader at the start, 50 o
 
 ## Known-broken — do NOT rediscover these the hard way
 
-- **Pre-1906 charts crash the report.** `build_detailed_report` raises
-  `AttributeError: 'NoneType' object has no attribute 'maha'` for any nativity whose 120-year
-  Vimshottari span ended before today — there is no "currently running" period, and
-  `synthesize()` dereferences it. Verified on Queen Victoria (1819). **This bites the Prime
-  Directive directly: most of Raman's own worked nativities are 19th century, so the engine
-  cannot produce a report for the charts it is validated against.** The measurement tools work
-  around it with `on=(birth.year + 35, …)`; the report has no such escape. Fixing it needs a
-  product decision first — what "now" means for a chart whose life ended in 1939 (cast at a date
-  inside the life / cycle the sequence / state that the reference date is outside the span).
-- **`app/raman_saab/plainspoken.py` has no test file** (910 lines, 41 lead functions, the layer
-  with the most reader contact). Twelve defects were found in it on 2026-08-06/07 — all by
-  printing output by hand, none by CI. Every class is mechanically checkable: guard-clean,
-  subject-verb agreement at n=1, no truncated list in a sentence claiming completeness, no lead
-  that addresses nobody, no lead contradicting its own section's label.
+- **Both earlier entries here are FIXED (re-checked 2026-10-23).** Pre-1906 charts now produce a
+  full report (b5d21a0: the running period reads `synthesis.BEYOND_SEQUENCE` instead of
+  dereferencing None; Queen Victoria 1819 renders). `plainspoken.py` has its test file
+  (`tests/raman_saab/test_plainspoken.py`, 3ffca1d, the twelve defect classes pinned).
+- **Book OCR corrections travel as data.** The corpus is git-ignored, so word-level OCR repairs
+  live in `tools/raman_saab/ocr_corrections.json` (line-preserving, digits never touched, valid
+  Sanskrit never "corrected"). On a machine with the corpus: `python -m
+  tools.raman_saab.apply_ocr_corrections --apply`, then re-lock with `UPDATE_SOURCE_LOCK=1`. Until
+  applied, the source lock still matches the uncorrected books. Fuzzy auto-correction was tried
+  and rejected: it rewrote maraka→karaka, chidra→chandra, lagnam→lagna.
 
 ## Style conventions
 

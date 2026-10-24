@@ -191,3 +191,41 @@ lord's malefic contacts. This is the disposition-prereg result again from a diff
 direction: in Raman's own conclusions a malefic-afflicted lord decides the matter about as often
 as he reasons past it, and nothing the engine reads separates the two. Held as
 `docs/raman_saab/held_patches/R5_general_lord_affliction_2026-10-24.patch`.
+
+## Addendum 4 (2026-10-24): R3a applied, every variant re-measured, hold-out scored
+
+**R3a.** The two reviewers agreed with each other on 92 of 102 rows. They agreed with the
+existing label on 69, agreed on a different label on 23, and split on 10 (kept as adjudicated).
+Of the 23: 15 "mixed" rows were really one-sided conclusions (8 afflicted, 7 favourable), one
+"afflicted" row was two-sided (HTJAH-II h9_02: an exalted royal father, lost very early), and 7
+rows hold no good-or-bad conclusion at all (two wives both alive, married a foreigner, Einstein's
+attitude to money), so both reviewers chose "unclear" and those rows were demoted to DRAFT,
+unscored. Recorded reading: the brief offered "unclear" as a label, and a row two reviewers
+independently find conclusion-free fails the confirmation rule, so demotion is the faithful act.
+
+Re-labelled pool, V0: **275/389 exact (70.7%), 351/389 within one (90.2%), 38 real errors.**
+
+| Variant (re-labelled pool) | Exact | Within one | Real errors | Ships? |
+|---|---|---|---|---|
+| V0 | 275 | 351 | 38 | baseline |
+| R2 package | 277 | 350 | 39 | no |
+| R3b | 280 | 335 | 54 | no |
+| R4 | 284 | 350 | 39 | no |
+| R5 | 271 | 350 | 39 | no |
+
+No engine variant passes on either pool. The engine is unchanged.
+
+**Hold-out (scored once).** The engine's verdicts on the hold-out reproduce the sealed hash
+exactly (`99ee148c...`), so this is the pre-registered V0 reading:
+
+| Pool | Exact | Within one | Real errors |
+|---|---|---|---|
+| Golden pool (in-sample) | 275/389 = 70.7% | 351/389 = 90.2% | 38 (9.8%) |
+| Sealed hold-out (unseen) | 23/36 = 63.9% | 28/36 = 77.8% | 8 (22.2%) |
+
+With 36 rows the hold-out exact figure has a 95% interval of roughly 47% to 79%, so it is
+consistent with a modest in-sample advantage, and its inversion rate is more than double the
+pool's. Read honestly: the pool figure carries some fitting from months of gates tuned on it, and
+the true out-of-sample inversion rate is likely nearer one in five than one in ten. Per-row
+record: `docs/raman_saab/holdout_score_2026-10-24.json`. The hold-out is now SPENT for these
+variants; any future fix needs fresh unseen charts for its own test.

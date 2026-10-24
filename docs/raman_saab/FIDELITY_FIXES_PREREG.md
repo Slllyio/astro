@@ -233,3 +233,18 @@ variants; any future fix needs fresh unseen charts for its own test.
 **User decision (2026-10-24):** R2 is HELD until more unseen charts exist ("Hold until more
 unseen charts"). R4 and R5 stay held on the same footing. Next step: a second sealed hold-out
 from Raman's other books, built with the same engine-blind brief and acceptance checks.
+
+## Addendum 5 (2026-10-24): hold-out 2 protocol, fixed before any chart is extracted
+
+Source: charts never used in the golden corpus or hold-out 1: Notable Horoscopes Nos. 1, 2, 3,
+4, 6, 7, 8, 9, 11, 12, 15 and 50 (skipped by the old extractor because their positions did not
+parse), and How to Judge a Horoscope Vol I and II charts whose birth date is in neither fixture.
+Same engine-blind brief plus `HOLDOUT_BRIEF2_ADDENDUM.md` (stated positions for charts without
+birth data). Acceptance: cast charts must match the printed dasa balance (planet, years within
+1) and any printed Lagna; stated-position charts need all nine grahas and the Lagna sign, and are
+dropped if their positions equal a golden chart's.
+
+Decision rule on hold-out 2, each held variant (R2, R4, R5) scored once against V0: it ships only
+if real errors do not rise, within-one does not fall, and exact rises or real errors fall. A
+variant that also passed this on hold-out 2 still goes to the user before shipping, because it
+failed the pool rule. Hold-out 1 is not reused.

@@ -47,7 +47,11 @@ class TestB6HouseRuleCoverage:
         It is partitioned across sub-matters by signification, so a duplicate
         spouse-tagged rule would double-count in the spouse preponderance."""
         chart = _chart({"Mars": 185.0}, 5.0)
-        assert _RULES["H7.KD.1"].fires(chart) is True
+        # R2 (2026-10-24): H7.KD.1 is DESCRIPTIVE (no single-chart vote, HTJAH-II:2579-2627),
+        # so its condition is checked directly; the per-frame narration still shows it.
+        from app.raman_saab.doctrine.conditions import EvalContext
+        assert _RULES["H7.KD.1"].kind == "descriptive"
+        assert _RULES["H7.KD.1"].condition.evaluate(EvalContext(chart)) is True
         assert _RULES["H7.C.60"].fires(chart) is True
 
     def test_b6_2_fourth_lord_in_12_property_loss_via_bridge(self):

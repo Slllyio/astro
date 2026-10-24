@@ -79,7 +79,6 @@
   "H7": {
     "citations": [
       "HTJAH-II:1773",
-      "HTJAH-II:2579",
       "HTJAH-II:323",
       "HTJAH-II:326",
       "HTJAH-II:374"
@@ -87,7 +86,6 @@
     "fired_rule_ids": [
       "H7.C.86",
       "H7.K.2",
-      "H7.KD.1",
       "H7.L.11",
       "H7.L.11b"
     ],
@@ -101,7 +99,7 @@
       "marital_happiness": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "insufficient-evidence"
       },
       "partnership": {
         "degree": "moderate",

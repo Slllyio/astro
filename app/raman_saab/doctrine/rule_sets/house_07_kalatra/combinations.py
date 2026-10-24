@@ -813,7 +813,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # ===== Kuja-Dosha (single-chart, HTJAH-II:2579-2632) — sig marital_happiness =====
     RuleRecord(
         id="H7.KD.1", house=7, signification="marital_happiness", group="combination",
-        kind="evaluable", condition=_KujaDosha(),
+        # R2 DESCRIPTIVE (2026-10-24, engine-blind citation review): Raman opens this dictum as
+        # "one of the most misunderstood and misapplied astrological dicta" (HTJAH-II:2579-2581),
+        # writes "The Dosha is not absolute" (:2605), and uses it only as units weighed against
+        # the partner's chart in matching (:2627) — never as a verdict on one chart. Shown, no vote.
+        kind="descriptive", condition=_KujaDosha(),
         fortified=None,
         afflicted="Kuja/Mangal Dosha — Mars in the 2/4/7/8/12 from the Lagna, the Moon or Venus "
                   "(not neutralised by a Mars+Jupiter or Mars+Moon conjunction) → affliction to "

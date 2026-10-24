@@ -424,7 +424,7 @@ _SIGNIFICATION_PLAIN: dict[str, str] = {
     "profession_learned": "career in a learned profession",
     "profession_labour": "career built on hands-on work",
     "status_honour": "public standing and honour",
-    "gains": "gains and income", "elder_siblings": "elder siblings",
+    "gains": "gains and income", "means_of_gain": "the means of earning", "elder_siblings": "elder siblings",
     "friends": "friendships", "acquisitions": "acquiring possessions",
     "loss_moksha": "release and letting go", "expenditure": "spending",
     "foreign_residence": "living abroad", "moksha": "spiritual liberation",

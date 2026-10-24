@@ -643,6 +643,14 @@ _H11: tuple[Signification, ...] = (
         primary_karaka="Jupiter",
         rule_tags=("gains",),
         source=_c2(15151),
+    ),    # R2 RE-SCOPE target (2026-10-24): HOW the native earns — "acquires wealth through honest
+    # and noble means" / "resorts to unfair and unscrupulous methods" (HTJAH-II:14357-14360).
+    Signification(
+        key="means_of_gain",
+        house=11,
+        primary_karaka="Jupiter",
+        rule_tags=("means_of_gain",),
+        source=_c2(14357),
     ),
 )
 

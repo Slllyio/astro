@@ -282,3 +282,13 @@ failed the pool rule. Hold-out 1 is not reused.
 V0 55/134 exact, 98 within one, 36 real (verdict hash matched the sealed file). R2 58/98/36 passes;
 R4 64/94/40 fails; R5 55/100/34 passes. Both passing variants go to the user, per Addendum 5.
 Write-up: `HOLDOUT2_RESULTS_2026-10-24.md`.
+
+## Addendum 8 (2026-10-24): user decision, R2 shipped
+
+The user chose "Ship R2 only". R2 is applied to `app/` (patch kept in `held_patches/` for the
+record). Pool re-based with lineage: 277/389 exact, 350/389 within one, 39 real errors (new pinned
+error HTJAH-II.h11_08 H11/gains). R5 stays held; R4 is dropped. Knock-on updates, all deliberate:
+rule-liveness baseline 899 -> 898 evaluable (H7.KD.1 descriptive), the `means_of_gain` topic phrase
+in the feedback instrument and report glossary, four tests that pinned H7.KD.1 firing or its
+maintainer note, the Track-B evidence snapshots, and the doctrine snapshot (1072 moves on unscored
+rows; summary in its note).

@@ -460,7 +460,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # prose — the rule engine is fire-on-true and absence-of-contact is the default
     # state of most charts, not a testimony.
     RuleRecord(
-        id="H1.N.66", house=1, signification="self", group="navamsa_qualifier",
+        # R2 RE-SCOPE (2026-10-24, engine-blind citation review): the only result Raman ties to
+        # this precept is "implicated in a defamation case but subsequently acquitted"
+        # (HTJAH-I:1973-1974) — enmity and litigation, a 6th-house matter, not the self.
+        id="H1.N.66", house=6, signification="enemies", group="navamsa_qualifier",
         kind="evaluable",
         condition=_LordsInContact(1, 6),
         # SENTIMENT-SPLIT corrected 2026-09-01. HTJAH-I:1972-1974 states an UNCONDITIONED

@@ -128,7 +128,9 @@ class TestMarriageWave2:
         sec = _section(markdown, "## Marriage monograph")
         fine = [ln for ln in sec.splitlines() if "Encoding-scope notes" in ln]
         assert len(fine) == 1
-        assert "v1-OOS" in fine[0] and "owned by H7.C.60" in fine[0]
+        # "v1-OOS" belonged to H7.KD.1, descriptive since R2 (2026-10-24), so it no longer
+        # reaches the fired-rule list at all; the H7.C.60 note still routes to fine print.
+        assert "owned by H7.C.60" in fine[0]
         bullets = [ln for ln in sec.splitlines()
                    if ln.strip().startswith("- (") and "Encoding-scope" not in ln]
         assert all("v1-OOS" not in ln and "owned by H7" not in ln for ln in bullets)

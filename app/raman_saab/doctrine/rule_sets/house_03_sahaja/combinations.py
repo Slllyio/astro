@@ -244,7 +244,7 @@ class _KarakaOrLordVargaDignity(C.Condition):
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
         for who in (_KARAKA, _third_lord(ctx.chart)):
-            if C.VargaDignity(who, "D9", {"exalt", "own"}).evaluate(ctx):
+            if C.VargaDignity(who, "D9", {"own"}).evaluate(ctx):   # R2 2026-10-24: "own Navamsha" only; D9 exaltation is not in the sentence
                 return True
             p = ctx.chart.planets.get(who)
             if p is not None and SIGN_LORDS[p.navamsa_sign] in NATURAL_BENEFICS:

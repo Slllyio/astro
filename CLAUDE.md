@@ -45,12 +45,12 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
   mismatches parked. The gate was removed and the ENTIRE adjudicable DRAFT queue (94 rows) was
   then reviewed by four parallel engine-blind `bphs-doctrine-reviewer` agents against Raman's
   printed text — 59 CONFIRM, 17 REVISE, 18 REJECT.
-- **★ CURRENT FIGURE (2026-10-24, after the R3a label re-adjudication — quote this one): 275/389 = 70.7%
-  exact, 351/389 = 90.2% within one step, 38 real errors. FIRST OUT-OF-SAMPLE FIGURE: a sealed
+- **★ CURRENT FIGURE (2026-10-24, after R2 shipped by user decision — quote this one): 277/389 = 71.2%
+  exact, 350/389 = 90.0% within one step, 39 real errors (R3a re-adjudication gave 275/351/38; R2 re-scoped ten rules to their citations, prereg Addendum 8). FIRST OUT-OF-SAMPLE FIGURE: a sealed
   hold-out of 36 unseen Raman conclusions (3HC charts) scores 23/36 = 63.9% exact, 28/36 = 77.8%
   within one, 8 inversions (22%). SECOND HOLD-OUT (2026-10-24, 134 unseen conclusions from NH Nos. 1-15 and HTJAH I/II): 55/134 = 41.0% exact, 98/134 = 73.1% within one, 36 real errors (27%); the engine over-calls affliction (`HOLDOUT2_RESULTS_2026-10-24.md`). Quote the in-pool and hold-out figures together.** Two engine-blind reviewers corrected 23 labels
   (15 "mixed" rows were one-sided, 7 had no conclusion and left the pool). Five pre-registered
-  engine fixes (R1-R5) were measured and NONE passed; the engine is unchanged. Record:
+  engine fixes (R1-R5) were measured; none passed in-pool; R2 and R5 passed hold-out 2 and the user shipped R2 only (R4 dropped, R5 held). Record:
   `docs/raman_saab/FIDELITY_FIXES_PREREG.md` (addenda 1-4) and `WHY_273_OF_396.md`.
 - Previous figure (2026-10-24, after the chart-fidelity fix): 273/396 = 68.9%
   exact, 363/396 = 91.7% within one ordinal step, 33 real errors (distance ≥ 2). It fell from

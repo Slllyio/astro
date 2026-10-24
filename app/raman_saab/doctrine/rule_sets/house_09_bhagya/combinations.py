@@ -318,6 +318,21 @@ class _MaleficInHouseDignified(C.Condition):
                    for name, p in ctx.chart.planets.items())
 
 
+class _UndignifiedMaleficInHouse(C.Condition):
+    """Some natural malefic occupies `house` and is NOT exalted / own / moolatrikona / friendly.
+    R2 NARROW (2026-10-24, engine-blind citation review): HTJAH-II:7468-7470 qualifies its own
+    malefics-in-the-9th clause — "But if the malefic in the 9th be exalted, in own or a
+    friendly sign, the opposite results are produced." A dignified malefic is not an affliction
+    to fortune in Raman's sentence, so it must not vote as one."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return any(name in NATURAL_MALEFICS and p.rasi_house == self.house
+                   and dignity(name, ctx.chart) not in _MaleficInHouseDignified._GOOD
+                   for name, p in ctx.chart.planets.items())
+
+
 class _MaleficOrEclipsedOrDebilInHouse(C.Condition):
     """A malefic, an eclipsed (combust), or a debilitated planet occupies `house`."""
     def __init__(self, house: int) -> None:
@@ -327,8 +342,9 @@ class _MaleficOrEclipsedOrDebilInHouse(C.Condition):
         for name, p in ctx.chart.planets.items():
             if p.rasi_house != self.house:
                 continue
-            if name in NATURAL_MALEFICS:
-                return True
+            if name in NATURAL_MALEFICS and \
+                    dignity(name, ctx.chart) not in _MaleficInHouseDignified._GOOD:
+                return True                  # R2 NARROW: HTJAH-II:7468-7470 exception
             if p.combust_fraction > 0.0:
                 return True
             if dignity(name, ctx.chart) == "debil":
@@ -721,7 +737,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # shashtyamsa"), and adding one part as a bare OR-disjunct to an already-broad rule
         # encodes his vocabulary without his threshold. Re-open with the 'weak' gate
         # (effective_strength) applied TOGETHER with the D9 leg, not beside it.
-        condition=C.Or(_LordDebilitated(9), C.CountInHouse(9, 1, "malefic")),
+        condition=C.Or(_LordDebilitated(9), _UndignifiedMaleficInHouse(9)),  # R2 NARROW: HTJAH-II:7468-7470
         fortified=None,
         afflicted="the 9th lord debilitated (in sign or Navamsa) / weak / in a malefic shashtyamsa, "
                   "OR malefics occupying the 9th → unfortunate in life. Encoded on 9th-lord "

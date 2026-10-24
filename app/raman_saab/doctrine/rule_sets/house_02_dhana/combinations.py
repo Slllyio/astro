@@ -1199,7 +1199,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "severely curtailed (chart 42: 'ordinary man drawing Rs. 50-60/month'; "
                   "chart 44: 'lost all fortune, Rs. 50000 debt')",
         frame="LAGNA", varga="D1", polarity="malefic",
-        source=Citation("HTJAH-I", 2800)),
+        source=Citation("HTJAH-I", 2802)),
 
     # #70 — 6th lord aspects the 2nd house → wealth curtailed.
     #       Chart 48: "6th lord aspects house of finance."

@@ -1,22 +1,24 @@
 {
   "H2": {
     "citations": [
-      "HTJAH-I:2362",
-      "HTJAH-I:2461",
-      "HTJAH-I:2472",
+      "HTJAH-I:2380",
+      "HTJAH-I:2385",
+      "HTJAH-I:2466",
       "HTJAH-I:2498",
-      "HTJAH-I:2544",
+      "HTJAH-I:2567",
       "HTJAH-I:2800",
-      "HTJAH-I:2879"
+      "HTJAH-I:2879",
+      "HTJAH-I:2937"
     ],
     "fired_rule_ids": [
-      "H2.C.17",
-      "H2.C.26",
+      "H2.C.23",
       "H2.C.40",
       "H2.C.65",
       "H2.C.69",
-      "H2.L.5",
-      "H2.P.Moon"
+      "H2.C.70",
+      "H2.L.7",
+      "H2.L.7b",
+      "H2.P.Saturn"
     ],
     "rollup": "mixed",
     "significations": {

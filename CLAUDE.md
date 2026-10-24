@@ -45,10 +45,12 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
   mismatches parked. The gate was removed and the ENTIRE adjudicable DRAFT queue (94 rows) was
   then reviewed by four parallel engine-blind `bphs-doctrine-reviewer` agents against Raman's
   printed text — 59 CONFIRM, 17 REVISE, 18 REJECT.
-- **★ CURRENT FIGURE (2026-10-23, after the engine-audit fixes — quote this one): 276/396 = 69.7%
-  exact, 366/396 = 92.4% within one ordinal step, 30 real errors (distance ≥ 2).** Lineage and the
+- **★ CURRENT FIGURE (2026-10-24, after the chart-fidelity fix — quote this one): 273/396 = 68.9%
+  exact, 363/396 = 91.7% within one ordinal step, 33 real errors (distance ≥ 2).** It fell from
+  276/366/30 because 8 HTJAH-I charts had been cast with a Lagna Raman never judged; re-timed to his
+  Lagna, three former matches became inversions (REAL_ERRORS_2026-10-23.md addendum). No judge code changed. Lineage and the
   per-step measurements: `golden_accuracy_baseline.json` `_comment`; the 30 rows, pinned by key:
-  its `real_errors` + `docs/raman_saab/REAL_ERRORS_2026-10-23.md`. Two of the steps were user
+  its `real_errors` + `docs/raman_saab/REAL_ERRORS_2026-10-23.md`. Two of the 2026-10-23 steps were user
   decisions: the Bhava Bala pillar no longer votes (`house_template.BHAVA_BALA_PILLAR_VOTES`) and
   the Raman engine defaults to Raman's ayanamsa. The figures below are the history.
 - **★ THE HONEST FIGURE (2026-08-23 adjudication): 269/381 = 70.6% exact, 329/381 = 86.4%

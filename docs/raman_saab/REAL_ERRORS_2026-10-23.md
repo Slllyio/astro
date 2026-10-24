@@ -68,3 +68,45 @@ Mechanism tags are computed, not read: a row can carry several. They say where i
 | NH.chart_73 | H2 wealth | afflicted | favourable | book chart with stated positions only, no Shadbala |
 | NH.chart_74 | H5 children | favourable | afflicted | book chart with stated positions only, no Shadbala, a late gate (saptamsa, fertility, yoga) moved the verdict, benefic and malefic rules both fired; the pillar count decided |
 | NH.chart_74 | H7 marital_happiness | favourable | afflicted | none of the above; needs a per-case reading |
+
+## Addendum 2026-10-24: eight charts were not Raman's charts
+
+The list is now **33 rows; the ratchet is 273/396 exact, 363/396 within one step.** No judge or
+doctrine code changed. The drop comes from fixing the charts themselves.
+
+**What was wrong.** 42 scored records carry a birth time but no `lagna_sign`, so the Track A
+casting check never ran on them. Reading Raman's own description of each chart (which house is
+which sign, who lords what, where the lords sit) gave his Lagna for 24 of them. 16 matched the
+cast. **8 did not**: the engine had been judging a chart Raman never judged.
+
+| Record | Raman's Lagna | Cast Lagna | Re-timed | Scored row before -> after |
+|---|---|---|---|---|
+| x65 | Aries | Taurus 1.0 | -6 min | H4 mother: matched -> **inversion** |
+| x79 | Libra | Scorpio 1.8 | -13 min | H4 education: matched -> matched |
+| chart_42 | Capricorn | Aquarius 2.9 | -13 min | H2 wealth: matched -> **inversion** |
+| chart_46 | Cancer | Leo 4.4 | -21 min | H2 wealth: one step out -> one step out |
+| h6_02 | Cancer | Gemini 28.4 | +10 min | H6 disease: matched -> matched |
+| h6_05 | Scorpio | Libra 29.4 | +5 min | H6 enemies/disease: matched -> **inversion** |
+| x75 | Virgo | Libra 11.2 | -48 min | H4 mother: inversion -> inversion |
+| x93 | Sagittarius | Libra 29.7 | +135 min | H5 children: matched -> matched |
+
+**The fix.** Each was re-timed to the smallest shift that puts the Lagna 0.5 degrees inside
+Raman's sign, following the HTJAH-I.chart_35 precedent, and the re-timed chart was then checked
+against every feature Raman quotes for it. All eight reproduce his description in full,
+including x75 and x93 where the printed time is far off (most likely misprinted or misread
+times). `birth.rectified` on each record holds the evidence and line citations. `lagna_sign` is
+now set on all 24, so Track A guards them from here on.
+
+**Why the score fell, and why that is right.** On Raman's own charts, three rows the engine used
+to match (x65 H4, chart_42 H2, h6_05 H6) become inversions. Those matches were produced by the
+wrong chart. Keeping them would be the overfitting the Prime Directive forbids.
+
+**Also fixed.** x93's verdict prose quoted Chart 94's conclusion. It now quotes Chart 93's own
+(HTJAH-I:5669-5670). The verdict is unchanged, since both say no children.
+
+**Still unchecked.** 18 of the 42 have no Lagna that can be read off the text (OCR-garbled chart
+diagrams or no house named). They are listed by the 2026-10-24 checker run and stay as they are.
+
+**Also measured the same day, nothing shipped:** letting Raman's influence axis (who joins and
+aspects a planet) vote in the verdict. Pre-registered in DISPOSITION_PILLAR_PREREG.md; it raised
+real errors 30 -> 38, so it does not bring the engine closer to Raman.

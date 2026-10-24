@@ -35,25 +35,32 @@ def load_corrections(path: Path = CORRECTIONS_PATH) -> list[dict]:
 
 
 def plan(corpus: Path = _CORPUS, corrections: list[dict] | None = None) -> dict[str, list]:
-    """Classify every entry against the files on disk: pending, applied, mismatch or missing."""
+    """Classify every entry against the files on disk: pending, applied, mismatch or missing.
+
+    A line may carry a CHAIN of entries (a later, image-verified pass correcting a line an
+    earlier pass already touched): each entry's ``before`` is the previous entry's ``after``.
+    The line's current text locates where in the chain the file stands."""
     status: dict[str, list] = defaultdict(list)
-    by_file: dict[str, list[dict]] = defaultdict(list)
+    chains: dict[str, dict[int, list[dict]]] = defaultdict(lambda: defaultdict(list))
     for c in corrections if corrections is not None else load_corrections():
-        by_file[c["file"]].append(c)
-    for rel, entries in by_file.items():
+        chains[c["file"]][c["line"]].append(c)
+    for rel, by_line in chains.items():
         path = corpus / rel
         if not path.is_file():
-            status["missing"].extend(entries)
+            status["missing"].extend(c for chain in by_line.values() for c in chain)
             continue
         lines = path.read_bytes().decode("utf-8").split("\n")
-        for c in entries:
-            current = lines[c["line"] - 1].removesuffix("\r") if c["line"] <= len(lines) else None
-            if current == c["after"]:
-                status["applied"].append(c)
-            elif current == c["before"]:
-                status["pending"].append(c)
-            else:
-                status["mismatch"].append(c)
+        for number, chain in by_line.items():
+            current = lines[number - 1].removesuffix("\r") if number <= len(lines) else None
+            if current == chain[-1]["after"]:
+                status["applied"].extend(chain)
+                continue
+            starts = [k for k, c in enumerate(chain) if c["before"] == current]
+            if not starts:
+                status["mismatch"].extend(chain)
+                continue
+            status["applied"].extend(chain[:starts[0]])
+            status["pending"].extend(chain[starts[0]:])
     return status
 
 
@@ -68,7 +75,7 @@ def apply(corpus: Path = _CORPUS, corrections: list[dict] | None = None) -> int:
         raw = path.read_bytes().decode("utf-8")
         lines = raw.split("\n")
         n = len(lines)
-        for c in entries:
+        for c in entries:  # chain order: a later entry's before is the earlier one's after
             # Keep the file's own line ending: some books are CRLF, and a mixed file would
             # count lines differently in readers that split on a lone CR.
             cr = "\r" if lines[c["line"] - 1].endswith("\r") else ""

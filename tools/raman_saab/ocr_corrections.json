@@ -1,5 +1,5 @@
 {
- "_comment": "Reviewed, line-preserving OCR corrections to the Raman book corpus (2026-10-23). Scope: every line the engine cites (code Citation objects, WORK:line tokens, golden citations) plus a whole-book pass over Notable Horoscopes. Each change is a whole-word fix from a hand-reviewed map: unambiguous OCR garbles only (h/b, F/L, E/F confusions, broken planet names, run-together words). Valid Sanskrit terms are never touched, digits never change, and no line is added or removed, so every citation keeps its line number. Apply with tools/raman_saab/apply_ocr_corrections.py, then re-lock the sources.",
+ "_comment": "Reviewed, line-preserving OCR corrections to the Raman book corpus (2026-10-23). Scope: every line the engine cites (code Citation objects, WORK:line tokens, golden citations) plus a whole-book pass over Notable Horoscopes. Each change is a whole-word fix from a hand-reviewed map: unambiguous OCR garbles only (h/b, F/L, E/F confusions, broken planet names, run-together words). Valid Sanskrit terms are never touched, digits never change, and no line is added or removed, so every citation keeps its line number. Apply with tools/raman_saab/apply_ocr_corrections.py, then re-lock the sources. Second pass (2026-10-24): Notable Horoscopes re-OCR'd with tesseract from the owner's epub page scans and aligned word by word with this text; every chart's birth data and planetary positions were compared and each differing block was read on the page image. Those entries carry 'verified' and are the only ones allowed to change a digit. Charts whose page has no scan in the epub (Nos. 9, 17, 48, 49 and the 1906 nativity) were left untouched.",
  "corrections": [
   {
    "file": "ashtakavarga_system_raman/chapter_012_timing-events.md",
@@ -1704,6 +1704,426 @@
    "line": 102,
    "before": "aluays added to the abwe result ",
    "after": "always added to the above result "
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 949,
+   "before": "Birth Details. — *1 9th July 3228 B.C., at about midnight ",
+   "after": "Birth Details. — *19th July 3228 B.C., at about midnight ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 953,
+   "before": "42' ; Mars 91 ° 6' ; Mercury 1 52° 48' ; Jupiter 1 48° 54' ; Venus ",
+   "after": "42' ; Mars 91 ° 6' ; Mercury 152° 48' ; Jupiter 148° 54' ; Venus ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1247,
+   "before": "6° 12'; Saturn 24° 36'; Rahu 86° 54' ; and Lagna 1 1 6° 45', ",
+   "after": "6° 12'; Saturn 24° 36'; Rahu 86° 54' ; and Lagna 116° 45', ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 1397,
+   "before": "48'; and Rahu 15° 38'. ",
+   "after": "48'; and Rahu 75° 38'. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2506,
+   "before": "at about 7.28 a.m. (Long. 1 2° 46' E„ Lat. 41 ° 29' N.) ",
+   "after": "at about 7.28 a.m. (Long. 12° 46' E„ Lat. 41 ° 29' N.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2510,
+   "before": "2'; Saturn 182° 2'; Rahu 278“ 50': Ketu 98° 50'; and Lagna ",
+   "after": "2'; Saturn 182° 2'; Rahu 278° 50': Ketu 98° 50'; and Lagna ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2746,
+   "before": "1 -1 0 a m. (Lat. 21 ° 20' N Long. 40° 1 4' E.) ",
+   "after": "1-10 a.m. (Lat. 21 ° 20' N Long. 40° 14' E.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2749,
+   "before": "Mars 90“ 35' ; Mercury 2° 24' ; Jupiter 209° 50' ; Venus 39 a ",
+   "after": "Mars 90° 35' ; Mercury 2° 24' ; Jupiter 209° 50' ; Venus 39°",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 2751,
+   "before": "304° 47' ; 1 0th house 227° 1 Ayanamsa 2° 26'. ",
+   "after": "304° 47' ; 10th house 227° 1 Ayanamsa 2° 26'. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3093,
+   "before": "4-48 a.m. (L.M.T.). (Let. 36° 13' N., Long. 58° 45' E.) ",
+   "after": "4-48 a.m. (L.M.T.). (Lat. 36° 13' N., Long. 58° 45' E.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3097,
+   "before": "67°; Saturn 278° 48’; Rahu 161° 6' ; and Lagna 49° 1*. ",
+   "after": "67°; Saturn 278° 48’; Rahu 161° 6' ; and Lagna 49° 1'. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3098,
+   "before": "Ayanamsa 9“ 6'. ■■ - ",
+   "after": "Ayanamsa 9° 6'. ■■ - ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3236,
+   "before": "12'; Mars 179° 38'; Mercury 155° 33'; Jupiter 170 a ; Venus ",
+   "after": "12'; Mars 179° 38'; Mercury 155° 33'; Jupiter 170°; Venus ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3238,
+   "before": "and Lagna 100 a 40'. Ayanamsa 11 ° 2'. -o 1 ",
+   "after": "and Lagna 100° 40'. Ayanamsa 11 ° 2'. -o 1 ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3379,
+   "before": "No. I2.-SWAMI VIDYARANYA ",
+   "after": "No. 12.-SWAMI VIDYARANYA ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3382,
+   "before": "at 10-58 p.m. (L.M.T). (Lat. 15° N, Long. 77 s E.) ",
+   "after": "at 10-58 p.m. (L.M.T). (Lat. 15° N, Long. 77° E.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3384,
+   "before": "Planetary Positions. — The Sun 1 6° 30' ; the Moon 1 00° 7' ; ",
+   "after": "Planetary Positions. — The Sun 16° 30' ; the Moon 100° 7' ; ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3688,
+   "before": "No. I3.-GURU NANAK ",
+   "after": "No. 13.-GURU NANAK ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3691,
+   "before": "midnight (L.M.T.). (Let. 31° 39' N., Long. 74° 47' E ) ",
+   "after": "midnight (L.M.T.). (Lat. 31° 39' N., Long. 74° 47' E ) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3693,
+   "before": "Planetary Positions.— The Sun 220° 30' ; the Moon 38\" ",
+   "after": "Planetary Positions.— The Sun 220° 30' ; the Moon 38° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3695,
+   "before": "Venus 186*; Saturn 39° 6'; Rahu 263° 48' ; and Lagna 136* ",
+   "after": "Venus 186°; Saturn 39° 6'; Rahu 263° 48' ; and Lagna 136° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 3696,
+   "before": "28'. Ayanamsa 1 5°. ",
+   "after": "28'. Ayanamsa 15°. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4063,
+   "before": "(O.S.) at 4-9 a.m. (L.M.T.). (Lat. 25 J 19' N„ Long. 69° 47' E.) ",
+   "after": "(O.S.) at 4-9 a.m. (L.M.T.). (Lat. 25° 19' N„ Long. 69° 47' E.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4065,
+   "before": "Planetary Positions.— The Sun 235 3 12' ; the Moon 70° ",
+   "after": "Planetary Positions.— The Sun 235° 12' ; the Moon 70° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4066,
+   "before": "O'; Mars 294° 42' ; Mercury 251° 30' ; Jupiter 187° 18' ; ",
+   "after": "0'; Mars 294° 42' ; Mercury 251° 30' ; Jupiter 187° 18' ; ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 4068,
+   "before": "203° 22' . Ayanamsa 16° 1*. ",
+   "after": "203° 22' . Ayanamsa 16° 1'. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 5599,
+   "before": "No. 2I.-TIPPU SULTAN ",
+   "after": "No. 21.-TIPPU SULTAN ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 6327,
+   "before": "Planetary Positions. — The Sun 11 3° 45' ; the Moon 53° 45' ; Mars ",
+   "after": "Planetary Positions. — The Sun 113° 45' ; the Moon 53° 45' ; Mars ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 6693,
+   "before": "357° 42' ; Mercury 1 9° 2'; Jupiter 297°4' ; Venus 6°45' ; Saturn 338°53’ ",
+   "after": "357° 42' ; Mercury 19° 2'; Jupiter 297°4' ; Venus 6°45' ; Saturn 338°53’ ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 6694,
+   "before": "; Rahu 358° 17' ; Ketu 168° 17'; and Lagna 41 0 19'. Ayanamsa 19°53’. ",
+   "after": "; Rahu 358° 17' ; Ketu 168° 17'; and Lagna 41° 19'. Ayanamsa 19°53’. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 6843,
+   "before": "293° 9'; Mercury 316° 33’; Jupiter 76° O'; Venus 339° 29’; Saturn 195° ",
+   "after": "293° 9'; Mercury 316° 33’; Jupiter 76° 0'; Venus 339° 29’; Saturn 195° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 6979,
+   "before": "Planetary Positions. — The Sun 301 0 12'; the Moon 18° 29' ; Mars ",
+   "after": "Planetary Positions. — The Sun 301° 12'; the Moon 18° 29' ; Mars ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7366,
+   "before": "1 3° N., Long. 5h. 10m. 20s.) ",
+   "after": "13° N., Long. 5h. 10m. 20s.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7369,
+   "before": "216° 55'; Mercury 317° 53'; Jupiter 22° 58'; Venus 333° T ; Saturn 91 0 ",
+   "after": "216° 55'; Mercury 317° 53'; Jupiter 22° 58'; Venus 333° 7' ; Saturn 91°",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7370,
+   "before": "6' (R) ; Rahu 327° 2T ; Ketu 147° 2V ; and Lagna92°50’. Ayanamsa ",
+   "after": "6' (R) ; Rahu 327° 21' ; Ketu 147° 21' ; and Lagna92°50’. Ayanamsa ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7528,
+   "before": "291 0 52 ; Mercury 243° 48'; Jupiter 56° 39'; Venus 247° 38 ; Saturn 111 ",
+   "after": "291° 52 ; Mercury 243° 48'; Jupiter 56° 39'; Venus 247° 38 ; Saturn 111 ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7529,
+   "before": "0 17'; Rahu 312° 49 ; Ketu 132° 49'; and Lagna 32°. Ayanamsa 20° ",
+   "after": "° 17'; Rahu 312° 49 ; Ketu 132° 49'; and Lagna 32°. Ayanamsa 20° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 7824,
+   "before": "61 °36' ; Mercury 9° 18’ ; Jupiter 11 7° 24' ; Venus 24° 32’ ; Saturn 132° ",
+   "after": "61 °36' ; Mercury 9° 18’ ; Jupiter 117° 24' ; Venus 24° 32’ ; Saturn 132° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8245,
+   "before": "Birth Details. — Born on 12/1 1th March 1863 at 2-3 a.m. (L.M.T.) ",
+   "after": "Birth Details. — Born on 12/11th March 1863 at 2-3 a.m. (L.M.T.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8249,
+   "before": "40° 56'; Mercury 302° 40'; Jupiter 186° 42’; Venus 351 0 17'; Saturn 162° ",
+   "after": "40° 56'; Mercury 302° 40'; Jupiter 186° 42’; Venus 351° 17'; Saturn 162° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8481,
+   "before": "127° 35'; Mercury 102° 32' ; Jupiter 179° 56' ; Venus 151 0 44' ; Saturn ",
+   "after": "127° 35'; Mercury 102° 32' ; Jupiter 179° 56' ; Venus 151° 44' ; Saturn ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8482,
+   "before": "160° 32' ; Rahu 223° 5' ; Ketu 43° 5’; and Lagna 21 1 ° 52’. Ayanamsa ",
+   "after": "160° 32' ; Rahu 223° 5' ; Ketu 43° 5’; and Lagna 211° 52’. Ayanamsa ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 8624,
+   "before": "39'; Mercury 57° 50'; Jupiter 207' 36’ (R); Venus 71 0 26’; Saturn 170° ",
+   "after": "39'; Mercury 57° 50'; Jupiter 207' 36’ (R); Venus 71° 26’; Saturn 170° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 9579,
+   "before": "1 1 0 29 ; Mercury 295° 36'; Jupiter 221 0 5’; Venus 358° 33'; Saturn 309° ",
+   "after": "11° 29 ; Mercury 295° 36'; Jupiter 221° 5’; Venus 358° 33'; Saturn 309° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10628,
+   "before": "Birth Details. -Bom on 29th July 1883 at 2 p.m. (L.M.T.) (Lat. 41 0 ",
+   "after": "Birth Details. -Bom on 29th July 1883 at 2 p.m. (L.M.T.) (Lat. 41°",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10631,
+   "before": "Planetary Positions. — The Sun 105° 13'; the Moon 48° 2T; Mars ",
+   "after": "Planetary Positions. — The Sun 105° 13'; the Moon 48° 21'; Mars ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 10980,
+   "before": "52’; Rahu 179° 37'; Ketu 359° 37'; and Lagna 11 7° 40'. Ayanamsa 20° ",
+   "after": "52’; Rahu 179° 37'; Ketu 359° 37'; and Lagna 117° 40'. Ayanamsa 20° ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 11152,
+   "before": "that His Flighness was the nearest approach in Modern times ",
+   "after": "that His Highness was the nearest approach in Modern times ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 11392,
+   "before": "1 1 0° 24' ; Mercury 164°2’ ; Jupiter 151 0 19’ ; Venus 211° 11'; Saturn ",
+   "after": "110° 24' ; Mercury 164°2’ ; Jupiter 151° 19’ ; Venus 211° 11'; Saturn ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12497,
+   "before": "the presence of outstanding yogas like Matavya, Raja-lakshana , ",
+   "after": "the presence of outstanding yogas like Malavya, Raja-lakshana , ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12695,
+   "before": "Planetary Positions. — The Sun 231 0 39'; the Moon 53° 3'; Mars ",
+   "after": "Planetary Positions. — The Sun 231° 39'; the Moon 53° 3'; Mars ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 12995,
+   "before": "Saturn 183° 49'; Rahu 351 ° 19'; Ketu 171 0 19' ; and Lagna 284° 9'. ",
+   "after": "Saturn 183° 49'; Rahu 351 ° 19'; Ketu 171° 19' ; and Lagna 284° 9'. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13333,
+   "before": "(L.M.T.) (Lat. 1 3° N., Long. 5h. 10m. 20s. E.) ",
+   "after": "(L.M.T.) (Lat. 13° N., Long. 5h. 10m. 20s. E.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13518,
+   "before": "(Lat. 52° 51' N., Long. 0°3CT E.) ",
+   "after": "(Lat. 52° 51' N., Long. 0°30' E.) ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13601,
+   "before": "which he happens to own gives rise to Matavya Yoga. These ",
+   "after": "which he happens to own gives rise to Malavya Yoga. These ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 13640,
+   "before": "no doubt caused Matavya Yoga and his strength is par excellence, ",
+   "after": "no doubt caused Malavya Yoga and his strength is par excellence, ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14756,
+   "before": "55' ; Rahu 28° 33'; Ketu 208° 33’ ; and Lagna 299°. Ayanamsa 21 0 9'. ",
+   "after": "55' ; Rahu 28° 33'; Ketu 208° 33’ ; and Lagna 299°. Ayanamsa 21° 9'. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14891,
+   "before": "229° 31' ; Mercury 180° 32'; Jupiter 84° 1'; Venus 171 0 10’; Saturn ",
+   "after": "229° 31' ; Mercury 180° 32'; Jupiter 84° 1'; Venus 171° 10’; Saturn ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 14893,
+   "before": "Ayanamsa 21 0 16’. ",
+   "after": "Ayanamsa 21° 16’. ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "notable_horoscopes_raman/chapter_001_full-text-unsplit.md",
+   "line": 15681,
+   "before": "field of work will be indicated by the 1 0th house and the Sun. 1 will make ",
+   "after": "field of work will be indicated by the 10th house and the Sun. 1 will make ",
+   "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
   }
  ]
 }

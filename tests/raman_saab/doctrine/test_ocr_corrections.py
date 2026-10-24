@@ -26,16 +26,22 @@ class TestCorrectionsAreWordRepairs:
             assert c["before"] != c["after"], c
             assert c["line"] >= 1, c
 
-    def test_no_line_is_corrected_twice(self):
-        """Two entries for one line would make the result depend on application order."""
-        keys = [(c["file"], c["line"]) for c in oc.load_corrections()]
-        assert len(keys) == len(set(keys))
-
-    def test_digits_never_change(self):
-        """Degrees, dates, bindu counts and chart numbers cannot be recovered from context, so a
-        correction may not touch a single digit."""
+    def test_repeated_lines_form_a_chain(self):
+        """A line corrected by two passes must chain: each later entry starts from exactly the
+        text the earlier one produced, so applying in file order is the only possible result."""
+        last: dict[tuple[str, int], str] = {}
         for c in oc.load_corrections():
-            assert re.findall(r"\d+", c["before"]) == re.findall(r"\d+", c["after"]), c
+            key = (c["file"], c["line"])
+            if key in last:
+                assert c["before"] == last[key], c
+            last[key] = c["after"]
+
+    def test_digits_change_only_when_checked_against_the_page(self):
+        """Degrees, dates, bindu counts and chart numbers cannot be recovered from context. A
+        correction may touch a digit only when it records that the printed page was read."""
+        for c in oc.load_corrections():
+            if re.findall(r"\d+", c["before"]) != re.findall(r"\d+", c["after"]):
+                assert "page" in c.get("verified", ""), c
 
     def test_changes_stay_word_sized(self):
         """Each entry repairs a few words; anything larger is a rewrite, not an OCR fix."""

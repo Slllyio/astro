@@ -1,0 +1,3794 @@
+{
+ "V0": {
+  "label": "V0",
+  "exact": 55,
+  "within1": 98,
+  "real": 36,
+  "n": 134,
+  "sha": "9ab344410ddc1f7252cf29fafe83e82e869f005ce886e43301293750228cd065",
+  "rows": [
+   [
+    "HTJAH-II.chart_57 H8/longevity",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_172 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_148 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_136 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_222 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_222 H11/gains",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_107 H5/children",
+    "HTJAH-I",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_157 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_157 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_124 H10/career",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_125 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_255 H12/moksha",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_255 H4/education",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_117 H6/disease_chronic",
+    "HTJAH-I",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H10/status_honour",
+    "HTJAH-I",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63 H1/health",
+    "HTJAH-I",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_63 H2/wealth",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H3/siblings",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63#2 H2/vision",
+    "HTJAH-I",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63#2 H3/courage",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "HTJAH-II.chart_A H5/children",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H7/coverture",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H7/spouse",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H8/death",
+    "HTJAH-II",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H11/elder_siblings",
+    "HTJAH-II",
+    "mixed",
+    "mixed",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B#2 H7/coverture",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B#3 H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "NH.chart_1 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_1 H2/speech",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1 H9/dharma",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H12/incarceration",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1 H11/elder_siblings",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_1 H4/mother",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H5/children",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H9/father",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H4/education",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1#3 H4/happiness",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H1/self",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_11 H9/father",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H10/career",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_12 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H2/wealth",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_12 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_15 H3/courage",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_15 H2/wealth",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H5/children",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_15#2 H1/self",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_2 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_2 H12/moksha",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2#2 H8/death",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_3 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_3 H10/status_honour",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_3 H4/education",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_3 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_3#2 H10/career",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_4 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H3/ear_throat",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_4 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H7/spouse",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_4 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H12/expenditure",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H8/longevity",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_6 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_6 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_6 H2/wealth",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_6 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H1/self",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H2/speech",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_7 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H4/mother",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H9/father",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H10/career",
+    "NH",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "NH.chart_7#2 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7#2 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H2/speech",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H4/education",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_8#2 H4/mother",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8#2 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H1/body",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_9 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H4/education",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H6/enemies",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H12/moksha",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_9#2 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ]
+  ]
+ },
+ "R2": {
+  "label": "R2",
+  "exact": 58,
+  "within1": 98,
+  "real": 36,
+  "n": 134,
+  "sha": "cebc4ba82fb563a0a188cd23f226c011e08790d864f44cfa1514bccebba462e8",
+  "rows": [
+   [
+    "HTJAH-II.chart_57 H8/longevity",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_172 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_148 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_136 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_222 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_222 H11/gains",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_107 H5/children",
+    "HTJAH-I",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_157 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_157 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_124 H10/career",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_125 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_255 H12/moksha",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_255 H4/education",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_117 H6/disease_chronic",
+    "HTJAH-I",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H10/status_honour",
+    "HTJAH-I",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63 H1/health",
+    "HTJAH-I",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_63 H2/wealth",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H3/siblings",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63#2 H2/vision",
+    "HTJAH-I",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63#2 H3/courage",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "HTJAH-II.chart_A H5/children",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H7/coverture",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H7/spouse",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H8/death",
+    "HTJAH-II",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H11/elder_siblings",
+    "HTJAH-II",
+    "mixed",
+    "mixed",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B#2 H7/coverture",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B#3 H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "NH.chart_1 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_1 H2/speech",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1 H9/dharma",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H12/incarceration",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1 H11/elder_siblings",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_1 H4/mother",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H5/children",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H9/father",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H4/education",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1#3 H4/happiness",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H1/self",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_11 H9/father",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H10/career",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_12 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H2/wealth",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_12 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_15 H3/courage",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_15 H2/wealth",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H5/children",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_15#2 H1/self",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_2 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_2 H12/moksha",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2#2 H1/self",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2#2 H8/death",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_3 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_3 H10/status_honour",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_3 H4/education",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_3 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_3#2 H10/career",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_4 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H3/ear_throat",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_4 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H7/spouse",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_4 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H12/expenditure",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H8/longevity",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_6 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_6 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_6 H2/wealth",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_6 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H1/self",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H2/speech",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_7 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H4/mother",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H9/father",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H10/career",
+    "NH",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "NH.chart_7#2 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7#2 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H2/speech",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H4/education",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_8#2 H4/mother",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8#2 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H1/body",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_9 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H4/education",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H6/enemies",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H12/moksha",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_9#2 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ]
+  ]
+ },
+ "R4": {
+  "label": "R4",
+  "exact": 64,
+  "within1": 94,
+  "real": 40,
+  "n": 134,
+  "sha": "398bb6980b6faafc1ef77acfbc26ac5b11dc35067669bfa0d68abcce9349e2ab",
+  "rows": [
+   [
+    "HTJAH-II.chart_57 H8/longevity",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_172 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_148 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_136 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_222 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_222 H11/gains",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_107 H5/children",
+    "HTJAH-I",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_157 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_157 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_124 H10/career",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_125 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_255 H12/moksha",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_255 H4/education",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_117 H6/disease_chronic",
+    "HTJAH-I",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H10/status_honour",
+    "HTJAH-I",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63 H1/health",
+    "HTJAH-I",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_63 H2/wealth",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H3/siblings",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63#2 H2/vision",
+    "HTJAH-I",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63#2 H3/courage",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "HTJAH-II.chart_A H5/children",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H7/coverture",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H7/spouse",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H8/death",
+    "HTJAH-II",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H11/elder_siblings",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B#2 H7/coverture",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B#3 H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "NH.chart_1 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_1 H2/speech",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H12/incarceration",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1 H11/elder_siblings",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_1 H4/mother",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H5/children",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H9/father",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H4/education",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1#3 H4/happiness",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H1/self",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_11 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_11 H10/career",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_12 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H2/wealth",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_12 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_15 H3/courage",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_15 H2/wealth",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H5/children",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_15#2 H1/self",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_2 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_2 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2#2 H8/death",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_3 H3/courage",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_3 H10/status_honour",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_3 H4/education",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_3 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_3#2 H10/career",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_4 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_4 H3/ear_throat",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_4 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H7/spouse",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_4 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H10/status_honour",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_4 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H12/expenditure",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H8/longevity",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4#2 H1/self",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_4#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_6 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_6 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_6 H2/wealth",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_6 H10/status_honour",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_7 H1/self",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H2/speech",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_7 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H4/mother",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_7 H10/career",
+    "NH",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "NH.chart_7#2 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7#2 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H2/speech",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_8 H4/education",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_8#2 H4/mother",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8#2 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H1/body",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_9 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H4/education",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H6/enemies",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_9#2 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ]
+  ]
+ },
+ "R5": {
+  "label": "R5",
+  "exact": 55,
+  "within1": 100,
+  "real": 34,
+  "n": 134,
+  "sha": "db9cc6c2ae5a9474900b51f369abdbb855b479d72f211ee726c7599d51126c18",
+  "rows": [
+   [
+    "HTJAH-II.chart_57 H8/longevity",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_172 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_148 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_136 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_241 H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_222 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_222 H11/gains",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_107 H5/children",
+    "HTJAH-I",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_157 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_157 H2/wealth",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_124 H10/career",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_125 H10/career",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_255 H12/moksha",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_255 H4/education",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_117 H6/disease_chronic",
+    "HTJAH-I",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H10/status_honour",
+    "HTJAH-I",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63 H1/health",
+    "HTJAH-I",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-I.chart_63 H2/wealth",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63 H3/siblings",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-I.chart_63#2 H2/vision",
+    "HTJAH-I",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "HTJAH-I.chart_63#2 H3/courage",
+    "HTJAH-I",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "HTJAH-II.chart_A H5/children",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H7/coverture",
+    "HTJAH-II",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "HTJAH-II.chart_A#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H7/spouse",
+    "HTJAH-II",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H8/death",
+    "HTJAH-II",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B H9/long_journeys",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H10/career",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B H11/elder_siblings",
+    "HTJAH-II",
+    "mixed",
+    "mixed",
+    0
+   ],
+   [
+    "HTJAH-II.chart_B H12/expenditure",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B#2 H7/coverture",
+    "HTJAH-II",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "HTJAH-II.chart_B#2 H9/father",
+    "HTJAH-II",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "HTJAH-II.chart_B#3 H7/marital_happiness",
+    "HTJAH-II",
+    "mixed",
+    "favourable",
+    1
+   ],
+   [
+    "NH.chart_1 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_1 H2/speech",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1 H9/dharma",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H12/incarceration",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1 H11/elder_siblings",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1 H4/mother",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_1#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H5/children",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H9/father",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_1#2 H4/education",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_1#2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_1#3 H4/happiness",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H1/self",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H9/father",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H10/career",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_11 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_12 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H2/wealth",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_12 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_12 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_12 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_12#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H1/body",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_15 H3/courage",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_15 H2/wealth",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_15 H5/children",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_15#2 H1/self",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_2 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_2 H12/moksha",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_2#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_2#2 H8/death",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_3 H3/courage",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_3 H10/status_honour",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_3 H4/education",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_3 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_3 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_3#2 H10/career",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_4 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H3/ear_throat",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_4 H4/education",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H7/spouse",
+    "NH",
+    "mixed",
+    "afflicted",
+    1
+   ],
+   [
+    "NH.chart_4 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_4 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H6/enemies",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_4 H12/expenditure",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4 H8/longevity",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4#2 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_4#2 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_6 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_6 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_6 H2/wealth",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_6 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_6 H10/status_honour",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H1/self",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H2/speech",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H8/longevity",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_7 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H4/mother",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_7 H9/father",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7 H10/career",
+    "NH",
+    "mixed",
+    "mixed",
+    0
+   ],
+   [
+    "NH.chart_7#2 H1/body",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_7#2 H8/death",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H2/speech",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H4/education",
+    "NH",
+    "afflicted",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H9/father",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8 H5/children",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_8 H1/self",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_8 H12/moksha",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_8#2 H4/mother",
+    "NH",
+    "afflicted",
+    "favourable",
+    2
+   ],
+   [
+    "NH.chart_8#2 H9/dharma",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H1/body",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ],
+   [
+    "NH.chart_9 H5/intellect",
+    "NH",
+    "favourable",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H4/education",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H7/marital_happiness",
+    "NH",
+    "afflicted",
+    "insufficient-evidence",
+    2
+   ],
+   [
+    "NH.chart_9 H9/father",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H8/longevity",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H6/enemies",
+    "NH",
+    "afflicted",
+    "afflicted",
+    0
+   ],
+   [
+    "NH.chart_9 H10/career",
+    "NH",
+    "favourable",
+    "favourable",
+    0
+   ],
+   [
+    "NH.chart_9 H12/moksha",
+    "NH",
+    "favourable",
+    "mixed",
+    1
+   ],
+   [
+    "NH.chart_9#2 H9/dharma",
+    "NH",
+    "favourable",
+    "afflicted",
+    2
+   ]
+  ]
+ }
+}

@@ -48,7 +48,7 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
 - **★ CURRENT FIGURE (2026-10-24, after the R3a label re-adjudication — quote this one): 275/389 = 70.7%
   exact, 351/389 = 90.2% within one step, 38 real errors. FIRST OUT-OF-SAMPLE FIGURE: a sealed
   hold-out of 36 unseen Raman conclusions (3HC charts) scores 23/36 = 63.9% exact, 28/36 = 77.8%
-  within one, 8 inversions (22%). Quote both.** Two engine-blind reviewers corrected 23 labels
+  within one, 8 inversions (22%). SECOND HOLD-OUT (2026-10-24, 134 unseen conclusions from NH Nos. 1-15 and HTJAH I/II): 55/134 = 41.0% exact, 98/134 = 73.1% within one, 36 real errors (27%); the engine over-calls affliction (`HOLDOUT2_RESULTS_2026-10-24.md`). Quote the in-pool and hold-out figures together.** Two engine-blind reviewers corrected 23 labels
   (15 "mixed" rows were one-sided, 7 had no conclusion and left the pool). Five pre-registered
   engine fixes (R1-R5) were measured and NONE passed; the engine is unchanged. Record:
   `docs/raman_saab/FIDELITY_FIXES_PREREG.md` (addenda 1-4) and `WHY_273_OF_396.md`.

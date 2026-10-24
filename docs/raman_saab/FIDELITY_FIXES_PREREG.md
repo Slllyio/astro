@@ -276,3 +276,9 @@ failed the pool rule. Hold-out 1 is not reused.
    chart. Fixture sha256 `4690276ba5f6fc77b25653d8e8db1f390f9a0af021875940fbea66ecfc0c4b0a`; V0 verdict file sha256
    `9ab344410ddc1f7252cf29fafe83e82e869f005ce886e43301293750228cd065` (not read before scoring).
    It is scored exactly once for V0, R2, R4 and R5 under the Addendum 5 rule.
+
+## Addendum 7 (2026-10-24): hold-out 2 scored once
+
+V0 55/134 exact, 98 within one, 36 real (verdict hash matched the sealed file). R2 58/98/36 passes;
+R4 64/94/40 fails; R5 55/100/34 passes. Both passing variants go to the user, per Addendum 5.
+Write-up: `HOLDOUT2_RESULTS_2026-10-24.md`.

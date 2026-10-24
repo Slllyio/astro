@@ -1,5 +1,5 @@
 {
- "_comment": "Reviewed, line-preserving OCR corrections to the Raman book corpus (2026-10-23). Scope: every line the engine cites (code Citation objects, WORK:line tokens, golden citations) plus a whole-book pass over Notable Horoscopes. Each change is a whole-word fix from a hand-reviewed map: unambiguous OCR garbles only (h/b, F/L, E/F confusions, broken planet names, run-together words). Valid Sanskrit terms are never touched, digits never change, and no line is added or removed, so every citation keeps its line number. Apply with tools/raman_saab/apply_ocr_corrections.py, then re-lock the sources. Second pass (2026-10-24): Notable Horoscopes re-OCR'd with tesseract from the owner's epub page scans and aligned word by word with this text; every chart's birth data and planetary positions were compared and each differing block was read on the page image. Those entries carry 'verified' and are the only ones allowed to change a digit. Charts whose page has no scan in the epub (Nos. 9, 17, 48, 49 and the 1906 nativity) were left untouched.",
+ "_comment": "Reviewed, line-preserving OCR corrections to the Raman book corpus (2026-10-23). Scope: every line the engine cites (code Citation objects, WORK:line tokens, golden citations) plus a whole-book pass over Notable Horoscopes. Each change is a whole-word fix from a hand-reviewed map: unambiguous OCR garbles only (h/b, F/L, E/F confusions, broken planet names, run-together words). Valid Sanskrit terms are never touched, digits never change, and no line is added or removed, so every citation keeps its line number. Apply with tools/raman_saab/apply_ocr_corrections.py, then re-lock the sources. Second pass (2026-10-24): Notable Horoscopes re-OCR'd with tesseract from the owner's epub page scans and aligned word by word with this text; every chart's birth data and planetary positions were compared and each differing block was read on the page image. Those entries carry 'verified' and are the only ones allowed to change a digit. Charts whose page has no scan in the epub (Nos. 9, 17, 48, 49 and the 1906 nativity) were left untouched. Third pass (2026-10-24): Hindu Predictive Astrology re-OCR'd from the owner's 300-page scan PDF. That PDF is a DIFFERENT EDITION from the corpus text (wording, spelling and line breaks differ), so it was used only to confirm unambiguous OCR garbles (e.g. Kepier->Kepler, majefics->malefics); spelling variants, wording and every digit were left as the corpus edition has them.",
  "corrections": [
   {
    "file": "ashtakavarga_system_raman/chapter_012_timing-events.md",
@@ -2124,6 +2124,342 @@
    "before": "field of work will be indicated by the 1 0th house and the Sun. 1 will make ",
    "after": "field of work will be indicated by the 10th house and the Sun. 1 will make ",
    "verified": "epub page scan read by eye; tesseract re-OCR as second witness (2026-10-24)"
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_001_necessity-for-the-study-of-astrology.md",
+   "line": 140,
+   "before": "Kepier, Bacon, Pythogoras and Democrates were ",
+   "after": "Kepler, Bacon, Pythogoras and Democrates were "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_002_the-zodiac-and-the-solar-system.md",
+   "line": 42,
+   "before": "planets, Rahu and Kethu, and the so-colled newly ",
+   "after": "planets, Rahu and Kethu, and the so-called newly "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_002_the-zodiac-and-the-solar-system.md",
+   "line": 197,
+   "before": "Mitbuna—Ani ",
+   "after": "Mithuna—Ani "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_004_planets-signs-and-constellations.md",
+   "line": 180,
+   "before": "2. Bharani—41 Arietis , 3 stars resembling like a famale ",
+   "after": "2. Bharani—41 Arietis , 3 stars resembling like a female "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_004_planets-signs-and-constellations.md",
+   "line": 183,
+   "before": "3. Krittika— jj Touri Alcyone-2 , 6 stars resembling ",
+   "after": "3. Krittika— jj Tauri Alcyone-2 , 6 stars resembling "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_004_planets-signs-and-constellations.md",
+   "line": 186,
+   "before": "4. Roliini— Alilebaran, 5 stars resembling like a ",
+   "after": "4. Roliini— Aldebaran, 5 stars resembling like a "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_006_astrological-terminology.md",
+   "line": 272,
+   "before": "(Naisargika Mitra) + (Tatkalika Milra) — (Adhi Mitra) ",
+   "after": "(Naisargika Mitra) + (Tatkalika Mitra) — (Adhi Mitra) "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_009_hindu-method-of-casting-the-horoscope.md",
+   "line": 43,
+   "before": "by competent Hindu astonomers, giving the ",
+   "after": "by competent Hindu astronomers, giving the "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_009_hindu-method-of-casting-the-horoscope.md",
+   "line": 140,
+   "before": "birth the constellation Robini ruled for 21-59 ",
+   "after": "birth the constellation Rohini ruled for 21-59 "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_009_hindu-method-of-casting-the-horoscope.md",
+   "line": 439,
+   "before": "Gh. 13—30 subracting the time of entry ",
+   "after": "Gh. 13—30 subtracting the time of entry "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_009_hindu-method-of-casting-the-horoscope.md",
+   "line": 491,
+   "before": "Punarvasu, the four 'padas of Piishyami and ",
+   "after": "Punarvasu, the four 'padas of Pushyami and "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_011_the-shadvargas.md",
+   "line": 62,
+   "before": "equal parts each is called a dekkana, getting 10 ",
+   "after": "equal parts each is called a drekkana, getting 10 "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_012_on-birth-verification-and-rectification.md",
+   "line": 65,
+   "before": "This branch of astrology does not come w'ithin ",
+   "after": "This branch of astrology does not come within "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_013_dasas-and-bhukthies.md",
+   "line": 664,
+   "before": "i.c., Balace of Rahu bhukthi in Kuja dasa at birth=0-5-13. ",
+   "after": "i.c., Balance of Rahu bhukthi in Kuja dasa at birth=0-5-13. "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_014_ayurdaya-or-longevity.md",
+   "line": 25,
+   "before": "of combinations, indicating eariy death of the ",
+   "after": "of combinations, indicating early death of the "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_014_ayurdaya-or-longevity.md",
+   "line": 199,
+   "before": "positdd in a kendra or 8th house, the death of the ",
+   "after": "posited in a kendra or 8th house, the death of the "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_014_ayurdaya-or-longevity.md",
+   "line": 230,
+   "before": "nations indicating counteraction of Balarisbta : ",
+   "after": "nations indicating counteraction of Balarishta : "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_015_marakas-or-death-inflicting-planets.md",
+   "line": 85,
+   "before": "not Yogokarakas but who become evil and con¬ ",
+   "after": "not Yogakarakas but who become evil and con¬ "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_015_marakas-or-death-inflicting-planets.md",
+   "line": 89,
+   "before": "of dekth if death does not occur in the dasas, etc,, ",
+   "after": "of death if death does not occur in the dasas, etc,, "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_019_judgment-of-bhavas-houses.md",
+   "line": 287,
+   "before": "aspected by majefics, the person commits adul¬ ",
+   "after": "aspected by malefics, the person commits adul¬ "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_021_planets-in-different-bhavas-or-houses.md",
+   "line": 86,
+   "before": "famocs, clever in acquiring wealth, superior ",
+   "after": "famous, clever in acquiring wealth, superior "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_021_planets-in-different-bhavas-or-houses.md",
+   "line": 244,
+   "before": "suffering, stumbhng, active, fruitless, liable to ",
+   "after": "suffering, stumbling, active, fruitless, liable to "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_021_planets-in-different-bhavas-or-houses.md",
+   "line": 463,
+   "before": "ficant life, well-built thigbs, strong-minded, cun¬ ",
+   "after": "ficant life, well-built thighs, strong-minded, cun¬ "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_022_planets-in-different-rasis-or-signs.md",
+   "line": 97,
+   "before": "reader, lucky, popular, influenced by womem ",
+   "after": "reader, lucky, popular, influenced by women "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md",
+   "line": 119,
+   "before": "9. Lord of the 3rd dusing his dasa gives ",
+   "after": "9. Lord of the 3rd during his dasa gives "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md",
+   "line": 520,
+   "before": "according to the sign held by Knja, trouble with ",
+   "after": "according to the sign held by Kuja, trouble with "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md",
+   "line": 599,
+   "before": "'enemies, good reputation, long journey to fereign ",
+   "after": "'enemies, good reputation, long journey to foreign "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md",
+   "line": 684,
+   "before": "head of the family, mental eaxiety, danger of ",
+   "after": "head of the family, mental anxiety, danger of "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md",
+   "line": 772,
+   "before": "arms, defeat in litigation, ioss of money due to ",
+   "after": "arms, defeat in litigation, loss of money due to "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md",
+   "line": 1139,
+   "before": "Sorrow, disease, loss of work and Dfiarma ",
+   "after": "Sorrow, disease, loss of work and Dharma "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md",
+   "line": 1477,
+   "before": "influence of famales, negligence of duty, bent on ",
+   "after": "influence of females, negligence of duty, bent on "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_025_source-and-nature-of-death.md",
+   "line": 270,
+   "before": "ceuse death by insect bites or wounds generated ",
+   "after": "cause death by insect bites or wounds generated "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_025_source-and-nature-of-death.md",
+   "line": 286,
+   "before": "navamsa in which the birih falls. Say the birth ",
+   "after": "navamsa in which the birth falls. Say the birth "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_026_the-ashtakavarga-system.md",
+   "line": 278,
+   "before": "effecls’will be 5/8 and the malefic effects 3/8. In ",
+   "after": "effects’will be 5/8 and the malefic effects 3/8. In "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_026_the-ashtakavarga-system.md",
+   "line": 527,
+   "before": "Leoj viz., 3 and 0 require no reduction as they ",
+   "after": "Leo viz., 3 and 0 require no reduction as they "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_026_the-ashtakavarga-system.md",
+   "line": 765,
+   "before": "in which there are no figures fbindus), no aus¬ ",
+   "after": "in which there are no figures bindus), no aus¬ "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_026_the-ashtakavarga-system.md",
+   "line": 1033,
+   "before": "during that period of lrfe. If there are three or ",
+   "after": "during that period of life. If there are three or "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_026_the-ashtakavarga-system.md",
+   "line": 1419,
+   "before": "i this number exceeds 27, duduet 27 or a multiple ",
+   "after": "i this number exceeds 27, deduct 27 or a multiple "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_027_prasna-sastra-or-horary-astrology.md",
+   "line": 186,
+   "before": "Lagna falls in a fixed sign, or in a fixed navarnsa, ",
+   "after": "Lagna falls in a fixed sign, or in a fixed navamsa, "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_028_unknown-birth-times.md",
+   "line": 128,
+   "before": "4th Dwadasarasa rises. Then Jupiter will be in ",
+   "after": "4th Dwadasamsa rises. Then Jupiter will be in "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_028_unknown-birth-times.md",
+   "line": 144,
+   "before": "or by the planet occuying the first house, prefer¬ ",
+   "after": "or by the planet occupying the first house, prefer¬ "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_029_medical-astrology.md",
+   "line": 235,
+   "before": "of the Kalapurusha (zodaical man) in which the ",
+   "after": "of the Kalapurusha (zodiacal man) in which the "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_031_mundane-astrology.md",
+   "line": 88,
+   "before": "political developments—have all been corrrectly ",
+   "after": "political developments—have all been correctly "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_033_annual-horoscopes.md",
+   "line": 34,
+   "before": "be found in my book Varsliaphal or the Hindu ",
+   "after": "be found in my book Varshaphal or the Hindu "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_034_gocharaphala-or-results-of-transits.md",
+   "line": 100,
+   "before": "excellent food, bed and clothes. Wnen the Moon ",
+   "after": "excellent food, bed and clothes. When the Moon "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_034_gocharaphala-or-results-of-transits.md",
+   "line": 150,
+   "before": "ively. To be more explicit; with rference to the ",
+   "after": "ively. To be more explicit; with reference to the "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_034_gocharaphala-or-results-of-transits.md",
+   "line": 533,
+   "before": "the pesson will get houses, articles of lacquer and ",
+   "after": "the person will get houses, articles of lacquer and "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_034_gocharaphala-or-results-of-transits.md",
+   "line": 561,
+   "before": "w'ealth, servants, articles of enjoyment, camels, ",
+   "after": "wealth, servants, articles of enjoyment, camels, "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_035_practical-horoscopes.md",
+   "line": 74,
+   "before": "Gemini; Mercury—Cancer; Jupitet Cancer, ",
+   "after": "Gemini; Mercury—Cancer; Jupiter Cancer, "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_035_practical-horoscopes.md",
+   "line": 132,
+   "before": "Jupiter—Pisces ;Rahu—Taurns; the Moon—Leo ; ",
+   "after": "Jupiter—Pisces ;Rahu—Taurus; the Moon—Leo ; "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_035_practical-horoscopes.md",
+   "line": 327,
+   "before": "General Remarks :—A strong Bnlnrishtn ",
+   "after": "General Remarks :—A strong Balarishta "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_036_drekkana-decanates-and-stellar.md",
+   "line": 274,
+   "before": "12. TJttara.— Self-acquired property, popu¬ ",
+   "after": "12. Uttara.— Self-acquired property, popu¬ "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_036_drekkana-decanates-and-stellar.md",
+   "line": 311,
+   "before": "fond of muric. ",
+   "after": "fond of music. "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_036_drekkana-decanates-and-stellar.md",
+   "line": 1289,
+   "before": "Dbanus ",
+   "after": "Dhanus "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_036_drekkana-decanates-and-stellar.md",
+   "line": 1313,
+   "before": "Dwlswabhava Rasis ",
+   "after": "Dwiswabhava Rasis "
+  },
+  {
+   "file": "hindu_predictive_astrology_raman/chapter_036_drekkana-decanates-and-stellar.md",
+   "line": 1685,
+   "before": "Tatkaiika Mitra ",
+   "after": "Tatkalika Mitra "
   }
  ]
 }

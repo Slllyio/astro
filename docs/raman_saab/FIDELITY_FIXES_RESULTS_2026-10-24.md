@@ -31,7 +31,7 @@ exact must rise or real errors fall.
 
 | Fix (re-labelled pool) | Exact | Within one | Real errors | Why it failed |
 |---|---|---|---|---|
-| R1 lord/karaka condition from Raman's grammar | 240-ish (238 on old pool) | 338 | 58 | agrees with Raman's own strong/weak words less often than Shadbala |
+| R1 lord/karaka condition from Raman's grammar (old 396-row pool; not re-run after it failed gate 1) | 238 | 338 | 58 | agrees with Raman's own strong/weak words less often than Shadbala |
 | R2 re-scope ten rules from their citations | 277 | 350 | 39 | one new inversion (HTJAH-II h11_08 gains) |
 | R3b tie-break by preponderance, cast charts | 280 | 335 | 54 | sixteen new inversions |
 | R4 tie-break by preponderance, stated charts | 284 | 350 | 39 | one new inversion (NH) |

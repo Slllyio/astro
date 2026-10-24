@@ -45,8 +45,8 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
   mismatches parked. The gate was removed and the ENTIRE adjudicable DRAFT queue (94 rows) was
   then reviewed by four parallel engine-blind `bphs-doctrine-reviewer` agents against Raman's
   printed text — 59 CONFIRM, 17 REVISE, 18 REJECT.
-- **★ CURRENT FIGURE (2026-10-24, after R2 shipped by user decision — quote this one): 277/389 = 71.2%
-  exact, 350/389 = 90.0% within one step, 39 real errors (R3a re-adjudication gave 275/351/38; R2 re-scoped ten rules to their citations, prereg Addendum 8). FIRST OUT-OF-SAMPLE FIGURE: a sealed
+- **★ CURRENT FIGURE (2026-10-24, after the NAVAMSA ONE-STEP RULE — quote this one): 269/389 = 69.2%
+  exact, 354/389 = 91.0% within one step, 35 real errors. User decisions the same day: R2 re-scoped ten rules to their citations (277/350/39, prereg Addendum 8), then the Navamsa was limited to moving a Rasi verdict one step, as Raman does (`house_template.NAVAMSA_ONE_STEP`, `NAVAMSA_STEP_FINDINGS_2026-10-24.md`; the old clause-2 flip had no citation). FIRST OUT-OF-SAMPLE FIGURE: a sealed
   hold-out of 36 unseen Raman conclusions (3HC charts) scores 23/36 = 63.9% exact, 28/36 = 77.8%
   within one, 8 inversions (22%). SECOND HOLD-OUT (2026-10-24, 134 unseen conclusions from NH Nos. 1-15 and HTJAH I/II): 55/134 = 41.0% exact, 98/134 = 73.1% within one, 36 real errors (27%); the engine over-calls affliction (`HOLDOUT2_RESULTS_2026-10-24.md`). Quote the in-pool and hold-out figures together.** Two engine-blind reviewers corrected 23 labels
   (15 "mixed" rows were one-sided, 7 had no conclusion and left the pool). Five pre-registered

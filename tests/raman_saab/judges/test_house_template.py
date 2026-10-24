@@ -118,12 +118,14 @@ class TestDecide:
     def test_contradiction_navamsa_weakens_afflicted(self):
         """Stage-3 'V2' navamsa guard: the same 2-strong-pillar contradiction with a
         WEAKENING navamsa is held back from favourable, falls to mixed, and is then
-        dropped to afflicted by the navamsa modulation."""
+        dropped to afflicted by the navamsa modulation. Since the NAVAMSA ONE-STEP RULE
+        (2026-10-24, user decision) the Navamsa may move the Rasi-only verdict (favourable)
+        one step only, so it reads mixed."""
         v, _ = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
                                   fired_benefic=(_fired("benefic"),),
                                   fired_malefic=(_fired("malefic"),),
                                   navamsa_status="weakens"))
-        assert v == "afflicted"
+        assert v == "mixed"
 
     def test_affliction_matter_lone_malefic_afflicted(self):
         """Stage-3 'B' dusthana-affliction (clause 1.5): an AFFLICTION_MATTER ledger

@@ -292,3 +292,11 @@ rule-liveness baseline 899 -> 898 evaluable (H7.KD.1 descriptive), the `means_of
 in the feedback instrument and report glossary, four tests that pinned H7.KD.1 firing or its
 maintainer note, the Track-B evidence snapshots, and the doctrine snapshot (1072 moves on unscored
 rows; summary in its note).
+
+## Addendum 9 (2026-10-24): user decision, Navamsa one-step rule
+
+Not pre-registered: it follows from the doctrine research in `NAVAMSA_STEP_FINDINGS_2026-10-24.md`
+(Raman lets the Navamsa change degree, not direction; the clause-2 flip had no citation). The user
+chose to encode it. Pool 277/350/39 -> 269/354/35, four pinned real errors fixed, none new. Both
+hold-outs were already spent, so their figures (22/30/6 and 57/100/34) describe the change and do
+not test it. Doctrine snapshot: 1541 verdict moves on the corpus, 1518 of them afflicted -> mixed.

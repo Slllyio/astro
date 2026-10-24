@@ -519,7 +519,36 @@ def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
     return base, False
 
 
+#: NAVAMSA ONE-STEP RULE (USER DECISION 2026-10-24, docs/raman_saab/NAVAMSA_STEP_FINDINGS_2026-10-24.md).
+#: The Navamsa is co-testimony weighed WITH the Rasi ("Every combination mentioned should be
+#: applied to the Rashi, Bhava and Navamsha charts and then a conclusion drawn", HTJAH-I:979-980).
+#: In Raman's worked charts it raises or lowers the grade and never by itself turns a clear Rasi
+#: reading to the other pole: "The moderate affliction... in Navamsha is more than counterbalanced
+#: by his strong disposition in Rashi" (HTJAH-I:4688-4689); "Navamsha cannot deny elder co-borns"
+#: (HTJAH-II:16704); a 9th lord in the 6/8/12 Navamsa gives results "good but their degree will be
+#: only middling" (HTJAH-II:12894-12896). Reversal by the Navamsa is printed only inside named
+#: yogas (3HC 158/244/248) and dasha-result rules (HTJAH-I:1739-1740), which live in their own
+#: code paths and are untouched here. So the Navamsa may move the Rasi-only verdict at most ONE
+#: step (favourable <-> mixed <-> afflicted); the clause-2 guard, which had no citation and was
+#: pool-tuned, now only lowers a favourable to mixed. Read LIVE off the module, like B1.
+NAVAMSA_ONE_STEP: bool = True
+
+_POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
+
+
 def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
+    """Collapse a ledger to (verdict, borderline_shifted), the Navamsa limited to one step."""
+    v, shifted = _decide_clauses(L)
+    if not NAVAMSA_ONE_STEP or L.navamsa_status in (None, "neutral"):
+        return v, shifted
+    rasi, _ = _decide_clauses(dataclasses.replace(L, navamsa_status="neutral"))
+    if (rasi in _POLE_ORDER and v in _POLE_ORDER
+            and abs(_POLE_ORDER[rasi] - _POLE_ORDER[v]) > 1):
+        return "mixed", True
+    return v, shifted
+
+
+def _decide_clauses(L: FrameLedger) -> tuple[Verdict, bool]:
     """Collapse a ledger to (verdict, borderline_shifted). The clause order matters."""
     # Longevity guard — SPAN only. For the numeric life-SPAN (`longevity` sig) the span class
     # and maraka are owned by the unbuilt ayurdaya pre-pass, so this judge must NOT emit a

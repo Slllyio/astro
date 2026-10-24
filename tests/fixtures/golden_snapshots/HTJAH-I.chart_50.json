@@ -10,27 +10,27 @@
       "H2.C.69",
       "H2.L.9"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "speech": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "vision": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "wealth": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   }

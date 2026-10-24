@@ -5124,6 +5124,11 @@ tension with a fact this backlog itself records. **Sweep House 6 next.**
 
 ### ★ OPEN — DOCTRINE-CONTESTED, needs USER SIGN-OFF, and deliberately NOT acted on
 
+> **MEASURED 2026-10-24 (DISPOSITION_PILLAR_PREREG.md): letting the influence axis vote in the
+> verdict makes the engine LESS faithful to Raman (real errors 30 -> 38, or 44 with a house-influence
+> pillar; a veto-only form changes nothing). Pre-registered, no variant passed, nothing shipped.
+> The Shadbala-pillar convention stands on evidence now, not only by precedent.**
+
 **HTJAH-I:5173-5175 closes this table by naming its own axis, and it is not Shadbala:**
 
 > *"...paying particular attention to the **benefic, malefic, or moderating nature of the

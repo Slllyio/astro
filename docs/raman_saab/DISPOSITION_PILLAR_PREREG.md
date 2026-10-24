@@ -63,3 +63,26 @@ variant passes, that is recorded here as the result and nothing ships.
 The pool is in-sample: earlier gates were tuned on these same rows. A pass here is evidence the
 mechanism is closer to Raman, not proof. The sealed hold-out of new Raman charts (audit
 2026-10-23) remains the real test and is still owed.
+
+## Result (measured 2026-10-24, after the above was committed in 3989eae)
+
+| Variant | Exact | Within one | Real errors | HTJAH-I real | HTJAH-II real | NH real |
+|---|---|---|---|---|---|---|
+| V0 shipped | 276 | 366 | 30 | 10 | 3 | 17 |
+| V1 influence decides | 266 | 358 | 38 | 10 | 7 | 21 |
+| V2 afflicted veto | 274 | 366 | 30 | 10 | 3 | 17 |
+| V3 V1 + house factor | 263 | 352 | 44 | 12 | 9 | 23 |
+
+**No variant passes. Nothing ships.** V1 and V3 fail every clause: V1 clears 3 real errors
+(NH chart_57 H5, NH chart_22 H7, HTJAH-I x73 H4) and creates 11, most of them wealth and marriage
+rows where Raman read the matter favourably despite a malefic contact. V2 changes no real error and
+costs 2 exact rows, so clause 1 fails.
+
+What this says about Raman: in his own conclusions, a malefic contact on the lord or karaka is
+testimony he weighs, not a verdict. Letting the influence axis vote directly makes the engine
+harsher than he is. This supports the standing convention (Shadbala pillars, influence through the
+fired rules) and closes the "OPEN - DOCTRINE-CONTESTED" question in DOCTRINE_BACKLOG on the
+evidence available. Re-open only with new evidence, such as the sealed hold-out.
+
+Measurement script: the runner monkeypatches `_strong`, `_lord_hard_afflicted` and
+`_bhava_bala_for` per variant; V0 reproduces the committed baseline exactly (276/366/30).

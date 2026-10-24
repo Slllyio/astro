@@ -248,3 +248,31 @@ Decision rule on hold-out 2, each held variant (R2, R4, R5) scored once against 
 if real errors do not rise, within-one does not fall, and exact rises or real errors fall. A
 variant that also passed this on hold-out 2 still goes to the user before shipping, because it
 failed the pool rule. Hold-out 1 is not reused.
+
+## Addendum 6 (2026-10-24): two extraction findings, fixed before the hold-out 2 fixture or any verdict exists
+
+1. **Vol II was extracted twice.** The HTJAH-I unsplit corpus file also carries Vol II from about
+   line 7865, so the "HTJAH-I second half" extractor and the HTJAH-II extractor independently
+   read the same 40 Vol II charts. Both were engine-blind. They agreed on 32 (house,
+   signification, verdict) conclusions and contradicted each other on none; the other 17 were
+   named by only one extractor (mostly signification-key naming, e.g. `career` vs
+   `profession_authority`). Following the standing rule that a contested label never enters the
+   scored pool, **only conclusions both extractors gave identically are scored**, and a chart is
+   dropped when the two disagree on its birth data (Nos. 178, 205). Merge log:
+   `holdout_extractions/r2_htjah2_merge_log.txt`. `r2_htjah1b.json` is therefore not fed to the
+   builder except for its closing illustrations A and B, which the other extractor did not reach
+   (single extraction, kept under the same footing as the NH and Vol I files).
+2. **Pre-Gregorian and BC dates** (NH Nos. 1-9 print Julian dates) are routed to Raman's printed
+   positions instead of the ephemeris cast, which is Gregorian; `build_holdout._birth` returns
+   "pre-Gregorian date" for years before 1583.
+3. **Prose dasa balances.** The first build rejected 23 Vol II charts as "no readable dasa
+   balance" because the parser read only the short form ("Venus 2-1-15"), while Vol II prints
+   "Balance of Venus Dasa at birth: 2 years 1 month and 15 days". The parser now reads both
+   (`_printed_balance_any`; OCR 'O' read as zero). That first build's verdict file was deleted
+   unread (only its hash was printed); hold-out 1 still rebuilds byte-identically.
+4. **Hold-out 2 sealed.** 26 natives, 40 records, 134 scored rows (94 favourable, 33 afflicted,
+   7 mixed) from NH, HTJAH Vol I and Vol II. Thirteen cast charts were rejected because they
+   disagree with the printed dasa balance, one for a Lagna mismatch, and NH No. 50 as a golden
+   chart. Fixture sha256 `4690276ba5f6fc77b25653d8e8db1f390f9a0af021875940fbea66ecfc0c4b0a`; V0 verdict file sha256
+   `9ab344410ddc1f7252cf29fafe83e82e869f005ce886e43301293750228cd065` (not read before scoring).
+   It is scored exactly once for V0, R2, R4 and R5 under the Addendum 5 rule.

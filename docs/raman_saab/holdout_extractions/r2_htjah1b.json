@@ -1,0 +1,1950 @@
+[
+ {
+  "chart_no": 45,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 11393,
+  "last_line": 11420,
+  "raw_birth": "Chart No. 45.—Born 26-5-1950 at 6-30 a.m. (I.S. T.) at 82 E 13, 16N52.",
+  "birth": {
+   "date": "1950-05-26",
+   "time": "06:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 16,
+   "lat_min": 52,
+   "lat_dir": "N",
+   "lon_deg": 82,
+   "lon_min": 13,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "dasa_balance",
+    "note": "months digit missing in OCR (\"2 years / month and / 5 days\")"
+   }
+  ],
+  "dasa_balance": "Venus 2-?-5",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Taurus (Lagna lord Venus, 8th house Sagittarius)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "This would make the 8th lord stronger than Lagna lord causing Alpayu. The native died in Venus Bhukti of Moon Dasha.",
+    "line": 11415,
+    "why": "Raman concludes short life (Alpayu) and records the death."
+   }
+  ]
+ },
+ {
+  "chart_no": 57,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 11711,
+  "last_line": 11745,
+  "raw_birth": "Chart No. 57. -Born 12-2-1880 at 0-40 a.m. (L.M.T.) at41 N2, 93 W25.",
+  "birth": {
+   "date": "1880-02-12",
+   "time": "00:40",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 41,
+   "lat_min": 2,
+   "lat_dir": "N",
+   "lon_deg": 93,
+   "lon_min": 25,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Jupiter 9-10-17",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Libra (Venus is Lagna and 8th lord, 8th house Taurus)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "favourable",
+    "quote": "aspected by an equally beneficeially disposed ayushKaraka Saturn has conferred the full span of life. The native died in June 1969 in Rahu Bhukti, Mars Dasha in his ninetieth year.",
+    "line": 11733,
+    "why": "Listed under Purnayu; full span of life, died in 90th year."
+   }
+  ]
+ },
+ {
+  "chart_no": 65,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 11973,
+  "last_line": 11999,
+  "raw_birth": "Chart No. 65.— Born 15-7-1942 at 2-30p.m. (I.S.T.)at 77 E 29, 8 N11.",
+  "birth": {
+   "date": "1942-07-15",
+   "time": "14:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 8,
+   "lat_min": 11,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 29,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat",
+    "note": "printed \"8 N11\" (Lat 8N11, Lon 77E29 as printed)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Taurus (Lagna lord Venus, 8th house Sagittarius)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The native's clothes caught fire on 16-12-1964 and death occurred on 19-12-1964.",
+    "line": 11994,
+    "why": "Violent death by burns, which Raman attributes to Ketu (Kujavad Ketu)."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "The native's clothes caught fire on 16-12-1964 and death occurred on 19-12-1964.",
+    "line": 11994,
+    "why": "Born 1942, died 1964 at age 22: short life as recorded by Raman."
+   }
+  ]
+ },
+ {
+  "chart_no": 70,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 12113,
+  "last_line": 12145,
+  "raw_birth": "Chart No. 70 .— Born 15-10-1891 at 10-30p.m. (G.M.T.) at 53 N 12, 0 W30.",
+  "birth": {
+   "date": "1891-10-15",
+   "time": "22:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 53,
+   "lat_min": 12,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 30,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "printed G.M.T."
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Cancer (Lagna lord Moon, 8th house Aquarius)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The native was accidentally shot and died on 2-1-1930.",
+    "line": 12136,
+    "why": "Violent death by fire-arm."
+   }
+  ]
+ },
+ {
+  "chart_no": 76,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 12289,
+  "last_line": 12309,
+  "raw_birth": "Chart No. 76.— Born 20-11-1925 at 1-00 p.m. (E.S.T.) at71 W 8.42 N 05.",
+  "birth": {
+   "date": "1925-11-20",
+   "time": "13:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 42,
+   "lat_min": 5,
+   "lat_dir": "N",
+   "lon_deg": 71,
+   "lon_min": 8,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "printed E.S.T."
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Virgo (8th house Aries)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "Conclusion: The native was also shot to death on 4-6-1968 for politicalreasons. The 8th house and 8th lord from Lagna and Moon are heavily afflicted hy malefic.",
+    "line": 12305,
+    "why": "Violent death (assassination by shooting)."
+   }
+  ]
+ },
+ {
+  "chart_no": 79,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 12356,
+  "last_line": 12376,
+  "raw_birth": "Chart No. 79.— Born 25-9-1916 at 1-58 p.m. (L.M.T.) at27 N 28, 77 E 41.",
+  "birth": {
+   "date": "1916-09-25",
+   "time": "13:58",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 27,
+   "lat_min": 28,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 41,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Sagittarius (8th house Cancer)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "Conclusion: The native, the leader of a national political party, was killed and the body thrown on the rails, according to reports Mars, Saturn and Ketu influences on the 8th house and 8th lord indicate a violent end.",
+    "line": 12369,
+    "why": "Violent death (killed)."
+   }
+  ]
+ },
+ {
+  "chart_no": 81,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 12410,
+  "last_line": 12435,
+  "raw_birth": "Chart No. 81.-Born 21-10-1953 at 2 a.m. (I.S.T.) at 18 N31, 73 E 55.",
+  "birth": {
+   "date": "1953-10-21",
+   "time": "02:00",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 31,
+   "lat_dir": "N",
+   "lon_deg": 73,
+   "lon_min": 55,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Leo (8th house Pisces)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "Conclusion: The native died on 4-4-1972 after consuming poison.",
+    "line": 12422,
+    "why": "Unnatural death by poisoning (suicide section)."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "Conclusion: The native died on 4-4-1972 after consuming poison.",
+    "line": 12422,
+    "why": "Born 1953, died 1972 at age 18: short life."
+   }
+  ]
+ },
+ {
+  "chart_no": 106,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 13554,
+  "last_line": 13566,
+  "raw_birth": "Chart No. 106. Bom 17-9-1941 at 10 a.m. (I.S.T.) at 22 N 34, 88 E24.",
+  "birth": {
+   "date": "1941-09-17",
+   "time": "10:00",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 34,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 24,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Saturn 3-0-27",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Libra (movable Lagna with own lord; Mercury 9th and 12th lord)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "In spite of every effort to come back to India, the native has been forced to stay back in a foregin country. The native went abroad in Mercury Dasha.",
+    "line": 13558,
+    "why": "Foreign travel/residence indicated and fulfilled (the native lives abroad; Raman notes it was against his wishes)."
+   }
+  ]
+ },
+ {
+  "chart_no": 107,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 13567,
+  "last_line": 13576,
+  "raw_birth": "Chart No. I07.-Born 12-1-1932 at 2-30p.m. (I.S.T.) at 32 NIO. 74 E 14.",
+  "birth": {
+   "date": "1932-01-12",
+   "time": "14:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 32,
+   "lat_min": 10,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 14,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat",
+    "note": "printed \"32 NIO\" read as 32N10"
+   }
+  ],
+  "dasa_balance": "Jupiter 10-5-23",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Taurus (Lagna lord Venus; 9th lord Saturn in own movable sign)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "The native went abroad in Saturn Dasha. His efforts at coming back have been in vain and he has been forced to reside there.",
+    "line": 13570,
+    "why": "Foreign travel/residence fulfilled (again against the native's wish to return)."
+   }
+  ]
+ },
+ {
+  "chart_no": 109,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 13601,
+  "last_line": 13622,
+  "raw_birth": "Chart No. 109.- Born 28-4-1945 at 11-39p.m. (I.S. T.) at 11 N 15. 75 E 49.",
+  "birth": {
+   "date": "1945-04-28",
+   "time": "23:39",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 11,
+   "lat_min": 15,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 49,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Saturn 17-6-10",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Sagittarius (Mercury 7th lord, Mars 12th lord, 9th lord Sun exalted in 5th)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "The native went abroad in Mercury Dasha. ... justifying the native's status as an immigrant-resident abroad.",
+    "line": 13610,
+    "why": "Foreign travel and residence abroad fulfilled."
+   }
+  ]
+ },
+ {
+  "chart_no": 119,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14392,
+  "last_line": 14405,
+  "raw_birth": "Chart No. 119.— Born 13-1-1944 at 1-49p.m. (L.M.T.) at 22N / 35, 88E23.",
+  "birth": {
+   "date": "1944-01-13",
+   "time": "13:49",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 35,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 23,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Ketu 5-11-0",
+  "lagna_sign_stated": "Taurus",
+  "lagna_sign_printed": "Taurus",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Profession given (accounts officer) without a quality verdict; no conclusion recorded."
+ },
+ {
+  "chart_no": 121,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14439,
+  "last_line": 14455,
+  "raw_birth": "Chart No. 121.— Born 28 5-1944 at 9-50 a.m. (I.S.T.) at 13 / N, 77E35.",
+  "birth": {
+   "date": "1944-05-28",
+   "time": "09:50",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Mercury 6-1-28",
+  "lagna_sign_stated": "Cancer",
+  "lagna_sign_printed": "Cancer",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Profession given (alcohol technologist) without a quality verdict."
+ },
+ {
+  "chart_no": 124,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14498,
+  "last_line": 14509,
+  "raw_birth": "Chart No. 124.— Bom 9-5-1922 at 9-32p.m. (I.S. T.) at 18 N 7, 83 E 27.",
+  "birth": {
+   "date": "1922-05-09",
+   "time": "21:32",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 7,
+   "lat_dir": "N",
+   "lon_deg": 83,
+   "lon_min": 27,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Mars 0-6-6",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Sagittarius (10th house Virgo)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "afflicted",
+    "quote": "Saturn there indicates a job as a stenographer. Rahu in the 10th afflicts Virgo coming in the way of advancement.",
+    "line": 14508,
+    "why": "Raman says Rahu obstructs this native's career advancement."
+   }
+  ]
+ },
+ {
+  "chart_no": 125,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14521,
+  "last_line": 14537,
+  "raw_birth": "Chart No. 125.-Bom 20-10-1931 at 7-20a.m. (I.S.T.) at 13 N 20, 74 E 45.",
+  "birth": {
+   "date": "1931-10-20",
+   "time": "07:20",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 20,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 45,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Mars 6-10-3",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Libra (Libra holds Lagna lord Venus and 9th/12th lord Mercury)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native is a top executive in a management firm and a nutritionalconsultant.",
+    "line": 14522,
+    "why": "Top executive: a high career position."
+   }
+  ]
+ },
+ {
+  "chart_no": 128,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14575,
+  "last_line": 14589,
+  "raw_birth": "Chart No. 128.— Bom 19-12-1952 at 11-16 pm. (I.ST.) at 11 N05, 77 E 20.",
+  "birth": {
+   "date": "1952-12-19",
+   "time": "23:16",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 11,
+   "lat_min": 5,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 20,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Moon 9-2-3",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Leo (Capricorn is the 6th house; Mars exalted Yoga Karaka)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Profession (timber businessman) without quality verdict."
+ },
+ {
+  "chart_no": 136,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14811,
+  "last_line": 14822,
+  "raw_birth": "Chart No. 136.- Bom 12/13-9-1897 at 2-51 a.m. / (L.M.T.) at 26 N17, 72 E 58.",
+  "birth": {
+   "date": "1897-09-13",
+   "time": "02:51",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 26,
+   "lat_min": 17,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 58,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"12/13-9-1897\" at 2-51 a.m.; civil date taken as 13th"
+   }
+  ],
+  "dasa_balance": "Mercury 11-9-0",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Cancer (10th house Aries; Sun 2nd lord, Jupiter 5th lord)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native is a rich and prosperous hanker consistent with the influences of Mercury (money transactions) and Jupiter (from the 2nd house) on the 10th house.",
+    "line": 14814,
+    "why": "Prosperous banker: successful career."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "The native is a rich and prosperous hanker",
+    "line": 14814,
+    "why": "Rich."
+   }
+  ]
+ },
+ {
+  "chart_no": 140,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14863,
+  "last_line": 14874,
+  "raw_birth": "Chart No. 140.— Born 24-2-1911 at 7-44 a.m. (L.M.T.)at 20 N 28. 85 E54.",
+  "birth": {
+   "date": "1911-02-24",
+   "time": "07:44",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 20,
+   "lat_min": 28,
+   "lat_dir": "N",
+   "lon_deg": 85,
+   "lon_min": 54,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Venus 17-4-16",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Pisces (Lagna occupied by exalted Venus)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Woodwork craft dealer; \"financial success\" stated only as a factor indication, not recorded."
+ },
+ {
+  "chart_no": 142,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14878,
+  "last_line": 14891,
+  "raw_birth": "Chart No. 142.— Born 31-5-1918 at 12-22p.m. (I.S.T.)at 13°N, 77 E35.",
+  "birth": {
+   "date": "1918-05-31",
+   "time": "12:22",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Moon 0-1-28",
+  "lagna_sign_stated": "Leo",
+  "lagna_sign_printed": "Leo",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The Lagna is a fiery and royal sign Leo with Mars in it. Mars is the planet of war and the Lagna lord Sun who rules authority and power is in the 10th house. The native is a Captain in the Army.",
+    "line": 14889,
+    "why": "Officer rank (authority) attributed to the strong 10th-house configuration."
+   }
+  ]
+ },
+ {
+  "chart_no": 147,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14940,
+  "last_line": 14948,
+  "raw_birth": "Chart No. 147.— Som 11-8-1921 at8-18p.m. (1ST.) at 13 N, 77 E 35.",
+  "birth": {
+   "date": "1921-08-11",
+   "time": "20:18",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Rahu 1-2-17",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Aquarius (10th lord Mars with 7th lord Sun)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Dancer who learnt from and performed with her husband; no quality verdict."
+ },
+ {
+  "chart_no": 148,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14949,
+  "last_line": 14991,
+  "raw_birth": "Chart No. 1 48.-Born 7/8-8-1894 at 5-30 a.m. (LM. T) at 13 N 6,78 E 7.",
+  "birth": {
+   "date": "1894-08-08",
+   "time": "05:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 6,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 7,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"7/8-8-1894\" at 5-30 a.m.; civil date taken as 8th"
+   }
+  ],
+  "dasa_balance": "Rahu 0-5-4",
+  "lagna_sign_stated": "Cancer",
+  "lagna_sign_printed": "Cancer",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native was a high ranking police officer.",
+    "line": 14957,
+    "why": "High-ranking officer."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "The native of Chart No. 148 retired as a Superintendent starting his career as a police constable",
+    "line": 14979,
+    "why": "Rose from constable to Superintendent."
+   }
+  ]
+ },
+ {
+  "chart_no": 149,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14960,
+  "last_line": 14991,
+  "raw_birth": "Chart No. ^49.—Born 5/6-10-1942 at 1-00 a.m. (W.T.)at 12N 58, 77 E34.",
+  "birth": {
+   "date": "1942-10-06",
+   "time": "01:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 58,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"5/6-10-1942\" at 1-00 a.m.; civil date taken as 6th"
+   },
+   {
+    "field": "time_basis",
+    "note": "printed \"(W.T.)\" = war time"
+   }
+  ],
+  "dasa_balance": "Mercury 3-8-3",
+  "lagna_sign_stated": "Gemini",
+  "lagna_sign_printed": "Gemini",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native occupies an enviable position in the hierarchy of the police force much in advance of many seniors in age.",
+    "line": 14971,
+    "why": "Rapid rise, enviable rank."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "has already reached the rank of Superintendent having thorough sheer merit.",
+    "line": 14981,
+    "why": "Early high rank on merit."
+   }
+  ],
+  "partial_positions": {
+   "Mars": {
+    "sign": "Virgo",
+    "deg": 20.35
+   },
+   "Lagna": {
+    "sign": "Gemini",
+    "deg": 21.88
+   }
+  }
+ },
+ {
+  "chart_no": 150,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 14993,
+  "last_line": 15013,
+  "raw_birth": "Chart No. 150.—Bom 7-12-1888 at about 5-30 p.m. (L.M T.) at 14 N 14, 76 E 26.",
+  "birth": {
+   "date": "1888-12-07",
+   "time": "17:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 14,
+   "lat_min": 14,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 26,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "note": "printed \"about 5-30 p.m.\""
+   }
+  ],
+  "dasa_balance": "Moon 5-0-5",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Taurus (10th house Aquarius; Lagna lord Venus in Capricorn)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Saturn is also the 9th lord and his aspect gives a position of authority. The native was the director of the State geological department.",
+    "line": 14994,
+    "why": "Director: position of authority."
+   }
+  ]
+ },
+ {
+  "chart_no": 156,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15084,
+  "last_line": 15098,
+  "raw_birth": "Chart No. 156.- Born 8/9-7-1953 at 0 h. 03 m. a.m. (I.S. T.) at 22 N 34, 88 E 24.",
+  "birth": {
+   "date": "1953-07-09",
+   "time": "00:03",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 34,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 24,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"8/9-7-1953 at 0 h. 03 m.\"; civil date taken as 9th"
+   }
+  ],
+  "dasa_balance": "Mars 5-2-14",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Pisces (10th house Sagittarius)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Engineer with government contracts; no quality verdict."
+ },
+ {
+  "chart_no": 157,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15099,
+  "last_line": 15112,
+  "raw_birth": "Chart No. 157 .— Born 10/11-2-1910 at 5-59 a.m. (I.S.T.)at ION51, 78 E47.",
+  "birth": {
+   "date": "1910-02-11",
+   "time": "05:59",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 51,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 47,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"10/11-2-1910\" at 5-59 a.m.; civil date taken as 11th"
+   },
+   {
+    "field": "time_basis",
+    "note": "printed I.S.T. (pre-1906 standard? kept as printed)"
+   }
+  ],
+  "dasa_balance": "Rahu 9-1-2",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Capricorn (Libra on 10th cusp; Mars 4th/11th lord)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Chart No. 1 57 belongs to a prosperous businessman.",
+    "line": 15103,
+    "why": "Prosperous businessman."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "The native owns a cinema studio which he rents out for very large sums to film-shooting units.",
+    "line": 15105,
+    "why": "Large earnings."
+   }
+  ]
+ },
+ {
+  "chart_no": 160,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15125,
+  "last_line": 15156,
+  "raw_birth": "Chart No. 160.-Bom 4/5-2-1928 at 4-30 a.m. (I.S. T.) at24 N 13, 75 E 30.",
+  "birth": {
+   "date": "1928-02-05",
+   "time": "04:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 24,
+   "lat_min": 13,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 30,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"4/5-2-1928\" at 4-30 a.m.; civil date taken as 5th"
+   }
+  ],
+  "dasa_balance": "Saturn 7-2-19",
+  "lagna_sign_stated": "Sagittarius",
+  "lagna_sign_printed": "Sagittarius",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "afflicted",
+    "quote": "In Chart No. 160 the 10th lord Mercury occupies 3rd house in a friendly sign, the lord thereof being placed in the 12th, a duSthana explaining the native's relatively low cadre.",
+    "line": 15127,
+    "why": "Raman frames the native's low rank as a deficiency explained by the 10th lord's dispositor in a dusthana."
+   }
+  ]
+ },
+ {
+  "chart_no": 161,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15158,
+  "last_line": 15169,
+  "raw_birth": "Chart No. 161. -Born 24-3-1906 at 6-53 a.m. (L.M. T.) at 13 N 30, 74 E 45.",
+  "birth": {
+   "date": "1906-03-24",
+   "time": "06:53",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 45,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Jupiter 2-9-11",
+  "lagna_sign_stated": "Pisces",
+  "lagna_sign_printed": "Pisces",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Restaurant owner; no quality verdict."
+ },
+ {
+  "chart_no": 167,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15225,
+  "last_line": 15245,
+  "raw_birth": "Chart No. 167. -Born 21-11-1915 at 7-30 a.m. (I.S.T.) at18 / N 50,75 E 40.",
+  "birth": {
+   "date": "1915-11-21",
+   "time": "07:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 40,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Sun 4-9-29",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Scorpio (10th house Leo; 10th lord Sun in Ascendant)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Civil judge; Raman says chart \"not so powerful\" as 166 (lower rank) but does not frame the career as a failure; left out."
+ },
+ {
+  "chart_no": 170,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15280,
+  "last_line": 15289,
+  "raw_birth": "Chart No. ^70-Born 30/31-8-1913 at 4-52 a.m. (L.M.T.)at 26 N 17, 72 E56.",
+  "birth": {
+   "date": "1913-08-31",
+   "time": "04:52",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 26,
+   "lat_min": 17,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 56,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"30/31-8-1913\" at 4-52 a.m.; civil date taken as 31st"
+   }
+  ],
+  "dasa_balance": "Ketu 5-1-3",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Leo? (10th lord Venus; not certain)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "Lawyer; no quality verdict."
+ },
+ {
+  "chart_no": 172,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15301,
+  "last_line": 15315,
+  "raw_birth": "Chart No. 172.—Bom 10/11-7-1891 at 1-18 a.m. (L.M.T.) at 13 N, 77E35.",
+  "birth": {
+   "date": "1891-07-11",
+   "time": "01:18",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"10/11-7-1891\" at 1-18 a.m.; civil date taken as 11th"
+   }
+  ],
+  "dasa_balance": "Venus 9-8-3",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Aries (fiery Lagna, 10th house Capricorn, Mercury 3rd/6th lord)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Chart No. 172 is of a well-known bar-at-law.",
+    "line": 15311,
+    "why": "Well-known barrister."
+   }
+  ]
+ },
+ {
+  "chart_no": 178,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15404,
+  "last_line": 15426,
+  "raw_birth": "Chart No. 178.- Born 2/3-7-1828 at 5-30 a.m. (I.S. T.) at 13 N5,80 E 15.",
+  "birth": {
+   "date": "1928-07-03",
+   "time": "05:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 5,
+   "lat_dir": "N",
+   "lon_deg": 80,
+   "lon_min": 15,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"2/3-7-1828\" with I.S.T.; year read as 1928 (1828 incompatible with IST); civil date 3rd (5-30 a.m.). Alternative: 1828-07-03"
+   }
+  ],
+  "dasa_balance": "Venus 12-9-27",
+  "lagna_sign_stated": "Gemini",
+  "lagna_sign_printed": "Gemini",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "making her a singer of great popularity and charm. The Adhiyoga has reference to these planets in Lagna and has made the native an authority and outstanding figure in the world of music.",
+    "line": 15408,
+    "why": "Outstanding career in music."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "has made the native an authority and outstanding figure in the world of music.",
+    "line": 15409,
+    "why": "Fame/eminence."
+   }
+  ]
+ },
+ {
+  "chart_no": 185,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15501,
+  "last_line": 15511,
+  "raw_birth": "Chart No. 185—Bom 3-4-1905 at 2-34 p.m. (I.S.T.)at 14 N 13, 75 E52.",
+  "birth": {
+   "date": "1905-04-03",
+   "time": "14:34",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 14,
+   "lat_min": 13,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 52,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Saturn 12-3-2",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "a martian sign occupied by Mars (sign not named)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native emerged as a political fighter and was voted to power and was a minister for some years.",
+    "line": 15509,
+    "why": "Became a minister."
+   }
+  ]
+ },
+ {
+  "chart_no": 187,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15522,
+  "last_line": 15537,
+  "raw_birth": "Chart No. 187. -Bom 8-8-9133 at 4-30 p.m. (I.S.T.) at 13°N / 17, E35.",
+  "birth": {
+   "date": "1933-08-08",
+   "time": "16:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"8-8-9133\"; read as 1933 (alt. 1913)"
+   },
+   {
+    "field": "lon",
+    "note": "printed \"13°N / 17, E35\"; read as 13N, 77E35"
+   }
+  ],
+  "dasa_balance": "Jupiter 5-7-28",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "a fiery sign (not named)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Chart No. 187 is of a public prosecutor. ... Saturn aspects the 10th lord and Jupiter aspects the former from the 10th house giving legal brilliance",
+    "line": 15529,
+    "why": "Legal brilliance in his profession."
+   }
+  ]
+ },
+ {
+  "chart_no": 191,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15577,
+  "last_line": 15594,
+  "raw_birth": "Chart No. ^9^.—Born 6-7-7920 at 72-77p.m. (I.S.T.)at 10, N 50. 78E42.",
+  "birth": {
+   "date": "1920-07-06",
+   "time": "12:11",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 42,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"6-7-7920\"; read 1920"
+   },
+   {
+    "field": "time",
+    "note": "printed \"72-77p.m.\"; read 12-11 p.m. (alt 12-17)"
+   }
+  ],
+  "dasa_balance": "Rahu 3-2-2",
+  "lagna_sign_stated": "Virgo",
+  "lagna_sign_printed": "Virgo",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The Mercury-Jupiter combination in the watery sign Cancer makes the native a prolific writer catering to emotional audiences.",
+    "line": 15580,
+    "why": "Prolific, successful script-writer."
+   }
+  ]
+ },
+ {
+  "chart_no": 193,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 15611,
+  "last_line": 15623,
+  "raw_birth": "Chart No. 193. -Bom 6/7-9-1936 at 4-30 a.m. (DST) at 35N 0. 106 W 40.",
+  "birth": {
+   "date": "1936-09-07",
+   "time": "04:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 35,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 106,
+   "lon_min": 40,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"6/7-9-1936\" at 4-30 a.m.; civil date taken as 7th"
+   },
+   {
+    "field": "time_basis",
+    "note": "printed DST"
+   }
+  ],
+  "dasa_balance": "Moon 6-11-16",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Cancer (10th lord Mars)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [],
+  "note": "College professor; no quality verdict."
+ },
+ {
+  "chart_no": 205,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 16048,
+  "last_line": 16082,
+  "raw_birth": "Chart No. 205.- Born 9-9-1913 at 9-30p.m. (P.S.T.) at 33N / 53, 117 W 49.",
+  "birth": {
+   "date": "1913-01-09",
+   "time": "21:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 33,
+   "lat_min": 53,
+   "lat_dir": "N",
+   "lon_deg": 117,
+   "lon_min": 49,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"9-9-1913\"; chart is named as Richard Nixon, whose birth date is 9-1-1913, so read 1913-01-09 (alt. as printed 1913-09-09). Verify with dasa balance Mars 4-1-4."
+   },
+   {
+    "field": "time_basis",
+    "note": "printed P.S.T."
+   }
+  ],
+  "dasa_balance": "Mars 4-1-4",
+  "lagna_sign_stated": "Leo",
+  "lagna_sign_printed": "Leo",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "mixed",
+    "quote": "Saturn in the 10th is not at ail desirable for although it confers initial success, it also gives defeat and humiliation in politically oriented charts. The fall came about following a shocking scandal involving corruption charges",
+    "line": 16074,
+    "why": "Elected President twice, then fell in scandal: both poles named."
+   }
+  ],
+  "name": "Richard Nixon"
+ },
+ {
+  "chart_no": 208,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 16158,
+  "last_line": 16172,
+  "raw_birth": "Chart No. 208.- Bom 8-2-1722 (N S.) at 2-15 a.m. (LMT) at 13° N, 77 E 35.",
+  "birth": {
+   "date": "1722-02-08",
+   "time": "02:15",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed (N.S.)"
+   }
+  ],
+  "dasa_balance": "Mercury 15-8-6",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native rose from the lowest position of almost nothing to very great power.",
+    "line": 16158,
+    "why": "Neechabhanga Raja Yoga fulfilled: rose to great power."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "collected a fortune which ranked second to none",
+    "line": 16171,
+    "why": "Immense fortune."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "afflicted",
+    "quote": "Starting with absolutely nothing in his pocket and no claims to any education",
+    "line": 16168,
+    "why": "No education."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "produced a man of extraordinary abilities.",
+    "line": 16162,
+    "why": "Extraordinary abilities / eminence."
+   }
+  ],
+  "name": "Hyder Ali"
+ },
+ {
+  "chart_no": 221,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 16946,
+  "last_line": 16972,
+  "raw_birth": "Chart No. 22 ^.— Born 30/31-7-1896 at 4-30a.m. (LM.T.) at22 N20, 73E.",
+  "birth": {
+   "date": "1896-07-31",
+   "time": "04:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 20,
+   "lat_dir": "N",
+   "lon_deg": 73,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"30/31-7-1896\" at 4-30 a.m.; civil date taken as 31st"
+   }
+  ],
+  "dasa_balance": "Mercury 5-1-6",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Sagittarius (Lagna lord Jupiter exalted in 8th; 11th Libra)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H11",
+    "signification": "gains",
+    "verdict": "favourable",
+    "quote": "Saturn has predominantly to do with labour so that gain through employing labour on a large scale was the important source of wealth.",
+    "line": 16971,
+    "why": "Large gains as industrialist."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "gain through employing labour on a large scale was the important source of wealth.",
+    "line": 16971,
+    "why": "Wealthy industrialist."
+   }
+  ]
+ },
+ {
+  "chart_no": 222,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 16974,
+  "last_line": 17002,
+  "raw_birth": "Chart No. 222 .— Born 26-11-1899 at 10-27p.m. (LM.T.) at ION 50, 79 E 36",
+  "birth": {
+   "date": "1899-11-26",
+   "time": "22:27",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 36,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Sun 4-2-9",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Cancer (11th Taurus; Sun 2nd, Mars 5th, Jupiter 9th lord)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "The native grew very rich with many investments and businesses",
+    "line": 16995,
+    "why": "Very rich (though less so than the comparison charts)."
+   },
+   {
+    "house": "H11",
+    "signification": "gains",
+    "verdict": "favourable",
+    "quote": "The 11th house being Taurus, the native amassed a fortune through soaps. Mars and Rahu Dasha saw the native build his soap-business into a national monopoly.",
+    "line": 16997,
+    "why": "Large gains."
+   }
+  ]
+ },
+ {
+  "chart_no": 241,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 17983,
+  "last_line": 17994,
+  "raw_birth": "Chart No. 241 .—Born 30/1-4/5-1898 at 1-23 a.m. (LM.T) at 13 N 20. 74 E49.",
+  "birth": {
+   "date": "1898-05-01",
+   "time": "01:23",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 20,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 49,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"30/1-4/5-1898\" at 1-23 a.m. (night of 30 April/1 May); civil date taken as 1 May"
+   }
+  ],
+  "dasa_balance": "Ketu 1-11-15",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Aquarius (Saturn Lagna and 12th lord)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native was a dedicated social worker and built a national banking concern starting from scratch.",
+    "line": 17990,
+    "why": "Built a national bank."
+   },
+   {
+    "house": "H12",
+    "signification": "expenditure",
+    "verdict": "favourable",
+    "quote": "made him a selfless worker whose projects of philanthropy proved a boon to countless numbers.",
+    "line": 17991,
+    "why": "12th-house judgment: beneficial (philanthropic) spending."
+   }
+  ]
+ },
+ {
+  "chart_no": 245,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 18031,
+  "last_line": 18044,
+  "raw_birth": "Chart No. 245.— Bom 4-7-1738 at 7-46 a.m. (L.M.T.)at 51 N 30. 0 W05.",
+  "birth": {
+   "date": "1738-07-04",
+   "time": "07:46",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 51,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 5,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Venus 6-8-12",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Cancer (Lagna lord Moon; 12th lord Mercury)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H12",
+    "signification": "expenditure",
+    "verdict": "mixed",
+    "quote": "The native wasted money in pleasures and lost heavily in racing. ... But the 12th lord in the 12th with Venus also gave him the benefit of his pursuits.",
+    "line": 18032,
+    "why": "Squandered money (afflicted) yet enjoyed the benefit of the pursuits (favourable): both poles named."
+   }
+  ]
+ },
+ {
+  "chart_no": 255,
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 18160,
+  "last_line": 18168,
+  "raw_birth": "Chart No. 255 .— Bom 23/24-7-1933 at 1-40a.m. (I.S.T.) at 21 N 9. 79 E9.",
+  "birth": {
+   "date": "1933-07-24",
+   "time": "01:40",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 21,
+   "lat_min": 9,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 9,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "note": "printed \"23/24-7-1933\" at 1-40 a.m.; civil date taken as 24th"
+   }
+  ],
+  "dasa_balance": "Mercury 9-11-10",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_sign_inferred": "Taurus (Lagna lord Venus; 12th lord Mars; 9th lord Saturn in 9th)",
+  "same_as": null,
+  "stated_positions": null,
+  "conclusions": [
+   {
+    "house": "H12",
+    "signification": "moksha",
+    "verdict": "favourable",
+    "quote": "The native is a spiritual aspirant, who, in spite of high academic qualifications, has taken to a line of austerity and sadhana.",
+    "line": 18163,
+    "why": "Spiritual life fulfilled."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "in spite of high academic qualifications",
+    "line": 18164,
+    "why": "High academic qualifications."
+   }
+  ]
+ },
+ {
+  "chart_no": "A",
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 18235,
+  "last_line": 18403,
+  "raw_birth": "Chart A .—Birth details with-held for obvious reasons:",
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Saturn 17-2-1",
+  "lagna_sign_stated": "Scorpio",
+  "lagna_sign_printed": "Scorpio",
+  "lagna_sign_inferred": "Scorpio (\"benefice for Scorpio Ascendants\"; Lagna Bhava 223 deg)",
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Virgo",
+    "deg": null
+   }
+  },
+  "conclusions": [
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "mixed",
+    "quote": "gave happiness in married life with the birth of children and prosperity of husband in his Dasha. ... The Rahu-Ketu axis afflicts the 9th lord from Lagna and the 7th house from the Moon causing vicissitudes in married life.",
+    "line": 18310,
+    "why": "Happy marriage first, then husband's illness made conjugal life impossible: both poles."
+   },
+   {
+    "house": "H7",
+    "signification": "coverture",
+    "verdict": "afflicted",
+    "quote": "After prolonged illness and several more surgical operations, the native's husband died in the sub-period of Mars in Venus Dasha.",
+    "line": 18325,
+    "why": "Widowhood."
+   },
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "favourable",
+    "quote": "gave happiness in married life with the birth of children",
+    "line": 18310,
+    "why": "Children born."
+   },
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "The native first went abroad in Venus Bhukti of Mercury Dasha. ... Venus Dasha also gave her many journeys abroad.",
+    "line": 18367,
+    "why": "Many foreign journeys."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "favourable",
+    "quote": "The exaltation of the Sun gave the native a well-placed father. ... The exaltation of the Karaka and the parivartana between the 5th and 9th lords gave a fairly long-lived father.",
+    "line": 18399,
+    "why": "Well-placed, fairly long-lived father."
+   }
+  ],
+  "note": "Birth details withheld. No Rasi table / longitudes in OCR text except Lagna Bhava 223 deg 11 min and 7th 43 deg 11 min; positions inferable from prose only (Jupiter exalted in 9th Cancer, Moon in Pisces with Mercury and Rahu, Venus in Gemini in 8th, Sun exalted in 6th with Mars, Saturn in Capricorn, Ketu in Virgo). Female native, married January 1950.",
+  "stated_positions_source": "sign placements stated in Raman prose (no Rasi table in OCR); degrees not given"
+ },
+ {
+  "chart_no": "B",
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "first_line": 18395,
+  "last_line": 18631,
+  "raw_birth": "Chart B.— Birth details withheld for obvious reasons:",
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Mars 6-0-17",
+  "lagna_sign_stated": "Taurus",
+  "lagna_sign_printed": "Taurus",
+  "lagna_sign_inferred": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "conclusions": [
+   {
+    "house": "H7",
+    "signification": "spouse",
+    "verdict": "favourable",
+    "quote": "The native married a beautiful and intelligent woman. Venus in the 7th house made the couple deeply devoted to each other.",
+    "line": 18431,
+    "why": "Beautiful, intelligent, devoted wife."
+   },
+   {
+    "house": "H7",
+    "signification": "coverture",
+    "verdict": "favourable",
+    "quote": "gave a long lease of married life. There are no indications in the chart for loss of wife.",
+    "line": 18436,
+    "why": "Long married life, wife survived."
+   },
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "mixed",
+    "quote": "this state of affairs began only after the native had 'ved a normal life for about 15 years. The next 15 years approximately, until his death, were filled with complicated health problems that did not allow sayana-sukha.",
+    "line": 18616,
+    "why": "Raman (12th-house sayana-sukha) says good and bad results came in equal measure."
+   },
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "favourable",
+    "quote": "Death was sudden and natural since there are no malefic aspects on the 8th house or 8th lord.",
+    "line": 18481,
+    "why": "Natural, non-violent death credited to an unafflicted 8th."
+   },
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "After that there were innumerable journeys abroad in the rest of Saturn Dasha until death.",
+    "line": 18501,
+    "why": "Many foreign journeys."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "favourable",
+    "quote": "This explains the humble beginnings in life of the native's father. The Karaka being in an upachaya lifted him to the rank of a leading industrialist",
+    "line": 18515,
+    "why": "Father rose from humble beginnings to leading industrialist."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "these Dasha saw the native s business prosper and expand considerably.",
+    "line": 18546,
+    "why": "Business prospered."
+   },
+   {
+    "house": "H11",
+    "signification": "elder_siblings",
+    "verdict": "mixed",
+    "quote": "The native had four elder brothers and two elder sisters. ... These two afflictions on the 11th Bhava resulted in the loss of two elder co-boms",
+    "line": 18569,
+    "why": "Six elder siblings, two of whom died."
+   },
+   {
+    "house": "H12",
+    "signification": "expenditure",
+    "verdict": "favourable",
+    "quote": "The native was extremely generous and charitable. There are no malefic aspects on the 12th house.",
+    "line": 18629,
+    "why": "Charitable spending credited to unafflicted 12th."
+   }
+  ],
+  "note": "Birth details withheld. Positions from prose only: Venus in Scorpio (7th), Mars exalted in Capricorn with Moon (9th), Saturn+Mercury(exalted, Virgo)+Rahu in 5th, Sun debilitated (Libra) with Jupiter in 6th, Ketu in Pisces. Lagna Bhava 56 deg 47 min.",
+  "stated_positions_source": "sign placements stated in Raman prose (no Rasi table in OCR); degrees not given"
+ }
+]

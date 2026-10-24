@@ -84,7 +84,12 @@ def _birth(b: dict) -> tuple[dict, str] | tuple[None, str]:
     lon = _deg(b.get("lon_deg"), b.get("lon_min"), b.get("lon_dir"))
     if lat is None or lon is None:
         return None, "no coordinates"
+    if b["date"].startswith("-"):
+        return None, "BC date (use printed positions)"
     y, mo, d = (int(x) for x in b["date"].split("-"))
+    if y < 1583:
+        # Julian-calendar date: the ephemeris cast is Gregorian, so Raman's printed positions decide
+        return None, "pre-Gregorian date (use printed positions)"
     basis = (b.get("time_basis") or "").lower().strip()
     if basis == "ghatikas_after_sunrise" and b.get("ghatikas"):
         g = re.match(r"\s*(\d+)(?:[-.](\d+))?", str(b["ghatikas"]))
@@ -132,6 +137,20 @@ def _printed_balance(s: str | None) -> tuple[str, float] | None:
         return None
     y, mo = int(m.group(2)), int(m.group(3))
     return ALIASES[name], y + mo / 12.0
+
+
+_PROSE = re.compile(r"balance\s+of\s+(?:the\s+)?([A-Za-z]+?)(?:'s)?\s+dasa\D*?([0-9Oo]+)\s*years?"
+                    r"(?:\D{0,12}?([0-9Oo]+)\s*months?)?", re.I)
+
+
+def _printed_balance_any(s: str | None) -> tuple[str, float] | None:
+    """Short form 'Venus 2-1-15' or Raman's prose 'Balance of Venus Dasa at birth: 2 years 1 month'."""
+    if s and (m := _PROSE.search(s)):
+        name = m.group(1).lower()
+        if name in ALIASES:
+            num = lambda t: int(t.replace("O", "0").replace("o", "0")) if t else 0
+            return ALIASES[name], num(m.group(2)) + num(m.group(3)) / 12.0
+    return _printed_balance(s)
 
 
 def main(paths: list[str], v0_out: str, out_path: str = OUT) -> None:
@@ -187,7 +206,7 @@ def main(paths: list[str], v0_out: str, out_path: str = OUT) -> None:
             report["already a golden chart"].append(tag); continue
         rec = {"id": tag, "birth": birth, "stated_positions": {}}
         chart = tg.build_chart(rec)
-        pb = _printed_balance(c.get("dasa_balance"))
+        pb = _printed_balance_any(c.get("dasa_balance"))
         if pb is None:
             report["no readable dasa balance"].append(tag); continue
         lord, yrs = _balance(chart.planets["Moon"].lon)

@@ -1,0 +1,17 @@
+chart 65: H8 longevity held (only one extractor)
+chart 79: H10 status_honour held (only one extractor)
+chart 81: H8 longevity held (only one extractor)
+chart 136: H10 career held (only one extractor)
+chart 142: H10 profession_authority held (only one extractor)
+chart 142: H10 career held (only one extractor)
+chart 148: H10 status_honour held (only one extractor)
+chart 150: H10 profession_authority held (only one extractor)
+chart 150: H10 career held (only one extractor)
+chart 160: H10 status_honour held (only one extractor)
+chart 160: H10 career held (only one extractor)
+chart 167: H10 career held (only one extractor)
+chart 178: dropped, the two extractions disagree on birth data
+chart 187: H10 career held (only one extractor)
+chart 191: H10 career held (only one extractor)
+chart 205: dropped, the two extractions disagree on birth data
+chart 208: H1 self held (only one extractor)

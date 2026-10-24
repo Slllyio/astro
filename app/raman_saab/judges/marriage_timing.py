@@ -319,6 +319,17 @@ def build_marriage_timing(r) -> Optional[MarriageTiming]:
         sign = int(lon // 30) + 1
         trines = [_sign_name(((sign - 1) + k) % 12 + 1) for k in (4, 8)]
         sph.append((label, _sign_name(sign), ", ".join(trines)))
+    # Fix 12 (timing gap check, USER DECISION 2026-10-24): Raman's PRACTISED sum adds the
+    # Lagna and 7th BHAVA longitudes — "Applying the method of adding the longitudes of the
+    # Lagna Bhava (223° 17') and the seventh house (43° 17'), the sum would be 266° 22'"
+    # (HTJAH-I:18296-18297; again at HTJAH-I:18426-18427, "56° 47' + 236° 47' = 293° 34'").
+    # In both cases the 7th bhava is the Lagna plus 180 degrees.
+    asc_lon = getattr(chart, "asc_lon", None)
+    if asc_lon is not None:
+        lon = (2.0 * float(asc_lon) + 180.0) % 360.0
+        sign = int(lon // 30) + 1
+        trines = [_sign_name(((sign - 1) + k) % 12 + 1) for k in (4, 8)]
+        sph.append(("Lagna bhava + 7th bhava", _sign_name(sign), ", ".join(trines)))
 
     return MarriageTiming(
         seventh_lord=lord7,

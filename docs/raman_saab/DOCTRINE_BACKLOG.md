@@ -5839,3 +5839,50 @@ for every finding to be fixed and made the two judgement calls below on decision
   the D9 manufacturing the verdict it was compared with).
 - **Not done here:** the sealed hold-out of unseen Raman charts (needs extraction on the PC with the
   full book set); electional/prasna/BPHS 46+ citations were not checkable in the cloud copy.
+
+## TIMING GAP CHECK -- all 16 fixes (2026-10-24, USER DECISION)
+
+Source: `docs/raman_saab/research/engine-timing-gap-check.md`. The user approved all 16 fixes,
+including fix 1, which revises the CLAUDE.md lock "Dasha/bhukti house-activation" (row updated
+the same day). Every rule change carries its verbatim Raman citation in code. Golden ratchet
+unchanged at **269/389 exact, 354 within one, 35 real errors**; `doctrine_snapshot --check`:
+**IDENTICAL across 346 charts (primitive + predicate + verdict)**.
+
+| # | Fix | Where |
+|---|---|---|
+| 1 | Timer set = Raman's printed per-house lists: karaka only for H3/H4/H5/H6/H7/H9 (Sun)/H12, lord-from-Moon from H2 on, H3 adds Mars's associates/aspecters | `primitives/vimshottari.py` (`TIMER_KARAKA`, `timer_roles`) |
+| 2 | Node channels: dispositor, conjoined planet, nakshatra lord, Sanivad Rahu / Kujavad Ketu (recovers Napoleon h10_05 Rahu) | `vimshottari.timer_roles`, `nakshatra_lord_of`, `NODE_DICTUM` |
+| 3 | Grade on the house's own set; allied 2/11, 9/12 as an `allied_via` note; MD lord's own bhukti = "same lord" | `vimshottari.period_tier`/`active_houses`, all tier consumers + 3 renderers |
+| 4 | Star-lord layer (veto/boost note) and the 3rd/5th/7th-star trial | `raman_timing` period_lords, bhukti_relations |
+| 5 | Lifespan gate | `vimshottari.lifespan_gate`; `raman_timing` period_lords, yoga_lords, maraka_order |
+| 6 | Raman's bhukti relation (6/8, 2/12, 3/11, kendra, mutual aspect, 5/9 lords, Saturn-Venus, maraka from the major lord) | `raman_timing.bhukti_relation`; `SYN_R15_BHUKTI_RELATION` |
+| 7 | Maraka order 5/4/3 inside primary; tertiary Saturn widened; delegation to a node; Amsa half of the Saturn signal; Saturn over 8th/12th lords' signs | `vimshottari.MarakaSet`, `death_weight_fn`, `delegated_marakas`; `MarakaSaturnConfluence.amsa_spans/signature`; `_chk_r9`; `raman_timing` saturn_8_12_lords |
+| 8 | Sade-Sati rounds since birth, ruling-period strength, SAV > 30; the "no doctrine on record" notes corrected | `raman_timing` sade_sati_rounds; detailed_report, report_html, template |
+| 9 | Vedha: Mercury 10th -> 7th as printed; no node rows; reverse Vedha; sentence fixed | `primitives/transits.py`; gochara and adverse tables in all renderers |
+| 10 | Dasa gate + combination label on each transit window | `raman_timing` transit_dasa_gate |
+| 11 | Saturn/Rahu over natal rasi and Navamsa signs; Mars-Saturn / Saturn-Rahu meetings on the Moon sign, 8th, 11th | `raman_timing` transit_natal_points, malefic_meetings |
+| 12 | Marriage point: lords' sums + the practised bhava sum, Jupiter windows and aspects | `judges/marriage_timing.py` (third sphuta); `raman_timing` marriage_point |
+| 13 | Sign-part activation | `raman_timing` sign_parts |
+| 14 | av_pinda: transit Saturn in the natal ayanamsa; Raman's ASP-11:388-393 cited first | `doctrine/av_pinda_timing.py` |
+| 15 | Antaras judged by position from MD/AD lords and role | `raman_timing` antaras |
+| 16 | Sandhi for the AD lord and yoga lords | `_chk_r7`; `raman_timing` bhukti_relations, yoga_lords |
+
+**Mercury 10th Vedha (fix 9).** The printed page (PDF p.264, book p.257, scanned at 400 dpi) and
+the OCR (HPA-34:203, 207) both read the Mercury row "2-4-6-8-10-11 / 5-3-9-1-7-12", so the 10th
+maps to the 7th. There is no sign of a misprint: 7 does not repeat in the row, and the classical 8
+would put a Vedha point on one of Mercury's own good houses. Raman's worked example (Mercury in
+the 11th obstructed by Saturn in the 12th) confirms the row's 11 -> 12 cell. Followed as printed.
+
+**Not done faithfully, or done with a disclosed proxy:**
+- `house_template._event_timing` still unions the 2/11, 9/12 aux houses for its event windows. This is timing metadata only, not a grade; it was left unchanged and needs its own decision.
+- The Saturn-in-10th Mrityu-yoga maraka is kept, with "no citation located" noted in code.
+- HTJAH-I:788 (iii), "lord of 3rd or 8th associated with 2nd or 7th lord": the 3rd and 8th lords are already secondary unconditionally, so set membership is unchanged.
+- HPA-15:41-46 (2nd stronger than 7th) is recorded as a variant, not applied.
+- Star-lord veto/boost, bhukti relations, sandhi, the lifespan gate and every transit table are report-only. None feeds a verdict, so the ratchet cannot measure them.
+- Dasa "good/bad" in transit_dasa_gate and sade_sati_rounds uses the engine's `lord_quality` tag. "Does the Dasa warrant it" uses the engine's `death_window` ranking. Raman gives no mechanical test for either.
+- The star trial treats "malefic" as a natural malefic (the project lock). Raman's wording does not say natural or functional.
+- No orb is printed for natal points, so whole signs are used. The ~10 degree conjunction (NH:12265-12266) is applied only to the Mars-Saturn and Saturn-Rahu meetings.
+- The natal-point scans cover the running bhukti and the next one only, to keep the table readable.
+- Raman's Jupiter-transit observation (ASP-11:402-409) is recorded, not encoded. The rekha half of the pinda clock (ASP-11:410-430) stays omitted.
+- Nodes still OBSTRUCT other planets' transits ("any other planet", HPA-34:159-160). Only their own Vedha rows were removed.
+- Rectification scoring was remapped to the new grades (par excellence / ordinary / same lord -> both-lords score; limited / feeble -> one-lord score, HTJAH-I:1592-1594). Its tests pass, but no separate rectification accuracy benchmark exists to re-measure against.

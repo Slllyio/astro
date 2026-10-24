@@ -1276,8 +1276,9 @@ def _varga_relation(r, prim_house, domain) -> str:
     return "neutral (D9 neither confirms nor weakens)"
 
 
-#: Raman's four fructification grades, strongest first (HTJAH-I:1592-1596, 1635-1640).
-_TIER_ORDER = ("par excellence", "ordinary", "limited", "feeble")
+#: Raman's fructification grades, strongest first (HTJAH-I:1592-1596, 1635-1640), with "same
+#: lord" for the MD lord's own bhukti (timing gap check fix 3, 2026-10-24; HTJAH-I:1635).
+_TIER_ORDER = ("par excellence", "ordinary", "same lord", "limited", "feeble")
 
 
 def _theme_timing(r, name, prim_house, houses, dom_planets) -> tuple[str, Optional[tuple[int, int]]]:

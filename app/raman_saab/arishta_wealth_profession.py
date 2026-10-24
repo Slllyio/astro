@@ -399,7 +399,7 @@ def build_wealth_chapter(r: "DetailedReport") -> Optional[WealthChapter]:
     if not rows:
         return None
     # periods of expansion: MD chapters whose lit houses include 2 or 11 at ordinary+
-    good_tiers = {"par excellence", "ordinary"}
+    good_tiers = {"par excellence", "ordinary", "same lord"}   # both-lords band (fix 3)
     exp: list[str] = []
     from app.raman_saab.render import _jd_to_date
     for ch in r.life_chapters.chapters:

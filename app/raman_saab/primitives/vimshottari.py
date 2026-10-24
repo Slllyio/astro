@@ -27,7 +27,7 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Final, Optional
+from typing import Callable, Final, Optional
 
 import swisseph as swe
 
@@ -36,7 +36,6 @@ from app.core.ephemeris_engine import (
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import drishti
-from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
 from app.raman_saab.primitives import dignity as _dignity
 from app.raman_saab.primitives.shadbala import total as _shadbala_total
 
@@ -159,18 +158,34 @@ class MarakaSet:
     """The death-inflicting grahas, tiered by Raman's doctrine (HTJAH-I:770-795). A maraka's
     Dasha is when a fatal 8th/longevity affliction is most apt to mature; the tier weights how
     strong a death-signal the period carries (it does NOT narrow the set — the doctrine is
-    deliberately broad, so the death-WINDOW ranking, not set membership, discriminates)."""
+    deliberately broad, so the death-WINDOW ranking, not set membership, discriminates).
+
+    ``primary_rank`` orders the primary tier as Raman does (USER DECISION 2026-10-24, timing
+    gap check fix 7): "Of these several determinants above mentioned, planets in conjunction
+    with lords of 2nd and 7th are the most powerful in causing death, while the lords
+    themselves are least powerful" (HTJAH-I:783-784). 3 = conjunct a 2nd/7th lord, 2 = a
+    (malefic) occupant of the 2nd/7th or a planet aspecting a 2nd/7th lord, 1 = the lord
+    alone. VARIANT on record, not applied: HPA-15:41-46 also ranks the 2nd over the 7th ("The
+    2nd house is always stronger in inflicting death than the 7th")."""
     primary: frozenset[str]
     secondary: frozenset[str]
     tertiary: frozenset[str]
+    primary_rank: tuple[tuple[str, int], ...] = ()
 
     def all(self) -> frozenset[str]:
         return self.primary | self.secondary | self.tertiary
 
+    def rank(self, graha: str) -> int:
+        """Primary sub-rank (3 conjunct > 2 occupant/aspecting > 1 lord); 0 outside primary."""
+        if graha not in self.primary:
+            return 0
+        return dict(self.primary_rank).get(graha, 1)
+
     def weight(self, graha: str) -> int:
-        """Death-signal weight: primary 3, secondary 2, tertiary 1, non-maraka 0."""
+        """Death-signal weight: primary 3 (lord) / 4 (occupant or aspecting a lord) / 5
+        (conjunct a 2nd/7th lord), secondary 2, tertiary 1, non-maraka 0 (HTJAH-I:783-784)."""
         if graha in self.primary:
-            return 3
+            return 2 + self.rank(graha)
         if graha in self.secondary:
             return 2
         if graha in self.tertiary:
@@ -202,65 +217,99 @@ def _lord_of_house(chart: RamanChart, house: int) -> str:
     return SIGN_LORDS[((chart.asc_sign - 1) + (house - 1)) % 12 + 1]
 
 
+#: The karaka Raman PRINTS in each house's "Time of Fructification" factor list. A house he
+#: prints no karaka for gets none (USER DECISION 2026-10-24, timing gap check fix 1 — this
+#: replaces the old rule of adding `BHAVA_KARAKA` for every house, with "Sun" as a default):
+#:   H3  "(d) the Karaka, and the planets in association with or aspecting Karaka"
+#:       (HTJAH-I:3526); Mars is "the Karaka for brothers (Kuja or Mars)" (HTJAH-I:3428)
+#:   H4  "(g) the Karaka of the fourth Bhava" (HTJAH-I:4309-4310); Moon, "MatruKaraka" (HTJAH-I:4421)
+#:   H5  "(f) the lord of the 5th from the Moon and the Karaka of the 5th Bhava"
+#:       (HTJAH-I:5322-5323); "Jupiter, the Karaka for children" (HTJAH-I:5619)
+#:   H6  "(f) the lord of the 6th from the Moon and the Karaka of the 6th" (HTJAH-I:6275);
+#:       "Mars, Karaka of the 6th Bhava" (HTJAH-I:6621)
+#:   H7  "(g) the Karaka of the 7th Bhava" (HTJAH-I:8272); "KalatraKaraka: Venus" (HTJAH-I:8504)
+#:   H9  "(g) the Sun who is the Karaka for father" (HTJAH-I:12737-12738) — the Sun, NOT Jupiter
+#:   H12 "The position of Saturn is also of significance as he is the Karaka of loss"
+#:       (HTJAH-I:17733-17734)
+#: H1, H2, H10 and H11 print no karaka (HTJAH-I:1586-1588, 2584-2586, 14071-14075,
+#: 16390-16395); H8's section prints no factor list at all (HTJAH-I:10316), so it takes the
+#: general (a)-(f) factors only ("The same consideration holds good with reference to the
+#: other houses", HTJAH-I:1588-1589).
+TIMER_KARAKA: Final[dict[int, str]] = {
+    3: "Mars", 4: "Moon", 5: "Jupiter", 6: "Mars", 7: "Venus", 9: "Sun", 12: "Saturn"}
+
+#: The planet each node acts like (USER DECISION 2026-10-24, fix 2): "Rahu gives the results
+#: of Venus (the planet with whom he associates), Jupiter (his sign- dispositor) and Saturn
+#: (Sanivad Rahu)" (HTJAH-I:11740-11741); "Ketu being in a martian sign and aiso according to
+#: the dictum Kujavad Ketu can also influence the 9th house" (HTJAH-I:12762-12763).
+NODE_DICTUM: Final[dict[str, str]] = {"Rahu": "Saturn", "Ketu": "Mars"}
+
+_NAK_LORDS: Final[tuple[str, ...]] = _SEQUENCE   # Ashwini=Ketu ... Revati=Mercury
+
+
+def nakshatra_lord_of(chart: RamanChart, planet: str) -> Optional[str]:
+    """The Vimshottari lord of the nakshatra ``planet`` occupies (None if absent). Raman:
+    "the fact of a planet being situated in a particular constellation is of paramount
+    importance especially in the matter of predicting significant events" (HTJAH-I:4518-4520)."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return None
+    nak = getattr(p, "nakshatra", None) or int((p.lon % 360.0) // (360.0 / 27)) + 1
+    return _NAK_LORDS[(int(nak) - 1) % 9]
+
+
 def timer_set(chart: RamanChart, house: int) -> frozenset[str]:
     """Raman's 'Time of Fructification' significator set for a bhava — the planets that bring
-    that house's results in their Dasha. The SAME rule is given for every house (HTJAH-I:4303-
-    4322 [4th] / 5315-5333 [5th]; HTJAH-II:9910-9934 [10th] / 14496-14537 [11th]):
+    that house's results in their Dasha or Bhukti. It is the flattening of ``timer_roles``,
+    which carries the factor-by-factor derivation and every citation; the two can never drift
+    because this function is defined from that one.
 
-      the H-lord, the H-karaka, the house's OCCUPANTS and ASPECTERS, the planets conjoining or
-      aspecting the H-LORD, the H-lord from the MOON, and a NODE whose dispositor is itself a
-      timer (a node gives the results of its sign-dispositor, HTJAH-I:2764/8566).
-
-    This generalizes event-timing BEYOND death/marakas — gains (11th/2nd), career (10th),
-    acquisition (4th), travel (9th/12th), children (5th) — lifting the non-death event-MD hit
-    rate from ~10% to ~92% on the dated goldens. A planet gives a house's results in its Dasha
-    when (and only when) it is in this set; the MD sets the theme, the Bhukti triggers."""
-    ts: set[str] = set()
-    lord = _lord_of_house(chart, house)
-    ts.add(lord)
-    ts.add(BHAVA_KARAKA.get(house, "Sun"))
-    for name, p in chart.planets.items():
-        if p.rasi_house == house or drishti.aspects_house(name, house, chart):
-            ts.add(name)
-    lp = chart.planets.get(lord)
-    if lp is not None:
-        for name, p in chart.planets.items():
-            if name != lord and (p.rasi_house == lp.rasi_house
-                                 or drishti.aspects_planet(name, lord, chart)):
-                ts.add(name)
-    moon = chart.planets.get("Moon")
-    if moon is not None:
-        ts.add(SIGN_LORDS[(moon.sign - 1 + (house - 1)) % 12 + 1])  # H-lord from the Moon
-    for node in ("Rahu", "Ketu"):                                    # node via its dispositor
-        np = chart.planets.get(node)
-        if np is not None and SIGN_LORDS[np.sign] in ts:
-            ts.add(node)
-    return frozenset(ts)
+    Corrected 2026-10-24 (USER DECISION, timing gap check fix 1 + fix 2): the set follows
+    Raman's PRINTED per-house lists (no karaka where he prints none, the Sun for the 9th, the
+    lord counted from the Moon only from the 2nd house on, the karaka's associates for the
+    3rd) and gives the nodes all four of Raman's result channels (sign lord, conjoined planet,
+    nakshatra lord, Sanivad Rahu / Kujavad Ketu)."""
+    return frozenset(timer_roles(chart, house))
 
 
 #: The role tags `timer_roles` can emit, in the order Raman lists the factors
-#: (HTJAH-I:1586-1596): the house's own lord, its karaka, occupants, aspecters,
-#: planets conjoining/aspecting the lord, the lord-from-the-Moon, and a node whose
-#: sign-dispositor is itself a timer (HTJAH-I:2764/8566).
+#: (HTJAH-I:1586-1588): the house's own lord, its karaka, occupants, aspecters, planets
+#: conjoining/aspecting the lord, the lord-from-the-Moon, the 3rd house's karaka associates,
+#: and the four node channels.
 TIMER_ROLE_TAGS: Final[tuple[str, ...]] = (
     "owns", "karaka", "occupies", "aspects house", "conjoins lord", "aspects lord",
-    "lord from Moon", "node of a timer's sign")
+    "lord from Moon", "conjoins karaka", "aspects karaka",
+    "node of a timer's sign", "node joins a timer", "node in a timer's star",
+    "Sanivad Rahu", "Kujavad Ketu")
 
 
 def timer_roles(chart: RamanChart, house: int) -> dict[str, tuple[str, ...]]:
-    """Role-preserving decomposition of ``timer_set`` — the SAME factor logic, factor by
-    factor, so a renderer can say BY WHICH of Raman's enumerated factors (HTJAH-I:1586-1596)
-    a period lord influences a house ("owns", "aspects lord", ...) instead of asserting the
-    fructification tier bare. Raman himself always names the factor ("Saturn, as lord of
-    the 2nd, aspecting its lord ..."); this restores that derivation to the narration.
+    """Role-preserving timer set — BY WHICH of Raman's printed factors each planet influences
+    ``house`` ("owns", "aspects lord", ...). Raman himself always names the factor ("Saturn,
+    as lord of the 2nd, aspecting its lord ..."), and the narration restores that.
 
-    ``timer_set`` itself is deliberately UNTOUCHED — it feeds the live verdict machinery
-    (active_houses -> the golden ratchet's activation surfaces), so this is a NEW function;
-    the paired test pins ``frozenset(timer_roles(chart, h)) == timer_set(chart, h)`` for
-    every house, so the two implementations can never silently drift.
+    The factors (USER DECISION 2026-10-24, timing gap check fixes 1-2):
 
-    Returns {planet: (role tag, ...)} with tags in TIMER_ROLE_TAGS order, first-hit order
-    preserved per planet."""
+    * (a) the lord, (b) planets aspecting the house, (c) planets posited in it, (d) planets
+      aspecting the lord, (e) planets in association with the lord — "The same consideration
+      holds good with reference to the other houses" (HTJAH-I:1586-1589).
+    * (f) the lord of the house counted from the Moon, FROM THE 2ND HOUSE ON: the 1st-house
+      list stops at (e) (HTJAH-I:1586-1588); the 2nd adds "(f) lord of the 2nd from the Moon"
+      (HTJAH-I:2586) and every later printed list repeats it (4309, 5322, 6275, 8271, 12737,
+      14075, 16395, 17733). The 3rd-house paragraph prints no (f) but says "The general
+      principles ... in reference to the 1st and 2nd houses also hold good with reference to
+      the 3rd" (HTJAH-I:3521-3522), so it carries the 2nd-house factor.
+    * the karaka only where printed (``TIMER_KARAKA``); for the 3rd, also "the planets in
+      association with or aspecting Karaka" (HTJAH-I:3526).
+    * a node, when any of its four channels is itself a timer: its sign lord ("Ketu should
+      give the results of sign dispositor Saturn", HTJAH-I:8566-8567), the planet it joins
+      ("Venus (the planet with whom he associates)", HTJAH-I:11740), its nakshatra lord
+      ("Rahu being a shadowy planet should give the results of Mars whose star he occupies",
+      HTJAH-I:4478-4479), and the planet it acts like ("Saturn (Sanivad Rahu)",
+      HTJAH-I:11741; "the dictum Kujavad Ketu", HTJAH-I:12762-12763). Channels are tested
+      against the non-node set, so the result does not depend on which node is read first.
+
+    Returns {planet: (role tag, ...)} with tags in TIMER_ROLE_TAGS order of first hit."""
     roles: dict[str, list[str]] = {}
 
     def _add(name: str, tag: str) -> None:
@@ -269,15 +318,17 @@ def timer_roles(chart: RamanChart, house: int) -> dict[str, tuple[str, ...]]:
             tags.append(tag)
 
     lord = _lord_of_house(chart, house)
-    _add(lord, "owns")                                            # the H-lord
-    _add(BHAVA_KARAKA.get(house, "Sun"), "karaka")                # the H-karaka
-    for name, p in chart.planets.items():                         # occupants / aspecters
+    _add(lord, "owns")                                            # (a) the H-lord
+    karaka = TIMER_KARAKA.get(house)
+    if karaka is not None:                                        # printed karaka only
+        _add(karaka, "karaka")
+    for name, p in chart.planets.items():                         # (b)/(c)
         if p.rasi_house == house:
             _add(name, "occupies")
         if drishti.aspects_house(name, house, chart):
             _add(name, "aspects house")
     lp = chart.planets.get(lord)
-    if lp is not None:                                            # conjoin/aspect the H-LORD
+    if lp is not None:                                            # (d)/(e)
         for name, p in chart.planets.items():
             if name != lord:
                 if p.rasi_house == lp.rasi_house:
@@ -285,17 +336,39 @@ def timer_roles(chart: RamanChart, house: int) -> dict[str, tuple[str, ...]]:
                 if drishti.aspects_planet(name, lord, chart):
                     _add(name, "aspects lord")
     moon = chart.planets.get("Moon")
-    if moon is not None:                                          # H-lord from the Moon
+    if moon is not None and house >= 2:                           # (f) from the 2nd house on
         _add(SIGN_LORDS[(moon.sign - 1 + (house - 1)) % 12 + 1], "lord from Moon")
-    for node in ("Rahu", "Ketu"):                                 # node via its dispositor
+    if house == 3 and karaka is not None:                         # 3rd: the karaka's associates
+        kp = chart.planets.get(karaka)
+        if kp is not None:
+            for name, p in chart.planets.items():
+                if name != karaka:
+                    if p.rasi_house == kp.rasi_house:
+                        _add(name, "conjoins karaka")
+                    if drishti.aspects_planet(name, karaka, chart):
+                        _add(name, "aspects karaka")
+    base = set(roles)                     # the set BEFORE any node channel is applied
+    for node in ("Rahu", "Ketu"):                                 # the four node channels
         np_ = chart.planets.get(node)
-        if np_ is not None and SIGN_LORDS[np_.sign] in roles:
+        if np_ is None:
+            continue
+        if SIGN_LORDS[np_.sign] in base:
             _add(node, "node of a timer's sign")
+        if any(n in base for n, p in chart.planets.items()
+               if n not in NODE_DICTUM and p.rasi_house == np_.rasi_house):
+            _add(node, "node joins a timer")
+        if nakshatra_lord_of(chart, node) in base:
+            _add(node, "node in a timer's star")
+        if NODE_DICTUM[node] in base:
+            _add(node, "Sanivad Rahu" if node == "Rahu" else "Kujavad Ketu")
     return {name: tuple(tags) for name, tags in roles.items()}
 
 
-# Secondary event houses unioned into the timer-set for a few matters (Raman reads gains from
-# the 2nd AND 11th; foreign travel from the 9th AND 12th).
+# Allied event houses (gains 2/11, travel 9/12). NO Raman citation stands behind grading one
+# house on the other's set, so since 2026-10-24 (USER DECISION, timing gap check fix 3) they
+# never enter a house's grade: `active_houses` reports them only as a separately labelled
+# `allied_via` note. The matter-level significator windows in the judge's timing overlay
+# still read the pair, as a disclosed engine convenience.
 _EVENT_AUX_HOUSES: Final[dict[int, tuple[int, ...]]] = {2: (11,), 11: (2,), 9: (12,), 12: (9,)}
 
 
@@ -328,14 +401,103 @@ def maraka_set(chart: RamanChart) -> MarakaSet:
         for node in ("Rahu", "Ketu"):
             if _node_is_maraka(chart, node):
                 secondary.add(node)
-    # 4. Saturn-in-10th Mrityu Yoga.
+    # 4. Saturn-in-10th Mrityu Yoga. (No Raman citation located; kept as the engine's
+    #    earlier reading and disclosed by the timing gap check, 2026-10-24.)
     sat = chart.planets.get("Saturn")
     if sat is not None and sat.rasi_house == 10:
         tertiary.add("Saturn")
+    # 5. Tertiary Saturn, the full printed breadth (fix 7, USER DECISION 2026-10-24):
+    #    "(c) Tertiary Determinants of Death .—(i) Saturn in conjunction, association or aspect
+    #    with the Maraka (determinants of death) mentioned above" (HTJAH-I:793-794) — any
+    #    primary or secondary maraka, not only a 2nd/7th lord.
+    if sat is not None and "Saturn" not in primary | secondary:
+        for m in sorted((primary | secondary) - {"Saturn"}):
+            if lords_associated(chart, "Saturn", m):
+                tertiary.add("Saturn")
+                break
     # Keep each graha in its strongest tier only.
     secondary -= primary
     tertiary -= primary | secondary
-    return MarakaSet(frozenset(primary), frozenset(secondary), frozenset(tertiary))
+    return MarakaSet(frozenset(primary), frozenset(secondary), frozenset(tertiary),
+                     _primary_ranks(chart, frozenset(primary)))
+
+
+def _primary_ranks(chart: RamanChart, primary: frozenset[str]) -> tuple[tuple[str, int], ...]:
+    """Raman's order inside the primary tier (HTJAH-I:783-784): 3 for a planet conjunct a
+    2nd/7th lord, 2 for an occupant of the 2nd/7th or a planet aspecting a 2nd/7th lord, 1 for
+    the lord alone."""
+    lords = {_lord_of_house(chart, 2), _lord_of_house(chart, 7)}
+    out: list[tuple[str, int]] = []
+    for g in sorted(primary):
+        p = chart.planets.get(g)
+        rank = 1
+        if p is not None:
+            conj = any((lp := chart.planets.get(lord)) is not None and lord != g
+                       and lp.rasi_house == p.rasi_house for lord in lords)
+            occ = p.rasi_house in (2, 7) or any(
+                lord != g and lord in chart.planets and drishti.aspects_planet(g, lord, chart)
+                for lord in lords)
+            rank = 3 if conj else (2 if occ else 1)
+        out.append((g, rank))
+    return tuple(out)
+
+
+def lifespan_gate(chart: RamanChart, span_years: Optional[float] = None) -> dict[str, bool]:
+    """{planet: does its Mahadasha BEGIN inside the native's span?} (USER DECISION 2026-10-24,
+    timing gap check fix 5). Raman: "Whether the native of the horoscope is likely to enjoy the
+    Dasha of the ascendant lord or for that matter, the Dasha of the lord of any house in
+    consideration. For knowing this, the longevity should be previously ascertained"
+    (HTJAH-I:1578-1580); "Venus can give the effects of first house only as minor lord"
+    (HTJAH-I:1622-1623); HPA-15:21-37 applies the same to marakas. A planet whose Mahadasha
+    starts after the span acts only through its bhuktis. ``span_years`` defaults to the
+    ayurdaya span; {} on a Track-B chart."""
+    if getattr(chart, "jd_ut", None) is None:
+        return {}
+    if span_years is None:
+        from app.raman_saab.primitives import ayurdaya
+        span_years = ayurdaya.longevity(chart).total_years
+    end = chart.jd_ut + span_years * DAYS_PER_VEDIC_YEAR
+    out: dict[str, bool] = {}
+    for md in mahadasha_timeline(chart, 120.0):
+        if md.maha not in out:
+            out[md.maha] = md.start_jd < end
+    return out
+
+
+def death_weight_fn(chart: RamanChart, ms: Optional[MarakaSet] = None,
+                    span_years: Optional[float] = None) -> Callable[[str], int]:
+    """The per-lord death-signal weight ``death_window`` sums (fix 7, USER DECISION
+    2026-10-24): ``MarakaSet.weight`` (primary ordered by HTJAH-I:783-784), and for a node that
+    carries a late maraka's delegated power, that maraka's weight (HTJAH-I:11194-11203)."""
+    ms = ms or maraka_set(chart)
+    delegated = dict(delegated_marakas(chart, ms, lifespan_gate(chart, span_years)))
+
+    def _weight(g: str) -> int:
+        return max(ms.weight(g), ms.weight(delegated[g]) if g in delegated else 0)
+    return _weight
+
+
+def delegated_marakas(chart: RamanChart, ms: Optional[MarakaSet] = None,
+                      gate: Optional[dict[str, bool]] = None) -> tuple[tuple[str, str], ...]:
+    """(node, delegating maraka) pairs: a maraka whose Mahadasha falls outside the span hands its
+    killing power to a node occupying its sign (USER DECISION 2026-10-24, fix 7). Raman:
+    "Saturn Dasha will come in the native's 90th year, which is far too late. Saturn by virtue
+    of his inherent affinity with Rahu (Sanivad Rahu) delegates his Maraka or killing power to
+    Rahu" and "as Saturn himself cannot cause death, he must naturally delegate his power on
+    the planet occupying his sign. Such a planet would be Rahu" (HTJAH-I:11194-11203)."""
+    if getattr(chart, "jd_ut", None) is None:
+        return ()
+    ms = ms or maraka_set(chart)
+    gate = gate if gate is not None else lifespan_gate(chart)
+    out: list[tuple[str, str]] = []
+    for m in sorted(ms.all()):
+        if m in ("Rahu", "Ketu") or gate.get(m, True):
+            continue
+        for node in ("Rahu", "Ketu"):
+            np_ = chart.planets.get(node)
+            if np_ is not None and SIGN_LORDS[np_.sign] == m:
+                out.append((node, m))
+    return tuple(out)
 
 
 def maraka_lords(chart: RamanChart) -> frozenset[str]:
@@ -411,6 +573,7 @@ def death_window(chart: RamanChart) -> tuple[DeathWindow, ...]:
     ms = maraka_set(chart)
     span = ayurdaya.longevity(chart)
     death_jd = chart.jd_ut + span.total_years * DAYS_PER_VEDIC_YEAR
+    _death_weight = death_weight_fn(chart, ms, span.total_years)
     band = _SPAN_BAND_YEARS.get(span.longevity_class, 8.0) * DAYS_PER_VEDIC_YEAR
     lo, hi = death_jd - band, death_jd + band
     out: list[DeathWindow] = []
@@ -420,7 +583,7 @@ def death_window(chart: RamanChart) -> tuple[DeathWindow, ...]:
         for bh in bhuktis(md):
             if bh.end_jd < lo or bh.start_jd > hi:
                 continue
-            score = ms.weight(bh.maha) + ms.weight(bh.antar)
+            score = _death_weight(bh.maha) + _death_weight(bh.antar)
             if score > 0:
                 out.append(DeathWindow(bh.maha, bh.antar, bh.start_jd, bh.end_jd, score))
     return tuple(out)
@@ -491,27 +654,74 @@ def significator_dasha_windows(
 # period lights up, the basis of Raman's temporally-prioritized reading.
 # ---------------------------------------------------------------------------
 
+#: Raman's fructification tiers, strongest first. "same lord" is the Mahadasha lord's OWN
+#: bhukti: Raman's par-excellence/ordinary test is about "the sub-period of ANOTHER
+#: influencing the 1st house, who is associated with the main lord" (HTJAH-I:1635-1637), so
+#: it does not apply when the two lords are one planet (USER DECISION 2026-10-24, timing gap
+#: check fix 3; the engine used to count a lord as "associated" with itself and print par
+#: excellence). It sits inside the both-lords band, below "ordinary", because the association
+#: that lifts a bhukti to par excellence is not there to be found.
+TIER_ORDER: Final[tuple[str, ...]] = (
+    "par excellence", "ordinary", "same lord", "limited", "feeble")
+SAME_LORD_TIER: Final[str] = "same lord"
+
+
 @dataclass(frozen=True)
 class ActiveHouse:
     """A house lit up by the running Dasha. Raman reads the chart through the period: the running
     Mahadasha/Bhukti lord ACTIVATES the houses it signifies (the inverse of `timer_set`), and the
-    matter fructifies there. ``grade`` follows HTJAH-II:680-694 — both period-lords time the house
-    -> ``par_excellence`` (the focus); exactly one -> ``limited``; neither -> dormant (omitted)."""
+    matter fructifies there.
+
+    ``grade`` is Raman's tier for the house, in key form: ``par_excellence`` / ``ordinary`` /
+    ``same_lord`` / ``limited`` / ``feeble`` (``tier`` gives the spoken form). Corrected
+    2026-10-24 (USER DECISION, timing gap check fix 3): the old two-grade label printed
+    "par_excellence" whenever both lords influenced the house, with no association test, so a
+    bhukti Raman calls "ordinary" was shown as par excellence; and each house is now graded on
+    ITS OWN printed factor list. ``allied_via`` names the allied event house (2<->11, 9<->12)
+    through which a period lord ALSO reaches the house — a separately labelled note with no
+    Raman citation behind it, never part of the grade."""
     house: int
-    grade: str                      # "par_excellence" | "limited"
+    grade: str
     md_activates: bool
     antar_activates: bool
     md_lord: str
     antar_lord: Optional[str]
+    allied_via: tuple[int, ...] = ()
+
+    @property
+    def tier(self) -> str:
+        return self.grade.replace("_", " ")
+
+
+def period_tier(chart: RamanChart, md: str, antar: Optional[str],
+                md_influences: bool, antar_influences: bool) -> Optional[str]:
+    """Raman's tier for one house in the period ``md``/``antar``, given whether each lord is in
+    the house's own timer set. The MD lord's own bhukti returns ``SAME_LORD_TIER`` when it
+    influences the house (HTJAH-I:1635, "the sub-period of another"); otherwise this is
+    ``bhukti_tier`` with the association read by ``lords_associated``."""
+    if antar is not None and antar == md:
+        return SAME_LORD_TIER if md_influences else None
+    associated = (antar is not None and md_influences and antar_influences
+                  and lords_associated(chart, md, antar))
+    return bhukti_tier(md_influences, antar is not None and antar_influences, associated)
+
+
+def running_top_tier(md: str, antar: Optional[str], associated: bool) -> str:
+    """The best tier the running bhukti can give a house both lords influence: par excellence
+    when the AD lord is associated with the MD lord, ordinary when not, and "same lord" for the
+    MD lord's own bhukti (HTJAH-I:1635-1640)."""
+    if antar is None or antar == md:
+        return SAME_LORD_TIER
+    return "par excellence" if associated else "ordinary"
 
 
 def active_houses(chart: RamanChart, jd: float) -> tuple[ActiveHouse, ...]:
     """The houses the running period lights up on ``jd`` (HTJAH-I:1586-1596: a Dasha lord gives the
     results of the houses it owns/occupies/aspects/associates-with — exactly `timer_set` membership,
-    read in reverse). Graded by whether BOTH period-lords converge on the house. ``par_excellence``
-    first. Empty on a Track-B chart (no jd_ut). NOTE: broad-recall / low-precision by design -- a slow
-    lord (Saturn/Rahu) times most houses, so during its Mahadasha many houses still grade
-    ``par_excellence``; the grade only narrows the field when the two period-lords disagree."""
+    read in reverse), each graded with Raman's tier on the house's OWN timer set (fix 3, USER
+    DECISION 2026-10-24: no 2/11 or 9/12 union inside the grade). Strongest tier first. Empty
+    on a Track-B chart (no jd_ut). NOTE: broad-recall by design — a slow lord (Saturn/Rahu)
+    times most houses."""
     if getattr(chart, "jd_ut", None) is None:
         return ()
     period = dasha_on(chart, jd)
@@ -520,19 +730,18 @@ def active_houses(chart: RamanChart, jd: float) -> tuple[ActiveHouse, ...]:
     md, antar = period.maha, period.antar
     out: list[ActiveHouse] = []
     for house in range(1, 13):
-        timers: set[str] = set(timer_set(chart, house))
-        for aux in _EVENT_AUX_HOUSES.get(house, ()):
-            timers |= timer_set(chart, aux)
+        timers = timer_set(chart, house)
         md_hit = md in timers
         antar_hit = antar is not None and antar in timers
-        if md_hit and antar_hit:
-            grade = "par_excellence"
-        elif md_hit or antar_hit:
-            grade = "limited"
-        else:
+        tier = period_tier(chart, md, antar, md_hit, antar_hit)
+        if tier is None:
             continue
-        out.append(ActiveHouse(house, grade, md_hit, antar_hit, md, antar))
-    out.sort(key=lambda a: (0 if a.grade == "par_excellence" else 1, a.house))
+        allied = tuple(aux for aux in _EVENT_AUX_HOUSES.get(house, ())
+                       if (md in (aux_set := timer_set(chart, aux)) and not md_hit)
+                       or (antar is not None and antar in aux_set and not antar_hit))
+        out.append(ActiveHouse(house, tier.replace(" ", "_"), md_hit, antar_hit, md, antar,
+                               allied))
+    out.sort(key=lambda a: (TIER_ORDER.index(a.tier), a.house))
     return tuple(out)
 
 
@@ -599,7 +808,12 @@ def bhukti_tier(md_influences: bool, antar_influences: bool, associated: bool) -
     3522, 4333, 8294, 16435) — applied to each house with ITS OWN significators.
 
     The four grades (HTJAH-I:1592-1596, 1635-1640 [1st]; 2588-2599 [2nd, incl. 'feeble']; the
-    'feeble' grade recurs at 16404 [11th] / 17746 [12th]):
+    'feeble' grade recurs at 16404 [11th] / 17746 [12th]). Record of what is PRINTED: the
+    par-excellence/ordinary split by association is printed only for the 1st house
+    (HTJAH-I:1635-1640); the MD-only grade reads "feeble" for the 2nd, 11th and 12th, "limited"
+    for the 3rd and 7th, "limited or even nominal" for the 4th, "limited or nominal" for the
+    5th, "limited or small" for the 6th and "a very small extent" for the 9th. The uniform
+    scheme is the CLAUDE.md lock, applied by Raman's own "hold equally good" statement:
       both lords influence the house + AD lord ASSOCIATED with the MD lord -> 'par excellence'
       both lords influence the house + AD lord NOT associated with MD lord  -> 'ordinary'
       only the AD (bhukti) lord influences the house (MD does not)          -> 'limited'

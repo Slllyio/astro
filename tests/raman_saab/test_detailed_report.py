@@ -93,13 +93,19 @@ class TestDetailedReport:
     def test_plain_summary_reads_for_a_layperson(self, report):
         """The plain gloss names life-areas, not house numbers, and grades intensity."""
         from app.raman_saab.detailed_report import plain_bhukti_summary
-        # a strongly-associated (par-excellence) bhukti reads as a strong stretch
-        assoc_rows = next(tp.activated for tp in report.timeline.periods
-                          if tp.period.antar == tp.period.maha)   # own bhukti = associated
-        s = plain_bhukti_summary(assoc_rows, associated=True)
+        # timing gap check fix 3 (HTJAH-I:1635): the MD lord's own bhukti is no longer read
+        # as "associated" with itself; it reads as that lord's own, unmixed stretch.
+        own_rows = next(tp.activated for tp in report.timeline.periods
+                        if tp.period.antar == tp.period.maha and tp.activated)
+        s = plain_bhukti_summary(own_rows, associated=False)
         assert s.startswith("In plain terms:")
-        assert "strong, well-supported" in s
+        assert "own sub-period" in s
         assert "H10" not in s and "career" in s.lower()   # named area, not a house number
+        # a genuinely associated bhukti (two lords) still reads as a strong stretch
+        two = next(tp for tp in report.timeline.periods
+                   if tp.period.antar != tp.period.maha
+                   and any(a.grade == "par_excellence" for a in tp.activated))
+        assert "strong, well-supported" in plain_bhukti_summary(two.activated, associated=True)
 
     def test_lords_associated_conjunction_and_self(self):
         """Sun/Jupiter/Venus conjoin in H10 on the canonical chart -> associated; a lord is
@@ -1233,7 +1239,8 @@ class TestLifeChapters:
             for m in ch.maraka_overlaps:
                 assert m.overlap_start_jd < ch.end_jd and m.overlap_end_jd > ch.start_jd
             for h, tier, natal in ch.houses_lit:
-                assert tier in ("par excellence", "ordinary", "limited", "feeble")
+                # timing gap check fix 3 (HTJAH-I:1635): "same lord" = the MD lord's own bhukti
+                assert tier in ("par excellence", "ordinary", "same lord", "limited", "feeble")
                 assert natal == rollup[h]
 
     def test_narrative_orders_natal_before_transits(self, report):
@@ -1819,8 +1826,8 @@ class TestWave1TimingSurfaces:
         assert "HTJAH-II:668-702" in section          # the recorded three-level citation
 
     def test_sade_sati_strip_is_dated_and_method_only(self, report, markdown):
-        """The three phase spans (12th/1st/2nd from the Moon) carry calendar dates and the
-        strip states the no-result-doctrine absence note; dates are gochara arithmetic."""
+        """The three phase spans (12th/1st/2nd from the Moon) carry calendar dates, the strip
+        points to Raman's rounds doctrine (AFB-12:169-174), and dates are gochara arithmetic."""
         import re
         phases = report.sade_sati_phases
         assert phases
@@ -1836,7 +1843,10 @@ class TestWave1TimingSurfaces:
         s = markdown.find("### Sade-Sati phase windows (Saturn from the natal Moon)")
         assert s >= 0
         section = markdown[s:markdown.find("\n## ", s)]
-        assert "no Sade-Sati x Moon result doctrine is on record" in section
+        # fix 8 (2026-10-24): the absence note was wrong — Raman gives a rounds doctrine
+        # (AFB-12:169-174); the strip now points to the Sade-Sati rounds table instead.
+        assert "AFB-12:161, 169-174" in section
+        assert "### Sade-Sati rounds since birth" in section
         assert "plain gochara arithmetic" in section
         for label in ("rising (12th from Moon)", "peak (over the Moon)",
                       "setting (2nd from Moon)"):
@@ -1860,9 +1870,11 @@ class TestWave1TimingSurfaces:
             assert (seg.end_jd - seg.start_jd) >= 25  # same noise floor as favourable
         section = markdown[a:markdown.find("###", a + 10)]
         assert "| Planet | Window | What it concerns | Mitigation (own AV bindus) | " \
-               "Interference |" in section
+               "Interference | Relief (reverse Vedha) |" in section
         assert "ASP-13:416" in section                # Raman's own proportion law, recorded
-        assert "not computed, not zero" in section    # the honest Vedha disclosure
+        # fix 9 (2026-10-24): the "not computed" Vedha disclosure became Raman's reverse
+        # Vedha, which he does define for adverse stations (HPA-34:161-164).
+        assert "HPA-34:161-164" in section
 
     def test_chara_sequence_is_dated_with_one_now_marker(self, report, markdown):
         """Chara rows are dated by JD arithmetic from birth (years x 365.2425), contiguous,
@@ -2259,7 +2271,8 @@ class TestWave2TimingDivisionalSoul:
         section = markdown[a:markdown.find("\n## ", a)]
         assert "HPA-34:369-381" in section            # the recorded blending doctrine
         assert "ASP-13:416" in section                # Raman's own mitigation proportion
-        assert "not computed, not zero" in section    # honest Vedha disclosure
+        # fix 9 (2026-10-24): reverse Vedha replaces "not computed" (HPA-34:161-164)
+        assert "HPA-34:161-164" in section
         assert "method windows, not exact dates" in section   # coarse-sampling honesty
         assert section.count("| MD |") + section.count("| AD |") == \
             len(report.dasha_transit_adverse)

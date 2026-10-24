@@ -45,6 +45,9 @@ class ActivatedHouseReading:
     antar_activates: bool
     md_quality: LordQuality
     antar_quality: Optional[LordQuality]
+    #: allied event house(s) (2<->11, 9<->12) through which a period lord ALSO reaches this
+    #: house — a labelled note, never part of the grade (timing gap check fix 3, 2026-10-24).
+    allied_via: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -86,7 +89,8 @@ def _activated_row(chart, promise: RamanReading, a: ActiveHouse) -> ActivatedHou
         house=a.house, grade=a.grade, natal_verdict=pf.rollup, natal_degree=degree,
         md_lord=a.md_lord, antar_lord=a.antar_lord,
         md_activates=a.md_activates, antar_activates=a.antar_activates,
-        md_quality=vd.lord_quality(chart, a.md_lord), antar_quality=antar_q)
+        md_quality=vd.lord_quality(chart, a.md_lord), antar_quality=antar_q,
+        allied_via=a.allied_via)
 
 
 def read_chart_on_date(birth: BirthData, jd: Optional[float] = None, *,

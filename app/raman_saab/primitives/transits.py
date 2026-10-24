@@ -42,18 +42,32 @@ _GOCHARA_GOOD: Final[dict[str, frozenset[int]]] = {
 
 #: The Vedha (obstruction) house paired with each benefic Gochara house, per planet. When another
 #: transiting planet occupies the Vedha house (from the Moon), the auspicious transit result is
-#: cancelled (classical Gochara Vedha, Raman's HPA/HTJAH transit chapter).
+#: cancelled: "These good effects are produced only when the 5th (a house of Vedha) is not
+#: simultaneously transitted by any other planet excepting Saturn" (HPA-34:158-161), from
+#: Raman's Vedhanka table (HPA-34:185-226).
+#:
+#: Mercury's 10th -> 7th (timing gap check fix 9, USER DECISION 2026-10-24). Raman prints the
+#: Mercury row "2 - 4 - 6-8-10-11 / 5-3 - 9-1- 7-12" (HPA-34:203, 207); the scan of the printed
+#: page (PDF p.264, book p.257, rendered at 400 dpi) reads the same, so the 10th is obstructed
+#: from the 7th — not the 8th of the common classical table. No misprint signal: 7 does not
+#: repeat in the row, and an 8 would put a Vedha point on one of Mercury's own good houses.
+#: Followed as Raman printed it.
+#:
+#: Rahu and Ketu have NO row (fix 9): Raman's table gives Vedhankas for the seven grahas only
+#: (HPA-34:185-226), so a node's own good transit carries no Vedha point here — "unspecified by
+#: Raman". The nodes still OBSTRUCT the others, being among "any other planet" (HPA-34:159-160).
 _VEDHA: Final[dict[str, dict[int, int]]] = {
     "Sun": {3: 9, 6: 12, 10: 4, 11: 5},
     "Moon": {1: 5, 3: 9, 6: 12, 7: 2, 10: 4, 11: 8},
     "Mars": {3: 12, 6: 9, 11: 5},
-    "Mercury": {2: 5, 4: 3, 6: 9, 8: 1, 10: 8, 11: 12},
+    "Mercury": {2: 5, 4: 3, 6: 9, 8: 1, 10: 7, 11: 12},
     "Jupiter": {2: 12, 5: 4, 7: 3, 9: 10, 11: 8},
     "Venus": {1: 8, 2: 7, 3: 1, 4: 10, 5: 9, 8: 5, 9: 11, 11: 6, 12: 3},
     "Saturn": {3: 12, 6: 9, 11: 5},
-    "Rahu": {3: 12, 6: 9, 11: 5},
-    "Ketu": {3: 12, 6: 9, 11: 5},
 }
+
+#: The label shown where a node's own transit has no Vedha point (fix 9).
+NODE_VEDHA_NOTE: Final[str] = "unspecified by Raman"
 
 #: Pairs that cause NO Vedha to each other (Raman's exception): Sun↔Saturn, Moon↔Mercury.
 _VEDHA_EXEMPT: Final[frozenset[frozenset[str]]] = frozenset(
@@ -90,6 +104,15 @@ class TransitRow:
     #: Raman's transit proportion, bindus/8 — "good effects ... to the extent of 62%" (5/8,
     #: ASP-13:280-282), "neutralises the evil to the extent of 75%" (6/8, ASP-13:416).
     bav_proportion: float | None = None
+    # ── Reverse Vedha (fix 9, appended 2026-10-24) ────────────────────────────────────────
+    #: "conversely, if the Sun is in the 5th, in the course of Gochara, no evil will be produced
+    #: provided the 11th is being transitted at the same time by any other planet, excepting
+    #: Saturn. Similarly the Vedhasthanas must be considered for all the planets"
+    #: (HPA-34:161-165). For an adverse transit sitting on a Vedha point, the good house it
+    #: pairs with (None when the transit is good or the house is no Vedha point) …
+    reverse_vedha_house: int | None = None
+    #: … and the transiting grahas occupying that good house, which relieve the evil.
+    reverse_vedha_by: tuple[str, ...] = ()
 
 
 def transit_chart(year: int, month: int, day: int, *, ayanamsa: str = "raman") -> RamanChart:
@@ -122,6 +145,7 @@ def gochara(natal: RamanChart, year: int, month: int, day: int, *,
         good = hfm in _GOCHARA_GOOD.get(planet, frozenset())
         bav = av.bhinnashtakavarga(natal, planet)[ts] if planet in av.PLANETS else None
         vedha_house, vedha_by = _vedha(planet, hfm, hfm_of) if good else (None, ())
+        rv_house, rv_by = _reverse_vedha(planet, hfm, hfm_of) if not good else (None, ())
         # Kakshya micro-transit (ASP-13): judged from the transiting LONGITUDE against the
         # NATAL Prasthara of the planet's own Ashtakavarga. Nodes carry None throughout.
         k_lord: str | None = None
@@ -134,7 +158,8 @@ def gochara(natal: RamanChart, year: int, month: int, day: int, *,
             gochara_good=good, bav_bindus=bav, supported=None if bav is None else bav >= 4,
             vedha_house=vedha_house, vedha_by=vedha_by, net_good=good and not vedha_by,
             kakshya_lord=k_lord, kakshya_favourable=k_fav,
-            bav_proportion=None if bav is None else round(bav / 8.0, 3)))
+            bav_proportion=None if bav is None else round(bav / 8.0, 3),
+            reverse_vedha_house=rv_house, reverse_vedha_by=rv_by))
     return tuple(rows)
 
 
@@ -148,6 +173,32 @@ def _vedha(planet: str, hfm: int, hfm_of: dict[str, int]) -> tuple[int | None, t
                   if hfm_of.get(q) == vh and q != planet
                   and frozenset({planet, q}) not in _VEDHA_EXEMPT)
     return vh, obstr
+
+
+def reverse_vedha_pair(planet: str, hfm: int) -> int | None:
+    """The good house whose Vedha point is `hfm` for `planet` (fix 9, HPA-34:161-165) — None when
+    `hfm` is one of the planet's good houses, is no Vedha point, or the planet is a node (no row
+    in Raman's table, HPA-34:185-226)."""
+    if hfm in _GOCHARA_GOOD.get(planet, frozenset()):
+        return None
+    return next((g for g, vh in _VEDHA.get(planet, {}).items() if vh == hfm), None)
+
+
+def _reverse_vedha(planet: str, hfm: int,
+                   hfm_of: dict[str, int]) -> tuple[int | None, tuple[str, ...]]:
+    """Reverse Vedha (fix 9): when `planet` transits an ADVERSE house `hfm` that is the Vedha
+    point of one of its good houses, any other transiting graha (bar the exempt pairs) in that
+    good house relieves the evil — "if the Sun is in the 5th ... no evil will be produced
+    provided the 11th is being transitted at the same time by any other planet, excepting
+    Saturn" (HPA-34:161-164). Returns (good house, relieving grahas); (None, ()) when `hfm` is
+    no Vedha point of `planet`'s (nodes have no row, HPA-34:185-226)."""
+    pair = reverse_vedha_pair(planet, hfm)
+    if pair is None:
+        return None, ()
+    relief = tuple(q for q in _ALL_GRAHAS
+                   if hfm_of.get(q) == pair and q != planet
+                   and frozenset({planet, q}) not in _VEDHA_EXEMPT)
+    return pair, relief
 
 
 def sade_sati(natal: RamanChart, year: int, month: int, day: int, *,
@@ -195,6 +246,11 @@ class GocharaSegment:
     gochara_good: bool
     bav_bindus: int | None
     vedha_sample_fraction: float
+    #: Reverse Vedha (fix 9, appended 2026-10-24; HPA-34:161-165): for an ADVERSE span on one
+    #: of the planet's Vedha points, the share of sampled dates on which another graha held the
+    #: paired good house and so relieved the evil. 0.0 for good spans, nodes, and adverse spans
+    #: that sit on no Vedha point. Same coarseness caveat as `vedha_sample_fraction`.
+    reverse_vedha_sample_fraction: float = 0.0
 
 
 #: MEASURED, and the measurement killed two plausible optimisations — recorded here so the
@@ -248,6 +304,20 @@ def _transiting_signs(year: int, month: int, day: int, *, ayanamsa: str) -> dict
     return signs
 
 
+def planet_longitude(jd: float, planet: str, *, ayanamsa: str) -> float:
+    """Sidereal longitude of ``planet`` (a SWE planet name, or Rahu/Ketu by the mean node) at
+    Julian Day ``jd``, in the given ayanamsa. Used where a transit test needs more than the
+    sign — the Navamsa sign of transiting Saturn (HTJAH-I:11226-11229) or a sign part
+    (HPA-34:83-85)."""
+    with sidereal_mode(ayanamsa):
+        if planet in ("Rahu", "Ketu"):
+            res, _ = swe.calc_ut(jd, swe.MEAN_NODE, _FLAGS_LIGHT)
+            lon = float(res[0]) % 360.0
+            return lon if planet == "Rahu" else (lon + 180.0) % 360.0
+        res, _ = swe.calc_ut(jd, SWE_PLANETS[planet], _FLAGS_LIGHT)
+        return float(res[0]) % 360.0
+
+
 def gochara_timeline(
     natal: RamanChart, ref_jd: float, years_back: float, years_forward: float, *,
     ayanamsa: str | None = None, planets: tuple[str, ...] = _TIMELINE_PLANETS,
@@ -279,10 +349,12 @@ def gochara_timeline(
         bav = (av.bhinnashtakavarga(natal, planet)[st["sign"]]
                if good and planet in av.PLANETS else None)
         frac = (st["vedha_hits"] / st["total"]) if good and st["total"] else 0.0
+        rfrac = (st["rv_hits"] / st["total"]) if not good and st["total"] else 0.0
         out[planet].append(GocharaSegment(
             planet=planet, start_jd=st["start"], end_jd=end, sign=st["sign"],
             house_from_moon=st["hfm"], gochara_good=good, bav_bindus=bav,
-            vedha_sample_fraction=round(frac, 3)))
+            vedha_sample_fraction=round(frac, 3),
+            reverse_vedha_sample_fraction=round(rfrac, 3)))
 
     jd = start_jd
     while jd <= end_jd:
@@ -299,12 +371,16 @@ def gochara_timeline(
             if cur is None or cur["sign"] != sign:
                 _close(planet, jd)
                 open_seg[planet] = {"start": jd, "sign": sign, "hfm": hfm, "good": good,
-                                    "vedha_hits": 0, "total": 0}
+                                    "vedha_hits": 0, "rv_hits": 0, "total": 0}
                 cur = open_seg[planet]
             if good:
                 _vh, obstr = _vedha(planet, hfm, hfm_of)
                 if obstr:
                     cur["vedha_hits"] += 1
+            else:
+                _rh, relief = _reverse_vedha(planet, hfm, hfm_of)
+                if relief:
+                    cur["rv_hits"] += 1
             cur["total"] += 1
         jd += step_days
     for planet in planets:

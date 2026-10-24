@@ -132,10 +132,11 @@ class TestJupiterTransitMethod:
     def test_both_sphutas_are_computed_with_their_trines(self, timing):
         """Two resultants (HTJAH-II:869-873): Lagna-lord + 7th-lord, and Moon + 7th-lord.
         Jupiter transiting the resultant rasi OR ITS TRINES is favourable, so the trines are
-        named too — a resultant without them is two thirds of the rule."""
-        assert len(timing.jupiter_sphutas) == 2
+        named too — a resultant without them is two thirds of the rule. Fix 12 (2026-10-24)
+        adds Raman's practised Lagna-bhava + 7th-bhava sum (HTJAH-I:18296-18297) as a third."""
+        assert len(timing.jupiter_sphutas) == 3
         labels = {lbl for lbl, _s, _t in timing.jupiter_sphutas}
-        assert labels == {"Lagna lord + 7th lord", "Moon + 7th lord"}
+        assert labels == {"Lagna lord + 7th lord", "Moon + 7th lord", "Lagna bhava + 7th bhava"}
         for _lbl, sign, trines in timing.jupiter_sphutas:
             assert sign
             assert len(trines.split(", ")) == 2

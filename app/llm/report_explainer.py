@@ -250,9 +250,17 @@ def _current_focus_houses(R: dict) -> tuple[Optional[dict], list[int]]:
                and row["start_jd"] <= ref_jd < row["end_jd"]), None)
     if cur is None:
         return None, []
-    tier = "par excellence" if cur.get("associated") else "ordinary"
+    tier = _running_tier(cur)
     focus = sorted(a["house"] for a in cur.get("activated", []) if a.get("tier") == tier)
     return cur, focus
+
+
+def _running_tier(cur: dict) -> str:
+    """The best tier the running bhukti gives (HTJAH-I:1635-1640); "same lord" for the MD
+    lord's own bhukti, where the association test does not apply (timing gap check fix 3)."""
+    if not cur.get("antar") or cur.get("antar") == cur.get("maha"):
+        return "same lord"
+    return "par excellence" if cur.get("associated") else "ordinary"
 
 
 def _summary_facts(R: dict) -> list[Fact]:
@@ -319,7 +327,7 @@ def _summary_facts(R: dict) -> list[Fact]:
 
     cur, focus_houses = _current_focus_houses(R)
     if cur is not None:
-        tier = "par excellence" if cur.get("associated") else "ordinary"
+        tier = _running_tier(cur)
         houses_bit = f" — lighting H{', H'.join(map(str, focus_houses))}" if focus_houses else ""
         _f(facts, f"Right now, the running period is {cur.get('maha')} MD / "
                   f"{cur.get('antar') or cur.get('maha')} AD, {tier}{houses_bit}.")

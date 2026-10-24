@@ -293,12 +293,16 @@ class TestWealthWave2:
 
     def test_expansion_self_disclosure_fires_when_lens_is_non_differential(
             self, report, markdown):
-        """Canonical chart: all five MDs light H2/H11 at par excellence — the
-        chapter applies its own calibration standard to itself."""
-        assert len(report.wealth.expansion_periods) == \
-            len(report.life_chapters.chapters)
-        assert "non-differential" in report.wealth.expansion_note
-        assert "Self-disclosure" in _section(markdown, "## Wealth chapter")
+        """The chapter applies its own calibration standard to itself: the self-disclosure
+        fires exactly when every MD lights H2/H11 at par excellence. Timing gap check fix 3
+        (2026-10-24, HTJAH-I:1586-1589: each house on its own list, no 2/11 union) means the
+        canonical chart's Moon MD now reaches H11 only at 'ordinary', so the lens
+        discriminates here and the disclosure correctly stays silent."""
+        exp = report.wealth.expansion_periods
+        saturated = (len(exp) == len(report.life_chapters.chapters) and all(
+            "(par excellence)" in e and "(ordinary)" not in e for e in exp))
+        assert ("non-differential" in report.wealth.expansion_note) == saturated
+        assert ("Self-disclosure" in _section(markdown, "## Wealth chapter")) == saturated
 
 
 class TestLongevityArishtaWave2:
@@ -406,7 +410,8 @@ class TestWave2HtmlParity:
                       "One planet, several hats", "The Dasamsa D-10",
                       "H10 activations in the window",
                       "Dhana / Daridra yogas", "Lord condition",
-                      "Self-disclosure", "population context",
+                      # "Self-disclosure" is conditional since fix 3 (see the test above)
+                      "population context",
                       "screened:", "none present", "Purnayu (purna band)",
                       "never converts the band into a date",
                       "no planet is debilitated in this chart"):

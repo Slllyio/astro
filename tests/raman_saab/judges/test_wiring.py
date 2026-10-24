@@ -332,14 +332,18 @@ class TestYogaModulation:
         Jupiter Libra (3HC:2984, no cancellation cited) — while Kemadruma does NOT
         form (the Moon has planets in the 2nd from it). The H1 'self' flip to
         afflicted is therefore driven by ('yoga','Y.SAKATA:drop'), benefic-only
-        strength-split ledger, untouched by the contradiction guard."""
+        strength-split ledger, untouched by the contradiction guard.
+
+        2026-10-23: with the Bhava Bala pillar withdrawn from verdicts, the ledger no longer
+        reads 'mixed' before the yoga step — it is already afflicted, so Sakata is recorded as
+        ':noted' (decisive verdicts never re-shift). The verdict Raman gives is unchanged."""
         chart = cast_chart(_CHART_33, ayanamsa="raman")
         fired_ids = {y.id for y in detect_yogas(chart)}
         assert "Y.SAKATA" in fired_ids and "Y.KEMADRUMA" not in fired_ids
         pf = ht.judge_house(chart, 1)
         sv = next(s for s in pf.significations if s.signification == "self")
         assert sv.verdict == "afflicted"
-        assert ("yoga", "Y.SAKATA:drop") in sv.metadata
+        assert ("yoga", "Y.SAKATA:noted") in sv.metadata
         assert all(not v.startswith("Y.KEMADRUMA")
                    for k, v in sv.metadata if k == "yoga")
 
@@ -359,12 +363,22 @@ class TestYogaModulation:
         assert ("yoga", "Y.DHANA.EXCH:lift") not in md
 
     def test_raja_lifts_borderline_h10_mixed(self):
-        """A fired raja yoga lifts a borderline H10 career 'mixed' to favourable."""
+        """A VITAL raja yoga (causing pair within 12°, HTJAH-I:643-644) lifts a borderline H10
+        career 'mixed' to favourable."""
         fired = (_fired_yoga("Y.RAJA.KT", "raja"),)
         v, shifted, md = ht._yoga_modulate(
-            "mixed", _clean_mixed_ledger(), _sig(10, "career"), fired)
+            "mixed", _clean_mixed_ledger(), _sig(10, "career"), fired,
+            frozenset({"Y.RAJA.KT"}))
         assert v == "favourable" and shifted is True
         assert ("yoga", "Y.RAJA.KT:lift") in md
+
+    def test_raja_without_vitality_is_noted_only(self):
+        """A raja yoga that fails the vitality test is surfaced but moves nothing."""
+        fired = (_fired_yoga("Y.RAJA.910X", "raja"),)
+        v, shifted, md = ht._yoga_modulate(
+            "mixed", _clean_mixed_ledger(), _sig(10, "career"), fired)
+        assert v == "mixed" and shifted is False
+        assert ("yoga", "Y.RAJA.910X:noted") in md
 
     def test_raja_surfaces_metadata_on_h9_h10(self):
         """Bangalore fires raja yogas (Y.RAJA.KT / Y.RAJA.910X); H9 fortune and H10

@@ -1215,8 +1215,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
 
     # #72 — a natural full benefic OCCUPYING the 2nd -> quality of speech fortified. Raman
     # states it per-chart on three printed nativities, same mechanism each time: J.C. Bose
-    # NH:5655 ("Jupiter in the 2nd house made Bose a clear, forceful and convincing
-    # speaker"), Tennyson NH:4777-4801 ("His poetic greatness is due to the position of
+    # NH:7627-7628 ("Jupiter in the 2nd house made Bose a clear, forceful and convincing
+    # speaker"), Tennyson NH:6391-6392 ("His poetic greatness is due to the position of
     # Venus in the 2nd..."), Marx (exalted yogakaraka Venus in the 2nd -> favourable speech;
     # the B3-extension record). Scoped to the FULL benefics {Jupiter, Venus, Mercury} — the
     # conditional Moon is not the subject of any of the three citations (contrast the
@@ -1231,7 +1231,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "(Jupiter: convincing speaker; Venus: poetic/artistic expression)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic",
-        source=Citation("NH", 5655)),
+        source=Citation("NH", 7628)),
 
     # #71 — Vakchalana Yoga (3HC #175): a malefic owning the 2nd, cast into a cruel
     #       navamsa, with the 2nd devoid of benefic aspect or association → stammerer.
@@ -1253,5 +1253,5 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="Vakchalana Yoga — malefic 2nd lord in a cruel navamsa with the 2nd "
                   "devoid of benefic aspect/association → the native stammers",
         frame="LAGNA", varga="D1", polarity="malefic",
-        source=Citation("3HC", 5991)),
+        source=Citation("3HCC", 5991)),
 )

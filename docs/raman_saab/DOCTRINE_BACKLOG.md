@@ -5124,6 +5124,11 @@ tension with a fact this backlog itself records. **Sweep House 6 next.**
 
 ### ★ OPEN — DOCTRINE-CONTESTED, needs USER SIGN-OFF, and deliberately NOT acted on
 
+> **MEASURED 2026-10-24 (DISPOSITION_PILLAR_PREREG.md): letting the influence axis vote in the
+> verdict makes the engine LESS faithful to Raman (real errors 30 -> 38, or 44 with a house-influence
+> pillar; a veto-only form changes nothing). Pre-registered, no variant passed, nothing shipped.
+> The Shadbala-pillar convention stands on evidence now, not only by precedent.**
+
 **HTJAH-I:5173-5175 closes this table by naming its own axis, and it is not Shadbala:**
 
 > *"...paying particular attention to the **benefic, malefic, or moderating nature of the
@@ -5798,3 +5803,39 @@ unmoved throughout: 286/397, 362/397, 35.**
 - Still open: decision C (canonical BPHS ch.7 copy); the vitality rule for pre-merge HTJAH raja
   yogas; H7 spouse yogas; `_rollup` masking an afflicted sub-matter; the real-outcome ratchet
   (needs a feature-store rebuild).
+
+## ENGINE AUDIT FIXES (2026-10-23)
+
+Source: the independent audit `raman-engine-audit-2026-10-23.md` (project files); the user asked
+for every finding to be fixed and made the two judgement calls below on decision cards.
+
+- **Citations.** H2.C.71 `3HC:5991` -> `3HCC:5991` (wrong edition); H2.C.72 `NH:5655` -> `NH:7628`
+  (pre-re-OCR numbering); H4.C.48 `HTJAH-I:4550` -> `4551` and H4.C.49 `NH:4961` -> `4963` (blank
+  lines); Kedara/Sula/Yuga/Gola off the shared `3HC:6868` heading onto their own definitions;
+  `VARSHA-7:190` (blank) -> `174`. The anchor test now scans `Citation("WORK", n)` objects.
+- **Golden labels.** HTJAH-I chart_09 H1 ("insufficient-evidence") demoted to DRAFT pending an
+  engine-blind re-adjudication — Raman's text (HTJAH-I:1181-1188) reads unfavourable; stale
+  "Phase E" notes removed from five H8 rows.
+- **One-sided-rasi navamsa guard** (`_navamsa_modulate`). The D9 may not carry a mixed to the pole
+  opposite every fired rule (HTJAH-I:975-980, the navamsa is co-testimony). Ratchet 286->284 /
+  362->364 / 34->32. Corpus-wide it is the largest mover: ~520 unscored sub-matters, mostly
+  favourable -> mixed (H12, H7, H4 heaviest). Re-open path: an engine-blind read of a sample of
+  those moves against the text.
+- **Rollup.** An afflicted sub-matter always reaches the house headline (was masked in ~8% of houses).
+- **Raja vitality.** HTJAH-I:641-645 ("within 12° of each other") is the encodable vitality test
+  the 3HC Remarks ask for; a raja yoga lifts a verdict only when it passes. Only the association
+  yoga Y.RAJA.KT has a measurable pair; every other raja yoga, old or new, is noted. No scored change.
+- **USER DECISION "Drop the pillar".** Bhava Bala no longer votes (`BHAVA_BALA_PILLAR_VOTES`); it is
+  still computed and reported. The H11 dhana floor's "all pillars strong" is read over the voting
+  pillars. Ratchet 284->276 / 364->366 / 32->30. New real error: HTJAH-I h5_15 H5 (flipped when the
+  vote went); cleared: chart_44 H2, NH chart_54 H9, NH chart_75 H1.
+- **USER DECISION "Raman's ayanamsa".** Raman-engine reports, CLI and API default to Raman's
+  ayanamsa; the report header names the ayanamsa actually used (it said "Lahiri sidereal" always).
+- **Report honesty.** A failed maraka check is reported as undetermined, never as "no maraka-tier
+  lord"; every swallowed exception in `detailed_report` is logged.
+- **Ratchet.** Re-based to 276/396, 366/396 with lineage; the 30 real errors are pinned by key
+  (`real_errors`, `test_no_new_real_errors`). Doctrine snapshot re-frozen (2147 VERDICT lines, note
+  in the file); cross-layer D9 baseline re-based (0.7294 -> 0.6693: part of the old agreement was
+  the D9 manufacturing the verdict it was compared with).
+- **Not done here:** the sealed hold-out of unseen Raman charts (needs extraction on the PC with the
+  full book set); electional/prasna/BPHS 46+ citations were not checkable in the cloud copy.

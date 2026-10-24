@@ -583,7 +583,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # LIMIT of the printed PK-contact corpus (no PK condemnation ever names the Sun as the
     # contact), NOT Raman's vocabulary — his "first-rate malefic" idiom explicitly includes
     # the Sun elsewhere (HTJAH-I:5673 "three first-rate malefic, viz., the Sun, Saturn and
-    # Rahu"; NH:10543; NH:18035). Reviewer-corrected reading, 2026-08-30.
+    # Rahu"; NH:10543). Reviewer-corrected reading, 2026-08-30.
     # NON-decisive testimony, same status and reasoning as C.39: Chart 99's own house/lord
     # "indicate birth", so the PK blemish grades the outcome rather than overriding everything;
     # the Dhana-Yoga chart (chart_67, NH:13766-13774) keeps a double-contact PK chart "fairly

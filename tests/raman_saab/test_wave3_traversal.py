@@ -42,7 +42,7 @@ _FINE_PRINT_LABEL = "Encoding-scope notes"
 
 @pytest.fixture(scope="module")
 def report():
-    return build_detailed_report(_CANONICAL)
+    return build_detailed_report(_CANONICAL, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
 
 
 @pytest.fixture(scope="module")

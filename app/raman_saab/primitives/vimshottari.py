@@ -343,6 +343,17 @@ def maraka_lords(chart: RamanChart) -> frozenset[str]:
     return maraka_set(chart).all()
 
 
+def maraka_running_phrase(flag: bool | None) -> str:
+    """How every report surface states whether the running period is maraka-tier.
+
+    ``None`` means the check could not be made for this chart, and is said so — never folded
+    into "no maraka-tier lord", which would be a confident statement the engine did not make
+    (audit 2026-10-23: the report's fallback used to set the flag to False on an exception)."""
+    if flag is None:
+        return "could not be determined for this chart"
+    return "carries a maraka-tier lord" if flag else "carries no maraka-tier lord"
+
+
 def is_maraka_period(chart: RamanChart, jd: float, *, strength: str = "any") -> bool:
     """True when the period running on `jd` carries a maraka. ``strength="any"`` (default): the
     Mahadasha OR Bhukti lord is a maraka. ``strength="strong"``: BOTH are marakas (the sharper

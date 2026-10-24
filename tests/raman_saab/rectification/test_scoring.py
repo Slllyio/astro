@@ -121,8 +121,12 @@ class TestFactChannelAndGuard:
         fact = resolve_fact("property", "favourable")
         raman = S.score_fact(cast_chart(birth, ayanamsa="raman"), fact)
         lahiri = S.score_fact(cast_chart(birth, ayanamsa="lahiri"), fact)
-        assert raman.agreement == 1.0
+        # 2026-10-23: with the Bhava Bala pillar withdrawn from verdicts, raman's H4 property
+        # reads mixed (agreement 0), not favourable (+1). Lahiri still disagrees (-1), so the
+        # fact still points to raman — by a margin of 1, no longer 2.
+        assert raman.agreement == 0.0
         assert lahiri.agreement == -1.0
+        assert raman.agreement > lahiri.agreement
 
 
 class TestScoreCandidate:

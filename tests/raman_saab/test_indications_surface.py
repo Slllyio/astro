@@ -30,7 +30,7 @@ CANON = BirthData("canon", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 @pytest.fixture(scope="module")
 def report():
     """The pinned baseline nativity (Bangalore 1990-07-15 12:00 IST, Virgo Lagna)."""
-    return build_detailed_report(CANON)
+    return build_detailed_report(CANON, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
 
 
 class TestIndicationsComposed:
@@ -148,7 +148,7 @@ class TestIndicationsAreVerdictInert:
         before = [(pf.house, str(pf.rollup),
                    tuple((sv.signification, str(sv.verdict)) for sv in pf.significations))
                   for pf in report.proformas]
-        again = build_detailed_report(CANON)
+        again = build_detailed_report(CANON, ayanamsa="lahiri")
         after = [(pf.house, str(pf.rollup),
                   tuple((sv.signification, str(sv.verdict)) for sv in pf.significations))
                  for pf in again.proformas]

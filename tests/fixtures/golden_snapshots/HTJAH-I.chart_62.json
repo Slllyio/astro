@@ -29,7 +29,7 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
@@ -39,7 +39,7 @@
         "verdict": "afflicted"
       },
       "short_journeys": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "favourable"
       },

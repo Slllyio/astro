@@ -195,7 +195,7 @@ def _compose_v2(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[
 
 
 def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
-               ayanamsa: str = "lahiri") -> Synthesis:
+               ayanamsa: str = "raman") -> Synthesis:
     chart: RamanChart = cast_chart(birth, ayanamsa=ayanamsa)
     reading = read_chart(birth, ayanamsa=ayanamsa)
     y, m, d = on if on is not None else _today()

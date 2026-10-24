@@ -1,0 +1,957 @@
+[
+ {
+  "chart_no": 1,
+  "native": "An Eminent Indian",
+  "first_line": 19,
+  "last_line": 50,
+  "raw_birth": "8/9-12-1878 at 5-40 a.m. (LMT) | Birth Detuils_-Born | (Lat: 129 45' N. Long: 780 54' E)",
+  "birth": {
+   "date": "1878-12-09",
+   "time": "05:40",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 45,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 54,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "129",
+    "read": 12
+   },
+   {
+    "field": "lon_deg",
+    "raw": "780",
+    "read": 78,
+    "alt": [
+     77
+    ]
+   },
+   {
+    "field": "date",
+    "raw": "8/9-12-1878",
+    "note": "night of 8/9; 05:40 a.m. taken as civil 9th"
+   }
+  ],
+  "dasa_balance": "Mars 3y 9m 23d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "2290 16' (229 16', Scorpio by longitude; not named in prose)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 2,
+  "native": "Franklin Delano Roosevelt",
+  "first_line": 53,
+  "last_line": 73,
+  "raw_birth": "Birth Detalls_Born on 30-8-1882 at 8 p.m. (LM.T) (Let: 40' | 48'",
+  "birth": {
+   "date": "1882-01-30",
+   "time": "20:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 40,
+   "lat_min": 48,
+   "lat_dir": "N",
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "raw": "30-8-1882",
+    "read": "1882-01-30",
+    "alt": [
+     "1882-08-30"
+    ],
+    "note": "printed month reads 8, but printed Sun 290 20' (Capricorn) requires late January; Roosevelt's known birth is 30 Jan 1882"
+   },
+   {
+    "field": "lat_deg",
+    "raw": "40'",
+    "read": 40,
+    "alt": [
+     41
+    ]
+   },
+   {
+    "field": "lon",
+    "raw": "(missing)",
+    "note": "longitude not legible in OCR"
+   }
+  ],
+  "dasa_balance": "Rahu 6y 7m 19d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "143* 32' (Leo by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 3,
+  "native": "Karl Marx",
+  "first_line": 90,
+  "last_line": 109,
+  "raw_birth": "Birth Details-Born on 5-5-1818 at 24.m. (LM.T) (Lat: 49' | 44' N. Long: 69 38' E.)",
+  "birth": {
+   "date": "1818-05-05",
+   "time": "02:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 49,
+   "lat_min": 44,
+   "lat_dir": "N",
+   "lon_deg": 6,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "raw": "24.m.",
+    "read": "02:00 a.m."
+   },
+   {
+    "field": "lon_deg",
+    "raw": "69 38'",
+    "read": 6
+   }
+  ],
+  "dasa_balance": "Venus 3y 9m 18d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "3028 56' (302 56', Aquarius by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 4,
+  "native": "Havelock Ellis",
+  "first_line": 110,
+  "last_line": 131,
+  "raw_birth": "Birth Delails-Boro on 2-2-1859 at 8-30a.m.(L.M.T:) (Lat.518 | 22' N_ Long: 0' 6' W).",
+  "birth": {
+   "date": "1859-02-02",
+   "time": "08:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 51,
+   "lat_min": 22,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 6,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "518",
+    "read": 51
+   }
+  ],
+  "dasa_balance": "Moon 6y 2m 12d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "3070 4' (307 4', Aquarius by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 5,
+  "native": "Henry Ford",
+  "first_line": 132,
+  "last_line": 157,
+  "raw_birth": "Blrth Detalls-Born on 30-7-1863 at 2 p.m. (LM.T:) (Lst 42* | 5' N.. Lopg: 838 5' W:)",
+  "birth": {
+   "date": "1863-07-30",
+   "time": "14:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 42,
+   "lat_min": 5,
+   "lat_dir": "N",
+   "lon_deg": 83,
+   "lon_min": 5,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lon_deg",
+    "raw": "838",
+    "read": 83
+   }
+  ],
+  "dasa_balance": "Moon 2y ?m 6d (raw: 2 years; $ months. 6 days; $ = 5 or 8)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "2I48 52' (214 52', Scorpio by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 6,
+  "native": "Edward, Duke of Windsor",
+  "first_line": 158,
+  "last_line": 190,
+  "raw_birth": "No. 51\" | 23-1-1894 at 10 p-m: (LMT:) (Lat | Blrth Details_Boro OD | 30' N_ Lopg: 0' 5' W:) tbe Moon 3139 0' Mars",
+  "birth": {
+   "date": "1894-06-23",
+   "time": "22:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 5,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date",
+    "raw": "23-1-1894",
+    "read": "1894-06-23",
+    "alt": [
+     "1894-01-23"
+    ],
+    "note": "printed month reads 1, but printed Sun ~71 (Gemini) requires late June; Duke of Windsor's known birth is 23 Jun 1894"
+   },
+   {
+    "field": "lat_deg",
+    "raw": "(missing)",
+    "note": "only \"30' N\" legible; probably 51 30'"
+   },
+   {
+    "field": "lon_min",
+    "raw": "0' 5' W",
+    "read": 5
+   },
+   {
+    "field": "chart_no",
+    "raw": "No. 51\" / 6. Edward",
+    "read": 6
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "not legible (planet/ascendant list scrambled in OCR)",
+  "same_as": null,
+  "notes": "Dasa balance not present in OCR",
+  "conclusions": []
+ },
+ {
+  "chart_no": 7,
+  "native": "Sri Sankaracharya of Govardhan Mutt",
+  "first_line": 191,
+  "last_line": 213,
+  "raw_birth": "Birth Details_Born on 19-3-1868 at 6-33 a.m. (L.MT:) (Lat. | 170 43' N_ Long: 738 20' E):",
+  "birth": {
+   "date": "1868-03-19",
+   "time": "06:33",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 17,
+   "lat_min": 43,
+   "lat_dir": "N",
+   "lon_deg": 73,
+   "lon_min": 20,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "170",
+    "read": 17
+   },
+   {
+    "field": "lon_deg",
+    "raw": "738",
+    "read": 73
+   }
+  ],
+  "dasa_balance": "Moon 9y 11m 17d (raw: 9 years, 1 [ months)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "3459 56' (345 56', Pisces by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 8,
+  "native": "H. H. Krishnaraja Wodiyar",
+  "first_line": 214,
+  "last_line": 236,
+  "raw_birth": "Blrth Details -Boro on 4-6-1884 at 10-18 a.m. (L.M.T:) (Lat: | 129 0' N. Long: 76\" 38' E).",
+  "birth": {
+   "date": "1884-06-04",
+   "time": "10:18",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat",
+    "raw": "129 0'",
+    "read": "12 0'",
+    "alt": [
+     "12 18'"
+    ]
+   }
+  ],
+  "dasa_balance": "Mars 1y 11m 16d (raw: 1 year, 1 ! montbs)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "1178 40' (117 40', Cancer by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 9,
+  "native": "Pandit Jawaharlal Nehru",
+  "first_line": 237,
+  "last_line": 268,
+  "raw_birth": "a 1l-20-27 P.m (LM.T ) | Bir th Details-Boro on 14-11-1889 | (Lat: 250 27' N; Long: 818 51\" E) [09* 30'",
+  "birth": {
+   "date": "1889-11-14",
+   "time": "23:20",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 25,
+   "lat_min": 27,
+   "lat_dir": "N",
+   "lon_deg": 81,
+   "lon_min": 51,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "raw": "a 1l-20-27 P.m",
+    "read": "11-20-27 p.m. (23:20:27)",
+    "alt": [
+     "23:20"
+    ]
+   },
+   {
+    "field": "lat_deg",
+    "raw": "250",
+    "read": 25
+   },
+   {
+    "field": "lon_deg",
+    "raw": "818",
+    "read": 81
+   }
+  ],
+  "dasa_balance": "Mercury 13y ?m 20d (months illegible)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "not legible (raw fragments '[09* 30'' near Ascendant)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 10,
+  "native": "Benito Mussolini",
+  "first_line": 272,
+  "last_line": 288,
+  "raw_birth": "Birth Details_Born on' 29-7-1883 9t 2 pm. (L.M.T:) (Let 419 | 0' N,, Loog: 169 0' E)",
+  "birth": {
+   "date": "1883-07-29",
+   "time": "14:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 41,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 16,
+   "lon_min": 0,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "419",
+    "read": 41,
+    "alt": [
+     44
+    ]
+   },
+   {
+    "field": "lon_deg",
+    "raw": "169",
+    "read": 16,
+    "alt": [
+     12
+    ]
+   }
+  ],
+  "dasa_balance": "Moon 3y 8m 26d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "211\" 43' (Scorpio by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 11,
+  "native": "M. S. Golwalkar",
+  "first_line": 289,
+  "last_line": 312,
+  "raw_birth": "Birth Detalls_Born 00 18/19-2-1906 a0 4-34a.m. (LM.T) | (Lat: 218 &8 N_Long; 790 5' E.)",
+  "birth": {
+   "date": "1906-02-19",
+   "time": "04:34",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 21,
+   "lat_min": 8,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 5,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_min",
+    "raw": "218 &8",
+    "read": 8,
+    "alt": [
+     9,
+     58
+    ]
+   },
+   {
+    "field": "lon_deg",
+    "raw": "790",
+    "read": 79
+   },
+   {
+    "field": "date",
+    "raw": "18/19-2-1906",
+    "note": "night of 18/19; 4:34 a.m. taken as civil 19th"
+   }
+  ],
+  "dasa_balance": "Venus 18y 3m 0d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "2749 57' (274 57', Capricorn by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 12,
+  "native": "Sri Narasimha Bharathi",
+  "first_line": 313,
+  "last_line": 342,
+  "raw_birth": "Detalls_Born 0 11-3-1858 et 9 p.m. (L.M.T:) (Lat: 43\" | Birth",
+  "birth": {
+   "date": "1858-03-11",
+   "time": "21:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat",
+    "raw": "Lat: 43\"",
+    "note": "latitude truncated/illegible (probably 13 x' for Sringeri)"
+   },
+   {
+    "field": "lon",
+    "raw": "(missing)"
+   }
+  ],
+  "dasa_balance": "Moon 7y 2m 7d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "192\" 50\" (Libra by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 13,
+  "native": "Sri Ramana Maharshi",
+  "first_line": 343,
+  "last_line": 365,
+  "raw_birth": "at [ a.0. (L.M T.) (Lal | Birtk Details-Boro O 29/30-12-1879 | 90 So' N_ Long: 780 51' E) the Moon 89\" 58\" Mars",
+  "birth": {
+   "date": "1879-12-30",
+   "time": "01:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 9,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 51,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "raw": "at [ a.0.",
+    "read": "1 a.m."
+   },
+   {
+    "field": "lat",
+    "raw": "90 So'",
+    "read": "9 50'"
+   },
+   {
+    "field": "lon_deg",
+    "raw": "780",
+    "read": 78,
+    "alt": [
+     77
+    ]
+   },
+   {
+    "field": "date",
+    "raw": "29/30-12-1879",
+    "note": "night of 29/30; 1 a.m. taken as civil 30th"
+   }
+  ],
+  "dasa_balance": "Jupiter 4y ?m 20d (raw: 4 ycars. ... month, 20)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "not legible",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 14,
+  "native": "Bangalore Suryanarain Rao",
+  "first_line": 366,
+  "last_line": 384,
+  "raw_birth": "Birth Delails_Born on 12-2-1856 4t 12-21 p.m. (L.M.T:) (Lat,",
+  "birth": {
+   "date": "1856-02-12",
+   "time": "12:21",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat/lon",
+    "raw": "(Lat, [rest missing]"
+   }
+  ],
+  "dasa_balance": "Venus 12y 3m 9d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "43\" 9' (Taurus by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 15,
+  "native": "Dr. Rabindranath Tagore",
+  "first_line": 385,
+  "last_line": 414,
+  "raw_birth": "Dirth Details_Born on 7-5-1861 at 2-51 Lm. (LMT) (Let:",
+  "birth": {
+   "date": "1861-05-07",
+   "time": "02:51",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "raw": "2-51 Lm.",
+    "read": "2-51 a.m."
+   },
+   {
+    "field": "lat/lon",
+    "raw": "(Let: [rest missing]"
+   }
+  ],
+  "dasa_balance": "Mercury 10y 2m 20d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "3369 9' (336 9', Pisces by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 16,
+  "native": "Joseph Stalin",
+  "first_line": 415,
+  "last_line": 447,
+  "raw_birth": "Details__Born on 20/21-12-1879 al 3-5a.m.(L.MTY(Laf: | Bir th | 428 0' N, Long: 4497' EX: 3446 Mars",
+  "birth": {
+   "date": "1879-12-21",
+   "time": "03:05",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 42,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 44,
+   "lon_min": 7,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "428",
+    "read": 42
+   },
+   {
+    "field": "lon",
+    "raw": "4497'",
+    "read": "44 7'",
+    "alt": [
+     "44 9'"
+    ]
+   },
+   {
+    "field": "date",
+    "raw": "20/21-12-1879",
+    "note": "night of 20/21; 3:05 a.m. taken as civil 21st"
+   }
+  ],
+  "dasa_balance": "Saturn 3y 6m 26d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "!94747 (possibly 194 47', Libra; uncertain)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 17,
+  "native": "Unnamed native (R: 183)",
+  "first_line": 450,
+  "last_line": 469,
+  "raw_birth": "Blrth Detalls_Born on 30-10-1903 at 9-30 a.m. (L.M,T ) (Lat; | 170 40' N, Long: 759 57' E.).",
+  "birth": {
+   "date": "1903-10-30",
+   "time": "09:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 17,
+   "lat_min": 40,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 57,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "170",
+    "read": 17
+   },
+   {
+    "field": "lon_deg",
+    "raw": "759",
+    "read": 75
+   }
+  ],
+  "dasa_balance": "Rahu 12y 11m 24d (raw: '1 [ months)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "709 36' (70 36', Gemini by longitude)",
+  "same_as": null,
+  "notes": "Header '(R: 183)' looks like a cross-reference to another Raman book/chart number; not identified",
+  "conclusions": []
+ },
+ {
+  "chart_no": 18,
+  "native": "Unnamed native (18/104)",
+  "first_line": 470,
+  "last_line": 493,
+  "raw_birth": "Birth Detalls-Born on 24-2-1904 et 7-30 a,m. (LS.T.) (Lat | 209 28' N, Long: 858 54' E:).",
+  "birth": {
+   "date": "1904-02-24",
+   "time": "07:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 20,
+   "lat_min": 28,
+   "lat_dir": "N",
+   "lon_deg": 85,
+   "lon_min": 54,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "raw": "(LS.T.)",
+    "note": "possibly L.M.T. or I.S.T.; IST did not exist in 1904"
+   },
+   {
+    "field": "lat_deg",
+    "raw": "209",
+    "read": 20
+   },
+   {
+    "field": "lon_deg",
+    "raw": "858",
+    "read": 85
+   }
+  ],
+  "dasa_balance": "Venus 17y 4m 16d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "3379. 14* (337 14', Pisces by longitude)",
+  "same_as": null,
+  "notes": "Header '(18/104)' looks like a cross-reference",
+  "conclusions": []
+ },
+ {
+  "chart_no": 19,
+  "native": "Unnamed native (11/146)",
+  "first_line": 494,
+  "last_line": 525,
+  "raw_birth": "Birth Details_Born on 5-12-1914 at 7-15 a m- (I.MT) (Lat: | 189 58 N.Long: 72\" 49 E.) .",
+  "birth": {
+   "date": "1914-12-05",
+   "time": "07:15",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 58,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 49,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "raw": "(I.MT)",
+    "read": "LMT"
+   },
+   {
+    "field": "lat_deg",
+    "raw": "189",
+    "read": 18
+   }
+  ],
+  "dasa_balance": "Rahu 4y 4m 28d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "2338 S7' (233 57', Scorpio by longitude)",
+  "same_as": null,
+  "notes": "Header '(11/146)' looks like a cross-reference; page header at line 486 also reads '(11/146)'",
+  "conclusions": []
+ },
+ {
+  "chart_no": 20,
+  "native": "Unnamed native (R 163)",
+  "first_line": 526,
+  "last_line": 551,
+  "raw_birth": "No. 20. (R [63) | (LM: T(Lat: | Bith Details_~Born on 28/29-1-1905 at $-00 2.m. | \"^43 N. Long: 769 13' E). Moon  2050 40'",
+  "birth": {
+   "date": "1905-01-29",
+   "time": null,
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": 43,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 13,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "raw": "$-00 2.m.",
+    "read": "5:00 or 8:00 a.m.",
+    "alt": [
+     "05:00",
+     "08:00"
+    ]
+   },
+   {
+    "field": "lat_deg",
+    "raw": "\"^43 N",
+    "note": "degrees illegible"
+   },
+   {
+    "field": "lon_deg",
+    "raw": "769",
+    "read": 76
+   },
+   {
+    "field": "chart ref",
+    "raw": "(R [63)",
+    "read": "R 163"
+   },
+   {
+    "field": "date",
+    "raw": "28/29-1-1905",
+    "note": "night of 28/29; a.m. time taken as civil 29th"
+   }
+  ],
+  "dasa_balance": "Jupiter 1?y ?m ?4d (raw: Dasu 1 ... months, *4 days; garbled)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "not legible",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 21,
+  "native": "Lenin",
+  "first_line": 552,
+  "last_line": 571,
+  "raw_birth": "Birth Details_Born on 22-4-1870 a1 9-42 p m. (LM.T:) (Lat: | 549 17' N_ Long: 489 26' E.)",
+  "birth": {
+   "date": "1870-04-22",
+   "time": "21:42",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 54,
+   "lat_min": 17,
+   "lat_dir": "N",
+   "lon_deg": 48,
+   "lon_min": 26,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "549",
+    "read": 54
+   },
+   {
+    "field": "lon_deg",
+    "raw": "489",
+    "read": 48
+   }
+  ],
+  "dasa_balance": "Moon 7y ?m 3d (raw: 7 ycars; 14 mopths, 3 days; 14 impossible, likely 1 or 4)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "2170 54' (217 54', Scorpio by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 22,
+  "native": "The Nizam of Hyderabad",
+  "first_line": 572,
+  "last_line": 595,
+  "raw_birth": "Btrth Detalls_-Boro o0 6-4-1886 0t 6-36 P.m: (LMT)) (Lat. | 17\" 30' N,,Long. 788 30' B)",
+  "birth": {
+   "date": "1886-04-06",
+   "time": "18:36",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 17,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 30,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lon_deg",
+    "raw": "788",
+    "read": 78
+   }
+  ],
+  "dasa_balance": "Venus 11y 7m 6d (raw: Il years, Tmontbs)",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "I8k' S0' (18x 50', probably Libra/Virgo boundary region; digit illegible)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 23,
+  "native": "Swami Vivekananda",
+  "first_line": 596,
+  "last_line": 617,
+  "raw_birth": "Birth Delails_Boro on 12-1-[863 at 6-3} 3.m. (LMT.) (Lat. | 22\" 40' N_ Long: 88\" 30' E.)",
+  "birth": {
+   "date": "1863-01-12",
+   "time": "06:33",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 40,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 30,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "raw": "6-3} 3.m.",
+    "read": "6-33 a.m.",
+    "alt": [
+     "06:30",
+     "06:35"
+    ]
+   },
+   {
+    "field": "date",
+    "raw": "12-1-[863",
+    "read": "1863"
+   }
+  ],
+  "dasa_balance": "Moon 3y 3m 27d",
+  "lagna_sign_stated": null,
+  "ascendant_longitude_printed": "2679 31' (267 31', Sagittarius by longitude)",
+  "same_as": null,
+  "notes": null,
+  "conclusions": []
+ }
+]

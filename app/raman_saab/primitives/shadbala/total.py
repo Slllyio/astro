@@ -18,6 +18,17 @@ from app.raman_saab.chart.model import ShadbalaBreakdown
 # Bhava Drig (signed). A lord meeting ~5-6 Rupas (300-360 Shashtiamsas) plus a middling
 # Bhavadig already clears this; document any retune here.
 #
+# NO LONGER A VERDICT PILLAR (2026-10-23, USER DECISION after the engine audit): 97.5% of
+# houses cleared this bar, so its vote was close to a constant "strong". The judge now reads
+# ``house_template.BHAVA_BALA_PILLAR_VOTES = False``; this value survives for the report-layer
+# readers that still quote it (``doctrine/uk_tripod.py``) and for the tuner.
+#
+# Consequence for the pillar knobs below: with two voting pillars (lord, karaka) a contradicted
+# matter is lifted only when BOTH are strong, and ``CONTRA_PILLAR_AFFLICT = 3`` cannot be
+# reached. Before the change it needed the Bhava Bala to be weak as well, which happened in
+# ~2.5% of houses, so the afflicted arm was already near-dead; the dusthana clause, the
+# navamsa and clauses 4-8 carry the afflictions.
+#
 # NOTE: deliberately NOT typed ``Final`` — this is a documented golden-tuned knob.
 # ``tools/raman_saab/tune_thresholds.py`` rebinds it (under a save/restore context
 # manager) while scoring candidate thresholds against the golden corpus.

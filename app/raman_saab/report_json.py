@@ -25,6 +25,7 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import Any, Optional
 
+from app.raman_saab.chart.ayanamsa import ayanamsa_label
 from app.raman_saab.detailed_report import (PREPONDERANCE_RULES, DetailedReport,
                                             distinctive_gloss,
                                             gochara_synthesis_sentence, graded_buckets,
@@ -558,7 +559,8 @@ def to_report_dict(r: DetailedReport) -> dict:
         "soul": _ad(r.soul),
         "pitru": _ad(r.pitru),
 
-        "window": {"ref_jd": r.ref_jd, "back": r.window_back, "forward": r.window_forward},
+        "window": {"ref_jd": r.ref_jd, "back": r.window_back, "forward": r.window_forward,
+                   "ayanamsa": ayanamsa_label(r.chart.ayanamsa)},
 
         # Wave-1 timing additions (2026-08-17, append-only): the current bhukti's
         # pratyantar drill-down, the dated Sade-Sati phase spans (method-only; no

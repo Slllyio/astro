@@ -229,3 +229,7 @@ pool's. Read honestly: the pool figure carries some fitting from months of gates
 the true out-of-sample inversion rate is likely nearer one in five than one in ten. Per-row
 record: `docs/raman_saab/holdout_score_2026-10-24.json`. The hold-out is now SPENT for these
 variants; any future fix needs fresh unseen charts for its own test.
+
+**User decision (2026-10-24):** R2 is HELD until more unseen charts exist ("Hold until more
+unseen charts"). R4 and R5 stay held on the same footing. Next step: a second sealed hold-out
+from Raman's other books, built with the same engine-blind brief and acceptance checks.

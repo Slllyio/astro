@@ -173,3 +173,21 @@ Jupiter nor Venus, OR (b) the house lord and the matter's primary karaka are eac
 aspected by at least one natural malefic and neither is joined or aspected by Jupiter or Venus.
 Natural malefics: Sun, Mars, Saturn, Rahu, Ketu (the locked convention). Firing rate over all
 golden charts is reported before the decision.
+
+## Addendum 3 (2026-10-24): R5 measured
+
+Firing rate over the 346 golden charts: 71 to 123 charts per house rule (21% to 36%). One
+coding reading recorded: where the lord IS the karaka, arm (b) is switched off, since "the lord
+and the Karaka" are then one factor and arm (b) would fire on a single malefic contact.
+
+| Variant | Exact | Within one | Real errors | HTJAH-I | HTJAH-II | NH | Ships? |
+|---|---|---|---|---|---|---|---|
+| R5 | 269 | 362 | 34 | 11 | 5 | 18 | no |
+
+R5 fixed four inversions exactly as intended (HTJAH-I h5_10 and h5_15, NH chart_55 self,
+NH chart_57 children) and created five: HTJAH-II h11_15 and x224 gains, NH chart_25 speech,
+NH chart_51 and chart_69 career, all charts where Raman reads the matter favourably despite the
+lord's malefic contacts. This is the disposition-prereg result again from a different
+direction: in Raman's own conclusions a malefic-afflicted lord decides the matter about as often
+as he reasons past it, and nothing the engine reads separates the two. Held as
+`docs/raman_saab/held_patches/R5_general_lord_affliction_2026-10-24.patch`.

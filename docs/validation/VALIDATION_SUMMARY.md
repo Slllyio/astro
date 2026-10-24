@@ -74,6 +74,16 @@ from Raman's *Studies in Jaimini* art.159: the dasa sign is the house's sign fro
 - The year-dated within-person +0.011 is matched by the placebo (+0.013), so it is structural, not timing.
 - C1 stays unread. Three dasha systems are now null. Full reading: `PHASE3J_READING.md`.
 
+## Addendum (2026-10-24): Phase 3J-AD, chara antardashas. The dasha-timing line is CLOSED.
+The owner chose BPHS-51 sl.7-12 for the chara antardashas. The engine (cec90acd) reproduces BPHS-51's three printed
+orders, and the doctrine reviewer VALIDATED it. Pre-registered (27d0516a) and run on the 1,192 day-dated,
+non-death sets.
+- **Antardasha sign = event house: −0.004 (−0.022..+0.013), within-person +0.004. BOUNDED_NULL.**
+- The placebo, convergence, Raman ayanamsa, Rodden AA and wider-activation arms are all null.
+- C1 stays unread.
+- Every dasha system and level the engines carry has now been tested (Vimshottari MD/AD/PD in both engines, Yogini
+  MD/AD, chara MD/AD), and none times real events. Full reading: `PHASE3J_AD_READING.md`.
+
 ## Stopping rule: triggered, and honoured
 No new outcome questions are opened. Not run, by design: 4.4 vocation, 4.5 lifespan, 4.6 H5 codings,
 4.7 time twins, Phase 5 composite/ML. Holdouts C1 (11,542), C2 (11,404), Gauquelin (25%) and
@@ -101,7 +111,7 @@ PHASE4_READING. Code: `tools/validation/`. Result records: `E:/astro/data/valida
   is at `E:/astro/data/astro_databank/derived/parashara_ext/`.
 - **Holdouts, all unread:** C1 / C2 (manifest `tools/validation/holdout_manifest_tierC1.json`), Gauquelin
   25% (salt `gauquelin-screening-v1`), Wikidata. The ledger `data/empirical/holdout_ledger.json` has no claims.
-- **Open, by user choice only:** chara dasha ANTARDASHAS (BPHS-51 sl.6 vs sl.7-12, owner decision; Yogini 3Y and chara MD 3J done), needing its own
+- **Dasha timing: CLOSED (2026-10-24).** Vimshottari (3 levels, 2 engines), Yogini and chara (MD + AD) are all null. Reopening needs a genuinely new instrument and its own
   prereg. Any new risk-set test must match on latitude band, or report within-person E (Phase 3R lesson).
 - **Leftover, harmless:** varga worktree has an uncommitted partial `build_store.py` edit; its finished
   version is committed here (64721b38). It can be discarded.

@@ -109,6 +109,13 @@ def ledger() -> list[WorkedExample]:
         WorkedExample("Chara dasa: onwards from Aquarius (9th = Libra, odd pada)",
                       chd.SEQUENCE_SOURCE, [11, 12, 1],
                       lambda: [x for x, _ in chd.sequence(11, _chara_example_signs())[:3]]),
+        # Antardasha orders printed in the BPHS-51 note on the same chart (sign-only: no placements used).
+        WorkedExample("Chara antardashas of Aquarius (fixed): every 6th rasi (BPHS-51 table)",
+                      chd.AD_FIXED_WORKED, (11, 4, 9, 2, 7, 12, 5, 10, 3, 8, 1, 6), lambda: chd.antardasha_signs(11)),
+        WorkedExample("Chara antardashas of Pisces (dual): kendras of 1st/5th/9th, reverse (BPHS-51:655-663)",
+                      chd.AD_PAKA_IS_DASA_RASI, (12, 9, 6, 3, 8, 5, 2, 11, 4, 1, 10, 7), lambda: chd.antardasha_signs(12)),
+        WorkedExample("Chara antardashas of Aries (movable, odd): twelve onwards (BPHS-51:670)",
+                      chd.AD_MOVABLE_FROM_ITSELF, tuple(range(1, 13)), lambda: chd.antardasha_signs(1)),
         WorkedExample("Uchcha bala (152 deg 15' from debilitation -> 50.75)",
                       Citation("BPHS-27", 97), 50.75,
                       lambda: round(uchcha_bala("Sun", 37.75), 2)),

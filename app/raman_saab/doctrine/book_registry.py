@@ -144,6 +144,13 @@ BOOKS: tuple[BookEntry, ...] = (
               None, "Prasna Marga, Vol I (Raman's translation & notes)"),
     BookEntry("PM2", "prasna_marga_vol2", True, "live",
               None, "Prasna Marga, Vol II (Raman's translation & notes)"),
+    # PM2F (2026-10-24, user decision): the COMPLETE Part II, OCR'd from the owner's epub page
+    # scans. The PM2 folder above is missing about 40% of the book and is kept untouched so no
+    # anchor into it moves; new horary citations into Part II should cite PM2F. Same walled
+    # horary scope as PM1/PM2. Unsplit, line-offset citations, like 3HCC.
+    BookEntry("PM2F", "prasna_marga_vol2_full", False, "live",
+              "chapter_001_full-text-unsplit.md",
+              "Prasna Marga, Vol II (COMPLETE, owner's epub scan)"),
     # THE COMPLETE 3HC (user's Drive scan, Motilal Banarsidass, 350pp, 2026-08-08) — the first
     # corpus copy containing combinations 163-300; every circulating scan before it truncated
     # at 162. Canonical citation target for encoding the far half.

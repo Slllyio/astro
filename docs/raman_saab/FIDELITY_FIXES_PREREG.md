@@ -114,3 +114,26 @@ not forced. Before shipping, each new rule's firing rate over all golden charts 
 
 All of R1-R5 are measured on a pool that has been studied for months, and R2 and R5 were chosen
 from that pool. A pass is evidence, not proof. The hold-out is the test.
+
+## Addendum 1 (2026-10-24): hold-out sealed, R1 gate 1, two recorded fixes
+
+**R6 sealed.** Four engine-blind extractions (`docs/raman_saab/holdout_extractions/`): 3HC
+charts 2-143 gave 130 conclusions; the Ashtakavarga chapter prints only bindu tables and gave
+none. After the acceptance checks: 27 natives, 28 records, **36 scored rows** (23 favourable,
+13 afflicted) in `tests/fixtures/raman_holdout_sealed.jsonl`. Rejected: 34 charts share a birth
+date with a golden chart, 13 disagree with the printed dasa balance, 10 lack a date, time or
+coordinates. V0 verdicts on the hold-out were written, not read, to
+`docs/raman_saab/holdout_v0_verdicts_sealed.json`,
+SHA-256 `99ee148ce3a1b8839090e48576492abbdcd183ff5ec6a30d4780807c921b547b`.
+Limits: 36 rows is small (one row is 2.8 points); where Raman names no Lagna, only the Moon is
+verified (through the dasa balance), not the Lagna.
+
+Two builder fixes, both made before any hold-out verdict existed: the dasa-balance parser
+stripped a trailing "s" from planet names ("Venus" became "venu"), rejecting good charts; and
+where no time basis is printed the builder now assumes LMT, Raman's default in this book, and
+the dasa-balance check still decides acceptance.
+
+**R1 gate 1: FAILED.** Agreement with Raman's own strong/weak words, R1 vs the current pillar:
+lord 111 vs 128 of 194; karaka 106 vs 133 of 201. R1 cannot ship. Its verdict numbers are
+measured for the record only. One coding fix: the frame-sign helper raised on stated-position
+charts with no Moon; it now falls back to the Lagna.

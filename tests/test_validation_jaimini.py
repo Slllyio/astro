@@ -60,3 +60,23 @@ class TestChara:
                            "houses": [rt.MARAKA, (9,), (7,)],
                            "event_root": ["Death", "Death of Father", "Relationship"]})
         assert death_keys(ev) == {("a", 1.0, "maraka"), ("a", 2.0, "(9,)")}
+
+
+class TestCharaAntardasha:
+    def test_ad_store_is_engine_antardashas(self, chart):
+        """AD periods in the store are exactly `chara_dasha.antardashas` of each engine mahadasha."""
+        from tools.validation.jaimini_ad_timing import ad_rows
+        sg = cd.chart_signs(chart)
+        s, e, t, _ = ad_rows(sg, chart.asc_sign, (chart.asc_sign,))
+        ads = [a for md in cd.timeline(chart.asc_sign, sg, horizon=100.0) for a in cd.antardashas(md)]
+        assert np.allclose(s, [a.start_year for a in ads]) and np.allclose(e, [a.end_year for a in ads])
+        for row, a in zip(t, ads):
+            assert house_sign(chart.asc_sign, int(row[:12].argmax()) + 1) == a.sign and row[:12].sum() == 1
+
+    def test_convergence_implies_ad_exposure(self):
+        """S_conv (MD and AD both the house's sign) is a subset of P_ad, and the placebo is seeded at Lagna + 1."""
+        from tools.validation.jaimini_ad_timing import process as ad_process
+        _, res = ad_process(ROW)
+        assert (res["converge"][2] <= res["real"][2]).all()
+        assert res["converge"][2].sum() > 0
+        assert not np.array_equal(res["placebo"][2], res["real"][2])

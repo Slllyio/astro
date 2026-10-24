@@ -130,3 +130,24 @@ def test_every_citation_resolves():
     """Each rule constant points at a real corpus line."""
     cites = [v for v in vars(cd).values() if type(v).__name__ == "Citation"]
     assert len(cites) >= 13 and all(verify(c) for c in cites)
+
+
+class TestAntardashas:
+    def test_fixed_runs_every_sixth_backwards_when_even(self):
+        """BPHS-51:581 -- fixed: 'every sixth rasi'; Taurus (even) counts it in reverse."""
+        assert cd.antardasha_signs(2)[:3] == (2, 9, 4)
+
+    def test_dual_odd_takes_kendras_onwards(self):
+        """BPHS-51:582-585 -- Gemini (odd, dual): itself, its kendras, then those of its 5th and 9th."""
+        assert cd.antardasha_signs(3) == (3, 6, 9, 12, 7, 10, 1, 4, 11, 2, 5, 8)
+
+    def test_every_order_is_a_permutation_of_the_twelve(self):
+        """Each dasa yields each of the twelve signs once."""
+        assert all(sorted(cd.antardasha_signs(s)) == list(range(1, 13)) for s in range(1, 13))
+
+    def test_twelve_equal_parts_tile_the_dasa(self):
+        """BPHS-51:529 -- each antardasha is 1/12 of the dasa years."""
+        p = cd.CharaPeriod(sign=11, years=8, start_year=3.0, end_year=11.0)
+        ads = cd.antardashas(p)
+        assert len(ads) == 12 and ads[0].start_year == 3.0 and abs(ads[-1].end_year - 11.0) < 1e-9
+        assert all(abs(a.years - 8 / 12) < 1e-12 for a in ads)

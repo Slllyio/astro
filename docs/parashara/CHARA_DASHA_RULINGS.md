@@ -103,21 +103,33 @@ Verdicts:
 - "Associated" = another graha in the same sign. BPHS 46:4783 ("Rahu is associated with a planet", here the Moon).
   `cast()` puts exactly the nine grahas in `longitudes`.
 
-## Q4: antardasha order. DEFERRED (scope decision)
-- **Root candidate:** BPHS-51 sl.7-12 (51:576-588):
-  - movable → the 12 in order;
-  - fixed → "every sixth rasi";
-  - dual → its kendras, then those of the 5th, then of the 9th.
-  - The translator applies it to this very chart's Chara dasa (51:601-660): "Aquarius is a fixed and odd rasi… every
-    sixth Rasi… Aquarius, then of Cancer… Sagittarius"; Pisces, being dual, takes its kendras in reverse.
-  - The direction there is set by an odd or even **sign**, not by pada.
-- **Against it, within root:** sl.6 (51:541-544) starts "from the Dasa rasi or from the rasi 7th therefrom, whichever is
-  stronger". That start rule is not reconciled with sl.7-12 in the text.
-- **Outside root:** Raman art.87 (SJ ch.4:952-970) uses a different order (from the 2nd rasi, direction from the 9th).
-  The Jaimini Sutras (pada-4 Su.8-10) put the sl.7-12 pattern on the mahadashas.
-- Length is settled: 1/12 of the dasa (BPHS-51:529-531).
-- **Ruling:** antardashas are not encoded. The sl.6 start-sign conflict needs the owner's decision, and Phase 3J is
-  scoped to the mahadasha level.
+## Q4: antardasha order. ENCODED (owner decision 2026-10-24: "go with ur recommendation" = BPHS-51 sl.7-12)
+- **Length (TEXT-SETTLED):** 1/12 of the dasa. BPHS-51:529-531: "dividing the Dasa years by 12".
+- **Order (TEXT-SETTLED by sl.7-12, 51:576-588):** movable → the twelve in order; fixed → "every sixth rasi"; dual →
+  "rasis in kendra to it, rasis in kendra to the 5th from it and rasis in kendra to the 9th from it". Direction: "onwards,
+  if the Dasa asraya rasi be an odd one, and in the reverse order if it be an even one" (51:587-588).
+- The translator's worked note on the same chart settles the two points sl.7-12 leaves open.
+  - **The Paka (dasa asraya) rasi is the dasa rasi itself:** "Here Aquarius is the first Dasaprada rasi. There it will
+    be both Paka and Bhoga rasi" (51:650-651); "Here Pisces is Paka rasi" (51:663).
+  - **Every order starts from the dasa rasi, and odd/even is the SIGN's parity, not the pada:** for fixed and dual
+    the verse says so ("start from it" 51:580-581; "the first Antardasa will belong to it" 51:582-583). For
+    **movable** the verse is silent, so starting at the dasa rasi is a CONVENTION: the translator's "including Aries"
+    (51:670), plus analogy with fixed and dual. This is where sl.6's 7th option is least ruled out. Aquarius (an odd
+    sign in an even pada, run onwards) is what proves sign parity rather than pada.
+    - "Aquarius is a fixed and odd rasi. Therefore, starting from Aquarius there will be in onwards the Antardasa of
+      every sixth Rasi" (51:602-604), and the printed table gives all twelve (51:613-648);
+    - Pisces "the first Antardasa will be of Pisces itself. Then in the reverse order… Sagittarius, Virgo and
+      Gemini… Scorpio, Leo, Taurus and Aquarius… Cancer, Aries, Capricorn and Libra" (51:655-663);
+    - "In the Dasa of Aries there will be Antardasas of the 12 rasis (including Aries) in onwards order as Aries is
+      Moveable and odd sign" (51:669-671).
+  - These three orders are fidelity-ledger rows, reproduced exactly. They depend only on the sign, not on placements.
+- **Recorded dissent, not encoded:**
+  - BPHS-51 sl.6 (51:541-545): "The Antardasas will start from the Dasa rasi or from the rasi 7th therefrom,
+    whichever is stronger" [OCR normalised: "front", ",7th"]. sl.6 agrees with sl.7-12 on direction and differs only on the start sign. The worked note never takes the 7th.
+  - Raman art.87 (SJ ch.4:952-971): a straight sequence for every modality, from the 2nd rasi and ending with the
+    dasa rasi, with the direction set by the 9th from the dasa rasi.
+  - The Jaimini Sutras pada-4 Su.8-10 apply the sl.7-12 pattern to the mahadashas.
+- Paka/Bhoga *effects* (51:588-599) are a reading rule, not timing, so they are not encoded.
 
 ## Q5: how a running sign activates a house. CONVENTION (Raman only), so it lives in the validation instrument
 - BPHS ch.50 judges a rasi dasa by its lord's strength (50:39-46) and defines no house-activation rule. The Jaimini
@@ -141,9 +153,13 @@ The fidelity ledger carries the three example rows that are independent of the r
 Pisces = 1; the sequence onwards from Aquarius. The Aries = 1 and Aquarius = 8 checks need the back-derived Mars and
 Rahu signs, so they are not ledger rows.
 
+Also encoded: antardashas (Q4, sl.7-12), with three ledger rows.
+
 Deferred:
-- antardashas (Q4);
 - node debilitation (not stated in BPHS-47).
+
+## Review of the antardashas (bphs-doctrine-reviewer, 2026-10-24, second pass)
+VALIDATED, nothing blocking. All three printed orders reproduce. Citation-range fixes were applied, and the movable start was relabelled CONVENTION.
 
 ## Review (bphs-doctrine-reviewer, 2026-10-24)
 **Confirmed:** pada, sequence, dual-lord in/out rules, association, the zero-year skip.

@@ -137,3 +137,39 @@ the dasa-balance check still decides acceptance.
 lord 111 vs 128 of 194; karaka 106 vs 133 of 201. R1 cannot ship. Its verdict numbers are
 measured for the record only. One coding fix: the frame-sign helper raised on stated-position
 charts with no Moon; it now falls back to the Lagna.
+
+## Addendum 2 (2026-10-24): R2 to R4 measured; R5 fixed before measurement
+
+| Variant | Exact | Within one | Real errors | HTJAH-I | HTJAH-II | NH | Ships? |
+|---|---|---|---|---|---|---|---|
+| V0 | 273 | 363 | 33 | 13 | 3 | 17 | baseline |
+| R1 | 238 | 338 | 58 | 12 | 11 | 35 | no (also failed gate 1) |
+| R2 package | 274 | 362 | 34 | 13 | 4 | 17 | no: +1 real error, -1 within one |
+| R3b | 276 | 348 | 48 | 15 | 10 | 23 | no |
+| R4 | 280 | 362 | 34 | 13 | 3 | 18 | no: +1 real error, -1 within one |
+| R3b + R4 | 283 | 347 | 49 | 15 | 10 | 24 | no |
+
+R2: the engine-blind reviewer returned KEEP for H2.C.69 (citation moved 2800 to 2802), H5.C.1,
+H2.C.26, H7.C.1; RE-SCOPE for H11.C.2 (to a new `means_of_gain` matter, mixed case excluded)
+and H1.N.66 (to H6 enemies); DESCRIPTIVE for H7.KD.1; NARROW for H3.C.8 (no D9-exaltation arm),
+H1.C.28b (two or more functional malefics) and H9.B.23/24 (exclude a dignified malefic,
+HTJAH-II:7468-7470). The package changed 8 rows: 3 new hits (HTJAH-II chart_11 and chart_12
+marriage, NH chart_13 self), 1 hit lost (HTJAH-II h7_06), and 1 new inversion: HTJAH-II h11_08
+gains, which the engine had right only because H11.C.2's malefic vote routed it through the
+contradiction clause; without that vote, weak pillars plus maraka pressure read afflicted.
+Held as `docs/raman_saab/held_patches/R2_rule_rescope_2026-10-24.patch` with the review.
+
+**R5 specification (fixed now, before any R5 number).** The 21 rows with no polarity rule
+miss 7 times, 5 of them inversions, all through clause 5. Raman's reason in each is the same
+general factor, stated for every house: "the strength, aspects, conjunctions and location of
+the lord of the house" (HTJAH-I:474) and "the good or bad nature of the aspects to which a lord
+... is subjected plays no mean part" (HTJAH-I:499-500); worked as "the lord and the Karaka are
+considerably afflicted. Hence the native lost his mother very early" (HTJAH-I:5228-5229). One
+rule per house h in 1, 2, 3, 4, 5, 7, 9, 10, 11 (the dusthanas are excluded: an afflicted
+dusthana lord is read the other way), tagged with that house's broad matter (self, wealth,
+siblings, mother, children, spouse, father, career, gains), polarity malefic, firing when
+EITHER (a) the house lord is joined or aspected by two or more natural malefics and by neither
+Jupiter nor Venus, OR (b) the house lord and the matter's primary karaka are each joined or
+aspected by at least one natural malefic and neither is joined or aspected by Jupiter or Venus.
+Natural malefics: Sun, Mars, Saturn, Rahu, Ketu (the locked convention). Firing rate over all
+golden charts is reported before the decision.

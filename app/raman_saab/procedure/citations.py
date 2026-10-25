@@ -54,6 +54,18 @@ CITATIONS: Final[dict[str, tuple[int, int, str]]] = {
     "from_moon": (5690, 5691, "affliction of the 5th lord from Chandra Lagna"),
     "combust_powerless": (3788, 3790, "becoming combust and hence powerless"),
     "debility_combustion_destroys": (3436, 3437, "is debilitated, is in combustion"),
+    # Round 2 (A3): Raman's sign words follow the natural relation.
+    "inimical_sign_natural": (2930, 2931, "but placed in an inimical sign"),
+    "enemy_sign_natural": (3811, 3812, "in the sign of an enemy"),
+    "friendly_sign_natural": (3779, 3779, "occupies Gemini, a friendly sign"),
+    # Round 2 (A8): an unoccupied, unaspected house is fairly strong.
+    "empty_house_fairly_strong": (3669, 3670, "benefice or malefic. Hence it is fairly strong"),
+    "empty_house_fairly_strong_2": (2809, 2810, "Hence it is fairly strong"),
+    # Round 2 (B1): a lord in the 8th from its own house.
+    "eighth_from_own_house": (3826, 3828, "his situation in the 8th from the 3rd"),
+    # Round 2 (B2): a natural benefic owning the 6th afflicts by contact.
+    "benefic_sixth_lord": (4405, 4406, "association with the Moon lord of the sixth"),
+    "benefic_sixth_lord_blemish": (4472, 4473, "with Mercury lord of the third and sixth and hence blemished"),
     # -- functional over natural (4.3) -------------------------------------------------------
     "own_lord_defused": (8594, 8595, "as he happens to be the 7th lord himself"),
     "yogakaraka_defused": (8748, 8748, "because he is a Yoga Karaka"),
@@ -62,6 +74,9 @@ CITATIONS: Final[dict[str, tuple[int, int, str]]] = {
     "dual_nature_named": (4405, 4405, "good as lord of Lagna and bad as a natural malefic"),
     # -- cancellation devices (4.6) ----------------------------------------------------------
     "neechabhanga": (1822, 1823, "neechabhanga or cancellation of debility"),
+    # Round 2: Raman's printed conditions for the cancellation (A2), nothing more.
+    "neechabhanga_conditions": (16178, 16181, "gets exalted in Amsa"),
+    "neechabhanga_kendra": (16178, 16179, "is in Kendra from the Moon or Lagna"),
     "own_sign_cancels": (2740, 2741, "This blemish is cancelled because"),
     "exalted_benefic_cancels": (2743, 2744, "cancelled as Jupiter in exaltation aspects"),
     "dispositor_aspect_harmless": (7033, 7035, "his aspect will not cause much mischief"),

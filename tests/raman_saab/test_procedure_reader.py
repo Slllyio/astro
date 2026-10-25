@@ -222,3 +222,142 @@ class TestIndependence:
                 if pat.search(py.read_text(encoding="utf-8", errors="ignore")):
                     offenders.append(str(py.relative_to(_ROOT)))
         assert not offenders, offenders
+
+
+# -- Round 2 (2026-10-25): fixes from the mismatch review ------------------------------------
+
+def _stated(positions: dict[str, float], asc_lon: float):
+    """A chart from stated longitudes; each planet's Bhava is its whole-sign house."""
+    from app.raman_saab.chart.model import RamanChart
+    asc_sign = int(asc_lon // 30) + 1
+    pos = {n: {"lon": lon, "bhava": (int(lon // 30) + 1 - asc_sign) % 12 + 1}
+           for n, lon in positions.items()}
+    return RamanChart.from_stated_positions(pos, asc_lon=asc_lon, ayanamsa="raman")
+
+
+def _planet_factor(step: str, planet: str, grade: str) -> Factor:
+    return Factor(step, f"the {step} {planet}", (), grade, 0, "", grade, False)
+
+
+class TestFatherKarakaDirection:
+    """Afflictions to the Sun decide the father; a strong Sun rescues nothing (HTJAH:13126-13127)."""
+
+    def test_strong_sun_does_not_rescue_afflicted_house_and_lord(self) -> None:
+        """Chart 90 shape: 9th house and lord afflicted, Sun strong -> afflicted, not favourable."""
+        m = matter_for(9, "father")
+        f = {"house": _factor("house", "afflicted"), "lord": _factor("lord", "blemished"),
+             "karaka": _factor("karaka", "strong"), "moon": _factor("moon", "moderate")}
+        c = conclude(m, f)
+        assert c.verdict == "afflicted"
+        assert c.rule_cite == cite("two_of_three")
+
+    def test_afflicted_sun_decides_against_good_house_and_lord(self) -> None:
+        """9th house and lord good, Sun afflicted -> afflicted: the karaka's affliction decides."""
+        m = matter_for(9, "father")
+        f = {"house": _factor("house", "strong"), "lord": _factor("lord", "fairly strong"),
+             "karaka": _factor("karaka", "afflicted"), "moon": _factor("moon", "moderate")}
+        c = conclude(m, f)
+        assert c.verdict == "afflicted" and c.rule_cite == cite("father_karaka_decides")
+
+
+class TestLongevitySameLord:
+    """For Aries and Libra the Lagna lord is the 8th lord; the comparison does not apply."""
+
+    def test_same_planet_falls_back_to_the_tally(self) -> None:
+        """Libra: Venus is both lords, so the verdict is the plain two-of-three tally."""
+        m = matter_for(8, "longevity")
+        f = {"house": _factor("house", "strong"), "lord": _planet_factor("lord", "Venus", "afflicted"),
+             "karaka": _factor("karaka", "fairly strong"), "moon": _factor("moon", "moderate")}
+        c = conclude(m, f, lagna_lord=_planet_factor("lord", "Venus", "afflicted"))
+        assert c.verdict == "favourable" and c.verdict == c.tally
+
+    def test_two_lords_are_still_compared(self) -> None:
+        """Different Lagna and 8th lords: a stronger Lagna lord gives the long band."""
+        m = matter_for(8, "longevity")
+        f = {"house": _factor("house", "afflicted"), "lord": _planet_factor("lord", "Mars", "afflicted"),
+             "karaka": _factor("karaka", "moderate"), "moon": _factor("moon", "moderate")}
+        c = conclude(m, f, lagna_lord=_planet_factor("lord", "Venus", "strong"))
+        assert c.verdict == "favourable" and c.rule_cite.startswith(cite("longevity_lords"))
+
+
+class TestRamanNeechabhanga:
+    """Only Raman's printed cancellations count (HTJAH:16178-16181)."""
+
+    _BASE = {"Sun": 190.0, "Venus": 200.0, "Saturn": 100.0, "Mars": 10.0, "Mercury": 175.0,
+             "Jupiter": 40.0, "Rahu": 50.0, "Ketu": 230.0}
+
+    def test_dispositor_conjunction_alone_does_not_cancel(self) -> None:
+        """Sun debilitated in Libra with Venus, neither Venus nor Saturn in a kendra: no relief."""
+        from app.raman_saab.primitives.bhangas import neecha_bhanga
+        from app.raman_saab.procedure.grading import raman_neecha_bhanga
+        ch = _stated({**self._BASE, "Moon": 70.0}, asc_lon=35.0)
+        assert neecha_bhanga("Sun", ch)            # the engine's conjunction clause fires
+        assert not raman_neecha_bhanga("Sun", ch)  # Raman prints no such condition
+
+    def test_dispositor_in_kendra_from_moon_cancels(self) -> None:
+        """Venus, lord of Libra, in the 10th from a Capricorn Moon cancels the Sun's debility."""
+        from app.raman_saab.procedure.grading import raman_neecha_bhanga
+        ch = _stated({**self._BASE, "Moon": 280.0}, asc_lon=35.0)
+        assert raman_neecha_bhanga("Sun", ch)
+
+
+class TestSignRelation:
+    """Raman's "friendly" and "inimical" sign follow the natural relation."""
+
+    def test_jupiter_in_libra_is_inimical(self) -> None:
+        """Chart 48: Jupiter in Libra is "placed in an inimical sign" (HTJAH:2930-2931)."""
+        from app.raman_saab.procedure.grading import sign_relation
+        assert sign_relation("Jupiter", 7) == "enemy"
+
+    def test_mars_and_venus_in_gemini(self) -> None:
+        """Chart 60: Mars in Gemini is "the sign of an enemy"; Chart 59: Venus there is friendly."""
+        from app.raman_saab.procedure.grading import sign_relation
+        assert sign_relation("Mars", 3) == "enemy"
+        assert sign_relation("Venus", 3) == "friend"
+
+
+class TestEmptyHouse:
+    """An unoccupied, unaspected house is fairly strong (HTJAH:3669-3670, 2809-2810)."""
+
+    def test_empty_house_counts_one_good_step(self) -> None:
+        """Every house with no occupant and no aspect carries a +1 testimony citing Chart 52."""
+        from app.raman_saab.procedure.grading import grade_house
+        ch = _stated({"Sun": 5.0, "Moon": 8.0, "Mars": 12.0, "Mercury": 15.0, "Jupiter": 18.0,
+                      "Venus": 21.0, "Saturn": 25.0, "Rahu": 28.0, "Ketu": 208.0}, asc_lon=2.0)
+        empty = [h for h in range(1, 13) for it in grade_house(ch, h).items
+                 if "neither occupied nor aspected" in it.text]
+        assert empty, "the stated chart should leave some house empty"
+        for h in empty:
+            it = next(i for i in grade_house(ch, h).items if "neither occupied" in i.text)
+            assert it.weight == 1 and it.cite == cite("empty_house_fairly_strong")
+
+
+class TestLordInEighthFromOwnHouse:
+    """Chart 61: Mars in a kendra and own sign, but 8th from the 3rd, is weak (HTJAH:3826-3828)."""
+
+    def test_eighth_from_third_and_sixth_lord_moon(self) -> None:
+        """Aquarius Lagna, Mars and the Moon (6th lord) in Scorpio: both testimonies are -1."""
+        from app.raman_saab.procedure.grading import grade_planet
+        ch = _stated({"Sun": 280.0, "Moon": 215.0, "Mars": 220.0, "Mercury": 290.0,
+                      "Jupiter": 120.0, "Venus": 300.0, "Saturn": 10.0, "Rahu": 160.0,
+                      "Ketu": 340.0}, asc_lon=305.0)
+        f = grade_planet(ch, "Mars", step="lord", house=3, role="the 3rd lord")
+        eighth = [i for i in f.items if "8th from the 3rd" in i.text]
+        assert eighth and eighth[0].weight == -1
+        assert eighth[0].cite == cite("eighth_from_own_house")
+        moon = [i for i in f.items if i.text.startswith("Moon") and i.substep == "associates"]
+        assert moon and moon[0].weight == -1 and "lord of the 6th" in moon[0].text
+
+
+class TestBeneficSixthLord:
+    """A natural benefic owning the 6th afflicts by contact, unless it owns the Lagna or a trine."""
+
+    def test_which_benefics_count(self) -> None:
+        """Moon for Aquarius and Mercury for Aries count; Jupiter for Cancer (6th and 9th) does not."""
+        from app.raman_saab.procedure.grading import _benefic_sixth_lord
+        pos = {"Sun": 0.5, "Moon": 40.0, "Mars": 80.0, "Mercury": 120.0, "Jupiter": 160.0,
+               "Venus": 200.0, "Saturn": 240.0, "Rahu": 280.0, "Ketu": 100.0}
+        assert _benefic_sixth_lord(_stated(pos, asc_lon=305.0), "Moon")
+        assert _benefic_sixth_lord(_stated(pos, asc_lon=5.0), "Mercury")
+        assert not _benefic_sixth_lord(_stated(pos, asc_lon=95.0), "Jupiter")
+        assert not _benefic_sixth_lord(_stated(pos, asc_lon=5.0), "Saturn")

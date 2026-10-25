@@ -242,3 +242,242 @@ No other change was made after the numbers were seen.
 - `tools.raman_saab.doctrine_snapshot --check` still reports IDENTICAL across 346 charts.
 - The golden ratchet is unchanged (269 / 354 / 35); `test_goldens.py` passes.
 - `tests/fixtures/golden_accuracy_baseline.json` was not touched.
+
+## Round 2 (2026-10-25): fixes from the mismatch review
+
+Written **before** any code change. Each of the 97 real-error rows of round 1 (after bug fix 1)
+was read against Raman's printed text and given exactly one class:
+
+- **A, reader bug**: the reader computes a fact Raman's text contradicts, or applies a cited rule
+  beyond what the citation says.
+- **B, missing Raman rule**: Raman's reasoning uses a general rule he states, with a quotable
+  citation, that the reader lacks.
+- **C, Raman's weighting**: left alone.
+- **D, label or casting issue**: recorded only; the goldens are not edited.
+
+A row is put in A or B only when one of the textual defects below is present on one of its three
+voting factors *and* points the way Raman concluded. Where a defect is present but points the
+other way, or two defects cancel, the row is classed by its main cause (usually C) and the fix will
+still change it; such losses are reported, not avoided. **No fix is chart-specific and none was
+chosen because a row would flip**: each is justified by the cited passages alone, and each applies
+to all 389 rows.
+
+### R2.1 The textual defects found
+
+| id | class | defect | Raman's text |
+|---|---|---|---|
+| A1 | A | The father rule lets a *good* Sun overrule an afflicted 9th house and lord. Raman's sentence is about afflictions only. | HTJAH:13126-13127, "Afflictions to the pitruKaraka by association, aspect, placement or otherwise are very important in depriving a native of his father". The Sun decides when afflicted; otherwise the plain two-of-three tally (HTJAH:2111-2113) stands. |
+| A2 | A | Neechabhanga is taken from the engine's four-clause primitive, which also cancels a debility when the dispositor joins or aspects the planet. Raman never gives that reason. | HTJAH:16178-16181 prints the cancellation as "the lord of this sign or the planet who gets exalted there is in Kendra from the Moon or Lagna" and "neecha (debilitated) in Rashi but gets exalted in Amsa". Every reason he gives in a worked chart is one of these (HTJAH:2037-2038, 8858-8859, 8888-8889, 8966-8967, 9133-9134). The reader gets its own check with these clauses only. Surfaced while checking Chart 90 (h9_06); it touches none of the 97 rows' voting factors. |
+| A3 | A | "Inimical sign" uses the engine's compound (panchadha) relation. In every case where the cast sign matches Raman's and the two relations disagree, Raman's word follows the natural relation. | HTJAH:2930-2931 (Chart 48, Jupiter in Libra, "an inimical sign"; compound gives neutral), HTJAH:3811-3812 (Chart 60, Mars in Gemini, "the sign of an enemy"; compound gives neutral), HTJAH:3779 (Chart 59, Venus in Gemini, "a friendly sign"), HTJAH:1947 (Venus in Capricorn, "a friendly sign"). One counter-instance: HTJAH:1898 calls Mars in Gemini "friendly", which neither relation gives. Exaltation, own sign and debility stay positional. |
+| A6 | A | Longevity compares the Lagna lord with the 8th lord. For Aries and Libra Lagnas they are one planet, so the comparison is degenerate and always reads "middle". | HTJAH:11415-11416 ("the 8th lord stronger than Lagna lord causing Alpayu") compares two lords. When they are the same planet the comparison does not apply, and the plain two-of-three tally (HTJAH:2111-2113) is used, in which Saturn, the karaka, is one of the three votes. |
+| A8 | A | An unoccupied, unaspected house counts 0 (moderate). Raman grades exactly that configuration "fairly strong" or "good". | HTJAH:3669-3670 (Chart 52, "not occupied or aspected by any planets, benefice or malefic. Hence it is fairly strong"), HTJAH:2809-2810 (Chart 43, "not aspected by any planet—good or bad. Hence it is fairly strong"), HTJAH:1801-1802 ("Lagna is occupied by no planet. This is good"). It becomes +1, in the house and in the view from the Moon. No passage grades an empty house weak. |
+| B1 | B | A lord in the 8th from its own house is not marked. | HTJAH:3826-3828 (Chart 61, the 3rd lord Mars "posited in a Kendra and own sign but his situation in the 8th from the 3rd and with the ruler of the 6th Moon renders him weak"); NH chart 64 ("lord of the 10th is placed in the 8th from the 10th"). -1 for the house's own lord; own sign does not cancel it (both instances are in own sign). Skipped where the lord already stands in a dusthana from the Lagna, which is counted once. |
+| B2 | B | A natural benefic that owns the 6th from the Lagna counts as helping (or as nothing). Raman counts its contact as an affliction. | HTJAH:4405-4406 (Chart 64, "The affliction is heavy because of association with the Moon lord of the sixth"), HTJAH:4472-4473 ("The fourth lord Moon is in the seventh with Mercury lord of the third and sixth and hence blemished"), HTJAH:3827, HTJAH:2218-2220 ("even this aspect is not good because Venus is lord of 6 and 11"). -1 by occupation, association or aspect. Not applied to a planet that also owns the Lagna, the 5th or the 9th (HTJAH:575-578: the 9th lord is "decidedly more benefice"), nor to the house's own lord. Counter-instance: HTJAH:8930-8931 calls Venus as 6th and 11th lord "not very helpful" rather than harmful. |
+
+Considered and **rejected** (C): a combustion cap (HTJAH:10409-10411 says a combust planet "becomes
+practically useless", but Raman routinely passes over Mercury's combustion); changing the
+yogakaraka weight (HTJAH:8565-8567 and 8748 against Charts 59 and 60); karaka-in-own-bhava for the
+7th (HTJAH:9244-9248 says that dictum "is not quite valid"); reading occupancy by Bhava only or by
+Rasi only (the text goes both ways: HTJAH:1945 against 2601-2602, 4082-4083 and 8878; recorded as an
+open doctrine conflict, the round-1 rule stands); a "with no relief" reading of Chart 90's Sun
+(HTJAH:13140), since Roosevelt (NH chart 47) counts conjunction with the Moon as a kendra from it,
+so Chart 90 is a Raman inconsistency on that point. A Special Dhana Lagna (HTJAH:3258-3300) is a
+stated rule but a separate method outside the house template; it is deferred, not built.
+
+A4 (the mother tie-break when the Moon is good) was drafted and **dropped**: it touches none of the
+97 rows and its textual basis (HTJAH:4392-4393) is a weighting call.
+
+### R2.2 Classification of the 97 rows
+
+| row | class | reason | citation |
+|---|---|---|---|
+| HTJAH-II.chart_33 H8 | C | Raman reads the span arithmetically (Pindayu 86y); the template has no arithmetic. B2 lowers Saturn further (a loss) | HTJAH:11415-11416 |
+| HTJAH-II.chart_34 H8 | A | Libra Lagna: Venus is Lagna and 8th lord, so the lord comparison is degenerate (A6); Venus's sign relation (A3) | HTJAH:11415-11416 |
+| HTJAH-II.chart_73 H8 | D | Lincoln: the label is the manner of death (assassination), not the span | - |
+| HTJAH-I.chart_53 H3 | D | Birth year OCR-garbled ("18*0"); the cast puts Venus in Leo/6th where Raman has it in the 7th with exalted Mercury | - |
+| HTJAH-I.chart_54 H3 | C | Raman's weighting of the 3rd; A3 lowers Mars further (a loss) | HTJAH:3690-3692 |
+| HTJAH-I.chart_57 H3 | C | Raman counts ear/throat afflictions toward the 3rd; A3 raises the lord (a loss) | HTJAH:3725-3727 |
+| HTJAH-I.chart_59 H3 | C | Raman weighs Venus's combustion over its vargottama | HTJAH:3779-3781 |
+| HTJAH-I.chart_60 H3 | A | Mars in Gemini is "the sign of an enemy"; the reader reads it neutral (A3) | HTJAH:3811-3812 |
+| HTJAH-I.chart_61 H3 | B | 3rd lord Mars in the 8th from the 3rd (B1) and with the 6th lord Moon (B2) | HTJAH:3826-3828 |
+| HTJAH-I.chart_38 H2 | C | Occupancy by Rasi vs Bhava, an open doctrine conflict; Raman's weighting | HTJAH:2601-2602 |
+| HTJAH-I.chart_41 H2 | C | Raman's weighting of the 2nd | - |
+| HTJAH-I.chart_48 H2 | A | Jupiter in Libra is "an inimical sign"; the reader reads it neutral (A3) | HTJAH:2930-2931 |
+| HTJAH-I.chart_50 H2 | B | Raman decides wealth by the Special Dhana Lagna, a stated rule outside the template (deferred, not built) | HTJAH:3295-3300 |
+| HTJAH-II.chart_11 H7 | A | Empty 7th graded moderate (A8); Venus in Capricorn is a friendly sign (A3) | HTJAH:3669-3670, 1947 |
+| HTJAH-I.h4_01 H4 | B | Chart 64: the Moon as 6th lord in the 4th makes the affliction heavy (B2); Venus's sign relation (A3) | HTJAH:4405-4406 |
+| HTJAH-I.h5_08 H5 | C | Raman's weighting; A3 raises the lord (a loss) | - |
+| HTJAH-I.h5_10 H5 | C | Raman's weighting; A8 raises the house (a loss) | - |
+| HTJAH-I.h5_15 H5 | A | Empty 5th graded moderate (A8); lord's sign relation (A3) | HTJAH:3669-3670 |
+| HTJAH-I.h5_18 H5 | C | Raman's weighting; A3 raises the lord (a loss) | - |
+| HTJAH-II.h7_01 H7 | C | A3 raises and B1 lowers the lord; Raman's weighting decides | - |
+| HTJAH-II.h7_10 H7 | C | Raman judges by a yoga (Jara/Bahukalatra type) | - |
+| HTJAH-II.h7_14 H7 | B | The 7th lord is touched by Venus as 6th lord (B2) | HTJAH:4472-4473 |
+| HTJAH-II.h7_15 H7 | C | Raman judges by a yoga and the maraka | - |
+| HTJAH-II.h11_05 H11 | A | Lord and karaka read "inimical" by the compound relation only (A3) | HTJAH:2930-2931 |
+| HTJAH-II.h11_06 H11 | C | Elder brothers: Raman's weighting | - |
+| HTJAH-II.h11_15 H11 | A | 11th lord read "inimical" by the compound relation only (A3) | HTJAH:2930-2931 |
+| HTJAH-II.h11_16 H11 | A | 11th lord read "inimical" by the compound relation only (A3) | HTJAH:2930-2931 |
+| HTJAH-II.h9_06 H9 | A | Chart 90: a strong Sun rescues an afflicted 9th house and lord; the rule is about afflictions (A1) | HTJAH:13126-13127 |
+| HTJAH-II.h9_12 H9 | A | The good-Sun rescue (A1); 9th lord in the 8th from the 9th (B1) | HTJAH:13126-13127 |
+| HTJAH-I.h6_01 H6 | C | Raman reads the 6th in reverse (pre-registered weak spot) | - |
+| HTJAH-I.h6_02 H6 | C | Raman reads the 6th in reverse | - |
+| HTJAH-I.h6_07 H6 | C | Raman reads the 6th in reverse | - |
+| HTJAH-I.h6_09 H6 | C | Raman reads the 6th in reverse | - |
+| HTJAH-I.h6_11 H6 | C | Raman reads the 6th in reverse | - |
+| HTJAH-I.h6_13 H6 | C | Raman reads the 6th in reverse | - |
+| NH.chart_26 H10 | D | Marx: the cast Moon is in Leo; Raman has it in Aries with the Sun and Rahu, in parivartana with Mars | NH:6561-6576 |
+| NH.chart_33 H2 | A | 2nd lord read "inimical" by the compound relation only (A3) | HTJAH:2930-2931 |
+| NH.chart_34 H12 | B | The Moon as 6th lord touches the 12th, its lord and Saturn (B2) | HTJAH:4405-4406 |
+| NH.chart_36 H6 | C | Raman reads the 6th in reverse | - |
+| NH.chart_39 H9 | A | The good-Sun rescue of an afflicted house (A1) | HTJAH:13126-13127 |
+| NH.chart_39 H8 | D | The label is about maraka timing, not the span | - |
+| NH.chart_42 H2 | C | Raman judges wealth by yogas | - |
+| NH.chart_42 H4 | D | The prose is about legal brilliance, not the mother | - |
+| NH.chart_42 H10 | C | Career judged from yogas and planets in the 10th | - |
+| NH.chart_45 H1 | C | Raman's weighting of the Lagna | - |
+| NH.chart_45 H7 | C | Raman's weighting of the 7th | - |
+| NH.chart_47 H9 | D | The prose is "Saturn, the planet of democracy in the 9th", not the father | - |
+| NH.chart_51 H10 | C | Career judged from the 9th/10th raja yoga | - |
+| NH.chart_51 H9 | D | The prose is about the 9th/10th exchange raja yoga, not the father | - |
+| NH.chart_51 H2 | C | Wealth judged from yogas | - |
+| NH.chart_54 H10 | C | Career judged from planets in the 10th; A8 raises the house (a loss) | - |
+| NH.chart_54 H4 | D | The prose is about education, not the mother | - |
+| NH.chart_55 H7 | C | Raman's weighting of the 7th | - |
+| NH.chart_55 H6 | C | Raman reads the 6th in reverse | - |
+| NH.chart_57 H7 | A | 7th lord Saturn in a natural enemy's sign read neutral (A3) | HTJAH:3811-3812 |
+| NH.chart_62 H11 | C | Gains judged from wealth yogas | - |
+| NH.chart_62 H7 | C | Raman's weighting of the 7th | - |
+| NH.chart_65 H2 | C | A8 raises the house and A3 lowers the lord; Raman's weighting decides | - |
+| NH.chart_69 H1 | C | Raman's weighting; A3 lowers the Sun (a loss) | - |
+| NH.chart_69 H10 | C | Career judged from yogas | - |
+| NH.chart_71 H3 | A | 3rd lord Jupiter in a natural enemy's sign read neutral (A3) | HTJAH:2930-2931 |
+| NH.chart_71 H9 | A | 9th lord read "inimical" by the compound relation only (A3) | HTJAH:2930-2931 |
+| NH.chart_71 H5 | C | Children read from Chandra Lagna; A3 lowers Jupiter (a loss) | - |
+| NH.chart_18 H5 | C | Raman's weighting; A3 raises lord and karaka (a loss) | - |
+| NH.chart_18 H10 | A | Empty 10th graded moderate (A8) | HTJAH:3669-3670 |
+| NH.chart_20 H5 | C | Children: Raman's weighting | - |
+| NH.chart_23 H10 | C | Career judged from yogas; A3 lowers the lord (a loss) | - |
+| NH.chart_24 H10 | A | 10th lord read "inimical" by the compound relation only (A3) | HTJAH:2930-2931 |
+| NH.chart_24 H8 | D | Lincoln: the label is the manner of death, not the span | - |
+| NH.chart_30 H10 | C | Career: Raman's weighting | - |
+| NH.chart_31 H5 | C | Children read from Chandra Lagna | - |
+| NH.chart_38 H9 | D | The label has a contested history (two reviewers graded it differently); A1 changes it either way | - |
+| NH.chart_40 H5 | C | Children read from Chandra Lagna | - |
+| NH.chart_46 H8 | A | Libra Lagna: degenerate lord comparison (A6); Venus's sign relation (A3) | HTJAH:11415-11416 |
+| NH.chart_46 H4 | C | Education: Raman's weighting; A8 raises the house (a loss) | - |
+| NH.chart_49 H3 | C | Raman's weighting; B2 lowers Venus (a loss) | - |
+| NH.chart_52 H7 | A | Venus in a natural enemy's sign read neutral (A3) | HTJAH:3811-3812 |
+| NH.chart_56 H10 | A | Empty 10th graded moderate (A8) | HTJAH:3669-3670 |
+| NH.chart_59 H3 | A | Mars in a natural enemy's sign read neutral (A3) | HTJAH:3811-3812 |
+| NH.chart_59 H5 | A | 5th lord Mars in a natural enemy's sign read neutral (A3) | HTJAH:3811-3812 |
+| NH.chart_64 H10 | B | "lord of the 10th is placed in the 8th from the 10th" (B1) | NH chart 64 |
+| NH.chart_64 H9 | C | Raman's weighting of the 9th | - |
+| NH.chart_66 H10 | C | Career judged from yogas; B2 lowers house and lord (a loss) | - |
+| NH.chart_66 H3 | B | 3rd lord Jupiter in the 8th from the 3rd (B1) | HTJAH:3826-3828 |
+| NH.chart_74 H5 | C | Children: Raman's weighting | - |
+| NH.chart_74 H7 | A | Empty 7th graded moderate (A8) | HTJAH:3669-3670 |
+| NH.chart_74 H10 | C | Career judged from yogas | - |
+| NH.chart_58 H10 | C | B2 lowers and A3 raises the lord; Raman's weighting decides | - |
+| NH.chart_58 H3 | C | Raman's weighting of the 3rd | - |
+| NH.chart_16 H2 | C | Wealth judged from yogas | - |
+| NH.chart_17 H6 | C | Raman reads the 6th in reverse | - |
+| NH.chart_17 H9 | A | The good-Sun rescue (A1) | HTJAH:13126-13127 |
+| NH.chart_48 H12 | C | Raman's weighting of the 12th | - |
+| NH.chart_48 H5 | C | Children: Raman's weighting | - |
+| HTJAH-I.x65 H4 | B | Chart 65: the 4th lord Moon "with Mercury lord of the third and sixth and hence blemished" (B2) | HTJAH:4472-4473 |
+| HTJAH-I.x75 H4 | A | The Moon read "inimical" by the compound relation only (A3) | HTJAH:2930-2931 |
+| HTJAH-II.x226 H11 | A | Empty 11th graded moderate (A8) | HTJAH:3669-3670 |
+
+**Counts: A 26, B 8 (7 addressed this round; the Special Dhana Lagna row is deferred), C 53, D 10.**
+
+### R2.3 Planned fixes
+
+A1, A2, A3, A6, A8, B1 and B2 as stated in R2.1. All are in `app/raman_saab/procedure/`
+(`grading.py`, `conclusion.py`, `citations.py`) with the verbatim citation in the code, and each gets
+a test in `tests/raman_saab/test_procedure_reader.py`. The engine, its judge, the golden ratchet and
+the report sections are not touched.
+
+### R2.4 Prediction (before the run)
+
+The defects push in both directions across all 389 rows (A3 removes as many "inimical" readings as
+it adds; A8 raises houses; B1 and B2 lower lords and houses), so currently-correct rows will also
+move. Predicted: **exact 145-160 (point 152), within one 290-305 (point 298), real errors 85-97
+(point 91).** Of the 34 A/B rows, I expect about half to stop being real errors and 5-10 other rows to
+become real errors.
+
+### R2.5 Results (written after the single round-2 run)
+
+| | exact | within one | real errors (distance 2) |
+|---|---|---|---|
+| reader, round 1 (after bug fix 1) | 147 / 389 (37.8%) | 292 (75.1%) | 97 |
+| **reader, round 2** | **151 / 389 (38.8%)** | **293 (75.3%)** | **96** |
+| engine (judge), for reference | 269 / 389 (69.2%) | 354 (91.0%) | 35 |
+
+All three figures fall inside the predicted ranges, but below every point prediction (152 / 298 /
+91). The net gain is small because the fixes moved 80 of 389 verdicts and the moves nearly cancel.
+
+- **Real errors removed (18):** HTJAH-II.chart_34 H8, HTJAH-I.chart_61 H3, HTJAH-I.chart_48 H2,
+  HTJAH-I.chart_50 H2, HTJAH-II.chart_11 H7, HTJAH-I.h4_01 H4, HTJAH-I.h5_15 H5,
+  HTJAH-II.h7_14 H7, HTJAH-II.h9_06 H9 (Chart 90, now exact), HTJAH-II.h9_12 H9,
+  NH.chart_34 H12, NH.chart_36 H6, NH.chart_57 H7, NH.chart_18 H10, NH.chart_46 H8,
+  NH.chart_59 H3 (now exact), NH.chart_59 H5, HTJAH-I.x65 H4. Seventeen of these are A/B rows
+  (half of the 34, as predicted); NH.chart_36 H6 is a C row. HTJAH-I.chart_50 H2 moved although its
+  own rule (the Special Dhana Lagna) was deferred, through A3 and B1.
+- **Real errors created (17), against the predicted 5-10:** HTJAH-I.chart_45 H2,
+  HTJAH-I.chart_51 H2, HTJAH-I.h5_11 H5, HTJAH-II.h11_08 H11, HTJAH-II.h12_04 H12,
+  HTJAH-II.h12_18 H12, NH.chart_28 H9, NH.chart_37 H2, NH.chart_54 H7, NH.chart_61 H10,
+  NH.chart_65 H5, NH.chart_67 H5, NH.chart_29 H7, NH.chart_38 H2, NH.chart_56 H2,
+  NH.chart_56 H4, NH.chart_73 H4. Examples: in h5_11 B2 makes Jupiter, lord of the 3rd and 6th for
+  Libra, afflict the 5th lord and the house; in NH.chart_73 H4 A8 makes the 4th from the Moon good,
+  which tips a Moon-led mother reading to favourable. These fixes stay, because the text demands
+  them; the losses are reported, not tuned away.
+- **Exact gains (26):** HTJAH-I.chart_29 H1, HTJAH-II.chart_78 H8, HTJAH-I.chart_62 H3,
+  HTJAH-II.h7_02/h7_05/h7_17 H7, HTJAH-II.h12_09/h12_10 H12, HTJAH-II.h9_02 H9, HTJAH-II.h9_06 H9,
+  NH.chart_35 H7, NH.chart_53 H10 and H7, NH.chart_55 H1, NH.chart_18 H4, NH.chart_23 H9,
+  NH.chart_27 H10, NH.chart_31 H10, NH.chart_38 H10, NH.chart_46 H12, NH.chart_49 H12,
+  NH.chart_59 H3, NH.chart_58 H8, NH.chart_68 H5, NH.chart_19 H9, NH.chart_5 H1.
+- **Exact losses (22):** HTJAH-I.chart_15 H1, HTJAH-I.chart_40 H2, HTJAH-II.chart_07/chart_08 H7,
+  HTJAH-I.h4_05/h4_06 H4, HTJAH-I.h5_11 H5, HTJAH-II.h9_04/h9_08/h9_11 H9, HTJAH-I.h6_06 H6,
+  NH.chart_25 H2, NH.chart_33 H10, NH.chart_36 H9, NH.chart_37 H7, NH.chart_47 H1,
+  NH.chart_57 H9, NH.chart_67 H9, NH.chart_75 H1, NH.chart_70 H10, NH.chart_19 H10, HTJAH-I.x80 H4.
+
+Real errors by house, round 2: H1 2, H2 12, H3 9, H4 6, H5 13, H6 8, H7 10, H8 4, H9 8, H10 14,
+H11 7, H12 3.
+
+**Timing is unchanged** (the timing rules use the engine's `timer_roles`, which no fix touches):
+
+| Rule | events | among candidates | inside window | mean base rate | lift | strength rank |
+|---|---|---|---|---|---|---|
+| native's death | 6 | 1 | 1 | 0.48 | 0.35 | 0.50 |
+| relative's death | 20 | 20 | 20 | 0.81 | 1.24 | 0.40 |
+| good event of a house | 13 | 11 | 12 | 0.66 | 1.29 | - |
+| bad event, influence set | 9 | 6 | 9 | 0.51 | 1.32 | - |
+| rise and fall in rank | 2 | 0 | 2 | 0.20 | 0 | - |
+
+**This is an in-sample figure.** The 389 rows are the same goldens the mismatch review read, and
+both hold-outs (the 36-conclusion 3HC set and the 134-conclusion NH/HTJAH set) are already spent.
+The 147 → 151 gain cannot be counted as out-of-sample improvement. What it does show is that
+seven text-demanded corrections, taken together, barely move the literal procedure: it remains
+close to indifferent to which way Raman concluded, and the engine's judge stays far ahead.
+
+### R2.6 D rows worth the user's attention
+
+- **NH.chart_26 H10 (Marx):** the cast Moon is in Leo; Raman's chart has it in Aries with the Sun
+  and Rahu, in exchange with Mars (NH:6561-6576). A casting issue that also affects the engine.
+- **HTJAH-I.chart_53 H3:** the birth year is OCR-garbled ("18*0"); the cast does not match
+  Raman's Venus.
+- **Off-topic labels:** NH.chart_42 H4 and NH.chart_54 H4 (scored as the mother; the prose is about
+  legal brilliance and education), NH.chart_47 H9 and NH.chart_51 H9 (scored as the father; the
+  prose is about Saturn as the planet of democracy and the 9th/10th raja yoga), HTJAH-II.chart_73 H8
+  and NH.chart_24 H8 (Lincoln; scored as the span, the prose is the manner of death),
+  NH.chart_39 H8 (maraka timing). NH.chart_38 H9 has a contested label history.
+
+### R2.7 Guards
+
+- `tools.raman_saab.doctrine_snapshot --check`: IDENTICAL across 346 charts.
+- Golden ratchet unchanged (269 / 354 / 35); `test_goldens.py` passes.
+- Every line of the reader's text output for all golden charts (715,246 lines) passes
+  `_FORBIDDEN_RE`; the regex was not touched.
+- Tests: 11 new in `tests/raman_saab/test_procedure_reader.py` (one class per fix, including the
+  Chart 90 karaka direction). `tests/raman_saab`: 7342 passed, 18 skipped, 3 xfailed.

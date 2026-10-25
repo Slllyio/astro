@@ -23,6 +23,12 @@ CONVENTIONS (Raman gives no mechanical rule; each is marked ``convention`` in th
 * The star lord (longevity and father only): the planet's own star, or a star ruled by the Lagna
   lord, a yogakaraka or a functional benefic, counts good; a node's star or that of the
   6th/8th/12th lord counts bad. Raman gives examples (HTJAH:11796-11798, 13344), not a table.
+* Round 2 (2026-10-25, from the mismatch review; each rule cites its passage in the code):
+  neechabhanga uses only Raman's printed conditions (HTJAH:16178-16181); "friendly" and
+  "inimical" sign follow the natural relation, as Raman's words do (HTJAH:2930-2931, 3811-3812,
+  3779); an unoccupied, unaspected house is fairly strong (HTJAH:3669-3670, 2809-2810); a lord in
+  the 8th from its own house is weakened (HTJAH:3826-3828); a natural benefic owning the 6th
+  afflicts what it touches (HTJAH:4405-4406, 4471-4472).
 * Deliberately NOT modelled: the degree-distance device ("nearly 20 degrees behind Rahu",
   HTJAH:2196-2197), because Raman prints no orb; the waning Moon as a malefic (the project's
   locked avastha table counts the Moon a benefic).
@@ -40,7 +46,6 @@ from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import drishti, hemming
 from app.raman_saab.ordinals import ordinal
 from app.raman_saab.primitives import relationships as rel
-from app.raman_saab.primitives.bhangas import neecha_bhanga
 from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS, functional_nature)
@@ -116,6 +121,12 @@ def influence(chart: RamanChart, planet: str, own_lord: Optional[str], graded: O
     if nature == "yogakaraka":
         return Item(sub, f"{who} {how}: a yogakaraka, so not harmful", 1,
                     cite("yogakaraka_defused"))
+    if _benefic_sixth_lord(chart, planet):
+        # Round 2 (B2): "The affliction is heavy because of association with the Moon lord of
+        # the sixth" (HTJAH:4405-4406); "The fourth lord Moon is in the seventh with Mercury
+        # lord of the third and sixth and hence blemished" (HTJAH:4472-4473).
+        return Item(sub, f"{who} {how}: a natural benefic, but lord of the 6th, so it "
+                         "afflicts", -1, cite("benefic_sixth_lord_blemish"))
     if planet in NATURAL_BENEFICS:
         if nature == "malefic":
             return Item(sub, f"{who} {how}: a natural benefic but a functional malefic for this "
@@ -131,6 +142,49 @@ def influence(chart: RamanChart, planet: str, own_lord: Optional[str], graded: O
                          "its aspect causes little mischief", 0,
                     cite("dispositor_aspect_harmless"))
     return Item(sub, f"{who} {how}: a malefic influence", -1, cite("malefic_afflicts"))
+
+
+def _benefic_sixth_lord(chart: RamanChart, planet: str) -> bool:
+    """A natural benefic owning the 6th from the Lagna and none of the Lagna, 5th or 9th
+    (Round 2, B2). The Lagna and trine lords are excluded because Raman holds the 9th lord
+    "decidedly more benefice" (HTJAH:575-578) and the Lagna lord protective; the house's own
+    lord is handled before this test."""
+    if planet not in NATURAL_BENEFICS:
+        return False
+    owned = set(_houses_owned(chart, planet))
+    return 6 in owned and not (owned & {1, 5, 9})
+
+
+def raman_neecha_bhanga(planet: str, chart: RamanChart) -> bool:
+    """Cancellation of debility on Raman's printed conditions only (Round 2, A2).
+
+    HTJAH:16178-16181: "If a planet is in debility and the lord of this sign or the planet who
+    gets exalted there is in Kendra from the Moon or Lagna" and "If a planet is neecha
+    (debilitated) in Rashi but gets exalted in Amsa". Every reason Raman gives in a worked chart
+    is one of these (HTJAH:2037-2038, 8858-8859, 8888-8889, 8966-8967, 9133-9134). The engine's
+    primitive also cancels when the dispositor joins or aspects the planet; Raman prints no such
+    condition, so the reader does not use it. A kendra from the Moon counts the Moon's own sign.
+    """
+    p = chart.planets.get(planet)
+    if p is None or planet in _NODES or dignity(planet, chart) != "debil":
+        return False
+    moon = chart.planets.get("Moon")
+    refs = [chart.asc_sign] + ([moon.sign] if moon is not None else [])
+    exalted_here = next((q for q, (s, _d) in rel.EXALTATION.items() if s == p.sign
+                         and q not in _NODES), None)
+    for q in (SIGN_LORDS[p.sign], exalted_here):
+        qp = chart.planets.get(q) if q else None
+        if qp is not None and any(count(r, qp.sign) in _KENDRA for r in refs):
+            return True
+    return p.navamsa_sign == rel.EXALTATION[planet][0]
+
+
+def sign_relation(planet: str, sign: int) -> str:
+    """Raman's "friendly" / "inimical" sign: the natural relation to the sign's lord (Round 2,
+    A3). Chart 48, Jupiter in Libra, "placed in an inimical sign" (HTJAH:2930-2931); Chart 60,
+    Mars in Gemini, "in the sign of an enemy" (HTJAH:3811-3812); Chart 59, Venus "occupies
+    Gemini, a friendly sign" (HTJAH:3779). The compound relation reads all three neutral."""
+    return rel.naisargika(planet, SIGN_LORDS[sign])
 
 
 def _sign_of(chart: RamanChart, planet: str) -> int:
@@ -209,8 +263,10 @@ def grade_house(chart: RamanChart, house: int) -> Factor:
     for name in aspecters:
         items.append(influence(chart, name, own_lord, None, "aspects"))
     if not occupants and not aspecters:
-        items.append(Item("occupants", f"{subject} is neither occupied nor aspected", 0,
-                          cite("empty_house_stated")))
+        # Round 2 (A8): "not occupied or aspected by any planets, benefice or malefic. Hence it
+        # is fairly strong" (HTJAH:3669-3670; again HTJAH:2809-2810).
+        items.append(Item("occupants", f"{subject} is neither occupied nor aspected, which is "
+                                       "good", 1, cite("empty_house_fairly_strong")))
     items += _kartari_items(chart, house, subject)
     nav_shift, nav_note = _navamsa_house(chart, house)
     return _finish("house", subject, items, nav_shift, nav_note)
@@ -274,6 +330,11 @@ def grade_planet(chart: RamanChart, planet: str, *, step: str, house: int, role:
     if count(house, h) == 12 and h not in _DUSTHANA and not own_sign:
         items.append(Item("position", f"{planet} is in the 12th from the {ordinal(house)} house",
                           -1, cite("spouse_death_loss_house")))
+    if planet == own_lord and count(house, h) == 8 and h not in _DUSTHANA:
+        # Round 2 (B1): "posited in a Kendra and own sign but his situation in the 8th from the
+        # 3rd ... renders him weak" (HTJAH:3826-3828); own sign does not cancel it there.
+        items.append(Item("position", f"{planet} is in the 8th from the {ordinal(house)} house, "
+                                      "its own house", -1, cite("eighth_from_own_house")))
     if h in karaka_bhava:
         items.append(Item("position", f"{planet}, the karaka, sits in its own Bhava (the "
                                       f"{ordinal(h)}), which harms its matter", -1,
@@ -288,9 +349,9 @@ def grade_planet(chart: RamanChart, planet: str, *, step: str, house: int, role:
     elif dig == "debil":
         exalted_benefic = [a for a in drishti.aspecting_planets(planet, chart)
                            if a in NATURAL_BENEFICS and dignity(a, chart) == "exalt"]
-        if neecha_bhanga(planet, chart):
+        if raman_neecha_bhanga(planet, chart):
             items.append(Item("dignity", f"{planet} is debilitated, but gets neechabhanga", 0,
-                              cite("neechabhanga")))
+                              cite("neechabhanga_conditions")))
         elif exalted_benefic:
             items.append(Item("dignity", f"{planet} is debilitated, but the exalted "
                                          f"{exalted_benefic[0]} aspects it, which cancels the "
@@ -298,12 +359,17 @@ def grade_planet(chart: RamanChart, planet: str, *, step: str, house: int, role:
         else:
             items.append(Item("dignity", f"{planet} is debilitated in {SIGNS[p.sign]}", -1,
                               cite("debility_combustion_destroys")))
-    elif dig == "enemy":
+    elif planet in _NODES:
+        items.append(Item("dignity", f"{planet} is in {SIGNS[p.sign]}; a node is read by its "
+                                     "sign lord, not by dignity", 0, cite("node_sign_lord")))
+    elif sign_relation(planet, p.sign) == "enemy":
         items.append(Item("dignity", f"{planet} is in an inimical sign {SIGNS[p.sign]}", -1,
-                          cite("debility_combustion_destroys")))
+                          cite("inimical_sign_natural")))
     else:
-        items.append(Item("dignity", f"{planet} is in a {dig} sign {SIGNS[p.sign]}", 0,
-                          cite("lord_first_printed")))
+        word = "friendly" if sign_relation(planet, p.sign) == "friend" else "neutral"
+        items.append(Item("dignity", f"{planet} is in a {word} sign {SIGNS[p.sign]}", 0,
+                          cite("friendly_sign_natural") if word == "friendly"
+                          else cite("lord_first_printed")))
     if p.combust_fraction > 0.0:
         items.append(Item("dignity", f"{planet} is combust", -1, cite("combust_powerless")))
     # 3. associates
@@ -382,8 +448,9 @@ def grade_from_moon(chart: RamanChart, house: int) -> Factor:
     for name in drishti.aspecting_house(target_h, chart):
         items.append(influence(chart, name, lord, None, "aspects"))
     if not items:
-        items.append(Item("occupants", f"{subject} is neither occupied nor aspected", 0,
-                          cite("empty_house_stated")))
+        # Round 2 (A8), as for the house itself (HTJAH:3669-3670).
+        items.append(Item("occupants", f"{subject} is neither occupied nor aspected, which is "
+                                       "good", 1, cite("empty_house_fairly_strong")))
     items += _kartari_items(chart, target_h, subject)
     lp = chart.planets.get(lord)
     if lp is not None:
@@ -398,7 +465,7 @@ def grade_from_moon(chart: RamanChart, house: int) -> Factor:
         if dig in ("exalt", "own", "moolatrikona"):
             items.append(Item("dignity", f"{lord} is {'exalted' if dig == 'exalt' else 'in its own sign'}",
                               1, cite("lord_first_printed")))
-        elif dig == "debil" and not neecha_bhanga(lord, chart):
+        elif dig == "debil" and not raman_neecha_bhanga(lord, chart):
             items.append(Item("dignity", f"{lord} is debilitated", -1,
                               cite("debility_combustion_destroys")))
     return _finish("moon", subject, items, 0, "the view from the Moon is read briefly, without "

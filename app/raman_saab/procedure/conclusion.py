@@ -3,9 +3,9 @@
 Spec 4.1: with house, lord and karaka graded, the verdict goes with the majority
 (HTJAH:2111-2113, 5729-5730). Spec 4.2: which factor wins a split, by matter (brothers and
 children: the lord over the house; the mother: the Moon decides an early loss, the house and
-lord how long; education: two separate answers; the father: the karaka; longevity: the Lagna
-lord against the 8th lord, then Saturn; gains: wealth yogas outrank the 11th house; elder
-brothers: agreement of the Lagna and Moon views). Spec 4.4: one benefic sets a floor (the
+lord how long; education: two separate answers; the father: an afflicted karaka; longevity:
+the Lagna lord against the 8th lord, then Saturn, unless they are one planet; gains: wealth
+yogas outrank the 11th house; elder brothers: agreement of the Lagna and Moon views). Spec 4.4: one benefic sets a floor (the
 thing comes but suffers) and none means denial. Spec 4.5: a blemish shows as a quality or a
 shorter duration.
 
@@ -114,10 +114,25 @@ def conclude(matter: Matter, factors: dict[str, Factor], *,
                 ("schooling (the house and lord)", school)]
         rule = "two separate answers; the overall verdict is the tally (convention)"
         rule_cite, basis = cite("education_karaka_vs_house"), "convention"
-    elif d == "father" and k != "neutral":
-        verdict = _VERDICT_OF_VOTE[k]
+    elif d == "father" and k == "bad":
+        # Round 2 (A1): "Afflictions to the pitruKaraka by association, aspect, placement or
+        # otherwise are very important in depriving a native of his father" (HTJAH:13126-13127).
+        # The sentence is about afflictions: an afflicted Sun decides, a strong Sun does not
+        # rescue an afflicted 9th house and lord (the two-of-three tally stands).
+        verdict = "afflicted"
         rule, rule_cite = ("afflictions to the karaka Sun are decisive for the father",
                            cite("father_karaka_decides"))
+    elif d == "father" and k == "good":
+        rule = ("a strong Sun does not overrule the 9th house and lord; two of the three "
+                "factors carry the verdict")
+    elif d == "longevity" and lagna_lord is not None and _same_planet(lagna_lord, factors["lord"]):
+        # Round 2 (A6): for an Aries or Libra Lagna the Lagna lord is the 8th lord, so "the 8th
+        # lord stronger than Lagna lord" (HTJAH:11415-11416) compares a planet with itself. The
+        # comparison does not apply; the plain tally (HTJAH:2111-2113) stands.
+        rule = ("the Lagna lord is also the 8th lord, so the two cannot be compared; two of the "
+                "three factors carry the verdict")
+        subs = [("the Lagna lord against the 8th lord",
+                 f"the same planet ({lagna_lord.subject.split()[-1]}): not compared")]
     elif d == "longevity" and lagna_lord is not None:
         li, ei = GRADES.index(lagna_lord.grade), GRADES.index(factors["lord"].grade)
         band = "favourable" if li > ei else ("mixed" if li == ei else "afflicted")
@@ -162,6 +177,11 @@ def conclude(matter: Matter, factors: dict[str, Factor], *,
     sentence = _sentence(matter, factors, steps, verdict, outcome)
     return Conclusion(tuple((s, votes[s]) for s in steps), tally, rule, rule_cite, basis,
                       verdict, outcome, tuple(subs), sentence)
+
+
+def _same_planet(a: Factor, b: Factor) -> bool:
+    """Whether two graded planet factors are the same planet (their subject ends in its name)."""
+    return a.subject.split()[-1] == b.subject.split()[-1]
 
 
 def _clause(f: Factor) -> str:

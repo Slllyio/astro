@@ -286,3 +286,10 @@ Moon column: printed or balance-implied / cast (difference, deg); for sign-only 
 | HTJAH-I.x80 | 1856-09-07T16:00 | sign | -- / Sc 22.1 | -- / Cp 19.6 |  | fit |  |
 | HTJAH-I.x93 | 1903-06-03T19:00 | sign | -- / Vi 3.6 | -- / Sg 0.7 |  | fit |  |
 | HTJAH-II.x226 | 1914-05-26T19:28 | balance | 60.2 / 60.1 (0.1) | -- / Sc 27.1 | bal Mars 3-4-15 | fit |  |
+## Applied 2026-10-26 (user decision "Fix")
+
+The eight certain misfits (rows 1-8) were re-cast in `tests/fixtures/raman_goldens.jsonl` (birth fields only, plus Vivekananda's `lagna_sign` 4 -> 9). Rows 9-13 are held pending a page-image check.
+
+- Engine ratchet: 269/389 -> **263/389 exact**, 354 -> **350 within one**, real errors 35 -> **39** (new: NH.chart_36 H7, H9, H10; NH.chart_67 H5). Baseline re-based with lineage in `golden_accuracy_baseline.json`.
+- Tier-3 evidence snapshots refreshed for HTJAH-I.chart_15 and chart_53; doctrine snapshot re-frozen, with differences confined to the eight charts.
+- Procedure reader (descriptive): 151/293/96 -> 154/294/95.

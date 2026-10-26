@@ -293,3 +293,13 @@ The eight certain misfits (rows 1-8) were re-cast in `tests/fixtures/raman_golde
 - Engine ratchet: 269/389 -> **263/389 exact**, 354 -> **350 within one**, real errors 35 -> **39** (new: NH.chart_36 H7, H9, H10; NH.chart_67 H5). Baseline re-based with lineage in `golden_accuracy_baseline.json`.
 - Tier-3 evidence snapshots refreshed for HTJAH-I.chart_15 and chart_53; doctrine snapshot re-frozen, with differences confined to the eight charts.
 - Procedure reader (descriptive): 151/293/96 -> 154/294/95.
+
+## Part 2, 2026-10-26 (user: "Go ahead" on checking the held charts)
+
+- **Tennyson (NH 25)** — page image (epub p.159) prints "6th August 1809 at about 11.45 p.m.", Moon 53°45', Lagna 55°, and the prose "Lagna is occupied by the Moon". Re-cast to 1809-08-05 23:41, which reproduces his chart (Lagna 55.2°, Taurus). No verdict change.
+- **Dalmia (NH 62)** — page image (epub p.346) prints 9-31 a.m. L.M.T. and Lagna 60°49' ("Gemini Lagna rising"). The record's data was transcribed correctly; Raman's Lagna needs 09:43. Re-cast to 09:43, as with the earlier Lagna re-timings. H2 becomes exact; H7 inverts (new real error).
+- **HTJAH-I chart 29** — "18-3-1903 at 12 a.m." read as the midnight closing the 18th, by Raman's printed balance: 1903-03-19 00:00. No verdict change.
+- **HTJAH-II h12_04 (Sukarno)** — "6-6-1901 about midnight", by the balance: 1901-06-07 00:00. H12 moves exact -> one step.
+- **HTJAH-I chart 18 — held.** The text prints "12-8-1896 at 1-52 a.m." plainly; the alternative leaves a 4° residual. There are no HTJAH scans on the PC to check further.
+
+Ratchet: 263/350/39 -> **262/389 exact, 349 within one, 40 real errors**.

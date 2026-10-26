@@ -3,14 +3,22 @@
     "citations": [
       "HTJAH-I:1072",
       "HTJAH-I:1106",
+      "HTJAH-I:1108",
+      "HTJAH-I:1112",
       "HTJAH-I:1133",
-      "HTJAH-I:1347"
+      "HTJAH-I:1139",
+      "HTJAH-I:1369",
+      "HTJAH-I:1505"
     ],
     "fired_rule_ids": [
       "H1.B.14",
+      "H1.B.16",
+      "H1.B.19",
       "H1.C.30",
+      "H1.C.34",
       "H1.L.11",
-      "H1.M.S07"
+      "H1.M.S08",
+      "H1.P.Moon"
     ],
     "rollup": "favourable",
     "significations": {

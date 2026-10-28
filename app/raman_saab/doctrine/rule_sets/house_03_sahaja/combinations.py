@@ -735,7 +735,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     #       the lord of the 3rd is placed in a house of loss/affliction.
     RuleRecord(
         id="H3.C.31", house=3, signification="ear_throat", group="combination",
-        kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
+        kind="descriptive",
         condition=C.Or(C.LordIn(3, 6), C.LordIn(3, 8), C.LordIn(3, 12)),
         fortified=None,
         afflicted="the 3rd lord placed in a dusthana (6th, 8th, or 12th) -> ear/throat "

@@ -1006,14 +1006,16 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 16469)),
     RuleRecord(
         id="H12.C.J11", house=12, signification="left_eye", group="combination",
-        kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
+        kind="descriptive",
         condition=C.InRashiHouse("Mars", 12),
         fortified=None,
         afflicted="Mars in the 12th → injures the right eye",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 16470)),
     RuleRecord(
         id="H12.C.J12", house=12, signification="left_eye", group="combination",
-        kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
+        kind="descriptive",
         condition=C.And(C.InRashiHouse("Sun", 6), C.InRashiHouse("Moon", 12)),
         fortified=None,
         afflicted="the Sun and the Moon in the 6th and the 12th from Lagna → one may lose one "

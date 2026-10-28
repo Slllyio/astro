@@ -130,7 +130,7 @@ class TestThePersistenceFormatIsLossless:
         """Interning is only acceptable if a human can still find a rule by name."""
         compact = json.loads(ds.SNAPSHOT_PATH.read_text(encoding="utf-8"))
         fired = compact["tables"]["fired"]
-        assert any(e.startswith("H8.L.1|") for e in fired), "rule ids must remain searchable"
+        assert any(e.startswith("H8.P.Mars|") for e in fired), "rule ids must remain searchable"
         assert all(e.count("|") == 2 for e in fired), "each entry is ruleId|branch|textHash"
 
     def test_the_file_is_small_enough_to_carry_in_the_repo(self) -> None:

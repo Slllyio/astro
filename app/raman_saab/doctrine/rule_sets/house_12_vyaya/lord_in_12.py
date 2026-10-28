@@ -142,9 +142,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 16157)),
     RuleRecord(
         id="H12.L.4", house=12, signification="loss_moksha",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
         # 2026-10-13 House-12 sweep (5/12 correct): 'well placed' (16164) is strength and
         # stays; the Venus clause (16166) is another planet's strength -> H12.L.4a.
-        group="lord_in_house", kind="evaluable",
+        group="lord_in_house", kind="descriptive",
         condition=C.LordIn(12, 4),
         fortified="the twelfth lord well placed - these adverse indications get mitigated "
                   "to a large extent",

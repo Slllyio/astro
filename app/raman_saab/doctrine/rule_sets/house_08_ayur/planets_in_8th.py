@@ -20,7 +20,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # — Planets in the 8th House (HTJAH-II:3483–3578) —
     RuleRecord(
         id="H8.P.Sun", house=8, signification="longevity", group="planet_in_house",
-        kind="evaluable", condition=C.InRashiHouse("Sun", 8),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 3485.
+        kind="descriptive", condition=C.InRashiHouse("Sun", 8),
         # SPLIT. The affliction scope runs 3485-3491 and ends at the configuration sentence;
         # 'He will have limited progeny, mostly male' (3492-3493) then stands unconditioned.
         general="limited progeny, mostly male",
@@ -31,10 +32,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "in life, weak eyes, penury and an uneventful life; (a configuration) Sun in "
                   "the 8th with the Moon or Rahu in the 12th and Saturn in a trine -> dental "
                   "trouble",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3483)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3485)),
     RuleRecord(
         id="H8.P.Moon", house=8, signification="longevity", group="planet_in_house",
-        kind="evaluable", condition=C.InRashiHouse("Moon", 8),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 3505.
+        kind="descriptive", condition=C.InRashiHouse("Moon", 8),
         # SENTIMENT-SPLIT. Zero openers of either kind; one unconditioned block cut so that
         # its only pleasant clause (3502-3503) went to fortified. Restores 'apprehensive',
         # 'amusement', 'large-hearted' and 'excessive perspiration', all dropped.
@@ -46,7 +48,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified=None,
         afflicted="(a conjunction, not an affliction) Mars and Saturn conjoining -> the "
                   "eyesight is afflicted",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3498)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3505)),
     RuleRecord(
         id="H8.P.Mars", house=8, signification="longevity", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Mars", 8),
@@ -110,6 +112,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 3539)),
     RuleRecord(
         id="H8.P.Saturn", house=8, signification="longevity", group="planet_in_house",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): benefic.
         kind="evaluable", condition=C.InRashiHouse("Saturn", 8),
         # SPLIT, with a sentiment-split nested inside it: 'good longevity BUT many
         # responsibilities' is one sentence that was cut across both slots.
@@ -122,10 +125,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "grief, and the native will be dishonest and cruel; (configurations) with "
                   "Mars and Rahu in Lagna and Gulika in a trine -> generative-organ disease; "
                   "with the Moon -> flatulence and spleen",
-        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3550)),
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 3550)),
     RuleRecord(
         id="H8.P.Rahu", house=8, signification="longevity", group="planet_in_house",
-        kind="evaluable", condition=C.InRashiHouse("Rahu", 8),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
+        kind="descriptive", condition=C.InRashiHouse("Rahu", 8),
         # Relocated 2026-09-01: Raman states this flatly for the placement, so it is
         # his GENERAL reading, not a strength branch. Text copied verbatim — this
         # section was ruled unconditioned by the planet_in_house sweep's review, and
@@ -141,9 +145,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3568)),
     RuleRecord(
         id="H8.P.Ketu", house=8, signification="longevity", group="planet_in_house",
-        kind="evaluable", condition=C.InRashiHouse("Ketu", 8),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 3575.
+        kind="descriptive", condition=C.InRashiHouse("Ketu", 8),
         fortified="aspected by benefic → much wealth, long life",
         afflicted="covets others' wealth and women; excretory-system disease; profligacy "
                   "diseases",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3574)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3575)),
 )

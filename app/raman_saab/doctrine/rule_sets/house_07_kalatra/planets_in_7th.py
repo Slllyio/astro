@@ -136,6 +136,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 555)),
     RuleRecord(
         id="H7.P.Saturn", house=7, signification="spouse", group="planet_in_house", kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): cite, cite 638.
         condition=C.InRashiHouse("Saturn", 7),
         # SENTIMENT-SPLIT: the whole entry (562-571), a single alternating list, was cut
         # down the middle. Restores Raman's hedge 'provided of course there are other
@@ -150,7 +151,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="if Mars afflicts -> courts may intervene, or violence such as suicide or "
                   "murder may destroy the marriage, provided of course there are other "
                   "afflictions",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 562)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 638)),
     RuleRecord(
         id="H7.P.Rahu", house=7, signification="spouse", group="planet_in_house", kind="evaluable",
         condition=C.InRashiHouse("Rahu", 7),

@@ -832,7 +832,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 7498)),
     RuleRecord(
-        id="H9.C.35", house=9, signification="higher_learning", group="combination", kind="evaluable",
+        id="H9.C.35", house=9, signification="fortune", group="combination", kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): reroute -> fortune.
         condition=_PlanetInHouseNotWith(9, ("Mercury", "Jupiter")),
         fortified=None,
         afflicted="planets in the 9th not associated with Mercury and Jupiter → diseased, forlorn, "
@@ -874,7 +875,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "malefic sign) → goes abroad but good fortune evades him",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7501)),
     RuleRecord(
-        id="H9.D.40", house=9, signification="long_journeys", group="combination", kind="evaluable",
+        id="H9.D.40", house=9, signification="long_journeys", group="combination", kind="descriptive",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
         condition=C.And(C.Conjunct("Sun", "Moon"), C.Conjunct("Moon", "Saturn")),
         fortified=None,
         afflicted="the Sun, the Moon and Saturn in the same sign → wicked and deceitful, tries to "

@@ -76,8 +76,11 @@ class TestItReportsWhatDecidesTheCall:
     def test_moved_rows_carry_the_golden_and_both_verdicts(self, charts) -> None:
         """Direction is the point. Each moved row reports golden, current and proposed so a
         re-base can be argued from the specific chart rather than from a net count."""
-        d = cd.measure("H8.L.1", C.LordIn(8, 1), charts)   # widen H8.L.1 back to bare
-        assert d.moved, "widening H8.L.1 should move Lincoln's H8/death row"
+        # Widen H8.P.Mars to every chart. (The fixture used to be H8.L.1 widened to bare; that
+        # rule became descriptive in the 2026-10-28 rule-defect review and no longer fires.)
+        always = C.Or(C.InHouse("Sun", 1), C.Not(C.InHouse("Sun", 1)))
+        d = cd.measure("H8.P.Mars", always, charts)
+        assert d.moved, "widening H8.P.Mars should move Lincoln's H8/death row"
         for cid, sig, gold, now, prop in d.moved:
             assert cid and sig and gold and now and prop
         rendered = str(d)

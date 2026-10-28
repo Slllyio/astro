@@ -113,3 +113,22 @@ support them. F5 helps some longevity rows and hurts others; Raman's span method
 Pindayu are not the same thing on every chart. The Mainpuri 10th and 11th therefore still read
 afflicted in the procedure reader, and the hand reading's "favourable" for them stays an opinion,
 not a measured fix.
+
+---
+
+## Addendum 1 (2026-10-28, written before any number for these two variants exists)
+
+The user looked at the re-built Mainpuri page and objected that the 10th and 11th still read
+afflicted. A line-by-line read of those two houses found two testimonies that contradict a rule
+the reader already applies elsewhere. Each is pre-registered here as a narrow variant and measured
+under the same pass rule (rules 1-4 above), against the shipped state **153 / 298 / 91**.
+
+| Id | Fix | Raman basis |
+|---|---|---|
+| F4b | In the Navamsa house test, **only the house's own lord** is not counted against his house (F4 without its own-sign and exaltation clauses). On Mainpuri the 10th lord Sun, in his own Leo in the Navamsa, currently lowers the 10th. | "as he happens to be the 7th lord himself" (HTJAH:8594-8595, `own_lord_defused`); the reader already applies it in the Rasi. |
+| F6 | A natural malefic that **owns a kendra other than the Lagna** and that Raman's table prints **neutral** counts 0 as an occupant, associate or aspecter ("named both ways"), not -1. On Mainpuri this is Saturn, lord of the 3rd and 4th, whose one aspect lowers the 11th house, the 10th lord and the karaka Jupiter. | Kendra lords that are not natural benefics are among the benefic lords (HTJAH:573-604; procedure spec 2.1); the table's "neutral" (HTJAH-I:552-553) sets the net to nothing, as the reader's `dual_nature_named` does for a functional benefic. |
+
+F4b is the part of F4 with a printed citation; F4 as a whole failed. Choosing it after seeing F4's
+six changed rows is a post-hoc narrowing, and is recorded as such: two of those six rows
+(NH.chart_25 H7, NH.chart_57 H10) were own-lord cases that moved toward Raman. The variant is
+justified by the citation, not by those rows, and is measured on all 389 like any other.

@@ -380,13 +380,15 @@ class TestMainpuriFixes:
     """The fixes that passed the pre-registered rule, and the switches of those that failed."""
 
     def test_switches_match_the_preregistered_results(self) -> None:
-        """F1 and F2 passed (153/298/91 against 152/295/94); F3, F4 and F5 failed and stay off."""
+        """F1, F2 and F4b passed (154/298/91 against 152/295/94); F3, F4, F5 and F6 stay off."""
         from app.raman_saab.procedure.grading import FIXES
         assert FIXES == {"F1_lagna_lord_balanced": True,
                          "F2_lord_in_own_house_aspect_once": True,
                          "F3_node_aspect_from_bhava": False,
                          "F4_navamsa_own_sign_malefic": False,
-                         "F5_span_decides_longevity": False}
+                         "F5_span_decides_longevity": False,
+                         "F4b_navamsa_own_lord": True,
+                         "F6_kendra_neutral_malefic": False}
 
     def test_lagna_lord_mars_is_balanced_not_malefic(self, mainpuri) -> None:
         """F1: Mars, Scorpio's Lagna lord, in the 11th counts 0, not as a malefic (HTJAH:575-578)."""
@@ -445,3 +447,12 @@ class TestMainpuriFixes:
         text = to_text(read_procedure(mainpuri, with_timing=False))
         hits = [ln for ln in text.splitlines() if _FORBIDDEN_RE.search(ln)]
         assert not hits, hits[:5]
+
+
+class TestAddendumOne:
+    """F4b: the house's own lord does not afflict his house in the Navamsa."""
+
+    def test_tenth_lord_sun_spared_in_navamsa(self, mainpuri) -> None:
+        """Sun, 10th lord, in his own Leo in the Navamsa 10th: named, not counted (HTJAH:8594)."""
+        f = read_matter(mainpuri, 10, "profession", with_timing=False).factors[0]
+        assert "Sun, the house's own lord, so not counted against it" in f.navamsa_note

@@ -132,3 +132,22 @@ F4b is the part of F4 with a printed citation; F4 as a whole failed. Choosing it
 six changed rows is a post-hoc narrowing, and is recorded as such: two of those six rows
 (NH.chart_25 H7, NH.chart_57 H10) were own-lord cases that moved toward Raman. The variant is
 justified by the citation, not by those rows, and is measured on all 389 like any other.
+
+### Addendum 1 results (against 153 / 298 / 91)
+
+| Variant | Exact | Within one | Real errors | Rule 1 | Random sample (rule 2) |
+|---|---|---|---|---|---|
+| F4b own lord in the Navamsa | 154 | 298 | 91 | pass | no change in the sample: pass |
+| F6 kendra-owning neutral malefic | 154 | 298 | 91 | pass | 1 changed, further (NH.chart_55 H1, Raman afflicted, became mixed): **fail** |
+| F4b + F6 | 154 | 298 | 91 | pass | as F6: fail |
+
+F4b ships (reader now **154 / 298 / 91**). F6 is held behind its switch. Of its 25 changed rows,
+the 10th and 11th rows moved toward Raman (NH.chart_42, 61, 69 H10; HTJAH-II.h11_15, x226 H11),
+while 8th, 9th and 12th affliction rows moved away (Gandhi H8, NH.chart_30 H9/H12, NH.chart_58 H12,
+NH.chart_52 H5). Restricting it to the 10th and 11th would be choosing the rule by its results, so
+it is not done.
+
+On Mainpuri the template tally therefore still reads the 10th and 11th afflicted: Saturn's
+aspect (F6, held) and Rahu's sign aspect on the 10th (F3, held) are what remain. The page now leads
+each house with the main engine's verdict (the scored judge, 260/389 exact), which reads both
+favourable, and shows the template tally beside it.

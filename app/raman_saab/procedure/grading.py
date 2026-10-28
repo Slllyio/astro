@@ -65,6 +65,8 @@ FIXES: dict[str, bool] = {
     "F3_node_aspect_from_bhava": False,
     "F4_navamsa_own_sign_malefic": False,
     "F5_span_decides_longevity": False,
+    "F4b_navamsa_own_lord": True,
+    "F6_kendra_neutral_malefic": False,
 }
 
 SIGNS: tuple[str, ...] = (
@@ -163,6 +165,13 @@ def influence(chart: RamanChart, planet: str, own_lord: Optional[str], graded: O
         # HTJAH-I:552-553); as a natural malefic he is named both ways, as a dual planet is.
         return Item(sub, f"{who} {how}: the Lagna lord, good as a benefic lord and bad as a "
                          "natural malefic; the two are balanced", 0, cite("functional_benefics"))
+    if (FIXES["F6_kendra_neutral_malefic"] and planet in NATURAL_MALEFICS
+            and nature == "neutral" and set(_houses_owned(chart, planet)) & {4, 7, 10}):
+        # F6 (Addendum 1): kendra lords that are not natural benefics are among the benefic
+        # lords (HTJAH:573-604); the table prints this one neutral, so it is named both ways.
+        return Item(sub, f"{who} {how}: a kendra lord, which a natural malefic turns good, and "
+                         "neutral in Raman's table for this Lagna; the two are balanced", 0,
+                    cite("functional_benefics"))
     if _benefic_sixth_lord(chart, planet):
         # Round 2 (B2): "The affliction is heavy because of association with the Moon lord of
         # the sixth" (HTJAH:4405-4406); "The fourth lord Moon is in the seventh with Mercury
@@ -323,6 +332,11 @@ def _navamsa_house(chart: RamanChart, house: int) -> tuple[int, str]:
     mal = [n for n, p in chart.planets.items() if p.navamsa_sign == target
            and n in NATURAL_MALEFICS]
     spared: list[str] = []
+    if FIXES["F4b_navamsa_own_lord"] and not FIXES["F4_navamsa_own_sign_malefic"]:
+        # F4b (Addendum 1): the house's own lord does not afflict his house in the Navamsa
+        # either (``own_lord_defused``, HTJAH:8594-8595).
+        spared = [n for n in mal if n == SIGN_LORDS[house_sign(chart, house)]]
+        mal = [n for n in mal if n not in spared]
     if FIXES["F4_navamsa_own_sign_malefic"]:
         # F4 (2026-10-28): own sign cancels a malefic occupant's blemish in the Rasi
         # (``own_sign_cancels``); read the same way in the Navamsa, and the house's own lord
@@ -332,8 +346,9 @@ def _navamsa_house(chart: RamanChart, house: int) -> tuple[int, str]:
             SIGN_LORDS[target] == n or rel.EXALTATION[n][0] == target or n == own_lord)]
         mal = [n for n in mal if n not in spared]
     net = len(ben) - len(mal)
-    note = (" (" + ", ".join(spared) + " in its own or exaltation sign, or the house's own "
-            "lord, so not counted against it)") if spared else ""
+    note = (" (" + ", ".join(spared) + (" in its own or exaltation sign, or the house's own lord"
+            if FIXES["F4_navamsa_own_sign_malefic"] else ", the house's own lord")
+            + ", so not counted against it)") if spared else ""
     if net == 0:
         return 0, (f"In the Navamsa the {ordinal(house)} from the Navamsa Lagna "
                    f"({SIGNS[target]}) holds " + (", ".join(ben + mal + spared) or "no planet")

@@ -1,0 +1,1605 @@
+[
+ {
+  "chart_no": "35.2",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 69,
+  "last_line": 82,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, born on 11th July 1872, 7-45 a.m. (IT 25' E. and 13\u00b0 N.)",
+  "birth": {
+   "date": "1872-07-11",
+   "time": "07:45",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 25,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lon_deg",
+    "raw": "IT",
+    "reading": 77,
+    "alternatives": [
+     11,
+     17,
+     71
+    ],
+    "note": "OCR 'IT' read as 77 (same coordinates as 35.5, Bangalore region)"
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Cancer",
+  "lagna_sign_printed": "Cancer",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "Father died in the 2nd year",
+    "line": 78,
+    "why": "Father's death in the native's 2nd year."
+   },
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "afflicted",
+    "quote": "two wives ; mark how Venus is afflicted",
+    "line": 81,
+    "why": "Two marriages, framed with affliction of Venus; no statement that the second marriage was happy."
+   },
+   {
+    "house": "H3",
+    "signification": "siblings",
+    "verdict": "afflicted",
+    "quote": "lost two sisters early",
+    "line": 82,
+    "why": "Loss of two sisters early in life."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.3",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 84,
+  "last_line": 94,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, born on 10th August 1874, 1-40 a.m. (93\u00b0 30' W. and 41\u00b0 50' N.)",
+  "birth": {
+   "date": "1874-08-10",
+   "time": "01:40",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 41,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 93,
+   "lon_min": 30,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Taurus",
+  "lagna_sign_printed": "Taurus",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Libra",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "A great politician and equal to a king in status; saved Europe from anarchy",
+    "line": 92,
+    "why": "Eminent political career with a major achievement."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "equal to a king in status",
+    "line": 93,
+    "why": "Royal-equivalent status attained."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "humane and tactful",
+    "line": 94,
+    "why": "Favourable character traits of the native."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.4",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 96,
+  "last_line": 112,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female, born on 30th October 1920, 8-30 p.m. (12\u00b0 N. and 76\u00b0 38' E.)'",
+  "birth": {
+   "date": "1920-10-30",
+   "time": "20:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Taurus",
+  "lagna_sign_printed": "Taurus",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Aries",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "died in her 14th year",
+    "line": 112,
+    "why": "Death in childhood = short life."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.5",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 114,
+  "last_line": 126,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female, born on 12th June 1909, at 4-25 p.m. (IT 25' E. and 13\u00b0 N.)",
+  "birth": {
+   "date": "1909-06-12",
+   "time": "16:25",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 25,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lon_deg",
+    "raw": "IT",
+    "reading": 77,
+    "alternatives": [
+     11,
+     17,
+     71
+    ]
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Taurus",
+  "lagna_sign_printed": "Taurus",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H7",
+    "signification": "spouse",
+    "verdict": "afflicted",
+    "quote": "a strong combination for widowhood which took away her husband in her 14 year",
+    "line": 125,
+    "why": "Husband died; native widowed at 14."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.6",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 128,
+  "last_line": 139,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female, born on 11th January 1928, at 8-30 a.m. (77\u00b025'E. and 13 c N.)",
+  "birth": {
+   "date": "1928-01-11",
+   "time": "08:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 25,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "13 c N.",
+    "reading": 13,
+    "note": "'c' = degree sign"
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Aquarius",
+  "lagna_sign_printed": "Aquarius",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": null
+   }
+  },
+  "same_as": "Probably the same native as 14.1 (female child, same date 11 Jan 1928, died at 15/16 months); 14.1 prints 7 ghatikas after sunrise and 74\u00b0E 12\u00b0N",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "A typical Balarishta horoscope; died in the 15th month",
+    "line": 136,
+    "why": "Death in infancy."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.7",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 141,
+  "last_line": 152,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, born on 28th September 1852, (51\u00b0 3' N. and 0\u00b030' E.)",
+  "birth": {
+   "date": "1852-09-28",
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 51,
+   "lat_min": 3,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 30,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time",
+    "note": "no birth time printed"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Aquarius",
+  "lagna_sign_printed": "Aquarius",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": null,
+    "deg": null
+   },
+   "Ketu": {
+    "sign": null,
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "An excellent military career; commanded the British Army in the Great War",
+    "line": 149,
+    "why": "Outstanding career at the top of the army."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "Earldom\u2014 1921",
+    "line": 151,
+    "why": "Received an earldom (title/honour)."
+   }
+  ],
+  "notes": "Rahu and Ketu positions not printed."
+ },
+ {
+  "chart_no": "35.8",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 154,
+  "last_line": 168,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, born on 21st August 1858, at 10-15 p.m. (48\u00b0 13' N. and 16\u00b0 23' E.)",
+  "birth": {
+   "date": "1858-08-21",
+   "time": "22:15",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 48,
+   "lat_min": 13,
+   "lat_dir": "N",
+   "lon_deg": 16,
+   "lon_min": 23,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Taurus",
+  "lagna_sign_printed": "Taurus",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Leo",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "fortune",
+    "verdict": "afflicted",
+    "quote": "An ill-starred Prince",
+    "line": 163,
+    "why": "'Ill-starred' = unfortunate life overall."
+   },
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "handsome and passionate",
+    "line": 165,
+    "why": "Handsome appearance."
+   },
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "afflicted",
+    "quote": "loveless marriage in 23rd year",
+    "line": 166,
+    "why": "Marriage without love."
+   },
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "death from gun- shot",
+    "line": 167,
+    "why": "Violent death by gunshot."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.10",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 186,
+  "last_line": 196,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, born on 25th April 1874, at 9 a.m. (44 G 30' N. and 11\u00b0 22' E.)",
+  "birth": {
+   "date": "1874-04-25",
+   "time": "09:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 44,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 11,
+   "lon_min": 22,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "44 G 30'",
+    "reading": 44,
+    "note": "'G' = degree sign"
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Gemini",
+  "lagna_sign_printed": "Gemini",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Libra",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Expert physicist; revolu- tionised the electric world ; inventor of wireless",
+    "line": 194,
+    "why": "Eminent scientific career and major invention."
+   }
+  ],
+  "notes": "Ketu not printed (Rahu printed in Aries).",
+  "fill_notes": [
+   "Ketu set opposite the printed Rahu"
+  ]
+ },
+ {
+  "chart_no": "35.11",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 198,
+  "last_line": 207,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, Born on 29th July 1850, at 8 p.m., Bangalore.",
+  "birth": {
+   "date": "1850-07-29",
+   "time": "20:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": "Bangalore"
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Leo",
+  "lagna_sign_printed": "Leo",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Capricorn",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "afflicted",
+    "quote": "Two wives; mark the position of Venus.",
+    "line": 206,
+    "why": "Two marriages, pointed to an affliction of Venus; no happy second marriage stated."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.12",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 209,
+  "last_line": 222,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, born on 23rd May 1707. at 12-30 midnight (63\u201c N. and 15 s E.)",
+  "birth": {
+   "date": "1707-05-23",
+   "time": "00:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 63,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 15,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "date/time",
+    "raw": "23rd May 1707. at 12-30 midnight",
+    "note": "'12-30 midnight' may mean 00:30 on 23 May or 00:30 on 24 May (night of the 23rd); Raman's Lagna Capricorn should decide"
+   },
+   {
+    "field": "lat_deg",
+    "raw": "63\u201c",
+    "reading": 63,
+    "alternatives": [
+     56,
+     53
+    ],
+    "note": "OCR digits doubtful"
+   },
+   {
+    "field": "lon_deg",
+    "raw": "15 s",
+    "reading": 15,
+    "alternatives": [
+     14
+    ],
+    "note": "'s' = degree sign"
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Capricorn",
+  "lagna_sign_printed": "Capricorn",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": null,
+    "deg": null
+   },
+   "Ketu": {
+    "sign": null,
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The greatest botanist who introduced the present system of bionomical nomenclature; professor of botany\u20141739",
+    "line": 217,
+    "why": "Pre-eminent scientific career and professorship."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "Knight of the Polar Star in 175S",
+    "line": 220,
+    "why": "Received a knighthood."
+   }
+  ],
+  "notes": "Rahu and Ketu not printed. Knighthood year printed '175S' read as 1758; death year '!778' read as 1778."
+ },
+ {
+  "chart_no": "35.15",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 251,
+  "last_line": 262,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female, born on 5th June 1913, at 1-15 p.m., Bangalore.",
+  "birth": {
+   "date": "1913-06-05",
+   "time": "13:15",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": "Bangalore"
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Virgo",
+  "lagna_sign_printed": "Virgo",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Virgo",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H7",
+    "signification": "spouse",
+    "verdict": "afflicted",
+    "quote": "Mark the strong combination for widowhood; Mars and Rahu in Pisces (8th bbava actually); husband died in her 19th year.",
+    "line": 259,
+    "why": "Husband died; native widowed at 19."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.16",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 264,
+  "last_line": 276,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female, born on 29th August 1920, at 5-51 p.m. (12' N. and 76 c 38' E.)",
+  "birth": {
+   "date": "1920-08-29",
+   "time": "17:51",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "12'",
+    "reading": 12,
+    "note": "printed with minute mark; read as 12\u00b0 N (as in 35.4/35.20)"
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Aquarius",
+  "lagna_sign_printed": "Aquarius",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Aries",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "Father died within 9 months",
+    "line": 272,
+    "why": "Father died in the native's infancy."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.17",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 278,
+  "last_line": 288,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male, born on 30th September 1910, at 8 a.m. on Friday (12' and 76 38' E.)",
+  "birth": {
+   "date": "1910-09-30",
+   "time": "08:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "12'",
+    "reading": 12,
+    "note": "no N/S printed; read 12\u00b0 N by analogy with 35.4/35.16/35.20"
+   },
+   {
+    "field": "lon_min",
+    "raw": "76 38'",
+    "reading": "76\u00b038'"
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Libra",
+  "lagna_sign_printed": "Libra",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "lost father in the 7th year",
+    "line": 287,
+    "why": "Father died in the native's childhood."
+   }
+  ],
+  "notes": "30 Sep 1910 is a Friday (consistent with the printed weekday)."
+ },
+ {
+  "chart_no": "35.18",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 290,
+  "last_line": 302,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male born on 7th September 1874, at 7-45 p.m. (14' N. and 75 4 30' E.)",
+  "birth": {
+   "date": "1874-09-07",
+   "time": "19:45",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 14,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 30,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lat_deg",
+    "raw": "14'",
+    "reading": 14
+   },
+   {
+    "field": "lon",
+    "raw": "75 4 30'",
+    "reading": "75\u00b030'",
+    "alternatives": [
+     "75\u00b04'30\"",
+     "74\u00b030'"
+    ],
+    "note": "'4' probably a garbled degree sign"
+   },
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Pisces",
+  "lagna_sign_printed": "Pisces",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Libra",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "favourable",
+    "quote": "15 children living",
+    "line": 300,
+    "why": "Very many living children."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "high position",
+    "line": 300,
+    "why": "Attained high position."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "good temperament",
+    "line": 301,
+    "why": "Good character of the native."
+   },
+   {
+    "house": "H7",
+    "signification": "spouse",
+    "verdict": "favourable",
+    "quote": "fair-looking wife",
+    "line": 301,
+    "why": "Attractive wife."
+   }
+  ]
+ },
+ {
+  "chart_no": "35.19",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 304,
+  "last_line": 315,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female, born on 21st January 1905, at 10 a.m.. Bangalore.",
+  "birth": {
+   "date": "1905-01-21",
+   "time": "10:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": "Bangalore"
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Pisces",
+  "lagna_sign_printed": "Pisces",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Aquarius",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "Father died in 7th year",
+    "line": 313,
+    "why": "Father died in her childhood."
+   },
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "afflicted",
+    "quote": "mother 16th year",
+    "line": 314,
+    "why": "Mother died when she was 16."
+   },
+   {
+    "house": "H7",
+    "signification": "spouse",
+    "verdict": "afflicted",
+    "quote": "husband 19th",
+    "line": 314,
+    "why": "Husband died when she was 19 (widowhood)."
+   },
+   {
+    "house": "H6",
+    "signification": "enemies",
+    "verdict": "afflicted",
+    "quote": "many liti- gations",
+    "line": 314,
+    "why": "Many lawsuits/disputes."
+   }
+  ],
+  "notes": "'a daughter surviving' (line 315) left out: unclear whether it marks loss of other children or a favourable result."
+ },
+ {
+  "chart_no": "35.20",
+  "source_file": "chapter_035_practical-horoscopes.md",
+  "first_line": 317,
+  "last_line": 330,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female, born on 1st April 1930, at 1-50 a.m. (12\u00b0 N. and 76\u00b0 38' E.)",
+  "birth": {
+   "date": "1930-04-01",
+   "time": "01:50",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "time_basis",
+    "note": "time basis not printed (Raman gives clock time only)"
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Capricorn",
+  "lagna_sign_printed": "Capricorn",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Libra",
+    "deg": null
+   }
+  },
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "A strong Balarishta horoscope; died in the 6th month",
+    "line": 327,
+    "why": "Death in infancy."
+   }
+  ]
+ },
+ {
+  "chart_no": "14.1",
+  "source_file": "chapter_014_ayurdaya-or-longevity.md",
+  "first_line": 273,
+  "last_line": 340,
+  "name": null,
+  "sex": "female",
+  "skipped": false,
+  "raw_birth": "Female child born on 11th January 1928 at 7 ghaties after sunrise. Longitude 74\u00b0 E., Latitude 12\u00b0 N. The sub-period of Venus in the major period of Venus rules for 16 months at birth.",
+  "birth": {
+   "date": "1928-01-11",
+   "time": null,
+   "time_basis": "ghatikas_after_sunrise",
+   "ghatikas": "7",
+   "lat_deg": 12,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 0,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   {
+    "field": "lon_deg",
+    "raw": "74\u00b0 E.",
+    "reading": 74,
+    "note": "differs from 35.6 (77\u00b025'E 13\u00b0N) which appears to be the same native"
+   }
+  ],
+  "dasa_balance": "Venus dasa, Venus bhukti with 16 months remaining at birth",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "stated_positions": null,
+  "same_as": "Probably the same native as 35.6 (same date, female, died at 15/16 months)",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "The child died within 16 months.",
+    "line": 339,
+    "why": "Death in infancy."
+   }
+  ],
+  "notes": "Rasi diagram OCR scrambled; stated_positions omitted. Text says Moon in the 7th (kendra) aspected by Saturn and Venus conjoined Saturn and Ketu, aspected by Rahu."
+ },
+ {
+  "chart_no": "14.2",
+  "source_file": "chapter_014_ayurdaya-or-longevity.md",
+  "first_line": 342,
+  "last_line": 392,
+  "name": null,
+  "sex": "male",
+  "skipped": false,
+  "raw_birth": "Male born on 6th August 1912 at 42-30 ghaties after sunrise (at Bangalore). Balance of Sun's period at birth years 4-3-9.",
+  "birth": {
+   "date": "1912-08-06",
+   "time": null,
+   "time_basis": "ghatikas_after_sunrise",
+   "ghatikas": "42-30",
+   "lat_deg": 12,
+   "lat_min": 59,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": "Bangalore"
+  },
+  "uncertain": [],
+  "dasa_balance": "Sun 4-3-9",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "stated_positions": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "Died in his 13th month on 14th August 1913.",
+    "line": 391,
+    "why": "Death in infancy."
+   }
+  ],
+  "notes": "Rasi diagram OCR scrambled; stated_positions omitted. Text: Ascendant between Rahu and Saturn; Moon afflicted by Saturn.",
+  "fill_notes": [
+   "Bangalore coordinates 12N59 77E35 added by the builder (place printed, no coordinates)"
+  ]
+ }
+]

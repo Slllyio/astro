@@ -8,7 +8,7 @@ dropped. Output: tests/fixtures/raman_holdout_sealed.jsonl plus a V0-verdict fil
 is printed. This script never prints an engine verdict.
 
 Usage:
-    python -m tools.raman_saab.build_holdout EXTRACT.json [EXTRACT.json ...] --v0-out PATH
+    python -m tools.raman_saab.build_holdout EXTRACT.json [EXTRACT.json ...] --v0-out PATH [--out FIXTURE] [--stamp DATE]
 """
 from __future__ import annotations
 
@@ -33,7 +33,12 @@ ALIASES = {"kethu": "Ketu", "ketu": "Ketu", "venus": "Venus", "sun": "Sun", "moo
 OUT = "tests/fixtures/raman_holdout_sealed.jsonl"
 #: extraction file stem prefix -> (record id prefix / book tag, citation tag)
 SOURCES = {"3hc": ("3HC", "3HCC"), "r2_nh": ("NH", "NH"), "r2_htjah1": ("HTJAH-I", "HTJAH-I"),
-           "r2_htjah2": ("HTJAH-II", "HTJAH-II")}
+           "r2_htjah2": ("HTJAH-II", "HTJAH-II"), "hpa": ("HPA", "HPA")}
+#: every earlier fixture: a native already in any of them is never reused
+_EARLIER = ("tests/fixtures/raman_goldens.jsonl", OUT, "tests/fixtures/raman_holdout2_sealed.jsonl")
+
+
+_STAMP = "2026-10-24"
 
 
 def _source(stem: str) -> tuple[str, str]:
@@ -84,6 +89,8 @@ def _birth(b: dict) -> tuple[dict, str] | tuple[None, str]:
     lon = _deg(b.get("lon_deg"), b.get("lon_min"), b.get("lon_dir"))
     if lat is None or lon is None:
         return None, "no coordinates"
+    if b.get("time_basis") == "other" and not b.get("ghatikas"):
+        b = dict(b, time_basis="")          # basis not printed (HPA): LMT, the sign check decides
     if b["date"].startswith("-"):
         return None, "BC date (use printed positions)"
     y, mo, d = (int(x) for x in b["date"].split("-"))
@@ -158,7 +165,7 @@ def main(paths: list[str], v0_out: str, out_path: str = OUT) -> None:
     from tests.raman_saab import test_goldens as tg
     golden_dates = set()
     golden_signs = set()
-    for fx in ("tests/fixtures/raman_goldens.jsonl", OUT):
+    for fx in _EARLIER:
         if fx == out_path:
             continue
         for line in open(fx, encoding="utf-8"):
@@ -207,6 +214,22 @@ def main(paths: list[str], v0_out: str, out_path: str = OUT) -> None:
         rec = {"id": tag, "birth": birth, "stated_positions": {}}
         chart = tg.build_chart(rec)
         pb = _printed_balance_any(c.get("dasa_balance"))
+        if pb is None and book == "HPA":
+            # HPA prints no dasa balance: the cast must put all nine grahas and the Lagna in the
+            # signs Raman prints (hold-out 3, Addendum 10); otherwise use the printed signs.
+            st = _stated(c)
+            if st is None:
+                report["no dasa balance and no complete stated positions"].append(tag); continue
+            sp, lag = st
+            miss = [g for g in _GRAHAS if int(chart.planets[g].lon // 30) + 1 != int(sp[g]["lon"] // 30) + 1]
+            if lag != chart.asc_sign:
+                miss.append("Lagna")
+            if miss:
+                report["cast disagrees with printed signs; used printed signs"].append(f"{tag} {miss}")
+                c = dict(c); c.pop("birth", None)
+                charts.append(c)
+                continue
+            pb = _balance(chart.planets["Moon"].lon)
         if pb is None:
             report["no readable dasa balance"].append(tag); continue
         lord, yrs = _balance(chart.planets["Moon"].lon)
@@ -244,7 +267,7 @@ def main(paths: list[str], v0_out: str, out_path: str = OUT) -> None:
                     sig, k = items[i]
                     ev[house] = {"signification": sig, "verdict": k["verdict"],
                                  "verdict_prose": k["quote"], "verdict_review": "HOLDOUT",
-                                 "review_note": f"Engine-blind extraction 2026-10-24 ({k['_cite']}:{k['line']}). {k.get('why','')}"}
+                                 "review_note": f"Engine-blind extraction {_STAMP} ({k['_cite']}:{k['line']}). {k.get('why','')}"}
             if not ev:
                 continue
             ids = "+".join(str(x) for x in sorted(nat["ids"], key=lambda z: (z is None, z)))
@@ -283,4 +306,6 @@ if __name__ == "__main__":
     a = sys.argv[1:]
     out = a[a.index("--v0-out") + 1]
     fx = a[a.index("--out") + 1] if "--out" in a else OUT
+    if "--stamp" in a:
+        _STAMP = a[a.index("--stamp") + 1]
     main([x for x in a if x.endswith(".json") and x not in (out, fx)], out, fx)

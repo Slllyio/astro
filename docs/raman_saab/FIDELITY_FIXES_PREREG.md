@@ -340,3 +340,15 @@ the pool (real errors do not rise overall or in any book; within-one does not fa
 or real errors fall), and (b) on hold-out 3, scored once, real errors do not rise and within-one
 does not fall against V0. Passing (a) and (b) still goes to the user, after an engine-blind
 doctrine review of the change. Failing either is reported and M1 is held; it is not adjusted.
+
+## Addendum 11 (2026-10-28): hold-out 3 sealed
+
+Extractions `holdout_extractions/r3_hpa_a.json`, `r3_hpa_b.json`; 33 conclusions given identically
+by both, none contradicted; merged as `r3_hpa_merged.json` with two mechanical fills recorded in
+each chart's `fill_notes` (Ketu opposite the printed Rahu for 35.10; Bangalore coordinates for
+14.2, place printed without coordinates). Fixture `tests/fixtures/raman_holdout3_sealed.jsonl`:
+15 natives, 16 records, **28 scored rows** (19 afflicted, 9 favourable). Six charts whose cast
+missed a printed sign (five Lagnas, two Venus) are used from their printed signs; 35.7, 35.12 and
+14.1 are rejected (incomplete data). V0 verdicts written, unread, to
+`docs/raman_saab/holdout3_v0_verdicts_sealed.json`,
+SHA-256 `c9543269443dffed95fcbdb57a7eb496113c31bd1da08bd34994742678a3bc08`.

@@ -533,6 +533,12 @@ def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
 #: pool-tuned, now only lowers a favourable to mixed. Read LIVE off the module, like B1.
 NAVAMSA_ONE_STEP: bool = True
 
+#: M1 (FIDELITY_FIXES_PREREG Addendum 10, HELD until the user decides): Raman's maraka chapter
+#: is death-determination doctrine (HTJAH-I:776-814), so maraka pressure would drive the verdict
+#: only for `death`, `longevity` (already guarded) and `wealth` (poverty block, HTJAH-I:2526-2528).
+MARAKA_GUARD_ALL_NON_DEATH: bool = False
+_MARAKA_DEATH_KEYS = frozenset({"death", "longevity", "wealth"})
+
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 
 
@@ -1317,7 +1323,8 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # flagged: the poverty block (HTJAH-I:2526-2528, H2.C.41-43) makes maraka ASSOCIATION a
     # poverty operator for that matter specifically (and those are fired rules, which keep
     # force under the guard regardless).
-    if sig.key in ("marital_happiness", "speech", "vision", "family"):
+    if (sig.key in ("marital_happiness", "speech", "vision", "family")
+            or (MARAKA_GUARD_ALL_NON_DEATH and sig.key not in _MARAKA_DEATH_KEYS)):
         flags.append("MARAKA_NON_DEATH_GUARD")
     # AFFLICTION_MATTER (Stage-3 "B"): an inherently-malefic dusthana signification (6th
     # afflictions, 12th incarceration/left_eye). _decide clause-1.5 reads this to confirm the

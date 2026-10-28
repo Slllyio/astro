@@ -352,3 +352,16 @@ missed a printed sign (five Lagnas, two Venus) are used from their printed signs
 14.1 are rejected (incomplete data). V0 verdicts written, unread, to
 `docs/raman_saab/holdout3_v0_verdicts_sealed.json`,
 SHA-256 `c9543269443dffed95fcbdb57a7eb496113c31bd1da08bd34994742678a3bc08`.
+
+## Addendum 12 (2026-10-28): M1 measured on the pool, FAILS rule (a), held
+
+Pool, V0 -> M1: exact 262 -> 262, within one 349 -> 350, real errors 40 -> 39. By book: HTJAH-I
+13 -> 12, HTJAH-II 5 -> 3, but **NH 22 -> 24**, so real errors rise in one book and M1 fails the
+one decision rule. Twelve rows move. Gains: HTJAH-I.h5_15 children, HTJAH-II.h11_08 gains,
+HTJAH-I.x75 mother (all afflicted -> favourable, Raman favourable). New real errors:
+NH.chart_35 H7 virility (afflicted -> insufficient-evidence: maraka was the only evidence) and
+NH.chart_54 H10 career (afflicted -> favourable, Raman afflicted). Also HTJAH-I.chart_57 H3
+ear_throat and NH.chart_36 H7 spouse fall to insufficient-evidence, the side effect predicted in
+Addendum 10. M1 stays in code behind `MARAKA_GUARD_ALL_NON_DEATH = False` and is not adjusted.
+Hold-out 3 was NOT scored for M1: a variant that fails the pool rule cannot ship, so the only
+fresh set is kept sealed for the next pre-registered variant.

@@ -1,0 +1,2655 @@
+[
+ {
+  "id": "H1.C.1a",
+  "tier": "blemish",
+  "quote": "the health will suffer. If there are any beneficial aspects this evil should not be predicted.",
+  "line": 1087,
+  "why": "Raman explicitly lets any benefic aspect cancel the health affliction."
+ },
+ {
+  "id": "H1.C.1b",
+  "tier": "blemish",
+  "quote": "the health will suffer. If there are any beneficial aspects this evil should not be predicted.",
+  "line": 1087,
+  "why": "Raman explicitly lets any benefic aspect cancel the health affliction."
+ },
+ {
+  "id": "H1.C.1c",
+  "tier": "blemish",
+  "quote": "the health will suffer. If there are any beneficial aspects this evil should not be predicted.",
+  "line": 1087,
+  "why": "Raman explicitly lets any benefic aspect cancel the health affliction."
+ },
+ {
+  "id": "H1.C.26a",
+  "tier": "blemish",
+  "quote": "If the Lagna or its lord is hemmed in between two malefic, preferably Saturn and Rahu, the native will encounter thieves and suffer on their account.",
+  "line": 1127,
+  "why": "A single specific misfortune (thieves), a small part of the self matter."
+ },
+ {
+  "id": "H1.C.26b",
+  "tier": "blemish",
+  "quote": "If the Lagna or its lord is hemmed in between two malefic, preferably Saturn and Rahu, the native will encounter thieves and suffer on their account.",
+  "line": 1127,
+  "why": "A single specific misfortune (thieves), a small part of the self matter."
+ },
+ {
+  "id": "H1.C.27",
+  "tier": "blemish",
+  "quote": "Rahu in the 12th is not as harmful as in the 2nd while Saturn in the 2nd is not as harmful as in the 12th.",
+  "line": 1128,
+  "why": "A comparative qualifier on the thieves rule, not an independent judgment of the self."
+ },
+ {
+  "id": "H1.C.28",
+  "tier": "decisive",
+  "quote": "If there are many evil planets in Lagna the person will always be miserable.",
+  "line": 1131,
+  "why": "Categorical, unqualified denial of happiness of the self ('always')."
+ },
+ {
+  "id": "H1.C.28b",
+  "tier": "ordinary",
+  "quote": "If there are many evil planets in Lagna the person will always be miserable.",
+  "line": 1131,
+  "why": "Rule recasts 'many evil planets' as two or more functional malefics and softens it to 'not desirable', a real affliction to be weighed."
+ },
+ {
+  "id": "H1.C.37",
+  "tier": "blemish",
+  "quote": "the lord of sign occupied by Lagnadhipati is blemished, the benefice results decrease and the malefic effects are augmented.",
+  "line": 1147,
+  "why": "States a lowering of level (results decrease), not a denial."
+ },
+ {
+  "id": "H1.L.12",
+  "tier": "ordinary",
+  "quote": "there will be many losses, visiting holy places and no success in business enterprises.",
+  "line": 1078,
+  "why": "Real losses mixed with favourable traits (charity, balance), to be weighed."
+ },
+ {
+  "id": "H1.L.7",
+  "tier": "blemish",
+  "quote": "If well disposed, he will spend most of his time in foreign countries and lead a licentious life. Or he will be a puppet in the hands of his parents-in-law.",
+  "line": 1054,
+  "why": "Character and lifestyle traits given under 'well disposed'; NOTE source 1048 itself is about the wife not living (7th-house matter)."
+ },
+ {
+  "id": "H1.L.8",
+  "tier": "blemish",
+  "quote": "If the lord is strong the native takes pride in helping others, has a number of friends, religiously inclined and will have a peaceful and sudden end.",
+  "line": 1059,
+  "why": "The rule text is FAVOURABLE in Raman (strong lord); only 'mean character' at 1057 is negative. Polarity mislabelled; minimal weight."
+ },
+ {
+  "id": "H1.M.G2",
+  "tier": "decisive",
+  "quote": "When the Sun, the Moon and the ascendant are afflicted by more than one of the malefic, liability to accidents and a violent or sudden death is indicated.",
+  "line": 1237,
+  "why": "Violent or sudden death stated in plain terms."
+ },
+ {
+  "id": "H1.M.G3",
+  "tier": "decisive",
+  "quote": "the body will be afflicted with distortions, lameness, or even paralysis.",
+  "line": 1240,
+  "why": "Plain bodily deformity/loss of function stated without qualification."
+ },
+ {
+  "id": "H1.N.39",
+  "tier": "ordinary",
+  "quote": "When the lord of Lagna is in the 12th in the Navamsha, the person will always be roaming about and suffers of mind and body.",
+  "line": 1711,
+  "why": "Real suffering of the self, not a denial."
+ },
+ {
+  "id": "H1.N.41",
+  "tier": "blemish",
+  "quote": "if he occupies 6th, 8th or 12th in the Navamsha from the sign held by the 2nd lord, there will be a lessening of the above effects.",
+  "line": 1717,
+  "why": "Only lowers the level of a good yoga."
+ },
+ {
+  "id": "H1.N.43",
+  "tier": "blemish",
+  "quote": "Enmity with brothers or sorrow to them may be anticipated when Lagnadhipati occupies 6th, 8th or 12th from the lord of the 3rd in the Navamsha.",
+  "line": 1725,
+  "why": "Moves the effect to another matter (brothers) and is hedged with 'may'."
+ },
+ {
+  "id": "H1.N.47",
+  "tier": "ordinary",
+  "quote": "Quite opposite results may be anticipated ... There will be reverses in the political or official career of the individual.",
+  "line": 1739,
+  "why": "Reverses of a career yoga, real but weighed, and largely another matter than the self."
+ },
+ {
+  "id": "H1.N.48",
+  "tier": "ordinary",
+  "quote": "one suffers from all kinds of physical ailments, wounds, enmity with rulers, failure, ... legal troubles, poverty, wounds from weapons and physical distress.",
+  "line": 1743,
+  "why": "Heavy affliction but Raman immediately reverses it by Navamsha strength, so it is weighed."
+ },
+ {
+  "id": "H1.N.54",
+  "tier": "ordinary",
+  "quote": "the native suffers misery and poverty. He will lead a sinful life and contract debts... When the lord of the 8th is rendered weak, the evil results are minimised.",
+  "line": 1759,
+  "why": "Serious, but Raman states a mitigation that weighs it."
+ },
+ {
+  "id": "H1.N.63",
+  "tier": "decisive",
+  "quote": "When lord of Lagna joins the 12th lord in the 12th, he will lose all ancestral property. Poverty will stare him",
+  "line": 1785,
+  "why": "Plain loss of all ancestral property and poverty; the own-Navamsha relief is only 'slightly benefit'."
+ },
+ {
+  "id": "H1.P.Ketu",
+  "tier": "blemish",
+  "quote": "It denotes a weak constitution and an emaciated figure. Instability and deceitfulness may influence the character.",
+  "line": 1559,
+  "why": "Traits of body and character, hedged with 'may' and 'unless other favourable configurations'."
+ },
+ {
+  "id": "H1.P.Mars",
+  "tier": "blemish",
+  "quote": "The domestic life will be unhappy unless there are other favourable combinations. Abuse of physical resources may lead to ill-health.",
+  "line": 1514,
+  "why": "Traits, scars, conditional proneness; Raman says 'the aspects should be carefully examined'."
+ },
+ {
+  "id": "H1.P.Moon",
+  "tier": "blemish",
+  "quote": "If with Saturn, the mind will always be worried.",
+  "line": 1507,
+  "why": "Mental traits from conjunctions; mild and partly favourable."
+ },
+ {
+  "id": "H1.P.Rahu",
+  "tier": "ordinary",
+  "quote": "The health will be generally unsatisfactory calling for treatment other than by medical methods.",
+  "line": 1553,
+  "why": "A real but general affliction of health to be weighed."
+ },
+ {
+  "id": "H1.P.Saturn",
+  "tier": "blemish",
+  "quote": "But, if Saturn is not afflicted, there will be much consideration for the welfare or others.",
+  "line": 1541,
+  "why": "Rule text is FAVOURABLE in Raman; the negatives of Saturn in Lagna (weak body, slow progress) are mild. Polarity mislabelled."
+ },
+ {
+  "id": "H1.P.Sun",
+  "tier": "blemish",
+  "quote": "If with Saturn or Mars, it indicates scars and a hot constitution. ... Fevers, inflammations and eye affections may also be anticipated.",
+  "line": 1502,
+  "why": "Minor ailments and bodily marks, hedged with 'may'."
+ },
+ {
+  "id": "H1.S.1",
+  "tier": "blemish",
+  "quote": "If Aries is afflicted they suffer from diseases pertaining to the head.",
+  "line": 1254,
+  "why": "A sign-tendency ailment; Raman says such dispositions 'vary from the normal' (1232)."
+ },
+ {
+  "id": "H1.S.3",
+  "tier": "blemish",
+  "quote": "If evil planets are in Gemini, trickery and deceit will characterise their nature.",
+  "line": 1288,
+  "why": "A trait of character."
+ },
+ {
+  "id": "H1.S.4",
+  "tier": "blemish",
+  "quote": "Their chest will be prominent and when afflicted, weak also.",
+  "line": 1334,
+  "why": "A bodily trait."
+ },
+ {
+  "id": "H1.S.5",
+  "tier": "ordinary",
+  "quote": "They are liable to suffer from nervous breakdowns and paralysis when the sign is afflicted.",
+  "line": 1341,
+  "why": "A serious illness liability, but only 'liable to', to be weighed."
+ },
+ {
+  "id": "H1.S.6",
+  "tier": "blemish",
+  "quote": "They become vindictive when Saturn is afflicted and may become somewhat bigoted.",
+  "line": 1417,
+  "why": "A character trait, qualified 'may', 'somewhat'."
+ },
+ {
+  "id": "H1.S.7",
+  "tier": "blemish",
+  "quote": "If Mars occupies any sign other than his own they lack confidence, become funky, nervous and weak-minded.",
+  "line": 1420,
+  "why": "A character trait."
+ },
+ {
+  "id": "H1.S.8",
+  "tier": "blemish",
+  "quote": "people born in it become great teachers, writers, and lecturers, provided the sign is free from afflictions.",
+  "line": 1428,
+  "why": "Affects the level of a gift, not the self."
+ },
+ {
+  "id": "H1.S.9",
+  "tier": "blemish",
+  "quote": "If Saturn is in the 4th, the chest will be weak with a tendency towards stooping.",
+  "line": 1435,
+  "why": "A bodily trait."
+ },
+ {
+  "id": "H2.C.1",
+  "tier": "decisive",
+  "quote": "If the second lord is in the 2nd with evil planets or aspected by him, he will be poor.",
+  "line": 2436,
+  "why": "Poverty stated plainly."
+ },
+ {
+  "id": "H2.C.10",
+  "tier": "decisive",
+  "quote": "He will be poor if lords of the 2nd and 3rd are in the 6th with or aspected by evil planets.",
+  "line": 2449,
+  "why": "Poverty stated plainly."
+ },
+ {
+  "id": "H2.C.17",
+  "tier": "ordinary",
+  "quote": "The eye suffers if the second lord is with Venus",
+  "line": 2461,
+  "why": "The eye suffers; affliction, not loss."
+ },
+ {
+  "id": "H2.C.18",
+  "tier": "decisive",
+  "quote": "the subject becomes night-blind if the Sun and the Moon are in the second.",
+  "line": 2461,
+  "why": "Plain loss of a function of sight."
+ },
+ {
+  "id": "H2.C.20",
+  "tier": "ordinary",
+  "quote": "He suffers from eye disease if the 2nd lord is in the 6th, 8th or 12th. If the 2nd lord is strong his eye-sight will be good.",
+  "line": 2464,
+  "why": "Disease of the eye, weighed against the lord's strength."
+ },
+ {
+  "id": "H2.C.22",
+  "tier": "ordinary",
+  "quote": "The eye becomes injured if lord of the 2nd joins Saturn, Mars or Gulika.",
+  "line": 2465,
+  "why": "Injury to the eye, not loss."
+ },
+ {
+  "id": "H2.C.23",
+  "tier": "blemish",
+  "quote": "Saturn in the 2nd is unfavourable for good eye-sight.",
+  "line": 2466,
+  "why": "Mild, qualified statement."
+ },
+ {
+  "id": "H2.C.24",
+  "tier": "decisive",
+  "quote": "Lord of the 2nd in a very weak position makes the person helpless and lead a very wretched existence.",
+  "line": 2466,
+  "why": "Plain, unqualified destitution."
+ },
+ {
+  "id": "H2.C.25",
+  "tier": "decisive",
+  "quote": "One will stammer or become dumb if the lord of the 2nd is debilitated, is in the 2nd or 8th with evil planets.",
+  "line": 2469,
+  "why": "Loss of speech (dumbness) stated plainly."
+ },
+ {
+  "id": "H2.C.26",
+  "tier": "ordinary",
+  "quote": "If the lord of the 12th be in the 2nd or vice versa, the subject loses wealth under penalty.",
+  "line": 2472,
+  "why": "Loss of wealth, to be weighed."
+ },
+ {
+  "id": "H2.C.27",
+  "tier": "ordinary",
+  "quote": "losses will occur through Government executions and fines.",
+  "line": 2473,
+  "why": "Loss of wealth, to be weighed."
+ },
+ {
+  "id": "H2.C.28",
+  "tier": "ordinary",
+  "quote": "he loses money by offending the authorities.",
+  "line": 2475,
+  "why": "Loss of wealth, to be weighed."
+ },
+ {
+  "id": "H2.C.29",
+  "tier": "decisive",
+  "quote": "One will be always in debt if evil planets are in the 2nd and lord of ascendant is in the 12th",
+  "line": 2475,
+  "why": "Categorical permanent indebtedness ('always')."
+ },
+ {
+  "id": "H2.C.4",
+  "tier": "ordinary",
+  "quote": "is bad for saving money. Even if there is any ancestral wealth, it will be spent—rather wasted on extravagant purposes.",
+  "line": 2439,
+  "why": "Wealth suffers through waste, not denied."
+ },
+ {
+  "id": "H2.C.41",
+  "tier": "decisive",
+  "quote": "Extreme poverty is caused if lord of Lagna is in the 12th with or aspected by a Maraka planet.",
+  "line": 2526,
+  "why": "Extreme poverty stated plainly."
+ },
+ {
+  "id": "H2.C.42",
+  "tier": "decisive",
+  "quote": "The same result could be expected if there is exchange of houses between 1st and 6th lords",
+  "line": 2527,
+  "why": "Extreme poverty stated plainly."
+ },
+ {
+  "id": "H2.C.43",
+  "tier": "decisive",
+  "quote": "the man will be extremely poor.",
+  "line": 2530,
+  "why": "Extreme poverty stated plainly."
+ },
+ {
+  "id": "H2.C.44",
+  "tier": "decisive",
+  "quote": "If Lagna is occupied by Saturn and hemmed in between malefic, fortune will be destroyed.",
+  "line": 2532,
+  "why": "Destruction of fortune; only Jupiter's specific aspect/association counteracts (encoded in the rule)."
+ },
+ {
+  "id": "H2.C.45",
+  "tier": "decisive",
+  "quote": "not only poverty is caused but the body will be deformed.",
+  "line": 2534,
+  "why": "Poverty and deformity stated plainly."
+ },
+ {
+  "id": "H2.C.50",
+  "tier": "ordinary",
+  "quote": "indicate during their Dasha or Bhukti, that the wife (or husband) will go astray.",
+  "line": 2652,
+  "why": "A real family affliction confined to a period."
+ },
+ {
+  "id": "H2.C.54",
+  "tier": "decisive",
+  "quote": "One gets involved in huge debts ... He will he unahle to pay off the debts in spite of efforts. There is danger of wife's death",
+  "line": 2671,
+  "why": "Unpayable debts and miserable existence stated plainly (conditional on the Navamsha clause)."
+ },
+ {
+  "id": "H2.C.58",
+  "tier": "ordinary",
+  "quote": "there will be huge losses ... When both the 2nd and 12th lords are rendered weak, the losses will be small.",
+  "line": 2692,
+  "why": "Losses Raman scales and can cancel by Navamsha, so weighed."
+ },
+ {
+  "id": "H2.C.62",
+  "tier": "blemish",
+  "quote": "If the lord of the 2nd is associated with the 12th lord, then in the course of the Dasha of the 2nd lord, financial prosperity will be ordinary.",
+  "line": 2710,
+  "why": "Lowers the level of prosperity only."
+ },
+ {
+  "id": "H2.C.63",
+  "tier": "ordinary",
+  "quote": "the subject will suffer financial losses during their Dasha and Bhuktis.",
+  "line": 2714,
+  "why": "Loss of wealth confined to periods."
+ },
+ {
+  "id": "H2.C.64",
+  "tier": "ordinary",
+  "quote": "both these lords will produce financial losses during their Dasha and Bhuktis.",
+  "line": 2715,
+  "why": "Loss of wealth confined to periods."
+ },
+ {
+  "id": "H2.C.69",
+  "tier": "ordinary",
+  "quote": "This is an unfavourable combination which always retards success in life.",
+  "line": 2803,
+  "why": "Retards success; the example native is ordinary, not destitute."
+ },
+ {
+  "id": "H2.C.70",
+  "tier": "blemish",
+  "quote": "Note the 6th lord aspects the house of finance... The degree of wealth shown is not very considerable and is frequently acquired by dint of hard labour.",
+  "line": 2936,
+  "why": "Lowers the level of wealth; wealth still comes."
+ },
+ {
+  "id": "H2.C.71",
+  "tier": "ordinary",
+  "quote": "Results.-The native becomes a stammerer.",
+  "line": 5995,
+  "why": "Speech impaired, not lost (3HCC Vakchalana)."
+ },
+ {
+  "id": "H2.L.6",
+  "tier": "blemish",
+  "quote": "Amassing of wealth by black-marketing, deceit ... can be anticipated if the second lord joins the 6th and is well fortified.",
+  "line": 2371,
+  "why": "For wealth this is acquisition by questionable means; the negative is moral, not denial of wealth."
+ },
+ {
+  "id": "H2.L.8",
+  "tier": "decisive",
+  "quote": "Actual observation reveals that under such a combination, there will hardly be any earnings, but inherited or accumulated wealth will disappear.",
+  "line": 2391,
+  "why": "Plain loss of earnings and accumulated wealth, from Raman's own observation."
+ },
+ {
+  "id": "H2.P.Ketu",
+  "tier": "ordinary",
+  "quote": "Bad speaker. Loss through fraud and deception. There will be liability in financial affairs.",
+  "line": 2577,
+  "why": "Real financial losses, to be weighed."
+ },
+ {
+  "id": "H2.P.Mars",
+  "tier": "blemish",
+  "quote": "Good earning powers but usually miserly. Much money is accumulated.",
+  "line": 2549,
+  "why": "Wealth favourable; negatives are character traits."
+ },
+ {
+  "id": "H2.P.Rahu",
+  "tier": "blemish",
+  "quote": "Financial affairs uncertain unless other favourable combinations occur. If Jupiter aspects the second house, then earnings will be good.",
+  "line": 2573,
+  "why": "Rule text is FAVOURABLE (Jupiter's aspect); Rahu's own effect is a qualified uncertainty. Polarity mislabelled."
+ },
+ {
+  "id": "H2.P.Saturn",
+  "tier": "ordinary",
+  "quote": "tends to make earning an uphill struggle. Much work with little gain.",
+  "line": 2567,
+  "why": "Real affliction of earnings, qualified by sign."
+ },
+ {
+  "id": "H2.P.Sun",
+  "tier": "blemish",
+  "quote": "This is not quite a favourable situation. Losses will occur by offending the authorities.",
+  "line": 2540,
+  "why": "Mild ('not quite favourable'); money still obtained by effort."
+ },
+ {
+  "id": "H3.C.10",
+  "tier": "decisive",
+  "quote": "destruction of the indications of the 3rd house should be predicted.",
+  "line": 3436,
+  "why": "Destruction of the matter stated plainly."
+ },
+ {
+  "id": "H3.C.14",
+  "tier": "blemish",
+  "quote": "If Jupiter is in the 11th, the person suffers worry on account of his elder brother.",
+  "line": 3444,
+  "why": "Worry only, a mild effect."
+ },
+ {
+  "id": "H3.C.18",
+  "tier": "ordinary",
+  "quote": "If the lord of the 3rd joins debilitation and has conjunction with malefic, the person becomes unskilful and timid.",
+  "line": 3457,
+  "why": "Courage itself afflicted, a real affliction."
+ },
+ {
+  "id": "H3.C.19",
+  "tier": "blemish",
+  "quote": "If the lord of the 3rd is with the Sun, the person becomes headstrong and furious",
+  "line": 3458,
+  "why": "A character trait."
+ },
+ {
+  "id": "H3.C.2",
+  "tier": "decisive",
+  "quote": "When the 3rd lord happens to be Mars and occupies the 3rd, then, generally, the native will lose all his younger brothers.",
+  "line": 3352,
+  "why": "Loss of all younger brothers stated plainly."
+ },
+ {
+  "id": "H3.C.25",
+  "tier": "blemish",
+  "quote": "with Saturn, dull and stupid",
+  "line": 3462,
+  "why": "A character trait."
+ },
+ {
+  "id": "H3.C.26",
+  "tier": "ordinary",
+  "quote": "with Rahu and Ketu, the person looks bold and martial outside but will have a timid heart and weak mind.",
+  "line": 3462,
+  "why": "Courage itself is inwardly lacking, a real affliction."
+ },
+ {
+  "id": "H3.C.27",
+  "tier": "blemish",
+  "quote": "If lord of the third is with Rahu or with the lord of the house where Rahu is, then the person will have fear from reptiles.",
+  "line": 3465,
+  "why": "A single specific fear, minor."
+ },
+ {
+  "id": "H3.C.28",
+  "tier": "ordinary",
+  "quote": "Mercury with the lord of third gives throat disease.",
+  "line": 3466,
+  "why": "Disease of the organ, not loss."
+ },
+ {
+  "id": "H3.C.29",
+  "tier": "ordinary",
+  "quote": "Generally evil planets in the third give troubles connected with throat. Ear defects and deafness should also be predicted",
+  "line": 3466,
+  "why": "Real affliction of throat/ear, strongest when repeated in Dwadasamsa."
+ },
+ {
+  "id": "H3.C.3",
+  "tier": "decisive",
+  "quote": "The Sun in a similar position will kill elder brothers.",
+  "line": 3353,
+  "why": "Death of brothers stated plainly."
+ },
+ {
+  "id": "H3.C.31",
+  "tier": "unsupported",
+  "quote": "Mercury with the lord of third gives throat disease. Generally evil planets in the third give troubles connected with throat.",
+  "line": 3466,
+  "why": "Cited passage says nothing about the 3rd lord in 6/8/12 affecting ear or throat."
+ },
+ {
+  "id": "H3.C.32",
+  "tier": "ordinary",
+  "quote": "In Chart No. 56, the third house is aspected by Saturn and the third lord is debilitated in the 6th. The native is partially deaf.",
+  "line": 3722,
+  "why": "Text (3467) names evil planets IN the 3rd; Saturn's aspect alone is supported only jointly in chart 56, so weighed."
+ },
+ {
+  "id": "H3.C.33",
+  "tier": "ordinary",
+  "quote": "In Chart No. 56, the third house is aspected by Saturn and the third lord is debilitated in the 6th. The native is partially deaf.",
+  "line": 3722,
+  "why": "Line 3467 does not mention lord debility; supported only jointly in chart 56."
+ },
+ {
+  "id": "H3.C.34",
+  "tier": "ordinary",
+  "quote": "If the lord of the 3rd and the Karaka for brothers (Kuja or Mars) are not placed in the 6th, 8th and 11th houses ... many long-lived ... brothers.",
+  "line": 3428,
+  "why": "Raman's 'destruction' clause (3436) is for debility/combustion/inimical company; dusthana placement only withholds the good result."
+ },
+ {
+  "id": "H3.C.35",
+  "tier": "ordinary",
+  "quote": "If the lord of the 3rd is an evil planet, if evil planets are in the 3rd, the native will have very few brothers.",
+  "line": 3435,
+  "why": "Few brothers, not none; malefic aspect is the rule's inversion of 3430, weighed."
+ },
+ {
+  "id": "H3.C.36",
+  "tier": "decisive",
+  "quote": "If the Karaka for brothers (Mars) or lord of the 3rd is debilitated, is in combustion or with inimical planets, destruction of the indications of the 3rd house should be predicted.",
+  "line": 3436,
+  "why": "Destruction of the matter stated plainly."
+ },
+ {
+  "id": "H3.C.37",
+  "tier": "decisive",
+  "quote": "The third house is subject to 'Papa- karthari' Yoga in Amsa in addition to other afflictions... These are adverse indications denying the birth of brothers.",
+  "line": 3836,
+  "why": "Denial of brothers stated."
+ },
+ {
+  "id": "H3.C.38",
+  "tier": "decisive",
+  "quote": "the house as well as the lord of brothers come under severe affliction... The subject of the chart has no brothers.",
+  "line": 3769,
+  "why": "No brothers, despite Jupiter's aspect: overrides good testimony."
+ },
+ {
+  "id": "H3.C.39",
+  "tier": "decisive",
+  "quote": "Though the Karaka Mars is well disposed, the fact of the ruler of the third becoming combust and hence powerless, renders the third house weak. This stands against his having any brothers.",
+  "line": 3788,
+  "why": "Overrides a well-disposed Karaka; denial of brothers."
+ },
+ {
+  "id": "H3.C.40",
+  "tier": "ordinary",
+  "quote": "In Chart No. 56, the third house is aspected by Saturn and the third lord is debilitated in the 6th. The native is partially deaf.",
+  "line": 3722,
+  "why": "Partial, not total, loss of hearing."
+ },
+ {
+  "id": "H3.C.9",
+  "tier": "ordinary",
+  "quote": "If the lord of the 3rd is an evil planet, if evil planets are in the 3rd, the native will have very few brothers.",
+  "line": 3435,
+  "why": "Few brothers, not denial."
+ },
+ {
+  "id": "H3.L.11",
+  "tier": "blemish",
+  "quote": "Eleventh House. -Not a very good combination.. Earnings with effort. He becomes vindictive. The bod) will be unattractive and emaciated.",
+  "line": 3405,
+  "why": "Rule text ('a number of younger brothers', 3351) is FAVOURABLE; the cited 3405 negatives are traits, not brothers. Polarity mislabelled."
+ },
+ {
+  "id": "H3.L.12",
+  "tier": "ordinary",
+  "quote": "When the 3rd lord is in the 12th, the youngest brother will be a tyrant. The native becomes poor on account of him.",
+  "line": 3412,
+  "why": "Real trouble through brothers, to be weighed."
+ },
+ {
+  "id": "H3.L.2",
+  "tier": "ordinary",
+  "quote": "He is likely to lose his younger brothers.",
+  "line": 3345,
+  "why": "Loss of brothers is only 'likely', and the whole position is qualified 'unless there are other favourable combinations'."
+ },
+ {
+  "id": "H3.L.8",
+  "tier": "ordinary",
+  "quote": "When the 3rd lord is in the 8th, he will suffer from a serious and dangerous disease and lose his younger brother.",
+  "line": 3391,
+  "why": "Plain loss of a brother, but an unconditioned lord-in-house result that Raman says 'have to be adapted to suit individual cases' (3415)."
+ },
+ {
+  "id": "H3.P.Ketu",
+  "tier": "blemish",
+  "quote": "Ketu .—Strong and adventurous but funky. Disturbs the mind with hallucinations.",
+  "line": 3517,
+  "why": "Traits of temperament and mind, nothing about siblings."
+ },
+ {
+  "id": "H3.P.Mars",
+  "tier": "blemish",
+  "quote": "If the house is further afflicted, it shows thoughts of suicide or violent tendencies.",
+  "line": 3483,
+  "why": "A conditional mental tendency, not the matter of siblings; Raman adds the evils are largely modified in Capricorn/Aries/Scorpio."
+ },
+ {
+  "id": "H3.P.Moon",
+  "tier": "blemish",
+  "quote": "If however the Moon is waning, cruel, miserable, impious and unscrupulous. An unfavourable position for peace of mind, if afflicted.",
+  "line": 3478,
+  "why": "Character and peace-of-mind traits, not a denial of siblings."
+ },
+ {
+  "id": "H3.P.Rahu",
+  "tier": "ordinary",
+  "quote": "The combination is generally bad for brothers.",
+  "line": 3512,
+  "why": "'Generally bad for brothers' is a real affliction to weigh, not a denial."
+ },
+ {
+  "id": "H3.P.Saturn",
+  "tier": "blemish",
+  "quote": "If Saturn is afflicted, the despondency is likely to run into mental affliction.",
+  "line": 3509,
+  "why": "A qualified ('likely') mental tendency that 'improves with age'; not about siblings."
+ },
+ {
+  "id": "H3.P.Venus",
+  "tier": "blemish",
+  "quote": "If Venus is afflicted, miserly, mean, poor and highly sensual. He becomes funky and interested in scandals.",
+  "line": 3501,
+  "why": "Character traits; the same paragraph says 'Brothers will be good'."
+ },
+ {
+  "id": "H4.C.1",
+  "tier": "decisive",
+  "quote": "If the lord of the fourth house occupies the sixth, eighth and twelfth and has no beneficial aspect, there will be early death of the mother.",
+  "line": 4206,
+  "why": "Plain death of the mother, with the benefic-aspect relief already built into the condition."
+ },
+ {
+  "id": "H4.C.17",
+  "tier": "blemish",
+  "quote": "The Sun and Mars in the fourth give wounds from stones.",
+  "line": 4223,
+  "why": "A single bodily injury, not a denial of happiness."
+ },
+ {
+  "id": "H4.C.18",
+  "tier": "decisive",
+  "quote": "The Moon in the fourth joined or aspected by evil planets kills the mother early.",
+  "line": 4224,
+  "why": "Raman gives the aspect arm the same plain result as the conjunction arm: the mother dies early (the rule text understates it)."
+ },
+ {
+  "id": "H4.C.18a",
+  "tier": "decisive",
+  "quote": "The Moon in the fourth joined or aspected by evil planets kills the mother early.",
+  "line": 4224,
+  "why": "Plain early death of the mother."
+ },
+ {
+  "id": "H4.C.19",
+  "tier": "blemish",
+  "quote": "The person will be reserved if the fourth is occupied by evil planets, or if Mars, Saturn or Rahu is in the fourth without good associations.",
+  "line": 4224,
+  "why": "A trait of character."
+ },
+ {
+  "id": "H4.C.21",
+  "tier": "blemish",
+  "quote": "He will be a hypocrite, sweet in words but dangerous at heart if Rahu, joined or aspected by evil planets, is in the fourth.",
+  "line": 4227,
+  "why": "A trait of character."
+ },
+ {
+  "id": "H4.C.29",
+  "tier": "decisive",
+  "quote": "Generally when the lord of the fourth is in the sixth or twelfth ... there will be early loss of mother. ... (i) Waning Moon in association with a malefic in the sixth or eighth house",
+  "line": 4401,
+  "why": "Listed as a combination for early loss of the mother, stated plainly."
+ },
+ {
+  "id": "H4.C.48",
+  "tier": "ordinary",
+  "quote": "This benefice disposition is more than counterbalanced by the combined aspect of two first-rate malefic... Matru-Karaka is considerably afflicted.",
+  "line": 4552,
+  "why": "The karaka affliction outweighs the karaka's own benefic aspect, but the conclusion is 'considerably afflicted', weighed with house and lord, not a denial."
+ },
+ {
+  "id": "H4.C.49",
+  "tier": "ordinary",
+  "quote": "the 4th house is subjected to Papakarthari Yoga. Evidently Shivaji was unlettered. But ... want of book-learning was more than compensated",
+  "line": 4963,
+  "why": "Raman reads book-learning as lacking yet weighs it against strong Jupiter, which more than compensates."
+ },
+ {
+  "id": "H4.C.5",
+  "tier": "blemish",
+  "quote": "One associates with bad people if the fourth or the fourth lord is subjected to Papakarthari Yoga.",
+  "line": 4211,
+  "why": "A trait of conduct, not a denial of happiness."
+ },
+ {
+  "id": "H4.C.53",
+  "tier": "decisive",
+  "quote": "The person loses lands by royal or Government orders if the lord of the fourth is neecha with Sun.",
+  "line": 4219,
+  "why": "Plain loss of lands, the property matter itself."
+ },
+ {
+  "id": "H4.L.12",
+  "tier": "ordinary",
+  "quote": "Deprived of happiness and properties. Early death to mother ... The good and bad nature of results ... becomes augmented or minimised according to the strength or weakness of the fourth lord.",
+  "line": 4187,
+  "why": "Plainly stated, but Raman says at once that these lord-in-house results are general, not to be applied verbatim, and scale with the lord's strength."
+ },
+ {
+  "id": "H4.L.6",
+  "tier": "blemish",
+  "quote": "Short-tempered and mean, he will have dissimulating habits, evil thoughts and intentions. He will always be roaming about.",
+  "line": 4165,
+  "why": "Traits of character only."
+ },
+ {
+  "id": "H4.L.8",
+  "tier": "ordinary",
+  "quote": "The person becomes miserable. Father dies early. ... He is also likely to lose landed properties or face litigation.",
+  "line": 4172,
+  "why": "Property loss is only 'likely'; the father's death belongs to another matter; the section is caveated as general (4190)."
+ },
+ {
+  "id": "H4.P.Ketu",
+  "tier": "ordinary",
+  "quote": "Will be deprived of mother, properties and happiness ... In all these cases, a careful weighing of the pros and cons of the affliction or fortification is absolutely necessary.",
+  "line": 4277,
+  "why": "Plain wording, but Raman says the planet-in-4th results are modified by aspects and must be weighed (4280, 4298)."
+ },
+ {
+  "id": "H4.P.Mars",
+  "tier": "ordinary",
+  "quote": "If Mars is the afflicted planet, there will be loss through theft, deception and even litigation. Affliction of Mars always denotes some tragic developments",
+  "line": 4285,
+  "why": "Losses and troubles to be weighed; benefic association tempers it (4287)."
+ },
+ {
+  "id": "H4.P.Rahu",
+  "tier": "ordinary",
+  "quote": "Foolish in behaviour; few friends; will be subjected to fraud ... Rahu-Mars or Ketu-Mars affliction shows tragedy or violence.",
+  "line": 4273,
+  "why": "Mixed traits and 'may denote' afflictions that Raman says need careful weighing (4298)."
+ },
+ {
+  "id": "H4.P.Saturn",
+  "tier": "ordinary",
+  "quote": "An affliction by Mars indicates a sudden downfall. It is also a combination for insanity. ... a careful weighing of the pros and cons ... is absolutely necessary.",
+  "line": 4295,
+  "why": "Serious afflictions, explicitly to be weighed, not settled."
+ },
+ {
+  "id": "H4.P.Sun",
+  "tier": "ordinary",
+  "quote": "If the Sun is strengthened, there will be financial benefits by inheritance; if afflicted, there will be trouble through political sources.",
+  "line": 4282,
+  "why": "'Trouble through' an affliction to be weighed."
+ },
+ {
+  "id": "H5.C.10",
+  "tier": "decisive",
+  "quote": "Children will die early ... when the fifth is aspected by a malefic, the lord of the fifth joins an evil planet",
+  "line": 5192,
+  "why": "Plain early death of children."
+ },
+ {
+  "id": "H5.C.13",
+  "tier": "decisive",
+  "quote": "Children will die early ... when Rahu occupying the 5th is aspected by Mars",
+  "line": 5199,
+  "why": "Plain early death of children."
+ },
+ {
+  "id": "H5.C.14",
+  "tier": "decisive",
+  "quote": "when Saturn aspected by the Moon occupies the 5th and the lord of the 5th joins Rahu",
+  "line": 5199,
+  "why": "Listed under 'Children will die early', stated plainly."
+ },
+ {
+  "id": "H5.C.15",
+  "tier": "decisive",
+  "quote": "when Rahu and lord of Lagna are associated with the 5th lord or occupy the 5th.",
+  "line": 5200,
+  "why": "Listed under 'Children will die early', stated plainly."
+ },
+ {
+  "id": "H5.C.16",
+  "tier": "decisive",
+  "quote": "The family is extinguished when the lord of Lagna is in the 5th, and Lagna and the Moon have evil associations",
+  "line": 5203,
+  "why": "Plain extinction of progeny."
+ },
+ {
+  "id": "H5.C.17",
+  "tier": "decisive",
+  "quote": "when the fifth is occupied by Mercury and the Lagna by a malefic",
+  "line": 5204,
+  "why": "Listed under 'The family is extinguished'."
+ },
+ {
+  "id": "H5.C.19",
+  "tier": "decisive",
+  "quote": "when Mars, Saturn and the Sun occupy respectively the 1st, 8th and 5th houses.",
+  "line": 5205,
+  "why": "Listed under 'The family is extinguished'."
+ },
+ {
+  "id": "H5.C.25",
+  "tier": "decisive",
+  "quote": "The first child dies if Mars is in the 5th aspected by Jupiter or Venus.",
+  "line": 5210,
+  "why": "Plain death of a child."
+ },
+ {
+  "id": "H5.C.36",
+  "tier": "ordinary",
+  "quote": "Rahu and Saturn in the 5th make one dull and stupid.",
+  "line": 5228,
+  "why": "A real affliction of intellect stated as a quality, not a loss to settle against good testimony."
+ },
+ {
+  "id": "H5.C.38",
+  "tier": "ordinary",
+  "quote": "as he is subject to Papakarthari Yoga and occupies a malefic Rashi, he is also blemished. ... All the three factors ... are considerably afflicted.",
+  "line": 5619,
+  "why": "Karaka blemish is one of three afflicted factors; denial came only from all three together."
+ },
+ {
+  "id": "H5.C.39",
+  "tier": "ordinary",
+  "quote": "The 5th from Chandra Lagna is occupied by the malefic Saturn and aspected by another malefic Mars. Hence the 5th house is strongly blemished.",
+  "line": 5828,
+  "why": "One factor in the house's assessment, weighed with lord and karaka in the conclusion (5839)."
+ },
+ {
+  "id": "H5.C.40",
+  "tier": "decisive",
+  "quote": "The disposition of 5th house and the 5th lord indicates the birth of children. But as PutraKaraka has the combined influences of two first-rate malefic... no fully developed children were born.",
+  "line": 5795,
+  "why": "Raman lets the karaka affliction override a good house and lord."
+ },
+ {
+  "id": "H5.C.41",
+  "tier": "ordinary",
+  "quote": "The house of children is not favourable. Mercury, the 5th lord from the Moon, is in a barren sign ... Wells had two sons",
+  "line": 8937,
+  "why": "One of several factors in an unfavourable reading, and the native still had sons."
+ },
+ {
+  "id": "H5.C.9",
+  "tier": "decisive",
+  "quote": "Children will die early ... when the lord of the fifth is hemmed in between malefic",
+  "line": 5192,
+  "why": "Plain early death of children."
+ },
+ {
+  "id": "H5.L.6",
+  "tier": "decisive",
+  "quote": "If the lord is afflicted, issues will not be born and he may have to adopt one",
+  "line": 5144,
+  "why": "Plain denial of children, already conditioned on affliction."
+ },
+ {
+  "id": "H5.L.8",
+  "tier": "ordinary",
+  "quote": "There will be extinction of the family. ... the above combinations are quite general and they have to be used with great care",
+  "line": 5153,
+  "why": "Rule text is empty; passage states extinction plainly, but the unconditioned lord-in-house list is caveated (5173) as needing modification."
+ },
+ {
+  "id": "H5.P.Ketu",
+  "tier": "ordinary",
+  "quote": "Loss of children ... The above results get modified by the aspects and associations of other lords. ... Much skill is required in judging the 5th house",
+  "line": 5265,
+  "why": "Plain-sounding but explicitly subject to modification by aspects and associations."
+ },
+ {
+  "id": "H5.P.Mars",
+  "tier": "ordinary",
+  "quote": "Affliction of Mars denotes danger of ruin and disgrace through the opposite sex.",
+  "line": 5273,
+  "why": "A 'danger' of trouble, to be weighed, not a denial of children."
+ },
+ {
+  "id": "H5.P.Rahu",
+  "tier": "ordinary",
+  "quote": "will lose a number of children ... Rahu's affliction is a very bad combination. It causes scandal through children.",
+  "line": 5262,
+  "why": "Loss of some children and scandal; modified by aspects (5268)."
+ },
+ {
+  "id": "H5.P.Saturn",
+  "tier": "ordinary",
+  "quote": "Saturn afflicted by Mars denotes danger of unnatural attachments ... There will be loss of children, danger of drowning and even heart trouble.",
+  "line": 5285,
+  "why": "A list of afflictions in a section Raman says is modified by aspects."
+ },
+ {
+  "id": "H5.P.Sun",
+  "tier": "ordinary",
+  "quote": "This combination deprives the person of children, riches and happiness. ... The above results get modified by the aspects and associations of other lords.",
+  "line": 5232,
+  "why": "Plain denial in wording, but Raman immediately says these results are modified by aspects and associations."
+ },
+ {
+  "id": "H1.N.66",
+  "tier": "ordinary",
+  "quote": "There should be no contact between lords of the 1st and 6th ... The native was once implicated in a defamation case but subsequently acquitted.",
+  "line": 1972,
+  "why": "A real trouble that did not settle the outcome (acquitted)."
+ },
+ {
+  "id": "H6.C.1",
+  "tier": "blemish",
+  "quote": "If the evil lord of the 6th resides in Lagna, 8th or 10th, he will suffer from boils.",
+  "line": 6073,
+  "why": "A minor ailment."
+ },
+ {
+  "id": "H6.C.10",
+  "tier": "blemish",
+  "quote": "rheumatic affections if the lord of Lagna is in Lagna with lord of the 8th.",
+  "line": 6085,
+  "why": "A minor ailment."
+ },
+ {
+  "id": "H6.C.12",
+  "tier": "ordinary",
+  "quote": "One will be endangered through water in the 5th or 9th year if the Sun is in the 6th or 8th and the Moon is in the 12th from the Sun.",
+  "line": 6088,
+  "why": "A danger, not a stated death or loss."
+ },
+ {
+  "id": "H6.C.12a",
+  "tier": "blemish",
+  "quote": "The Moon in the 6th with Mars indicates jaundiced constitution.",
+  "line": 6091,
+  "why": "A bodily constitution trait."
+ },
+ {
+  "id": "H6.C.13",
+  "tier": "ordinary",
+  "quote": "Saturn or Mars in the 6th aspected by Rahu or the Sun, and the ascendant lord weak denotes lingering disease.",
+  "line": 6092,
+  "why": "A real chronic illness to be weighed."
+ },
+ {
+  "id": "H6.C.15",
+  "tier": "ordinary",
+  "quote": "Parivarthana between lords of the 6th and 12th denote loss of money in the 31st or 40th year.",
+  "line": 6089,
+  "why": "Loss of money, an ordinary affliction."
+ },
+ {
+  "id": "H6.C.16",
+  "tier": "decisive",
+  "quote": "if the 6th lord in the 6th is with Mars aspected by Rahu or Ketu, he will lose his estates by auction.",
+  "line": 6110,
+  "why": "Plain loss of estates."
+ },
+ {
+  "id": "H6.C.18",
+  "tier": "ordinary",
+  "quote": "If the lord of the 6th is in a Kendra aspected by evil planets or many evil planets are in the 6th, the person will be vexed by enemies.",
+  "line": 6104,
+  "why": "Troubles from enemies, weighed."
+ },
+ {
+  "id": "H6.C.2",
+  "tier": "blemish",
+  "quote": "If the 6th lord is in the 6th or 8th with the Sun, he will suffer from boils in the head; with the Moon, in the face",
+  "line": 6074,
+  "why": "A minor ailment, located."
+ },
+ {
+  "id": "H6.C.20",
+  "tier": "ordinary",
+  "quote": "the person will be constantly troubled and vexed by his relatives.",
+  "line": 6107,
+  "why": "Troubles through relatives."
+ },
+ {
+  "id": "H6.C.21",
+  "tier": "ordinary",
+  "quote": "He will be put to difficulties by relatives if Jupiter or Venus is in Lagna with lord of the 6th aspected by Saturn, Rahu or Mars.",
+  "line": 6108,
+  "why": "Difficulties through relatives."
+ },
+ {
+  "id": "H6.C.22",
+  "tier": "ordinary",
+  "quote": "He will suffer from thieves and fire if the 9th lord occupies the 6th, aspected by the 6th lord",
+  "line": 6109,
+  "why": "'Suffer from' losses, weighed."
+ },
+ {
+  "id": "H6.C.23",
+  "tier": "decisive",
+  "quote": "If the lord of Lagna and the 6th join a Kendra with Saturn, the person will be confined",
+  "line": 6096,
+  "why": "Imprisonment stated plainly."
+ },
+ {
+  "id": "H6.C.24",
+  "tier": "decisive",
+  "quote": "if with Rahu or Ketu, he will be placed in irons.",
+  "line": 6097,
+  "why": "Imprisonment stated plainly."
+ },
+ {
+  "id": "H6.C.25",
+  "tier": "decisive",
+  "quote": "One will have a tragic end if the Moon aspected by Lagnadhipati joins Saturn, Rahu or Ketu in the 6th, 8th or 12th.",
+  "line": 6097,
+  "why": "A violent/tragic death stated plainly."
+ },
+ {
+  "id": "H6.C.27",
+  "tier": "decisive",
+  "quote": "Parivarthana or mutual aspects between Mars and the Sun, in Rashi or in Navamsha, indicates death in a dual fight.",
+  "line": 6100,
+  "why": "Violent death stated plainly."
+ },
+ {
+  "id": "H6.C.28",
+  "tier": "ordinary",
+  "quote": "Mars afflicted: accidents, losses and troubles through employees. If Saturn is the afflicting planet, death may be due to operation",
+  "line": 6127,
+  "why": "Accidents and losses; the death arms are 'may', and Raman demands careful evaluation (6185)."
+ },
+ {
+  "id": "H6.C.3",
+  "tier": "blemish",
+  "quote": "Lords of the 6th and 8th occupying the 7th and the 8th respectively will cause piles.",
+  "line": 6077,
+  "why": "A minor ailment."
+ },
+ {
+  "id": "H6.C.4",
+  "tier": "ordinary",
+  "quote": "joining the lord of the 6th in the ascendant indicate respectively danger from high fevers, ... consumption, sexual troubles, nervous diseases",
+  "line": 6078,
+  "why": "'Danger from' diseases, some serious; weighed."
+ },
+ {
+  "id": "H6.C.5",
+  "tier": "ordinary",
+  "quote": "Evil planets in the 6th or lord of the 6th with Saturn or Rahu will cause the native to suffer always.",
+  "line": 6080,
+  "why": "Chronic suffering, a real affliction to weigh."
+ },
+ {
+  "id": "H6.C.6",
+  "tier": "ordinary",
+  "quote": "One suffers greatly from fever in his 6th and 12th years if Mars is in the 6th and the lord of the 6th is in the 8th.",
+  "line": 6081,
+  "why": "A timed severe illness, not a loss."
+ },
+ {
+  "id": "H6.C.7",
+  "tier": "ordinary",
+  "quote": "He will contact leprosy in his 20th year if the Moon and Jupiter are in the 6th",
+  "line": 6083,
+  "why": "A serious disease, but not a stated denial or death."
+ },
+ {
+  "id": "H6.C.9",
+  "tier": "blemish",
+  "quote": "colic in the 30th year if there is Parivarthana (mutual exchange of houses) between lords of the 6th and the 12th",
+  "line": 6084,
+  "why": "A minor ailment at one age."
+ },
+ {
+  "id": "H6.L.10",
+  "tier": "ordinary",
+  "quote": "When the lord is weak: dismissal formidable enemies, low life or begging.",
+  "line": 6052,
+  "why": "Real troubles; Raman caveats the list as needing modification (6062)."
+ },
+ {
+  "id": "H6.L.12",
+  "tier": "ordinary",
+  "quote": "If afflicted: miserable, hard and wretched existence.",
+  "line": 6060,
+  "why": "General misery, weighed."
+ },
+ {
+  "id": "H6.L.2",
+  "tier": "decisive",
+  "quote": "If the sixth lord is weak and otherwise ill-disposed in the 2nd, there will be loss of wife in the Dasha or Bhukti of the malefic lord.",
+  "line": 6009,
+  "why": "Plain loss of wife, conditioned on affliction."
+ },
+ {
+  "id": "H6.L.3",
+  "tier": "decisive",
+  "quote": "The 6th lord weak and afflicted, the native will have no younger brothers.",
+  "line": 6015,
+  "why": "Plain denial of younger brothers, conditioned on affliction."
+ },
+ {
+  "id": "H6.L.4",
+  "tier": "ordinary",
+  "quote": "Weak and afflicted: he will quarrel with his mother and ancestral property will be involved in debts. He will work as a menial and lead a miserable life.",
+  "line": 6019,
+  "why": "Quarrels, debts and misery, weighed."
+ },
+ {
+  "id": "H6.L.5",
+  "tier": "ordinary",
+  "quote": "In the Fifth House. — Sickly children. The native will be adopted by his maternal uncle and become fortunate",
+  "line": 6024,
+  "why": "Rule text is empty; passage gives sickly children, a weighed affliction, not a denial."
+ },
+ {
+  "id": "H6.L.7",
+  "tier": "decisive",
+  "quote": "If the sixth lord is afflicted, he will either divorce his wife early in life or she will die.",
+  "line": 6033,
+  "why": "Rule text is empty; the passage's afflicted arm plainly states loss of the wife."
+ },
+ {
+  "id": "H6.L.8",
+  "tier": "ordinary",
+  "quote": "When afflicted, he will have plenty of debts and will suffer from loathsome diseases.",
+  "line": 6039,
+  "why": "Debts and disease, weighed."
+ },
+ {
+  "id": "H6.L.9",
+  "tier": "ordinary",
+  "quote": "If afflicted: poverty, sinful acts, misfortunes through relatives, ungrateful towards preceptors",
+  "line": 6047,
+  "why": "Real afflictions to be weighed."
+ },
+ {
+  "id": "H6.P.Ketu",
+  "tier": "blemish",
+  "quote": "The best position for Ketu ... He will be foeless. Nevertheless his moral character will be loose.",
+  "line": 6155,
+  "why": "Overall favourable; the negative is a trait of character."
+ },
+ {
+  "id": "H6.P.Mars",
+  "tier": "ordinary",
+  "quote": "Mars afflicted: accidents, losses and troubles through employees. If Saturn is the afflicting planet, death may be due to operation",
+  "line": 6127,
+  "why": "Accidents/losses and 'may' death arms; Raman calls for careful evaluation (6185)."
+ },
+ {
+  "id": "H6.P.Moon",
+  "tier": "ordinary",
+  "quote": "Affliction by Mars and Saturn: curious and incurable diseases and revengeful enemies. ... Afflicted in common signs, danger from lung troubles.",
+  "line": 6120,
+  "why": "Real disease afflictions, weighed."
+ },
+ {
+  "id": "H6.P.Rahu",
+  "tier": "ordinary",
+  "quote": "Rahu's affliction is the most unfortunate combination denoting huge debts, unexpected enmities and incurable diseases. ... unless there is relief by benefice associations",
+  "line": 6181,
+  "why": "Severe but explicitly relievable and to be carefully evaluated (6185)."
+ },
+ {
+  "id": "H6.P.Saturn",
+  "tier": "ordinary",
+  "quote": "If afflicted, sickness through privation or neglect; troubles through subordinates. If Mars is the afflicting planet, dangerous illness and operations.",
+  "line": 6145,
+  "why": "Illness and troubles, weighed."
+ },
+ {
+  "id": "H6.P.Sun",
+  "tier": "ordinary",
+  "quote": "Sun afflicted: Long and troublesome illness. ... heart-trouble or frequent chest pain unless the affliction is relieved by Jupiter's aspect.",
+  "line": 6116,
+  "why": "Illness that Jupiter's aspect can relieve or neutralise (6164)."
+ },
+ {
+  "id": "H7.C.16",
+  "tier": "blemish",
+  "quote": "If Saturn or Mars aspect Venus in the 7th house, the native will indulge in adultery.",
+  "line": 451,
+  "why": "A trait of conduct, not a denial of the spouse."
+ },
+ {
+  "id": "H7.C.17",
+  "tier": "blemish",
+  "quote": "If Saturn, the Moon and Mars occupy the 7th house, both the native and his wife will be immoral.",
+  "line": 452,
+  "why": "A trait of character of both partners."
+ },
+ {
+  "id": "H7.C.18",
+  "tier": "blemish",
+  "quote": "If the 2nd, 7th and the 10th lords occupy the 7th, the native will be a profligate.",
+  "line": 454,
+  "why": "A trait of character."
+ },
+ {
+  "id": "H7.C.24",
+  "tier": "ordinary",
+  "quote": "If weak and afflicted Venus be in the 7th house, the wife may be barren or the husband may be impotent.",
+  "line": 415,
+  "why": "Qualified 'may', split between two outcomes."
+ },
+ {
+  "id": "H7.C.25",
+  "tier": "ordinary",
+  "quote": "If Mars with a malefic occupies the 7th house, the native may suffer impotency caused by urinary problems.",
+  "line": 419,
+  "why": "Qualified 'may suffer'."
+ },
+ {
+  "id": "H7.C.26",
+  "tier": "decisive",
+  "quote": "If Saturn and Venus occupy the 10th or 8th and receive no benefic aspects, the person will be impotent.",
+  "line": 421,
+  "why": "Plain denial of virility, benefic relief built into the condition."
+ },
+ {
+  "id": "H7.C.28",
+  "tier": "decisive",
+  "quote": "The following planetary positions cause one to be impotent : 1. Saturn in depression in the 6th or 12th house.",
+  "line": 428,
+  "why": "Plain denial of virility."
+ },
+ {
+  "id": "H7.C.30",
+  "tier": "decisive",
+  "quote": "3. The Moon in an even sign and Mercury in an odd sign and both being aspected by Mars.",
+  "line": 432,
+  "why": "Listed plainly among positions that 'cause one to be impotent'."
+ },
+ {
+  "id": "H7.C.32",
+  "tier": "decisive",
+  "quote": "The following planetary positions cause one to be impotent : ... 5. If Mars is in an even sign and the Lagna is in an odd sign.",
+  "line": 438,
+  "why": "Raman lists it flatly among positions that cause impotence, a plain denial of virility."
+ },
+ {
+  "id": "H7.C.34",
+  "tier": "decisive",
+  "quote": "The following planetary positions cause one to be impotent : ... 7. Ifthe 7th lord and Venus are in the 6th house.",
+  "line": 445,
+  "why": "Plain statement of impotence, a denial of the matter."
+ },
+ {
+  "id": "H7.C.46",
+  "tier": "ordinary",
+  "quote": "Venus in the 7th for Taurus Ascendant threatens death to wife.",
+  "line": 377,
+  "why": "'Threatens' is a danger to be weighed, not a stated loss."
+ },
+ {
+  "id": "H7.C.48",
+  "tier": "decisive",
+  "quote": "When the 2nd and 7th houses ... are occupied or aspected by malefics, the loss of wife or husband happens.",
+  "line": 384,
+  "why": "States the loss of the partner in plain terms."
+ },
+ {
+  "id": "H7.C.49",
+  "tier": "decisive",
+  "quote": "If the 5th or 8th lord is in the 7th, death of wife or husband occurs.",
+  "line": 386,
+  "why": "Plain statement of the partner's death."
+ },
+ {
+  "id": "H7.C.52",
+  "tier": "decisive",
+  "quote": "The Moon and Saturn in the 7th in a woman's chart indicates remarriage while in a man's chart, they deny marriage or progeny.",
+  "line": 392,
+  "why": "For a man Raman states an outright denial of marriage."
+ },
+ {
+  "id": "H7.C.53",
+  "tier": "decisive",
+  "quote": "Malefics in the 2nd, 7th and 8th from Lagna result in demise of married partner.",
+  "line": 394,
+  "why": "Plain statement of the partner's death."
+ },
+ {
+  "id": "H7.C.54",
+  "tier": "ordinary",
+  "quote": "The Sun and Rahu in the 7th cause loss of wealth through women.",
+  "line": 395,
+  "why": "A loss of wealth through marriage: a real affliction, not a denial."
+ },
+ {
+  "id": "H7.C.55",
+  "tier": "ordinary",
+  "quote": "Mercury in the 7th in Taurus or Jupiter in the 7th in Capricorn or Saturn and Mars in the 7th in Pisces are injurious to the life of the married partner.",
+  "line": 398,
+  "why": "'Injurious to the life' harms the partner without stating death."
+ },
+ {
+  "id": "H7.C.56",
+  "tier": "decisive",
+  "quote": "Saturn and Mercury in the 7th indicate a widow or widower for a life-partner.",
+  "line": 401,
+  "why": "States widowhood plainly, i.e. loss of the partner."
+ },
+ {
+  "id": "H7.C.60",
+  "tier": "decisive",
+  "quote": "If the 7th house is occupied by Mars, the wife will die.",
+  "line": 913,
+  "why": "Plain statement of the wife's death."
+ },
+ {
+  "id": "H7.C.65",
+  "tier": "decisive",
+  "quote": "If Venus and Mars conjoin in the 7th, the native will be bereft of wife.",
+  "line": 926,
+  "why": "Plain statement of the loss of the wife."
+ },
+ {
+  "id": "H7.C.67",
+  "tier": "decisive",
+  "quote": "If Mars occupy the 2nd, the 12th, the 4th, the 8th or the 7th house, the native will lose, by death, his married partner.",
+  "line": 929,
+  "why": "Plain statement of the partner's death."
+ },
+ {
+  "id": "H7.C.74",
+  "tier": "decisive",
+  "quote": "If the 7th house be a malefic sign occupied by Saturn, the native will be widowed.",
+  "line": 954,
+  "why": "Plain statement of widowhood."
+ },
+ {
+  "id": "H7.C.78",
+  "tier": "decisive",
+  "quote": "if Rahu conjoins Saturn and Mars in the 7th or 8th house, widowhood is denoted early in life.",
+  "line": 968,
+  "why": "Plain statement of early widowhood."
+ },
+ {
+  "id": "H7.C.80",
+  "tier": "decisive",
+  "quote": "If the 7th house and the 7th lord be subject to papakartari yoga ... with out any benefic influence, the result is loss of husband.",
+  "line": 975,
+  "why": "Plain loss of the husband, already conditioned on no benefic relief."
+ },
+ {
+  "id": "H7.C.82",
+  "tier": "ordinary",
+  "quote": "Beneficial influences on the 7th house or its lord give happiness in marriage while afflictions by malefic pianets cause misery, death or separation in marriage.",
+  "line": 995,
+  "why": "A general summing-up that sets afflictions against benefic influences, so they are weighed."
+ },
+ {
+  "id": "H7.C.83",
+  "tier": "ordinary",
+  "quote": "If the 7th lord is in the 12th house and the karaka is also very weak, marital happiness will be lacking and one may lose one's wife through death or separation.",
+  "line": 834,
+  "why": "Qualified by 'may', and offset by a strong 7th lord and Venus in the next sentence."
+ },
+ {
+  "id": "H7.C.84",
+  "tier": "decisive",
+  "quote": "Affliction causes the early death of partner while the native may die in distant lands.",
+  "line": 300,
+  "why": "Raman states the partner's early death plainly for an afflicted 7th lord in the 8th."
+ },
+ {
+  "id": "H7.C.85",
+  "tier": "decisive",
+  "quote": "If Mars occupy the 2nd, the 12th, the 4th, the 8th or the 7th house, the native will lose, by death, his married partner.",
+  "line": 929,
+  "why": "Plain statement of the partner's death; the rule adds conditions on top."
+ },
+ {
+  "id": "H7.C.86",
+  "tier": "ordinary",
+  "quote": "the 7th lords are afflicted by Rahu ... This results in a husband who was already married to another ... Rahu's presence makes him immoral.",
+  "line": 1773,
+  "why": "A worked case where the affliction spoils the spouse's character without denying the marriage."
+ },
+ {
+  "id": "H7.C.88",
+  "tier": "ordinary",
+  "quote": "the Sun ruling the 2nd or house of family and Saturn ruling the 7th or house of wife, made his domestic life quite miserable.",
+  "line": 11141,
+  "why": "A real affliction of domestic happiness, applied in a case, with no denial."
+ },
+ {
+  "id": "H7.C.9",
+  "tier": "ordinary",
+  "quote": "If the Moon occupies the 7th house in a malefic sign or Navamsa, the wife will be wicked, mean and similar to a menial.",
+  "line": 402,
+  "why": "Afflicts the spouse's character, a substantive part of the matter, but no loss or denial."
+ },
+ {
+  "id": "H7.K.1",
+  "tier": "decisive",
+  "quote": "The following planetary positions cause one to be impotent : ... 2. Saturn in the 6th or the 8th house from Venus.",
+  "line": 430,
+  "why": "Listed flatly among causes of impotence, a denial of virility."
+ },
+ {
+  "id": "H7.K.2",
+  "tier": "decisive",
+  "quote": "If there ere malefics in the 4th, 8th and 12th houses from Venus, or Venus is hemmed in between malefics, the wife will die soon after marriage.",
+  "line": 374,
+  "why": "Plain statement of the wife's early death."
+ },
+ {
+  "id": "H7.K.3",
+  "tier": "ordinary",
+  "quote": "If there are malefics in the 7th from Venus, the marriage will be unhappy.",
+  "line": 376,
+  "why": "Unhappiness is a real affliction to be weighed, not a denial."
+ },
+ {
+  "id": "H7.L.12",
+  "tier": "ordinary",
+  "quote": "There maybe more than one marriage in the native's life. He may marry a second time clandestinely while the first wife is still alive.",
+  "line": 329,
+  "why": "Repeated 'may'; the severe outcome is reserved for a severely afflicted lord."
+ },
+ {
+  "id": "H7.L.8",
+  "tier": "unsupported",
+  "quote": "When well placed, marriage may take place with relatives or the partner may be a rich person.",
+  "line": 298,
+  "why": "Raman gives this as the favourable result of a well-placed lord, not as a negative testimony."
+ },
+ {
+  "id": "H7.P.Ketu",
+  "tier": "ordinary",
+  "quote": "The native has an unhappy marriage with a shrewish wife ... His wife is sickly. ... These results are modified by the aspects and associations",
+  "line": 579,
+  "why": "A real affliction that Raman says aspects and associations modify."
+ },
+ {
+  "id": "H7.P.Mars",
+  "tier": "blemish",
+  "quote": "Mars in the 7th, unaspected by benefics, indicates frequent quarrels leading to misunderstandings.",
+  "line": 2558,
+  "why": "Quarrels are a mild, partial effect from a compatibility passage; the cited line 532 (clashes and tensions) agrees."
+ },
+ {
+  "id": "H7.P.Moon",
+  "tier": "blemish",
+  "quote": "If the Moon is waning, he will always be quarrelling with his enemies.",
+  "line": 528,
+  "why": "Mostly character traits (quarrels with enemies, intolerable life at line 610) that do not deny the spouse matter, and the Jupiter arm is favourable."
+ },
+ {
+  "id": "H7.P.Rahu",
+  "tier": "ordinary",
+  "quote": "He will have affairs with outcaste women or foreigners. His wife suffers from womb disorders.",
+  "line": 574,
+  "why": "Real afflictions of the marriage and the wife's health, not a denial."
+ },
+ {
+  "id": "H7.P.Saturn",
+  "tier": "ordinary",
+  "quote": "If Mars afflicts, courts may intervene ; or violence, such as suicide or murder, may destroy the marriage, provided of course there are other afflictions.",
+  "line": 638,
+  "why": "Raman makes it explicitly conditional on other afflictions, so it is weighed. The text is at lines 638-640, not the cited 562."
+ },
+ {
+  "id": "H7.P.Sun",
+  "tier": "unsupported",
+  "quote": "If Jupiter aspects or associates with the Sun, the partner may be a highly evolved spiritual soul ... If fortified Venus be with the Sun, marriage will be marked by spiritual harmony.",
+  "line": 596,
+  "why": "The rule text (lines 594-599, not the cited 514) is favourable and contains no negative testimony."
+ },
+ {
+  "id": "H8.C.1",
+  "tier": "decisive",
+  "quote": "If the 8th house is occupied by malefics, the native dies an unnatural death such as suicide, murder or accident.",
+  "line": 3084,
+  "why": "Plain statement of a violent death."
+ },
+ {
+  "id": "H8.C.12",
+  "tier": "ordinary",
+  "quote": "If the Moon occupies the 8th together with Mars, Saturn or Rahu, death may be caused by epilepsy.",
+  "line": 3613,
+  "why": "A qualified ('may') disease cause of death, not a violent end."
+ },
+ {
+  "id": "H8.C.13",
+  "tier": "ordinary",
+  "quote": "If the Moon in the 8th is aspected by a strong Saturn, surgery or some ailment of the anus or the eye may be the cause of death.",
+  "line": 3616,
+  "why": "A qualified disease or surgical cause of death."
+ },
+ {
+  "id": "H8.C.15",
+  "tier": "blemish",
+  "quote": "If Mercury and Venus occupy the 8th, the native dies while asleep.",
+  "line": 3645,
+  "why": "A peaceful manner of death; hardly an affliction."
+ },
+ {
+  "id": "H8.C.17",
+  "tier": "decisive",
+  "quote": "If the Moon and Mercury join the 6th or the 8th, poison will be the cause of death.",
+  "line": 3647,
+  "why": "Plain statement of an unnatural death by poison."
+ },
+ {
+  "id": "H8.C.21",
+  "tier": "decisive",
+  "quote": "when a Sarpa ... Nigada ... Pasa ... or Ayudha ... drekkana rises in the 8th Bhava ... the death is brought about by suicide by hanging.",
+  "line": 3684,
+  "why": "Plain statement of a violent death (suicide)."
+ },
+ {
+  "id": "H8.C.3",
+  "tier": "blemish",
+  "quote": "If the 6th and 8th lords are related, death follows ill-health.",
+  "line": 3087,
+  "why": "Describes a natural death through disease, the benign class in the same passage; severe only if the houses are also afflicted."
+ },
+ {
+  "id": "H8.C.33",
+  "tier": "decisive",
+  "quote": "if the lord of the 8th is in the Ascendant and the waning Moon is aspected by Mars, death will be due to a weapon.",
+  "line": 6758,
+  "why": "A violent death, quoted and applied by Raman to an actual assassination."
+ },
+ {
+  "id": "H8.D.1",
+  "tier": "blemish",
+  "quote": "Saturn in the 8th with a malefic planet or Rahu in the Lagna causes stomach complaints.",
+  "line": 3583,
+  "why": "A minor ailment, not a manner of death."
+ },
+ {
+  "id": "H8.D.2",
+  "tier": "ordinary",
+  "quote": "it results in a disease that will prevent the intake of food. ... the disease may take the form of minor ailments like severe colds or mumps or be something serious like cancer.",
+  "line": 3586,
+  "why": "A real disease whose seriousness Raman grades by the affliction, so it is weighed."
+ },
+ {
+  "id": "H8.D.3",
+  "tier": "decisive",
+  "quote": "The nature of the death, viz., by hanging is shown by Saturn lord of the 8th occupying Ayudha Drekkana.",
+  "line": 14734,
+  "why": "Raman lets it settle a violent death (hanging) in a worked case."
+ },
+ {
+  "id": "H8.D.4",
+  "tier": "decisive",
+  "quote": "Death takes place in captivity when the 22nd Drekkana happens to be either Nigala, Sarpa or Pasa. ... as Ayushkaraka is also in a Nigala Drekkana, the queen had to meet her end by being guillotined.",
+  "line": 5943,
+  "why": "Applied in a case as deciding a violent death in captivity."
+ },
+ {
+  "id": "H8.D.5",
+  "tier": "decisive",
+  "quote": "Death takes place in captivity when the 22nd Drekkana happens to be either Nigala, Sarpa or Pasa.",
+  "line": 6674,
+  "why": "Plain statement of death in captivity, used as the case conclusion."
+ },
+ {
+  "id": "H8.D.6",
+  "tier": "decisive",
+  "quote": "Jupiter is in the 8th aspected powerfully by Mars ... Because of the strong martian and saturnine influences on the 8th ... Gandhi ... had a violent end.",
+  "line": 9187,
+  "why": "In a worked case Raman lets Mars's aspect override the benefic in the 8th, so it settles a violent end."
+ },
+ {
+  "id": "H8.K.10",
+  "tier": "decisive",
+  "quote": "The native dies through burns or a weapon if the Moon occupies Aries or Scorpio and is hemmed inbetween malefics.",
+  "line": 3654,
+  "why": "Plain statement of a violent death."
+ },
+ {
+  "id": "H8.K.22",
+  "tier": "ordinary",
+  "quote": "When the Moon occupies the 8th in a watery sign, consumption leads to death.",
+  "line": 3711,
+  "why": "A disease cause of death, not violent."
+ },
+ {
+  "id": "H8.K.23",
+  "tier": "ordinary",
+  "quote": "When Mercury in Leo is aspected by a malefic planet, death is caused by fever.",
+  "line": 3716,
+  "why": "A disease cause of death."
+ },
+ {
+  "id": "H8.K.24",
+  "tier": "ordinary",
+  "quote": "When Venus occupies the 8th house and is aspected by a malefic, death is from consumption, rheumatism or diabetes.",
+  "line": 3717,
+  "why": "A disease cause of death."
+ },
+ {
+  "id": "H8.K.25",
+  "tier": "ordinary",
+  "quote": "When Jupiter occupies the 8th house in a watery sign, affection of the lungs brings about death.",
+  "line": 3719,
+  "why": "A disease cause of death."
+ },
+ {
+  "id": "H8.K.26",
+  "tier": "ordinary",
+  "quote": "If Rahu is in the 8th house aspected by a malefic, death follows an attack of small-pox, boils, snake-bite, fall or biliousness.",
+  "line": 3720,
+  "why": "A mixed list, mostly disease, with no plainly violent end."
+ },
+ {
+  "id": "H8.K.28",
+  "tier": "ordinary",
+  "quote": "If Mars and Saturn occupy the 8th house, death is caused by affliction to the aorta.",
+  "line": 3724,
+  "why": "A disease cause of death."
+ },
+ {
+  "id": "H8.K.29",
+  "tier": "ordinary",
+  "quote": "Mercury and Venus in the 9th house also cause death by heart disease.",
+  "line": 3725,
+  "why": "A disease cause of death."
+ },
+ {
+  "id": "H8.K.3",
+  "tier": "decisive",
+  "quote": "When the waning Moon is in the 6th or 8th and the 4th and the 10th are occupied by malefic planets, death is brought about through the scheming of an enemy.",
+  "line": 3625,
+  "why": "Plain statement of an unnatural death at an enemy's hands."
+ },
+ {
+  "id": "H8.K.30",
+  "tier": "ordinary",
+  "quote": "The Moon in Virgo hemmed in between malefics causes death through anaemia.",
+  "line": 3726,
+  "why": "A disease cause of death."
+ },
+ {
+  "id": "H8.K.8",
+  "tier": "decisive",
+  "quote": "If the Sun and the Moon occupy the 8th or the 6th, the native is killed by a ferocious animal.",
+  "line": 3642,
+  "why": "Plain statement of a violent death."
+ },
+ {
+  "id": "H8.L.1",
+  "tier": "unsupported",
+  "quote": "If the 8th lord is weak or placed in the 6th, 8th or 12th from Navamsa Lagna, the intensity of misfortune is reduced.",
+  "line": 2905,
+  "why": "The rule text is a mitigating clause, not a negative testimony, and it says nothing about longevity."
+ },
+ {
+  "id": "H8.L.10",
+  "tier": "ordinary",
+  "quote": "the native has slow advancement in career. He faces obstacles and impediments ... He may suffer poverty.",
+  "line": 3028,
+  "why": "The rule text is empty; the passage is a weighed career affliction, not about longevity, and it is mitigated by the Navamsa placement."
+ },
+ {
+  "id": "H8.L.12",
+  "tier": "unsupported",
+  "quote": "The position of the 8th lord in the 12th house with the 12th lord gives rise to a Rajayoga. If benefics join the 8th lord, unfavourable results may be expected.",
+  "line": 3053,
+  "why": "The rule text is empty; the base placement is favourable (a Rajayoga), with nothing negative about longevity."
+ },
+ {
+  "id": "H8.L.2",
+  "tier": "ordinary",
+  "quote": "brings in troubles and problems of all sorts. ... If longevity is good, he may suffer some severe illness.",
+  "line": 2917,
+  "why": "The rule text is empty; the passage gives real troubles, mitigated by the Navamsa placement."
+ },
+ {
+  "id": "H8.L.3",
+  "tier": "ordinary",
+  "quote": "If malefics afflict the 8th lord in the 3rd with the 3rd lord, the sufferings of the native will be unbearable.",
+  "line": 2934,
+  "why": "Heavy suffering, but not a denial of longevity, and benefic results come with the 6th or 12th lord."
+ },
+ {
+  "id": "H8.L.4",
+  "tier": "ordinary",
+  "quote": "Ifthe affliction is heavy his land and immovable property may slip from his hands ... Malefics furthering the affliction may force him to seek his fortune abroad",
+  "line": 2945,
+  "why": "Qualified ('may') losses of property, not a denial of longevity."
+ },
+ {
+  "id": "H8.L.5",
+  "tier": "ordinary",
+  "quote": "If the 8th lord is in the 6th, 12th or 8th from Navamsa Lagna, the evil results are greatly mitigated. But if fortified in a kendra (quadrant) or trikona (trine), the evil",
+  "line": 2965,
+  "why": "An intensifier of weighed troubles (to children and health), not a denial of longevity."
+ },
+ {
+  "id": "H8.L.7",
+  "tier": "ordinary",
+  "quote": "The lord of the 8th house placed in the 7th house with the 7th lord curtails longevity. ... !f afflicted, the native will also suffer from disease.",
+  "line": 2993,
+  "why": "Curtails longevity and causes disease; a real affliction, weighed (strong lords give the opposite)."
+ },
+ {
+  "id": "H8.P.Jupiter",
+  "tier": "blemish",
+  "quote": "He will live long. ... If Jupiter is debilitated and the Moon is in the 4th house from Lagna, the native will be a menial, being always ordered about.",
+  "line": 3532,
+  "why": "A status trait; Raman gives this placement long life and a painless death."
+ },
+ {
+  "id": "H8.P.Ketu",
+  "tier": "blemish",
+  "quote": "If Ketu is afflicted, the native covets others' wealth and women. He will suffer from diseases due to disorders in the excretory system",
+  "line": 3575,
+  "why": "Character traits and ailments, not a threat to longevity."
+ },
+ {
+  "id": "H8.P.Mars",
+  "tier": "ordinary",
+  "quote": "The native willbe short-lived unless there are other alleviating factors, and he may suffer the loss of wife",
+  "line": 3510,
+  "why": "Short life, explicitly weighed against alleviating factors."
+ },
+ {
+  "id": "H8.P.Moon",
+  "tier": "blemish",
+  "quote": "if Mars and Saturn conjoin and the Moon is in the 8th house, the native's eyesight will be afflicted.",
+  "line": 3505,
+  "why": "A single bodily ailment, not about longevity."
+ },
+ {
+  "id": "H8.P.Rahu",
+  "tier": "blemish",
+  "quote": "The native will suffer from public censure and humiliation. He will be troubled by many ailments. He will be vicious, quarrelsome and unscrupulous.",
+  "line": 3568,
+  "why": "Character traits and ailments; nothing about the span of life."
+ },
+ {
+  "id": "H8.P.Saturn",
+  "tier": "blemish",
+  "quote": "Saturn in the 8th house gives good longevity ... If afflicted by malefic planets, his children will cause him pain and grief. The native will be dishonest and cruel.",
+  "line": 3550,
+  "why": "Traits and grief from children; Raman gives this placement good longevity."
+ },
+ {
+  "id": "H8.P.Sun",
+  "tier": "blemish",
+  "quote": "If the Sun is afflicted, he will be troubled with sores, in the face and head and be disgruntled in life. His eyes will be weak. He will suffer penury",
+  "line": 3485,
+  "why": "Minor ailments and hardship, not about longevity."
+ },
+ {
+  "id": "H9.A.1",
+  "tier": "blemish",
+  "quote": "the father will not be present at the time of the birth of the child. He may be in his own town.",
+  "line": 7413,
+  "why": "A temporary circumstance at the birth, a small part of the father matter."
+ },
+ {
+  "id": "H9.A.11",
+  "tier": "blemish",
+  "quote": "If the 4th lord conjoins the 9th lord in the 6th house, the native's father will be a profligate.",
+  "line": 7440,
+  "why": "A trait of the father's character."
+ },
+ {
+  "id": "H9.A.13",
+  "tier": "ordinary",
+  "quote": "If the 5th lord or the Sun is afflicted by Saturn, Rahu or Mandi, the native will be a source of misery to the father.",
+  "line": 7443,
+  "why": "A real affliction of the father relationship, to be weighed."
+ },
+ {
+  "id": "H9.A.17",
+  "tier": "ordinary",
+  "quote": "If the Sun is in an inimical sign, the native will studiously cause pain to his father.",
+  "line": 7450,
+  "why": "Strain in the relationship with the father; affliction, not loss."
+ },
+ {
+  "id": "H9.A.18",
+  "tier": "decisive",
+  "quote": "If the Sun and Moon be in trine to Mars and Saturn, the child will be abandoned by both parents.",
+  "line": 7451,
+  "why": "Plain statement of losing the father (abandonment)."
+ },
+ {
+  "id": "H9.A.19",
+  "tier": "decisive",
+  "quote": "Saturn, Mars and Rahu in the 11th or the 9th house from the Lagna cause father's death.",
+  "line": 7453,
+  "why": "Plain statement of the father's death."
+ },
+ {
+  "id": "H9.A.2",
+  "tier": "blemish",
+  "quote": "When the Sun in such a position occupies a movable sign, the father will be away in a foreign country at the birth of the child.",
+  "line": 7414,
+  "why": "A temporary absence at the birth."
+ },
+ {
+  "id": "H9.A.20",
+  "tier": "blemish",
+  "quote": "If the Sun or the Moon occupy a kendra in a movable sign, the native will not perform the last rites of the father.",
+  "line": 7455,
+  "why": "A small part of the father matter."
+ },
+ {
+  "id": "H9.A.20a",
+  "tier": "decisive",
+  "quote": "Afflictions to the Sun or his occupation of malefic houses results in early death of father.",
+  "line": 7921,
+  "why": "States the father's early death plainly, though Raman cautions at 7910 that no single planet entirely decides the bhava."
+ },
+ {
+  "id": "H9.A.21",
+  "tier": "ordinary",
+  "quote": "The presence of karaka Sun in the 9th house with 8th lord Jupiter is not conducive to longevity of father,",
+  "line": 7966,
+  "why": "'Not conducive' is a weighed affliction, not a stated death."
+ },
+ {
+  "id": "H9.A.22",
+  "tier": "decisive",
+  "quote": "The position of Rahu in the 9th indicates early death to his father.",
+  "line": 5311,
+  "why": "Raman applies it in a case as indicating the father's early death."
+ },
+ {
+  "id": "H9.A.3",
+  "tier": "decisive",
+  "quote": "If the Sun, Mars and Saturn combine in the 4th or the 10th house, the birth is of a posthumous child.",
+  "line": 7416,
+  "why": "The father dies before the birth: a plain loss."
+ },
+ {
+  "id": "H9.A.4",
+  "tier": "decisive",
+  "quote": "When the 5th or the 9th house from the Lagna be a malefic sign and is occupied bythe Sun, the father ofthe child will die soon.",
+  "line": 7420,
+  "why": "Plain statement of the father's death."
+ },
+ {
+  "id": "H9.A.5",
+  "tier": "decisive",
+  "quote": "The Sun and malefics in the 10th house from the Moon also indicate early death of father.",
+  "line": 7425,
+  "why": "Plain statement of the father's early death."
+ },
+ {
+  "id": "H9.A.6",
+  "tier": "ordinary",
+  "quote": "the father of the child will be in some sort of captivity at the time of its birth.",
+  "line": 7428,
+  "why": "'Some sort of' captivity, at the birth only, is a qualified affliction."
+ },
+ {
+  "id": "H9.A.7",
+  "tier": "ordinary",
+  "quote": "When the Sun is afflicted by conjunction with malefics, the child's father's life will be adversely influenced.",
+  "line": 7429,
+  "why": "'Adversely influenced' is a weighed affliction."
+ },
+ {
+  "id": "H9.B.22",
+  "tier": "ordinary",
+  "quote": "If the 9th lord is aspected by a malefic, inimical or debilitated planet and is in the 6th house, the person suffers in every respect.",
+  "line": 7461,
+  "why": "A broad affliction of fortune, to be weighed."
+ },
+ {
+  "id": "H9.B.23",
+  "tier": "ordinary",
+  "quote": "If the 9th lord be in a malefic shashtyamsa or occupy a debilitated sign or Navamsa or be weak or if malefics occupy the 9th house, the native is unfortunate in life.",
+  "line": 7463,
+  "why": "A real affliction of fortune; Raman cautions the 9th-bhava results are general (7395-7403)."
+ },
+ {
+  "id": "H9.B.24",
+  "tier": "ordinary",
+  "quote": "If a malefic, eclipsed or debilitated planet occupy the 9th house, the native will be luckless, poor or unprincipled. But if the malefic in the 9th be exalted ... the opposite",
+  "line": 7467,
+  "why": "An affliction that Raman reverses by dignity, so it is weighed."
+ },
+ {
+  "id": "H9.C.35",
+  "tier": "ordinary",
+  "quote": "Planets in the 9th if not associated with Mercury and Jupiter make one diseased, forlorn and face captivity and misery.",
+  "line": 7507,
+  "why": "A general affliction; nothing specific to higher learning."
+ },
+ {
+  "id": "H9.D.40",
+  "tier": "blemish",
+  "quote": "If the Sun, the Moon and Saturn are in the same sign, the person will be wicked and deceitful and try to travel abroad.",
+  "line": 7503,
+  "why": "A character trait; for long journeys it is not even adverse."
+ },
+ {
+  "id": "H9.D.47",
+  "tier": "decisive",
+  "quote": "If malefics occupy the 10th and 4th houses from Lagna, the native dies during his pilgrimage to a sacred shrine.",
+  "line": 9397,
+  "why": "Death on the journey is stated plainly, without qualifier."
+ },
+ {
+  "id": "H9.L.12",
+  "tier": "ordinary",
+  "quote": "Father may die early leaving the native penniless. These combinations are very general and cannot be applied without taking into account the concerned karaka",
+  "line": 7390,
+  "why": "Real affliction of fortune, but Raman says at once that it must be weighed against the karaka and other dispositions."
+ },
+ {
+  "id": "H9.L.6",
+  "tier": "ordinary",
+  "quote": "The ninth lord in the sixth house gives a sickly father afflicted with chronic diseases... attempts to make his fortune may be frustrated through litigation",
+  "line": 7340,
+  "why": "Suffering of father and fortune, qualified by 'may' and offset by benefic flanking."
+ },
+ {
+  "id": "H9.L.8",
+  "tier": "ordinary",
+  "quote": "The native may lose his father early in life. If malefics afflict the eighth house in such a case, he may suffer severe poverty",
+  "line": 7359,
+  "why": "Father's early death and poverty are hedged with 'may' and benefics can bring inheritance, so the factor is weighed."
+ },
+ {
+  "id": "H9.P.Ketu",
+  "tier": "blemish",
+  "quote": "short-tempered and may get upset over trifles... treating his parents badly... but save much money through frugal living. He will have a good wife and children.",
+  "line": 7594,
+  "why": "Character traits only; fortune itself is favourable."
+ },
+ {
+  "id": "H9.P.Mars",
+  "tier": "blemish",
+  "quote": "Saturn with Mars in the 9th indicates addiction to other women and a wicked nature. He will be self-seeking, stubborn and impetuous.",
+  "line": 7542,
+  "why": "The conjunction clauses describe character, not loss of fortune."
+ },
+ {
+  "id": "H9.P.Rahu",
+  "tier": "blemish",
+  "quote": "He will hate his father and revile God and religion. But he may become famous and acquire much wealth.",
+  "line": 7588,
+  "why": "Attitudes and character, with fame and wealth expressly kept."
+ },
+ {
+  "id": "H9.P.Saturn",
+  "tier": "blemish",
+  "quote": "The Sun with Saturn causes serious conflicts with the father... growths or lumps in the stomach. Mercury with Saturn makes the native untruthful and deceitful although he may be wealthy.",
+  "line": 7581,
+  "why": "Conflict, an ailment and a trait; fortune is not denied ('although wealthy')."
+ },
+ {
+  "id": "H9.P.Sun",
+  "tier": "blemish",
+  "quote": "The native may change his faith if the Sun is afflicted. He displays hostile feelings towards his father... Venus with the Sun gives sickness",
+  "line": 7513,
+  "why": "Change of faith, attitudes and minor sickness, all character or minor touches."
+ },
+ {
+  "id": "H10.C.32",
+  "tier": "decisive",
+  "quote": "If the kendras are all occupied by malefics, the result is notoriety. Such natives resort to crime and hypocrisy, suffer poverty",
+  "line": 11061,
+  "why": "Plain, unqualified denial of honour: notoriety, crime and poverty."
+ },
+ {
+  "id": "H10.C.33m",
+  "tier": "blemish",
+  "quote": "Benefics in the 10th from the Ascendant or the Moon make the native noble-minded while malefics make him addicted to evil deeds.",
+  "line": 11066,
+  "why": "A trait of conduct set against the benefic alternative."
+ },
+ {
+  "id": "H10.C.35",
+  "tier": "blemish",
+  "quote": "unrelieved by other favourable aspects the person becomes aggressive, lacks tolerance for the adversary, and is fanatical and ruthless.",
+  "line": 13443,
+  "why": "Traits of temperament, not loss of status."
+ },
+ {
+  "id": "H10.C.36",
+  "tier": "ordinary",
+  "quote": "The Rajayoga-causing elements are not without their bad points... Saturn in the 10th is not at all desirable for although it confers initial success, it also gives defeat and humiliation in politicall",
+  "line": 14022,
+  "why": "A real affliction that Raman weighs as a bad point within a Rajayoga chart, limited to political charts; the text does not say it 'destroys' the Rajayoga."
+ },
+ {
+  "id": "H10.C.52",
+  "tier": "blemish",
+  "quote": "The afflicted Moon here makes the native a gambler and violent in disposition.",
+  "line": 11010,
+  "why": "Disposition and character trait."
+ },
+ {
+  "id": "H10.C.54",
+  "tier": "blemish",
+  "quote": "If the 2nd and 7th lords be two of the planets in the 10th house, the native will be lustful.",
+  "line": 11029,
+  "why": "A single character trait."
+ },
+ {
+  "id": "H10.C.54a",
+  "tier": "blemish",
+  "quote": "But if the 10th lord be weak and in the 7th house, the native will be of evil conduct.",
+  "line": 11028,
+  "why": "A conduct trait, offered as the reverse of an ascetic yoga."
+ },
+ {
+  "id": "H10.C.62",
+  "tier": "decisive",
+  "quote": "Hitler's horoscope is fully illustrative of the dictum that final fall is inevitable when Saturn occupies the 10th afflicted by Mars or Rahu.",
+  "line": 12304,
+  "why": "Raman calls the fall inevitable, a dictum that overrides, and illustrates it with Hitler's collapse."
+ },
+ {
+  "id": "H10.L.12",
+  "tier": "ordinary",
+  "quote": "the native will have to work in a far-off place. He will lack comforts and face many difficulties in life.",
+  "line": 9565,
+  "why": "Career hardship to be weighed, not denial; benefic disposition redirects it."
+ },
+ {
+  "id": "H10.L.6",
+  "tier": "blemish",
+  "quote": "The person will have an occupation bearing on judiciary, prisons or hospitals.",
+  "line": 9509,
+  "why": "This names a field of work, not an affliction; Raman puts disgrace only in a separate conditional clause on Rahu or afflicted malefics."
+ },
+ {
+  "id": "H10.L.8",
+  "tier": "ordinary",
+  "quote": "The native has many breaks in career. If the 10th lord is fortified, he will occupy a high office in his field but only for a short time.",
+  "line": 9525,
+  "why": "Career suffers interruption but is not denied."
+ },
+ {
+  "id": "H10.P.Ketu",
+  "tier": "ordinary",
+  "quote": "He will commit vile deeds and be impure in his resolves. He will face many obstacles in all his undertakings.",
+  "line": 9902,
+  "why": "The malefic content is obstacles to be weighed; the rule's own text quotes only the favourable 'beneficially disposed' clause."
+ },
+ {
+  "id": "H10.P.Mars",
+  "tier": "blemish",
+  "quote": "If Saturn and Mars combine in the 10th house, he will be daring but will have no progeny.",
+  "line": 9848,
+  "why": "For career the clauses are favourable or neutral; the only denial is of progeny, a different matter."
+ },
+ {
+  "id": "H10.P.Rahu",
+  "tier": "blemish",
+  "quote": "There is a tendency to lusts after widows... He will be famous and will engage himself in business... commits many sins.",
+  "line": 9894,
+  "why": "Character traits beside fame and business; career is not afflicted."
+ },
+ {
+  "id": "H10.P.Saturn",
+  "tier": "blemish",
+  "quote": "If Saturn is associated with the 8th lord in a malefic Navamsa, the native suffers under a tyrannical superior officer.",
+  "line": 9888,
+  "why": "A minor qualified touch inside an otherwise elevating placement (ruler or minister)."
+ },
+ {
+  "id": "H11.C.2",
+  "tier": "blemish",
+  "quote": "If malefics be in the 11th Bhava, the native resorts to unfair and unscrupulous methods of earning",
+  "line": 14359,
+  "why": "Describes the manner of earning (character), not loss of gains."
+ },
+ {
+  "id": "H11.C.21",
+  "tier": "ordinary",
+  "quote": "If the 11th lord is associated with the 12th lord, loss can be expected during their mutual periods.",
+  "line": 15182,
+  "why": "Loss confined to periods, weighed."
+ },
+ {
+  "id": "H11.C.22",
+  "tier": "blemish",
+  "quote": "financial stress is possible during the major and minor periods of these planets.",
+  "line": 15184,
+  "why": "Qualified ('possible') and limited to periods."
+ },
+ {
+  "id": "H11.C.23",
+  "tier": "blemish",
+  "quote": "If the 5th lord is in the 8th house or the 8th lord occupies the 5th house, then also losses can occur.",
+  "line": 15185,
+  "why": "A mild, qualified possibility."
+ },
+ {
+  "id": "H11.C.38",
+  "tier": "ordinary",
+  "quote": "Malefic aspects and associations on the 11th house and 11th lord deny elder brothers or give them short lives or other-wise mar their prosperity.",
+  "line": 14747,
+  "why": "Denial is only one of three alternatives the reader must weigh."
+ },
+ {
+  "id": "H11.C.39",
+  "tier": "ordinary",
+  "quote": "the native may not have any elder brother or may lose him by death.",
+  "line": 14750,
+  "why": "Denial or death, but hedged with 'may'."
+ },
+ {
+  "id": "H11.C.5",
+  "tier": "decisive",
+  "quote": "even if one is born in an affluent family will lose everything and he will have to wander about without self-respect.",
+  "line": 14369,
+  "why": "A plain total loss that overrides even an affluent birth."
+ },
+ {
+  "id": "H11.C.54",
+  "tier": "ordinary",
+  "quote": "Lord of the 11th house in the twelfth with the ruler of the 12th house gives losses through varied expenditure. If malefics afflict the 12th house, wealth will be squandered.",
+  "line": 14731,
+  "why": "Loss of wealth to be weighed."
+ },
+ {
+  "id": "H11.C.7",
+  "tier": "ordinary",
+  "quote": "If the 2nd and 11th lords are afflicted and inimical to the Lagna lord, money is squandered on wine and women.",
+  "line": 14390,
+  "why": "Loss of wealth through vice, a weighed affliction."
+ },
+ {
+  "id": "H11.L.12",
+  "tier": "ordinary",
+  "quote": "He will suffer losses in business... These results are very general and must not be applied",
+  "line": 14335,
+  "why": "Losses and an ailing brother, which Raman says must not be applied without weighing."
+ },
+ {
+  "id": "H11.L.8",
+  "tier": "ordinary",
+  "quote": "The native though rich at birth suffers many calamities and loses much of his money.",
+  "line": 14309,
+  "why": "Heavy loss but not total; begging only under a further condition."
+ },
+ {
+  "id": "H11.P.Mars",
+  "tier": "blemish",
+  "quote": "an eloquent and forceful speaker, clever and rich but lustful, will acquire landed Properties",
+  "line": 14453,
+  "why": "Gains are favourable; 'lustful' is a single trait."
+ },
+ {
+  "id": "H11.P.Venus",
+  "tier": "blemish",
+  "quote": "will make immense profits possessing all kinds of comforts and luxuries. He will have a weakness for women",
+  "line": 14469,
+  "why": "Gains are favourable; a trait only."
+ },
+ {
+  "id": "H12.C.A10",
+  "tier": "ordinary",
+  "quote": "Reckless investment in shares and trade and business are likely when Mercury is placed in a similar situation. Family litigation will also dwindle wealth.",
+  "line": 16314,
+  "why": "Loss of wealth that Raman says to weigh (16322-16325: 'possible in toto only if...')."
+ },
+ {
+  "id": "H12.C.A11",
+  "tier": "ordinary",
+  "quote": "Venus causes loss of money through women of ill-fame, scandals or black-mail",
+  "line": 16316,
+  "why": "Loss of money, which Raman explicitly says to weigh (16322-16325)."
+ },
+ {
+  "id": "H12.C.A13",
+  "tier": "ordinary",
+  "quote": "Saturn and Rahu cause heavy expenses on deaths and similar calamities.",
+  "line": 16318,
+  "why": "Heavy expense, subject to Raman's caveat to weigh (16322-16325)."
+ },
+ {
+  "id": "H12.C.A14",
+  "tier": "ordinary",
+  "quote": "The Moon and the Ascendant lord in the 12th result in dissipation of money through medical and hospital bills, sureties, bail-amounts",
+  "line": 16320,
+  "why": "Dissipation of money, subject to the weighing caveat that follows."
+ },
+ {
+  "id": "H12.C.A15",
+  "tier": "ordinary",
+  "quote": "The native's mother is instrumental in his losing money when the afflicted 12th lord joins the 4th lord.",
+  "line": 16327,
+  "why": "Loss of money through one channel."
+ },
+ {
+  "id": "H12.C.A16",
+  "tier": "ordinary",
+  "quote": "shows loss of money through their respective significations, namely, enemies, litigation, women, children, co-borns, married partner and father.",
+  "line": 16333,
+  "why": "Loss of money through channels."
+ },
+ {
+  "id": "H12.C.A17",
+  "tier": "blemish",
+  "quote": "The 12th lord with a malefic suggests embezzlement tendencies.",
+  "line": 16337,
+  "why": "A tendency of character, phrased mildly ('suggests')."
+ },
+ {
+  "id": "H12.C.A19",
+  "tier": "ordinary",
+  "quote": "If the luminaries occupy the 12th, loss of wealth takes place through tax raids, government enactments or confiscation.",
+  "line": 16363,
+  "why": "Loss of wealth to be weighed."
+ },
+ {
+  "id": "H12.C.A2",
+  "tier": "ordinary",
+  "quote": "If the 12th lord is aspected by or is with a malefic or depressed or eclipsed planet, the native spends his money in illegal and questionable ways.",
+  "line": 16252,
+  "why": "Spending on vice is a real affliction of expenditure that has to be weighed."
+ },
+ {
+  "id": "H12.C.A4",
+  "tier": "ordinary",
+  "quote": "If malefics afflict the 12th, one's earning get dissipated in many ways.",
+  "line": 16262,
+  "why": "Dissipation of earnings, weighed."
+ },
+ {
+  "id": "H12.C.A8",
+  "tier": "ordinary",
+  "quote": "The native's wealth is spent on fines or will be confiscated by the Government when the afflicted Sun occupies the 12th.",
+  "line": 16310,
+  "why": "Loss of wealth, subject to the weighing caveat at 16322."
+ },
+ {
+  "id": "H12.C.A9",
+  "tier": "ordinary",
+  "quote": "Mars in the 12th gives expensive litigation and dangerous enemies. Money will be lost through ransom, cheating and swindlers.",
+  "line": 16312,
+  "why": "Loss of money, subject to the weighing caveat at 16322."
+ },
+ {
+  "id": "H12.C.C1",
+  "tier": "decisive",
+  "quote": "Poverty is indicated when Jupiter is in the 12th, 6th or 8th from the Moon and the Moon is in a trine or a quadrant, debilitated or occupying an inimical varga.",
+  "line": 16395,
+  "why": "Plain statement of poverty."
+ },
+ {
+  "id": "H12.C.C3",
+  "tier": "decisive",
+  "quote": "If the Sun in Aries is aspected by a malefic and is in debility in Navamsa; or if Venus occupies Virgo both in Rasi and Navamsa, a beggar is born.",
+  "line": 16398,
+  "why": "Plain statement of beggary."
+ },
+ {
+  "id": "H12.C.C5",
+  "tier": "decisive",
+  "quote": "If a malefic occupies the 2nd, 4th or the 5th house from Jupiter, one will be poor.",
+  "line": 16410,
+  "why": "Plain statement of poverty."
+ },
+ {
+  "id": "H12.C.C6",
+  "tier": "decisive",
+  "quote": "The same result is indicated if the luminaries in the Lagna are aspected or associated with the 2nd or the 7th lord.",
+  "line": 16411,
+  "why": "Plain statement of poverty, made by reference to the line before."
+ },
+ {
+  "id": "H12.C.C8",
+  "tier": "decisive",
+  "quote": "the native will never earn enough for even bare subsistence.",
+  "line": 16417,
+  "why": "Absolute, unqualified poverty."
+ },
+ {
+  "id": "H12.C.C9",
+  "tier": "decisive",
+  "quote": "Benefics in the 10th and malefics in the 2nd denote poverty... Most of these combinations can be found in the charts of slum-dwellers",
+  "line": 16418,
+  "why": "Plain statement of poverty."
+ },
+ {
+  "id": "H12.C.D1",
+  "tier": "decisive",
+  "quote": "The Ascendant, its lord and planets in papakartari yoga usually give rise to imprisonment.",
+  "line": 16426,
+  "why": "Imprisonment stated plainly."
+ },
+ {
+  "id": "H12.C.D2",
+  "tier": "decisive",
+  "quote": "If the Lagna and the 6th lord combine with Saturn in a kendra or kona, the native will suffer imprisonment.",
+  "line": 16427,
+  "why": "Imprisonment stated plainly."
+ },
+ {
+  "id": "H12.C.D3",
+  "tier": "decisive",
+  "quote": "Malefics in the 2nd, 5th, 9th and 12th houses cause captivity",
+  "line": 16429,
+  "why": "Captivity stated plainly."
+ },
+ {
+  "id": "H12.C.D3c",
+  "tier": "ordinary",
+  "quote": "If Gemini, Libra or Virgo is ascending, one may be put in fetters.",
+  "line": 16434,
+  "why": "A hedged ('may') mode of D3's captivity, not a separate testimony."
+ },
+ {
+  "id": "H12.C.D4",
+  "tier": "decisive",
+  "quote": "The 6th and Lagna lords in a trine or quadrant, joining Rahu or Ketu, cause incarceration.",
+  "line": 16438,
+  "why": "Incarceration stated plainly."
+ },
+ {
+  "id": "H12.C.D5",
+  "tier": "ordinary",
+  "quote": "Death in captivity may occur when the Moon, Mars, Saturn and the Sun occupy the 10th, 9th, 1st and 5th houses respectively.",
+  "line": 16439,
+  "why": "A grave outcome, but hedged with 'may occur'."
+ },
+ {
+  "id": "H12.C.E3",
+  "tier": "decisive",
+  "quote": "One will not enjoy such pleasures under the following combinations : If the Lagna lord occupies the 6th, 8th or the 12th",
+  "line": 16296,
+  "why": "Plain denial of bed-pleasures, though Raman lets the cause vary with the chart."
+ },
+ {
+  "id": "H12.C.F1",
+  "tier": "decisive",
+  "quote": "the native may face untold calamities and hardships. He will enter upon a vicious code of conduct, commit sins and go to hell after death.",
+  "line": 16495,
+  "why": "Plain denial of the higher planes ('will ... go to hell')."
+ },
+ {
+  "id": "H12.C.F2",
+  "tier": "ordinary",
+  "quote": "one may go to lower planes such as hell after death.",
+  "line": 16499,
+  "why": "The same outcome, hedged with 'may'."
+ },
+ {
+  "id": "H12.C.H2",
+  "tier": "ordinary",
+  "quote": "If malefics afflict by papakartari yoga or by aspect, the native may leave the country for fear of the law or life",
+  "line": 16236,
+  "why": "A hedged, real affliction of foreign residence."
+ },
+ {
+  "id": "H12.C.J1",
+  "tier": "ordinary",
+  "quote": "If Lagna lord Venus is in the 6th, one suffers from diseases in the left eye.",
+  "line": 16450,
+  "why": "Disease of the left eye, not its loss."
+ },
+ {
+  "id": "H12.C.J10",
+  "tier": "blemish",
+  "quote": "If the Lagna and 2nd lords occupy the 6th, 8th or the 12th houses, one's eye-sight may be affected.",
+  "line": 16469,
+  "why": "A mild, qualified effect on eyesight."
+ },
+ {
+  "id": "H12.C.J11",
+  "tier": "ordinary",
+  "quote": "Mars in the 12th injures the right eye.",
+  "line": 16470,
+  "why": "Real injury, but to the RIGHT eye; the rule is filed under left_eye, so the routing does not match the text."
+ },
+ {
+  "id": "H12.C.J12",
+  "tier": "ordinary",
+  "quote": "If the Sun and the Moon occupy the 6th and the 12th from Lagna, one may lose one of his eyes.",
+  "line": 16471,
+  "why": "Loss of an eye, but hedged with 'may' and not tied to the left eye."
+ },
+ {
+  "id": "H12.C.J13",
+  "tier": "ordinary",
+  "quote": "If the Moon and Venus occupy the 12th house, or if Venus along with a malefic occupy the 12th house, the left eye will be affected.",
+  "line": 16472,
+  "why": "The left eye is affected, not lost."
+ },
+ {
+  "id": "H12.C.J2",
+  "tier": "decisive",
+  "quote": "The 2nd and 12th lords conjoining Venus and the Lagna lord in any of the dusthanas... makes one born blind.",
+  "line": 16451,
+  "why": "Plain loss of the organ (blindness from birth)."
+ },
+ {
+  "id": "H12.C.J3",
+  "tier": "decisive",
+  "quote": "Combination of the Lagna lord, the Sun and Venus gives the same results.",
+  "line": 16453,
+  "why": "The same plain result: born blind."
+ },
+ {
+  "id": "H12.C.J4",
+  "tier": "ordinary",
+  "quote": "The Moon afflicted by a malefic planet and Venus in the 2nd house can cause loss of vision.",
+  "line": 16454,
+  "why": "Loss of vision, hedged with 'can'."
+ },
+ {
+  "id": "H12.C.J5",
+  "tier": "ordinary",
+  "quote": "The Moon and Venus in the 6th, the 8th or the 12th cause night-blindness.",
+  "line": 16460,
+  "why": "A real eye ailment that falls short of loss."
+ },
+ {
+  "id": "H12.C.J6",
+  "tier": "blemish",
+  "quote": "One will have weak vision if the waning Moon is aspected by Saturn",
+  "line": 16461,
+  "why": "Weak vision; Raman later calls defective vision 'of little consequence' (16485)."
+ },
+ {
+  "id": "H12.C.J7",
+  "tier": "blemish",
+  "quote": "or if the Moon in Cancer is aspected by malefics from the 7th or the 10th house.",
+  "line": 16462,
+  "why": "Weak vision, a minor ailment by Raman's own comment at 16476-16489."
+ },
+ {
+  "id": "H12.C.J8",
+  "tier": "blemish",
+  "quote": "Eye troubles are foreseen when Venus occupies the Lagna or the 8th house afflicted by malefics.",
+  "line": 16463,
+  "why": "Unspecified eye trouble, minor by Raman's later comment."
+ },
+ {
+  "id": "H12.C.J9",
+  "tier": "blemish",
+  "quote": "If the Sun aspected by Mars or Saturn or afflicted by Rahu occupy the 12th house or any trine, the native will have defective vision.",
+  "line": 16465,
+  "why": "Defective vision, which Raman says is 'of little consequence' today."
+ },
+ {
+  "id": "H12.L.1",
+  "tier": "blemish",
+  "quote": "The native will have a weak constitution and will be feeble-minded. He will, however, be handsome and sweet-tongued.",
+  "line": 16129,
+  "why": "Traits of body and mind; the graver clauses depend on further conditions."
+ },
+ {
+  "id": "H12.L.10",
+  "tier": "ordinary",
+  "quote": "undertake tedious journeys for his occupation... The native will derive no happiness or physical comforts from his sons.",
+  "line": 16207,
+  "why": "Real hardships, offset by profit, under the 'general' caveat at 16230."
+ },
+ {
+  "id": "H12.L.11",
+  "tier": "ordinary",
+  "quote": "He will engage himself in business, but does not make much profit... the native's funds may dwindle",
+  "line": 16214,
+  "why": "Limited gain and dwindling funds, weighed."
+ },
+ {
+  "id": "H12.L.2",
+  "tier": "blemish",
+  "quote": "If the twelfth lord is ill-disposed, the native indulges in gossip and quarrelling.",
+  "line": 16149,
+  "why": "A character trait (the main losses are mitigable by dignity)."
+ },
+ {
+  "id": "H12.L.3",
+  "tier": "ordinary",
+  "quote": "He will be timid and quiet. Loss of a brother is shown... He may work in some commonplace job and earn very little.",
+  "line": 16152,
+  "why": "Real but mixed afflictions, to be weighed."
+ },
+ {
+  "id": "H12.L.4",
+  "tier": "ordinary",
+  "quote": "Early death to mother... But if the twelfth lord is well placed, these adverse indications get mitigated to a large extent.",
+  "line": 16161,
+  "why": "Raman says himself that good placement mitigates it, so it is weighed."
+ },
+ {
+  "id": "H12.L.5",
+  "tier": "ordinary",
+  "quote": "Either difficulty to beget progeny or unhappiness from children will be experienced.",
+  "line": 16169,
+  "why": "A real affliction, but given as alternatives and not as denial."
+ },
+ {
+  "id": "H12.L.7",
+  "tier": "ordinary",
+  "quote": "Married life will be unhappy and may end in separation.",
+  "line": 16189,
+  "why": "A real, hedged affliction."
+ },
+ {
+  "id": "H12.P.Jupiter",
+  "tier": "blemish",
+  "quote": "The native may deride religion and be evil-minded... Later on he repents and reforms himself.",
+  "line": 16629,
+  "why": "A character trait, which Raman says is later reformed."
+ },
+ {
+  "id": "H12.P.Ketu",
+  "tier": "ordinary",
+  "quote": "The native will have a restless and wandering mind and leave his country of birth... All his inherited property may be lost.",
+  "line": 16654,
+  "why": "Hedged loss of inheritance plus traits."
+ },
+ {
+  "id": "H12.P.Mars",
+  "tier": "ordinary",
+  "quote": "The person may lose his wife... He is liable to deception and may lose his money.",
+  "line": 16615,
+  "why": "Real but hedged ('may') losses."
+ },
+ {
+  "id": "H12.P.Mercury",
+  "tier": "ordinary",
+  "quote": "the person will indulge in extra-marital relations and suffer penury... He will also have a few children.",
+  "line": 16625,
+  "why": "Penury and other afflictions, weighed."
+ },
+ {
+  "id": "H12.P.Moon",
+  "tier": "blemish",
+  "quote": "The native may suffer from some deformity... Eye-sight will be weak.",
+  "line": 16609,
+  "why": "Traits and minor ailments ('some', 'may')."
+ },
+ {
+  "id": "H12.P.Rahu",
+  "tier": "decisive",
+  "quote": "If the Sun is in the 7th, Mars is in the 10th and Rahu is in the 12th Bhava, the native's father will die early.",
+  "line": 16650,
+  "why": "The father's early death is stated plainly; Rahu alone is otherwise 'prosperous'."
+ },
+ {
+  "id": "H12.P.Saturn",
+  "tier": "decisive",
+  "quote": "The native will be dull-headed and lose all his money.",
+  "line": 16644,
+  "why": "Total loss of wealth stated plainly."
+ },
+ {
+  "id": "H12.P.Sun",
+  "tier": "ordinary",
+  "quote": "He will not be quite successful in his life... He will suffer the loss of some limb",
+  "line": 16603,
+  "why": "Real afflictions; the rule's text (fines and confiscation, 16310) is a weighed loss of wealth."
+ },
+ {
+  "id": "H12.P.Venus",
+  "tier": "ordinary",
+  "quote": "Desertion by relatives; hankering after comforts without success and penury will make the native's life miserable... If Venus is exalted, contrary results will happen.",
+  "line": 16634,
+  "why": "A real affliction, which Raman reverses for an exalted Venus."
+ }
+]

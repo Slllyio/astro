@@ -48,6 +48,7 @@ from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine import lookups
 from app.raman_saab.doctrine.conditions import EvalContext, HemmedBy
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
+from app.raman_saab.doctrine import malefic_tiers
 from app.raman_saab.doctrine.significations import Signification, significations_of
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.doctrine.yoga_routes import routes_to
@@ -206,6 +207,9 @@ class FrameLedger:
     #: debilitation) that Raman reads as powerless independently of its Shadbala total.
     #: None on Track-B (no positions to judge). See `_lord_hard_afflicted`.
     lord_hard_afflicted: Optional[bool] = None
+    #: Y1 — blemish-grade malefic rules set aside because a benefic rule also fired (kept here
+    #: so every renderer still shows them). Empty unless `Y1_BLEMISH_TIER` is on.
+    fired_blemish: tuple[rf.FiredRule, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -538,6 +542,12 @@ NAVAMSA_ONE_STEP: bool = True
 #: only for `death`, `longevity` (already guarded) and `wealth` (poverty block, HTJAH-I:2526-2528).
 MARAKA_GUARD_ALL_NON_DEATH: bool = False
 _MARAKA_DEATH_KEYS = frozenset({"death", "longevity", "wealth"})
+
+#: Y1 (FIDELITY_FIXES_PREREG Addendum 13, HELD until measured and decided): a malefic rule
+#: graded `blemish` from its citation (`doctrine.malefic_tiers`) does not open the
+#: benefic-vs-malefic contradiction. Raman weighs a single small touch past a good
+#: combination (3HC 10264-10267; NH 10921-10926). Not applied to inherent-affliction matters.
+Y1_BLEMISH_TIER: bool = False
 
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 
@@ -1368,6 +1378,14 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     if "longevity" in sig.rule_tags or "death" == sig.key or maraka_active:
         flags.append("LONGEVITY_UNKNOWN")
 
+    blemish: tuple[rf.FiredRule, ...] = ()
+    if Y1_BLEMISH_TIER and benefic and sig.key not in _DUSTHANA_AFFLICTION_KEYS:
+        blemish = tuple(fr for fr in malefic if malefic_tiers.tier(fr.rule.id) == "blemish")
+        if blemish:
+            malefic = tuple(fr for fr in malefic if fr not in blemish)
+            if not malefic:
+                flags.append("BLEMISH_ONLY")
+
     return FrameLedger(
         frame=frame, lord=lord, lord_strong=lord_strong, karaka=karaka,
         karaka_strong=karaka_strong, bhava_bala=bb, bhava_bala_strong=bb_strong,
@@ -1375,7 +1393,8 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         maraka_active=maraka_active, parivartana_resilient=parivartana_resilient,
         lord_karaka_identical=lord_karaka_identical,
         fired_benefic=benefic, fired_malefic=malefic, fired_neutral=neutral,
-        flags=tuple(dict.fromkeys(flags)), lord_hard_afflicted=lord_hard)
+        flags=tuple(dict.fromkeys(flags)), lord_hard_afflicted=lord_hard,
+        fired_blemish=blemish)
 
 
 # ---------------------------------------------------------------------------

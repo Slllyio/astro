@@ -394,3 +394,23 @@ overall or in any book; within-one does not fall; exact rises or real errors fal
 3 scored once, V0 against Y1: real errors do not rise and within-one does not fall; (c) an
 engine-blind doctrine review of the tier table before anything ships, which goes to the user.
 Hold-out 3 is scored only if (a) passes.
+
+## Addendum 14 (2026-10-28): Y1 measured on the pool, FAILS, held
+
+Tiers from the four engine-blind reviews (379 rules): 106 decisive, 168 ordinary, 100 blemish,
+5 unsupported; per-rule quotes in `research/malefic_tiers_review_2026-10-28.json`, table in
+`doctrine/malefic_tiers.py`. Pool, V0 -> Y1: exact 262 -> 263, within one 349 -> 345, **real
+errors 40 -> 44** (NH 22 -> 25, HTJAH-I 13 -> 14). Fails rules 1 and 2. Thirteen rows move: six
+mixed -> favourable that Raman calls favourable, but also NH.chart_42 and chart_53 H1 self
+favourable -> afflicted (with the blemish set aside the contradiction closes and the weak-pillar
+clause decides), and HTJAH-I.chart_10 H1 and NH.chart_46 H4 education mixed -> favourable where
+Raman says afflicted. Y1 stays behind `Y1_BLEMISH_TIER = False`, not adjusted; hold-out 3 is not
+scored and stays sealed.
+
+Side findings of the review, for citation-first repair (none measured, none applied): 5 rules
+graded `unsupported` (H3.C.31, H7.L.8, H7.P.Sun, H8.L.1, H8.L.12); rules whose `text` is
+Raman's favourable or mitigating clause but whose polarity is malefic (H1.L.8, H1.P.Saturn,
+H2.P.Rahu, H3.L.11, H10.P.Ketu, H12.L.4, H12.P.Venus); routing problems (H12.C.J11 is the right
+eye, filed under left_eye; H9.C.35 and H9.D.40 cite passages silent on their matter; several
+H8.L/H8.P rules tagged `longevity` cite passages about other matters); one rule note contradicted
+by its own citation (H4.C.18, HTJAH-I:4224); and several one-line citation offsets.

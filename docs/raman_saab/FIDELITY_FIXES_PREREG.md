@@ -365,3 +365,32 @@ ear_throat and NH.chart_36 H7 spouse fall to insufficient-evidence, the side eff
 Addendum 10. M1 stays in code behind `MARAKA_GUARD_ALL_NON_DEATH = False` and is not adjusted.
 Hold-out 3 was NOT scored for M1: a variant that fails the pool rule cannot ship, so the only
 fresh set is kept sealed for the next pre-registered variant.
+
+## Addendum 13 (2026-10-28): variant Y1 (a blemish does not open the contradiction), fixed before the tiers or any Y1 number exist
+
+User decision 2026-10-28: start the yoga-flaw fix (`YOGA_BLEMISH_PROPOSAL_2026-10-24.md`) as the
+next pre-registered change, tested on the sealed hold-out 3.
+
+**Tiers.** Every rule that lands in a matter's malefic bucket on any fixture chart (379 rules:
+363 malefic by polarity, 16 neutral promoted by the functional-malefic overlay; selection by
+firing only, no verdict read) is graded by four engine-blind agents, about 95 rules each, from
+its cited passage: `decisive`, `ordinary`, `blemish`, or `unsupported`. Brief:
+`docs/raman_saab/research/TIER_BRIEF.md`. The grades are stored as data in the engine; a rule
+with no grade, or graded `unsupported` or `decisive`, behaves exactly as today in Y1. The
+`decisive` and `unsupported` grades are recorded for later work only.
+
+**Y1 (one variant, no second version).** For a matter that is NOT an inherent-affliction matter
+(`AFFLICTION_MATTER`: 6th, 8th death, 12th incarceration and left eye), when at least one benefic
+rule fired, the malefic rules graded `blemish` are removed from the ledger's malefic set before
+the verdict clauses run. They are kept on the ledger as their own `fired_blemish` list and flagged
+`BLEMISH_ONLY` when they were the only malefics, so every renderer still shows them. When no
+benefic fired, a blemish counts as an ordinary malefic, unchanged. Consequence: a good matter
+with only blemish-grade negatives no longer goes through the contradiction clause (and so the
+Navamsa can no longer turn it), and a yoga lift that required "no malefic fired" now ignores
+blemishes. Nothing else changes. Switch: `house_template.Y1_BLEMISH_TIER` (default False).
+
+**Decision rule.** Same as M1: (a) the one decision rule on the pool (real errors do not rise
+overall or in any book; within-one does not fall; exact rises or real errors fall); (b) hold-out
+3 scored once, V0 against Y1: real errors do not rise and within-one does not fall; (c) an
+engine-blind doctrine review of the tier table before anything ships, which goes to the user.
+Hold-out 3 is scored only if (a) passes.

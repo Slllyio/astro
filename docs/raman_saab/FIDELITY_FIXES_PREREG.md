@@ -300,3 +300,43 @@ Not pre-registered: it follows from the doctrine research in `NAVAMSA_STEP_FINDI
 chose to encode it. Pool 277/350/39 -> 269/354/35, four pinned real errors fixed, none new. Both
 hold-outs were already spent, so their figures (22/30/6 and 57/100/34) describe the change and do
 not test it. Doctrine snapshot: 1541 verdict moves on the corpus, 1518 of them afflicted -> mixed.
+
+## Addendum 10 (2026-10-28): hold-out 3 and variant M1, fixed before any M1 number or hold-out 3 chart exists
+
+**Hold-out 3 source.** *Hindu Predictive Astrology* ch. 35 ("Practical Horoscopes", 21 natives
+with birth data, printed sign positions and short remarks) and ch. 14 Horoscope Nos. 1-3. No HPA
+chart has been used in the golden pool or either earlier hold-out. Natives whose birth date is
+already in any fixture are skipped (285 dates; Nos. 35.1 Mussolini and 14.3 are among them).
+Extraction: two independent engine-blind agents, same brief (`HOLDOUT_BRIEF.md`) plus
+`HOLDOUT_BRIEF3_ADDENDUM.md`; only conclusions the two give identically (house, matter and
+verdict) are scored, as for HTJAH-II in hold-out 2. Acceptance: HPA prints no dasa balance, so a
+cast chart is accepted only if all nine grahas and the Lagna fall in the signs Raman prints;
+otherwise (or with no coordinates) the chart is used from its printed signs as a stated-position
+chart, as NH Nos. 1-15 were. The V0 verdicts are written to a file whose SHA-256 is recorded
+here, unread, before M1 is applied to `app/`. Hold-out 3 is scored once.
+Disclosure: while scoping the source I read the remarks of ch. 35 Nos. 1-5. None of that text
+was used in designing M1.
+
+**Diagnosis that motivated M1** (decision-path trace of every scored row, pool plus the two
+spent hold-outs, 559 rows). Sixteen rows are decided by clause 6 on "a weak pillar plus maraka
+pressure" with no malefic rule fired at all: 8 are matters Raman calls favourable (all real
+errors), 6 afflicted, 2 mixed. The matters are career, authority, gains, elder siblings, spouse,
+children, intellect, mother, self, hearing. `maraka_active` is true whenever the matter's lord or
+karaka is a maraka of the native, and Raman's maraka doctrine is death-determination doctrine
+("Primary Determinants of death ... the 2nd and 7th are houses of death", HTJAH-I:776-814). B3
+and its 2026-08-29 extension already removed maraka's verdict-driving effect from marital
+happiness, speech, vision and family on exactly this ground; the reviewer's words then were "the
+maraka chapter is death-determination doctrine, full stop".
+
+**M1 (one variant, no second version).** `MARAKA_NON_DEATH_GUARD` is set for every
+signification except `death`, `longevity` (already under `LONGEVITY_GUARD`) and `wealth` (the
+poverty block, HTJAH-I:2526-2528, makes maraka association a wealth operator). Nothing else
+changes: `maraka_active` is still recorded, the karaka veto and every fired rule keep full force.
+Expected side effect, accepted in advance: where maraka pressure was the only evidence, a matter
+may now read insufficient-evidence, which scores as distance 2.
+
+**Decision rule.** M1 is recommended to the user only if (a) it passes the one decision rule on
+the pool (real errors do not rise overall or in any book; within-one does not fall; exact rises
+or real errors fall), and (b) on hold-out 3, scored once, real errors do not rise and within-one
+does not fall against V0. Passing (a) and (b) still goes to the user, after an engine-blind
+doctrine review of the change. Failing either is reported and M1 is held; it is not adjusted.

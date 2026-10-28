@@ -1,0 +1,699 @@
+{
+ "rules": [
+  {
+   "id": "H3.C.31",
+   "flag": "unsupported",
+   "house": 3,
+   "signification": "ear_throat",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "the 3rd lord placed in a dusthana (6th, 8th, or 12th) -> ear/throat affliction; the house of hearing suffers when its lord occupies a house of disease (6th), obstruction (8th), or loss (12th)",
+   "source": "HTJAH-I:3465",
+   "first_review": {
+    "tier": "unsupported",
+    "quote": "Mercury with the lord of third gives throat disease. Generally evil planets in the third give troubles connected with throat.",
+    "line": 3466,
+    "why": "Cited passage says nothing about the 3rd lord in 6/8/12 affecting ear or throat."
+   }
+  },
+  {
+   "id": "H7.L.8",
+   "flag": "unsupported",
+   "house": 7,
+   "signification": "spouse",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "marriage with relatives or a rich partner",
+   "afflicted": null,
+   "source": "HTJAH-II:298",
+   "first_review": {
+    "tier": "unsupported",
+    "quote": "When well placed, marriage may take place with relatives or the partner may be a rich person.",
+    "line": 298,
+    "why": "Raman gives this as the favourable result of a well-placed lord, not as a negative testimony."
+   }
+  },
+  {
+   "id": "H7.P.Sun",
+   "flag": "unsupported",
+   "house": 7,
+   "signification": "spouse",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "(conjunctions, not fortification) with Mercury -> highly intelligent, and tactfully deals with troubles accruing from Government or other sources; with Jupiter -> the partner may be a highly evolved spiritual soul; with a fortified Venus -> marriage marked by spiritual harmony",
+   "afflicted": null,
+   "source": "HTJAH-II:514",
+   "first_review": {
+    "tier": "unsupported",
+    "quote": "If Jupiter aspects or associates with the Sun, the partner may be a highly evolved spiritual soul ... If fortified Venus be with the Sun, marriage will be marked by spiritual harmony.",
+    "line": 596,
+    "why": "The rule text (lines 594-599, not the cited 514) is favourable and contains no negative testimony."
+   }
+  },
+  {
+   "id": "H8.L.1",
+   "flag": "unsupported",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "the 8th lord weak - the intensity of the misfortune is reduced",
+   "source": "HTJAH-II:2902",
+   "first_review": {
+    "tier": "unsupported",
+    "quote": "If the 8th lord is weak or placed in the 6th, 8th or 12th from Navamsa Lagna, the intensity of misfortune is reduced.",
+    "line": 2905,
+    "why": "The rule text is a mitigating clause, not a negative testimony, and it says nothing about longevity."
+   }
+  },
+  {
+   "id": "H8.L.12",
+   "flag": "unsupported",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": null,
+   "source": "HTJAH-II:3053",
+   "first_review": {
+    "tier": "unsupported",
+    "quote": "The position of the 8th lord in the 12th house with the 12th lord gives rise to a Rajayoga. If benefics join the 8th lord, unfavourable results may be expected.",
+    "line": 3053,
+    "why": "The rule text is empty; the base placement is favourable (a Rajayoga), with nothing negative about longevity."
+   }
+  },
+  {
+   "id": "H1.L.8",
+   "flag": "favourable_text_marked_malefic",
+   "house": 1,
+   "signification": "self",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "takes pride in helping others, many friends, religiously inclined, peaceful and sudden end",
+   "afflicted": null,
+   "source": "HTJAH-I:1057",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "If the lord is strong the native takes pride in helping others, has a number of friends, religiously inclined and will have a peaceful and sudden end.",
+    "line": 1059,
+    "why": "The rule text is FAVOURABLE in Raman (strong lord); only 'mean character' at 1057 is negative. Polarity mislabelled; minimal weight."
+   }
+  },
+  {
+   "id": "H1.P.Saturn",
+   "flag": "favourable_text_marked_malefic",
+   "house": 1,
+   "signification": "self",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "Saturn NOT afflicted → much consideration for the welfare of others; self-confidence is normally justified and moral stability will be marked",
+   "afflicted": null,
+   "source": "HTJAH-I:1541",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "But, if Saturn is not afflicted, there will be much consideration for the welfare or others.",
+    "line": 1541,
+    "why": "Rule text is FAVOURABLE in Raman; the negatives of Saturn in Lagna (weak body, slow progress) are mild. Polarity mislabelled."
+   }
+  },
+  {
+   "id": "H2.P.Rahu",
+   "flag": "favourable_text_marked_malefic",
+   "house": 2,
+   "signification": "wealth",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "peevish, diseased face, friction in family life, danger to eye-sight; financial affairs uncertain unless other favourable combinations occur; money is gained through friends and business",
+   "afflicted": "(an aspect, not an affliction) Jupiter aspecting the 2nd house → earnings will be good",
+   "source": "HTJAH-I:2573",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "Financial affairs uncertain unless other favourable combinations occur. If Jupiter aspects the second house, then earnings will be good.",
+    "line": 2573,
+    "why": "Rule text is FAVOURABLE (Jupiter's aspect); Rahu's own effect is a qualified uncertainty. Polarity mislabelled."
+   }
+  },
+  {
+   "id": "H3.L.11",
+   "flag": "favourable_text_marked_malefic",
+   "house": 3,
+   "signification": "siblings",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "a number of younger brothers when 3rd lord is in 3rd, 6th or 11th",
+   "afflicted": null,
+   "source": "HTJAH-I:3405",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "Eleventh House. -Not a very good combination.. Earnings with effort. He becomes vindictive. The bod) will be unattractive and emaciated.",
+    "line": 3405,
+    "why": "Rule text ('a number of younger brothers', 3351) is FAVOURABLE; the cited 3405 negatives are traits, not brothers. Polarity mislabelled."
+   }
+  },
+  {
+   "id": "H10.P.Ketu",
+   "flag": "favourable_text_marked_malefic",
+   "house": 10,
+   "signification": "career",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "if beneficially disposed → happy, religious, well-read in scriptures, pilgrim-visits",
+   "afflicted": null,
+   "source": "HTJAH-II:9900",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "He will commit vile deeds and be impure in his resolves. He will face many obstacles in all his undertakings.",
+    "line": 9902,
+    "why": "The malefic content is obstacles to be weighed; the rule's own text quotes only the favourable 'beneficially disposed' clause."
+   }
+  },
+  {
+   "id": "H12.L.4",
+   "flag": "favourable_text_marked_malefic",
+   "house": 12,
+   "signification": "loss_moksha",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "the twelfth lord well placed - these adverse indications get mitigated to a large extent",
+   "afflicted": null,
+   "source": "HTJAH-II:16161",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Early death to mother... But if the twelfth lord is well placed, these adverse indications get mitigated to a large extent.",
+    "line": 16161,
+    "why": "Raman says himself that good placement mitigates it, so it is weighed."
+   }
+  },
+  {
+   "id": "H12.P.Venus",
+   "flag": "favourable_text_marked_malefic",
+   "house": 12,
+   "signification": "loss_moksha",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "Venus exalted → contrary (favourable) results",
+   "afflicted": null,
+   "source": "HTJAH-II:16634",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Desertion by relatives; hankering after comforts without success and penury will make the native's life miserable... If Venus is exalted, contrary results will happen.",
+    "line": 16634,
+    "why": "A real affliction, which Raman reverses for an exalted Venus."
+   }
+  },
+  {
+   "id": "H12.C.J11",
+   "flag": "routing",
+   "house": 12,
+   "signification": "left_eye",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "Mars in the 12th → injures the right eye",
+   "source": "HTJAH-II:16470",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Mars in the 12th injures the right eye.",
+    "line": 16470,
+    "why": "Real injury, but to the RIGHT eye; the rule is filed under left_eye, so the routing does not match the text."
+   }
+  },
+  {
+   "id": "H12.C.J12",
+   "flag": "routing",
+   "house": 12,
+   "signification": "left_eye",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "the Sun and the Moon in the 6th and the 12th from Lagna → one may lose one of his eyes",
+   "source": "HTJAH-II:16471",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "If the Sun and the Moon occupy the 6th and the 12th from Lagna, one may lose one of his eyes.",
+    "line": 16471,
+    "why": "Loss of an eye, but hedged with 'may' and not tied to the left eye."
+   }
+  },
+  {
+   "id": "H9.C.35",
+   "flag": "routing",
+   "house": 9,
+   "signification": "higher_learning",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "planets in the 9th not associated with Mercury and Jupiter → diseased, forlorn, captivity and misery",
+   "source": "HTJAH-II:7507",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Planets in the 9th if not associated with Mercury and Jupiter make one diseased, forlorn and face captivity and misery.",
+    "line": 7507,
+    "why": "A general affliction; nothing specific to higher learning."
+   }
+  },
+  {
+   "id": "H9.D.40",
+   "flag": "routing",
+   "house": 9,
+   "signification": "long_journeys",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "the Sun, the Moon and Saturn in the same sign → wicked and deceitful, tries to travel abroad",
+   "source": "HTJAH-II:7503",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "If the Sun, the Moon and Saturn are in the same sign, the person will be wicked and deceitful and try to travel abroad.",
+    "line": 7503,
+    "why": "A character trait; for long journeys it is not even adverse."
+   }
+  },
+  {
+   "id": "H10.L.6",
+   "flag": "routing",
+   "house": 10,
+   "signification": "career",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "an occupation bearing on judiciary, prisons or hospitals",
+   "afflicted": null,
+   "source": "HTJAH-II:9508",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "The person will have an occupation bearing on judiciary, prisons or hospitals.",
+    "line": 9509,
+    "why": "This names a field of work, not an affliction; Raman puts disgrace only in a separate conditional clause on Rahu or afflicted malefics."
+   }
+  },
+  {
+   "id": "H10.C.36",
+   "flag": "routing",
+   "house": 10,
+   "signification": "status_honour",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "Saturn in the 10th (a politically-oriented chart) → initial success but eventual defeat and humiliation; destroys Rajayogas",
+   "source": "HTJAH-II:14020",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "The Rajayoga-causing elements are not without their bad points... Saturn in the 10th is not at all desirable for although it confers initial success, it also gives defeat and humiliation in politicall",
+    "line": 14022,
+    "why": "A real affliction that Raman weighs as a bad point within a Rajayoga chart, limited to political charts; the text does not say it 'destroys' the Rajayoga."
+   }
+  },
+  {
+   "id": "H10.P.Mars",
+   "flag": "routing",
+   "house": 10,
+   "signification": "career",
+   "polarity": "neutral",
+   "kind": "evaluable",
+   "fortified": "other combinations favouring - the native may become a cruel ruler; fond of praise and may take bold steps in governing; rash; earns much money",
+   "afflicted": "(conjunctions, not afflictions) with Mercury → skilled scientist or technician patronised by rulers; with Jupiter → head of low-class people; with Venus → trader in foreign lands; with Saturn → daring but no progeny",
+   "source": "HTJAH-II:9841",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "If Saturn and Mars combine in the 10th house, he will be daring but will have no progeny.",
+    "line": 9848,
+    "why": "For career the clauses are favourable or neutral; the only denial is of progeny, a different matter."
+   }
+  },
+  {
+   "id": "H8.L.10",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": null,
+   "source": "HTJAH-II:3027",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "the native has slow advancement in career. He faces obstacles and impediments ... He may suffer poverty.",
+    "line": 3028,
+    "why": "The rule text is empty; the passage is a weighed career affliction, not about longevity, and it is mitigated by the Navamsa placement."
+   }
+  },
+  {
+   "id": "H8.L.4",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "the affliction heavy - land and immovable property slip from his hands, conveyances lost or destroyed, pets sicken and die; malefics furthering the affliction force him to seek his fortune abroad, where he meets troubles and losses",
+   "source": "HTJAH-II:2940",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Ifthe affliction is heavy his land and immovable property may slip from his hands ... Malefics furthering the affliction may force him to seek his fortune abroad",
+    "line": 2945,
+    "why": "Qualified ('may') losses of property, not a denial of longevity."
+   }
+  },
+  {
+   "id": "H8.L.5",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "the 8th lord fortified - the evil results are intensified",
+   "afflicted": null,
+   "source": "HTJAH-II:2957",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "If the 8th lord is in the 6th, 12th or 8th from Navamsa Lagna, the evil results are greatly mitigated. But if fortified in a kendra (quadrant) or trikona (trine), the evil",
+    "line": 2965,
+    "why": "An intensifier of weighed troubles (to children and health), not a denial of longevity."
+   }
+  },
+  {
+   "id": "H8.P.Ketu",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "aspected by benefic → much wealth, long life",
+   "afflicted": "covets others' wealth and women; excretory-system disease; profligacy diseases",
+   "source": "HTJAH-II:3574",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "If Ketu is afflicted, the native covets others' wealth and women. He will suffer from diseases due to disorders in the excretory system",
+    "line": 3575,
+    "why": "Character traits and ailments, not a threat to longevity."
+   }
+  },
+  {
+   "id": "H8.P.Moon",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "(a conjunction, not an affliction) Mars and Saturn conjoining -> the eyesight is afflicted",
+   "source": "HTJAH-II:3498",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "if Mars and Saturn conjoin and the Moon is in the 8th house, the native's eyesight will be afflicted.",
+    "line": 3505,
+    "why": "A single bodily ailment, not about longevity."
+   }
+  },
+  {
+   "id": "H8.P.Rahu",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "public censure, humiliation; many ailments; vicious, quarrelsome, unscrupulous; Moon with malefic + Rahu in 8th/12th/5th → mental disorders",
+   "afflicted": null,
+   "source": "HTJAH-II:3568",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "The native will suffer from public censure and humiliation. He will be troubled by many ailments. He will be vicious, quarrelsome and unscrupulous.",
+    "line": 3568,
+    "why": "Character traits and ailments; nothing about the span of life."
+   }
+  },
+  {
+   "id": "H8.P.Saturn",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "neutral",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "Saturn afflicted by malefic planets -> his children cause him pain and grief, and the native will be dishonest and cruel; (configurations) with Mars and Rahu in Lagna and Gulika in a trine -> generative-organ disease; with the Moon -> flatulence and spleen",
+   "source": "HTJAH-II:3550",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "Saturn in the 8th house gives good longevity ... If afflicted by malefic planets, his children will cause him pain and grief. The native will be dishonest and cruel.",
+    "line": 3550,
+    "why": "Traits and grief from children; Raman gives this placement good longevity."
+   }
+  },
+  {
+   "id": "H8.P.Sun",
+   "flag": "routing",
+   "house": 8,
+   "signification": "longevity",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "the Sun in the 8th in exaltation -> lives long, charming and an eloquent speaker; (a configuration) with the 8th or 11th lord -> sudden speculation gain",
+   "afflicted": "the Sun afflicted -> troubled with sores in the face and head, disgruntled in life, weak eyes, penury and an uneventful life; (a configuration) Sun in the 8th with the Moon or Rahu in the 12th and Saturn in a trine -> dental trouble",
+   "source": "HTJAH-II:3483",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "If the Sun is afflicted, he will be troubled with sores, in the face and head and be disgruntled in life. His eyes will be weak. He will suffer penury",
+    "line": 3485,
+    "why": "Minor ailments and hardship, not about longevity."
+   }
+  },
+  {
+   "id": "H1.L.7",
+   "flag": "citation_line",
+   "house": 1,
+   "signification": "self",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "spends most time in foreign countries, leads a licentious life; or a puppet of parents-in-law",
+   "afflicted": null,
+   "source": "HTJAH-I:1048",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "If well disposed, he will spend most of his time in foreign countries and lead a licentious life. Or he will be a puppet in the hands of his parents-in-law.",
+    "line": 1054,
+    "why": "Character and lifestyle traits given under 'well disposed'; NOTE source 1048 itself is about the wife not living (7th-house matter)."
+   }
+  },
+  {
+   "id": "H6.P.Rahu",
+   "flag": "citation_line",
+   "house": 6,
+   "signification": "enemies_disease",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "Rahu's affliction -> huge debts, unexpected enmities and incurable diseases, unless there is relief by benefic associations or aspects; (a conjunction) the Moon and Saturn joining Rahu -> mental derangement and a psychological misfit",
+   "source": "HTJAH-I:6150",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Rahu's affliction is the most unfortunate combination denoting huge debts, unexpected enmities and incurable diseases. ... unless there is relief by benefice associations",
+    "line": 6181,
+    "why": "Severe but explicitly relievable and to be carefully evaluated (6185)."
+   }
+  },
+  {
+   "id": "H4.P.Mars",
+   "flag": "citation_line",
+   "house": 4,
+   "signification": "mother_home",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "Mars involved in benefic association or aspect -> the evil is tempered to a certain amount",
+   "afflicted": "Mars the afflicted planet -> loss through theft, deception and even litigation; tragic developments in the personal life, quarrels, strife and misunderstandings",
+   "source": "HTJAH-I:4250",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "If Mars is the afflicted planet, there will be loss through theft, deception and even litigation. Affliction of Mars always denotes some tragic developments",
+    "line": 4285,
+    "why": "Losses and troubles to be weighed; benefic association tempers it (4287)."
+   }
+  },
+  {
+   "id": "H9.D.47",
+   "flag": "citation_line",
+   "house": 9,
+   "signification": "long_journeys",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "malefics occupying the 10th and 4th from Lagna → native dies during his pilgrimage to a sacred shrine",
+   "source": "HTJAH-II:9396",
+   "first_review": {
+    "tier": "decisive",
+    "quote": "If malefics occupy the 10th and 4th houses from Lagna, the native dies during his pilgrimage to a sacred shrine.",
+    "line": 9397,
+    "why": "Death on the journey is stated plainly, without qualifier."
+   }
+  },
+  {
+   "id": "H9.L.12",
+   "flag": "citation_line",
+   "house": 9,
+   "signification": "fortune",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "the 9th lord in the 12th gives a poor background; the native will suffer much and will have to work very hard in life, and even then success may not come to him; he will be religious and noble but always in want; the father may die early, leaving the native penniless",
+   "afflicted": null,
+   "source": "HTJAH-II:7389",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Father may die early leaving the native penniless. These combinations are very general and cannot be applied without taking into account the concerned karaka",
+    "line": 7390,
+    "why": "Real affliction of fortune, but Raman says at once that it must be weighed against the karaka and other dispositions."
+   }
+  },
+  {
+   "id": "H7.P.Saturn",
+   "flag": "citation_line",
+   "house": 7,
+   "signification": "spouse",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "Saturn strong in his own constellation -> the partner later becomes pious and devoted; (a configuration) with a strong Moon -> marriage with a widow",
+   "afflicted": "if Mars afflicts -> courts may intervene, or violence such as suicide or murder may destroy the marriage, provided of course there are other afflictions",
+   "source": "HTJAH-II:562",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "If Mars afflicts, courts may intervene ; or violence, such as suicide or murder, may destroy the marriage, provided of course there are other afflictions.",
+    "line": 638,
+    "why": "Raman makes it explicitly conditional on other afflictions, so it is weighed. The text is at lines 638-640, not the cited 562."
+   }
+  },
+  {
+   "id": "H7.P.Mars",
+   "flag": "citation_line",
+   "house": 7,
+   "signification": "spouse",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": "hen-pecked by his wife and submissive to women; married life with clashes and tensions, or two wives; rash and given to speculation; intelligent, tactless, stubborn, peevish and unsuccessful",
+   "afflicted": "(a configuration, not an affliction; HTJAH-II:2558-2559, not the cited line) Mars in the 7th unaspected by benefics → frequent quarrels leading to misunderstandings",
+   "source": "HTJAH-II:532",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "Mars in the 7th, unaspected by benefics, indicates frequent quarrels leading to misunderstandings.",
+    "line": 2558,
+    "why": "Quarrels are a mild, partial effect from a compatibility passage; the cited line 532 (clashes and tensions) agrees."
+   }
+  },
+  {
+   "id": "H7.P.Moon",
+   "flag": "citation_line",
+   "house": 7,
+   "signification": "spouse",
+   "polarity": "neutral",
+   "kind": "evaluable",
+   "fortified": "the Moon waxing or otherwise strong -> hails from a good family",
+   "afflicted": "(a lunar phase and a conjunction, not afflictions) the Moon waning -> always quarrelling with his enemies; with Rahu -> an intolerable life and trouble from supernatural sources; with Jupiter -> a smooth, happy married life",
+   "source": "HTJAH-II:522",
+   "first_review": {
+    "tier": "blemish",
+    "quote": "If the Moon is waning, he will always be quarrelling with his enemies.",
+    "line": 528,
+    "why": "Mostly character traits (quarrels with enemies, intolerable life at line 610) that do not deny the spouse matter, and the Jupiter arm is favourable."
+   }
+  },
+  {
+   "id": "H7.C.82",
+   "flag": "citation_line",
+   "house": 7,
+   "signification": "marital_happiness",
+   "polarity": "malefic",
+   "kind": "evaluable",
+   "fortified": null,
+   "afflicted": "two or more malefics afflicting the 7th (occupation or aspect) with no full benefic relieving it -> estrangement and loss of marital happiness; separation should be predicted",
+   "source": "HTJAH-II:996",
+   "first_review": {
+    "tier": "ordinary",
+    "quote": "Beneficial influences on the 7th house or its lord give happiness in marriage while afflictions by malefic pianets cause misery, death or separation in marriage.",
+    "line": 995,
+    "why": "A general summing-up that sets afflictions against benefic influences, so they are weighed."
+   }
+  }
+ ],
+ "signification_keys_by_house": {
+  "1": [
+   "self",
+   "body",
+   "health"
+  ],
+  "2": [
+   "wealth",
+   "family",
+   "speech",
+   "vision"
+  ],
+  "3": [
+   "siblings",
+   "courage",
+   "short_journeys",
+   "ear_throat"
+  ],
+  "4": [
+   "mother",
+   "happiness",
+   "education",
+   "vehicles",
+   "property",
+   "home_comforts"
+  ],
+  "5": [
+   "children",
+   "intellect",
+   "poorvapunya"
+  ],
+  "6": [
+   "enemies_disease",
+   "accidents",
+   "debts",
+   "enemies",
+   "disease_chronic"
+  ],
+  "7": [
+   "spouse",
+   "marital_happiness",
+   "virility",
+   "coverture",
+   "wealth_through_marriage",
+   "partnership"
+  ],
+  "8": [
+   "longevity",
+   "death",
+   "legacies",
+   "sudden_gains"
+  ],
+  "9": [
+   "father",
+   "fortune",
+   "dharma",
+   "higher_learning",
+   "long_journeys"
+  ],
+  "10": [
+   "career",
+   "profession_authority",
+   "profession_trade",
+   "profession_learned",
+   "profession_labour",
+   "status_honour"
+  ],
+  "11": [
+   "gains",
+   "elder_siblings",
+   "friends",
+   "acquisitions",
+   "means_of_gain"
+  ],
+  "12": [
+   "loss_moksha",
+   "expenditure",
+   "foreign_residence",
+   "moksha",
+   "incarceration",
+   "left_eye"
+  ]
+ }
+}

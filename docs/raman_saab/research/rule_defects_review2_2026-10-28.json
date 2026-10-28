@@ -1,0 +1,326 @@
+[
+ {
+  "id": "H3.C.31",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Mercury with the lord of third gives throat disease. Generally evil planets in the third give troubles connected with throat. Ear defects and deafness ... evil planets in the 3rd house",
+  "line": 3466,
+  "why": "Raman prints no rule that the 3rd lord in 6/8/12 afflicts ear or throat; his stated ear/throat rules are evil planets in the 3rd (3466-3468), 6th lord with 3rd lord in 3rd (6381), malefic aspects on 3/11 (16317); worked charts 55-56 (3718-3723) show deafness only with added malefic aspects on the 3rd."
+ },
+ {
+  "id": "H7.L.8",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "When well placed, marriage may take place with relatives or the partner may be a rich person. Affliction causes the early death of partner",
+  "line": 298,
+  "why": "The rule's text is Raman's well-placed result (a hedged, non-adverse description), not a negative testimony; the negative arm is the separate affliction clause at 300."
+ },
+ {
+  "id": "H7.P.Sun",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Marriage is delayed and troubled ... His wife's character will be questionable and the native will run the risk of loss and disgrace through women.",
+  "line": 516,
+  "why": "The cited line 514 opens Raman's Sun-in-7th placement, which is plainly adverse for the spouse; the favourable conjunction modifiers (594-599) sit only in the rule's text field and do not change the placement's vote."
+ },
+ {
+  "id": "H8.L.1",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 2905,
+  "quote": "If the 8th lord is weak or placed in the 6th, 8th or 12th from Navamsa Lagna, the intensity of misfortune is reduced.",
+  "line": 2905,
+  "why": "A mitigating clause on penury/debts/bodily complaints of the 8th lord in Lagna; Raman says nothing here about longevity or any 8th-house key."
+ },
+ {
+  "id": "H8.L.12",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "The position of the 8th lord in the 12th house with the 12th lord gives rise to a Rajayoga. If benefics join the 8th lord, unfavourable results may be expected.",
+  "line": 3053,
+  "why": "Base placement is a Rajayoga; the adverse arms (treachery of friends, expenditure, vicious acts) are not about longevity or any 8th-house key."
+ },
+ {
+  "id": "H1.L.8",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 1059,
+  "quote": "Eighth House: Learned, gambling tendencies, interested in occultism and mean character. If the lord is strong the native takes pride in helping others ... peaceful and sudden end.",
+  "line": 1057,
+  "why": "The base placement is a mixed set of traits and the rule's text is the favourable strong-lord result, so it is not a negative testimony for self; nor is it a plain unconditional benefic."
+ },
+ {
+  "id": "H1.P.Saturn",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "The body will be weak and emaciated. Progress in any venture will be slow ... Loss through negligence and lack of opportunity are possible. Misfortunes are likely in the early part of life.",
+  "line": 1545,
+  "why": "Raman's Saturn-in-Lagna placement (1541-1551) is adverse for the native on balance; the favourable 'not afflicted' sub-clause in the text field is only a modifier."
+ },
+ {
+  "id": "H2.P.Rahu",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Peevish, diseased face, friction in family life, danger to eye-sight. Financial affairs uncertain unless other favourable combinations occur.",
+  "line": 2573,
+  "why": "Rahu in the 2nd makes finances uncertain absent other favourable combinations, a real (qualified) negative for wealth; Jupiter's aspect is an exception, not the placement's result."
+ },
+ {
+  "id": "H3.L.11",
+  "repair": "benefic",
+  "new_signification": null,
+  "cite_line": 3351,
+  "quote": "The 3rd lord well-disposed in the 3rd, 6th or 11th indicates a number of younger brothers.",
+  "line": 3351,
+  "why": "Raman plainly gives the well-disposed 3rd lord in the 11th a favourable result for siblings; the 11th-house paragraph at 3405 says nothing adverse about brothers."
+ },
+ {
+  "id": "H10.P.Ketu",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "He will commit vile deeds and be impure in his resolves. He will face many obstacles in all his undertakings.",
+  "line": 9902,
+  "why": "Ketu in the 10th gives obstacles in all undertakings, a real career negative; the cited 9900 opens the passage and the favourable clause applies only if beneficially disposed."
+ },
+ {
+  "id": "H12.L.4",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Early death to mother, mental restlessness, unnecessary worry, enmity of relatives and living abroad are some of the results.",
+  "line": 16161,
+  "why": "The adverse results of the 12th lord in the 4th are 4th-house matters (mother, peace of mind, residence); nothing here is a loss/moksha testimony for the 12th."
+ },
+ {
+  "id": "H12.P.Venus",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Desertion by relatives ; hankering after comforts without success and penury will make the native's life miserable.",
+  "line": 16634,
+  "why": "Penury and fruitless craving for comforts is a real 12th-house loss testimony; the exalted-Venus reversal is an exception, not the placement's result."
+ },
+ {
+  "id": "H12.C.J11",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Mars in the 12th injures the right eye.",
+  "line": 16470,
+  "why": "Raman names the right eye, which has no 12th-house key; it cannot vote on left_eye."
+ },
+ {
+  "id": "H12.C.J12",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "If the Sun and the Moon occupy the 6th and the 12th from Lagna, one may lose one of his eyes.",
+  "line": 16471,
+  "why": "Raman does not say which eye, and specifies the left eye only for the next combination (Moon/Venus in the 12th, 16472-16474), so this is not a left_eye testimony."
+ },
+ {
+  "id": "H9.C.35",
+  "repair": "reroute",
+  "new_signification": "fortune",
+  "cite_line": null,
+  "quote": "Planets in the 9th if not associated with Mercury and Jupiter make one diseased, forlorn and face captivity and misery.",
+  "line": 7507,
+  "why": "A general misery/misfortune result of planets in the 9th, adverse to the native's fortune, with nothing about higher learning."
+ },
+ {
+  "id": "H9.D.40",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "If the Sun, the Moon and Saturn are in the same sign, the person will be wicked and deceitful and try to travel abroad.",
+  "line": 7503,
+  "why": "A character trait plus a tendency to travel abroad, which is not adverse for long journeys."
+ },
+ {
+  "id": "H10.L.6",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 9508,
+  "quote": "In the Sixth House : The person will have an occupation bearing on judiciary, prisons or hospitals.",
+  "line": 9508,
+  "why": "Names a field of work, not an affliction; Raman's adverse arms (Saturn's aspect, Rahu or afflicted malefics) are separate conditions."
+ },
+ {
+  "id": "H10.C.36",
+  "repair": "cite",
+  "new_signification": null,
+  "cite_line": 14022,
+  "quote": "Saturn in the 10th is not at all desirable for although it confers initial success, it also gives defeat and humiliation in politically oriented charts.",
+  "line": 14022,
+  "why": "A real status/honour negative, but the sentence is at 14022-14024; 14020 is the paragraph's opening line."
+ },
+ {
+  "id": "H10.P.Mars",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Other combinations favouring the native may become a cruel ruler ... He will be rash. He will earn much money.",
+  "line": 9841,
+  "why": "Already neutral, which is faithful: the career results are conditional or favourable and the only denial (no progeny) belongs to another matter."
+ },
+ {
+  "id": "H8.L.10",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "the native has slow advancement in career. He faces obstacles and impediments in his activities.",
+  "line": 3028,
+  "why": "The adverse results are 10th-house (career) matters, not longevity; Raman even adds possible unexpected gains (3039)."
+ },
+ {
+  "id": "H8.L.4",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 2945,
+  "quote": "If the affliction is heavy his land and immovable property may slip from his hands ... His conveyances may get lost or be destroyed.",
+  "line": 2945,
+  "why": "Losses of mental peace, mother's health, property and conveyances are 4th-house matters, not longevity."
+ },
+ {
+  "id": "H8.L.5",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 2965,
+  "quote": "If the 8th lord is in the 6th, 12th or 8th from Navamsa Lagna, the evil results are greatly mitigated. But if fortified in a kendra or trikona, the evil results are intensified.",
+  "line": 2965,
+  "why": "An intensifier of children's troubles and ill-health (5th-house matters), not a longevity testimony."
+ },
+ {
+  "id": "H8.P.Ketu",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 3575,
+  "quote": "If Ketu is afflicted, the native covets others' wealth and women. He will suffer from diseases due to disorders in the excretory system",
+  "line": 3575,
+  "why": "Character and ailments, not the span of life; Raman's only longevity statement here is favourable (benefic aspect gives long life, 3574-3575)."
+ },
+ {
+  "id": "H8.P.Moon",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 3505,
+  "quote": "if Mars and Saturn conjoin and the Moon is in the 8th house, the native's eyesight will be afflicted.",
+  "line": 3505,
+  "why": "An eyesight ailment, not longevity; the Moon in the 8th even acquires possessions through legacies (3503)."
+ },
+ {
+  "id": "H8.P.Rahu",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "The native will suffer from public censure and humiliation. He will be troubled by many ailments. He will be vicious, quarrelsome and unscrupulous.",
+  "line": 3568,
+  "why": "Censure, ailments and traits, nothing about the span of life or another 8th-house key."
+ },
+ {
+  "id": "H8.P.Saturn",
+  "repair": "benefic",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Saturn in the 8th house gives good longevity but many responsibilites in life.",
+  "line": 3550,
+  "why": "Raman plainly states Saturn in the 8th gives good longevity, exactly the rule's condition and matter; the afflicted clauses concern children, character and ailments."
+ },
+ {
+  "id": "H8.P.Sun",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 3485,
+  "quote": "If the Sun is afflicted, he will be troubled with sores, in the face and head and be disgruntled in life. His eyes will be weak. He will suffer penury",
+  "line": 3485,
+  "why": "Ailments and hardship, not longevity; the only longevity statement (exalted Sun lives long) is favourable and conditional."
+ },
+ {
+  "id": "H1.L.7",
+  "repair": "descriptive",
+  "new_signification": null,
+  "cite_line": 1054,
+  "quote": "If well disposed, he will spend most of his time in foreign countries and lead a licentious life. Or he will be a puppet in the hands of his parents-in-law.",
+  "line": 1054,
+  "why": "The rule's text is Raman's well-disposed lifestyle description at 1054, not a negative testimony for self; the cited 1048 is about the wife (a 7th-house matter)."
+ },
+ {
+  "id": "H6.P.Rahu",
+  "repair": "cite",
+  "new_signification": null,
+  "cite_line": 6181,
+  "quote": "Rahu's affliction is the most unfortunate combination denoting huge debts, unexpected enmities and incurable diseases.",
+  "line": 6181,
+  "why": "The rule's afflicted text is Raman's sentence at 6181-6182; 6150 is the plain Rahu-in-6th placement paragraph."
+ },
+ {
+  "id": "H4.P.Mars",
+  "repair": "reroute",
+  "new_signification": "happiness",
+  "cite_line": 4285,
+  "quote": "If Mars is the afflicted planet, there will be loss through theft, deception and even litigation. Affliction of Mars always denotes some tragic developments in the personal life, quarrels",
+  "line": 4285,
+  "why": "The rule's key mother_home does not exist; the afflicted text (losses, tragic personal developments, quarrels) is a negative for 4th-house happiness and sits at 4285, not 4250."
+ },
+ {
+  "id": "H9.D.47",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "If malefics occupy the 10th and 4th houses from Lagna, the native dies during his pilgrimage to a sacred shrine.",
+  "line": 9396,
+  "why": "The sentence begins on the cited line 9396 and is a plain negative for long journeys (pilgrimage)."
+ },
+ {
+  "id": "H9.L.12",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "The position of the lord of the ninth house in the twelfth house gives a poor background ... always in want. Father may die early leaving the native penniless.",
+  "line": 7389,
+  "why": "A real negative for fortune and the citation 7389 is where the passage begins; Raman's caveat (7395) to weigh the karaka is general to all placements."
+ },
+ {
+  "id": "H7.P.Saturn",
+  "repair": "cite",
+  "new_signification": null,
+  "cite_line": 638,
+  "quote": "If Mars afflicts, courts may intervene ; or violence, such as suicide or murder, may destroy the marriage, provided of course there are other afflictions.",
+  "line": 638,
+  "why": "The rule's afflicted text is at 638-643; 562 is the plain Saturn-in-7th placement."
+ },
+ {
+  "id": "H7.P.Mars",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Married life will have clashes and tensions or there may be two wives.",
+  "line": 533,
+  "why": "The cited 532 is Raman's Mars-in-7th placement, a real negative for the spouse; the afflicted-text note already credits 2558-2559."
+ },
+ {
+  "id": "H7.P.Moon",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Wife will be good-looking but the native will seek other women ... He hails from a good family if the Moon is waxing and otherwise strong.",
+  "line": 522,
+  "why": "Already neutral, which matches Raman's mixed Moon-in-7th passage; the cited 522 is where it begins."
+ },
+ {
+  "id": "H7.C.82",
+  "repair": "keep",
+  "new_signification": null,
+  "cite_line": null,
+  "quote": "Beneficial influences on the 7th house or its lord give happiness in marriage while afflictions by malefic pianets cause misery, death or separation in marriage.",
+  "line": 996,
+  "why": "The adverse clause runs 995-996, so the citation is right; note the rule's 'two or more malefics' threshold is not printed by Raman."
+ }
+]

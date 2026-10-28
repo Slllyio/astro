@@ -414,3 +414,21 @@ H2.P.Rahu, H3.L.11, H10.P.Ketu, H12.L.4, H12.P.Venus); routing problems (H12.C.J
 eye, filed under left_eye; H9.C.35 and H9.D.40 cite passages silent on their matter; several
 H8.L/H8.P rules tagged `longevity` cite passages about other matters); one rule note contradicted
 by its own citation (H4.C.18, HTJAH-I:4224); and several one-line citation offsets.
+
+## Addendum 15 (2026-10-28): citation repair of the rules flagged by the tier review (user decision: "fix the rule defects"), HELD for sign-off
+
+A second engine-blind reviewer re-checked the 36 flagged rules (`research/rule_defects_2026-10-28.json`
+-> `research/rule_defects_review2_2026-10-28.json`): 18 descriptive, 11 keep, 3 citation-line only,
+2 benefic (H3.L.11 HTJAH-I:3351; H8.P.Saturn "Saturn in the 8th house gives good longevity",
+HTJAH-II:3550), 2 reroute (H9.C.35 -> fortune; H4.P.Mars NOT applied: its `mother_home` key is a
+deliberate tag shared by mother and happiness, and the reviewer had been given only signification
+keys). Applied as `held_patches/RULE_DEFECTS_2026-10-28.patch`.
+
+Pool, before -> after: exact 262 -> 260, within one 349 -> 349, real errors 40 -> 40 (no book
+changes in real errors). Four rows move: HTJAH-II.h12_11 and NH.chart_59 incarceration afflicted
+-> mixed (H12.L.4, now descriptive, was carrying them; Raman afflicted), HTJAH-II.h9_17
+long_journeys favourable -> mixed (rerouted H9.C.35 now reaches it through the shared fortune
+tag; Raman favourable), NH.chart_14 body mixed -> favourable (H1.L.7 descriptive; Raman
+favourable). This is a faithfulness correction, not a tuning variant: each rule now says what
+its passage says, and the strict figure falls by two. Shipping it re-bases the ratchet, so it is
+the user's decision.

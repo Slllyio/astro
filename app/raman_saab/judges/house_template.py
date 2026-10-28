@@ -33,6 +33,7 @@ Usage:
 """
 from __future__ import annotations
 
+import contextvars
 import dataclasses
 
 from app.core.avastha import compute_avasthas
@@ -1161,6 +1162,12 @@ def _bhava_bala_for(chart: RamanChart, house: int) -> Optional[float]:
         bhava_sign=bhava_sign, bhava_sign_deg=bhava_sign_deg)
 
 
+#: Rule ids the judge skips while set. Empty by default, so judging is unchanged; the house audit
+#: (``app.raman_saab.house_audit``) sets it to re-judge a house without its doubtful rules.
+EXCLUDED_RULES: contextvars.ContextVar[frozenset[str]] = contextvars.ContextVar(
+    "EXCLUDED_RULES", default=frozenset())
+
+
 def _bucket_fired(
     chart: RamanChart, sig: Signification, ctx: EvalContext,
 ) -> tuple[tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...]]:
@@ -1171,8 +1178,11 @@ def _bucket_fired(
     benefic: list[rf.FiredRule] = []
     malefic: list[rf.FiredRule] = []
     neutral: list[rf.FiredRule] = []
+    excluded = EXCLUDED_RULES.get()
     for fr in rf.fire_house_cached(chart, sig.house, ctx):
         if tags and fr.rule.signification not in tags:
+            continue
+        if fr.rule.id in excluded:
             continue
         pol = fr.rule.polarity
         if pol in ("malefic", "maraka"):

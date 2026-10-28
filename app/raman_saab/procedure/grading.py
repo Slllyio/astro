@@ -55,6 +55,18 @@ from app.raman_saab.procedure.model import GRADES, Factor, Item
 
 logger = logging.getLogger(__name__)
 
+#: The 2026-10-28 fixes from the Mainpuri hand reading, pre-registered in
+#: ``docs/raman_saab/PROCEDURE_READER_FIXES_PREREG_2026-10-28.md`` before any was measured. Each
+#: is a switch so the measurement can run it alone; the results section of that document records
+#: which passed. F5 is read by ``conclusion.py``.
+FIXES: dict[str, bool] = {
+    "F1_lagna_lord_balanced": True,
+    "F2_lord_in_own_house_aspect_once": True,
+    "F3_node_aspect_from_bhava": False,
+    "F4_navamsa_own_sign_malefic": False,
+    "F5_span_decides_longevity": False,
+}
+
 SIGNS: tuple[str, ...] = (
     "", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
     "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -72,6 +84,29 @@ def sign_from(base_sign: int, n: int) -> int:
 def count(from_sign: int, to_sign: int) -> int:
     """How many signs ``to_sign`` is from ``from_sign`` (1..12)."""
     return (to_sign - from_sign) % 12 + 1
+
+
+def node_aspects_house(chart: RamanChart, planet: str, house: int) -> bool:
+    """Whether ``planet`` aspects rasi-house ``house``; with F3, a node moved to another Bhava
+    casts its 7th aspect from that Bhava (HTJAH:1945-1946 extended to the node's one aspect)."""
+    p = chart.planets.get(planet)
+    if (FIXES["F3_node_aspect_from_bhava"] and p is not None and planet in _NODES
+            and p.bhava and p.bhava != p.rasi_house):
+        return count(p.bhava, house) == 7
+    return drishti.aspects_house(planet, house, chart)
+
+
+def aspecting_house(chart: RamanChart, house: int) -> list[str]:
+    """Every planet aspecting rasi-house ``house`` (``drishti``, with the F3 node correction)."""
+    return [n for n in chart.planets if node_aspects_house(chart, n, house)]
+
+
+def aspecting_planet(chart: RamanChart, target: str) -> list[str]:
+    """Every planet aspecting ``target`` (``drishti``, with the F3 node correction)."""
+    t = chart.planets.get(target)
+    if t is None:
+        return []
+    return [n for n in chart.planets if n != target and node_aspects_house(chart, n, t.rasi_house)]
 
 
 def house_sign(chart: RamanChart, house: int) -> int:
@@ -121,6 +156,13 @@ def influence(chart: RamanChart, planet: str, own_lord: Optional[str], graded: O
     if nature == "yogakaraka":
         return Item(sub, f"{who} {how}: a yogakaraka, so not harmful", 1,
                     cite("yogakaraka_defused"))
+    if (FIXES["F1_lagna_lord_balanced"] and planet == SIGN_LORDS[chart.asc_sign]
+            and planet in NATURAL_MALEFICS and nature not in ("benefic", "yogakaraka")):
+        # F1 (2026-10-28): the Lagna lord is among the benefic lords (HTJAH:575-578; procedure
+        # spec 2.1) even where the Lagna's table prints him neutral (Scorpio's Mars,
+        # HTJAH-I:552-553); as a natural malefic he is named both ways, as a dual planet is.
+        return Item(sub, f"{who} {how}: the Lagna lord, good as a benefic lord and bad as a "
+                         "natural malefic; the two are balanced", 0, cite("functional_benefics"))
     if _benefic_sixth_lord(chart, planet):
         # Round 2 (B2): "The affliction is heavy because of association with the Moon lord of
         # the sixth" (HTJAH:4405-4406); "The fourth lord Moon is in the seventh with Mercury
@@ -231,7 +273,7 @@ def grade_house(chart: RamanChart, house: int) -> Factor:
     occupants = [n for n, p in chart.planets.items() if p.rasi_house == house]
     occupants += [n for n, p in chart.planets.items()
                   if p.bhava == house and p.rasi_house != house]
-    aspecters = drishti.aspecting_house(house, chart)
+    aspecters = aspecting_house(chart, house)
     for name in occupants:
         p = chart.planets[name]
         if p.rasi_house != house:
@@ -280,15 +322,26 @@ def _navamsa_house(chart: RamanChart, house: int) -> tuple[int, str]:
            and n in NATURAL_BENEFICS]
     mal = [n for n, p in chart.planets.items() if p.navamsa_sign == target
            and n in NATURAL_MALEFICS]
+    spared: list[str] = []
+    if FIXES["F4_navamsa_own_sign_malefic"]:
+        # F4 (2026-10-28): own sign cancels a malefic occupant's blemish in the Rasi
+        # (``own_sign_cancels``); read the same way in the Navamsa, and the house's own lord
+        # protects his house there as he does in the Rasi (``own_lord_defused``).
+        own_lord = SIGN_LORDS[house_sign(chart, house)]
+        spared = [n for n in mal if n not in _NODES and (
+            SIGN_LORDS[target] == n or rel.EXALTATION[n][0] == target or n == own_lord)]
+        mal = [n for n in mal if n not in spared]
     net = len(ben) - len(mal)
+    note = (" (" + ", ".join(spared) + " in its own or exaltation sign, or the house's own "
+            "lord, so not counted against it)") if spared else ""
     if net == 0:
         return 0, (f"In the Navamsa the {ordinal(house)} from the Navamsa Lagna "
-                   f"({SIGNS[target]}) holds " + (", ".join(ben + mal) or "no planet")
-                   + ": no change")
+                   f"({SIGNS[target]}) holds " + (", ".join(ben + mal + spared) or "no planet")
+                   + note + ": no change")
     word = "lifts the grade one step" if net > 0 else "lowers the grade one step"
     return (1 if net > 0 else -1), (
         f"In the Navamsa the {ordinal(house)} from the Navamsa Lagna ({SIGNS[target]}) holds "
-        + ", ".join(ben + mal) + f": {word}")
+        + ", ".join(ben + mal + spared) + note + f": {word}")
 
 
 def grade_planet(chart: RamanChart, planet: str, *, step: str, house: int, role: str,
@@ -347,7 +400,7 @@ def grade_planet(chart: RamanChart, planet: str, *, step: str, house: int, role:
         items.append(Item("dignity", f"{planet} is in its own sign {SIGNS[p.sign]}", 1,
                           cite("lord_first_printed")))
     elif dig == "debil":
-        exalted_benefic = [a for a in drishti.aspecting_planets(planet, chart)
+        exalted_benefic = [a for a in aspecting_planet(chart, planet)
                            if a in NATURAL_BENEFICS and dignity(a, chart) == "exalt"]
         if raman_neecha_bhanga(planet, chart):
             items.append(Item("dignity", f"{planet} is debilitated, but gets neechabhanga", 0,
@@ -378,9 +431,15 @@ def grade_planet(chart: RamanChart, planet: str, *, step: str, house: int, role:
             items.append(influence(chart, name, own_lord if name == own_lord else None,
                                    planet, "joins"))
     # 4. aspecters
-    for name in drishti.aspecting_planets(planet, chart):
-        items.append(influence(chart, name, own_lord if name == own_lord else None,
-                               planet, "aspects"))
+    once = FIXES["F2_lord_in_own_house_aspect_once"] and planet == own_lord and h == house
+    for name in aspecting_planet(chart, planet):
+        it = influence(chart, name, own_lord if name == own_lord else None, planet, "aspects")
+        if once and it.weight != 0:
+            # F2 (2026-10-28): the lord sits in the house it rules, so this aspect was already
+            # weighed on the house; it is named, not charged a second time.
+            it = Item(it.substep, it.text + " (already weighed on the house, the lord's own)",
+                      0, it.cite, "convention")
+        items.append(it)
     # 5. kartari (planet form)
     items += _kartari_items(chart, h, planet)
     # star lord, where Raman says it decides
@@ -445,7 +504,7 @@ def grade_from_moon(chart: RamanChart, house: int) -> Factor:
     occ = [n for n, p in chart.planets.items() if p.sign == target]
     for name in occ:
         items.append(influence(chart, name, lord, None, "occupies"))
-    for name in drishti.aspecting_house(target_h, chart):
+    for name in aspecting_house(chart, target_h):
         items.append(influence(chart, name, lord, None, "aspects"))
     if not items:
         # Round 2 (A8), as for the house itself (HTJAH:3669-3670).

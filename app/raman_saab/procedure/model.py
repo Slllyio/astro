@@ -137,6 +137,7 @@ class StageZero:
     balarishta: Optional[str]
     dasas: tuple[tuple[str, str, str, str], ...]  # ((lord, start, end, "within span" | ...), ...)
     cites: tuple[str, ...]
+    special_features: tuple[str, ...] = ()      # Raman's opening paragraph (features.py)
 
 
 @dataclass(frozen=True)

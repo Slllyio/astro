@@ -92,6 +92,9 @@ def to_text(r: ProcedureReading) -> str:
         out.append(f"Balarishta: {s.balarishta}")
     for lord, a, b, status in s.dasas:
         out.append(f"  {lord} Mahadasha {a} to {b}: {status}")
+    if s.special_features:
+        out.append("Special features:")
+        out += [f"  - {f}" for f in s.special_features]
     out.append("Citations: " + ", ".join(s.cites))
     out.append("")
     for m in r.matters:

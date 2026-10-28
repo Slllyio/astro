@@ -361,3 +361,87 @@ class TestBeneficSixthLord:
         assert _benefic_sixth_lord(_stated(pos, asc_lon=5.0), "Mercury")
         assert not _benefic_sixth_lord(_stated(pos, asc_lon=95.0), "Jupiter")
         assert not _benefic_sixth_lord(_stated(pos, asc_lon=5.0), "Saturn")
+
+
+# -- 2026-10-28: fixes from the Mainpuri hand reading (PROCEDURE_READER_FIXES_PREREG) ---------
+
+@pytest.fixture(scope="module")
+def mainpuri():
+    """Mainpuri 1989-10-12 10:02 IST, 27N14, 79E02: Scorpio Lagna, Rahu at Aquarius 0 deg 28'."""
+    birth = BirthData("mainpuri", 1989, 10, 12, 10, 2, 5.5, 27.23, 79.03)
+    return cast_chart(birth, ayanamsa="raman")
+
+
+def _items(reading_, step: str) -> list:
+    return [i for f in reading_.factors if f.step == step for i in f.items]
+
+
+class TestMainpuriFixes:
+    """The fixes that passed the pre-registered rule, and the switches of those that failed."""
+
+    def test_switches_match_the_preregistered_results(self) -> None:
+        """F1 and F2 passed (153/298/91 against 152/295/94); F3, F4 and F5 failed and stay off."""
+        from app.raman_saab.procedure.grading import FIXES
+        assert FIXES == {"F1_lagna_lord_balanced": True,
+                         "F2_lord_in_own_house_aspect_once": True,
+                         "F3_node_aspect_from_bhava": False,
+                         "F4_navamsa_own_sign_malefic": False,
+                         "F5_span_decides_longevity": False}
+
+    def test_lagna_lord_mars_is_balanced_not_malefic(self, mainpuri) -> None:
+        """F1: Mars, Scorpio's Lagna lord, in the 11th counts 0, not as a malefic (HTJAH:575-578)."""
+        mars = [i for i in _items(read_matter(mainpuri, 11, "gains", with_timing=False), "house")
+                if i.text.startswith("Mars")]
+        assert mars and mars[0].weight == 0 and "the Lagna lord" in mars[0].text
+
+    def test_saturn_aspect_counted_once_for_lord_in_own_house(self, mainpuri) -> None:
+        """F2: Mercury rules and occupies the 11th; Saturn's aspect is charged on the house only."""
+        r = read_matter(mainpuri, 11, "gains", with_timing=False)
+        on_house = [i for i in _items(r, "house") if i.text.startswith("Saturn")]
+        on_lord = [i for i in _items(r, "lord") if i.text.startswith("Saturn")]
+        assert on_house[0].weight == -1
+        assert on_lord[0].weight == 0 and "already weighed on the house" in on_lord[0].text
+
+    def test_children_not_denied_when_a_benefic_redeems(self) -> None:
+        """T1: afflicted house and lord, a redeeming view from the Moon: few or delayed."""
+        m = matter_for(5, "children")
+        f = {"house": _factor("house", "afflicted"), "lord": _factor("lord", "blemished"),
+             "karaka": _factor("karaka", "moderate"),
+             "moon": _factor("moon", "fairly strong", redeeming=True)}
+        assert conclude(m, f).outcome.startswith("few or delayed")
+        f["moon"] = _factor("moon", "moderate")
+        assert conclude(m, f).outcome == "none: children denied"
+
+    def test_mainpuri_children_not_denied(self, mainpuri) -> None:
+        """T1 on the chart that showed it: Jupiter in the 5th from the Moon redeems."""
+        c = read_matter(mainpuri, 5, "children", with_timing=False).conclusion
+        assert "denied" not in c.outcome
+
+    def test_longevity_shows_the_computed_span(self, mainpuri) -> None:
+        """T2: the 84-year Pindayu is shown beside the lords' band, and the disagreement named."""
+        subs = dict(read_matter(mainpuri, 8, "longevity", with_timing=False)
+                    .conclusion.sub_answers)
+        span = subs["the computed span (stage zero)"]
+        assert span.startswith("84.") and "Purnayu" in span and "disagrees" in span
+
+    def test_special_features_open_the_reading(self, mainpuri) -> None:
+        """T3: vargottama Lagna, Mercury's Navamsa fall, Kemadruma cancelled, the sandhi margin."""
+        feats = " ".join(stage_zero(mainpuri).special_features)
+        assert "The Lagna is vargottama" in feats
+        assert "Mercury is exalted in Virgo but debilitated in the Navamsa" in feats
+        assert "Kemadruma is present" in feats and "cancelled" in feats
+        assert re.search(r"Mercury is 0\.\d\d degrees from a Bhava-sandhi", feats)
+
+    def test_node_aspect_moves_with_the_bhava_when_switched_on(self, mainpuri, monkeypatch) -> None:
+        """F3 (held): Rahu in the 4th sign but the 3rd Bhava aspects the 9th, not the 10th."""
+        from app.raman_saab.procedure import grading
+        assert "Rahu" in grading.aspecting_house(mainpuri, 10)
+        monkeypatch.setitem(grading.FIXES, "F3_node_aspect_from_bhava", True)
+        assert "Rahu" not in grading.aspecting_house(mainpuri, 10)
+        assert "Rahu" in grading.aspecting_house(mainpuri, 9)
+
+    def test_features_and_outcomes_pass_the_guard(self, mainpuri) -> None:
+        """Every new line passes _FORBIDDEN_RE."""
+        text = to_text(read_procedure(mainpuri, with_timing=False))
+        hits = [ln for ln in text.splitlines() if _FORBIDDEN_RE.search(ln)]
+        assert not hits, hits[:5]

@@ -65,3 +65,51 @@ out-of-sample improvement.
 ## Results
 
 (Filled in after the runs; nothing below this line existed when the rule above was committed.)
+
+### Rule 1: the 389 rows (baseline 152 / 295 / 94)
+
+| Variant | Exact | Within one | Real errors | Rule 1 |
+|---|---|---|---|---|
+| F1 Lagna lord balanced | 152 | 296 | 93 | **pass** |
+| F2 aspect once for a lord in its own house | 153 | 297 | 92 | **pass** |
+| F3 node aspect from the Bhava | 146 | 296 | 93 | fail (exact falls 6) |
+| F4 Navamsa own-sign malefic spared | 152 | 293 | 96 | fail (real errors rise 2) |
+| F5 computed span decides longevity | 153 | 293 | 96 | fail (real errors rise 2) |
+| all five | 148 | 295 | 94 | fail |
+| **F1 + F2 (shipped)** | **153** | **298** | **91** | **pass** |
+
+Rows F1 changed (3): HTJAH-II.h10_06 H10 afflicted→mixed (Raman mixed, now exact); HTJAH-II.h12_16
+H12 afflicted→mixed (Raman afflicted, now one step off); NH.chart_42 H4 afflicted→mixed (Raman
+favourable; this row is one of the off-topic labels already noted in PROCEDURE_READER_2026-10-25).
+Rows F2 changed (3): HTJAH-I.chart_40 H2 mixed→favourable (Raman favourable); HTJAH-II.h11_06 H11
+afflicted→mixed (Raman favourable); NH.chart_58 H3 afflicted→mixed (Raman favourable). Five of the
+six move toward Raman, one moves one step away.
+
+### Rule 2: the random sample
+
+`random.Random(20261028).sample` over the 237 records with confirmed verdicts drew HTJAH-I.h6_13,
+HTJAH-II.h9_13, NH.chart_55, NH.chart_75, HTJAH-I.h6_03, HTJAH-II.chart_33, HTJAH-I.h6_02,
+NH.chart_54, HTJAH-I.h4_01 and HTJAH-I.chart_33.
+
+- **F1 and F2 changed no verdict in the sample**, so rule 2 passes for them without testing
+  anything. The two fixes are narrow: F1 only touches a Scorpio Lagna (the one Lagna whose table
+  prints its natural-malefic lord neutral), and F2 only a lord sitting in its own house under an
+  aspect. That is why the 389-row figures move by one to three.
+- F3 changed one sample row, away from Raman: NH.chart_75 (Farouk) H7 mixed→favourable, where Raman
+  writes of "the unhappiness in Farouk's domestic life".
+- F5 changed one sample row, toward Raman: HTJAH-II.chart_33 H8 afflicted→favourable (Raman's own
+  Pindayu 86 years). It still fails rule 1 on the full set.
+
+### What ships
+
+F1 and F2 on; F3, F4 and F5 kept behind their switches, off. T1, T2 and T3 ship (text only).
+
+### What this says about the hand reading
+
+Three of the five verdict fixes came from my reading of the Mainpuri chart and did not survive
+Raman's own charts. F3 (moving the node's aspect with the Bhava) and F4 (an own-sign malefic in
+the Navamsa not lowering the house) are extensions Raman never prints, and the 389 rows do not
+support them. F5 helps some longevity rows and hurts others; Raman's span method and the engine's
+Pindayu are not the same thing on every chart. The Mainpuri 10th and 11th therefore still read
+afflicted in the procedure reader, and the hand reading's "favourable" for them stays an opinion,
+not a measured fix.

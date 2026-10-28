@@ -38,6 +38,10 @@ def _nav_state(planet: str, sign: int) -> str:
     return ""
 
 
+def _and(xs: list[str]) -> str:
+    return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1] if xs else ""
+
+
 def _arc(a: float, b: float) -> float:
     d = abs(a - b) % 360.0
     return min(d, 360.0 - d)
@@ -88,8 +92,8 @@ def special_features(chart: RamanChart) -> tuple[str, ...]:
         stands = [f.origin for f in kd.frames if f.stands]
         free = [f.origin for f in kd.frames if not f.house]
         if stands:
-            out.append("Kuja dosha from " + ", ".join(stands) + "; free from "
-                       + (", ".join(free) or "none") + ". Raman checks all three "
+            out.append("Kuja dosha from " + _and(stands) + "; free from "
+                       + (_and(free) or "none") + ". Raman checks all three "
                        "(HTJAH-II:2593-2600)" + ("; it is neutralised by Mars' association"
                        if kd.conjunct_jupiter or kd.conjunct_moon or kd.universal_exempt
                        else "") + ".")

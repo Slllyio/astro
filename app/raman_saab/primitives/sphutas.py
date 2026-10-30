@@ -54,9 +54,10 @@ logger = logging.getLogger(__name__)
 _BEEJA_PLANETS: Final[tuple[str, ...]] = ("Sun", "Venus", "Jupiter")
 _KSHETRA_PLANETS: Final[tuple[str, ...]] = ("Mars", "Moon", "Jupiter")
 
-#: Variant G2 (FIDELITY_FIXES_PREREG Addendum 18): read each sphuta by Raman's full printed
-#: test (HTJAH-I:5521-5527, Charts 88-90) instead of parity alone. Measurement switch.
-G2_PRINTED_SPHUTA_TEST: bool = False
+#: G2 (FIDELITY_FIXES_PREREG Addenda 18-20, user decision 2026-10-30 "Ship G2"): each sphuta is
+#: read by Raman's full printed test (HTJAH-I:5521-5527, Charts 88-90). False restores the old
+#: parity-only test, which reads Charts 88 and 89 weak where Raman judges them fertile.
+G2_PRINTED_SPHUTA_TEST: bool = True
 
 _SPHUTA_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
 _SPHUTA_MALEFICS: Final[frozenset[str]] = frozenset({"Sun", "Mars", "Saturn", "Rahu", "Ketu"})
@@ -106,11 +107,11 @@ class BeejaKshetra:
     beeja_lon: float
     beeja_sign: int
     beeja_navamsa_sign: int
-    beeja_strong: bool        # odd sign AND odd navamsa (HTJAH-I:5521-5522)
+    beeja_strong: bool        # Raman's printed test, odd parity (HTJAH-I:5521-5527)
     kshetra_lon: float
     kshetra_sign: int
     kshetra_navamsa_sign: int
-    kshetra_strong: bool      # even sign AND even navamsa (HTJAH-I:5523-5524)
+    kshetra_strong: bool      # Raman's printed test, even parity (HTJAH-I:5521-5527)
     citations: tuple[Citation, ...]
 
 
@@ -197,12 +198,11 @@ def printed_point_strong(chart: RamanChart, lon: float, want_odd: bool) -> bool:
 
 
 def beeja_kshetra(chart: RamanChart) -> Optional[BeejaKshetra]:
-    """The H5 fertility GATE: both sphutas with Raman's odd/even classification.
+    """The H5 fertility GATE: both sphutas judged by Raman's printed test.
 
-    Beeja is strong in an ODD sign and ODD navamsa; Kshetra is strong in an
-    EVEN sign and EVEN navamsa (HTJAH-I:5521-5524). Benefic-aspect, malefic-sign
-    and Rahu-conjunction conditions (HTJAH-I:5524-5527) are left to the H5
-    judge — this is the pure numeric component. None if any of the five
+    Beeja wants ODD parity, Kshetra EVEN; each is read by ``printed_point_strong``
+    (parity in Rasi or Navamsa, benefic contact, and the malefic-sign, Rahu and
+    5th-from bars, HTJAH-I:5521-5527). None if any of the five
     required planets is absent (sparse Track-B charts must not crash)."""
     beeja = beeja_sphuta(chart)
     kshetra = kshetra_sphuta(chart)

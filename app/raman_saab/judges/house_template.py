@@ -550,10 +550,10 @@ _MARAKA_DEATH_KEYS = frozenset({"death", "longevity", "wealth"})
 #: combination (3HC 10264-10267; NH 10921-10926). Not applied to inherent-affliction matters.
 Y1_BLEMISH_TIER: bool = False
 
-#: G1 (FIDELITY_FIXES_PREREG Addendum 16, HELD until measured and decided): the Beeja/Kshetra
-#: fertility gate moves a children verdict at most one step toward afflicted instead of deciding
-#: it. Raman's own Charts 88 and 89 judge an even-sign Beeja strong and an odd-sign Kshetra
-#: fertile on their other testimony (HTJAH-I:5529-5582), so the parity test alone is co-testimony.
+#: G1 (FIDELITY_FIXES_PREREG Addendum 16): the Beeja/Kshetra fertility gate moves a children
+#: verdict at most one step instead of deciding it. DROPPED 2026-10-30 (user decision "Ship G2,
+#: drop G1", Addendum 20): it kept the parity-only trigger an engine-blind review found unsound;
+#: G2 repaired the trigger itself (`primitives.sphutas.G2_PRINTED_SPHUTA_TEST`). Kept off, for the record.
 G1_FERTILITY_ONE_STEP: bool = False
 
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
@@ -2016,11 +2016,10 @@ def _fertility_gate(
     * Strong sphutas (and the unprinted one-weak partial case) ride along as metadata
       only. None-safe on sparse charts (a missing sphuta planet skips the gate entirely).
 
-    Metadata values are prefixed ``numeric_`` ('numeric_strong' / 'numeric_partial')
-    because only the NUMERIC odd/even sphuta test is evaluated here; the
-    HTJAH-I:5524-5527 aspect/Rahu-association clauses are deferred to the H5
-    judge and NOT checked by this gate — the values deliberately do not claim a
-    full fertility assessment.
+    Metadata values keep their ``numeric_`` prefix ('numeric_strong' / 'numeric_partial').
+    Since G2 (2026-10-30) the strong/weak flags come from Raman's full printed sphuta
+    test (``sphutas.printed_point_strong``, HTJAH-I:5521-5527); the navamsa-layer,
+    saptavarga-majority and sex-routing refinements are still not encoded.
     """
     if sig.house != 5 or not (
             sig.key in _FERTILITY_KEYS or "progeny" in sig.rule_tags):

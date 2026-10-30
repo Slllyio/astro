@@ -113,7 +113,7 @@ def apply(variants: set[str]) -> None:
     from app.raman_saab.doctrine.rule_sets.house_07_kalatra import combinations as h7c
     ht.G1_FERTILITY_ONE_STEP = "G1" in variants          # Addendum 16
     h7c.NODE_AXIS_AS_ONE = "N1" in variants              # Addendum 16
-    sphutas.G2_PRINTED_SPHUTA_TEST = "G2" in variants     # Addendum 18
+    sphutas.G2_PRINTED_SPHUTA_TEST = "PARITY" not in variants  # G2 shipped (Addendum 20); PARITY = old test
 
 
 def run(variants: set[str]) -> dict[str, tuple[str, str, Optional[str]]]:

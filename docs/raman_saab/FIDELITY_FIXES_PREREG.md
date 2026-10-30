@@ -655,3 +655,26 @@ Raman's own printed test both points are weak, so the Kanpur children denial is 
 
 **Status:** G2 held behind `sphutas.G2_PRINTED_SPHUTA_TEST` (default False) for the user's
 decision. Recommendation: ship G2 and drop G1.
+
+## Addendum 20 (2026-10-30): G2 shipped, G1 dropped
+
+User decision on the decision card: "Ship G2, drop G1".
+- `sphutas.G2_PRINTED_SPHUTA_TEST` now defaults to True. The baseline is re-based 260/349/40 →
+  **263/353/36** with lineage in `golden_accuracy_baseline.json`. The four former inversions
+  (NH.chart_67, 48, 57, 52 H5 children) leave `real_errors`.
+- G1 stays in the code, switched off for the record, and is not a candidate any more.
+- `fidelity_variants.py` now measures from the shipped engine; the `PARITY` token restores the
+  old parity-only test for comparison.
+- The reviewer's caveats (Addendum 19, items 1-6) are open work for any later G3, which needs
+  its own pre-registration and a sealed set with several H5 children rows and full degrees.
+
+**Measured after shipping, reported for honesty (not a decision input; the user had already
+decided).** G2 is more faithful on Raman's charts but HARSHER on ordinary ones:
+- Across the 346 castable golden charts, 41 children verdicts moved: 30 toward afflicted, 11 away.
+- On 600 random births (the harshness-diagnosis sampler, seed 20261030), both points weak rises
+  313 → 438 (52% → 73%), and children afflicted rises 512 → 544 (85% → 91%).
+- The cause is that Raman's printed test is strict per point: a malefic sign alone bars 5 of 12
+  signs, and a benefic contact is required. Read from one chart for both sexes and fed into a
+  decisive denial, it denies most charts. That is the reviewer's caveat 6 (the override and the
+  missing sex input), not the point test itself. It is the next thing to fix, pre-registered on
+  its own.

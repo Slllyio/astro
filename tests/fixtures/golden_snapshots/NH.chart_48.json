@@ -75,12 +75,12 @@
       "H5.C.1",
       "H5.L.7"
     ],
-    "rollup": "afflicted",
+    "rollup": "favourable",
     "significations": {
       "children": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "intellect": {
         "degree": "mild",

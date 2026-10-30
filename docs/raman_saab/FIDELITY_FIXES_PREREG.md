@@ -432,3 +432,33 @@ tag; Raman favourable), NH.chart_14 body mixed -> favourable (H1.L.7 descriptive
 favourable). This is a faithfulness correction, not a tuning variant: each rule now says what
 its passage says, and the strict figure falls by two. Shipping it re-bases the ratchet, so it is
 the user's decision.
+
+## Addendum 16 (2026-10-30): hold-out 3 re-sealed, one birth time corrected from the page scan, still unread
+
+The user supplied page scans of *Hindu Predictive Astrology* (310 jp2 images; ch.35 is scans
+0280-0286, book page = scan number - 15). The scans are a slightly different edition from the
+archive.org text in the corpus: 20 practical horoscopes instead of 21 (the text's No. 11, male,
+29 July 1850, Bangalore, is absent, so the numbering shifts by one after No. 10). The other
+charts' birth data agree, and the scans confirm the three uncertain digits recorded in the
+extraction (77°25' E for Nos. 2, 5 and 6; 12° N for the text's No. 17; 75°30' E for the
+text's No. 18).
+
+One correction: the text's **No. 5** (female, 12 June 1909, 77°25' E, 13° N) reads "4-25 p.m.";
+the scan (0282, book p.267) prints **"4-25 a.m."**. Cast at 04:25 LMT, the chart matches every
+sign Raman printed (Ascendant, Sun and Rahu in Taurus); at 16:25 the Ascendant is Scorpio, which
+is why the chart had failed the sign check and was scored from its printed signs. User decision
+2026-10-30 ("Fix it and re-seal, unread"): the time is corrected in `r3_hpa_merged.json`
+(recorded in the chart's `fill_notes`) and the hold-out rebuilt with
+`build_holdout --stamp 2026-10-30`.
+
+Checks, none of which read a verdict: rebuilding from the old extraction reproduced the old
+fixture byte for byte; in the new fixture the only change is that HPA.chart_35.5 is now cast
+from its birth data (no stated positions) and every record's `review_note` stamp; no label
+changed (still 28 rows, 19 afflicted, 9 favourable). Five charts are now used from their printed
+signs (35.3, 35.4, 35.6 Lagna; 35.10, 35.17 Venus; 35.17's cast Venus is 0.3° into Virgo and the
+scan still prints Leo). The V0 verdicts are rewritten, unread, with the CURRENT engine (the
+rule-defect repairs of Addendum 15 shipped after the first seal, so V0 is again the shipped
+engine): `docs/raman_saab/holdout3_v0_verdicts_sealed.json`,
+SHA-256 `103509cafe094f2bb1dfcb746249469d17ad0e3c9f70ef87983eb150fb35bc19`. This supersedes the
+Addendum 11 hash. Side note, no action: for Henry Ford (text No. 14, scan No. 13) the scan prints
+3 p.m. where the text prints 2 p.m.; Ford is scored from HTJAH-II's own data, not from HPA.

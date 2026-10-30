@@ -7,7 +7,7 @@
   "name": null,
   "sex": "male",
   "skipped": false,
-  "raw_birth": "Male, born on 11th July 1872, 7-45 a.m. (IT 25' E. and 13\u00b0 N.)",
+  "raw_birth": "Male, born on 11th July 1872, 7-45 a.m. (IT 25' E. and 13° N.)",
   "birth": {
    "date": "1872-07-11",
    "time": "07:45",
@@ -115,7 +115,7 @@
   "name": null,
   "sex": "male",
   "skipped": false,
-  "raw_birth": "Male, born on 10th August 1874, 1-40 a.m. (93\u00b0 30' W. and 41\u00b0 50' N.)",
+  "raw_birth": "Male, born on 10th August 1874, 1-40 a.m. (93° 30' W. and 41° 50' N.)",
   "birth": {
    "date": "1874-08-10",
    "time": "01:40",
@@ -212,7 +212,7 @@
   "name": null,
   "sex": "female",
   "skipped": false,
-  "raw_birth": "Female, born on 30th October 1920, 8-30 p.m. (12\u00b0 N. and 76\u00b0 38' E.)'",
+  "raw_birth": "Female, born on 30th October 1920, 8-30 p.m. (12° N. and 76° 38' E.)'",
   "birth": {
    "date": "1920-10-30",
    "time": "20:30",
@@ -293,10 +293,10 @@
   "name": null,
   "sex": "female",
   "skipped": false,
-  "raw_birth": "Female, born on 12th June 1909, at 4-25 p.m. (IT 25' E. and 13\u00b0 N.)",
+  "raw_birth": "Female, born on 12th June 1909, at 4-25 p.m. (IT 25' E. and 13° N.)",
   "birth": {
    "date": "1909-06-12",
-   "time": "16:25",
+   "time": "04:25",
    "time_basis": "other",
    "ghatikas": null,
    "lat_deg": 13,
@@ -374,6 +374,9 @@
     "line": 125,
     "why": "Husband died; native widowed at 14."
    }
+  ],
+  "fill_notes": [
+   "2026-10-30: time 16:25 -> 04:25 from the HPA page scan (scan 0282, book p.267: '4-25 a.m.'); the archive.org text reads 'p.m.'. The 04:25 cast matches every printed sign. User decision 2026-10-30."
   ]
  },
  {
@@ -384,7 +387,7 @@
   "name": null,
   "sex": "female",
   "skipped": false,
-  "raw_birth": "Female, born on 11th January 1928, at 8-30 a.m. (77\u00b025'E. and 13 c N.)",
+  "raw_birth": "Female, born on 11th January 1928, at 8-30 a.m. (77°25'E. and 13 c N.)",
   "birth": {
    "date": "1928-01-11",
    "time": "08:30",
@@ -451,7 +454,7 @@
     "deg": null
    }
   },
-  "same_as": "Probably the same native as 14.1 (female child, same date 11 Jan 1928, died at 15/16 months); 14.1 prints 7 ghatikas after sunrise and 74\u00b0E 12\u00b0N",
+  "same_as": "Probably the same native as 14.1 (female child, same date 11 Jan 1928, died at 15/16 months); 14.1 prints 7 ghatikas after sunrise and 74°E 12°N",
   "conclusions": [
    {
     "house": "H8",
@@ -471,7 +474,7 @@
   "name": null,
   "sex": "male",
   "skipped": false,
-  "raw_birth": "Male, born on 28th September 1852, (51\u00b0 3' N. and 0\u00b030' E.)",
+  "raw_birth": "Male, born on 28th September 1852, (51° 3' N. and 0°30' E.)",
   "birth": {
    "date": "1852-09-28",
    "time": null,
@@ -546,7 +549,7 @@
     "house": "H10",
     "signification": "status_honour",
     "verdict": "favourable",
-    "quote": "Earldom\u2014 1921",
+    "quote": "Earldom— 1921",
     "line": 151,
     "why": "Received an earldom (title/honour)."
    }
@@ -561,7 +564,7 @@
   "name": null,
   "sex": "male",
   "skipped": false,
-  "raw_birth": "Male, born on 21st August 1858, at 10-15 p.m. (48\u00b0 13' N. and 16\u00b0 23' E.)",
+  "raw_birth": "Male, born on 21st August 1858, at 10-15 p.m. (48° 13' N. and 16° 23' E.)",
   "birth": {
    "date": "1858-08-21",
    "time": "22:15",
@@ -666,7 +669,7 @@
   "name": null,
   "sex": "male",
   "skipped": false,
-  "raw_birth": "Male, born on 25th April 1874, at 9 a.m. (44 G 30' N. and 11\u00b0 22' E.)",
+  "raw_birth": "Male, born on 25th April 1874, at 9 a.m. (44 G 30' N. and 11° 22' E.)",
   "birth": {
    "date": "1874-04-25",
    "time": "09:00",
@@ -838,7 +841,7 @@
   "name": null,
   "sex": "male",
   "skipped": false,
-  "raw_birth": "Male, born on 23rd May 1707. at 12-30 midnight (63\u201c N. and 15 s E.)",
+  "raw_birth": "Male, born on 23rd May 1707. at 12-30 midnight (63“ N. and 15 s E.)",
   "birth": {
    "date": "1707-05-23",
    "time": "00:30",
@@ -860,7 +863,7 @@
    },
    {
     "field": "lat_deg",
-    "raw": "63\u201c",
+    "raw": "63“",
     "reading": 63,
     "alternatives": [
      56,
@@ -929,7 +932,7 @@
     "house": "H10",
     "signification": "career",
     "verdict": "favourable",
-    "quote": "The greatest botanist who introduced the present system of bionomical nomenclature; professor of botany\u20141739",
+    "quote": "The greatest botanist who introduced the present system of bionomical nomenclature; professor of botany—1739",
     "line": 217,
     "why": "Pre-eminent scientific career and professorship."
    },
@@ -1052,7 +1055,7 @@
     "field": "lat_deg",
     "raw": "12'",
     "reading": 12,
-    "note": "printed with minute mark; read as 12\u00b0 N (as in 35.4/35.20)"
+    "note": "printed with minute mark; read as 12° N (as in 35.4/35.20)"
    },
    {
     "field": "time_basis",
@@ -1139,12 +1142,12 @@
     "field": "lat_deg",
     "raw": "12'",
     "reading": 12,
-    "note": "no N/S printed; read 12\u00b0 N by analogy with 35.4/35.16/35.20"
+    "note": "no N/S printed; read 12° N by analogy with 35.4/35.16/35.20"
    },
    {
     "field": "lon_min",
     "raw": "76 38'",
-    "reading": "76\u00b038'"
+    "reading": "76°38'"
    },
    {
     "field": "time_basis",
@@ -1236,10 +1239,10 @@
    {
     "field": "lon",
     "raw": "75 4 30'",
-    "reading": "75\u00b030'",
+    "reading": "75°30'",
     "alternatives": [
-     "75\u00b04'30\"",
-     "74\u00b030'"
+     "75°4'30\"",
+     "74°30'"
     ],
     "note": "'4' probably a garbled degree sign"
    },
@@ -1439,7 +1442,7 @@
   "name": null,
   "sex": "female",
   "skipped": false,
-  "raw_birth": "Female, born on 1st April 1930, at 1-50 a.m. (12\u00b0 N. and 76\u00b0 38' E.)",
+  "raw_birth": "Female, born on 1st April 1930, at 1-50 a.m. (12° N. and 76° 38' E.)",
   "birth": {
    "date": "1930-04-01",
    "time": "01:50",
@@ -1520,7 +1523,7 @@
   "name": null,
   "sex": "female",
   "skipped": false,
-  "raw_birth": "Female child born on 11th January 1928 at 7 ghaties after sunrise. Longitude 74\u00b0 E., Latitude 12\u00b0 N. The sub-period of Venus in the major period of Venus rules for 16 months at birth.",
+  "raw_birth": "Female child born on 11th January 1928 at 7 ghaties after sunrise. Longitude 74° E., Latitude 12° N. The sub-period of Venus in the major period of Venus rules for 16 months at birth.",
   "birth": {
    "date": "1928-01-11",
    "time": null,
@@ -1537,9 +1540,9 @@
   "uncertain": [
    {
     "field": "lon_deg",
-    "raw": "74\u00b0 E.",
+    "raw": "74° E.",
     "reading": 74,
-    "note": "differs from 35.6 (77\u00b025'E 13\u00b0N) which appears to be the same native"
+    "note": "differs from 35.6 (77°25'E 13°N) which appears to be the same native"
    }
   ],
   "dasa_balance": "Venus dasa, Venus bhukti with 16 months remaining at birth",

@@ -951,3 +951,40 @@ planets, not always the house lord. The principle stands as Raman's reason; the 
 faithful sign-level trigger for it. Its use is in the report, not the verdict.
 
 Hold-out 4 untouched and still sealed.
+
+## Addendum 31 (2026-10-30): hold-out 5 protocol, fixed before any position is read or any verdict exists
+
+User decision 2026-10-30 ("Find fresh Raman charts"). Every Raman book on the PC was listed
+again; the unused worked charts with conclusions are, almost entirely, the *How to Judge a
+Horoscope* charts that hold-out 2's build rejected because their Rasi diagrams did not survive
+OCR. Re-running the builder on the hold-out 2 extraction files (no fixture written, no verdict
+read) lists them:
+
+- HTJAH Vol I: 21, 25, 27, 34, 36, 70, 74, 86, 87, 90, 119, 123, 124, 125, 126 (dasa balance
+  disagrees, Lagna disagrees, no readable balance, or no date and no positions).
+- HTJAH Vol II: 45, 65, 70, 76, 79, 81, 106, 107, 109, 149, 185, 208, 245.
+
+None of them has ever been scored. Their conclusions were extracted engine-blind on 2026-10-24
+(`r2_htjah1a.json`; Vol II from `r2_htjah2_merged.json`, i.e. only conclusions both extractors
+gave identically). The conclusions are used as extracted; nothing is re-extracted.
+
+**Positions.** The OCR source has empty diagrams, but archive.org item
+`raman-how-to-judge-horoscope-2` holds both volumes as PDFs with the diagrams as images
+(downloaded to `E:\astro\data\knowledge_library\sources\htjah_scans\`). Two independent readers
+transcribe, for each chart: birth line, dasa balance, and the nine grahas and Lagna of the Rasi
+diagram. A chart is used only if both readings agree on every graha's sign and the Lagna;
+otherwise it is dropped and listed.
+
+**Path.** Where the birth data is printed and the cast puts all nine grahas and the Lagna in
+Raman's printed signs, the chart is cast (full degrees). Otherwise it is scored from the printed
+signs (`deg` unset), the hold-out 3/4 rule: where our ephemeris and Raman's printed chart
+disagree, his printed chart is what he judged. The dasa balance is recorded, not used.
+
+**Dedupe.** The builder's usual check against the goldens and hold-outs 1-3, and against
+hold-out 4 through its position extractions (`r4_3hc_scan_positions_a.json`), never through the
+sealed hold-out 4 fixture.
+
+**Sealing and use.** V0 verdicts (engine at this branch's HEAD) are written unread and their
+SHA-256 recorded. Hold-out 5 is scored once, together with hold-out 4 (Addendum 28), for the
+next pre-registered variant(s), under the one decision rule. Nothing here changes the engine or
+the pool.

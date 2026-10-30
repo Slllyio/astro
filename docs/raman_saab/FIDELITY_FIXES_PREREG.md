@@ -433,7 +433,7 @@ favourable). This is a faithfulness correction, not a tuning variant: each rule 
 its passage says, and the strict figure falls by two. Shipping it re-bases the ratchet, so it is
 the user's decision.
 
-## Addendum 16 (2026-10-30): hold-out 3 re-sealed, one birth time corrected from the page scan, still unread
+## Addendum 21 (2026-10-30): hold-out 3 re-sealed, one birth time corrected from the page scan, still unread
 
 The user supplied page scans of *Hindu Predictive Astrology* (310 jp2 images; ch.35 is scans
 0280-0286, book page = scan number - 15). The scans are a slightly different edition from the
@@ -463,7 +463,7 @@ SHA-256 `103509cafe094f2bb1dfcb746249469d17ad0e3c9f70ef87983eb150fb35bc19`. This
 Addendum 11 hash. Side note, no action: for Henry Ford (text No. 14, scan No. 13) the scan prints
 3 p.m. where the text prints 2 p.m.; Ford is scored from HTJAH-II's own data, not from HPA.
 
-## Addendum 17 (2026-10-30): hold-out 4 from the page scans of *Three Hundred Important Combinations*, fixed before any hold-out 4 verdict exists
+## Addendum 22 (2026-10-30): hold-out 4 from the page scans of *Three Hundred Important Combinations*, fixed before any hold-out 4 verdict exists
 
 User instruction 2026-10-30 ("go ahead": find more unused Raman worked charts on the PC). The
 user's scans of 3HC (350 jp2 pages, `300_important_combinations_b.v._raman_jp2.zip`) cover the
@@ -488,11 +488,11 @@ both is scored; a disagreement is dropped as contested and listed. The builder's
 against goldens and hold-outs 1-3 applies.
 
 **Sealing.** V0 verdicts (the shipped engine, HEAD at sealing) are written unread and their
-SHA-256 recorded in the next addendum. Hold-out 4 is scored once, under the same rules as
+SHA-256 recorded in Addendum 23. Hold-out 4 is scored once, under the same rules as
 hold-out 3, for the next pre-registered variant; hold-outs 3 and 4 may be reported together and
 separately. Nothing here changes the engine or the 389-row pool.
 
-## Addendum 18 (2026-10-30): hold-out 4 sealed
+## Addendum 23 (2026-10-30): hold-out 4 sealed
 
 Positions: `holdout_extractions/r4_3hc_scan_positions_a.json` and `_b.json` (two readers, all
 twenty Rasi diagrams agree). Conclusions: `r4_3hc_scan_conclusions.json` (page-scan extractor)

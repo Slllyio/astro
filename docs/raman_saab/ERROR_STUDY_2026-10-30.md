@@ -21,7 +21,7 @@ whole: in the pool and in hold-out 3 the larger group is now the reverse (too le
   two strong pillars (8) or clause 5 with no malefic rule firing at all (6). Hold-out 3 shows
   the same (6 of 8). Counting fired rules does not separate these from the many correct
   strong-pillar rows: where malefic rules outnumber benefic ones, Raman still reads favourable
-  in 14 of 25 rows. This is the pillar-preponderance optimum recorded since 2026-08.
+  in 14 of 26 rows. This is the pillar-preponderance optimum recorded since 2026-08.
 - **Weak pillar plus an active maraka turns a non-death matter afflicted (8 of 14 harsh
   errors):** variant M1 (Addendum 10/12) already tested the maraka guard and failed its NH rule;
   a narrower re-cut after seeing M1's numbers would break the pre-registration rule.

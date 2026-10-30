@@ -432,3 +432,61 @@ tag; Raman favourable), NH.chart_14 body mixed -> favourable (H1.L.7 descriptive
 favourable). This is a faithfulness correction, not a tuning variant: each rule now says what
 its passage says, and the strict figure falls by two. Shipping it re-bases the ratchet, so it is
 the user's decision.
+
+## Addendum 16 (2026-10-30): variants G1 and N1, fixed before any G1 or N1 number exists
+
+User decision 2026-10-30 ("Headline + pre-register both", on the harshness diagnosis
+`HARSHNESS_DIAGNOSIS_2026-10-30.md`). Both variants come from the Kanpur trace (10 Oct 1989,
+15:15 IST), a chart outside the goldens. Their in-pool firing counts were already seen in the
+diagnosis: the fertility gate decided 12 confirmed rows (9 afflicted, 1 mixed, 2 favourable in
+Raman's words), and H7.C.82 fires on the nodes alone on no confirmed row. No variant number
+exists yet.
+
+**G1 (one variant, no second version). The fertility gate moves the verdict one step, never decides it.**
+Today `_fertility_gate` sets children/progeny to `afflicted` when both sphutas fail their
+odd/even test, or when one fails and Arm A or Arm B corroborates. Under G1 the same arms fire
+on the same conditions, but each moves the verdict at most **one step toward afflicted**:
+favourable to mixed, mixed to afflicted, afflicted unchanged. The `FERTILITY_GATE` flag and the
+metadata are unchanged.
+
+Basis:
+- Raman's worked Chart 88: a Beeja in an even sign is judged "strong" on its other testimony
+  (HTJAH-I:5529-5551).
+- Chart 89: a Kshetra in an odd sign is judged "fertile → birth of children", fewer in number
+  (HTJAH-I:5553-5582).
+- So the parity test alone is co-testimony. It is not a decision. The relief clauses
+  (HTJAH-I:5524-5527) are not encoded, so the gate cannot tell a relieved point from an
+  unrelieved one.
+- Moving one step is the same discipline the Navamsa follows (NAVAMSA_ONE_STEP).
+
+Switch: `house_template.G1_FERTILITY_ONE_STEP` (default False).
+
+**N1 (one variant, no second version). The nodal axis counts as one affliction in H7.C.82.**
+Today `_SeventhBesiegedByMalefics` counts distinct natural malefics occupying or aspecting the
+7th, so Ketu in the 7th plus Rahu's 7th aspect from the 1st (or the reverse) makes "two".
+Under N1, Rahu and Ketu together count as one, whenever either afflicts the 7th. Every other
+part of the condition is unchanged: the threshold of two, and the full-benefic relief.
+
+Basis:
+- The two nodes are always opposite, so one placement always brings the other's aspect. They
+  are one testimony.
+- The rule's cited classic case is Saturn + Mars (HTJAH-II:562), and its worked firings are
+  Saturn + Mars and Mars + Ketu.
+
+Switch: `house_7 combinations.NODE_AXIS_AS_ONE` (default False).
+
+**Decision rule** (the same as M1 and Y1). For each variant alone:
+
+- (a) Pool rule: real errors do not rise overall or in any book; within one does not fall; and
+  exact rises or real errors fall.
+- (b) Hold-out 3, scored once, against its sealed V0: real errors do not rise and within one
+  does not fall. Hold-out 3 is scored only for a variant that passes (a).
+- (c) An engine-blind doctrine review of the change, with the result going to the user.
+
+A variant that fails is reported and held behind its switch. It is not adjusted.
+
+If both pass (a), each goes to (b) on its own, and then the pair goes together. Because
+hold-out 3 is scored once, the scoring order is fixed now: G1, then N1, then the pair, all in
+one run, with V0 read from the sealed file.
+
+If (a) passes but N1 changes no pool row, the pool cannot test it, and the hold-out decides.

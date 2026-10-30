@@ -208,6 +208,9 @@ class FrameLedger:
     #: debilitation) that Raman reads as powerless independently of its Shadbala total.
     #: None on Track-B (no positions to judge). See `_lord_hard_afflicted`.
     lord_hard_afflicted: Optional[bool] = None
+    #: C2 — the LORD is joined by a node AND touched by Saturn or Mars (see
+    #: `_lord_obstructed`). None unless `C2_OBSTRUCTED_CARRIER` is on.
+    lord_obstructed: Optional[bool] = None
     #: Y1 — blemish-grade malefic rules set aside because a benefic rule also fired (kept here
     #: so every renderer still shows them). Empty unless `Y1_BLEMISH_TIER` is on.
     fired_blemish: tuple[rf.FiredRule, ...] = ()
@@ -472,6 +475,25 @@ def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:
     return bool(es.combust > 0.0 or es.debilitated_uncancelled)
 
 
+def _lord_obstructed(lord: str, chart: RamanChart) -> Optional[bool]:
+    """C2: is the lord joined by Rahu or Ketu (same sign) AND joined or aspected by Saturn or
+    Mars (Raman's whole-sign drishti; a planet never obstructs itself)? NH:7196-7199."""
+    p = chart.planets.get(lord)
+    if p is None:
+        return None
+    node = any(q is not None and q.sign == p.sign
+               for q in (chart.planets.get("Rahu"), chart.planets.get("Ketu")))
+    if not node:
+        return False
+    for m in ("Saturn", "Mars"):
+        q = chart.planets.get(m)
+        if m == lord or q is None:
+            continue
+        if q.sign == p.sign or drishti.aspects_planet(m, lord, chart):
+            return True
+    return False
+
+
 def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:
     p = chart.planets.get(planet)
     if p is None or p.shadbala_rupas is None:
@@ -555,6 +577,16 @@ Y1_BLEMISH_TIER: bool = False
 #: drop G1", Addendum 20): it kept the parity-only trigger an engine-blind review found unsound;
 #: G2 repaired the trigger itself (`primitives.sphutas.G2_PRINTED_SPHUTA_TEST`). Kept off, for the record.
 G1_FERTILITY_ONE_STEP: bool = False
+
+#: C2 (FIDELITY_FIXES_PREREG Addendum 29, OFF until measured and decided): the obstructed
+#: carrier. Raman reads a strong yoga as a promise whose ENJOYMENT is denied when its own
+#: planets are gripped by a node and a malefic: "Rahu's association and the aspect of Saturn
+#: hardens the political life obstructing the expression of the yoga in concrete terms, i.e.,
+#: the actual enjoyment of the yoga results is denied" (NH:7196-7199); "obstruction of the free
+#: flow of fortunate influences" (NH:7255-7257). When the matter's lord is so obstructed, the
+#: strong-pillar favourable lift (clauses 2 and 5) is blocked and the matter falls to 'mixed',
+#: the same shape as the B1 guard. Sign-only: no orb, no star lord.
+C2_OBSTRUCTED_CARRIER: bool = False
 
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 
@@ -656,7 +688,8 @@ def _decide_clauses(L: FrameLedger) -> tuple[Verdict, bool]:
         # painted over, and the AFFLICTED arm stays untouched.
         elif (known and strong >= shadbala_total.CONTRA_PILLAR_FAVOUR
                 and L.navamsa_status != "weakens"
-                and not (B1_DOMINANT_FACTOR_GUARD and L.lord_hard_afflicted)):
+                and not (B1_DOMINANT_FACTOR_GUARD and L.lord_hard_afflicted)
+                and not (C2_OBSTRUCTED_CARRIER and L.lord_obstructed)):
             base = "favourable"
         else:
             base = "mixed"
@@ -678,7 +711,8 @@ def _decide_clauses(L: FrameLedger) -> tuple[Verdict, bool]:
     weak_pillar = (not L.lord_strong) or (not L.karaka_strong)
     # 5. clean strength + supportive bhava + no malefic -> favourable.
     if both_strong and bhava_ok and not L.fired_malefic:
-        base = "favourable"
+        # C2 (Addendum 29): an obstructed lord blocks the lift, as in clause 2.
+        base = "mixed" if (C2_OBSTRUCTED_CARRIER and L.lord_obstructed) else "favourable"
     # 6. a weak pillar with malefic / weak-bhava / maraka pressure -> afflicted...
     elif weak_pillar and (L.fired_malefic or L.bhava_bala_strong is False or maraka_drives):
         base = "afflicted"
@@ -1410,6 +1444,7 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         lord_karaka_identical=lord_karaka_identical,
         fired_benefic=benefic, fired_malefic=malefic, fired_neutral=neutral,
         flags=tuple(dict.fromkeys(flags)), lord_hard_afflicted=lord_hard,
+        lord_obstructed=(_lord_obstructed(lord, chart) if C2_OBSTRUCTED_CARRIER else None),
         fired_blemish=blemish)
 
 

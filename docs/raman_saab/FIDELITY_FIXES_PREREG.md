@@ -876,3 +876,51 @@ Two facts the merged record must state plainly:
   (no degrees), so it cannot test G2 or any sphuta-based fertility variant.
 User decision 2026-10-30: hold-out 4 stays sealed until a further fix is ready to be tested
 together with R5 in one reading.
+
+## Addendum 29 (2026-10-30): C2, the obstructed carrier, fixed before any C2 number exists
+
+**Why.** `RAMAN_PHILOSOPHY_2026-10-30.md` (project files) traced Raman's own stated reason on
+each of the 35 pool real errors. Most lenient errors (Raman afflicted, engine favourable) rest
+on one principle: strength is a promise, and when the planets that carry it are gripped, the
+"enjoyment" is denied. Tilak: "Rahu's association and the aspect of Saturn hardens the
+political life obstructing the expression of the yoga in concrete terms, i.e., the actual
+enjoyment of the yoga results is denied" (NH:7196-7199); "obstruction of the free flow of
+fortunate influences" (NH:7255-7257). The 7th lord with Rahu: NH:5930-5932, NH:12941-12942.
+The engine's strong-pillar lift reads only the pillars' dignity and Shadbala, so it cannot see
+this. The B1 guard blocks the lift for a combust or debilitated lord; nothing blocks it for an
+obstructed one.
+
+**C2 (fixed now).** The matter's lord (the frame lord the ledger already uses) is OBSTRUCTED
+when both hold:
+1. Rahu or Ketu occupies the lord's sign; and
+2. Saturn or Mars, other than the lord itself, occupies the lord's sign or aspects the lord by
+   Raman's whole-sign drishti (Saturn 3/7/10, Mars 4/7/8).
+
+Two agents are required because Tilak's chart is explicit on both sides: Rahu alone, nearly
+10° from Jupiter, "stands neutralised" for Guru-Chandala (NH:7264-7266), while Rahu with
+Saturn's aspect obstructs the Raja yoga. Sign-only: no orb and no star lord, so the same
+definition runs on degree charts and on the sign-only hold-out 4.
+
+Effect, and nothing else: when the lord is obstructed, (a) clause 2's strong-pillar favourable
+lift is blocked, exactly where the B1 guard sits, and (b) clause 5's favourable becomes
+'mixed'. Both then pass through the navamsa modulation as any 'mixed' does. No afflicted arm,
+veto or other clause changes. No house is exempt. Flag `house_template.C2_OBSTRUCTED_CARRIER`,
+default off; measured by `tools/raman_saab/fidelity_variants.py C2`.
+
+**Admitted weakness.** The principle was found by reading the pool's own error rows, so a pool
+pass is in-sample and is evidence only that the rule does not break other rows. It is not
+confirmation.
+
+**Decision rule.** Unchanged (`passes()` against V0 = the engine at bd8c28a3). Reported: the
+pool figure by book, every row that moves, and how often the lord is obstructed on the scored
+rows.
+
+**Predictions, written before measuring.** C2 can only move a favourable to mixed (or, through
+the navamsa, to afflicted or back). It should turn some of the lenient real errors into
+one-step misses, but only those whose lord carries the two-agent grip; several lenient rows rest
+on the karaka or on two-of-three (principle (i)), which C2 does not touch. It will also cost
+some exact favourables. Expected: fewer than 10% of scored rows move; direction uncertain, and
+a FAIL on the rule is entirely possible.
+
+**Hold-out.** Hold-out 4 stays sealed (Addendum 28: until a further fix is ready to be tested
+together with R5 in one reading). Whether C2, if it passes, is that fix is the user's call.

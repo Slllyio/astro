@@ -924,3 +924,30 @@ a FAIL on the rule is entirely possible.
 
 **Hold-out.** Hold-out 4 stays sealed (Addendum 28: until a further fix is ready to be tested
 together with R5 in one reading). Whether C2, if it passes, is that fix is the user's call.
+
+## Addendum 30 (2026-10-30): C2 measured, FAILS
+
+| | exact | within one | real errors | HTJAH-I real | HTJAH-II real | NH real |
+|---|---|---|---|---|---|---|
+| V0 (bd8c28a3) | 263 | 354 | 35 | 13 | 5 | 17 |
+| C2 | 263 | 352 | 37 | 14 | 6 | 17 |
+
+C2 FAILS the decision rule: real errors rise overall and in HTJAH-I and HTJAH-II, and
+within-one falls. Held; no adjusted version will be tried on the pool (Addendum 29).
+
+Six rows move:
+- Better (2): HTJAH-II.h9_03 and h9_04 H9/father, Raman afflicted: mixed → afflicted (exact).
+- Worse (4): HTJAH-I.chart_17 H1/self and HTJAH-II.h12_01 H12/moksha, Raman favourable:
+  mixed → afflicted (new real errors); HTJAH-II.h11_06 H11/elder siblings and NH.chart_42
+  H2/wealth, Raman favourable: favourable → mixed.
+
+The four mixed → afflicted moves come through the navamsa, as declared: once C2 makes the rasi
+reading 'mixed', `NAVAMSA_ONE_STEP` no longer holds a weakening D9 back from 'afflicted'.
+
+The finding that matters: **none of the lenient real errors C2 was aimed at moved** (NH.chart_30
+H9/H10, chart_22 and chart_62 H7, chart_64 H10). On a sign-only reading their lords do not
+carry the node-plus-malefic grip; in Raman's sentences the obstructed planets are the yoga's
+planets, not always the house lord. The principle stands as Raman's reason; the engine has no
+faithful sign-level trigger for it. Its use is in the report, not the verdict.
+
+Hold-out 4 untouched and still sealed.

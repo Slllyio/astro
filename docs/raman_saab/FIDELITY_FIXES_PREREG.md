@@ -462,3 +462,32 @@ engine): `docs/raman_saab/holdout3_v0_verdicts_sealed.json`,
 SHA-256 `103509cafe094f2bb1dfcb746249469d17ad0e3c9f70ef87983eb150fb35bc19`. This supersedes the
 Addendum 11 hash. Side note, no action: for Henry Ford (text No. 14, scan No. 13) the scan prints
 3 p.m. where the text prints 2 p.m.; Ford is scored from HTJAH-II's own data, not from HPA.
+
+## Addendum 17 (2026-10-30): hold-out 4 from the page scans of *Three Hundred Important Combinations*, fixed before any hold-out 4 verdict exists
+
+User instruction 2026-10-30 ("go ahead": find more unused Raman worked charts on the PC). The
+user's scans of 3HC (350 jp2 pages, `300_important_combinations_b.v._raman_jp2.zip`) cover the
+20 charts that hold-out 1 (Addendum 1) had to reject although they carry Raman conclusions: 12
+whose printed dasa balance disagrees with our cast (19, 24, 32, 60, 66, 84, 104, 124, 128, 134,
+135, 141), one with no readable balance (13), and seven with missing or garbled birth data or
+diagrams (44, 46, 78, 80, 85, 99, 107). The OCR text had scrambled their Rasi diagrams.
+
+**Positions.** Two independent readers transcribed each chart's birth line, dasa balance and
+Rasi diagram from the scans; the two readings agree on all twenty (differences were spelling of
+abbreviations only), each with nine grahas once and one Lagna. Every chart is scored from
+**Raman's printed signs** (the stated-positions path of `build_holdout`, `deg` unset), the rule
+already used for HPA charts whose cast misses a printed sign: where our ephemeris and Raman's
+own printed chart disagree, Raman's printed chart is what he judged. Mandi, printed in three
+diagrams, is not a graha and is not used. The dasa balance is recorded but not used to accept or
+reject, because no cast is used.
+
+**Conclusions.** The original engine-blind 3HC extraction (`3hc_a/b/c.json`, from the OCR text)
+is paired with a second engine-blind extraction made from the page images
+(`r4_3hc_scan_conclusions.json`). Only a (house, signification, verdict) given identically by
+both is scored; a disagreement is dropped as contested and listed. The builder's usual dedupe
+against goldens and hold-outs 1-3 applies.
+
+**Sealing.** V0 verdicts (the shipped engine, HEAD at sealing) are written unread and their
+SHA-256 recorded in the next addendum. Hold-out 4 is scored once, under the same rules as
+hold-out 3, for the next pre-registered variant; hold-outs 3 and 4 may be reported together and
+separately. Nothing here changes the engine or the 389-row pool.

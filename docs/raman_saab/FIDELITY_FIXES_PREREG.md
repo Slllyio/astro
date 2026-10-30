@@ -540,3 +540,62 @@ and the only scored firings of H7.C.82 involve Saturn or Mars.
 decides. My recommendation is to keep G1 off until the review reads the sphuta passage itself.
 The pool trade is real, but the hold-out cannot confirm it, and the cleaner fix is to encode the
 relief clauses Raman prints, which this variant does not do.
+
+## Addendum 18 (2026-10-30): variant G2, Raman's printed sphuta test, fixed before any G2 number exists
+
+User go-ahead 2026-10-30 ("go ahead", on the offer to read the sphuta passage and review G1).
+The passage HTJAH-I:5496-5633 was read verbatim from the corpus on the user's PC
+(`how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md`). No G2 number exists yet.
+
+**What the text says.**
+- The test (5521-5527): Beeja strong in an odd sign and odd Navamsa, "aspected by or associated
+  with benefics"; Kshetra the same in even sign and Navamsa. "Evil and impotent planets should
+  not aspect these sensitive points, nor should evil planets occupy the 5th from" them; neither
+  "should fall in a malefic sign"; "Rahu should never join" them.
+- Chart 88 (male, 8-8-1912 19:35 IST, Bangalore; the same nativity as goldens HTJAH-I.chart_10):
+  Beeja in Cancer, an EVEN sign, is judged strong: occupied by the Sun, a benefic sign, aspected
+  by Jupiter and Saturn, Jupiter in the 5th from it, odd Navamsa (5543-5551).
+- Chart 89 (female, 16-10-1918 14:20 IST; the same nativity as HTJAH-I.chart_12): Kshetra in
+  Sagittarius, an ODD sign, is judged fertile: benefic sign, aspected by Jupiter, even Navamsa
+  (5574-5577). For both: "the fertility cannot be in a pronounced manner … the number of
+  children cannot be very large" (5577-5580).
+- Chart 90 (sterile): Beeja in an even and malefic sign in Rasi and Amsa (Capricorn), aspected by
+  Saturn (5602-5605).
+- 5508-5509: weak Beeja with strong Kshetra means children late, not none.
+
+**Finding on the shipped gate (rule (c) of Addendum 16, for G1 as well).** The shipped test
+reads parity only, in both Rasi and Navamsa. Cast as printed, it reads Chart 88's Beeja WEAK
+(Cancer) and Chart 89's Kshetra WEAK (Sagittarius), the two points Raman judges fertile. So the
+shipped gate contradicts two of Raman's three worked sphuta charts. G1 keeps that test and only
+softens its effect; it does not repair it.
+
+**G2 (one variant, no second version). A sphuta point is strong exactly when Raman's printed
+conditions hold.** For each point P (Beeja: odd parity wanted; Kshetra: even), with signs and
+aspects whole-sign as everywhere in the engine, natural benefics Jupiter, Venus, Mercury, Moon,
+natural malefics Sun, Mars, Saturn, Rahu, Ketu:
+
+- Bars (any one makes P weak):
+  1. P's Rasi sign is ruled by a natural malefic (Aries, Leo, Scorpio, Capricorn, Aquarius) (5526).
+  2. Rahu occupies P's Rasi sign (5526-5527).
+  3. A natural malefic occupies the 5th sign from P (5525).
+  4. A natural malefic aspects P's sign and no natural benefic occupies or aspects it (5524-5525;
+     Chart 88 is strong under Saturn's aspect because Jupiter also aspects).
+- Requirements (all needed for P strong, when no bar applies):
+  5. A natural benefic occupies or aspects P's Rasi sign (5521-5524).
+  6. P has the wanted parity in its Rasi sign OR in its Navamsa sign (Charts 88 and 89 hold
+     one of the two and are judged fertile).
+
+The gate itself is unchanged: both points weak → afflicted; one weak → afflicted only on Arm A
+or Arm B. The Saptamsa guard reads the same strong flags. Nothing reads the chart's sex, which
+the engine does not have; that limit stays and is recorded.
+
+Switch: `primitives.sphutas.G2_PRINTED_SPHUTA_TEST` (default False).
+
+**Decision rule.**
+- (a) The pool rule of Addendum 16, unchanged.
+- (b) Worked charts: G2 must read Chart 88's Beeja strong, Chart 89's Kshetra strong, and Chart
+  90's Beeja weak (from its printed longitudes, Sun 53°, Jupiter 192°, Venus 26°). Checked before
+  the pool run; a failure stops the variant.
+- (c) An engine-blind doctrine review of the G2 specification against the verbatim text.
+- Hold-out 3 is spent (Addendum 17). There is no sealed out-of-sample set for G2, and that is
+  reported with the result. Shipping is the user's decision.

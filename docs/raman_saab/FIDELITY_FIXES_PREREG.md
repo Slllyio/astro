@@ -755,3 +755,18 @@ unread, to `docs/raman_saab/holdout4_v0_verdicts_sealed.json`,
 SHA-256 `223b8ae34d3f392eb452be2a5e7a4a3a66951dabb2d385bd0f4416842cc4d6d9`.
 Limit: positions are signs only (no degrees), so degree-dependent rules (combustion, exact
 aspects, avasthas) read every graha at 15°, as for every printed-signs chart before.
+
+## Addendum 24 (2026-10-30): reconciling the two branches
+
+This branch and the fertility branch (`claude/project-thread-yj2a5g`) both wrote addenda on
+2026-10-30. Theirs are 16-20; this branch's were renumbered 21-23 when the two were merged.
+Two facts the merged record must state plainly:
+- **Hold-out 3 is spent.** The fertility branch read it once at 05:53 (Addendum 17, against the
+  Addendum 11 seal). The re-seal in Addendum 21 came at 06:11, after that read, so its words
+  "still unread" were wrong when written. The corrected birth time stands as a data fix; the set
+  gives no further out-of-sample test.
+- **Hold-out 4's V0 predates G2** (Addendum 20). Any later score on hold-out 4 must say so, or
+  re-run V0 with the current engine at scoring time and report both. Hold-out 4 has signs only
+  (no degrees), so it cannot test G2 or any sphuta-based fertility variant.
+User decision 2026-10-30: hold-out 4 stays sealed until a further fix is ready to be tested
+together with R5 in one reading.

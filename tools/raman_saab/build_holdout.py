@@ -35,7 +35,8 @@ OUT = "tests/fixtures/raman_holdout_sealed.jsonl"
 SOURCES = {"3hc": ("3HC", "3HCC"), "r2_nh": ("NH", "NH"), "r2_htjah1": ("HTJAH-I", "HTJAH-I"),
            "r2_htjah2": ("HTJAH-II", "HTJAH-II"), "hpa": ("HPA", "HPA")}
 #: every earlier fixture: a native already in any of them is never reused
-_EARLIER = ("tests/fixtures/raman_goldens.jsonl", OUT, "tests/fixtures/raman_holdout2_sealed.jsonl")
+_EARLIER = ("tests/fixtures/raman_goldens.jsonl", OUT, "tests/fixtures/raman_holdout2_sealed.jsonl",
+            "tests/fixtures/raman_holdout3_sealed.jsonl")
 
 
 _STAMP = "2026-10-24"

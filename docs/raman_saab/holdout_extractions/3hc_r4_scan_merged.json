@@ -1,0 +1,1486 @@
+[
+ {
+  "chart_no": 13,
+  "first_line": 1562,
+  "last_line": 1592,
+  "raw_birth": "ChrrtNo r3.-Born on 19-7-1816 at Gh. I5l after / Sunrise. Irt. 17\" N.; Long. Sh I\\m. 20s. E.",
+  "birth": null,
+  "uncertain": [
+   {
+    "field": "ghatikas",
+    "raw": "Gh. I5l",
+    "reading": "15½",
+    "alternatives": [
+     "15-1",
+     "151 (impossible)"
+    ]
+   },
+   {
+    "field": "lon",
+    "raw": "Long. Sh I\\m. 20s. E.",
+    "reading": "5h 10m 20s = 77d35m",
+    "alternatives": [
+     "5h 1?m 20s"
+    ]
+   }
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "He was a man of great self- respect, held a decent position as a Dewan, a great yogee and knew well eight languages.",
+    "line": 1590,
+    "why": "Raman praises the native's character (great self-respect)."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "held a decent position as a Dewan",
+    "line": 1591,
+    "why": "Raman reports the native held office as a Dewan."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "knew well eight languages.",
+    "line": 1592,
+    "why": "Raman reports notable learning/intellect."
+   }
+  ],
+  "note": "Father of Prof. B. Suryanarain Rao.",
+  "stated_positions": {
+   "Moon": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Capricorn",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Libra",
+  "scan_birth_line": "Chart No 13.—Born on 19-7-1816 at Gh. 15? after Sunrise. Lat. 17° N.; Long. 5h 10m. 20s. E.",
+  "scan_dasa_balance": null,
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 19,
+  "first_line": 2080,
+  "last_line": 2111,
+  "raw_birth": "Charl No L9.-Born on 12-5-1916 at Gh. i9-15 after / rlse. Lat. I3o N.; Long.77\" 35' E.",
+  "birth": null,
+  "uncertain": [
+   {
+    "field": "ghatikas",
+    "raw": "Gh. i9-15",
+    "reading": "19-15"
+   }
+  ],
+  "dasa_balance": "Sun 5-11-3",
+  "lagna_sign_stated": "Sagittarius",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "afflicted",
+    "quote": "But still the native is neither a King nor a high personality. The reason is obvious. Jupiter is powerfully aspected by Saturn and Mars.",
+    "line": 2102,
+    "why": "Raman frames the lack of eminence as a deficiency caused by malefic aspects on Jupiter."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "The native has a good personality, is good-tempered and liked by his associates.",
+    "line": 2107,
+    "why": "Raman describes a good personality and temperament."
+   }
+  ],
+  "stated_positions": {
+   "Sun": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Sagittarius",
+  "scan_birth_line": "Chart No 19.—Born on 12-5-1916 at Gh. 39-15 after Sunrise. Lat. 13° N.; Long. 77° 35' E.",
+  "scan_dasa_balance": "Balance of Sun's Dasa at birth: years 5-11-3.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 24,
+  "first_line": 2364,
+  "last_line": 2402,
+  "raw_birth": "Chart No. 24 -Born on 23-10-l8EJ ut Gh. lt15 after Sun' / rise. Lot. l2o N.; I-ong.77\" J4' E. / Balance of Mercury's Dasa at birth: years 7-3-23.",
+  "birth": null,
+  "uncertain": [
+   {
+    "field": "date year",
+    "raw": "l8EJ",
+    "reading": "1883",
+    "alternatives": [
+     "1885",
+     "1888"
+    ]
+   },
+   {
+    "field": "ghatikas",
+    "raw": "Gh. lt15",
+    "reading": "11-15",
+    "alternatives": [
+     "1-15",
+     "17-15"
+    ]
+   },
+   {
+    "field": "lon_min",
+    "raw": "J4'",
+    "reading": "34"
+   }
+  ],
+  "dasa_balance": "Mercury 7-3-23",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "in the m:rttcr of intellcctual development, learning, wealth and generorrs instincts, Bhadra Yoga has been fully illustrared.",
+    "line": 2368,
+    "why": "Raman states the yoga's intellectual results were fully realised."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "in the m:rttcr of intellcctual development, learning, wealth and generorrs instincts, Bhadra Yoga has been fully illustrared.",
+    "line": 2368,
+    "why": "Raman states learning was fully realised."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "in the m:rttcr of intellcctual development, learning, wealth and generorrs instincts, Bhadra Yoga has been fully illustrared.",
+    "line": 2368,
+    "why": "Raman states wealth was fully realised."
+   }
+  ],
+  "stated_positions": {
+   "Ketu": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Libra",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Sagittarius",
+  "scan_birth_line": "Chart No. 24.—Born on 23-10-1883 at Gh. 10-45 after Sunrise. Lat. 12° N.; Long. 77° 34' E.",
+  "scan_dasa_balance": "Balance of Mercury's Dasa at birth: years 7-3-23.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 32,
+  "first_line": 2802,
+  "last_line": 2828,
+  "raw_birth": "Chart No. 32.- Born on 23-2-1896 at Gh. 38-i0 at 13\" N.; / 77\" 35' E.",
+  "birth": null,
+  "uncertain": [
+   {
+    "field": "ghatikas",
+    "raw": "Gh. 38-i0",
+    "reading": "38-10"
+   }
+  ],
+  "dasa_balance": "Mars 2-1-28",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native is a high Educational Officer and is enjoying all the blessings of the Yoga",
+    "line": 2825,
+    "why": "Raman reports a high official post."
+   }
+  ],
+  "stated_positions": {
+   "Moon": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aquarius",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Libra",
+  "scan_birth_line": "Chart No. 32.—Born on 23-2-1896 at Gh. 38-30 at 13° N.; 77° 35' E.",
+  "scan_dasa_balance": "Balance of Mars' Dasa at birth: years 2-1-28.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 44,
+  "first_line": 3618,
+  "last_line": 3648,
+  "raw_birth": "Chrrt No. 44.-Born on 7-5-1886 at 2-30 p.n. I4r. 10\" / 24' N.; Lang. 3h.4Im. W.",
+  "birth": null,
+  "uncertain": [
+   {
+    "field": "lon",
+    "raw": "Lang. 3h.4Im. W.",
+    "reading": "unresolved; 3h41m W impossible for an Indian ruler - perhaps 5h 1?m E",
+    "alternatives": []
+   },
+   {
+    "field": "lat",
+    "raw": "I4r. 10\" 24' N.",
+    "reading": "10d24m N"
+   }
+  ],
+  "dasa_balance": "Rahu 10-4-22",
+  "lagna_sign_stated": "Virgo",
+  "same_as": null,
+  "conclusions": [],
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Virgo",
+  "scan_birth_line": "Chart No. 44.—Born on 7-5-1886 at 2-30 p.m. Lat. 40° 24' N.; Long. 3h. 41m. W.",
+  "scan_dasa_balance": "Balance of Rahu Dasa at birth: years 10-4-22.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 46,
+  "first_line": 3750,
+  "last_line": 3778,
+  "raw_birth": "Chart No. 46,-Born on 15'9-1861 at about 2-20 p'n' / Balance of Moon's Dasa at birth ; yearc 3'l-24'",
+  "birth": null,
+  "uncertain": [
+   {
+    "field": "place",
+    "raw": "none printed",
+    "reading": null
+   }
+  ],
+  "dasa_balance": "Moon 3-1-24",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "statesman of international fame.",
+    "line": 3756,
+    "why": "Raman reports international fame."
+   },
+   {
+    "house": "H2",
+    "signification": "speech",
+    "verdict": "favourable",
+    "quote": "His manners and speech were extremely polished",
+    "line": 3757,
+    "why": "Raman reports polished speech."
+   }
+  ],
+  "note": "Time printed 'about 2-20 p.m.'.",
+  "stated_positions": {
+   "Ketu": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Capricorn",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Capricorn",
+  "scan_birth_line": "Chart No. 46.—Born on 15-9-1861 at about 2-20 p.m.",
+  "scan_dasa_balance": "Balance of Moon's Dasa at birth; years 3-1-24.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 60,
+  "first_line": 4544,
+  "last_line": 4555,
+  "raw_birth": "Chsrt No. ffi.-Born on g-12-1921 at l2-IS a.n. I-ong.0\" 5. llr.: I-at.5i' 30' N.",
+  "birth": null,
+  "uncertain": [
+   "day raw 'g' read 9 (alt 8)",
+   "time raw 'l2-IS a.n.' read 12:15 a.m. (minutes 'IS' -> 15)",
+   "lat raw '5i' 30'' read 51 30 (London)",
+   "lon raw '0\" 5. llr.' read 0 5 W",
+   "dasa raw '5-l-lg' read 5-1-19"
+  ],
+  "dasa_balance": "Jupiter 5-1-19 (raw '5-l-lg')",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "lt pertains to a Commander in the British Royal Air Force.",
+    "line": 4545,
+    "why": "Native held a commander's rank in the RAF."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "But he is neither poor nor cruel.",
+    "line": 4548,
+    "why": "Raman explicitly denies the poverty Sula Yoga promises for this native."
+   }
+  ],
+  "stated_positions": {
+   "Rahu": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Virgo",
+  "scan_birth_line": "Chart No. 60.—Born on 8-12-1921 at 12-15 a.m. Long. 0° 5' W.; Lat. 51° 30' N.",
+  "scan_dasa_balance": "Balance of Jupiter's Dasa at birth: years 5-1-18.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 66,
+  "first_line": 5040,
+  "last_line": 5051,
+  "raw_birth": "Chart No.66.-Born on 5-9-1906 at 9-16 a.m. (L.M.T,) Lat.25\" N.; LonS.84' E.",
+  "birth": null,
+  "uncertain": [],
+  "dasa_balance": "Saturn 0-0-9",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "favourable",
+    "quote": "during Mercury's Dasa the native's father became extremely wealthy",
+    "line": 5047,
+    "why": "Father prospered greatly during the native's Mercury Dasa."
+   }
+  ],
+  "note": "Lagna implied Libra (Mars lord of 2nd, Mercury lord of 9th) but not named.",
+  "stated_positions": {
+   "Jupiter": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Libra",
+  "scan_birth_line": "Chart No. 66.—Born on 5-9-1906 at 9-16 a.m. (L.M.T.) Lat. 25° N.; Long. 84° E.",
+  "scan_dasa_balance": "Balance of Saturn's Dasa at birth: year 0-0-9.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 78,
+  "first_line": 5825,
+  "last_line": 5829,
+  "raw_birth": "Chart No. 7t.-Born on 224-1915 at dr30 a.m. (I.S.T,) at12'58' N.;77\" 34' E.",
+  "birth": null,
+  "uncertain": [
+   "date raw '224-1915' read 22-4-1915",
+   "time raw 'dr30 a.m.' hour illegible (?:30 a.m.)"
+  ],
+  "dasa_balance": "Moon 4-10-2",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "vision",
+    "verdict": "afflicted",
+    "quote": "The native lost his sighi inhis lOth year during Chandra Dasa Sani Bhukthi.",
+    "line": 5829,
+    "why": "Native became blind at age ~10."
+   }
+  ],
+  "stated_positions": {
+   "Mars": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Leo",
+  "scan_birth_line": "Chart No. 78.—Born on 22-8-1915 at 6-30 a.m. (I.S.T.) at 12° 58' N.; 77° 34' E.",
+  "scan_dasa_balance": "Balance of Moon's Dasa at birth: years 4-10-2.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 80,
+  "first_line": 6037,
+  "last_line": 6063,
+  "raw_birth": "Chut No. t0.-turn on 16-10-19lg at 2-20 p.m. (L.tW,, )Lat. 13\" N.; Long. 72\" 34' E.",
+  "birth": null,
+  "uncertain": [
+   "date raw '16-10-19lg' -> 1918 or 1919",
+   "lon raw '72\" 34'' printed; 77 34 more likely for 13 N (Bangalore)",
+   "time basis raw '(L.tW,, )' read LMT"
+  ],
+  "dasa_balance": "Rahu 12-10-21",
+  "lagna_sign_stated": "Aquarius (derived: 'the 3rd house falls in Aries')",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H3",
+    "signification": "siblings",
+    "verdict": "mixed",
+    "quote": "The native has five brothers and sisters alive. Unfortunately, the 3rd house has acquried the lordship of Mars in all the six vargas. Consequently, the relationship is not very cordial for no fault of the native.",
+    "line": 6059,
+    "why": "Many surviving siblings (favourable) but uncordial relations (afflicted) - both named."
+   }
+  ],
+  "stated_positions": {
+   "Ketu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aquarius",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Aquarius",
+  "scan_birth_line": "Chart No. 80.—Born on 16-10-1918 at 2-20 p.m. (L.M.; ) Lat. 13° N.; Long. 77° 34' E.",
+  "scan_dasa_balance": "Balance of Rahu's Dasa at birth: years 12-10-21.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 84,
+  "first_line": 6246,
+  "last_line": 6261,
+  "raw_birth": "Chart No. U.-Born on I9-12-1630 at 6-26 p.m. (L.M.f )Iat. 18\" 32' N.; Long. 73\" 53' E.",
+  "birth": null,
+  "uncertain": [
+   "chart no raw 'U'"
+  ],
+  "dasa_balance": "Mars 4-1-17",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "The native was an expert in strategy and with his limited resources defied the Mughal Emperor, and brought him down to his knees.",
+    "line": 6258,
+    "why": "Yuddha Praveena Yoga fructified: expert strategist and victorious."
+   }
+  ],
+  "stated_positions": {
+   "Venus": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Leo",
+  "scan_birth_line": "Chart No. 84.—Born on 19-12-1630 at 6-26 p.m. (L.M.T ) Lat. 18° 32' N.; Long. 73° 53' E.",
+  "scan_dasa_balance": "Balance of Mars Dasa at birth: years 4-1-17.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 85,
+  "first_line": 6337,
+  "last_line": 6356,
+  "raw_birth": "Chart No. t3.-Born on 24-9-I8n ot Gh. 37-10 after Sunrise. Iat. 13' N. ; Long 77' 35' E.",
+  "birth": null,
+  "uncertain": [
+   "chart no raw 't3'",
+   "date raw '24-9-I8n' -> 24-9-18?? year's last two digits illegible"
+  ],
+  "dasa_balance": "Mercury 7-3-24",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "property",
+    "verdict": "favourable",
+    "quote": "The subject owns a very good house.",
+    "line": 6340,
+    "why": "Uttama Griha Yoga fructified."
+   }
+  ],
+  "stated_positions": {
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Capricorn",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Pisces",
+  "scan_birth_line": "Chart No. 85.—Born on 24-9-1890 at Gh. 37-10 after Sunrise. Lat. 13° N.; Long 77° 35' E.",
+  "scan_dasa_balance": "Balance of Mercury's Dasa at birth: years 7-3-24.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 99,
+  "first_line": 7264,
+  "last_line": 7301,
+  "raw_birth": "Chart No. 99.-Born on Lat. |i\" N. ; Long.77' 35' E. Thrcc Hundred Important Combinations 28-6-1914 at g-57 p.m. (I.S.T.)",
+  "birth": null,
+  "uncertain": [
+   "time raw 'g-57 p.m.' read 9:57 pm (alt 8:57)",
+   "lat raw '|i\"' illegible (13?)"
+  ],
+  "dasa_balance": "Venus 16-2-3",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "afflicted",
+    "quote": "The yoga is powerful, and there are absolutely no relieving features. We can anticipate death of almost all issues that may be born to the subject.",
+    "line": 7267,
+    "why": "Raman forecasts death of nearly all children."
+   }
+  ],
+  "stated_positions": {
+   "Sun": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aquarius",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Aquarius",
+  "scan_birth_line": "Chart No. 99.—Born on 28-6-1914 at 9-57 p.m. (I.S.T.) Lat. 13° N.; Long. 77° 35' E.",
+  "scan_dasa_balance": "Balance of Venus Dasa at birth: years 16-2-3.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 104,
+  "first_line": 7569,
+  "last_line": 7595,
+  "raw_birth": "Chart No. l04.-Bornon 5-5-1871 at II-14 p.m. (L.M.f.) Lat. 13\" N., Long 76\" 9 E.",
+  "birth": null,
+  "uncertain": [],
+  "dasa_balance": "Saturn 17-10-10",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Chart No. 104 is the horoscope of a retired Judge.",
+    "line": 7569,
+    "why": "Native's career: a judge."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "The native is a man of great intelligence and integrity. Even at this advanced tge, his powers of memory and comprehension are extraordinarily good.",
+    "line": 7572,
+    "why": "Buddhimaturya fructified."
+   }
+  ],
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Sagittarius",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Capricorn",
+  "scan_birth_line": "Chart No. 104.—Born on 5-5-1871 at 11-14 p.m. (L.M.T.) Lat. 13° N., Long 76° 9 E.",
+  "scan_dasa_balance": "Balance of Saturn's Dasa at birth: years 17-10-10.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 107,
+  "first_line": 7710,
+  "last_line": 7727,
+  "raw_birth": "Chrrt No. 107.-Born on 26-6-1920 at 2-6 p.m. (L.M.f.) Lat. 21' 51' N. ; Long. 4th. 28m. E.",
+  "birth": null,
+  "uncertain": [
+   "longitude printed in time units '4th. 28m.' = 4h28m (=67deg00') - suspicious; alternative 4h48m (=72deg00') or other; lon_deg/min left null"
+  ],
+  "dasa_balance": "Jupiter 11-10-17",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "afflicted",
+    "quote": "Chart No. 107 belongs to a man whose mental dullness almost borders on insanity.",
+    "line": 7713,
+    "why": "Raman states the native's intellect is grossly deficient."
+   }
+  ],
+  "notes": "Also: 'He cannot think, he cannot use intelligence and sometimes he behaves like a mad man.' (7725)",
+  "stated_positions": {
+   "Ketu": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Libra",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Pisces",
+  "scan_birth_line": "Chart No. 107.—Born on 26-6-1920 at 2-6 p.m. (L.M.T.) Lat. 24° 54' N.; Long. 4th. 28m. E.",
+  "scan_dasa_balance": "Balance of Jupiter's Dasa at birth: years 11-10-17.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 124,
+  "first_line": 8585,
+  "last_line": 8602,
+  "raw_birth": "Chert No. 124-Born on 15-5-1895 at 9-17 p.m. (L.M.T.) Iat. 22' 25' N. ; Long. 87\" 2l' E.",
+  "birth": null,
+  "uncertain": [],
+  "dasa_balance": "Moon 5-9-0",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "The subject was a big zamindar.",
+    "line": 8595,
+    "why": "Raman reports the Raja yoga produced a position of landed eminence."
+   }
+  ],
+  "notes": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aquarius",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Gemini",
+  "scan_birth_line": "Chart No. 124—Born on 15-5-1895 at 9-17 p.m. (L.M.T.) Lat. 22° 25' N.; Long. 87° 21' E.",
+  "scan_dasa_balance": "Balance of Moon's Dasa at birth: years 5-9-0.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 128,
+  "first_line": 8763,
+  "last_line": 8773,
+  "raw_birth": "Chart No. l2&.-Born on 2t-9-t866 at J-33 p.m. Lat. Sf 24' N.; Long.0o 15' E.",
+  "birth": null,
+  "uncertain": [
+   "date '2t-9-t866' read 21-9-1866",
+   "time 'J-33 p.m.' hour unreadable: read 4-33 (alternatives 3-33, 5-33)",
+   "lat 'Sf' read 51",
+   "time basis not printed"
+  ],
+  "dasa_balance": "Mars 5-1-3",
+  "lagna_sign_stated": "Capricorn (Makara)",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "The native of Chart No. 128 was a prince of literature and commanded considerable respect and riches.",
+    "line": 8766,
+    "why": "Raman reports eminence and respect."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "commanded considerable respect and riches.",
+    "line": 8767,
+    "why": "Raman reports considerable riches."
+   }
+  ],
+  "notes": null,
+  "stated_positions": {
+   "Mars": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Capricorn",
+  "scan_birth_line": "Chart No. 128.—Born on 21-9-1866 at 3-33 p.m. Lat. 51° 24' N.; Long. 0° 15' E.",
+  "scan_dasa_balance": "Balance of Mars' Dasa at birth: years 5-1-3.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 134,
+  "first_line": 9237,
+  "last_line": 9246,
+  "raw_birth": "Cbart No. 134.-Born on 18-12-1898 at about 2-20 a.m. (L.M.T.) I'at. 13\" N.; Long 77\" 35' E.",
+  "birth": null,
+  "uncertain": [
+   "time 'about' as printed"
+  ],
+  "dasa_balance": "Rahu 0-0-8",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H6",
+    "signification": "disease_chronic",
+    "verdict": "afflicted",
+    "quote": "The disease made its appearance at the end of Saturn Dasa",
+    "line": 9241,
+    "why": "Raman reports the native contracted consumption."
+   }
+  ],
+  "notes": null,
+  "stated_positions": {
+   "Ketu": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aquarius",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Libra",
+  "scan_birth_line": "Chart No. 134.—Born on 18-12-1898 at about 2-20 a.m. (L.M.T.) Lat. 13° N.; Long 77° 35' E.",
+  "scan_dasa_balance": "Balance of Rahu's Dasa at birth: year 0-0-8.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 135,
+  "first_line": 9373,
+  "last_line": 9385,
+  "raw_birth": "Chert No. 135.-Born on 30-1-1894 at Il-5 p.m. (L.M.T.) Irt. 51\" 3I' N., Long. 6\" 37' E.",
+  "birth": null,
+  "uncertain": [],
+  "dasa_balance": "Jupiter 13-11-23",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The man was hanged by the international tribunal for alleged war crimes.",
+    "line": 9384,
+    "why": "Raman reports execution (Sirachcheda yoga)."
+   }
+  ],
+  "notes": "Venus 6th lord -> Sagittarius Lagna implied (derived).",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Pisces",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Sagittarius",
+  "scan_birth_line": "Chart No. 135.—Born on 30-4-1894 at 11-5 p.m. (L.M.T.) Lat. 51° 31' N., Long. 6° 37' E.",
+  "scan_dasa_balance": "Balance of Jupiter's Dasa at birth: years 13-11-23.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ },
+ {
+  "chart_no": 141,
+  "first_line": 9872,
+  "last_line": 9913,
+  "raw_birth": "Cbart No. l4l-Born on 13-6-1873 at ll-55 p.nt. (L.M.T.) [it. 42\" N.: Long. 75\" E.",
+  "birth": null,
+  "uncertain": [
+   "lat '42' suspicious (alternative 12)"
+  ],
+  "dasa_balance": "Sun 0-0-3",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "vision",
+    "verdict": "afflicted",
+    "quote": "The native, a lady, is completely blind.",
+    "line": 9875,
+    "why": "Raman reports total blindness."
+   },
+   {
+    "house": "H6",
+    "signification": "disease_chronic",
+    "verdict": "afflicted",
+    "quote": "Besides blindness, there is trouble with the elimination of the urine and bleeding piles.",
+    "line": 9876,
+    "why": "Raman reports further chronic ailments."
+   }
+  ],
+  "notes": "Female native.",
+  "stated_positions": {
+   "Venus": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": null
+   },
+   "Sun": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Capricorn",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Aquarius",
+  "scan_birth_line": "Chart No. 141—Born on 13-6-1873 at 11-55 p.m. (L.M.T.) Lat. 42° N.; Long. 75° E.",
+  "scan_dasa_balance": "Balance of the Sun's Dasa at birth: year 0-0-3.",
+  "fill_notes": [
+   "2026-10-30 hold-out 4: positions from the page-scan Rasi diagram (two readers agreed); conclusions = agreement of the OCR-text and page-scan extractions (Addendum 17)."
+  ]
+ }
+]

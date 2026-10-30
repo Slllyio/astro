@@ -491,3 +491,21 @@ against goldens and hold-outs 1-3 applies.
 SHA-256 recorded in the next addendum. Hold-out 4 is scored once, under the same rules as
 hold-out 3, for the next pre-registered variant; hold-outs 3 and 4 may be reported together and
 separately. Nothing here changes the engine or the 389-row pool.
+
+## Addendum 18 (2026-10-30): hold-out 4 sealed
+
+Positions: `holdout_extractions/r4_3hc_scan_positions_a.json` and `_b.json` (two readers, all
+twenty Rasi diagrams agree). Conclusions: `r4_3hc_scan_conclusions.json` (page-scan extractor)
+paired with the original `3hc_a/b/c.json`; merged as `3hc_r4_scan_merged.json`. 29 conclusions
+were given identically by both; dropped as not identical (mapping differences, no direction
+contradicted): chart 13 H12 moksha vs H9 dharma, chart 44 H10 profession_authority vs
+status_honour (chart 44 is left with none), chart 46 H10 career and chart 134 H8 death (given by
+one extractor only). Chart 84's printed signs equal a golden chart's (the same native), so it is
+dropped by the dedupe. `build_holdout._EARLIER` now also lists hold-out 3.
+
+Fixture `tests/fixtures/raman_holdout4_sealed.jsonl`: 18 natives, 18 records, **28 scored rows**
+(19 favourable, 8 afflicted, 1 mixed), all from Raman's printed signs. V0 verdicts written,
+unread, to `docs/raman_saab/holdout4_v0_verdicts_sealed.json`,
+SHA-256 `223b8ae34d3f392eb452be2a5e7a4a3a66951dabb2d385bd0f4416842cc4d6d9`.
+Limit: positions are signs only (no degrees), so degree-dependent rules (combustion, exact
+aspects, avasthas) read every graha at 15°, as for every printed-signs chart before.

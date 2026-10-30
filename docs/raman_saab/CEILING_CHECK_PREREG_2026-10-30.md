@@ -65,3 +65,14 @@ Either way the rebuild proceeds (user decision); this sets what the rebuild can 
 List natives that appear in more than one of pool / H1-3 (same name, or same birth date),
 and compare Raman's labels where the same house and matter is judged twice. No pass rule;
 counts and the rows are reported.
+
+## Addendum 1 (2026-10-30): Part B passages widened, fixed before any agreement number exists
+
+Labeller A's first pass returned "none" on 33 of 80 items and reported why: the passage window
+(cited lines, padded to at least 24) often held only the chart's birth data or stopped before
+Raman's conclusion. That is a defect of how the items were built, not label noise, and counting
+it as disagreement would understate agreement. No agreement with gold has been computed and
+labeller B's first-pass file has not been compared with anything. Both first-pass files are
+discarded. Items are rebuilt with each cited range padded to 15 lines before and at least 90
+lines total (or 40 past the cited end), and both labellers re-run fresh on the new file. All
+other rules stand, including "none" counted as disagreement.

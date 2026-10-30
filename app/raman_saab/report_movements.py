@@ -63,7 +63,11 @@ MOVEMENTS: Final[tuple[Movement, ...]] = (
         "ruler", "planet_bios", "psych",
     )),
     Movement("II", "How to read it honestly", (
-        "info_content", "interpretation_guide", "judgment_graph",
+        "info_content", "interpretation_guide",
+        # v42 — how Raman would weigh this chart: his frame for holding a verdict, read
+        # straight after the guide to reading the report, before any verdict is met.
+        "philosophy",
+        "judgment_graph",
         # v37 (merged 2026-10-14; was v34 on the empirical-engine branch) — the integrated
         # reading: the themes that bind the sections together, read before the digest ranks them.
         "themes",

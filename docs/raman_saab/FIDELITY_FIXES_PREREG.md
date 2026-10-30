@@ -749,3 +749,20 @@ for either; any ship decision is the user's.
   mixed under V0, S1 and S2 alone, and afflicted only under S1+S2. Recorded, not used.
 
 Status: S2 waits for an engine-blind review and the user's decision. S1 held.
+
+## Addendum 26 (2026-10-30): engine-blind review of the H9.A.18 repair, S1 and S2
+
+- **H9.A.18 repair: SOUND WITH CAVEATS.** The "both luminaries in trine to both malefics"
+  reading is the printed one; a pair-to-pair reading reduces to the same check, and the old
+  any-of reading had no textual basis. Caveats: the same sign is not counted as a trine (now
+  stated in the docstring); the sentence is about abandonment by both parents, so the H4
+  mother matter lacks its mirror rule, and the rule must not feed death or longevity scoring.
+- **S2: SOUND WITH CAVEATS.** The Jupiter citation (HTJAH-I:2316) names no karaka, and the
+  HTJAH-I:2734 comment is about eyesight, so both are unsound. Mercury is the planet Raman's
+  text supports (HPA-6:167-169; HTJAH-I:13852). Caveats: Raman never uses the word "karaka" for
+  Mercury and speech, so the entry should cite HPA-6 as a planetary signification; dropping
+  Jupiter is an interpretive choice that must be recorded. The reviewer also flagged that the
+  H2 "vision" entry cites 2734 for Jupiter as Netra-Karaka, which that line does not say.
+- **S1: SOUND WITH CAVEATS; holding it is reasonable.** One malefic suffices; "it" most
+  naturally means the lord. Leaving out the waning Moon and an afflicted Mercury as malefics
+  is a narrowing that would need its own citation.

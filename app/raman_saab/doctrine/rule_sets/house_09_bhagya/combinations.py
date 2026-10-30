@@ -211,7 +211,9 @@ class _SunMoonTrineToMarsSaturn(C.Condition):
 
     Repaired 2026-10-30: the condition used to read Mars OR Saturn (``any``), which
     the printed "and" does not say; it fired on 19 goldens against 2 for the
-    printed reading."""
+    printed reading. "In trine" counts the 5th and 9th signs only, not the same sign. The
+    sentence is about abandonment (separation), not the father's death; the mirror on the
+    4th-house mother matter is not encoded (engine-blind review, prereg Addendum 26)."""
     _TRINE: Final[frozenset[int]] = frozenset({5, 9})
 
     def evaluate(self, ctx: C.EvalContext) -> bool:

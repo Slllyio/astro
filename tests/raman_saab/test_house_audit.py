@@ -145,4 +145,30 @@ class TestStabilityAndCli:
         ha.main(["--date", "1989-10-12", "--time", "10:02", "--tz", "5.5", "--lat", "27.23",
                  "--lon", "79.03", "--houses", "10", "--no-stability"])
         out = capsys.readouterr().out
-        assert "## The 10th house (lord Sun): **favourable**" in out and "H10.P.Ketu" in out
+        assert "## The 10th house (lord Sun): favourable in 6 of 6 matters" in out
+        assert "H10.P.Ketu" in out
+
+
+@pytest.fixture(scope="module")
+def kanpur():
+    """10 Oct 1989, 15:15 IST, Kanpur: the chart whose 10th led the 2026-10-30 diagnosis."""
+    return cast_chart(BirthData("kanpur", 1989, 10, 10, 15, 15, 5.5, 26.4499, 80.3319),
+                      ayanamsa="raman")
+
+
+class TestMatterBreakdown:
+    def test_one_afflicted_matter_is_named_not_hidden(self, kanpur) -> None:
+        """Kanpur's 10th rolls up afflicted on one matter; the breakdown names it beside the rest."""
+        pf = ht.judge_house(kanpur, 10)
+        assert pf.rollup == "afflicted"
+        b = ht.matter_breakdown(pf)
+        assert b.startswith("favourable in 4 of 6 matters")
+        assert "afflicted in 1 (profession_trade)" in b
+
+    def test_breakdown_counts_every_matter(self, mainpuri) -> None:
+        """Every signification is counted once; the breakdown re-reads, never re-decides."""
+        for h in range(1, 13):
+            pf = ht.judge_house(mainpuri, h)
+            b = ht.matter_breakdown(pf)
+            import re
+            assert sum(int(x) for x in re.findall(r" in (\d+)", b)) == len(pf.significations)

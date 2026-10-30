@@ -202,12 +202,18 @@ def house_general_readings(r, house):
     return _g(r, house)
 
 
+def _matter_breakdown(pf) -> str:
+    from app.raman_saab.judges.house_template import matter_breakdown
+    return matter_breakdown(pf)
+
+
 def _proforma_dict(pf, r=None) -> dict:
     """Trimmed house proforma: the verdict + per-signification verdicts (not the full ledger)."""
     return {
         "house": pf.house,
         "lord": pf.lord,
         "rollup": str(pf.rollup),
+        "matter_breakdown": _matter_breakdown(pf),     # append-only 2026-10-30
         "significations": [
             # `indications` (append-only 2026-09-01) is the verdict-INVARIANT lookup channel
             # `judge_signification` already fills: the cause-of-end decanate, the source of

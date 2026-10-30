@@ -122,6 +122,7 @@ class HouseAudit:
     precedents: tuple[Precedent, ...]
     similar: tuple[Similar, ...]
     stability: tuple[tuple[int, str], ...]       # (minutes offset, house verdict)
+    matter_breakdown: str = ""                   # the house told by its matters (2026-10-30)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -441,7 +442,8 @@ def audit_house(chart: RamanChart, house: int, *, stability: bool = True,
             c2 = cast_chart(_shift_birth(chart.birth, mins), ayanamsa=chart.ayanamsa)
             stab.append((mins, ht.judge_house(c2, house).rollup))
     return HouseAudit(house, pf.lord, pf.rollup, robust.rollup, _facts(chart, house),
-                      tuple(checks), tuple(traces), precs, sims, tuple(stab))
+                      tuple(checks), tuple(traces), precs, sims, tuple(stab),
+                      ht.matter_breakdown(pf))
 
 
 def audit_chart(chart: RamanChart, houses: tuple[int, ...] = tuple(range(1, 13)), *,
@@ -479,7 +481,9 @@ def to_markdown(audits: tuple[HouseAudit, ...], title: str = "",
            "Raman's own conclusions on comparable charts, and birth-time stability. Precedents "
            "are associations in his printed verdicts, not a causal test. " + ROBUSTNESS_NOTE, ""]
     for a in audits:
-        head = f"## The {ordinal(a.house)} house (lord {a.lord}): **{a.verdict}**"
+        head = (f"## The {ordinal(a.house)} house (lord {a.lord}): {a.matter_breakdown} "
+                f"— worst matter **{a.verdict}**") if a.matter_breakdown else \
+            f"## The {ordinal(a.house)} house (lord {a.lord}): **{a.verdict}**"
         if raman and a.house in raman:
             head += f" — Raman: **{raman[a.house][0]}**"
         if a.robust_verdict != a.verdict:

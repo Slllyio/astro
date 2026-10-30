@@ -165,6 +165,19 @@ class TestDetailedReport:
         assert "driven by _" in markdown
         assert "weakest decided matter" in markdown         # the rule is stated
 
+    def test_house_head_leads_with_its_matters_on_every_surface(self, report, markdown):
+        """Each house names its matter breakdown beside the worst-matter headline (2026-10-30)."""
+        from app.raman_saab.judges.house_template import matter_breakdown
+        from app.raman_saab.report_html import to_html
+        from app.raman_saab.report_json import to_report_dict
+        html, js = to_html(report), to_report_dict(report)
+        for pf in report.proformas:
+            b = matter_breakdown(pf)
+            head = next(ln for ln in markdown.splitlines() if ln.startswith(f"### House {pf.house} "))
+            assert f"matters: {b}" in head
+            assert b in html.replace("&#x27;", "'")
+            assert js["proformas"][pf.house - 1]["matter_breakdown"] == b
+
     def test_longevity_is_band_first_and_not_false_precision(self, markdown):
         """Raman's order (band, then period) and no two-decimal lifespan."""
         assert "Balarishta" in markdown and "Band by combination" in markdown

@@ -550,6 +550,12 @@ _MARAKA_DEATH_KEYS = frozenset({"death", "longevity", "wealth"})
 #: combination (3HC 10264-10267; NH 10921-10926). Not applied to inherent-affliction matters.
 Y1_BLEMISH_TIER: bool = False
 
+#: G1 (FIDELITY_FIXES_PREREG Addendum 16, HELD until measured and decided): the Beeja/Kshetra
+#: fertility gate moves a children verdict at most one step toward afflicted instead of deciding
+#: it. Raman's own Charts 88 and 89 judge an even-sign Beeja strong and an odd-sign Kshetra
+#: fertile on their other testimony (HTJAH-I:5529-5582), so the parity test alone is co-testimony.
+G1_FERTILITY_ONE_STEP: bool = False
+
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 
 
@@ -1979,6 +1985,13 @@ def _putrakaraka_malefic_afflicted(chart: RamanChart) -> bool:
     return False
 
 
+def _fertility_step(verdict: Verdict) -> Verdict:
+    """The fertility gate's effect: decisive denial, or one step toward afflicted under G1."""
+    if not G1_FERTILITY_ONE_STEP:
+        return "afflicted"
+    return {"favourable": "mixed", "mixed": "afflicted"}.get(verdict, verdict)
+
+
 def _fertility_gate(
     chart: RamanChart, sig: Signification, verdict: Verdict,
     lead: FrameLedger, ctx: EvalContext,
@@ -2021,7 +2034,7 @@ def _fertility_gate(
         # Both seed and field barren -> denial (decisive; overrides any favourable/mixed
         # the placement evidence produced). A single weak sphuta is handled by the
         # one-weak 'numeric_partial' branch below (weighed, not denied).
-        verdict = "afflicted"
+        verdict = _fertility_step(verdict)
         return verdict, (("beeja_kshetra", "weak"),), lead
     if bk.beeja_strong and bk.kshetra_strong:
         return verdict, (("beeja_kshetra", "numeric_strong"),), lead
@@ -2043,7 +2056,7 @@ def _fertility_gate(
     if arm_a or arm_b:
         lead = dataclasses.replace(
             lead, flags=tuple(dict.fromkeys(lead.flags + ("FERTILITY_GATE",))))
-        verdict = "afflicted"
+        verdict = _fertility_step(verdict)
         return verdict, (("beeja_kshetra", "one_weak_denied"),), lead
     return verdict, (("beeja_kshetra", "numeric_partial"),), lead
 
@@ -2345,6 +2358,29 @@ def _rollup(verdicts: tuple[Verdict, ...]) -> Verdict:
     if "mixed" in present and "favourable" in present and "afflicted" not in present:
         return "mixed"
     return min(verdicts, key=lambda v: _ROLLUP_ORDER[v])
+
+
+def matter_breakdown(pf: HouseProforma) -> str:
+    """The house told by its matters, e.g. "favourable in 4 of 6 matters, mixed in 1, afflicted
+    in 1 (profession_trade)". A pure re-read of ``pf.significations``; it decides nothing.
+
+    User decision 2026-10-30 (HARSHNESS_DIAGNOSIS_2026-10-30.md): the rollup headline is the
+    worst matter, which on Raman's 389 conclusions gives 80 real errors against 40 for the
+    matters themselves, so every surface leads the house with this breakdown beside it."""
+    n = len(pf.significations)
+    counts = {v: [sv.signification for sv in pf.significations if sv.verdict == v]
+              for v in ("favourable", "mixed", "afflicted", "insufficient-evidence")}
+    parts: list[str] = []
+    for v in ("favourable", "mixed", "afflicted", "insufficient-evidence"):
+        keys = counts[v]
+        if not keys:
+            continue
+        label = "undecided" if v == "insufficient-evidence" else v
+        part = f"{label} in {len(keys)}" + (f" of {n} matters" if not parts else "")
+        if v != "favourable" and len(keys) < n:
+            part += f" ({', '.join(keys)})"
+        parts.append(part)
+    return ", ".join(parts)
 
 
 def judge_house(chart: RamanChart, house: int) -> HouseProforma:

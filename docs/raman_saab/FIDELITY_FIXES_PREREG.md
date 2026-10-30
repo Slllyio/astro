@@ -490,3 +490,53 @@ hold-out 3 is scored once, the scoring order is fixed now: G1, then N1, then the
 one run, with V0 read from the sealed file.
 
 If (a) passes but N1 changes no pool row, the pool cannot test it, and the hold-out decides.
+
+## Addendum 17 (2026-10-30): G1 and N1 measured
+
+**Correction to Addendum 16 (wording only, no number involved).** The N1 switch lives at
+`doctrine/rule_sets/house_07_kalatra/combinations.NODE_AXIS_AS_ONE`. The last sentence of
+Addendum 16 ("if (a) passes but N1 changes no pool row, the hold-out decides") cannot apply. A
+variant that changes no row has no gain, so it cannot pass (a). It is not used.
+
+**Pool, V0 → G1** (exact / within one / real errors):
+
+| Scope | V0 | G1 |
+|---|---|---|
+| all | 260 / 349 / 40 | **251 / 351 / 38** |
+| HTJAH-I | 54 / 70 / 13 | 50 / 70 / 13 |
+| HTJAH-II | 65 / 90 / 5 | unchanged |
+| NH | 141 / 189 / 22 | 136 / 191 / 20 |
+
+**G1 passes rule (a).** Real errors do not rise in any book, within one rises, and real errors
+fall overall. Thirteen rows move, all H5 children, afflicted → mixed:
+- **Ten Raman calls afflicted.** They lose their exact match: HTJAH-I h5_04, h5_08, h5_09,
+  h5_12, h5_18 and NH chart_37, 18, 20, 31, 22.
+- **HTJAH-I.h5_13**, which Raman calls mixed, becomes exact.
+- **NH.chart_67 and chart_48**, which Raman calls favourable, stop being real errors.
+
+This is the B1-type trade: 9 exact for 2 real errors. In the ten afflicted rows the gate had
+been carrying a denial that Raman reached from the house, its lord and the karaka, not from the
+sphutas. So G1 exposes that the placement reading of the 5th is too lenient there.
+
+**Hold-out 3, scored once** (`score_holdout … G1`, V0 from the sealed file, SHA as in
+Addendum 11):
+- G1 changes **none** of the 28 rows. The fixture's one children row is untouched. Result:
+  8 / 19 / 9 of 28. Rule (b) holds only vacuously; the hold-out says nothing about G1.
+- The current engine was also run as a control and matches G1 row for row.
+- Side finding: it differs from the sealed V0 on one row. HPA.chart_35.8 H9 fortune moves from
+  favourable to mixed (Raman afflicted). That move comes from the Addendum 15 citation repairs,
+  which rerouted H9.C.35 to fortune. It is the first out-of-sample reading of those repairs:
+  real errors 10 → 9, within one 18 → 19.
+- Hold-out 3 has now been read once. The next variant needs a new sealed set.
+
+**Rule (c), the doctrine review of G1, is pending.** It needs the printed HTJAH-I:5510-5611 on
+the user's PC. Folder access to that corpus was refused in this session.
+
+**N1** changes no pool row: 260 / 349 / 40 throughout. So it fails (a) as written. It was not
+scored on hold-out 3, and it stays held behind its switch. Its case rests on Kanpur-like charts,
+and the only scored firings of H7.C.82 involve Saturn or Mars.
+
+**Status:** G1 and N1 are both held behind their switches (default False) until the user
+decides. My recommendation is to keep G1 off until the review reads the sphuta passage itself.
+The pool trade is real, but the hold-out cannot confirm it, and the cleaner fix is to encode the
+relief clauses Raman prints, which this variant does not do.

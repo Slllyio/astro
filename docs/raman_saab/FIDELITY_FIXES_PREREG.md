@@ -678,3 +678,74 @@ decided).** G2 is more faithful on Raman's charts but HARSHER on ordinary ones:
   decisive denial, it denies most charts. That is the reviewer's caveat 6 (the override and the
   missing sex input), not the point test itself. It is the next thing to fix, pre-registered on
   its own.
+
+## Addendum 24 (2026-10-30): H9.A.18 repair, and speech variants S1 and S2, fixed before any S1 or S2 number exists
+
+Numbered 24 because the audit thread holds 21-23.
+
+**H9.A.18 (a rule repair, not a variant).** `_SunMoonTrineToMarsSaturn` required each luminary
+to be in trine to Mars OR Saturn. Raman prints (HTJAH-II:7452-7453, read on the PC 2026-10-30):
+"If the Sun and Moon be in trine to Mars and Saturn, the child will be abandoned by both
+parents." The condition now requires both. Expected: no scored row moves (the rule fired on 19
+goldens, 2 under the printed reading); the doctrine snapshot changes at the predicate level
+only. Found on the Vaishali check, where the loose reading denied a father the family says is
+well.
+
+**Why speech.** On the Vaishali check (speech delay, confirmed by the family) the engine read
+speech "mixed". Raman's own text was searched on the PC for every speech, Vak, dumb and stammer
+line, and for Mercury near speech or intellect. Two findings bear on the engine:
+
+1. HPA-19:150-151 prints a speech rule the engine does not encode: "Defective speech should be
+   predicted if malefics are with the lord of the second or aspect it." HTJAH-I:2469 (the
+   stricter stammer rule, already H2.C.25) is the only speech affliction encoded from Raman's
+   Parashari books.
+2. The engine's speech karaka is Jupiter, cited to HTJAH-I:2316, a line that names the 2nd
+   house's significations and no karaka. Raman's one planet-to-speech statement is HPA-6:167-169:
+   "Mercury — good and eloquent speech". In HTJAH-I Mercury is "the planet of intelligence"
+   (4794, 14421, 15482) and "rules buddhi" (13852); Jupiter is the Dhana-karaka (2754). The
+   comment in `significations.py` citing HTJAH-I:2734 for Mercury and speech is wrong: that
+   line is about the eyes in Chart 39.
+
+**S1 (fixed now).** A new evaluable rule on H2 speech, afflicted branch only: a natural malefic
+(Sun, Mars, Saturn, Rahu, Ketu), other than the 2nd lord itself, occupies the 2nd lord's sign or
+aspects the 2nd lord by Raman's drishti (nodes by the 7th only). Source HPA-19:150. Measured by
+adding the rule at run time; the shipped engine is untouched.
+
+**S2 (fixed now).** The speech karaka is Mercury instead of Jupiter; nothing else changes.
+
+**Decision rule.** Unchanged (`passes()`): real errors may not rise in any book, within-one may
+not fall, and exact must rise or real errors fall. Reported for each: pool figure, the three
+scored speech rows (NH.chart_25, chart_26, chart_33; Raman says favourable on all three; V0
+reads mixed, mixed, afflicted), and S1's firing rate on the goldens.
+
+**Predictions, written before measuring.** S1 fires on most charts (five malefics, two contact
+channels); on the three scored rows, all favourable in Raman, it can only hurt or do nothing, so
+S1 is expected to FAIL the rule and, if it fires on more than half the charts, to be a candidate
+for a descriptive record rather than an evaluable one. S2: no prediction of direction; the
+pool has only three speech rows, so neither result can carry much weight. No hold-out exists
+for either; any ship decision is the user's.
+
+## Addendum 25 (2026-10-30): H9.A.18 repair, S1 and S2 measured
+
+| | exact | within one | real errors |
+|---|---|---|---|
+| V0 (after the H9.A.18 repair) | 263 | 353 | 36 |
+| S1 | 263 | 353 | 36 |
+| S2 | 263 | 354 | 35 |
+| S1+S2 | 263 | 354 | 35 |
+
+- **H9.A.18 repair**: pool unchanged, as predicted. The doctrine snapshot moved at the predicate
+  level only: 26 golden charts stop firing H9.A.18, no verdict changes (re-frozen with a note).
+- **S1**: no scored row moves; it fires on 213 of 346 castable goldens (62%), as predicted. It
+  FAILS the decision rule (nothing improves). Held. Firing on six charts in ten makes it a
+  non-discriminating indication on its own; if encoded at all, it belongs as a descriptive
+  record, which is a separate decision.
+- **S2**: PASSES. One row moves, NH.chart_33 H2/speech, Raman favourable: afflicted → mixed
+  (an inversion becomes a one-step miss). No book worsens. The pool holds only three speech
+  rows, so this is thin evidence; the stronger case for S2 is the citation itself (the
+  shipped Jupiter karaka is cited to a line that names no karaka; Mercury is Raman's printed
+  speech planet at HPA-6:167-169).
+- **Vaishali** (the real chart that prompted this; not part of the decision): speech reads
+  mixed under V0, S1 and S2 alone, and afflicted only under S1+S2. Recorded, not used.
+
+Status: S2 waits for an engine-blind review and the user's decision. S1 held.

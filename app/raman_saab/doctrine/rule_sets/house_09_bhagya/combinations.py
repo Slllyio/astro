@@ -206,7 +206,12 @@ class _LordAfflictedBy(C.Condition):
 
 class _SunMoonTrineToMarsSaturn(C.Condition):
     """The Sun AND the Moon each stand in a trine (5th/9th, i.e. trikona distance)
-    to Mars or to Saturn — Raman's "Sun and Moon in trine to Mars and Saturn"."""
+    to Mars AND to Saturn — Raman's "If the Sun and Moon be in trine to Mars and
+    Saturn, the child will be abandoned by both parents" (HTJAH-II:7452-7453).
+
+    Repaired 2026-10-30: the condition used to read Mars OR Saturn (``any``), which
+    the printed "and" does not say; it fired on 19 goldens against 2 for the
+    printed reading."""
     _TRINE: Final[frozenset[int]] = frozenset({5, 9})
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
@@ -219,7 +224,7 @@ class _SunMoonTrineToMarsSaturn(C.Condition):
         targets = (mars.rasi_house, sat.rasi_house)
 
         def trines(lum_house: int) -> bool:
-            return any(((t - lum_house) % 12) + 1 in self._TRINE for t in targets)
+            return all(((t - lum_house) % 12) + 1 in self._TRINE for t in targets)
         return trines(sun.rasi_house) and trines(moon.rasi_house)
 
 

@@ -40,7 +40,7 @@
       "H2.P.Mercury",
       "H2.P.Moon"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "strong",
@@ -48,9 +48,9 @@
         "verdict": "favourable"
       },
       "speech": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
         "degree": "strong",

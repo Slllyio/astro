@@ -28,7 +28,7 @@
       "H2.P.Mercury",
       "H2.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "strong",
@@ -36,9 +36,9 @@
         "verdict": "favourable"
       },
       "speech": {
-        "degree": "strong",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
         "degree": "strong",

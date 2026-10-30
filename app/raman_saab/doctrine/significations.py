@@ -168,7 +168,7 @@ _H1: tuple[Signification, ...] = (
 # ---------------------------------------------------------------------------
 # House 2 — Dhana Bhava
 # Primary karaka: Jupiter (Dhana-Karaka)        HTJAH-I:2754
-# Secondary: Mercury (speech/literary gift)      HTJAH-I:2734
+# Speech: Mercury                               HPA-6:167-169 (user decision 2026-10-30, S2)
 # ---------------------------------------------------------------------------
 
 _H2: tuple[Signification, ...] = (
@@ -189,10 +189,14 @@ _H2: tuple[Signification, ...] = (
     Signification(
         key="speech",
         house=2,
-        primary_karaka="Jupiter",
-        secondary_karakas=("Mercury",),
+        # Mercury, not Jupiter: USER DECISION 2026-10-30 ("Ship Mercury for speech",
+        # prereg Addenda 24-27). Raman: "Mercury -- good and eloquent speech" (HPA-6:167-169);
+        # Mercury "rules buddhi" (HTJAH-I:13852). Jupiter had been cited to HTJAH-I:2316, a
+        # line naming no karaka. Raman never writes "karaka" for Mercury and speech: this is
+        # his planetary signification, and dropping Jupiter is a recorded interpretive choice.
+        primary_karaka="Mercury",
         rule_tags=("wealth", "speech"),
-        source=_c1(2316),
+        source=Citation("HPA-6", 168),
     ),
     Signification(
         key="vision",

@@ -766,3 +766,21 @@ Status: S2 waits for an engine-blind review and the user's decision. S1 held.
 - **S1: SOUND WITH CAVEATS; holding it is reasonable.** One malefic suffices; "it" most
   naturally means the lord. Leaving out the waning Moon and an afflicted Mercury as malefics
   is a narrowing that would need its own citation.
+
+## Addendum 27 (2026-10-30): S2 shipped
+
+User decision 2026-10-30 ("Ship Mercury for speech"). `significations.py`: the H2 speech
+signification's primary karaka is Mercury, cited `HPA-6:168`, with no secondary karaka (as
+measured). The wrong HTJAH-I:2734 comment is replaced. Pool 263/354/35; baseline re-based,
+NH.chart_33 H2/speech removed from `real_errors`.
+
+What moved on the 346 castable goldens (doctrine snapshot, re-frozen with a note):
+- H2 speech: 130 verdicts change, 79 worse and 51 better (favourable 177 → 153, mixed 127 →
+  145, afflicted 42 → 48).
+- H2 headline rollup: 75 change, all worse (favourable 166 → 114, afflicted 54 → 82). The
+  rollup does not mask an afflicted sub-matter, so a weak Mercury now pulls the 2nd house down.
+  No scored H2 row other than speech moved. This harshness is a consequence to watch; any
+  change to how the rollup weighs speech needs its own pre-registration.
+
+Still open: the H4 mother mirror of H9.A.18; the H2 vision entry's karaka citation
+(HTJAH-I:2734 does not name Jupiter as Netra-Karaka); S1 held.

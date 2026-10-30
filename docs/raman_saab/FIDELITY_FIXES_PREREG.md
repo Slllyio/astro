@@ -988,3 +988,34 @@ sealed hold-out 4 fixture.
 SHA-256 recorded. Hold-out 5 is scored once, together with hold-out 4 (Addendum 28), for the
 next pre-registered variant(s), under the one decision rule. Nothing here changes the engine or
 the pool.
+
+## Addendum 32 (2026-10-30): hold-out 5 built and sealed under Addendum 31
+
+**Readings.** Two independent readers transcribed the 28 Rasi diagrams from the archive.org page
+images (`r5_htjah_scan_positions_a.json`, `r5_htjah_scan_positions_b.json`); the second reader
+worked without sight of the first. Both agree on every graha and the Lagna of all 26 complete
+diagrams. Dropped before any build: HTJAH-I chart 123 (no diagram printed in this edition) and
+HTJAH-II chart 45 (Mars and Ketu are not printed in its Rasi). No degrees are printed in any
+diagram.
+
+**Dedupe.** HTJAH-I chart 86 has the birth date of golden `HTJAH-I.x86` (the same chart);
+HTJAH-II chart 208 (Hyder Ali) has the printed signs of golden `NH.chart_19` (the same native).
+Both dropped.
+
+**Path.** Cast, all nine grahas and the Lagna in Raman's printed signs (full degrees): HTJAH-I
+21, 27, 34, 87; HTJAH-II 70, 79, 81, 107, 109, 149. Printed signs (cast disagreed: Lagna in eight,
+Moon in three, others in two): HTJAH-I 25, 36, 70, 74, 119; HTJAH-II 65, 76, 106, 185, 245.
+Printed signs, no birth data: HTJAH-I 90, 124, 125, 126. Birth-line facts the hold-out 2
+extraction lacked were taken from both readings (HTJAH-I 86's line; G.M.T., E.S.T. and War Time
+zones for HTJAH-II 70, 76, 149); they are listed in `build_holdout5.BIRTH_FIX`.
+
+Fixture `tests/fixtures/raman_holdout5_sealed.jsonl` (`tools/raman_saab/build_holdout5.py`):
+24 natives, 32 records, **36 scored rows** (19 favourable, 13 afflicted, 4 mixed); 10 natives
+with degrees, 14 from printed signs. Fixture SHA-256
+`f12251b7e8176b71706a2665f665cdadcec2ef523357aad13d5d044de34e0ca2`. V0 verdicts (engine at this
+branch's HEAD: G2 and S2 on, C2 off) written, unread, to
+`docs/raman_saab/holdout5_v0_verdicts_sealed.json`, SHA-256
+`5a1c55acf5cd1abfade02ab00c00ca9524701b757e753f7db62aabc9b6791a74`.
+
+Limits: 36 rows is small; with hold-out 4's 28 the joint test has 64. Conclusions come from the
+hold-out 2 extraction, so where that extraction mis-mapped a house, the error stands.

@@ -599,3 +599,59 @@ Switch: `primitives.sphutas.G2_PRINTED_SPHUTA_TEST` (default False).
 - (c) An engine-blind doctrine review of the G2 specification against the verbatim text.
 - Hold-out 3 is spent (Addendum 17). There is no sealed out-of-sample set for G2, and that is
   reported with the result. Shipping is the user's decision.
+
+## Addendum 19 (2026-10-30): G2 measured
+
+**(b) Worked charts, checked first (cast with the Raman ayanamsa):**
+
+| Raman's chart | Raman's verdict | Shipped (parity only) | G2 |
+|---|---|---|---|
+| 88, Beeja in Cancer (even), Navamsa odd, aspected by Jupiter | strong | weak | **strong** |
+| 89, Kshetra in Sagittarius (odd), Navamsa Scorpio, aspected by Jupiter | fertile | weak | **fertile** |
+| 90, Beeja 271° = Capricorn, a malefic sign | sterile | weak | **weak** |
+
+G2 passes (b). The shipped test fails two of the three. Pinned in
+`tests/raman_saab/primitives/test_sphutas.py::TestPrintedSphutaTest`.
+
+**(a) Pool, V0 → G2** (exact / within one / real errors):
+
+| Scope | V0 | G2 |
+|---|---|---|
+| all | 260 / 349 / 40 | **263 / 353 / 36** |
+| HTJAH-I | 54 / 70 / 13 | 53 / 70 / 13 |
+| HTJAH-II | 65 / 90 / 5 | unchanged |
+| NH | 141 / 189 / 22 | **145 / 193 / 18** |
+
+G2 passes (a): real errors rise in no book, within one rises, exact rises and real errors fall.
+Five rows move, all H5 children:
+- NH.chart_67 and chart_48, Raman favourable: afflicted → favourable (two inversions removed).
+- NH.chart_57 and chart_52, Raman afflicted: favourable → afflicted (two inversions removed).
+- HTJAH-I.h5_11 (Chart 101, five abortions, no surviving issue), Raman afflicted:
+  afflicted → mixed. Its Raman reading is about survival of issue, not the sphutas.
+
+This is unlike G1: G2 gains in BOTH directions, so it is not a softening.
+
+**(c) Engine-blind review** (reviewer saw only the verbatim text and the three rule specs):
+- Shipped parity-only test: UNSOUND, it inverts Charts 88 and 89.
+- G1: UNSOUND, same trigger.
+- G2: SOUND WITH CAVEATS. It reproduces all three worked charts from the printed facts, but the
+  only negative case (90) fails every test, so the bars are thinly discriminated. Caveats the
+  reviewer named, none of which G2 encodes (one variant, no second version):
+  1. Mercury is an "impotent" planet with Saturn (5524), so Mercury should not rescue a point.
+  2. Raman also reads the Navamsa: aspects there, and the 5th from the point in the Navamsa (88).
+  3. A debilitated benefic does not rescue (90: "Jupiter neecha in Beeja Sthana").
+  4. The majority-malefic-saptavarga denial (5607) is not encoded.
+  5. When only the Navamsa parity holds, Raman says fertility is "not pronounced": a tempering,
+     which G2 reads as plain strong.
+  6. The gate's override is stronger than Raman's "simple rule … in the majority of cases"
+     (5514-5515); and Raman reads one point per native by sex, which the engine has no input for.
+  These are the ingredients of any later variant (G3), pre-registered separately.
+
+**Hold-out:** none. Hold-out 3 is spent, so G2 has no out-of-sample check.
+
+**Kanpur (the chart that started this):** unchanged under G2. Its Beeja is Cancer with a
+Capricorn Navamsa (parity fails in both); its Kshetra in Libra has Rahu in the 5th from it. By
+Raman's own printed test both points are weak, so the Kanpur children denial is faithful.
+
+**Status:** G2 held behind `sphutas.G2_PRINTED_SPHUTA_TEST` (default False) for the user's
+decision. Recommendation: ship G2 and drop G1.

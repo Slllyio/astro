@@ -11,6 +11,8 @@ Day-precision events only (pre-registered).
 
 Usage:
     py -3.12 -m tools.parashara.astrobank.transit_tests --raman-root E:/astro/data/astro_databank/derived/raman --store E:/astro/data/astro_databank/derived/parashara
+    # AMENDMENT_1 (pooled A+B = primary store + extension store)
+    py -3.12 -m tools.parashara.astrobank.transit_tests --raman-root <raman> --store <parashara> --store <parashara_ext> --population pooled
 """
 from __future__ import annotations
 
@@ -40,6 +42,22 @@ TESTS = [
     ("divorce_H7_transit_only", r"divorce", r"death of", 7, None),
     ("death_H8_transit_only", r"^death", r"death of", 8, None),
 ]
+
+
+POPULATIONS = ("store", "extension", "pooled")   # tierC withdrawn: AMENDMENT_2
+
+
+def select_people(population: str, cast: set[str], store_pop: set[str],
+                  tier: dict[str, str]) -> set[str]:
+    """Who each AMENDMENT_1 analysis reads. Only people with a cast chart are eligible."""
+    ab = {p for p in cast if tier.get(p) in ("A", "B")}
+    if population == "store":
+        return ab & store_pop
+    if population == "extension":
+        return ab - store_pop
+    if population == "pooled":
+        return ab
+    raise ValueError(population)
 
 
 def _jd(y: int, m: int, d: int) -> float:
@@ -84,14 +102,20 @@ def main(argv: list[str] | None = None) -> int:
         pass
     ap = argparse.ArgumentParser()
     ap.add_argument("--raman-root", type=Path, required=True)
-    ap.add_argument("--store", type=Path, required=True)
+    ap.add_argument("--store", type=Path, action="append", required=True,
+                    help="Parashara store dir; repeat to pool (e.g. primary + extension)")
+    ap.add_argument("--population", choices=POPULATIONS, default="store",
+                    help="store = original run (default); extension / pooled = AMENDMENT_1 A+B "
+                         "(the tier-C confirmation is withdrawn by AMENDMENT_2)")
     a = ap.parse_args(argv)
     swe.set_sid_mode(swe.SIDM_LAHIRI)
     rng = np.random.default_rng(20260724)
 
-    natal = pd.read_parquet(a.store / "natal.parquet").set_index("person_id")
-    sig = pd.read_parquet(a.store / "sig_windows.parquet")
-    mar = pd.read_parquet(a.store / "maraka_windows.parquet")
+    def _cat(name: str) -> pd.DataFrame:
+        return pd.concat([pd.read_parquet(st / name) for st in a.store], ignore_index=True)
+    natal = _cat("natal.parquet").drop_duplicates("person_id").set_index("person_id")
+    sig = _cat("sig_windows.parquet")
+    mar = _cat("maraka_windows.parquet")
     h7_wins = {p: g[["jd_start", "jd_end"]].to_numpy()
                for p, g in sig[(sig.house == 7) & (sig.level == "AD")].groupby("person_id")}
     mar_wins = {p: g[["jd_start", "jd_end"]].to_numpy()
@@ -103,7 +127,8 @@ def main(argv: list[str] | None = None) -> int:
     master = master.set_index("person_id")
     ev = pd.read_parquet(a.raman_root / "person_events.parquet")
     pop = set(pd.read_parquet(a.raman_root / "store_population.parquet").person_id)
-    ok_people = set(natal.index) & pop & set(master[master.quality_tier.isin(["A", "B"])].index)
+    ok_people = select_people(a.population, set(natal.index), pop,
+                              dict(zip(master.index, master.quality_tier)))
     ev = ev[ev.person_id.isin(ok_people)]
     death_year: dict[str, int] = {}
     for r in ev.itertuples():
@@ -182,7 +207,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[{tid}] n={len(la)} people={len(np.unique(pa))} coverage={cov:.2f}  "
               f"lift={la.mean():+.4f} CI=({l_lo:+.4f},{l_hi:+.4f})  "
               f"cross={xa.mean():+.4f} CI=({x_lo:+.4f},{x_hi:+.4f})  -> {status}")
-    (a.store / "transit_results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    suffix = "" if a.population == "store" else f"_{a.population}"
+    (a.store[0] / f"transit_results{suffix}.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     return 0
 
 

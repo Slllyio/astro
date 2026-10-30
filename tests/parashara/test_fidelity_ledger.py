@@ -24,7 +24,7 @@ def test_all_worked_results_reproduced(capsys):
 
 def test_ledger_does_not_shrink():
     """The ledger is a floor — a refactor must not quietly drop worked examples."""
-    assert len(ledger()) >= 24
+    assert len(ledger()) >= 30
 
 
 def test_every_ledger_citation_resolves():

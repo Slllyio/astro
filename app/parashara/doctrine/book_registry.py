@@ -83,6 +83,12 @@ BOOKS: Final[tuple[BookEntry, ...]] = (
               "Uttara Kalamrita (Kalidasa)", note="Complete, 8 khandas."),
     BookEntry("HORASARA", "hora_sara_santhanam", True, ALLIED,
               "Hora Sara (Prithuyasas, tr. R. Santhanam)"),
+    BookEntry("JAIMINI", "jaimini_sutras", True, ALLIED,
+              "Jaimini Sutras (tr. and notes B. Suryanarain Rao)",
+              note="Only five chapter files on disk (pada 2, pada 4 and three mis-titled splits). Cited "
+                   "for chara dasha conventions where BPHS-46 is silent or ambiguous "
+                   "(docs/parashara/CHARA_DASHA_RULINGS.md); most of what it says there is the "
+                   "translator's NOTES, not sutra text."),
 
     # --- CORROBORATION: agreement evidence, never authority. ---
     # Raman follows Parashara closely, so his agreement is genuine corroboration for a BPHS
@@ -96,6 +102,8 @@ BOOKS: Final[tuple[BookEntry, ...]] = (
     BookEntry("HTJAH-II", "how_to_judge_horoscope_raman2", False, CORROBORATION,
               "How to Judge a Horoscope, Vol II (B. V. Raman)",
               fixed_file="chapter_001_full-text-unsplit.md"),
+    BookEntry("SJ", "studies_jaimini_raman", True, CORROBORATION,
+              "Studies in Jaimini Astrology (B. V. Raman)"),
 )
 
 #: Resolution set — these tags resolve to on-disk text (click-to-source works).

@@ -1,0 +1,8 @@
+{
+  "fraction": 0.5,
+  "holdout_sha256": "9e43e8b47174cb3aa8ea3aa75bfdc937a8f031c05bd75c69c6e5f78191d98904",
+  "n_holdout": 11542,
+  "n_total": 22946,
+  "population_sha256": "7ab2ccc9fff3594ee02133791f0af1d69123fd2671698a797fa65c9f5bc2752d",
+  "salt": "tierC-split-v1"
+}

@@ -124,12 +124,15 @@ def process_natal(row: dict[str, Any]) -> dict[str, Any] | None:
         return None
 
 
-def run_natal(raman_root: Path, out: Path, workers: int) -> int:
+def run_natal(raman_root: Path, out: Path, workers: int, extension: bool = False) -> int:
     pop = pd.read_parquet(raman_root / "store_population.parquet")
     master = pd.read_parquet(raman_root / "person_master.parquet")
-    rows = master[master.person_id.isin(set(pop.person_id))][
+    people = _extension_people(raman_root) if extension else set(pop.person_id)
+    rows = master[master.person_id.isin(people)][
         ["person_id", "birth_date", "birth_time", "tz_offset", "latitude", "longitude"]
     ].to_dict("records")
+    (out / "parts").mkdir(parents=True, exist_ok=True)
+    _guard_population(out / "parts", rows, extension=extension)
     with mp.Pool(processes=workers, initializer=init_worker) as pool:
         res = pool.map(process_natal, rows, chunksize=200)
     ok = [r for r in res if r is not None]
@@ -146,13 +149,47 @@ def _engine_sha() -> str:
         return "unknown"
 
 
-def run(raman_root: Path, out: Path, workers: int, bench: int | None) -> int:
+def _extension_people(raman_root: Path) -> set[str]:
+    """DOUBLE_TRANSIT_PREREG_AMENDMENT_1: people (tiers A/B/C) with a DAY-precision marriage,
+    divorce or own-death event who are NOT in the original store population."""
+    import re
+    ev = pd.read_parquet(raman_root / "person_events.parquet")
+    ev = ev[ev.date_precision == "day"]
+    low = (ev.event_root + " " + ev.event_subtype.fillna("")).str.lower()
+    target = (low.str.contains("marriage|divorce", regex=True)
+              | (low.str.match(r"^death") & ~low.str.contains("death of")))
+    master = pd.read_parquet(raman_root / "person_master.parquet")
+    tiered = set(master[master.quality_tier.isin(["A", "B", "C"])].person_id)
+    pop = set(pd.read_parquet(raman_root / "store_population.parquet").person_id)
+    _ = re  # pattern logic mirrors transit_tests.TESTS
+    return (set(ev[target].person_id) & tiered) - pop
+
+
+def _guard_population(parts: Path, rows: list[dict], *, extension: bool) -> None:
+    """Chunk `.done` markers are positional: resuming into an --out built for a DIFFERENT
+    population would silently skip chunks and then overwrite the store. Refuse instead."""
+    import hashlib
+    sha = hashlib.sha256("\n".join(sorted(r["person_id"] for r in rows)).encode()).hexdigest()
+    marker = parts / "population_sha.txt"
+    # an unmarked store predates this guard and is the primary population: only a
+    # non-extension run may adopt it
+    legacy = extension and not marker.exists() and (any(parts.glob("*.done")) or (parts.parent / "natal.parquet").exists())
+    if legacy or (marker.exists() and marker.read_text(encoding="utf-8").strip() != sha):
+        raise SystemExit(f"[store] {parts.parent} was built for a different (or unrecorded) "
+                         f"population; use a fresh --out (refusing to resume/overwrite)")
+    marker.write_text(sha, encoding="utf-8")
+
+
+def run(raman_root: Path, out: Path, workers: int, bench: int | None,
+        extension: bool = False) -> int:
     pop = pd.read_parquet(raman_root / "store_population.parquet")
     master = pd.read_parquet(raman_root / "person_master.parquet")
-    sel = master[master.person_id.isin(set(pop.person_id))]
+    people = _extension_people(raman_root) if extension else set(pop.person_id)
+    sel = master[master.person_id.isin(people)]
     rows = sel[["person_id", "birth_date", "birth_time", "tz_offset",
                 "latitude", "longitude"]].to_dict("records")
-    print(f"[store] population: {len(rows)} charts (Raman store's population, recast with Parashara)")
+    label = "AMENDMENT_1 extension" if extension else "Raman store's population"
+    print(f"[store] population: {len(rows)} charts ({label}, cast with Parashara)")
 
     if bench:
         init_worker()
@@ -165,6 +202,7 @@ def run(raman_root: Path, out: Path, workers: int, bench: int | None) -> int:
 
     parts = out / "parts"
     parts.mkdir(parents=True, exist_ok=True)
+    _guard_population(parts, rows, extension=extension)
     chunks = [rows[i:i + _CHUNK] for i in range(0, len(rows), _CHUNK)]
     failures, t0 = 0, time.perf_counter()
     with mp.Pool(processes=workers, initializer=init_worker) as pool:
@@ -209,10 +247,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--bench", type=int, default=None)
     ap.add_argument("--natal-only", action="store_true",
                     help="write only natal.parquet (double-transit test inputs)")
+    ap.add_argument("--extension", action="store_true",
+                    help="cast DOUBLE_TRANSIT_PREREG_AMENDMENT_1's extension people (outside the "
+                         "store population); requires a fresh --out")
     a = ap.parse_args(argv)
     if a.natal_only:
-        return run_natal(a.raman_root, a.out, a.workers)
-    return run(a.raman_root, a.out, a.workers, a.bench)
+        return run_natal(a.raman_root, a.out, a.workers, extension=a.extension)
+    return run(a.raman_root, a.out, a.workers, a.bench, extension=a.extension)
 
 
 if __name__ == "__main__":

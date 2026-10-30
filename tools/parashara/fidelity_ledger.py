@@ -30,6 +30,7 @@ from app.parashara.doctrine.arudha import EXCEPTION_SOURCE, RULE_SOURCE, arudha_
 from app.parashara.doctrine.functional_by_lagna import YOGAKARAKA_SOURCE, yogakaraka
 from app.parashara.doctrine.sources import Citation, verify
 from app.parashara.primitives import ashtakavarga as av
+from app.parashara.primitives import chara_dasha as chd
 from app.parashara.primitives.longevity import (
     ASCENDANT_SOURCE,
     NISARGAYU_YEARS,
@@ -76,6 +77,18 @@ def _argala_houses() -> set[int]:
     return {a.argala_house for a in argala.argala_for(1, ps)}
 
 
+def _chara_example_signs() -> dict[str, int]:
+    """The ch.46 sl.167 example chart (R. Santhanam's example; the drawing is OCR-garbled).
+
+    OCR-ATTESTED: Lagna Aquarius with Mercury, Jupiter, Venus (46:4750-4753; 51:652 "associated with
+    benefics"); Rahu with the Moon (46:4746-4748, and 46:4783 "Rahu is associated with a planet"); Ketu
+    opposite Rahu. Saturn is unassociated, since the text prefers Rahu for that reason.
+    BACK-DERIVED from the printed years under n - 1, so NOT used for any ledger row: Rahu's sign
+    (Gemini), Mars (Taurus). Sun/Saturn are arbitrary non-associating placements."""
+    return {"Mercury": 11, "Jupiter": 11, "Venus": 11, "Mars": 2, "Moon": 3, "Rahu": 3, "Ketu": 9,
+            "Sun": 6, "Saturn": 8}
+
+
 def ledger() -> list[WorkedExample]:
     """Every worked result Parashara (or the cited allied text) states that the engine reproduces."""
     signs, asc = _canonical_signs()
@@ -88,6 +101,21 @@ def ledger() -> list[WorkedExample]:
                       lambda: _ahargana_lord(1984, 6, 1, 30, 2)),
         WorkedExample("Vimshottari seed (Revati/27 -> Mercury MD)",
                       Citation("BPHS-46", 128), "Mercury", lambda: vim_seed(27).lord),
+        # Only rows independent of the n - 1 rule they test (see _chara_example_signs).
+        WorkedExample("Chara dasa: Aquarius takes Rahu, the associated co-lord (BPHS-46:4783)",
+                      Citation("BPHS-46", 4783), "Rahu", lambda: chd.dasa_lord(11, _chara_example_signs())),
+        WorkedExample("Chara dasa: Pisces 1 year, Jupiter with the Lagna (BPHS-46:5037)",
+                      chd.PISCES_ONE_YEAR, 1, lambda: chd.years(12, _chara_example_signs())),
+        WorkedExample("Chara dasa: onwards from Aquarius (9th = Libra, odd pada)",
+                      chd.SEQUENCE_SOURCE, [11, 12, 1],
+                      lambda: [x for x, _ in chd.sequence(11, _chara_example_signs())[:3]]),
+        # Antardasha orders printed in the BPHS-51 note on the same chart (sign-only: no placements used).
+        WorkedExample("Chara antardashas of Aquarius (fixed): every 6th rasi (BPHS-51 table)",
+                      chd.AD_FIXED_WORKED, (11, 4, 9, 2, 7, 12, 5, 10, 3, 8, 1, 6), lambda: chd.antardasha_signs(11)),
+        WorkedExample("Chara antardashas of Pisces (dual): kendras of 1st/5th/9th, reverse (BPHS-51:655-663)",
+                      chd.AD_PAKA_IS_DASA_RASI, (12, 9, 6, 3, 8, 5, 2, 11, 4, 1, 10, 7), lambda: chd.antardasha_signs(12)),
+        WorkedExample("Chara antardashas of Aries (movable, odd): twelve onwards (BPHS-51:670)",
+                      chd.AD_MOVABLE_FROM_ITSELF, tuple(range(1, 13)), lambda: chd.antardasha_signs(1)),
         WorkedExample("Uchcha bala (152 deg 15' from debilitation -> 50.75)",
                       Citation("BPHS-27", 97), 50.75,
                       lambda: round(uchcha_bala("Sun", 37.75), 2)),

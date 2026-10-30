@@ -1,0 +1,118 @@
+# Validation program: final summary (2026-10-14)
+
+Branch `validation` (local only; worktree `E:\tmp\astro-validation`). Every test was pre-registered
+and committed before its numbers existed, with sham/planted controls run first. Engines were frozen
+throughout. All four holdouts are unread.
+
+## The answer
+**Neither engine predicts real lives, and this is now bounded, not merely "not significant".**
+Every core question ends BOUNDED_NULL, and each has its machinery shown able to see an effect of
+that size:
+
+| core question | test | result | machinery check |
+|---|---|---|---|
+| 1. Do house verdicts match life outcomes? | Phase 1 pool (both engines); 4.2 rule-level pool + dose-response | AUC 0.49–0.51; rule RR 1.007 (0.996–1.019), τ² = 0; OR 0.984 per extra rule | sham gates pass |
+| 2. Do dashas time events? | Phase 3 risk sets, 13,034 events, Raman's four tiers | AD −0.010 (−0.030..+0.009); MD −0.003 (−0.015..+0.008) | planted +0.030 recovered (+0.0305) |
+| 3. Does a life identify its chart? | Phase 4.3, true chart vs 4 decoys within ±3 days | hit rate 0.1999 vs 0.20 | planted 0.312 |
+| (pipeline sees real effects?) | Phase 4.1 Gauquelin Mars on his own file | +4.7 pts (CI +2.0..+7.2), PASS | n/a |
+
+## What was learned along the way
+- **Instrument reliability** (Phase 2): ±30 min of birth-time error leaves AD timing κ ≈ 0.64.
+  Lahiri vs Raman ayanamsa flips about half of AD calls, worse than a 30-minute error.
+- **The two engines barely agree**: Raman vs Parashara house verdicts κ = 0.00–0.05 on 22k charts,
+  and still near zero when the ayanamsa is matched. "Vedic astrology" is not one testable object;
+  each test bounds one implementation.
+- **Why it fails** (measured, two mirror images):
+  - static: the median chart carries 19 afflicted + 31 favourable significations at once;
+  - timing: one dasha lord influences 5.8 of 12 houses, 85% of AD periods activate some house at
+    "ordinary or better", and a house is activated for 27–45% of a life.
+  Indications abundant enough to fit any life, at any date, cannot discriminate one.
+- **"Did the test fail?" Checked, and no** (Phase 3 deep look): no filler-date heaping; four
+  narrower activation instruments (including "the dasha of the house's own lord") are all null; the
+  tier mix at events matches matched controls within 0.7 points; the placebo dasha equals the real one.
+- Leans worth noting, all non-findings: the marriage double-transit lean (+3.4% on 314) vanished
+  when pooled (+0.3%); the suicide thread never replicated; Raman's rules lean the wrong way more
+  often than the right way (35% predicted-direction, p = 0.006).
+
+## Process notes (honest record)
+- Pre-run audits caught real bugs **before** any result: 4.6k unmapped deaths, duplicate events, a
+  missing stop rule, an off-prereg health mapping, the "+120° sham" that would have reproduced the
+  real dasha, and the missing Raman factor (f).
+- Two amendments, both committed before the affected comparison: Phase 3 gates moved from a single
+  draw to 500-draw calibration (a 1%-chance gate failure; user decision), and the double-transit
+  tier-C confirmation was withdrawn in favour of the C1/C2 split (user decision).
+- Deviations recorded in the results files: the Phase 4.2 estimator (separation), 11 Gauquelin rows
+  with a missing tz, and one wrong statement in Phase 1 (per-rule results were in fact persisted).
+
+## Addendum (2026-10-14): Phase 3R, Raman's own engine (user request)
+The one open path, "Raman's own judge driving the timing", was pre-registered and run: the Raman
+engine's `timer_set` + `bhukti_tier` + `lords_associated`, its own dashas, Raman ayanamsa and
+`maraka_set`. **AD level: bounded null (+0.003). MD level: negative (−0.018)**, the opposite of the
+prediction, traced by diagnostic to a chart-level selection effect (cases' charts are activated ~1 point
+less over their whole lives; identical under a scrambled dasha). Within-person: null at both levels.
+C1 stays unread. Full reading: `PHASE3R_READING.md`.
+**Phase 3P (pratyantar level, Raman engine; user request):** the PD lord activating the event's house
++0.009 (−0.010..+0.029) and MD+AD+PD convergence −0.005 (−0.022..+0.012), both BOUNDED_NULL, with the
+within-person effect null too. The placebo is indistinguishable. See `PHASE3P_READING.md`.
+
+## Addendum (2026-10-21): Phase 3Y, Yogini dasha (user-approved open option)
+Pre-registered (`PHASE3Y_YOGINI_PREREG.md`, c4c5f710) and run on the same 13,034 risk sets. The Parashara
+engine's Yogini (BPHS-46:199, cycle repeated past 36 years, ADs from BPHS-46:110) was used with Phase 3's
+activation instrument. **AD level −0.010 (−0.029..+0.010), within-person −0.004; MD level +0.001
+(−0.010..+0.011), within-person +0.005. Both BOUNDED_NULL.** All gates passed. The placebo (+1 nakshatra)
+does as well as the real sequence, and Raman ayanamsa and Rodden AA agree. C1 stays unread. A second
+dasha system now joins Vimshottari as a bounded null. Full reading: `PHASE3Y_READING.md`.
+
+## Addendum (2026-10-24): Phase 3J, Jaimini chara dasha (owner option A)
+Chara dasha was first encoded in the Parashara engine from BPHS-46 sl.155-167 (13087d3f). The owner's instruction
+was "find answers in ancient texts", and the rulings are in `docs/parashara/CHARA_DASHA_RULINGS.md`. A doctrine review
+was applied, and the engine reproduces Raman's Example 20 table 12/12. Antardashas are deferred (BPHS-51 conflicts).
+Phase 3J was pre-registered (7d9e4402) and run on Phase 3's risk sets minus deaths (8,165). Activation, a convention
+from Raman's *Studies in Jaimini* art.159: the dasa sign is the house's sign from the Lagna.
+- **Year-dated: +0.001 (−0.007..+0.010), BOUNDED_NULL.**
+- **Day-dated: −0.014 (−0.033..+0.007), UNDERPOWERED** (TOST p 0.059).
+- The year-dated within-person +0.011 is matched by the placebo (+0.013), so it is structural, not timing.
+- C1 stays unread. Three dasha systems are now null. Full reading: `PHASE3J_READING.md`.
+
+## Addendum (2026-10-24): Phase 3J-AD, chara antardashas. The dasha-timing line is CLOSED.
+The owner chose BPHS-51 sl.7-12 for the chara antardashas. The engine (cec90acd) reproduces BPHS-51's three printed
+orders, and the doctrine reviewer VALIDATED it. Pre-registered (27d0516a) and run on the 1,192 day-dated,
+non-death sets.
+- **Antardasha sign = event house: −0.004 (−0.022..+0.013), within-person +0.004. BOUNDED_NULL.**
+- The placebo, convergence, Raman ayanamsa, Rodden AA and wider-activation arms are all null.
+- C1 stays unread.
+- Every dasha system and level the engines carry has now been tested (Vimshottari MD/AD/PD in both engines, Yogini
+  MD/AD, chara MD/AD), and none times real events. Full reading: `PHASE3J_AD_READING.md`.
+
+## Stopping rule: triggered, and honoured
+No new outcome questions are opened. Not run, by design: 4.4 vocation, 4.5 lifespan, 4.6 H5 codings,
+4.7 time twins, Phase 5 composite/ML. Holdouts C1 (11,542), C2 (11,404), Gauquelin (25%) and
+Wikidata stay unread, kept for any future instrument that is genuinely new: a different dasha system
+(Yogini, Ashtottari, Jaimini), or Raman's own judge driving the timing. Each would need its own
+pre-registration and would get one read.
+
+## What the engines are
+Faithful scholarly instruments: "what would Raman / Parashara say", measured against their own books
+(the fidelity axis). They are not validated predictors of lives, and must not be presented as one.
+The two axes are reported side by side, never averaged.
+
+## Files
+`docs/validation/`: SESOI_PREREG, BOUNDS + PHASE1_READING, RELIABILITY + PHASE2_READING,
+PHASE3_TIMING_PREREG + AMENDMENT_1 + RESULTS + DEEP + READING, PHASE4_{1,2,3}_*_PREREG + RESULTS,
+PHASE4_READING. Code: `tools/validation/`. Result records: `E:/astro/data/validation/results.jsonl`.
+
+## Handoff: where everything is (for the next session)
+- **Code + docs:** branch `validation`, worktree `E:\tmp\astro-validation` (local only, not pushed;
+  never touch origin/main). It is varga-corroboration + `app/empirical` + `tools/validation/`.
+- **Worktree data links:** `data/knowledge_library` is a junction to the varga worktree's copy, and
+  `app/medini/data/*.parquet` are hard links to varga's (gitignored; needed for the full suite).
+- **Data outputs:** `E:/astro/data/validation/` holds the result records (`results.jsonl`), the activation
+  stores (Parashara and Raman engine, both frames), and per-phase JSON. The Parashara extension store
+  is at `E:/astro/data/astro_databank/derived/parashara_ext/`.
+- **Holdouts, all unread:** C1 / C2 (manifest `tools/validation/holdout_manifest_tierC1.json`), Gauquelin
+  25% (salt `gauquelin-screening-v1`), Wikidata. The ledger `data/empirical/holdout_ledger.json` has no claims.
+- **Dasha timing: CLOSED (2026-10-24).** Vimshottari (3 levels, 2 engines), Yogini and chara (MD + AD) are all null. Reopening needs a genuinely new instrument and its own
+  prereg. Any new risk-set test must match on latitude band, or report within-person E (Phase 3R lesson).
+- **Leftover, harmless:** varga worktree has an uncommitted partial `build_store.py` edit; its finished
+  version is committed here (64721b38). It can be discarded.
+- **Not done:** bringing `validation` into `main-local` (a user decision).

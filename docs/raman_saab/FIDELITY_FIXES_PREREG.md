@@ -862,7 +862,7 @@ SHA-256 `223b8ae34d3f392eb452be2a5e7a4a3a66951dabb2d385bd0f4416842cc4d6d9`.
 Limit: positions are signs only (no degrees), so degree-dependent rules (combustion, exact
 aspects, avasthas) read every graha at 15°, as for every printed-signs chart before.
 
-## Addendum 27 (2026-10-30): reconciling the two branches
+## Addendum 28 (2026-10-30): reconciling the two branches
 
 This branch and the fertility branch (`claude/project-thread-yj2a5g`) both wrote addenda on
 2026-10-30. Theirs are 16-20; this branch's were renumbered 21-23 when the two were merged.

@@ -3364,6 +3364,7 @@ function render(R, S, FQ){
     const P=prep[pf.house], HS=hs[pf.house];
     const d=el('details',{class:'card'});
     const sm=el('summary'); sm.append('H'+pf.house+' · ',vchip(pf.rollup),el('span',{class:'muted'},' lord '+pf.lord));
+    if(pf.matter_breakdown) sm.append(el('span',{class:'muted'},' · '+t('matters')+': '+pf.matter_breakdown));
     d.append(sm);
     const b=el('div',{class:'body'});
     // v35 — the person-facing lead, above the pillars. Adds; never replaces.

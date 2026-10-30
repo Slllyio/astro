@@ -433,6 +433,252 @@ favourable). This is a faithfulness correction, not a tuning variant: each rule 
 its passage says, and the strict figure falls by two. Shipping it re-bases the ratchet, so it is
 the user's decision.
 
+## Addendum 16 (2026-10-30): variants G1 and N1, fixed before any G1 or N1 number exists
+
+User decision 2026-10-30 ("Headline + pre-register both", on the harshness diagnosis
+`HARSHNESS_DIAGNOSIS_2026-10-30.md`). Both variants come from the Kanpur trace (10 Oct 1989,
+15:15 IST), a chart outside the goldens. Their in-pool firing counts were already seen in the
+diagnosis: the fertility gate decided 12 confirmed rows (9 afflicted, 1 mixed, 2 favourable in
+Raman's words), and H7.C.82 fires on the nodes alone on no confirmed row. No variant number
+exists yet.
+
+**G1 (one variant, no second version). The fertility gate moves the verdict one step, never decides it.**
+Today `_fertility_gate` sets children/progeny to `afflicted` when both sphutas fail their
+odd/even test, or when one fails and Arm A or Arm B corroborates. Under G1 the same arms fire
+on the same conditions, but each moves the verdict at most **one step toward afflicted**:
+favourable to mixed, mixed to afflicted, afflicted unchanged. The `FERTILITY_GATE` flag and the
+metadata are unchanged.
+
+Basis:
+- Raman's worked Chart 88: a Beeja in an even sign is judged "strong" on its other testimony
+  (HTJAH-I:5529-5551).
+- Chart 89: a Kshetra in an odd sign is judged "fertile → birth of children", fewer in number
+  (HTJAH-I:5553-5582).
+- So the parity test alone is co-testimony. It is not a decision. The relief clauses
+  (HTJAH-I:5524-5527) are not encoded, so the gate cannot tell a relieved point from an
+  unrelieved one.
+- Moving one step is the same discipline the Navamsa follows (NAVAMSA_ONE_STEP).
+
+Switch: `house_template.G1_FERTILITY_ONE_STEP` (default False).
+
+**N1 (one variant, no second version). The nodal axis counts as one affliction in H7.C.82.**
+Today `_SeventhBesiegedByMalefics` counts distinct natural malefics occupying or aspecting the
+7th, so Ketu in the 7th plus Rahu's 7th aspect from the 1st (or the reverse) makes "two".
+Under N1, Rahu and Ketu together count as one, whenever either afflicts the 7th. Every other
+part of the condition is unchanged: the threshold of two, and the full-benefic relief.
+
+Basis:
+- The two nodes are always opposite, so one placement always brings the other's aspect. They
+  are one testimony.
+- The rule's cited classic case is Saturn + Mars (HTJAH-II:562), and its worked firings are
+  Saturn + Mars and Mars + Ketu.
+
+Switch: `house_7 combinations.NODE_AXIS_AS_ONE` (default False).
+
+**Decision rule** (the same as M1 and Y1). For each variant alone:
+
+- (a) Pool rule: real errors do not rise overall or in any book; within one does not fall; and
+  exact rises or real errors fall.
+- (b) Hold-out 3, scored once, against its sealed V0: real errors do not rise and within one
+  does not fall. Hold-out 3 is scored only for a variant that passes (a).
+- (c) An engine-blind doctrine review of the change, with the result going to the user.
+
+A variant that fails is reported and held behind its switch. It is not adjusted.
+
+If both pass (a), each goes to (b) on its own, and then the pair goes together. Because
+hold-out 3 is scored once, the scoring order is fixed now: G1, then N1, then the pair, all in
+one run, with V0 read from the sealed file.
+
+If (a) passes but N1 changes no pool row, the pool cannot test it, and the hold-out decides.
+
+## Addendum 17 (2026-10-30): G1 and N1 measured
+
+**Correction to Addendum 16 (wording only, no number involved).** The N1 switch lives at
+`doctrine/rule_sets/house_07_kalatra/combinations.NODE_AXIS_AS_ONE`. The last sentence of
+Addendum 16 ("if (a) passes but N1 changes no pool row, the hold-out decides") cannot apply. A
+variant that changes no row has no gain, so it cannot pass (a). It is not used.
+
+**Pool, V0 → G1** (exact / within one / real errors):
+
+| Scope | V0 | G1 |
+|---|---|---|
+| all | 260 / 349 / 40 | **251 / 351 / 38** |
+| HTJAH-I | 54 / 70 / 13 | 50 / 70 / 13 |
+| HTJAH-II | 65 / 90 / 5 | unchanged |
+| NH | 141 / 189 / 22 | 136 / 191 / 20 |
+
+**G1 passes rule (a).** Real errors do not rise in any book, within one rises, and real errors
+fall overall. Thirteen rows move, all H5 children, afflicted → mixed:
+- **Ten Raman calls afflicted.** They lose their exact match: HTJAH-I h5_04, h5_08, h5_09,
+  h5_12, h5_18 and NH chart_37, 18, 20, 31, 22.
+- **HTJAH-I.h5_13**, which Raman calls mixed, becomes exact.
+- **NH.chart_67 and chart_48**, which Raman calls favourable, stop being real errors.
+
+This is the B1-type trade: 9 exact for 2 real errors. In the ten afflicted rows the gate had
+been carrying a denial that Raman reached from the house, its lord and the karaka, not from the
+sphutas. So G1 exposes that the placement reading of the 5th is too lenient there.
+
+**Hold-out 3, scored once** (`score_holdout … G1`, V0 from the sealed file, SHA as in
+Addendum 11):
+- G1 changes **none** of the 28 rows. The fixture's one children row is untouched. Result:
+  8 / 19 / 9 of 28. Rule (b) holds only vacuously; the hold-out says nothing about G1.
+- The current engine was also run as a control and matches G1 row for row.
+- Side finding: it differs from the sealed V0 on one row. HPA.chart_35.8 H9 fortune moves from
+  favourable to mixed (Raman afflicted). That move comes from the Addendum 15 citation repairs,
+  which rerouted H9.C.35 to fortune. It is the first out-of-sample reading of those repairs:
+  real errors 10 → 9, within one 18 → 19.
+- Hold-out 3 has now been read once. The next variant needs a new sealed set.
+
+**Rule (c), the doctrine review of G1, is pending.** It needs the printed HTJAH-I:5510-5611 on
+the user's PC. Folder access to that corpus was refused in this session.
+
+**N1** changes no pool row: 260 / 349 / 40 throughout. So it fails (a) as written. It was not
+scored on hold-out 3, and it stays held behind its switch. Its case rests on Kanpur-like charts,
+and the only scored firings of H7.C.82 involve Saturn or Mars.
+
+**Status:** G1 and N1 are both held behind their switches (default False) until the user
+decides. My recommendation is to keep G1 off until the review reads the sphuta passage itself.
+The pool trade is real, but the hold-out cannot confirm it, and the cleaner fix is to encode the
+relief clauses Raman prints, which this variant does not do.
+
+## Addendum 18 (2026-10-30): variant G2, Raman's printed sphuta test, fixed before any G2 number exists
+
+User go-ahead 2026-10-30 ("go ahead", on the offer to read the sphuta passage and review G1).
+The passage HTJAH-I:5496-5633 was read verbatim from the corpus on the user's PC
+(`how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md`). No G2 number exists yet.
+
+**What the text says.**
+- The test (5521-5527): Beeja strong in an odd sign and odd Navamsa, "aspected by or associated
+  with benefics"; Kshetra the same in even sign and Navamsa. "Evil and impotent planets should
+  not aspect these sensitive points, nor should evil planets occupy the 5th from" them; neither
+  "should fall in a malefic sign"; "Rahu should never join" them.
+- Chart 88 (male, 8-8-1912 19:35 IST, Bangalore; the same nativity as goldens HTJAH-I.chart_10):
+  Beeja in Cancer, an EVEN sign, is judged strong: occupied by the Sun, a benefic sign, aspected
+  by Jupiter and Saturn, Jupiter in the 5th from it, odd Navamsa (5543-5551).
+- Chart 89 (female, 16-10-1918 14:20 IST; the same nativity as HTJAH-I.chart_12): Kshetra in
+  Sagittarius, an ODD sign, is judged fertile: benefic sign, aspected by Jupiter, even Navamsa
+  (5574-5577). For both: "the fertility cannot be in a pronounced manner … the number of
+  children cannot be very large" (5577-5580).
+- Chart 90 (sterile): Beeja in an even and malefic sign in Rasi and Amsa (Capricorn), aspected by
+  Saturn (5602-5605).
+- 5508-5509: weak Beeja with strong Kshetra means children late, not none.
+
+**Finding on the shipped gate (rule (c) of Addendum 16, for G1 as well).** The shipped test
+reads parity only, in both Rasi and Navamsa. Cast as printed, it reads Chart 88's Beeja WEAK
+(Cancer) and Chart 89's Kshetra WEAK (Sagittarius), the two points Raman judges fertile. So the
+shipped gate contradicts two of Raman's three worked sphuta charts. G1 keeps that test and only
+softens its effect; it does not repair it.
+
+**G2 (one variant, no second version). A sphuta point is strong exactly when Raman's printed
+conditions hold.** For each point P (Beeja: odd parity wanted; Kshetra: even), with signs and
+aspects whole-sign as everywhere in the engine, natural benefics Jupiter, Venus, Mercury, Moon,
+natural malefics Sun, Mars, Saturn, Rahu, Ketu:
+
+- Bars (any one makes P weak):
+  1. P's Rasi sign is ruled by a natural malefic (Aries, Leo, Scorpio, Capricorn, Aquarius) (5526).
+  2. Rahu occupies P's Rasi sign (5526-5527).
+  3. A natural malefic occupies the 5th sign from P (5525).
+  4. A natural malefic aspects P's sign and no natural benefic occupies or aspects it (5524-5525;
+     Chart 88 is strong under Saturn's aspect because Jupiter also aspects).
+- Requirements (all needed for P strong, when no bar applies):
+  5. A natural benefic occupies or aspects P's Rasi sign (5521-5524).
+  6. P has the wanted parity in its Rasi sign OR in its Navamsa sign (Charts 88 and 89 hold
+     one of the two and are judged fertile).
+
+The gate itself is unchanged: both points weak → afflicted; one weak → afflicted only on Arm A
+or Arm B. The Saptamsa guard reads the same strong flags. Nothing reads the chart's sex, which
+the engine does not have; that limit stays and is recorded.
+
+Switch: `primitives.sphutas.G2_PRINTED_SPHUTA_TEST` (default False).
+
+**Decision rule.**
+- (a) The pool rule of Addendum 16, unchanged.
+- (b) Worked charts: G2 must read Chart 88's Beeja strong, Chart 89's Kshetra strong, and Chart
+  90's Beeja weak (from its printed longitudes, Sun 53°, Jupiter 192°, Venus 26°). Checked before
+  the pool run; a failure stops the variant.
+- (c) An engine-blind doctrine review of the G2 specification against the verbatim text.
+- Hold-out 3 is spent (Addendum 17). There is no sealed out-of-sample set for G2, and that is
+  reported with the result. Shipping is the user's decision.
+
+## Addendum 19 (2026-10-30): G2 measured
+
+**(b) Worked charts, checked first (cast with the Raman ayanamsa):**
+
+| Raman's chart | Raman's verdict | Shipped (parity only) | G2 |
+|---|---|---|---|
+| 88, Beeja in Cancer (even), Navamsa odd, aspected by Jupiter | strong | weak | **strong** |
+| 89, Kshetra in Sagittarius (odd), Navamsa Scorpio, aspected by Jupiter | fertile | weak | **fertile** |
+| 90, Beeja 271° = Capricorn, a malefic sign | sterile | weak | **weak** |
+
+G2 passes (b). The shipped test fails two of the three. Pinned in
+`tests/raman_saab/primitives/test_sphutas.py::TestPrintedSphutaTest`.
+
+**(a) Pool, V0 → G2** (exact / within one / real errors):
+
+| Scope | V0 | G2 |
+|---|---|---|
+| all | 260 / 349 / 40 | **263 / 353 / 36** |
+| HTJAH-I | 54 / 70 / 13 | 53 / 70 / 13 |
+| HTJAH-II | 65 / 90 / 5 | unchanged |
+| NH | 141 / 189 / 22 | **145 / 193 / 18** |
+
+G2 passes (a): real errors rise in no book, within one rises, exact rises and real errors fall.
+Five rows move, all H5 children:
+- NH.chart_67 and chart_48, Raman favourable: afflicted → favourable (two inversions removed).
+- NH.chart_57 and chart_52, Raman afflicted: favourable → afflicted (two inversions removed).
+- HTJAH-I.h5_11 (Chart 101, five abortions, no surviving issue), Raman afflicted:
+  afflicted → mixed. Its Raman reading is about survival of issue, not the sphutas.
+
+This is unlike G1: G2 gains in BOTH directions, so it is not a softening.
+
+**(c) Engine-blind review** (reviewer saw only the verbatim text and the three rule specs):
+- Shipped parity-only test: UNSOUND, it inverts Charts 88 and 89.
+- G1: UNSOUND, same trigger.
+- G2: SOUND WITH CAVEATS. It reproduces all three worked charts from the printed facts, but the
+  only negative case (90) fails every test, so the bars are thinly discriminated. Caveats the
+  reviewer named, none of which G2 encodes (one variant, no second version):
+  1. Mercury is an "impotent" planet with Saturn (5524), so Mercury should not rescue a point.
+  2. Raman also reads the Navamsa: aspects there, and the 5th from the point in the Navamsa (88).
+  3. A debilitated benefic does not rescue (90: "Jupiter neecha in Beeja Sthana").
+  4. The majority-malefic-saptavarga denial (5607) is not encoded.
+  5. When only the Navamsa parity holds, Raman says fertility is "not pronounced": a tempering,
+     which G2 reads as plain strong.
+  6. The gate's override is stronger than Raman's "simple rule … in the majority of cases"
+     (5514-5515); and Raman reads one point per native by sex, which the engine has no input for.
+  These are the ingredients of any later variant (G3), pre-registered separately.
+
+**Hold-out:** none. Hold-out 3 is spent, so G2 has no out-of-sample check.
+
+**Kanpur (the chart that started this):** unchanged under G2. Its Beeja is Cancer with a
+Capricorn Navamsa (parity fails in both); its Kshetra in Libra has Rahu in the 5th from it. By
+Raman's own printed test both points are weak, so the Kanpur children denial is faithful.
+
+**Status:** G2 held behind `sphutas.G2_PRINTED_SPHUTA_TEST` (default False) for the user's
+decision. Recommendation: ship G2 and drop G1.
+
+## Addendum 20 (2026-10-30): G2 shipped, G1 dropped
+
+User decision on the decision card: "Ship G2, drop G1".
+- `sphutas.G2_PRINTED_SPHUTA_TEST` now defaults to True. The baseline is re-based 260/349/40 →
+  **263/353/36** with lineage in `golden_accuracy_baseline.json`. The four former inversions
+  (NH.chart_67, 48, 57, 52 H5 children) leave `real_errors`.
+- G1 stays in the code, switched off for the record, and is not a candidate any more.
+- `fidelity_variants.py` now measures from the shipped engine; the `PARITY` token restores the
+  old parity-only test for comparison.
+- The reviewer's caveats (Addendum 19, items 1-6) are open work for any later G3, which needs
+  its own pre-registration and a sealed set with several H5 children rows and full degrees.
+
+**Measured after shipping, reported for honesty (not a decision input; the user had already
+decided).** G2 is more faithful on Raman's charts but HARSHER on ordinary ones:
+- Across the 346 castable golden charts, 41 children verdicts moved: 30 toward afflicted, 11 away.
+- On 600 random births (the harshness-diagnosis sampler, seed 20261030), both points weak rises
+  313 → 438 (52% → 73%), and children afflicted rises 512 → 544 (85% → 91%).
+- The cause is that Raman's printed test is strict per point: a malefic sign alone bars 5 of 12
+  signs, and a benefic contact is required. Read from one chart for both sexes and fed into a
+  decisive denial, it denies most charts. That is the reviewer's caveat 6 (the override and the
+  missing sex input), not the point test itself. It is the next thing to fix, pre-registered on
+  its own.
+
 ## Addendum 21 (2026-10-30): hold-out 3 re-sealed, one birth time corrected from the page scan, still unread
 
 The user supplied page scans of *Hindu Predictive Astrology* (310 jp2 images; ch.35 is scans

@@ -29,6 +29,7 @@ from app.raman_saab.primitives.functional_nature import functional_nature, is_yo
 from app.raman_saab.procedure import timing as tm
 from app.raman_saab.procedure.citations import cite
 from app.raman_saab.procedure.conclusion import conclude
+from app.raman_saab.procedure.features import special_features
 from app.raman_saab.procedure.grading import (
     SIGNS, grade_from_moon, grade_house, grade_planet, lord_of)
 from app.raman_saab.procedure.matters import MATTERS, Matter, matter_for
@@ -111,7 +112,8 @@ def stage_zero(chart: RamanChart) -> StageZero:
                      balarishta, tuple(dasas),
                      (cite("functional_for_dasha"), cite("functional_benefics"),
                       cite("functional_malefics"), cite("yogakaraka"), cite("stronger_reference"),
-                      cite("span_first"), cite("dasa_within_span")))
+                      cite("span_first"), cite("dasa_within_span")),
+                     special_features(chart))
 
 
 def read_matter(chart: RamanChart, house: int, key: Optional[str] = None, *,
@@ -149,7 +151,15 @@ def _read(chart: RamanChart, matter: Matter, with_timing: bool, span: Optional[f
         lagna_lord = grade_planet(chart, ll, step="lord", house=1, role="the Lagna lord",
                                   star_lord=True)
     links = tm.wealth_links(chart) if matter.decider == "gains" else ()
-    concl = conclude(matter, factors, lagna_lord=lagna_lord, wealth_links=links)
+    life: Optional[tuple[float, str]] = None
+    if matter.decider == "longevity" and chart.jd_ut is not None:
+        if span is not None and span_class is not None:
+            life = (span, span_class)
+        else:
+            from app.raman_saab.primitives import ayurdaya
+            res = ayurdaya.longevity(chart)
+            life = (res.total_years, res.longevity_class)
+    concl = conclude(matter, factors, lagna_lord=lagna_lord, wealth_links=links, life=life)
     timing = tm.timing_for(chart, matter, span, span_class) if with_timing else ()
     ordered = tuple(factors[s] for s in ("house", "lord", "karaka", "moon") if s in factors)
     return MatterReading(house, matter.key, matter.label, matter.karaka, karaka_note, ordered,

@@ -204,7 +204,16 @@ class TestMetadata:
 
 class TestFertilityGate:
     """Mandatory H5 fertility pre-pass: a single weak sphuta is weighed, but BOTH
-    barren (Stage-3 'O1') is decisive progeny DENIAL -> afflicted."""
+    barren (Stage-3 'O1') is decisive progeny DENIAL -> afflicted.
+
+    The gate's mechanics are pinned on the parity reading of the sphutas, which the
+    synthetic charts below were built for; Raman's printed test (G2, the default) is
+    pinned on his worked Charts 88-90 in primitives/test_sphutas.py."""
+
+    @pytest.fixture(autouse=True)
+    def _parity_only(self, monkeypatch):
+        from app.raman_saab.primitives import sphutas
+        monkeypatch.setattr(sphutas, "G2_PRINTED_SPHUTA_TEST", False)
 
     def test_sphuta_pins_hold(self):
         """The two _h5_chart longitude sets really produce both-weak / both-strong

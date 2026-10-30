@@ -1,4 +1,4 @@
-"""Pre-registered fidelity-fix variants R1, R3b, R4 (docs/raman_saab/FIDELITY_FIXES_PREREG.md).
+"""Pre-registered fidelity-fix variants R1, R3b, R4, G1, N1, G2 (docs/raman_saab/FIDELITY_FIXES_PREREG.md).
 
 Measurement only: every variant is applied by rebinding judge functions at run time, so the
 shipped engine is untouched until a variant passes the pre-registered decision rule.
@@ -17,6 +17,7 @@ from typing import Optional
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.judges import house_template as ht
+from app.raman_saab.primitives import sphutas
 from app.raman_saab.primitives.bhangas import neecha_bhanga
 from app.raman_saab.primitives.dignity import dignity
 
@@ -109,6 +110,10 @@ def apply(variants: set[str]) -> None:
     ht._build_frame_ledger = _r1_ledger if "R1" in variants else _ORIG_LEDGER
     cast, stated = "R3b" in variants, "R4" in variants
     ht._decide = _make_tiebreak(cast, stated) if (cast or stated) else _ORIG_DECIDE
+    from app.raman_saab.doctrine.rule_sets.house_07_kalatra import combinations as h7c
+    ht.G1_FERTILITY_ONE_STEP = "G1" in variants          # Addendum 16
+    h7c.NODE_AXIS_AS_ONE = "N1" in variants              # Addendum 16
+    sphutas.G2_PRINTED_SPHUTA_TEST = "PARITY" not in variants  # G2 shipped (Addendum 20); PARITY = old test
 
 
 def run(variants: set[str]) -> dict[str, tuple[str, str, Optional[str]]]:

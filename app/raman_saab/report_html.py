@@ -640,6 +640,9 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
     drv_entry = driver_entry(cal, mr.verdict)
     driver = drv_entry.signification if drv_entry else None
     drv = (f'<span class="driver">driven by <b>{_esc(driver)}</b></span>' if driver else "")
+    if pf is not None:
+        from app.raman_saab.judges.house_template import matter_breakdown
+        drv += f'<span class="driver matters">matters: {_esc(matter_breakdown(pf))}</span>'
 
     split = signification_tenor_split(cal)
     note = tenor_note(split, mr.verdict)

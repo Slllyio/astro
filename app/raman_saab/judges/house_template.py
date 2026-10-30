@@ -33,6 +33,7 @@ Usage:
 """
 from __future__ import annotations
 
+import contextvars
 import dataclasses
 
 from app.core.avastha import compute_avasthas
@@ -548,6 +549,12 @@ _MARAKA_DEATH_KEYS = frozenset({"death", "longevity", "wealth"})
 #: benefic-vs-malefic contradiction. Raman weighs a single small touch past a good
 #: combination (3HC 10264-10267; NH 10921-10926). Not applied to inherent-affliction matters.
 Y1_BLEMISH_TIER: bool = False
+
+#: G1 (FIDELITY_FIXES_PREREG Addendum 16): the Beeja/Kshetra fertility gate moves a children
+#: verdict at most one step instead of deciding it. DROPPED 2026-10-30 (user decision "Ship G2,
+#: drop G1", Addendum 20): it kept the parity-only trigger an engine-blind review found unsound;
+#: G2 repaired the trigger itself (`primitives.sphutas.G2_PRINTED_SPHUTA_TEST`). Kept off, for the record.
+G1_FERTILITY_ONE_STEP: bool = False
 
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 
@@ -1161,6 +1168,12 @@ def _bhava_bala_for(chart: RamanChart, house: int) -> Optional[float]:
         bhava_sign=bhava_sign, bhava_sign_deg=bhava_sign_deg)
 
 
+#: Rule ids the judge skips while set. Empty by default, so judging is unchanged; the house audit
+#: (``app.raman_saab.house_audit``) sets it to re-judge a house without its doubtful rules.
+EXCLUDED_RULES: contextvars.ContextVar[frozenset[str]] = contextvars.ContextVar(
+    "EXCLUDED_RULES", default=frozenset())
+
+
 def _bucket_fired(
     chart: RamanChart, sig: Signification, ctx: EvalContext,
 ) -> tuple[tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...]]:
@@ -1171,8 +1184,11 @@ def _bucket_fired(
     benefic: list[rf.FiredRule] = []
     malefic: list[rf.FiredRule] = []
     neutral: list[rf.FiredRule] = []
+    excluded = EXCLUDED_RULES.get()
     for fr in rf.fire_house_cached(chart, sig.house, ctx):
         if tags and fr.rule.signification not in tags:
+            continue
+        if fr.rule.id in excluded:
             continue
         pol = fr.rule.polarity
         if pol in ("malefic", "maraka"):
@@ -1969,6 +1985,13 @@ def _putrakaraka_malefic_afflicted(chart: RamanChart) -> bool:
     return False
 
 
+def _fertility_step(verdict: Verdict) -> Verdict:
+    """The fertility gate's effect: decisive denial, or one step toward afflicted under G1."""
+    if not G1_FERTILITY_ONE_STEP:
+        return "afflicted"
+    return {"favourable": "mixed", "mixed": "afflicted"}.get(verdict, verdict)
+
+
 def _fertility_gate(
     chart: RamanChart, sig: Signification, verdict: Verdict,
     lead: FrameLedger, ctx: EvalContext,
@@ -1993,11 +2016,10 @@ def _fertility_gate(
     * Strong sphutas (and the unprinted one-weak partial case) ride along as metadata
       only. None-safe on sparse charts (a missing sphuta planet skips the gate entirely).
 
-    Metadata values are prefixed ``numeric_`` ('numeric_strong' / 'numeric_partial')
-    because only the NUMERIC odd/even sphuta test is evaluated here; the
-    HTJAH-I:5524-5527 aspect/Rahu-association clauses are deferred to the H5
-    judge and NOT checked by this gate — the values deliberately do not claim a
-    full fertility assessment.
+    Metadata values keep their ``numeric_`` prefix ('numeric_strong' / 'numeric_partial').
+    Since G2 (2026-10-30) the strong/weak flags come from Raman's full printed sphuta
+    test (``sphutas.printed_point_strong``, HTJAH-I:5521-5527); the navamsa-layer,
+    saptavarga-majority and sex-routing refinements are still not encoded.
     """
     if sig.house != 5 or not (
             sig.key in _FERTILITY_KEYS or "progeny" in sig.rule_tags):
@@ -2011,7 +2033,7 @@ def _fertility_gate(
         # Both seed and field barren -> denial (decisive; overrides any favourable/mixed
         # the placement evidence produced). A single weak sphuta is handled by the
         # one-weak 'numeric_partial' branch below (weighed, not denied).
-        verdict = "afflicted"
+        verdict = _fertility_step(verdict)
         return verdict, (("beeja_kshetra", "weak"),), lead
     if bk.beeja_strong and bk.kshetra_strong:
         return verdict, (("beeja_kshetra", "numeric_strong"),), lead
@@ -2033,7 +2055,7 @@ def _fertility_gate(
     if arm_a or arm_b:
         lead = dataclasses.replace(
             lead, flags=tuple(dict.fromkeys(lead.flags + ("FERTILITY_GATE",))))
-        verdict = "afflicted"
+        verdict = _fertility_step(verdict)
         return verdict, (("beeja_kshetra", "one_weak_denied"),), lead
     return verdict, (("beeja_kshetra", "numeric_partial"),), lead
 
@@ -2335,6 +2357,29 @@ def _rollup(verdicts: tuple[Verdict, ...]) -> Verdict:
     if "mixed" in present and "favourable" in present and "afflicted" not in present:
         return "mixed"
     return min(verdicts, key=lambda v: _ROLLUP_ORDER[v])
+
+
+def matter_breakdown(pf: HouseProforma) -> str:
+    """The house told by its matters, e.g. "favourable in 4 of 6 matters, mixed in 1, afflicted
+    in 1 (profession_trade)". A pure re-read of ``pf.significations``; it decides nothing.
+
+    User decision 2026-10-30 (HARSHNESS_DIAGNOSIS_2026-10-30.md): the rollup headline is the
+    worst matter, which on Raman's 389 conclusions gives 80 real errors against 40 for the
+    matters themselves, so every surface leads the house with this breakdown beside it."""
+    n = len(pf.significations)
+    counts = {v: [sv.signification for sv in pf.significations if sv.verdict == v]
+              for v in ("favourable", "mixed", "afflicted", "insufficient-evidence")}
+    parts: list[str] = []
+    for v in ("favourable", "mixed", "afflicted", "insufficient-evidence"):
+        keys = counts[v]
+        if not keys:
+            continue
+        label = "undecided" if v == "insufficient-evidence" else v
+        part = f"{label} in {len(keys)}" + (f" of {n} matters" if not parts else "")
+        if v != "favourable" and len(keys) < n:
+            part += f" ({', '.join(keys)})"
+        parts.append(part)
+    return ", ".join(parts)
 
 
 def judge_house(chart: RamanChart, house: int) -> HouseProforma:

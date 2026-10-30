@@ -28,6 +28,7 @@ from typing import Optional
 
 from app.raman_saab.ordinals import ordinal
 from app.raman_saab.procedure.citations import cite
+from app.raman_saab.procedure.grading import FIXES
 from app.raman_saab.procedure.matters import Matter
 from app.raman_saab.procedure.model import GRADES, Conclusion, Factor
 
@@ -48,10 +49,22 @@ def tally_steps(matter: Matter) -> tuple[str, str, str]:
     return ("house", "lord", third)
 
 
+def _children_floor(factors: dict[str, Factor]) -> bool:
+    """T1 (2026-10-28): whether any of the four factors, the view from the Moon included,
+    carries a redeeming benefic testimony. Raman denies a matter only when none does
+    (HTJAH:8669-8670, spec 4.4)."""
+    return any(f.redeeming for f in factors.values())
+
+
+_DENIED = "none: children denied"
+_FEW = "few or delayed: the house and lord are afflicted, but a benefic testimony redeems"
+
+
 def conclude(matter: Matter, factors: dict[str, Factor], *,
-             lagna_lord: Optional[Factor] = None, wealth_links: tuple[str, ...] = ()
-             ) -> Conclusion:
-    """Settle the verdict for ``matter`` from its graded factors."""
+             lagna_lord: Optional[Factor] = None, wealth_links: tuple[str, ...] = (),
+             life: Optional[tuple[float, str]] = None) -> Conclusion:
+    """Settle the verdict for ``matter`` from its graded factors. ``life`` is the engine's
+    computed span of life ``(years, class)`` when the chart has birth data (longevity only)."""
     steps = tally_steps(matter)
     votes = {s: factors[s].vote for s in steps}
     if matter.decider == "gains" and wealth_links:
@@ -69,7 +82,7 @@ def conclude(matter: Matter, factors: dict[str, Factor], *,
         rule, rule_cite = "the lord outweighs the house", cite("lord_over_house_brothers")
     if d == "children":
         if h == "bad" and lo == "bad":
-            verdict, outcome = "afflicted", "none: children denied"
+            verdict, outcome = "afflicted", (_FEW if _children_floor(factors) else _DENIED)
             rule, rule_cite = ("the house and lord are afflicted, so the karaka is set aside",
                                cite("two_afflicted_ignore_karaka"))
         elif h != "bad" and lo != "bad" and k == "bad":
@@ -87,7 +100,7 @@ def conclude(matter: Matter, factors: dict[str, Factor], *,
                                cite("children_not_denied"))
         else:
             outcome = {"favourable": "born", "mixed": "born, with blemish",
-                       "afflicted": "none: children denied"}[verdict]
+                       "afflicted": _FEW if _children_floor(factors) else _DENIED}[verdict]
     elif d == "mother":
         early = {"bad": "early loss of the mother is indicated",
                  "good": "no early loss is indicated",
@@ -152,6 +165,19 @@ def conclude(matter: Matter, factors: dict[str, Factor], *,
                 ("Saturn moves the band", f"Saturn {factors['karaka'].grade}: {span[moved]}")]
         rule, rule_cite = ("the Lagna lord against the 8th lord, then Saturn moves the band",
                            cite("longevity_lords") + ", " + cite("longevity_saturn"))
+        if life is not None:
+            years, cls = life
+            by_span = {"purna": "favourable", "madhya": "mixed", "alpa": "afflicted"}[cls]
+            # T2 (2026-10-28): the computed span is shown beside the lords' band.
+            subs.append(("the computed span (stage zero)",
+                         f"{years:.1f} years: {span[by_span]}"
+                         + ("" if by_span == moved else "; the lords' band above disagrees")))
+            if FIXES["F5_span_decides_longevity"]:
+                # F5: "the span of life comes first" (spec 2.2; HTJAH:763-765, 1578-1580).
+                verdict = by_span
+                rule = ("the computed span of life comes first; the lords and Saturn are shown "
+                        "beside it")
+                rule_cite = cite("span_first")
     elif d == "gains" and wealth_links:
         rule = ("yogas linking the 2nd, 5th, 9th and 11th lords outrank the 11th house ("
                 + "; ".join(wealth_links) + ")")

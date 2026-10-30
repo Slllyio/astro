@@ -6320,6 +6320,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         head = f"### House {mr.house} — {mr.name}: {mr.verdict.upper()}"
         if driver:
             head += f" (driven by _{driver}_)"
+        if pf is not None:
+            from app.raman_saab.judges.house_template import matter_breakdown
+            head += f" · matters: {matter_breakdown(pf)}"
         L.append(head)
         # v35 — say it to the person first, then the pillars. Adds; the technical rows below
         # are untouched.

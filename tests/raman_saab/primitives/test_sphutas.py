@@ -26,12 +26,19 @@ def _chart(lons: dict[str, float], asc_lon: float = 0.0) -> RamanChart:
 _DEG = 1.0 / 60.0  # arc-minute in degrees
 
 
+@pytest.fixture
+def parity_only(monkeypatch):
+    """Pin the parity component alone (the G2 switch off); the printed test is pinned below."""
+    monkeypatch.setattr(sphutas, "G2_PRINTED_SPHUTA_TEST", False)
+
+
 def test_kala_root_numbers_are_immutable():
     """KALA_ROOT_NUMBERS is a read-only mapping proxy (doctrine data is frozen)."""
     with pytest.raises(TypeError):
         sphutas.KALA_ROOT_NUMBERS["Sun"] = 0  # type: ignore[index]
 
 
+@pytest.mark.usefixtures("parity_only")
 class TestBeejaSphuta:
     def test_beeja_simple_sum_sixty_gemini(self):
         """Beeja = Sun 10 + Venus 20 + Jupiter 30 = 60 deg = Gemini (HTJAH-I:5517)."""
@@ -83,6 +90,7 @@ class TestBeejaSphuta:
         assert bk.beeja_strong is True
 
 
+@pytest.mark.usefixtures("parity_only")
 class TestKshetraSphuta:
     def test_kshetra_simple_sum_thirty_taurus(self):
         """Kshetra = Mars 10 + Moon 10 + Jupiter 10 = 30 deg = Taurus exactly:
@@ -278,3 +286,49 @@ class TestSahams:
         out = sphutas.sahams(_chart(_C109, asc_lon=_C109_ASC))
         for s in out.values():
             assert s.citations and all(verify(c) for c in s.citations)
+
+
+@pytest.fixture(scope="module")
+def chart88():
+    """Raman's Chart 88 (HTJAH-I:5529), the same nativity as golden HTJAH-I.chart_10."""
+    from app.raman_saab.chart.adapter import cast_chart
+    from app.raman_saab.chart.model import BirthData
+    return cast_chart(BirthData("c88", 1912, 8, 8, 19, 35, 5.5, 13.0, 77.5833), ayanamsa="raman")
+
+
+@pytest.fixture(scope="module")
+def chart89():
+    """Raman's Chart 89 (HTJAH-I:5553), the same nativity as golden HTJAH-I.chart_12."""
+    from app.raman_saab.chart.adapter import cast_chart
+    from app.raman_saab.chart.model import BirthData
+    return cast_chart(BirthData("c89", 1918, 10, 16, 14, 20, 5.5, 13.0, 77.5833), ayanamsa="raman")
+
+
+class TestPrintedSphutaTest:
+    """G2, Raman's printed sphuta test (FIDELITY_FIXES_PREREG Addenda 18-20)."""
+
+    @pytest.fixture
+    def g2(self, monkeypatch):
+        monkeypatch.setattr(sphutas, "G2_PRINTED_SPHUTA_TEST", True)
+
+    def test_printed_test_is_the_default(self):
+        """User decision 2026-10-30: the printed test ships (Addendum 20)."""
+        assert sphutas.G2_PRINTED_SPHUTA_TEST is True
+
+    def test_chart88_beeja_in_cancer_is_strong(self, g2, chart88):
+        """Chart 88: Beeja in Cancer, aspected by Jupiter, odd Navamsa -> strong (HTJAH-I:5543-5551)."""
+        assert sphutas.beeja_kshetra(chart88).beeja_strong
+
+    def test_chart89_kshetra_in_sagittarius_is_strong(self, g2, chart89):
+        """Chart 89: Kshetra in Sagittarius, aspected by Jupiter, even Navamsa -> fertile (HTJAH-I:5574-5577)."""
+        assert sphutas.beeja_kshetra(chart89).kshetra_strong
+
+    def test_chart90_beeja_in_capricorn_is_weak(self, chart88):
+        """Chart 90: Beeja 271 = Capricorn 1, a malefic sign -> sterile (HTJAH-I:5600-5605)."""
+        assert not sphutas.printed_point_strong(chart88, 271.0, want_odd=True)
+
+    def test_parity_only_reads_charts_88_and_89_weak(self, monkeypatch, chart88, chart89):
+        """The old parity-only test contradicts Raman on both worked fertile points (why G2 shipped)."""
+        monkeypatch.setattr(sphutas, "G2_PRINTED_SPHUTA_TEST", False)
+        assert not sphutas.beeja_kshetra(chart88).beeja_strong
+        assert not sphutas.beeja_kshetra(chart89).kshetra_strong

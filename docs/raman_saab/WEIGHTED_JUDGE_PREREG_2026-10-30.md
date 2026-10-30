@@ -65,3 +65,36 @@ W1 passes the rule but the interval on W1 minus B3 includes 0, the result is rep
   final test is on 4 and 5.
 - B3 needs no fitting, so it is the fair bar. If W1 cannot beat it, the honest product judge is
   B3-like (a cited count of what fires), and W1's value is limited to calibrated probabilities.
+
+## Addendum 1 (2026-10-30): weights graded, development check run, W1 frozen
+
+**Weights.** Two blind graders graded all 739 polar rules. They agreed exactly on 91.1%
+(kappa 0.69). Grades: 1 for about 83%, 3 for 27 rules, 0.5 for 55-66, 0.25 for 24-40. Weight
+is the mean of the two (`weighted_judge/rule_weights.json`; both graders' grades in
+`rule_weight_grades.json`). Note: the two graders shared a scratch folder; each reports
+reading only the rules file and writing its own output.
+
+**Development check (fit on pool, scored on hold-outs 1-3, 198 rows):**
+
+| | exact | within one | real errors | macro recall | log-loss |
+|---|---|---|---|---|---|
+| W1 | 125 | 132 | 66 | 0.445 | 0.786 |
+| B3 (polarity count) | **131** | 138 | 60 | 0.433 | - |
+| E (shipped engine) | 87 | **150** | **48** | 0.347 | - |
+| class frequencies | - | - | - | - | 0.838 |
+| W1 with every weight 1 (exploratory, not pre-registered) | 125 | 132 | 66 | 0.428 | 0.800 |
+
+Fitted on the pool: b 0.52, m 0.34, lord/karaka term l 0.05 (about zero), and W1 never predicts
+"mixed".
+
+What this shows:
+- W1 does **not** beat B3 on the development check (125 vs 131 exact, 66 vs 60 real errors).
+- The text-graded weights add calibration only (log-loss 0.786 vs 0.800 with unit weights),
+  not exact matches.
+- The lord and karaka condition, as the engine computes it, carries no information about
+  Raman's verdict once the fired rules are counted.
+- The fired rules carry little information: log-loss improves only from 0.838 to 0.786.
+  What Raman uses to decide is mostly not in the engine's fired rules.
+
+W1 is frozen as pre-registered (`weighted_judge/w1_frozen.json`). Recommendation recorded for
+the user: do not spend hold-outs 4 and 5 on W1, since it already trails B3 on development data.

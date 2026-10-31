@@ -1010,3 +1010,33 @@ and conclusion text checked in the new window): HTJAH-I x13, x65, x67, x68, x69,
 x75, x79, x80; HTJAH-II x226. HTJAH-II h11_02 (spouse) now also cites HTJAH-II:1638-1680, where
 the same birth data is printed as the 7th-house Chart No. 12 with the conclusion "happy married
 life". Unscored DRAFT rows with the same defect (42) are listed by the check and left alone.
+
+## Addendum 37 (2026-10-31): the whole pool re-reviewed, labels re-based
+
+User decision 2026-10-31 ("Apply, and check every row"). The 8 changes of Addendum 36 were applied
+(262/386/357/29). Then the 319 scored rows not yet reviewed (every former exact match and every
+one-step miss outside the Addendum 34 sample) were read by two more engine-blind reviewers each,
+16 in all, eight packets of about 40 (`label_review_2026-10-31/blind_key_full.json`,
+`out_Q*.json`), with the Addendum 34 brief and rule unchanged. The two rows where reviewers split
+with neither agreeing with gold went to a third engine-blind reader (`out_third.json`); a change
+needed two of three at medium confidence or better.
+
+| Group | rows | stands | relabel | demoted (no conclusion) | low-confidence agreement, stands | split, stands |
+|---|---|---|---|---|---|---|
+| Former exact matches | 228 | 196 | 10 | 18 | 3 | 1 |
+| Former one-step misses | 91 | 81 | 7 | 3 | 0 | 0 |
+
+The demotions are matters Raman never concludes on: mostly NH rows whose matter was inferred
+from a related remark (the 4th house read only for education scored as "mother" or "happiness";
+a father's death only timed by dasa; a marriage only dated). Relabels include HTJAH-II chart_35
+H8/death afflicted → favourable (long life, died at 70), NH chart_35 (Tagore) H5 favourable →
+afflicted ("Of his five children, two were the survivors"), and several favourable → mixed where
+Raman's verdict is gain-then-loss (Hitler, the Nizam, C. R. Das career and wealth).
+
+**Result (no engine change): 238/365 exact (65.2%), 332/365 within one step (91.0%), 33 real
+errors.** Real errors rise 29 → 33: four corrected labels now contradict the engine
+(HTJAH-I h6_12 H4/education, HTJAH-II chart_35 H8/death, NH chart_35 H5/children, NH chart_37
+H7/spouse) and none of the 29 left. This is the figure with every scored label read twice blind
+against Raman's text, so it replaces 263/389 as the honest in-pool figure. The fall in exact
+matches comes mostly from removing rows the engine "matched" on conclusions Raman never drew.
+Hold-outs untouched.

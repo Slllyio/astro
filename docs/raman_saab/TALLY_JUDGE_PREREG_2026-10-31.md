@@ -89,3 +89,17 @@ else:
    counts +1 instead of -1 (Raman: malefics in the 3rd, 6th and 11th do good).
 Same model, same stages, same stop rule (development check exact must be above B3's 131), and
 the same one-time final test on hold-outs 4 and 5 only with the user's say-so.
+
+## Addendum 3 (2026-10-31): T2 development check, FAILS the stop rule
+
+| | Pool exact (in-sample) | Pool log-loss | H1-3 exact | H1-3 real errors | H1-3 log-loss |
+|---|---|---|---|---|---|
+| T1 | 193 | 0.940 | 124 | 67 | 0.831 |
+| **T2** | 210 | 0.933 | **118** | 73 | 0.819 |
+| B3 (simple rule count) | 253 | - | **131** | 60 | - |
+| class frequencies | - | 0.945 | - | - | 0.838 |
+
+Functional nature and the upachaya exception make the tally slightly more informative (log-loss
+0.819 vs 0.831 on hold-outs 1-3; +17 exact on the pool), but on the hold-outs it gets fewer exact
+matches (118), still never predicts "mixed", and stays well below B3. Not frozen; hold-outs 4 and
+5 not proposed. (The runner's output labels the column "T1"; with `--T2` it is T2.)

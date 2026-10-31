@@ -1,0 +1,57 @@
+{
+  "n": 2000,
+  "seed": 20261031,
+  "verdict_share": {
+    "marriage": {
+      "MIXED": 0.7455,
+      "DENIED": 0.163,
+      "PROMISED": 0.08,
+      "NOT_SIGNIFIED": 0.0115
+    },
+    "health": {
+      "MIXED": 0.5685,
+      "DENIED": 0.272,
+      "PROMISED": 0.115,
+      "NOT_SIGNIFIED": 0.0445
+    },
+    "wealth": {
+      "PROMISED": 0.8165,
+      "NOT_SIGNIFIED": 0.1835
+    },
+    "service": {
+      "MIXED": 0.743,
+      "PROMISED": 0.1245,
+      "DENIED": 0.1135,
+      "NOT_SIGNIFIED": 0.019
+    }
+  },
+  "changes_within_window": {
+    "marriage": {
+      "\u00b12min": 0.27,
+      "\u00b15min": 0.5005,
+      "\u00b115min": 0.597
+    },
+    "health": {
+      "\u00b12min": 0.382,
+      "\u00b15min": 0.661,
+      "\u00b115min": 0.7765
+    },
+    "wealth": {
+      "\u00b12min": 0.1975,
+      "\u00b15min": 0.3545,
+      "\u00b115min": 0.429
+    },
+    "service": {
+      "\u00b12min": 0.2845,
+      "\u00b15min": 0.4915,
+      "\u00b115min": 0.589
+    }
+  },
+  "marriage_timing_coverage_age20_40": {
+    "charts": 500,
+    "mean": 0.598,
+    "min": 0.0,
+    "max": 1.0
+  },
+  "marriage_csl_houses_signified_mean": 5.03
+}

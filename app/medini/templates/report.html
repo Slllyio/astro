@@ -1804,6 +1804,7 @@ const SEC_ID={
   'What matters most':'digest','Your Reading':'plain_reading','Judgment graph':'judgment_graph',
   'How to read this report':'interpretation_guide',
   'How Raman would weigh this chart':'philosophy',
+  'For and against, matter by matter':'for_against',
   'Planet biographies (dominant grahas)':'planet_bios',
   'Plain terms — every technical word, with why it matters':'plain_terms_panel',
   'Chart signature':'chart_signature','Ruler of the nativity':'ruler','Psychological profile':'psych',
@@ -2936,6 +2937,23 @@ function render(R, S, FQ){
           :w.houses.map(x=>'house '+x[0]+' ('+x[1].join(', ')+')').join('; ');
         add(para(w.title+' — '+where+': '+w.how+' “'+w.quote+'” ('+w.cite+')')); }
     } else add(para(t('No house on this chart turns on one of these weighing principles.'),'muted'));
+  }
+
+  // ===== For and against, matter by matter (v43, for_against.py) — every cited rule for and
+  // against each matter, and their plain count. =====
+  const fa=R.for_against;
+  if(fa){
+    sec('for_against'); add(H2('For and against, matter by matter')); plainLead('for_against');
+    add(para(t(fa.notice),'lede'));
+    let cur=null;
+    for(const m of (fa.matters||[])){
+      if(m.house!==cur){ cur=m.house; add(para(t('House '+m.house),'muted')); }
+      const agree=(m.lean==='leans favourable'&&m.judge_verdict==='favourable')||
+                  (m.lean==='leans afflicted'&&m.judge_verdict==='afflicted');
+      add(para(m.matter+' — '+m.count_line+(agree?'':' (the clause judge reads it '+m.judge_verdict+')')));
+      for(const x of (m.reasons_for||[])) add(para('For: '+x.reading+' ('+x.cite+', '+x.rule_id+')','muted'));
+      for(const x of (m.reasons_against||[])) add(para('Against: '+x.reading+' ('+x.cite+', '+x.rule_id+')','muted'));
+    }
   }
 
   // ===== The integrated reading (v34) — the theme synthesis, ABOVE the technical sections.

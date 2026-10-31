@@ -790,6 +790,11 @@ _SECTION_SPECS: tuple[SectionSpec, ...] = (
     # foundation, and which weighing principle is at work in each house. Appended at the END
     # per the append-only default; placed by the arc right after the interpretation guide.
     SectionSpec("philosophy", "## How Raman would weigh this chart", 'id="philosophy"', "v42"),
+    # v43 (2026-10-31, user-requested after the ceiling check, reason coding and tally studies):
+    # for and against, matter by matter — every cited rule that speaks for and against each
+    # matter, and their plain count (the measured best judge out of sample). Appended at the
+    # END per the append-only default; placed by the arc right after the house-by-house reading.
+    SectionSpec("for_against", "## For and against, matter by matter", 'id="for_against"', "v43"),
     # (The six empirical-engine rows above were appended at the END of the SET per the
     # append-only default; since the 2026-10-14 merge their reading position is set
     # by the arc in `report_movements`, like every other section.)
@@ -2969,6 +2974,9 @@ class DetailedReport:
     # append-only 2026-10-30 (v42, user-requested: "use the findings" of the philosophy study):
     # how Raman would weigh this chart. Report-only (PREC-10). `philosophy.ChartPhilosophy`.
     philosophy: object = None
+    # append-only 2026-10-31 (v43, user-requested): for and against, matter by matter.
+    # Report-only (PREC-10). `for_against.ForAgainst`.
+    for_against: object = None
 
 
 @dataclass(frozen=True)
@@ -4742,6 +4750,11 @@ def build_detailed_report(
     except Exception:  # noqa: BLE001
         logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
+    try:
+        from app.raman_saab.for_against import for_against
+        enriched = _dc_replace(enriched, for_against=for_against(enriched))
+    except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
 
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
     final = _dc_replace(enriched, nichod=build_nichod(enriched),
@@ -5484,6 +5497,31 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         else:
             L.append("_No house on this chart turns on one of these weighing principles._")
         L.append("")
+
+    # ── v43 for and against, matter by matter (for_against) ───────────────────
+    _fa = getattr(r, "for_against", None)
+    if _fa is not None:
+        L.start("for_against")
+        L.append("## For and against, matter by matter")
+        L.append("")
+        L.append(f"_{_fa.notice}_")
+        L.append("")
+        _cur = None
+        for m in _fa.matters:
+            if m.house != _cur:
+                _cur = m.house
+                L.append(f"### House {m.house}")
+                L.append("")
+            judge = ("" if (m.lean == "leans favourable" and m.judge_verdict == "favourable")
+                     or (m.lean == "leans afflicted" and m.judge_verdict == "afflicted")
+                     else f" (the clause judge reads it {m.judge_verdict})")
+            L.append(f"**{m.matter.capitalize()}** — {m.count_line}{judge}")
+            L.append("")
+            for tag, rs in (("For", m.reasons_for), ("Against", m.reasons_against)):
+                for x in rs:
+                    L.append(f"- {tag}: {x.reading} ({x.cite}, {x.rule_id})")
+            if m.reasons_for or m.reasons_against:
+                L.append("")
 
     # ── how to read this report (v18, chart-independent interpretation guide) ─
     from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as _IG

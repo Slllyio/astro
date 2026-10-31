@@ -101,3 +101,21 @@ class TestSplitAndLedger:
         with pytest.raises(ReuseError):
             led.check_test("p1", rect[:1])
         assert EventLedger.from_dict(led.to_dict()).used == led.used
+
+
+class TestStabilityBand:
+    def test_band_covers_every_minute_for_every_cusp(self) -> None:
+        """Each cusp's runs tile the window with no gap or overlap."""
+        from app.kp.rectify import stability_band
+        b = stability_band(BANGALORE, 10)
+        for c in range(1, 13):
+            rs = b.cusp_runs(c)
+            assert rs[0].start == -10 and rs[-1].end == 10
+            assert all(x.end + 1 == y.start for x, y in zip(rs, rs[1:]))
+
+    def test_zero_window_is_all_stable_and_matches_cast(self) -> None:
+        """With no uncertainty every cusp is stable at the cast's own sub-lord."""
+        from app.kp.rectify import stability_band
+        b = stability_band(BANGALORE, 0)
+        chart = cast(BANGALORE)
+        assert all(b.stable(c) == chart.cusp(c).sub_lord for c in range(1, 13))

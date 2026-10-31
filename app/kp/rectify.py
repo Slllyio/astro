@@ -45,7 +45,7 @@ Usage:
     events = [KPEvent("marriage", 2016, 2, 14), KPEvent("service_start", 2012, 7, 1)]
     result = rectify(birth, events, window_minutes=30)
     print(result.to_markdown())
-    kp_birth = result.kp_birth()     # feed to app.kp.judgment.judge
+    band = stability_band(birth, 15)  # default hand-off: stated time + which sub-lords hold
 """
 
 from __future__ import annotations
@@ -313,7 +313,12 @@ class RectificationResult:
         return (better + 0.5 * ties) / n if n else 0.5
 
     def kp_birth(self) -> Birth:
-        """The rectified birth for the KP engine: centre of the top set, window covering all of it."""
+        """The rectified birth: centre of the top set, window covering all of it.
+
+        UNVALIDATED (T1 could not be run, docs/kp/RECTIFICATION_T1_RESULTS.md). Per the user's
+        decision of 2026-10-31 the KP engine keeps the STATED time and reads
+        :func:`stability_band` instead; this hand-off is shown beside it, never in its place.
+        """
         lo, hi = min(self.top_offsets), max(self.top_offsets)
         mid = (lo + hi) / 2
         b = self.birth.shifted(mid)
@@ -402,7 +407,9 @@ def rectify(birth: Birth, events: Sequence[KPEvent], *, window_minutes: int = 30
                      "window spans all of them.")
     if res.top_share > 0.5:
         notes.append(f"The top score covers {res.top_share:.0%} of the window: these events do not pick out a time.")
-    notes.append("Not validated: see docs/kp/RECTIFICATION_PREREG_2026-10-31.md for the measured recovery rate.")
+    notes.append("Not validated: the real-data recovery test could not be run (no people qualified, "
+                 "docs/kp/RECTIFICATION_T1_RESULTS.md). Use the stated time and stability_band() for KP "
+                 "readings; this result is shown beside it, not in its place.")
     return RectificationResult(birth, window_minutes, tuple(minutes), tuple(events), tuple(notes))
 
 
@@ -456,8 +463,82 @@ class EventLedger:
         return cls({p: set(v) for p, v in d.items()})
 
 
+# --- the stability band (the default hand-off while rectification is unmeasured) ---
+
+@dataclass(frozen=True, slots=True)
+class SubLordRun:
+    """One cusp's sub-lord over a contiguous span of the window (offsets in minutes)."""
+
+    cusp: int
+    sub_lord: str
+    start: int
+    end: int
+
+
+@dataclass(frozen=True)
+class StabilityBand:
+    """Which cusp sub-lords hold across the stated time's uncertainty window, and which flip."""
+
+    birth: Birth
+    window_minutes: int
+    runs: tuple[SubLordRun, ...]
+
+    def cusp_runs(self, cusp: int) -> tuple[SubLordRun, ...]:
+        return tuple(r for r in self.runs if r.cusp == cusp)
+
+    def stable(self, cusp: int) -> Optional[str]:
+        """The cusp's sub-lord if it is the same over the whole window, else None."""
+        rs = self.cusp_runs(cusp)
+        return rs[0].sub_lord if len(rs) == 1 else None
+
+    @property
+    def stable_cusps(self) -> tuple[int, ...]:
+        return tuple(c for c in range(1, 13) if self.stable(c))
+
+    def to_dict(self) -> dict:
+        return {
+            "stated": f"{self.birth.year:04d}-{self.birth.month:02d}-{self.birth.day:02d} "
+                      f"{self.birth.hour:02d}:{self.birth.minute:02d}",
+            "window_minutes": self.window_minutes,
+            "stable_cusps": {c: self.stable(c) for c in self.stable_cusps},
+            "flipping_cusps": {c: [(r.sub_lord, r.start, r.end) for r in self.cusp_runs(c)]
+                               for c in range(1, 13) if not self.stable(c)},
+        }
+
+    def to_markdown(self) -> str:
+        d = self.to_dict()
+        L = [f"## Cusp sub-lord stability for {d['stated']} ±{self.window_minutes} min", "",
+             "The KP engine uses the stated time. Only readings that rest on a stable cusp sub-lord "
+             "hold whatever the exact minute.", "",
+             "| cusp | sub-lord over the window |", "|---|---|"]
+        for c in range(1, 13):
+            rs = self.cusp_runs(c)
+            if len(rs) == 1:
+                L.append(f"| {c} | {rs[0].sub_lord} (stable) |")
+            else:
+                L.append(f"| {c} | " + "; ".join(f"{r.sub_lord} {r.start:+d}..{r.end:+d}" for r in rs)
+                         + " (CHANGES) |")
+        return "\n".join(L)
+
+
+def stability_band(birth: Birth, window_minutes: float | None = None, *,
+                   node_mode: str = "mean") -> StabilityBand:
+    """Cusp sub-lords minute by minute across ``birth`` ± window (default: its uncertainty_minutes)."""
+    w = int(round(window_minutes if window_minutes is not None else birth.uncertainty_minutes))
+    subs = [tuple(c.sub_lord for c in cast(birth.shifted(k), node_mode=node_mode).cusps)
+            for k in range(-w, w + 1)]
+    runs: list[SubLordRun] = []
+    for i in range(12):
+        start = -w
+        for k in range(1, len(subs) + 1):
+            if k == len(subs) or subs[k][i] != subs[k - 1][i]:
+                runs.append(SubLordRun(i + 1, subs[k - 1][i], start, k - 1 - w))
+                start = k - w
+    return StabilityBand(birth, w, tuple(runs))
+
+
 __all__ = [
     "KPEventType", "KP_EVENT_TYPES", "KPEvent", "EventScore", "score_event", "MinuteScore",
     "score_minute", "RectificationResult", "rectify", "SPLIT_SALT", "split_events",
-    "ReuseError", "EventLedger",
+    "ReuseError", "EventLedger", "SubLordRun", "StabilityBand", "stability_band",
 ]

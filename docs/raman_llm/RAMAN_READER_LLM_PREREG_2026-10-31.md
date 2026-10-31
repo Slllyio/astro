@@ -86,3 +86,17 @@ Until someone marks it, the report must say the prose is not blind-judged.
 After the folds, one adapter is trained on all 651 rows (tools/raman_llm/read.py). Its readings
 are a model of how Raman wrote, not a forecast; its fold numbers above are the only evidence of
 how well it matches him.
+
+## Addendum 2026-10-31 (before any model was trained or scored)
+
+The user's GPU is an AMD Radeon RX 9060 XT, 15.9 GB, run through AMD's ROCm PyTorch for Windows
+(torch 2.9.1+rocm7.13.0) with bitsandbytes 0.50.2's native ROCm library. The section 5 table
+would pick Qwen3-8B for 15.9 GB. The user asked for the best model their GPU can train, and
+section 5's rule is "the largest Qwen3 that fits", so Qwen3-14B in 4-bit is tried first. If it
+runs out of memory, Qwen3-8B is used, as section 5 already says.
+
+The 14B weights are loaded from `unsloth/Qwen3-14B-bnb-4bit` (base model Qwen/Qwen3-14B), an
+nf4 pre-quantization with double-quant, bf16 compute and lm_head left unquantized, which are the
+same settings train_eval.py applies on load. The reason is download size: 9.9 GB instead of
+29.5 GB on a connection of about 0.2-1 MB/s. Nothing else changes: same split, pass bar,
+LoRA r/alpha, epochs, lr, batch, max length and seed.

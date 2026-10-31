@@ -28,6 +28,16 @@ CLASSES = ("afflicted", "mixed", "favourable")
 BENEFICS = ("Jupiter", "Venus", "Mercury")
 MALEFICS = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
 GOOD_DIGNITY = {"exalt", "moolatrikona", "own"}
+VARIANT = "T1"   # "T2": functional nature by frame + upachaya exception (prereg Addendum 2)
+
+
+def _sign(q: str, frame_sign: int) -> int:
+    """Influence of planet q: natural nature (T1) or functional nature for the frame (T2)."""
+    if VARIANT == "T2" and q not in ("Rahu", "Ketu"):
+        from app.raman_saab.primitives.functional_nature import compute_functional_nature
+        n = compute_functional_nature(frame_sign, q)
+        return 1 if n in ("benefic", "yogakaraka") else -1 if n == "malefic" else 0
+    return 1 if q in BENEFICS else -1 if q in MALEFICS else 0
 BAD_DIGNITY = {"debil", "enemy"}
 
 
@@ -43,7 +53,7 @@ def _house_from(chart, frame_sign: int, planet: str) -> int:
     return (chart.planets[planet].sign - frame_sign) % 12 + 1
 
 
-def _associations(chart, planet, drishti):
+def _associations(chart, planet, drishti, frame_sign):
     """+1 per benefic joining/aspecting, -1 per malefic, -1 if combust."""
     p = chart.planets[planet]
     s = 0
@@ -52,7 +62,7 @@ def _associations(chart, planet, drishti):
             continue
         touches = chart.planets[q].sign == p.sign or drishti.aspects_planet(q, planet, chart)
         if touches:
-            s += 1 if q in BENEFICS else -1 if q in MALEFICS else 0
+            s += _sign(q, frame_sign)
     if p.combust_fraction > 0:
         s -= 1
     return s
@@ -102,16 +112,19 @@ def factors(chart, house: int, sig: str, karaka: str) -> dict[str, int]:
             d = _house_from(chart, fs, lord)
             f["lord_place"] += 1 if d in (1, 4, 7, 10, 5, 9) else -1 if d in (6, 8, 12) else 0
             f["lord_dignity"] += _dignity_score(chart, lord, dignity)
-            f["lord_assoc"] += _associations(chart, lord, drishti)
+            f["lord_assoc"] += _associations(chart, lord, drishti, fs)
             if drishti.aspects_house(lord, th, chart) and chart.planets[lord].rasi_house != th:
                 f["aspects"] += 1
         for q, p in chart.planets.items():
             if q == lord:
                 continue
             if p.rasi_house == th:
-                f["occupants"] += 1 if q in BENEFICS else -1 if q in MALEFICS else 0
+                v = _sign(q, fs)
+                if VARIANT == "T2" and house in (3, 6, 11) and v < 0:
+                    v = 1
+                f["occupants"] += v
             elif drishti.aspects_house(q, th, chart):
-                f["aspects"] += 1 if q in BENEFICS else -1 if q in MALEFICS else 0
+                f["aspects"] += _sign(q, fs)
         if hemming.hemmed_house(chart, th, "malefic"):
             f["hemming"] -= 1
         if hemming.hemmed_house(chart, th, "benefic"):
@@ -124,7 +137,7 @@ def factors(chart, house: int, sig: str, karaka: str) -> dict[str, int]:
         f["karaka"] += _dignity_score(chart, karaka, dignity)
         if chart.planets[karaka].rasi_house in (6, 8, 12):
             f["karaka"] -= 1
-        f["karaka"] += _associations(chart, karaka, drishti)
+        f["karaka"] += _associations(chart, karaka, drishti, chart.asc_sign)
         f["navamsa"] += _navamsa_score(chart, karaka, rel, SIGN_LORDS)
     if lagna_lord and lagna_lord != karaka:
         f["navamsa"] += _navamsa_score(chart, lagna_lord, rel, SIGN_LORDS)
@@ -219,7 +232,10 @@ def _freq(rows):
 
 
 def main(cmd):
+    global VARIANT, DIR, PARAMS
     sys.path.insert(0, ".")
+    if "--T2" in sys.argv:
+        VARIANT = "T2"; DIR = Path("docs/raman_saab/tally_judge_t2"); PARAMS = DIR / "t2_frozen.json"
     from tests.raman_saab import test_goldens as tg
     DIR.mkdir(parents=True, exist_ok=True)
     pool = rows_for(tg._TRACK_B_RATCHET, True)

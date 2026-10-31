@@ -61,3 +61,18 @@ is decisive. If mean Jaccard is under 0.5, the ranking is reported as unreliable
 
 - Everything here is in-sample to the pool. It finds candidates; it does not measure gains.
 - Raman's prose names reasons selectively; a factor he omits may still have weighed with him.
+
+## Addendum 1 (2026-10-31): coefficient model on the coded factors (user request), fixed before any coding exists
+
+User asked (2026-10-31) for machine learning to give "coefficients of all the factors" that
+influence Raman's judgement. Added as Step 4, fixed now:
+- Features per conclusion: for each of the 18 factor types, the signed count of Raman's stated
+  factors (+1 per favourable mention, -1 per adverse), and a separate signed indicator for the
+  decisive one.
+- Model 1: ordinal logistic regression with L2 penalty, penalty chosen by leave-one-chart-out
+  cross-validation; coefficients reported with chart-clustered bootstrap 95% intervals.
+- Model 2: gradient-boosted trees (shallow, depth 2) with SHAP values, to show interactions;
+  leave-one-chart-out accuracy reported.
+- **These coefficients describe how Raman's stated reasons map to his verdict. They are not a
+  predictive engine:** the features come from his own text. To use a factor in the engine it
+  must be computed from the chart, then pre-registered and tested on unseen data.

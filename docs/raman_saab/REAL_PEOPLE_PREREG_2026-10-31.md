@@ -61,3 +61,4 @@ committed. The repository holds only this protocol, the tool, hashes and aggrega
 | Date | Event | sha256 / note |
 |---|---|---|
 | 2026-10-31 | Protocol and tool committed; tool checked on synthetic data only | n/a |
+| 2026-10-31 08:35 UTC | Batch 1 sealed: 20 people (P01-P20), birth details only; no facts collected. Vaishali excluded (her facts were seen 2026-10-30 before any seal). Assumptions: "sitaberi mela ground" cast at Nagpur Sitabuldi 21.15N 79.08E, "05.34" read as a.m., Sultanpur MP cast at Raisen-district Sultanpur 23.14N 77.93E; time quality "family-given" for all | cc1e6bb39eabbd22907db979890cfe923cf70faf179fd79c093088e646ae19fb |

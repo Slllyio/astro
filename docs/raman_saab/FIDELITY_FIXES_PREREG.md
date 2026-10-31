@@ -1019,3 +1019,49 @@ branch's HEAD: G2 and S2 on, C2 off) written, unread, to
 
 Limits: 36 rows is small; with hold-out 4's 28 the joint test has 64. Conclusions come from the
 hold-out 2 extraction, so where that extraction mis-mapped a house, the error stands.
+
+## Addendum 33 (2026-10-31): R5, C1 and C4 on hold-outs 4+5, fixed before any C1 or C4 number exists and before either hold-out is read
+
+User decision 2026-10-31 ("GO AHEAD" to pre-registering the held variants and scoring them once
+on both fresh sets). The Rethink thread's tally judges T1 and T2 failed their development stop
+rule and do not claim these sets; its W1 judge is frozen but is not proposed for them. So this
+is the only use of hold-outs 4 and 5.
+
+**Variants** (each a switch, off by default; nothing is shipped by this addendum):
+- **R5**: exactly as specified in Addendum 2 and coded in Addendum 3 (the held patch
+  `held_patches/R5_general_lord_affliction_2026-10-24.patch`, unchanged). Its pool figure is
+  already known (269/362/34 against that day's V0; it failed the pool rule).
+- **C1**: weakness is not affliction (3HCC:877-881, HTJAH-I:18225-18227, HTJAH-I:503-505). At
+  clause 6, when a weak pillar would give `afflicted` but **no malefic rule fired** (the
+  afflicted rests on weak Bhava Bala or maraka pressure alone), the base is `mixed` instead.
+  Nothing else changes. This is close to M1 (Addendum 10), which failed the pool rule; C1 keeps
+  the evidence and demotes one step, where M1 dropped the evidence. It is said here plainly that
+  C1 was formed after M1's numbers were seen, so only fresh charts can test it.
+- **C4**: the relief check on the karaka veto (3HCC:11228-11230, NH:6230-6231). The review of
+  decisive paths found: clause 1.5 already requires no benefic contradiction; H7.C.82 already
+  requires no benefic relief; the fertility gate was handled by G1 and G2. The one decisive
+  path with no relief test is the clause 1 karaka veto. Under C4, when the karaka is not intact
+  but Jupiter or Venus (other than the karaka itself) is in the karaka's sign or aspects it
+  (Raman's whole-sign drishti, `drishti.aspects_planet`), the veto gives `mixed` (one step)
+  instead of `afflicted`. Under the longevity guard it stays insufficient-evidence.
+
+**Measure.** Scored once each: V0 (the engine at this branch's HEAD, re-run at scoring time,
+since hold-out 4's sealed V0 predates G2 (Addendum 28); the sealed V0 files are checked by
+SHA-256 and both versions reported), R5, C1, C4, and the passing variants together. Also
+reported, no fitting, as the Rethink thread asked: **B3** (count the fired benefic and malefic
+rules in the signification's lead ledger; favourable if benefic >= malefic, else afflicted; as in
+`tools/raman_saab/ceiling_check.py`, PR #27) and **always-favourable**. For each: exact,
+within-one, real errors, per book, and macro recall over the three labels, on hold-out 4,
+hold-out 5 and the 64 rows together. The pool figures of C1 and C4 are measured too and
+reported, for information only.
+
+**Decision rule** (the one rule, on the 64 rows together): a variant passes only if real errors
+do not rise, overall or in any book; within-one does not fall; and exact rises or real errors
+fall, all against V0 re-run. A passing variant still goes to the user, who decides whether to
+ship. Two limits are stated in advance: (1) with 64 rows a pass or fail by one or two rows is
+weak evidence either way; (2) hold-out 4 and 14 of hold-out 5's 24 natives are printed-sign
+charts with no Shadbala, so they go through the clause 3 fallback, and C1 (a clause 6 change)
+can only move rows on the 10 cast natives of hold-out 5. If a variant passes the rule but stays
+below B3, that is reported as the headline, not the pass.
+
+After this reading, hold-outs 4 and 5 are spent.

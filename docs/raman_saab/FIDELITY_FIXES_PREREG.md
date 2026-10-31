@@ -1065,3 +1065,36 @@ can only move rows on the 10 cast natives of hold-out 5. If a variant passes the
 below B3, that is reported as the headline, not the pass.
 
 After this reading, hold-outs 4 and 5 are spent.
+
+## Addendum 34 (2026-10-31): R5, C1 and C4 scored once on hold-outs 4+5
+
+Run by `tools/raman_saab/score_batch33.py` (code committed in e36e4e52, before the run); raw
+output in `docs/raman_saab/batch33/`. Both sealed V0 files matched their SHA-256, and the V0
+re-run at HEAD gives the same verdict on all 64 rows (G2 moves nothing here), so the sealed and
+re-run V0 are one figure.
+
+| Judge | H4 (28) exact / w1 / real | H5 (36) | H4+H5 (64) | macro recall |
+|---|---|---|---|---|
+| V0 (engine) | 12 / 20 / 8 | 17 / 30 / 6 | **29 / 50 / 14** | 0.369 |
+| R5 | 12 / 20 / 8 | 17 / 31 / 5 | 29 / 51 / 13 | 0.369 |
+| C1 | 12 / 20 / 8 | 17 / 30 / 6 | 29 / 50 / 14 | 0.369 |
+| C4 | 12 / 20 / 8 | 17 / 30 / 6 | 29 / 50 / 14 | 0.369 |
+| B3 (rule count) | 18 / 19 / 9 | 22 / 26 / 10 | **40 / 45 / 19** | 0.408 |
+| always-favourable | 19 / 20 / 8 | 19 / 23 / 13 | 38 / 43 / 21 | 0.333 |
+
+Verdicts under the rule:
+- **R5 passes, by one row.** It changes a single verdict, HTJAH-I chart 25 H10/career, from
+  insufficient-evidence to afflicted, which is Raman's label: within-one +1, real errors -1, no
+  book rises. One row is not evidence of a general effect. On the pool, at today's engine, R5
+  is 255/354/35 against V0 263/354/35 (exact falls by 8), so it still fails the pool rule.
+- **C1 fails** (no strict gain): it changes no hold-out row. On the pool, 261/355/34, NH real
+  errors rise 17 to 19.
+- **C4 fails** (no strict gain): it changes no row on the hold-outs or on the pool; a broken
+  karaka (combust, debilitated and a maraka at once) with Jupiter or Venus contact did not occur.
+- The package of passing variants is R5 alone, already measured.
+
+**Headline.** On the 64 fresh rows the engine is exact on 29, against 40 for B3 and 38 for
+always-favourable. The engine's errors are milder (14 real errors against 19 and 21, within-one
+50 against 45 and 43), but it matches Raman's verdict less often than a plain count of fired
+rules. This repeats hold-outs 1-3 (engine 87/198, B3 131). None of R5, C1 or C4 changes that.
+Hold-outs 4 and 5 are now spent.

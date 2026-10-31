@@ -1174,6 +1174,23 @@ EXCLUDED_RULES: contextvars.ContextVar[frozenset[str]] = contextvars.ContextVar(
     "EXCLUDED_RULES", default=frozenset())
 
 
+#: BS1 (prereg Addendum 34, 2026-10-31). OFF: a MEASUREMENT, not a shipped rule. When on, a
+#: rule bucket a matter BORROWS from a sibling matter of the same house contributes only the
+#: house placements (lord-in-house, planet-in-house), as the H4 `mother_home` bridge already
+#: does; the sibling's own combinations (poverty combos on moksha, Dhana yogas on eyesight)
+#: stop voting on matters their printed result is not about. Read LIVE so a sweep can rebind it.
+BS1_BORROWED_PLACEMENTS_ONLY: bool = False
+
+_PLACEMENT_GROUPS: frozenset[str] = frozenset({"lord_in_house", "planet_in_house"})
+
+
+def _borrowed_keys(sig: Signification) -> frozenset[str]:
+    """Tags in `sig.rule_tags` that are ANOTHER matter's own key in the same house."""
+    from app.raman_saab.doctrine.significations import significations_of
+    keys = {s.key for s in significations_of(sig.house)}
+    return frozenset(t for t in sig.rule_tags if t != sig.key and t in keys)
+
+
 def _bucket_fired(
     chart: RamanChart, sig: Signification, ctx: EvalContext,
 ) -> tuple[tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...]]:
@@ -1185,10 +1202,13 @@ def _bucket_fired(
     malefic: list[rf.FiredRule] = []
     neutral: list[rf.FiredRule] = []
     excluded = EXCLUDED_RULES.get()
+    borrowed = _borrowed_keys(sig) if BS1_BORROWED_PLACEMENTS_ONLY else frozenset()
     for fr in rf.fire_house_cached(chart, sig.house, ctx):
         if tags and fr.rule.signification not in tags:
             continue
         if fr.rule.id in excluded:
+            continue
+        if fr.rule.signification in borrowed and fr.rule.group not in _PLACEMENT_GROUPS:
             continue
         pol = fr.rule.polarity
         if pol in ("malefic", "maraka"):

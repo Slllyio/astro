@@ -937,3 +937,24 @@ death, H9 father/dharma/long journeys, H10 profession and status, H11 elder sibl
 H12 all but loss_moksha). Removing borrowed combinations removes votes on both sides, so the
 direction is uncertain. H9 father (24 rows) and H8 death (15) are the largest groups and the most
 likely to cost exact matches. A FAIL is quite possible. A pass is in-sample evidence only.
+
+## Addendum 35 (2026-10-31): BS1 measured, FAILS
+
+| | exact | within one | real errors | HTJAH-I real | HTJAH-II real | NH real |
+|---|---|---|---|---|---|---|
+| V0 (bd8c28a3) | 263 | 354 | 35 | 13 | 5 | 17 |
+| BS1 | 254 | 350 | 39 | 14 | 5 | 20 |
+
+BS1 FAILS the decision rule on every count. Held, flag left off; no adjusted version will be tried.
+
+21 rows move, 5 better and 16 worse. Better: HTJAH-I chart_39 vision, HTJAH-II h12_01 moksha,
+h9_01 father, h9_17 long journeys, NH chart_19 father. Worse: ten of the H12 incarceration and
+left-eye rows fall from afflicted to mixed; HTJAH-I h6_11 debts afflicted → favourable (new real
+error); NH chart_28 and chart_67 father favourable → mixed; NH chart_49 courage and chart_48
+dharma mixed → afflicted (new real errors); HTJAH-II h9_09 father; NH chart_14 body to abstention.
+
+**The finding that matters.** Ten correct "afflicted" verdicts on the left eye and imprisonment
+are carried by the 12th house's poverty, debt and generic-loss combinations, not by any rule about
+eyes or confinement. The engine gets those rows right partly for a reason Raman did not give.
+The leak is real as a design defect, but removing it costs more true verdicts than it fixes, so
+the pool cannot tell a faithful scope from the current one. Recorded for the report, not shipped.

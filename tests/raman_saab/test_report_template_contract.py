@@ -185,6 +185,9 @@ _FROZEN = (
     # v42 (2026-10-30, user-requested): how Raman would weigh this chart — a pure re-read of the
     # judged ledgers (app/raman_saab/philosophy.py). Appended at the END; _FROZEN grown here.
     ("philosophy", "## How Raman would weigh this chart", 'id="philosophy"'),
+    # v43 (2026-10-31, user-requested): for and against, matter by matter — a pure re-read of
+    # the judged ledgers (app/raman_saab/for_against.py). Appended at the END; _FROZEN grown here.
+    ("for_against", "## For and against, matter by matter", 'id="for_against"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -208,7 +211,8 @@ _ORDER_V41: tuple[str, ...] = (
     # III. The instrument
     "chart_grids", "positions", "rect_confidence", "shadbala", "ashtakavarga", "divisional",
     # IV. The twelve fields
-    "houses", "house_strength", "preponderance", "dominance", "restraint", "indications",
+    "houses", "for_against", "house_strength", "preponderance", "dominance", "restraint",
+    "indications",
     "yogas", "yoga_deep", "deeptadi",
     # V. The matters of life
     "aptitude", "career", "profession", "wealth", "marriage", "children", "health_readout",
@@ -355,6 +359,8 @@ class TestTemplateContract:
             "v36", "v37", "v38", "v39", "v40", "v41",
             # v42 (2026-10-30): "How Raman would weigh this chart" (philosophy.py).
             "v42",
+            # v43 (2026-10-31): "For and against, matter by matter" (for_against.py).
+            "v43",
         }
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6

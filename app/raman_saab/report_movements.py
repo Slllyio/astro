@@ -78,7 +78,11 @@ MOVEMENTS: Final[tuple[Movement, ...]] = (
         "ashtakavarga", "divisional",
     )),
     Movement("IV", "The twelve fields", (
-        "houses", "house_strength", "preponderance",
+        "houses",
+        # v43 — for and against, matter by matter: the cited reasons and their count, read
+        # right after the house-by-house verdicts they lay open.
+        "for_against",
+        "house_strength", "preponderance",
         # v34 — what governs a contested house, then how firmly each house stands. They sit
         # here because they are about the twelve fields, and after preponderance because both
         # re-read its ledger.

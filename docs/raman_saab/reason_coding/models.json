@@ -1,0 +1,485 @@
+{
+ "n": 347,
+ "class_freq_logloss": 0.9399,
+ "ordinal_loco_by_alpha": [
+  {
+   "n": 347,
+   "exact": 292,
+   "real": 15,
+   "macro_recall": 0.644,
+   "logloss": 0.5087,
+   "alpha": 0.01
+  },
+  {
+   "n": 347,
+   "exact": 290,
+   "real": 15,
+   "macro_recall": 0.623,
+   "logloss": 0.4792,
+   "alpha": 0.1
+  },
+  {
+   "n": 347,
+   "exact": 291,
+   "real": 20,
+   "macro_recall": 0.618,
+   "logloss": 0.4605,
+   "alpha": 0.3
+  },
+  {
+   "n": 347,
+   "exact": 291,
+   "real": 23,
+   "macro_recall": 0.618,
+   "logloss": 0.4498,
+   "alpha": 1.0
+  },
+  {
+   "n": 347,
+   "exact": 293,
+   "real": 21,
+   "macro_recall": 0.622,
+   "logloss": 0.4597,
+   "alpha": 3.0
+  },
+  {
+   "n": 347,
+   "exact": 294,
+   "real": 20,
+   "macro_recall": 0.624,
+   "logloss": 0.5033,
+   "alpha": 10.0
+  }
+ ],
+ "ordinal": {
+  "alpha": 1.0,
+  "loco": {
+   "n": 347,
+   "exact": 291,
+   "real": 23,
+   "macro_recall": 0.618,
+   "logloss": 0.4498,
+   "alpha": 1.0
+  },
+  "coefficients": [
+   {
+    "feature": "lord_association*decisive",
+    "coef": 1.051,
+    "ci95": [
+     0.52,
+     1.593
+    ],
+    "nonzero_rows": 25
+   },
+   {
+    "feature": "dusthana_lords",
+    "coef": 0.979,
+    "ci95": [
+     0.52,
+     1.58
+    ],
+    "nonzero_rows": 41
+   },
+   {
+    "feature": "occupants",
+    "coef": 0.917,
+    "ci95": [
+     0.468,
+     1.406
+    ],
+    "nonzero_rows": 129
+   },
+   {
+    "feature": "maraka_longevity*decisive",
+    "coef": 0.897,
+    "ci95": [
+     0.389,
+     1.201
+    ],
+    "nonzero_rows": 8
+   },
+   {
+    "feature": "other",
+    "coef": 0.896,
+    "ci95": [
+     0.566,
+     1.413
+    ],
+    "nonzero_rows": 154
+   },
+   {
+    "feature": "lord_house",
+    "coef": 0.83,
+    "ci95": [
+     0.499,
+     1.273
+    ],
+    "nonzero_rows": 133
+   },
+   {
+    "feature": "nodes",
+    "coef": 0.814,
+    "ci95": [
+     0.293,
+     1.491
+    ],
+    "nonzero_rows": 87
+   },
+   {
+    "feature": "named_yoga*decisive",
+    "coef": 0.813,
+    "ci95": [
+     0.216,
+     1.39
+    ],
+    "nonzero_rows": 54
+   },
+   {
+    "feature": "house_aspects*decisive",
+    "coef": 0.797,
+    "ci95": [
+     0.394,
+     1.208
+    ],
+    "nonzero_rows": 16
+   },
+   {
+    "feature": "life_fact",
+    "coef": 0.796,
+    "ci95": [
+     0.351,
+     1.358
+    ],
+    "nonzero_rows": 94
+   },
+   {
+    "feature": "general_maxim",
+    "coef": 0.77,
+    "ci95": [
+     0.198,
+     1.369
+    ],
+    "nonzero_rows": 20
+   },
+   {
+    "feature": "lord_association",
+    "coef": 0.753,
+    "ci95": [
+     0.359,
+     1.234
+    ],
+    "nonzero_rows": 147
+   },
+   {
+    "feature": "other_frame",
+    "coef": 0.743,
+    "ci95": [
+     0.424,
+     1.246
+    ],
+    "nonzero_rows": 152
+   },
+   {
+    "feature": "occupants*decisive",
+    "coef": 0.732,
+    "ci95": [
+     0.109,
+     1.384
+    ],
+    "nonzero_rows": 27
+   },
+   {
+    "feature": "karaka*decisive",
+    "coef": 0.716,
+    "ci95": [
+     -0.033,
+     1.448
+    ],
+    "nonzero_rows": 22
+   },
+   {
+    "feature": "house_aspects",
+    "coef": 0.685,
+    "ci95": [
+     0.318,
+     1.07
+    ],
+    "nonzero_rows": 147
+   },
+   {
+    "feature": "lord_house*decisive",
+    "coef": 0.636,
+    "ci95": [
+     0.201,
+     1.106
+    ],
+    "nonzero_rows": 15
+   },
+   {
+    "feature": "other*decisive",
+    "coef": 0.624,
+    "ci95": [
+     0.033,
+     1.196
+    ],
+    "nonzero_rows": 33
+   },
+   {
+    "feature": "named_yoga",
+    "coef": 0.599,
+    "ci95": [
+     0.192,
+     1.198
+    ],
+    "nonzero_rows": 106
+   },
+   {
+    "feature": "lord_dignity*decisive",
+    "coef": 0.587,
+    "ci95": [
+     0.188,
+     0.832
+    ],
+    "nonzero_rows": 8
+   },
+   {
+    "feature": "nodes*decisive",
+    "coef": 0.564,
+    "ci95": [
+     0.061,
+     1.143
+    ],
+    "nonzero_rows": 16
+   },
+   {
+    "feature": "karaka",
+    "coef": 0.537,
+    "ci95": [
+     0.196,
+     1.004
+    ],
+    "nonzero_rows": 164
+   },
+   {
+    "feature": "other_frame*decisive",
+    "coef": 0.391,
+    "ci95": [
+     -0.131,
+     0.879
+    ],
+    "nonzero_rows": 18
+   },
+   {
+    "feature": "maraka_longevity",
+    "coef": 0.341,
+    "ci95": [
+     -0.265,
+     0.892
+    ],
+    "nonzero_rows": 27
+   },
+   {
+    "feature": "navamsa",
+    "coef": 0.291,
+    "ci95": [
+     -0.051,
+     0.793
+    ],
+    "nonzero_rows": 125
+   },
+   {
+    "feature": "lord_dignity",
+    "coef": 0.284,
+    "ci95": [
+     -0.237,
+     0.841
+    ],
+    "nonzero_rows": 62
+   },
+   {
+    "feature": "dusthana_lords*decisive",
+    "coef": 0.274,
+    "ci95": [
+     -0.324,
+     0.96
+    ],
+    "nonzero_rows": 7
+   },
+   {
+    "feature": "dasa_timing",
+    "coef": 0.241,
+    "ci95": [
+     -0.189,
+     0.775
+    ],
+    "nonzero_rows": 147
+   },
+   {
+    "feature": "hemming",
+    "coef": 0.199,
+    "ci95": [
+     -0.269,
+     0.875
+    ],
+    "nonzero_rows": 49
+   },
+   {
+    "feature": "dasa_timing*decisive",
+    "coef": 0.178,
+    "ci95": [
+     -0.945,
+     0.974
+    ],
+    "nonzero_rows": 11
+   },
+   {
+    "feature": "navamsa*decisive",
+    "coef": 0.144,
+    "ci95": [
+     -0.244,
+     0.485
+    ],
+    "nonzero_rows": 7
+   },
+   {
+    "feature": "general_maxim*decisive",
+    "coef": 0.097,
+    "ci95": [
+     0.0,
+     0.296
+    ],
+    "nonzero_rows": 1
+   },
+   {
+    "feature": "hemming*decisive",
+    "coef": 0.01,
+    "ci95": [
+     0.0,
+     0.039
+    ],
+    "nonzero_rows": 1
+   }
+  ]
+ },
+ "boosted_loco": {
+  "n": 347,
+  "exact": 290,
+  "real": 23,
+  "macro_recall": 0.623,
+  "logloss": 0.5384
+ },
+ "boosted_shap_importance": [
+  {
+   "feature": "other",
+   "mean_abs_shap": 0.2371
+  },
+  {
+   "feature": "other_frame",
+   "mean_abs_shap": 0.1791
+  },
+  {
+   "feature": "lord_association",
+   "mean_abs_shap": 0.1753
+  },
+  {
+   "feature": "karaka",
+   "mean_abs_shap": 0.1354
+  },
+  {
+   "feature": "life_fact",
+   "mean_abs_shap": 0.1138
+  },
+  {
+   "feature": "occupants",
+   "mean_abs_shap": 0.1078
+  },
+  {
+   "feature": "named_yoga",
+   "mean_abs_shap": 0.1066
+  },
+  {
+   "feature": "dasa_timing",
+   "mean_abs_shap": 0.0945
+  },
+  {
+   "feature": "house_aspects",
+   "mean_abs_shap": 0.0885
+  },
+  {
+   "feature": "lord_house",
+   "mean_abs_shap": 0.0779
+  },
+  {
+   "feature": "nodes",
+   "mean_abs_shap": 0.0759
+  },
+  {
+   "feature": "dusthana_lords",
+   "mean_abs_shap": 0.0691
+  },
+  {
+   "feature": "navamsa",
+   "mean_abs_shap": 0.0637
+  },
+  {
+   "feature": "lord_dignity",
+   "mean_abs_shap": 0.0429
+  },
+  {
+   "feature": "named_yoga*decisive",
+   "mean_abs_shap": 0.0279
+  },
+  {
+   "feature": "lord_association*decisive",
+   "mean_abs_shap": 0.0273
+  },
+  {
+   "feature": "nodes*decisive",
+   "mean_abs_shap": 0.0259
+  },
+  {
+   "feature": "karaka*decisive",
+   "mean_abs_shap": 0.0207
+  },
+  {
+   "feature": "other_frame*decisive",
+   "mean_abs_shap": 0.0081
+  },
+  {
+   "feature": "other*decisive",
+   "mean_abs_shap": 0.0068
+  },
+  {
+   "feature": "navamsa*decisive",
+   "mean_abs_shap": 0.0063
+  },
+  {
+   "feature": "hemming",
+   "mean_abs_shap": 0.006
+  },
+  {
+   "feature": "occupants*decisive",
+   "mean_abs_shap": 0.0052
+  },
+  {
+   "feature": "general_maxim",
+   "mean_abs_shap": 0.0036
+  },
+  {
+   "feature": "dasa_timing*decisive",
+   "mean_abs_shap": 0.0018
+  },
+  {
+   "feature": "maraka_longevity",
+   "mean_abs_shap": 0.0017
+  },
+  {
+   "feature": "house_aspects*decisive",
+   "mean_abs_shap": 0.0004
+  },
+  {
+   "feature": "maraka_longevity*decisive",
+   "mean_abs_shap": 0.0003
+  }
+ ]
+}

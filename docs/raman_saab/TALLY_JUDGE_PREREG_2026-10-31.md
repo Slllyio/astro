@@ -61,3 +61,17 @@ Fit on the pool, scored on hold-outs 1-3 (198): T1 124 exact, 67 real errors, lo
 (class frequencies 0.838); B3 131 / 60; E 87 / 48. On the pool itself T1's log-loss is 0.940
 against 0.945 for class frequencies, and it never predicts "mixed". T1 is below B3's 131, so by
 the stop rule it is reported as failed, not frozen, and hold-outs 4 and 5 are not proposed.
+
+**Exploratory, not pre-registered (pool, 389 rows): rank correlation of each T1 factor with
+Raman's verdict.** Lord placement +0.01, lord dignity -0.00, Navamsa +0.03, hemming +0.02,
+occupants +0.07, karaka +0.08, aspects -0.08, lord associations +0.12, 6/8/12 lords -0.11,
+routed yogas +0.21. The engine's own benefic-minus-malefic rule count: +0.46 (in-sample; those
+rules were built on this pool).
+
+Reading: the general bhava factors, applied mechanically, carry almost no information about
+Raman's verdicts on his worked charts, although his *stated* reasons recover 84% of them. He
+picks, from many possible factors, the ones that agree with the conclusion, and on these
+charts (mostly famous lives) the conclusion often rests on what is known to have happened
+(13% of his stated factors are dasa or life facts). This is consistent with the 47k-chart
+real-outcome null. Caveat: T1's signing is the general rule only (no functional
+benefic/malefic by Lagna, no upachaya exception), so a finer signing could do somewhat better.

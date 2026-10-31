@@ -62,3 +62,4 @@ committed. The repository holds only this protocol, the tool, hashes and aggrega
 |---|---|---|
 | 2026-10-31 | Protocol and tool committed; tool checked on synthetic data only | n/a |
 | 2026-10-31 08:35 UTC | Batch 1 sealed: 20 people (P01-P20), birth details only; no facts collected. Vaishali excluded (her facts were seen 2026-10-30 before any seal). Assumptions: "sitaberi mela ground" cast at Nagpur Sitabuldi 21.15N 79.08E, "05.34" read as a.m., Sultanpur MP cast at Raisen-district Sultanpur 23.14N 77.93E; time quality "family-given" for all | cc1e6bb39eabbd22907db979890cfe923cf70faf179fd79c093088e646ae19fb |
+| 2026-10-31 08:33 UTC | Batch 1 RE-SEALED before any facts: user corrected P07 place to Sitaberi near Shivpuri MP (cast 25.42N 77.66E); 05:34 a.m. and Raisen-district Sultanpur confirmed. This hash supersedes cc1e6bb3 | ac490313acb3e0f9c70973a07808ef3bcba8ab5f9f76720ecf4863dbed2ed5a0 |

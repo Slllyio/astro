@@ -54,3 +54,10 @@ cut points). Verdict = most probable of afflicted / mixed / favourable.
    interval on T1 minus B3 includes 0.
 
 Only bug fixes may follow the development check, each recorded here before re-running.
+
+## Addendum 1 (2026-10-31): development check, T1 FAILS the stop rule
+
+Fit on the pool, scored on hold-outs 1-3 (198): T1 124 exact, 67 real errors, log-loss 0.831
+(class frequencies 0.838); B3 131 / 60; E 87 / 48. On the pool itself T1's log-loss is 0.940
+against 0.945 for class frequencies, and it never predicts "mixed". T1 is below B3's 131, so by
+the stop rule it is reported as failed, not frozen, and hold-outs 4 and 5 are not proposed.

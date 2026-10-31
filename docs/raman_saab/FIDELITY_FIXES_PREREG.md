@@ -876,3 +876,64 @@ Two facts the merged record must state plainly:
   (no degrees), so it cannot test G2 or any sphuta-based fertility variant.
 User decision 2026-10-30: hold-out 4 stays sealed until a further fix is ready to be tested
 together with R5 in one reading.
+
+## Addendum 34 (2026-10-31): label re-review of the 35 real errors with matched controls, and variant BS1 (borrowed buckets carry placements only), both fixed before any outcome
+
+User request 2026-10-31 ("FIX ALL THESE", of the 35 pool real errors in `ERROR_STUDY_2026-10-30.md`).
+Numbered 34 because the other branch (`claude/project-thread-1ztlhb`) has used 29-33. Hold-outs
+are not read or touched here; Addendum 33 on that branch governs hold-outs 4 and 5.
+
+**Admitted position.** These 35 rows have been studied repeatedly; the ceiling check found that
+logic fitted to the pool does not carry out of sample. Nothing below is a per-row patch. Part A
+re-checks the answer key in BOTH directions; part B fixes a design defect found while reading the
+rules that fire on these rows, and is measured on all 389 rows.
+
+### Part A. Label re-review (protocol fixed before any reviewer output is read)
+
+Rows: the 35 pool real errors plus 35 controls drawn at random (seed 20261031) from the 263 exact
+matches, stratified by book in the same proportions (NH 17, HTJAH-I 13, HTJAH-II 5). The 70 rows
+are shuffled and split into two packets. Four reviewers, two per packet, each engine-blind:
+they see only the chart name, house, matter and Raman's cited passage (60 lines of context each
+side, with the full book text available), never the gold label, the engine verdict, or which
+group a row is in. Each returns favourable / mixed / afflicted / none, with Raman's words.
+
+Outcome per row, the same rule for errors and controls:
+- both reviewers give the same label, different from gold, confidence medium or high → proposed
+  relabel;
+- both give `none` → proposed removal from the scored pool (back to DRAFT; Raman states no
+  conclusion on that matter);
+- the reviewers disagree and neither agrees with gold → held for a third engine-blind reader;
+- otherwise the gold label stands.
+Reported: proposed changes in each group separately. Changes are proposals for the user; none is
+applied without sign-off. If the error group yields changes and the control group does not, the
+report says plainly that a one-sided review can still flatter the score.
+
+### Part B. Variant BS1: a borrowed rule bucket contributes only house placements
+
+**The defect.** Each sub-matter judges the fired rules whose `signification` tag is in its
+`rule_tags`. In H4 the shared tag is a pure bridge (`mother_home`), holding only the lord-in-house
+and planet-in-house rules, so every H4 matter shares the general placements and keeps its own
+combinations. The module docstrings state that this is the intended design elsewhere too ("so it
+aggregates the shared placements AND its own combos", `house_05_putra/combinations.py`). But in
+eleven houses the shared tag is another matter's own bucket, so that matter's specific
+combinations leak into every sibling matter. Examples: Raman's poverty and debt combinations
+(HTJAH-II:16373-16424, tagged `loss_moksha`) vote on moksha, the left eye and imprisonment; the
+Dhana yogas and the Dwirdwadasa wealth rule (tagged `wealth`) vote on speech and eyesight;
+the gains combinations vote on elder brothers. A combination's printed result is about its own
+matter ("one will be poor", HTJAH-II:16410), not about its neighbours'.
+
+**BS1 (fixed now).** In `_bucket_fired`, when a fired rule's tag is another matter's own key in
+the same house (a borrowed bucket), the rule counts only if its group is `lord_in_house` or
+`planet_in_house`. A matter's own bucket, and any pure bridge bucket that is no matter's key
+(`mother_home`), count in full as now. Uniform across all twelve houses, no exemptions. Flag
+`house_template.BS1_BORROWED_PLACEMENTS_ONLY`, default off.
+
+**Decision rule.** Unchanged: `fidelity_variants.passes()` against V0 = the engine at bd8c28a3
+(263/354/35). Reported: figure by book, every row that moves.
+
+**Predictions, written before measuring.** Only sub-matters that borrow a bucket can move (on the
+pool: H1 body/health, H2 speech/vision, H3 courage, H6 sub-matters, H7 spouse/partnership, H8
+death, H9 father/dharma/long journeys, H10 profession and status, H11 elder siblings/acquisitions,
+H12 all but loss_moksha). Removing borrowed combinations removes votes on both sides, so the
+direction is uncertain. H9 father (24 rows) and H8 death (15) are the largest groups and the most
+likely to cost exact matches. A FAIL is quite possible. A pass is in-sample evidence only.

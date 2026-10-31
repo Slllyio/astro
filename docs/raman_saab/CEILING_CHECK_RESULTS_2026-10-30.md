@@ -66,7 +66,7 @@ to measure.
 ## Addendum (2026-10-31): the same comparison on fresh data
 
 Hold-outs 4 and 5 (64 never-seen conclusions) were scored once by the philosophy thread
-(FIDELITY_FIXES_PREREG Addendum 37 on claude/project-thread-1ztlhb; V0 with the audit thread's RS1 repair gives identical verdicts on all 64 rows), with the
+(FIDELITY_FIXES_PREREG Addendum 38, commit 155ed516 on claude/project-thread-1ztlhb, pool figures there on pre-re-review labels; V0 with the audit thread's RS1 repair gives identical verdicts on all 64 rows), with the
 two no-fit baselines included at this thread's request:
 
 | | exact | within one | real errors | macro recall |

@@ -1,0 +1,33 @@
+{
+  "mode": "synthetic",
+  "n_people": 200,
+  "n_failed": 0,
+  "tracks": {
+    "kp": {
+      "mean_pct_rank": 0.2225,
+      "ci95": [
+        0.1962,
+        0.2507
+      ],
+      "label": "SIGNAL",
+      "n": 200
+    },
+    "kp_placebo": {
+      "mean_pct_rank": 0.4975,
+      "ci95": [
+        0.4623,
+        0.5352
+      ],
+      "label": "BOUNDED_NULL",
+      "n": 200
+    }
+  },
+  "kp_hit_rate": 0.53,
+  "kp_chance_hit_rate": 0.1826,
+  "kp_mean_abs_err_min": 11.91,
+  "stated_mean_abs_err_min": 15.71,
+  "kp_closer_than_stated": 0.565,
+  "mean_rect_events": 3.9,
+  "t0_pass": true,
+  "placebo_gate_ok": true
+}

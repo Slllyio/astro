@@ -746,4 +746,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "loss. The 11th lord in the 6/8/12 from Navamsa Lagna → runs into debts. "
                   "TODO(predicate: Navamsa 6/8/12 overlay for the debt qualifier)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14731)),
+    # RS1 (prereg Addendum 36, 2026-10-31): moved from H3.C.14. Printed in the 3rd-house
+    # chapter, but Raman's next sentence routes it here: "The elder brother, his prosperity and
+    # his adversity should be judged by a consideration of the 11th house" (HTJAH-I:3444-3445).
+    RuleRecord(
+        id="H11.C.RS1", house=11, signification="elder_siblings", group="combination",
+        kind="evaluable",
+        condition=C.InRashiHouse("Jupiter", 11),
+        fortified=None,
+        afflicted="Jupiter in the 11th -> the person suffers worry on account of his elder "
+                  "brother",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 3444)),
 )

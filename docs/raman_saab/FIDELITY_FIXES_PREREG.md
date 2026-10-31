@@ -958,3 +958,55 @@ are carried by the 12th house's poverty, debt and generic-loss combinations, not
 eyes or confinement. The engine gets those rows right partly for a reason Raman did not give.
 The leak is real as a design defect, but removing it costs more true verdicts than it fixes, so
 the pool cannot tell a faithful scope from the current one. Recorded for the report, not shipped.
+
+## Addendum 36 (2026-10-31): label re-review results, RS1, and twelve citation repairs
+
+### Label re-review (Part A of Addendum 34)
+
+Four engine-blind reviewers, two per packet, all 70 rows returned
+(`label_review_2026-10-31/`: brief, blind key, the four outputs). Outcomes under the fixed rule:
+
+| | rows | gold stands | relabel | remove (no conclusion) | held |
+|---|---|---|---|---|---|
+| Real errors | 35 | 29 | 5 | 1 | 0 |
+| Controls (exact matches) | 35 | 33 | 0 | 2 | 0 |
+
+Proposed changes (not applied; user's call):
+- HTJAH-I chart_48 H2/wealth afflicted → mixed ("not very considerable… acquired by dint of hard
+  labour", plus loss through Government displeasure).
+- NH chart_55 (Nizam) H1/self afflicted → mixed (powerful Dhana yogas side by side with
+  Rajabhanga-like combinations).
+- NH chart_30 (Tilak) H9/fortune afflicted → mixed, and H10/career afflicted → mixed ("Arishta
+  yogas for suffering evenly balanced with Rajayogas").
+- NH chart_36 (Vivekananda) H9/father favourable → afflicted ("These positions are enough to
+  deprive the native of his father").
+- Remove NH chart_36 H7/spouse (both: Raman concludes celibacy, not a spouse verdict; low
+  confidence), NH chart_28 H2/wealth and NH chart_42 H4/mother (both: no conclusion).
+
+If all were applied: 262/386 exact, 357 within one, 29 real errors (from 263/389, 354, 35).
+**Caution, as Addendum 34 required:** six of 35 error rows changed against two of 35 controls.
+Error rows are where bad labels are expected to collect, but only 35 of the 228 other
+exact-match rows were reviewed; at the control rate (2/35) about 13 more unreviewed exact rows
+would also lose their label, which would lower the exact count. The fall from 35 to 29 real
+errors is real for these rows and flatters the whole pool.
+
+### RS1: the elder-brother rule leaves the 3rd house (applied)
+
+H3.C.14 ("If Jupiter is in the 11th, the person suffers worry on account of his elder brother",
+HTJAH-I:3444) voted on the 3rd house's siblings matter, though Raman's very next sentence says
+"The elder brother, his prosperity and his adversity should be judged by a consideration of the
+11th house" (HTJAH-I:3444-3445). It is now descriptive in the 3rd and scored from the 11th as
+H11.C.RS1 (elder_siblings). Found while reading the rules that fire on chart_60's H3 error.
+Pool: 263/354/35, no scored row moves. Unscored verdicts move (doctrine snapshot re-frozen with
+the note): H3 of HTJAH-II chart_02 and h9_17 afflicted → favourable; H11 elder siblings of
+HTJAH-II x141 favourable → mixed.
+
+### Citation repairs (applied; no verdict or score changes)
+
+The reviewers found that several scored rows cite a passage about a different chart. A check of
+every HTJAH golden named "Chart N" for "Chart No. N" in its cited window confirmed the defect
+for twelve scored rows; each was re-pointed to Raman's own passage for that chart (birth date
+and conclusion text checked in the new window): HTJAH-I x13, x65, x67, x68, x69, x71, x72, x73,
+x75, x79, x80; HTJAH-II x226. HTJAH-II h11_02 (spouse) now also cites HTJAH-II:1638-1680, where
+the same birth data is printed as the 7th-house Chart No. 12 with the conclusion "happy married
+life". Unscored DRAFT rows with the same defect (42) are listed by the check and left alone.

@@ -599,7 +599,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # #14 — Jupiter in the 11th -> worry on account of the ELDER brother.
     RuleRecord(
         id="H3.C.14", house=3, signification="siblings", group="combination",
-        kind="evaluable",
+        # RS1 (prereg Addendum 36, 2026-10-31): DESCRIPTIVE here. Raman's own next sentence
+        # says the elder brother "should be judged by a consideration of the 11th house"
+        # (HTJAH-I:3444-3445), so this is an elder-sibling rule, not a 3rd-house one. It is
+        # scored from the 11th as H11.C.RS1 (house_11_labha/combinations.py).
+        kind="descriptive",
         condition=C.InRashiHouse("Jupiter", 11),
         fortified=None,
         afflicted="Jupiter in the 11th -> worry on account of the elder brother (the "

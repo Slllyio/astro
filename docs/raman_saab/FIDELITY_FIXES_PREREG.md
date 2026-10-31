@@ -1066,9 +1066,9 @@ below B3, that is reported as the headline, not the pass.
 
 After this reading, hold-outs 4 and 5 are spent.
 
-## Addendum 37 (2026-10-31): R5, C1 and C4 scored once on hold-outs 4+5
+## Addendum 38 (2026-10-31): R5, C1 and C4 scored once on hold-outs 4+5
 
-(Numbered 37 because the audit branch `claude/project-thread-kubltm` took 34-36 the same day.)
+(Numbered 38 because the audit branch `claude/project-thread-kubltm` took 34-37 the same day.)
 
 Run by `tools/raman_saab/score_batch33.py` (code committed in e36e4e52, before the run); raw
 output in `docs/raman_saab/batch33/`. Both sealed V0 files matched their SHA-256, and the V0
@@ -1104,3 +1104,8 @@ Hold-outs 4 and 5 are now spent.
 **Check against the audit branch's RS1 repair** (Addendum 36 on `claude/project-thread-kubltm`,
 not in the engine scored above): V0 re-run on that branch gives the same verdict on all 64
 hold-out rows, and 263/354/35 on the pool, so the figures above stand with or without RS1.
+
+**Labels.** Every pool figure in this addendum uses the pool labels as they stood before the
+audit branch's whole-pool re-review (its Addendum 37: 24 rows to DRAFT, 22 relabelled, V0 then
+238/365/332/33). Pool figures here are information only; the decision used the hold-outs, whose
+labels that review did not touch.

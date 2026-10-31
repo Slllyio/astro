@@ -75,3 +75,17 @@ charts (mostly famous lives) the conclusion often rests on what is known to have
 (13% of his stated factors are dasa or life facts). This is consistent with the 47k-chart
 real-outcome null. Caveat: T1's signing is the general rule only (no functional
 benefic/malefic by Lagna, no upachaya exception), so a finer signing could do somewhat better.
+
+## Addendum 2 (2026-10-31): variant T2, fixed before any T2 number exists
+
+User decision 2026-10-31 ("Refine factor signing once more"). T2 = T1 with two changes, nothing
+else:
+1. **Functional nature.** Wherever T1 signs an influencing planet by natural nature (factors 3,
+   4, 5, and the karaka's associations in 8), T2 signs it by its functional nature for the frame's
+   sign as Lagna, from Raman's printed table (HTJAH-I:523-566, `compute_functional_nature`):
+   benefic or yogakaraka +1, malefic -1, neutral 0. Rahu and Ketu keep -1 (they have no lordship).
+   For the karaka block the frame is the Lagna.
+2. **Upachaya exception.** When the matter's house is the 3rd, 6th or 11th, a malefic occupying T
+   counts +1 instead of -1 (Raman: malefics in the 3rd, 6th and 11th do good).
+Same model, same stages, same stop rule (development check exact must be above B3's 131), and
+the same one-time final test on hold-outs 4 and 5 only with the user's say-so.

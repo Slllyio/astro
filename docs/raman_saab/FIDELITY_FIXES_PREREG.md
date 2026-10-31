@@ -988,3 +988,119 @@ sealed hold-out 4 fixture.
 SHA-256 recorded. Hold-out 5 is scored once, together with hold-out 4 (Addendum 28), for the
 next pre-registered variant(s), under the one decision rule. Nothing here changes the engine or
 the pool.
+
+## Addendum 32 (2026-10-30): hold-out 5 built and sealed under Addendum 31
+
+**Readings.** Two independent readers transcribed the 28 Rasi diagrams from the archive.org page
+images (`r5_htjah_scan_positions_a.json`, `r5_htjah_scan_positions_b.json`); the second reader
+worked without sight of the first. Both agree on every graha and the Lagna of all 26 complete
+diagrams. Dropped before any build: HTJAH-I chart 123 (no diagram printed in this edition) and
+HTJAH-II chart 45 (Mars and Ketu are not printed in its Rasi). No degrees are printed in any
+diagram.
+
+**Dedupe.** HTJAH-I chart 86 has the birth date of golden `HTJAH-I.x86` (the same chart);
+HTJAH-II chart 208 (Hyder Ali) has the printed signs of golden `NH.chart_19` (the same native).
+Both dropped.
+
+**Path.** Cast, all nine grahas and the Lagna in Raman's printed signs (full degrees): HTJAH-I
+21, 27, 34, 87; HTJAH-II 70, 79, 81, 107, 109, 149. Printed signs (cast disagreed: Lagna in eight,
+Moon in three, others in two): HTJAH-I 25, 36, 70, 74, 119; HTJAH-II 65, 76, 106, 185, 245.
+Printed signs, no birth data: HTJAH-I 90, 124, 125, 126. Birth-line facts the hold-out 2
+extraction lacked were taken from both readings (HTJAH-I 86's line; G.M.T., E.S.T. and War Time
+zones for HTJAH-II 70, 76, 149); they are listed in `build_holdout5.BIRTH_FIX`.
+
+Fixture `tests/fixtures/raman_holdout5_sealed.jsonl` (`tools/raman_saab/build_holdout5.py`):
+24 natives, 32 records, **36 scored rows** (19 favourable, 13 afflicted, 4 mixed); 10 natives
+with degrees, 14 from printed signs. Fixture SHA-256
+`f12251b7e8176b71706a2665f665cdadcec2ef523357aad13d5d044de34e0ca2`. V0 verdicts (engine at this
+branch's HEAD: G2 and S2 on, C2 off) written, unread, to
+`docs/raman_saab/holdout5_v0_verdicts_sealed.json`, SHA-256
+`5a1c55acf5cd1abfade02ab00c00ca9524701b757e753f7db62aabc9b6791a74`.
+
+Limits: 36 rows is small; with hold-out 4's 28 the joint test has 64. Conclusions come from the
+hold-out 2 extraction, so where that extraction mis-mapped a house, the error stands.
+
+## Addendum 33 (2026-10-31): R5, C1 and C4 on hold-outs 4+5, fixed before any C1 or C4 number exists and before either hold-out is read
+
+User decision 2026-10-31 ("GO AHEAD" to pre-registering the held variants and scoring them once
+on both fresh sets). The Rethink thread's tally judges T1 and T2 failed their development stop
+rule and do not claim these sets; its W1 judge is frozen but is not proposed for them. So this
+is the only use of hold-outs 4 and 5.
+
+**Variants** (each a switch, off by default; nothing is shipped by this addendum):
+- **R5**: exactly as specified in Addendum 2 and coded in Addendum 3 (the held patch
+  `held_patches/R5_general_lord_affliction_2026-10-24.patch`, unchanged). Its pool figure is
+  already known (269/362/34 against that day's V0; it failed the pool rule).
+- **C1**: weakness is not affliction (3HCC:877-881, HTJAH-I:18225-18227, HTJAH-I:503-505). At
+  clause 6, when a weak pillar would give `afflicted` but **no malefic rule fired** (the
+  afflicted rests on weak Bhava Bala or maraka pressure alone), the base is `mixed` instead.
+  Nothing else changes. This is close to M1 (Addendum 10), which failed the pool rule; C1 keeps
+  the evidence and demotes one step, where M1 dropped the evidence. It is said here plainly that
+  C1 was formed after M1's numbers were seen, so only fresh charts can test it.
+- **C4**: the relief check on the karaka veto (3HCC:11228-11230, NH:6230-6231). The review of
+  decisive paths found: clause 1.5 already requires no benefic contradiction; H7.C.82 already
+  requires no benefic relief; the fertility gate was handled by G1 and G2. The one decisive
+  path with no relief test is the clause 1 karaka veto. Under C4, when the karaka is not intact
+  but Jupiter or Venus (other than the karaka itself) is in the karaka's sign or aspects it
+  (Raman's whole-sign drishti, `drishti.aspects_planet`), the veto gives `mixed` (one step)
+  instead of `afflicted`. Under the longevity guard it stays insufficient-evidence.
+
+**Measure.** Scored once each: V0 (the engine at this branch's HEAD, re-run at scoring time,
+since hold-out 4's sealed V0 predates G2 (Addendum 28); the sealed V0 files are checked by
+SHA-256 and both versions reported), R5, C1, C4, and the passing variants together. Also
+reported, no fitting, as the Rethink thread asked: **B3** (count the fired benefic and malefic
+rules in the signification's lead ledger; favourable if benefic >= malefic, else afflicted; as in
+`tools/raman_saab/ceiling_check.py`, PR #27) and **always-favourable**. For each: exact,
+within-one, real errors, per book, and macro recall over the three labels, on hold-out 4,
+hold-out 5 and the 64 rows together. The pool figures of C1 and C4 are measured too and
+reported, for information only.
+
+**Decision rule** (the one rule, on the 64 rows together): a variant passes only if real errors
+do not rise, overall or in any book; within-one does not fall; and exact rises or real errors
+fall, all against V0 re-run. A passing variant still goes to the user, who decides whether to
+ship. Two limits are stated in advance: (1) with 64 rows a pass or fail by one or two rows is
+weak evidence either way; (2) hold-out 4 and 14 of hold-out 5's 24 natives are printed-sign
+charts with no Shadbala, so they go through the clause 3 fallback, and C1 (a clause 6 change)
+can only move rows on the 10 cast natives of hold-out 5. If a variant passes the rule but stays
+below B3, that is reported as the headline, not the pass.
+
+After this reading, hold-outs 4 and 5 are spent.
+
+## Addendum 37 (2026-10-31): R5, C1 and C4 scored once on hold-outs 4+5
+
+(Numbered 37 because the audit branch `claude/project-thread-kubltm` took 34-36 the same day.)
+
+Run by `tools/raman_saab/score_batch33.py` (code committed in e36e4e52, before the run); raw
+output in `docs/raman_saab/batch33/`. Both sealed V0 files matched their SHA-256, and the V0
+re-run at HEAD gives the same verdict on all 64 rows (G2 moves nothing here), so the sealed and
+re-run V0 are one figure.
+
+| Judge | H4 (28) exact / w1 / real | H5 (36) | H4+H5 (64) | macro recall |
+|---|---|---|---|---|
+| V0 (engine) | 12 / 20 / 8 | 17 / 30 / 6 | **29 / 50 / 14** | 0.369 |
+| R5 | 12 / 20 / 8 | 17 / 31 / 5 | 29 / 51 / 13 | 0.369 |
+| C1 | 12 / 20 / 8 | 17 / 30 / 6 | 29 / 50 / 14 | 0.369 |
+| C4 | 12 / 20 / 8 | 17 / 30 / 6 | 29 / 50 / 14 | 0.369 |
+| B3 (rule count) | 18 / 19 / 9 | 22 / 26 / 10 | **40 / 45 / 19** | 0.408 |
+| always-favourable | 19 / 20 / 8 | 19 / 23 / 13 | 38 / 43 / 21 | 0.333 |
+
+Verdicts under the rule:
+- **R5 passes, by one row.** It changes a single verdict, HTJAH-I chart 25 H10/career, from
+  insufficient-evidence to afflicted, which is Raman's label: within-one +1, real errors -1, no
+  book rises. One row is not evidence of a general effect. On the pool, at today's engine, R5
+  is 255/354/35 against V0 263/354/35 (exact falls by 8), so it still fails the pool rule.
+- **C1 fails** (no strict gain): it changes no hold-out row. On the pool, 261/355/34, NH real
+  errors rise 17 to 19.
+- **C4 fails** (no strict gain): it changes no row on the hold-outs or on the pool; a broken
+  karaka (combust, debilitated and a maraka at once) with Jupiter or Venus contact did not occur.
+- The package of passing variants is R5 alone, already measured.
+
+**Headline.** On the 64 fresh rows the engine is exact on 29, against 40 for B3 and 38 for
+always-favourable. The engine's errors are milder (14 real errors against 19 and 21, within-one
+50 against 45 and 43), but it matches Raman's verdict less often than a plain count of fired
+rules. This repeats hold-outs 1-3 (engine 87/198, B3 131). None of R5, C1 or C4 changes that.
+Hold-outs 4 and 5 are now spent.
+
+**Check against the audit branch's RS1 repair** (Addendum 36 on `claude/project-thread-kubltm`,
+not in the engine scored above): V0 re-run on that branch gives the same verdict on all 64
+hold-out rows, and 263/354/35 on the pool, so the figures above stand with or without RS1.

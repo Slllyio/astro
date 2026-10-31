@@ -14,12 +14,12 @@
       "H8.D.4",
       "H8.D.5"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "death": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "legacies": {
         "degree": "moderate",

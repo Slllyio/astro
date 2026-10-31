@@ -203,7 +203,9 @@ def timeline_to_text(tl) -> str:
         out.append(f"=== {label}  ({_jd_to_date(tp.period.start_jd)} .. "
                    f"{_jd_to_date(tp.period.end_jd)}) ===")
         pe = [a for a in tp.activated if a.grade == "par_excellence"]
-        lim = [a for a in tp.activated if a.grade == "limited"]
+        # every non-par-excellence grade (ordinary / same lord / limited / feeble) is listed
+        # with its own label — timing gap check fix 3 (2026-10-24) retired the two-grade view
+        lim = [a for a in tp.activated if a.grade != "par_excellence"]
         if pe:
             for a in pe:
                 out.append(f"  [par-excellence] House {a.house} ({_HOUSE_NAMES[a.house]}): "
@@ -211,7 +213,7 @@ def timeline_to_text(tl) -> str:
         else:
             out.append("  (no par-excellence house this period)")
         if lim:
-            out.append(f"  limited: {', '.join(str(a.house) for a in lim)}")
+            out.append("  " + "; ".join(f"{a.grade.replace('_', ' ')}: {a.house}" for a in lim))
     return _ascii("\n".join(out))
 
 
@@ -224,8 +226,9 @@ def timeline_to_markdown(tl) -> str:
         for a in pe:
             out.append(f"- **House {a.house} ({_HOUSE_NAMES[a.house]}):** "
                        f"{a.natal_verdict} ({a.natal_degree})")
-        lim = [a.house for a in tp.activated if a.grade == "limited"]
+        lim = [a for a in tp.activated if a.grade != "par_excellence"]
         if lim:
-            out.append(f"- _limited:_ {', '.join(map(str, lim))}")
+            out.append("- " + "; ".join(f"_{a.grade.replace('_', ' ')}:_ {a.house}"
+                                        for a in lim))
         out.append("")
     return _ascii("\n".join(out))

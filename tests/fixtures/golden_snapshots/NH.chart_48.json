@@ -12,7 +12,6 @@
       "HTJAH-II:16312",
       "HTJAH-II:16314",
       "HTJAH-II:16410",
-      "HTJAH-II:16470",
       "HTJAH-II:16506",
       "HTJAH-II:16615",
       "HTJAH-II:16625"
@@ -28,7 +27,6 @@
       "H12.C.F4",
       "H12.C.H2",
       "H12.C.I3",
-      "H12.C.J11",
       "H12.L.3",
       "H12.L.3a",
       "H12.P.Mars",
@@ -77,12 +75,12 @@
       "H5.C.1",
       "H5.L.7"
     ],
-    "rollup": "afflicted",
+    "rollup": "favourable",
     "significations": {
       "children": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "intellect": {
         "degree": "mild",

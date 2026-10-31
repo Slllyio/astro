@@ -352,14 +352,24 @@ def _timing_item(report: "DetailedReport", priority: int) -> DigestItem | None:
                    if tp.period.start_jd <= report.ref_jd < tp.period.end_jd), None)
     if cur_tp is not None:
         from app.raman_saab.detailed_report import graded_buckets
+        from app.raman_saab.primitives.vimshottari import running_top_tier
         associated, _buckets = graded_buckets(cur_tp, report.chart)
-        tier = "par excellence" if associated else "ordinary"
+        tier = running_top_tier(cur_tp.period.maha, cur_tp.period.antar, associated)
         assoc_word = "associated" if associated else "not associated"
         ad = cur_tp.period.antar or cur_tp.period.maha
-        tier_clause = (f" The running {cur.maha}/{ad} sub-period grades {tier} by Raman's "
-                       f"four-tier scheme (lords {assoc_word}); that grade and the lean "
-                       f"above are different axes, not a contradiction.")
-        tier_cites = ("HTJAH-I:1592-1596",)
+        if tier == "same lord":
+            # timing gap check fix 3 (2026-10-24): the MD lord's own bhukti
+            tier_clause = (f" The running {cur.maha}/{ad} sub-period is the major lord's own, "
+                           f"so by Raman's four-tier scheme it grades 'same lord' rather "
+                           f"than par excellence or ordinary (his association test is for "
+                           f"the sub-period of another, HTJAH-I:1635); that grade and the "
+                           f"lean above are different axes, not a contradiction.")
+            tier_cites = ("HTJAH-I:1592-1596", "HTJAH-I:1635")
+        else:
+            tier_clause = (f" The running {cur.maha}/{ad} sub-period grades {tier} by Raman's "
+                           f"four-tier scheme (lords {assoc_word}); that grade and the lean "
+                           f"above are different axes, not a contradiction.")
+            tier_cites = ("HTJAH-I:1592-1596",)
     return DigestItem(
         kind="timing",
         title=f"You are currently in the {cur.maha} Mahadasha",

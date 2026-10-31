@@ -25,7 +25,7 @@ class RamanReading:
     proformas: tuple[HouseProforma, ...] = ()
 
 
-def read_chart(birth: BirthData, *, ayanamsa: str = "lahiri") -> RamanReading:
+def read_chart(birth: BirthData, *, ayanamsa: str = "raman") -> RamanReading:
     """Birth data -> a deterministic, cited, house-by-house Raman reading (modern judge).
 
     Defaults to **Lahiri** sidereal ayanamsa — the project-locked standard for all live/user

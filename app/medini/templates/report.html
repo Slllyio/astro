@@ -543,7 +543,7 @@
             </div>
             <div style="margin-top:.45rem"><label class="leaf-label" data-i18n="TIMEZONE (HRS FROM UTC)">TIMEZONE (HRS FROM UTC)</label><input class="leaf-input" id="tz_offset" type="number" step="0.25" value="5.5"></div>
           </details>
-          <div style="margin-bottom:.9rem"><label class="leaf-label" data-i18n="AYANAMSA">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
+          <div style="margin-bottom:.9rem"><label class="leaf-label" data-i18n="AYANAMSA">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>raman</option><option>lahiri</option></select></div>
           <div style="text-align:center"><button class="leaf-button" id="go" type="button" onclick="run()" data-i18n="Cast the Reading">Cast the Reading</button></div>
           <div style="text-align:center;margin-top:.5rem;font-size:.76rem;color:var(--ink-faded);font-style:italic" data-i18n="a few seconds to cast & compose">a few seconds to cast &amp; compose</div>
         </div>
@@ -666,8 +666,8 @@ const PARITY_NOTES={
   bav_reduced:"HPA-26 reductions - used classically for special calculations; shown for completeness; ASP transit application deferred pending corpus. Raman: the bindu tables \"must be subjected to two reductions, viz., Thrikona reduction and Ekadhipathya reduction\" (HPA-26:390-393), in that order - \"After the Thrikona reduction, the Ekadhipathya reduction must be applied\" (HPA-26:466-467). Trikona follows Raman's own stated SUBTRACT reading (HPA-26:423-431), regression-pinned to his worked Sun table (HPA-26:432-462).",
   sodya_pinda:"Computed from the reduced tables above: each sign's reduced bindus x its fixed zodiacal factor (Rasi Gunakara, HPA-26:1149-1153), plus the reduced bindus in each graha's occupied sign x its fixed planetary factor (Graha Gunakara, HPA-26:1311-1315). The sum is Raman's Sodya Pinda by his own naming (ASP-14:196-198); HPA-26 applies it to LONGEVITY (the x7/27 Ayurdaya use, HPA-26:1400-1404 / ASP-14:199-201). Honesty note, recorded not fudged: on ASP-14's worked Standard Horoscope Raman prints Sun 96/86/182 where this pipeline gives 103/88/191 on his own stated longitudes - the divergence is in HIS printed reduced tables (the 1962 book carries known misprints), so the engine pins the RULES, anchored on HPA-26's own worked reduction, and records this delta.",
   pratyantar:"The third level of the Vimshottari hierarchy, for the bhukti running now only - the same proportional lord-years/120 split, one level down, in JD space. Raman names all three levels as carriers of a house's results: \"as lords of the Dasas (main-periods), as lords of Bhuktis (Sub-periods) or as lords of the Antaras\" (HTJAH-II:668-702). The running pratyantar is marked; each span reads in the same indication idiom as the bhukti rows above.",
-  sade_sati:"Sade-Sati is Saturn's roughly 7.5-year passage across the 12th, 1st and 2nd signs from the natal Moon (see glossary). These are the dated phase spans of the episode nearest the reference date, with the current position marked. Method note (dates only): no Sade-Sati x Moon result doctrine is on record in the encoded corpus, so no intensity or result reading is offered - the dates are plain gochara arithmetic (transiting Saturn's sign against the natal Moon sign), at the outlook's ~week sampling resolution; a retrograde re-entry shows as its own dated row.",
-  adverse:"The mirror of the favourable transit lanes above - the stretches when Jupiter, Saturn, Rahu or Ketu sits in a house from your Moon that the classical Gochara scheme does NOT count as supportive for that planet. The same computation always produced these windows; only the favourable half was shown before. Honest labels: 'what it concerns' is the same life-area that planet governs, here classically unsupported rather than supported; 'mitigation' applies Raman's own proportion law - the planet's bindus in the transited sign neutralise the evil to that extent (\"neutralises the evil to the extent of 75%\" at 6 of 8 bindus, ASP-13:416); Vedha (interference) is defined for favourable transits only, so that column reads '-' here - not computed, not zero. Per Raman a transit stays secondary to the Dasha (HTJAH-II:4679): read an adverse window as reduced transit support during whatever the running period already indicates, never a stand-alone prediction.",
+  sade_sati:"Sade-Sati is Saturn's roughly 7.5-year passage across the 12th, 1st and 2nd signs from the natal Moon (see glossary). These are the dated phase spans of the episode nearest the reference date, with the current position marked. The dates are plain gochara arithmetic (transiting Saturn's sign against the natal Moon sign), at the outlook's ~week sampling resolution; a retrograde re-entry shows as its own dated row. Raman's result doctrine (corrected 2026-10-24 - an earlier note said none was on record): the round since birth, the ruling period's strength and the Sarvashtakavarga of the three signs (AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616), read in the Sade-Sati rounds table.",
+  adverse:"The mirror of the favourable transit lanes above - the stretches when Jupiter, Saturn, Rahu or Ketu sits in a house from your Moon that the classical Gochara scheme does NOT count as supportive for that planet. The same computation always produced these windows; only the favourable half was shown before. Honest labels: 'what it concerns' is the same life-area that planet governs, here classically unsupported rather than supported; 'mitigation' applies Raman's own proportion law - the planet's bindus in the transited sign neutralise the evil to that extent (\"neutralises the evil to the extent of 75%\" at 6 of 8 bindus, ASP-13:416); Vedha (interference) obstructs favourable transits, so that column reads '-' here; the 'relief' column applies Raman's reverse Vedha (added 2026-10-24) - an adverse station on a Vedha point is relieved when another planet holds the paired good house (\"conversely, if the Sun is in the 5th ... no evil will be produced provided the 11th is being transitted at the same time by any other planet, excepting Saturn\", HPA-34:161-164); the nodes have no row in his table. Per Raman a transit stays secondary to the Dasha (HTJAH-II:4679): read an adverse window as reduced transit support during whatever the running period already indicates, never a stand-alone prediction.",
   dasha_transit_adverse:"The mirror of the confluence table above - the stretches where the running period's own lord is ALSO transiting adversely from your Moon. The favourable builder was one-sided by construction; Raman's blending doctrine reads obstruction too (HPA-34:369-381). Method-only, and coarsely sampled like its favourable twin: the engine is not a validated predictor.",
   chara:"The parallel sign-based dasha the Chart signature chip names (see glossary). Dates are plain JD arithmetic from birth (period years x 365.2425 days) over the KN Rao sequence already encoded in the engine; the 12-sign cycle repeats. The running sign is marked. No result judgment attaches here - matters are read from Vimshottari.",
   maraka:"Raman's second step after the longevity band (HTJAH-I:761-814; HTJAH-II:4485-4546): the 2nd and 7th are the houses of death; their lords, occupants and associates carry maraka power in their periods - each graha names why it qualified. A DISCLOSURE OF THE METHOD, not a prediction - the validation program measured no chart-specific death-timing signal (REAL_OUTCOME_GENERALIZATION.md).",
@@ -707,8 +707,8 @@ const I18N_HI = {
   [PARITY_NOTES.sodya_pinda]:"ऊपर की शोधित तालिकाओं से गणना: प्रत्येक राशि के शोधित बिंदु x उसका निश्चित राशि गुणकार (HPA-26:1149-1153), तथा प्रत्येक ग्रह की अधिष्ठित राशि के शोधित बिंदु x उसका निश्चित ग्रह गुणकार (HPA-26:1311-1315)। यह योग रामन का अपना शोध्य पिण्ड है (ASP-14:196-198); HPA-26 इसे आयु-गणना (x7/27 आयुर्दाय प्रयोग, HPA-26:1400-1404 / ASP-14:199-201) में लगाता है। ईमानदारी-टिप्पणी, दर्ज की गई है छुपाई नहीं: ASP-14 की मानक कुंडली में रामन सूर्य के लिए 96/86/182 छापते हैं जहाँ यह पाइपलाइन उन्हीं के बताए भोगांशों पर 103/88/191 देती है - अंतर उनकी छपी शोधित तालिकाओं में है (1962 की पुस्तक में ज्ञात मुद्रण-दोष हैं), इसलिए इंजन नियमों को पिन करता है, HPA-26 के अपने सधे शोधन पर टिकाकर, और यह अंतर दर्ज करता है।",
   [PARITY_NOTES.pratyantar]:"विंशोत्तरी पदानुक्रम का तीसरा स्तर, केवल अभी चल रही भुक्ति के लिए - वही आनुपातिक स्वामी-वर्ष/120 विभाजन, एक स्तर नीचे, JD गणना में। रामन तीनों स्तरों को भाव-फल के वाहक बताते हैं: \"दशाओं के स्वामी रूप में, भुक्तियों के स्वामी रूप में, या अंतरों के स्वामी रूप में\" (HTJAH-II:668-702)। चालू प्रत्यंतर चिह्नित है; हर अवधि ऊपर की भुक्ति-पंक्तियों वाले संकेत-शैली में ही पढ़ी जाती है।",
   [PARITY_NOTES.dasha_transit_adverse]:"ऊपर की संगम-तालिका का दर्पण - वे कालखंड जब चल रही दशा/अंतर्दशा का स्वामी स्वयं भी आपके चंद्र से प्रतिकूल गोचर में हो। अनुकूल तालिका रचना से ही एकपक्षीय थी; रामन का मिश्रण-सिद्धांत बाधा को भी पढ़ता है (HPA-34:369-381)। केवल पद्धति, और अपनी अनुकूल जोड़ी की तरह मोटे अंतराल पर - इंजन कोई प्रमाणित भविष्यवक्ता नहीं है।",
-  [PARITY_NOTES.sade_sati]:"साढ़ेसाती जन्म चंद्र से 12वीं, 1ली और 2री राशियों में शनि का लगभग साढ़े सात वर्ष का गोचर है (शब्दावली देखें)। ये संदर्भ-तिथि के निकटतम प्रकरण की तिथि-सहित चरण-अवधियाँ हैं, वर्तमान स्थिति चिह्नित। पद्धति-टिप्पणी (केवल तिथियाँ): संहिताबद्ध कॉर्पस में साढ़ेसाती x चंद्र का कोई फल-सिद्धांत दर्ज नहीं है, इसलिए कोई तीव्रता या फल-पाठ नहीं दिया जाता - तिथियाँ सादी गोचर-गणना हैं (गोचरस्थ शनि की राशि बनाम जन्म चंद्र-राशि), लगभग साप्ताहिक नमूना-सटीकता पर; वक्री पुनःप्रवेश अपनी अलग तिथि-पंक्ति के रूप में दिखता है।",
-  [PARITY_NOTES.adverse]:"ऊपर की अनुकूल गोचर-पट्टियों का प्रतिबिम्ब - वे अवधियाँ जब बृहस्पति, शनि, राहु या केतु आपके चंद्र से ऐसे भाव में बैठता है जिसे शास्त्रीय गोचर-योजना उस ग्रह के लिए सहायक नहीं गिनती। यही गणना ये अवधियाँ सदा से बनाती थी; पहले केवल अनुकूल आधा दिखाया जाता था। ईमानदार स्तंभ-नाम: 'किससे संबंधित' वही जीवन-क्षेत्र है जिस पर वह ग्रह शासन करता है, यहाँ शास्त्रीय समर्थन के बिना; 'शमन' रामन का अपना अनुपात-नियम लगाता है - गोचरस्थ राशि में ग्रह के बिंदु उसी अंश तक अशुभ को निष्फल करते हैं (8 में से 6 बिंदुओं पर \"75% तक अशुभ का शमन\", ASP-13:416); वेध केवल अनुकूल गोचरों के लिए परिभाषित है, इसलिए वह स्तंभ यहाँ '-' पढ़ता है - गणना नहीं हुई, शून्य नहीं। रामन के अनुसार गोचर दशा के अधीन रहता है (HTJAH-II:4679): प्रतिकूल अवधि को चालू दशा जो भी संकेत दे रही है उसमें घटे हुए गोचर-समर्थन की तरह पढ़ें, कभी स्वतंत्र भविष्यवाणी की तरह नहीं।",
+  [PARITY_NOTES.sade_sati]:"साढ़ेसाती जन्म चंद्र से 12वीं, 1ली और 2री राशियों में शनि का लगभग साढ़े सात वर्ष का गोचर है (शब्दावली देखें)। ये संदर्भ-तिथि के निकटतम प्रकरण की तिथि-सहित चरण-अवधियाँ हैं, वर्तमान स्थिति चिह्नित। तिथियाँ सादी गोचर-गणना हैं (गोचरस्थ शनि की राशि बनाम जन्म चंद्र-राशि), लगभग साप्ताहिक नमूना-सटीकता पर; वक्री पुनःप्रवेश अपनी अलग तिथि-पंक्ति के रूप में दिखता है। रामन का फल-सिद्धांत (2026-10-24 संशोधित - पहले यहाँ लिखा था कि कोई दर्ज नहीं): जन्म से कौन-सा चक्र, चल रही दशा का बल और तीनों राशियों का सर्वाष्टकवर्ग (AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616), साढ़ेसाती-चक्र तालिका में।",
+  [PARITY_NOTES.adverse]:"ऊपर की अनुकूल गोचर-पट्टियों का प्रतिबिम्ब - वे अवधियाँ जब बृहस्पति, शनि, राहु या केतु आपके चंद्र से ऐसे भाव में बैठता है जिसे शास्त्रीय गोचर-योजना उस ग्रह के लिए सहायक नहीं गिनती। यही गणना ये अवधियाँ सदा से बनाती थी; पहले केवल अनुकूल आधा दिखाया जाता था। ईमानदार स्तंभ-नाम: 'किससे संबंधित' वही जीवन-क्षेत्र है जिस पर वह ग्रह शासन करता है, यहाँ शास्त्रीय समर्थन के बिना; 'शमन' रामन का अपना अनुपात-नियम लगाता है - गोचरस्थ राशि में ग्रह के बिंदु उसी अंश तक अशुभ को निष्फल करते हैं (8 में से 6 बिंदुओं पर \"75% तक अशुभ का शमन\", ASP-13:416); वेध अनुकूल गोचरों में बाधा डालता है, इसलिए वह स्तंभ यहाँ '-' पढ़ता है; 'राहत' स्तंभ रामन का विपरीत वेध लगाता है - वेध-स्थान पर बैठे प्रतिकूल गोचर का अशुभ तब नहीं फलता जब कोई अन्य ग्रह जोड़ी वाले शुभ भाव में हो (HPA-34:161-164); राहु-केतु की उनकी तालिका में कोई पंक्ति नहीं। रामन के अनुसार गोचर दशा के अधीन रहता है (HTJAH-II:4679): प्रतिकूल अवधि को चालू दशा जो भी संकेत दे रही है उसमें घटे हुए गोचर-समर्थन की तरह पढ़ें, कभी स्वतंत्र भविष्यवाणी की तरह नहीं।",
   [PARITY_NOTES.chara]:"कुंडली-स्वरूप चिप जिस समानांतर राशि-आधारित दशा का नाम लेती है (शब्दावली देखें)। तिथियाँ जन्म से सादी JD गणना हैं (दशा-वर्ष x 365.2425 दिन), इंजन में पहले से संहिताबद्ध केएन राव क्रम पर; 12-राशि चक्र दोहराता है। चालू राशि चिह्नित है। यहाँ कोई फल-निर्णय नहीं जुड़ता - विषय विंशोत्तरी से पढ़े जाते हैं।",
   [PARITY_NOTES.maraka]:"आयु-वर्ग के बाद रामन का दूसरा चरण (HTJAH-I:761-814; HTJAH-II:4485-4546): 2रा और 7वाँ मृत्यु के भाव हैं; उनके स्वामी, स्थित ग्रह और संबंधी अपनी दशाओं में मारक-शक्ति रखते हैं - प्रत्येक ग्रह बताता है कि वह क्यों अर्ह हुआ। यह पद्धति का प्रकटीकरण है, भविष्यवाणी नहीं - सत्यापन कार्यक्रम ने कुंडली-विशिष्ट मृत्यु-समय का कोई संकेत नहीं मापा (REAL_OUTCOME_GENERALIZATION.md)।",
   [PARITY_NOTES.baladi]:"बालादि (आयु-अवस्था, राशि में अंश से) और जाग्रदादि (चेतना-अवस्था, आती दृष्टि से) अवस्थाएँ - निर्णायक की तीव्रता-मापी: जिस भाव के फल-वाहक मृत/सुषुप्ति में बैठे हों उसके फल की मात्रा एक सीढ़ी घटा दी जाती है (फल स्वयं कभी नहीं)। स्रोत-श्रेणी: CLASSICAL_NONCITABLE (फलदीपिका अ.3 श्लो.3/10/20; बृ.पा.हो.शा. अ.1 श्लो.14-16) - रामन के अपने ग्रंथों से बाहर, दिखाई इसलिए गई क्योंकि निर्णायक इसका उपयोग करता है।",
@@ -1182,6 +1182,7 @@ const I18N_HI = {
   "ordinary": "सामान्य",
   "limited": "सीमित",
   "feeble": "क्षीण",
+  "same lord": "एक ही स्वामी",
   "— no houses lit this bhukti": "— इस अंतर्दशा में कोई भाव सक्रिय नहीं हुआ",
   "running": "चालू",
   "now": "अभी",
@@ -1262,6 +1263,8 @@ let CUR_LEAF = 2;      // leaf recorded on each PAGE_TOC entry; corrected after 
 let PAGE_TOC = [];     // {label,id,leaf,step} for every rendered H2 — drives the TOC   // the current report JSON — set at render() entry so top-level
                   // helpers (H2's plain-language layer) can read section_meta.
 function t(s){ return LANG==='hi' ? (I18N_HI[s] || s) : s; }
+// Mirrors primitives.vimshottari.maraka_running_phrase: null = the check could not be made, said so.
+function maraka_phrase(v){ return v==null ? 'could not be determined for this chart' : (v ? 'carries a maraka-tier lord' : 'carries no maraka-tier lord'); }
 // Re-apply translation to every [data-i18n] element (static HTML chrome) — called on load
 // and whenever the toggle changes. JS-CONSTRUCTED content (headings, cards) calls t()
 // directly at render time instead, so it's already correct whenever it's (re)built.
@@ -1389,6 +1392,10 @@ function sectionTable(title, arr, drop, note){ if(!arr||!arr.length) return;
   if(note) b.append(para(t(note),'vz-note'));   // plain caption: what the table answers
   const sc=el('div',{class:'tscroll'});
   sc.append(rows(arr,drop)); b.append(sc); d.append(b); return d; }
+// A raman_timing table ({key,title,note,columns,rows}) as a sectionTable — every column kept.
+function timingTable(tt){ if(!tt||!(tt.rows||[]).length) return;
+  const cols=tt.columns||[];
+  return sectionTable(tt.title, tt.rows.map(r=>{ const o={}; cols.forEach((c,i)=>{ o[c]=r[i]; }); return o; }), [], tt.note); }
 function citeChip(src){ if(!src) return null; const s=el('cite',{class:'src'},src.work+':'+src.line);
   s.onclick=(e)=>{e.preventDefault();openSrc(src.work+':'+src.line);}; return s; }
 
@@ -1431,7 +1438,7 @@ function goodVar(b){ return b===true?'var(--fav)':b===false?'var(--aff)':'var(--
 function natureVar(n){ n=String(n||'').toLowerCase();
   if(/benefic|yoga/.test(n)) return 'var(--fav)'; if(/malefic|maraka/.test(n)) return 'var(--aff)'; return 'var(--ink)'; }
 function tintBg(c){ return 'color-mix(in srgb,'+c+' 12%,var(--surface))'; }
-const TIER_OP={'par excellence':1,'ordinary':.72,'limited':.45,'feeble':.28,'par_excellence':1};
+const TIER_OP={'par excellence':1,'ordinary':.72,'same lord':.6,'limited':.45,'feeble':.28,'par_excellence':1,'same_lord':.6};
 
 // --- sign / house / planet lookups ---
 const GABBR={Sun:'Su',Moon:'Mo',Mars:'Ma',Mercury:'Me',Jupiter:'Ju',Venus:'Ve',Saturn:'Sa',Rahu:'Ra',Ketu:'Ke'};
@@ -1942,6 +1949,7 @@ const JG_ROLE=[['lord_of','rules it'],['occupies','sits in it'],
                ['aspects','aspects it'],['karaka_of','is its natural significator']];
 //: activation tiers in plain words — mirrors judgment_graph.PLAIN_TIER (Python side).
 const JG_PLAIN_TIER={'par excellence':'full, strong results','ordinary':'normal results',
+                     'same lord':"one planet's own results",
                      'limited':'slight results','feeble':'faint results'};
 
 // per-house digest of the graph: who touches this house, and how.
@@ -2499,14 +2507,17 @@ async function readAsStory(btn){
 }
 
 // ---- Life-narrative: which houses each bhukti lights, graded per Raman's four-tier scheme ----
-const TIER_ORDER=['par excellence','ordinary','limited','feeble'];
+// 'same lord' (timing gap check fix 3, 2026-10-24): the MD lord's own bhukti — Raman's
+// association test is for "the sub-period of another" (HTJAH-I:1635).
+const TIER_ORDER=['par excellence','ordinary','same lord','limited','feeble'];
 const TIER_MEAN={'par excellence':'both lords influence the house AND the AD lord is associated with the MD lord',
   'ordinary':'both lords influence the house, AD not associated with MD',
+  'same lord':"the MD lord's own bhukti influences the house; the association test (for the sub-period of another, HTJAH-I:1635) does not apply",
   'limited':'only the bhukti (AD) lord influences the house',
   'feeble':'only the MD lord influences the house'};
 function renderTimeline(R, add){
   add(para('A planet influences a house by owning, occupying or aspecting the house or its lord '+
-    '(HTJAH-I:1586-1640). Grades (uniform for every house) — '+
+    '(HTJAH-I:1586-1640), each house on its own printed factor list (a karaka only where Raman prints one; the Moon-counted lord from the 2nd house on; the nodes by sign lord, joined planet, star lord, Sanivad Rahu / Kujavad Ketu). An "allied via H11"-style note (2/11, 9/12) has no Raman citation and never enters the grade. Grades (uniform for every house) — '+
     TIER_ORDER.map(t=>t+': '+TIER_MEAN[t]).join('; ')+'. Verdicts are the unchanged natal readings.','muted'));
   // 2026-08-18 parity: the per-row delivery tags (md_quality / antar_quality) the rows always
   // carried — how well each activating lord delivers, HTJAH-II:10004-10008.
@@ -2535,15 +2546,18 @@ function renderTimeline(R, add){
       hd.append(el('span',{class:'muted'},'  '+jdYM(bk.start_jd)+' – '+jdYM(bk.end_jd)));
       if(bk.antar&&bk.antar!==bk.maha) hd.append(el('span',{class:'muted'},
         ' · AD '+(bk.associated?'associated with':'not associated with')+' MD'));
+      else hd.append(el('span',{class:'muted'},' · '+t("the MD lord's own bhukti (same lord)")));
       if(now) hd.append(el('span',{class:'chip',style:'margin-left:.4rem'},t('now')));
       blk.append(hd);
       const byT={}; for(const a of (bk.activated||[])){ const k=a.tier||a.grade; (byT[k]=byT[k]||[]).push(a); }
       let any=false;
       for(const tier of TIER_ORDER){ const items=byT[tier]; if(!items||!items.length) continue; any=true;
-        const row=el('div',{class:'lit-row'+((tier==='limited'||tier==='feeble')?' dim':'')});
+        const row=el('div',{class:'lit-row'+((tier==='limited'||tier==='feeble'||tier==='same lord')?' dim':'')});
         row.append(el('span',{class:'tier-label',title:TIER_MEAN[tier]},tier));
         for(const a of items) row.append(el('span',{class:'chip house-chip v-'+String(a.natal_verdict).replace(/[^a-z-]/gi,''),
-          title:tier+' · natal verdict: '+a.natal_verdict},'H'+a.house));
+          title:tier+' · natal verdict: '+a.natal_verdict+
+            ((a.allied_via||[]).length?(' · allied via '+a.allied_via.map(h=>'H'+h).join(', ')+' (note only, not in the grade)'):'')},
+          'H'+a.house+((a.allied_via||[]).length?(' (allied via '+a.allied_via.map(h=>'H'+h).join(', ')+')'):'')));
         blk.append(row);
       }
       if(!any) blk.append(el('span',{class:'muted'},t('— no houses lit this bhukti')));
@@ -2642,7 +2656,10 @@ function adverseTransitRows(R){ const out=[];
       what_it_concerns:PLANET_THEME[seg.planet]||'—',
       mitigation:(bav!=null)?(bav+'/8 '+t('of the evil neutralised'))
         :(seg.planet==='Rahu'||seg.planet==='Ketu')?t('— (node: no classical Ashtakavarga)'):'—',
-      interference:'—'}); }
+      interference:'—',
+      // fix 9 (2026-10-24): reverse Vedha relief (HPA-34:161-164); nodes have no row.
+      relief_reverse_vedha:(seg.planet==='Rahu'||seg.planet==='Ketu')?'— (unspecified by Raman)'
+        :(seg.reverse_vedha_sample_fraction>0?(Math.round(seg.reverse_vedha_sample_fraction*100)+'% of sampled dates relieved'):'none sampled / not on a Vedha point')}); }
   out.sort((a,b2)=>a.start_jd-b2.start_jd); return out; }
 
 // ---- reading LENGTH: the same cast, read two ways ----------------------------
@@ -3347,6 +3364,7 @@ function render(R, S, FQ){
     const P=prep[pf.house], HS=hs[pf.house];
     const d=el('details',{class:'card'});
     const sm=el('summary'); sm.append('H'+pf.house+' · ',vchip(pf.rollup),el('span',{class:'muted'},' lord '+pf.lord));
+    if(pf.matter_breakdown) sm.append(el('span',{class:'muted'},' · '+t('matters')+': '+pf.matter_breakdown));
     d.append(sm);
     const b=el('div',{class:'body'});
     // v35 — the person-facing lead, above the pillars. Adds; never replaces.
@@ -3473,10 +3491,10 @@ function render(R, S, FQ){
       PARITY_NOTES.maraka));
     add(para(t('22nd drekkana lord')+': '+(R.maraka.drekkana22_lord||'—')+' · '+
       t('64th navamsa lord')+': '+(R.maraka.navamsa64_lord||'—')+' · '+
-      t('Running period')+' '+(R.maraka_period_now?t('carries a maraka-tier lord'):t('carries no maraka-tier lord'))+
+      t('Running period')+' '+t(maraka_phrase(R.maraka_period_now))+
       ' '+t('(broad, low-discrimination flag by design)'),'muted')); }
   add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn, [],
-    'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast. The "tier addends" column spells the score out per lord (primary=3 / secondary=2 / tertiary=1), so the number is checkable.'));
+    'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast. The "tier addends" column spells the score out per lord (primary 5 conjunct a 2nd/7th lord, 4 occupant or aspecting it, 3 the lord itself, HTJAH-I:783-784; secondary=2; tertiary=1; a node holding a late maraka\'s delegated power carries its weight, HTJAH-I:11194-11203), so the number is checkable. The amsa_spans / signature columns add the Amsa half: "the Rashi and Amsa occupied by him at birth or its trines" (HTJAH-I:11226-11228).'));
   // v17 — Health & vulnerability read-out: pure re-read, caveat always shown.
   if(R.health_readout && (R.health_readout.rows||[]).length){ const hr=R.health_readout;
     sec('health_readout'); add(H2('Health & vulnerability read-out')); plainLead('health_readout');
@@ -3486,7 +3504,7 @@ function render(R, S, FQ){
     if((hr.maraka_tiers||[]).length)
       add(para('Maraka tiers: '+hr.maraka_tiers.map(t=>t[0]+' ('+t[1]+')').join(', ')+
         ' — 22nd drekkana lord: '+hr.drekkana22_lord+', 64th navamsa lord: '+hr.navamsa64_lord+'.','muted'));
-    add(para('Running period '+(hr.maraka_period_now?'carries a maraka-tier lord':'carries no maraka-tier lord')+
+    add(para('Running period '+maraka_phrase(hr.maraka_period_now)+
       ' (broad, low-discrimination flag by design). Longevity band: '+hr.longevity_band+'.','muted')); }
 
   // ===== Arishta & Bhanga (v22) — completeness repair 2026-08-14 =====
@@ -3668,6 +3686,9 @@ function render(R, S, FQ){
     'The finest sub-division of the running period: which planet holds each short interval.'));
   add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats, [],
     'The benefic-point (Ashtakavarga) score of the sign each period-lord sits in — the seat its period rests on.'));
+  // 2026-10-24 (timing gap check, all 16 fixes): Raman's own period checks — every column
+  // and row of each table, as the markdown and standalone HTML print them.
+  for(const tt of (R.raman_period_checks||[])) add(timingTable(tt));
 
   // ===== Life-chapters =====
   sec('life_chapters'); add(H2('Life-chapters')); plainLead('life_chapters');
@@ -3712,7 +3733,7 @@ function render(R, S, FQ){
   if(_go) add(vizCard('Slow-mover transit outlook over time', _go,
     'Jupiter, Saturn, Rahu and Ketu through the signs across the window — green = favourable transit, red = adverse, opacity by Ashtakavarga bindus; the dashed line is now. The confluence table is below.'));
   add(sectionTable('Current transits with Vedha', R.gochara, [],
-    'Where each planet is today from your Moon-sign, whether that station is classically favourable, and whether another planet obstructs (vedha) it.'));
+    'Where each planet is today from your Moon-sign, whether that station is classically favourable, and whether another planet obstructs (vedha) it. reverse_vedha_house / reverse_vedha_by: an adverse station on a Vedha point is relieved by a planet in the paired good house (HPA-34:161-164). Mercury\'s 10th is obstructed from the 7th as Raman prints it (HPA-34:203, 207); the nodes have no Vedha row in his table (unspecified by Raman).'));
   add(sectionTable('Dasha × Transit confluence', R.dasha_transit, [],
     'Rows where the running period and today\'s transits point the same way — agreement between the two timing systems.'));
   // 2026-08-18 parity: the ADVERSE confluence rows (period lord ALSO transiting adversely).
@@ -3734,6 +3755,8 @@ function render(R, S, FQ){
         sign:p2.sign,start_jd:p2.start_jd,end_jd:p2.end_jd,
         now:p2.current?('◀ '+t('now')):'—'})),[],
       (_ssv?null:PARITY_NOTES.sade_sati))); }
+  // 2026-10-24 (timing gap check, all 16 fixes): Raman's own transit checks.
+  for(const tt of (R.raman_transit_checks||[])) add(timingTable(tt));
 
   // ===== Today for you (Muhurtha) — the day judged against THIS native's janma star/rasi =====
   sec('_muhurtha'); add(H2('Today for you (Muhurtha)'));
@@ -3849,7 +3872,7 @@ function render(R, S, FQ){
       +p2(_b.hour)+':'+p2(_b.minute)+' (tz '+(_b.tz_offset>=0?'+':'')+_b.tz_offset+')','lede'));
     add(para(t('Latitude')+' '+Number(_b.latitude).toFixed(4)+' · '+t('longitude')+' '
       +Number(_b.longitude).toFixed(4)+' · '+t('ayanamsa')+' '
-      +((R.window&&R.window.ayanamsa)||'Lahiri sidereal'),'muted')); }
+      +((R.window&&R.window.ayanamsa)||'sidereal'),'muted')); }
 
   // the running period lives on R.synthesis; the `summary` object carries only a prebuilt
   // `running_period` string, which is why reading S.running_md here rendered nothing.
@@ -3857,8 +3880,7 @@ function render(R, S, FQ){
   sec('now_box');
   if(_sy.running_md||_sy.running_ad){ add(H2('Running now'));
     add(para('Mahadasha '+(_sy.running_md||'—')+' · Antardasha '+(_sy.running_ad||'—')
-      +(R.maraka_period_now?' · the running period carries a maraka-tier lord'
-                           :' · the running period carries no maraka-tier lord'),'lede'));
+      +' · the running period '+maraka_phrase(R.maraka_period_now),'lede'));
     if(_sy.chara) add(para(t('Chara dasha')+': '+_sy.chara,'muted'));
     if(_sy.sade_sati) add(para(_sy.sade_sati,'muted'));
     if(_sy.panchanga) add(para(t('Panchanga')+': '+_sy.panchanga,'muted')); }

@@ -313,11 +313,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 13441)),
     RuleRecord(
         id="H10.C.36", house=10, signification="status_honour", group="combination",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): cite, cite 14022.
         kind="evaluable", condition=C.InRashiHouse("Saturn", 10),
         fortified=None,
         afflicted="Saturn in the 10th (a politically-oriented chart) → initial success but "
                   "eventual defeat and humiliation; destroys Rajayogas",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14020)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14022)),
 
     # ===== G. Sanyasa / asceticism — career =====
     RuleRecord(

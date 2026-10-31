@@ -1,11 +1,11 @@
 {
   "ashtakavarga_system_raman/chapter_015_miscellaneous.md": {
     "line_count": 347,
-    "sha256": "62304e9502869261a1893f97d2790f65b6027e58b64ede0de90ac75f8593be2e"
+    "sha256": "449247818c22babcca0ef69582dfc012111a506bb907dbadd55cbbd051ce5ca9"
   },
   "bphs/chapter_007_divisional-consideration.md": {
     "line_count": 883,
-    "sha256": "a5f9202ba73a03dbc2e1572aa1d903fa07cd30354b2d1bc0d94302584d21c669"
+    "sha256": "39e8614d83a31682327aa6ee3a900789996a56f88ad2ae6e78a8b69ece776faf"
   },
   "graha_bhava_balas_raman/chapter_001_chapter.md": {
     "line_count": 218,
@@ -19,9 +19,13 @@
     "line_count": 1412,
     "sha256": "9e43401be8d41851e944a176d2bab004950890319026156c6044c8e80c9d619e"
   },
+  "hindu_predictive_astrology_raman/chapter_006_astrological-terminology.md": {
+    "sha256": "6a6e8dcaef0b16efbb746eb4c2c0f61d75c20c8d1dccdd10f96cfb44bb2c0358",
+    "line_count": 387
+  },
   "hindu_predictive_astrology_raman/chapter_011_the-shadvargas.md": {
     "line_count": 201,
-    "sha256": "fb4d0baeb7a1ca877c8633a41bb46f9cd81af5e8443385b8491c833d2f7cab0b"
+    "sha256": "8fa854ce448264d38c821c19a6f09c5c6daa037f1288dceae090fda8ce4e69a5"
   },
   "hindu_predictive_astrology_raman/chapter_018_results-of-ascending-signs.md": {
     "line_count": 327,
@@ -29,35 +33,35 @@
   },
   "hindu_predictive_astrology_raman/chapter_020_special-yogas.md": {
     "line_count": 289,
-    "sha256": "b7863ee42ebf8e25dbff5c7d72715115dce9c31935a509ed3e64d28099cf555f"
+    "sha256": "2a9607ca8b40fca16ea2341a43118be3636bbed68c4d21f7232aebef75b8d1f0"
   },
   "hindu_predictive_astrology_raman/chapter_021_planets-in-different-bhavas-or-houses.md": {
     "line_count": 614,
-    "sha256": "13022931e6bdb58f95607bd382558eb12d9151353bf80f9f803bce90c9c8fc1e"
+    "sha256": "e647c81462579ee293a34f60d23e0ec44e9c8f3c4dc104aaa8f94e3f88dba312"
   },
   "hindu_predictive_astrology_raman/chapter_022_planets-in-different-rasis-or-signs.md": {
     "line_count": 531,
-    "sha256": "f4f93a7ac5ab14d65d0f20d0c2faf53ce546e74e838f99d7d61f09304387f8cb"
+    "sha256": "f785e544ed41eab587d9c965569c2358808b5af3a9667d6ac800e48fd4ef8313"
   },
   "hindu_predictive_astrology_raman/chapter_024_results-of-dasas-and-bhukthies.md": {
     "line_count": 1538,
-    "sha256": "8d792f155862da38db2a6157e33c49a2ffb71612236cf1195c90c362d0d2c6c7"
+    "sha256": "1fea72042d0438a1e53e95d9fb4bdb679bf63502d331d08843b3dc87bd8cfc00"
   },
   "hindu_predictive_astrology_raman/chapter_029_medical-astrology.md": {
     "line_count": 571,
-    "sha256": "8321419bac9ec768ade68aa7eb153f03dd2affb8cbb123ad318ca7e2c104549b"
+    "sha256": "9a20ca68aa306d18d5be2dae8a6276722fc538100fc25b9315ca0289f10de5e6"
   },
   "hindu_predictive_astrology_raman/chapter_034_gocharaphala-or-results-of-transits.md": {
     "line_count": 596,
-    "sha256": "4831ba745beafa599783a16c9037c2e904098b1a8642ab31041fc7fd95778511"
+    "sha256": "650cf6c9eea15d9b069d3707451d6001b8587f9f7cf0466cfaa3c1930b7c9636"
   },
   "how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 19335,
-    "sha256": "e7c632dd5c37cce8c175f264e4ea4617213a72beafafa57c3c4de4cc6b81af08"
+    "sha256": "ed80814c6ccca4d3687ea3bcba3dfa79740f6ddea53e1bf0e511bfafaed38bcc"
   },
   "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md": {
     "line_count": 18817,
-    "sha256": "73901f7f43aa5f72e70ef6dde82466b48776d1ddba35d3ae0ddfde849f21ca15"
+    "sha256": "ff0787e2e4d6af9f9890c646159a940a5bc1c7afb39f6440ec2f5267fbb52629"
   },
   "muhurtha_raman/chapter_002_general-hints.md": {
     "line_count": 259,
@@ -85,7 +89,7 @@
   },
   "notable_horoscopes_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 17062,
-    "sha256": "c8dd6a38d64fbf9c107bd24ae6bb9651956812bf90b1a678117848d0392b01c4"
+    "sha256": "c7ff29acec260d22a9d0318e27f511c0c8d37e3c11d00772b7d843a91167a3e5"
   },
   "phaladeepika/chapter_05_chapter-3-divisions-of-the-zodiac.md": {
     "line_count": 334,
@@ -93,7 +97,7 @@
   },
   "prasna_tantra_raman/chapter_002_bhava-prasna.md": {
     "line_count": 486,
-    "sha256": "b03b99288138a0ed70ae92dc8b38e13ae92b2967e0ca2ecdaa4fc2672601094e"
+    "sha256": "33c5e507f235d50bbcd95c6da5c8a9ee292eb00280ad1d3e6a7d03dcf79acd58"
   },
   "prasna_tantra_raman/chapter_004_miscellaneous-matters.md": {
     "line_count": 2598,
@@ -101,26 +105,26 @@
   },
   "prasna_tantra_raman/chapter_049_bhava-prasna.md": {
     "line_count": 3685,
-    "sha256": "715860496e441365995f340414ff973efa0d40bb64db49dac104db6b872452e0"
+    "sha256": "2aa2572bb2dadba46c74915857bb34856e1799aad143a761892601c85f5d4fad"
   },
   "studies_jaimini_raman/chapter_009_summary.md": {
     "line_count": 1600,
-    "sha256": "1aa61e4137c9b445d67279e19e79f221bd20f83108d5af633fb50ed4fa295b13"
+    "sha256": "18068760daa41b7bb1198fb3796d3ea0eeb3f0cc2b061a3b69241792483ea9ed"
   },
   "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md": {
     "line_count": 12053,
-    "sha256": "d4371bd289571c1c1f5677f9e81f063d29f36865691515bcaa57ae16c3d01dc8"
+    "sha256": "be939988b8aa4f747f647e6da5711d8a4df5cfc54bfeb3ae8ca5eb8e658d6ad3"
   },
   "three_hundred_combinations_hocr/chapter_001_full-text-unsplit.md": {
     "line_count": 3237,
-    "sha256": "dcb36624054c732bdb9c10c6321010f96693827cd3c56900e8be614cefed2a31"
+    "sha256": "e7fe7245bd9c3d006e388ed63950a9bd8ed2a36ba83922874df08d22adf9ee33"
   },
   "three_hundred_combinations_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 8984,
-    "sha256": "71ab513b12cd3f6466c26abe61b59bbaba6d0fa0d6bd9fde74eeff23d40284e4"
+    "sha256": "8880233fc621df1d3142921e35b26a8e0844ea435d2020b8888e4b1aa401e5b5"
   },
   "varshaphal_raman/chapter_007_yogas-sahams-etc.md": {
     "line_count": 255,
-    "sha256": "611f9204fd07cbfea0035f1eab6e7b3ab8debfc590ac5a408457442327f1f64d"
+    "sha256": "9a9fdd44278d09c5e8a9828853ab42a3dfd093a6adc62f47d6e01311c29af383"
   }
 }

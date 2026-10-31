@@ -38,6 +38,8 @@ from app.raman_saab.chart.constants import SIGN_LORDS
 #: would have died of NameError inside the very handler meant to keep it alive.
 logger = logging.getLogger(__name__)
 from app.raman_saab.chart.model import BirthData, RamanChart
+from app.raman_saab.primitives.vimshottari import maraka_running_phrase
+from app.raman_saab.chart.ayanamsa import ayanamsa_label
 from app.raman_saab.judges.calibrated_reading import (
     _VALIDITY,
     CalibratedHouseReading,
@@ -122,6 +124,50 @@ def _jd_ym(jd: float) -> str:
     import swisseph as swe
     y, m, _d, _h = swe.revjul(jd, swe.GREG_CAL)
     return f"{int(y)}-{int(m):02d}"
+
+
+def _reverse_vedha_cell(g) -> str:
+    """The snapshot row's reverse-Vedha cell (fix 9): the relieving grahas and the good house
+    they hold, or why there is none."""
+    if g.gochara_good:
+        return "-"
+    if g.planet in ("Rahu", "Ketu"):
+        return f"- ({tr.NODE_VEDHA_NOTE})"
+    rv_house = getattr(g, "reverse_vedha_house", None)
+    if rv_house is None:
+        return "- (not on a Vedha point)"
+    rv_by = getattr(g, "reverse_vedha_by", ()) or ()
+    return (f"relieved by {', '.join(rv_by)} in the {_ordinal(rv_house)}" if rv_by
+            else f"none in the {_ordinal(rv_house)}")
+
+
+def _timing_tables_md(tables) -> list[str]:
+    """Markdown for `raman_timing.TimingTable`s — every column, every row (REPORT COMPLETENESS)."""
+    out: list[str] = []
+    for t in tables:
+        out.append(f"### {t.title}")
+        out.append("")
+        out.append(f"_{t.note}_")
+        out.append("")
+        out.append("| " + " | ".join(t.columns) + " |")
+        out.append("|" + "---|" * len(t.columns))
+        for row in t.rows:
+            out.append("| " + " | ".join(str(c).replace("|", "/") for c in row) + " |")
+        out.append("")
+    return out
+
+
+def relief_word(planet: str, house_from_moon: Optional[int], frac: float) -> str:
+    """Plain word for REVERSE Vedha on an adverse transit (fix 9, 2026-10-24): "conversely, if
+    the Sun is in the 5th, in the course of Gochara, no evil [is] produced provided the 11th is
+    being transitted at the same time by any other planet, excepting Saturn" (HPA-34:161-164).
+    Nodes have no row in Raman's Vedhanka table (HPA-34:185-226)."""
+    if planet in ("Rahu", "Ketu"):
+        return f"- ({tr.NODE_VEDHA_NOTE})"
+    pair = tr.reverse_vedha_pair(planet, house_from_moon) if house_from_moon else None
+    if pair is None:
+        return "- (not on a Vedha point)"
+    return f"{_vedha_word(frac).split(' ')[0]} (relief from the {_ordinal(pair)})"
 
 
 def _vedha_word(frac: float) -> str:
@@ -422,7 +468,7 @@ _SIGNIFICATION_PLAIN: dict[str, str] = {
     "profession_learned": "career in a learned profession",
     "profession_labour": "career built on hands-on work",
     "status_honour": "public standing and honour",
-    "gains": "gains and income", "elder_siblings": "elder siblings",
+    "gains": "gains and income", "means_of_gain": "the means of earning", "elder_siblings": "elder siblings",
     "friends": "friendships", "acquisitions": "acquiring possessions",
     "loss_moksha": "release and letting go", "expenditure": "spending",
     "foreign_residence": "living abroad", "moksha": "spiritual liberation",
@@ -439,6 +485,10 @@ _TIER_MEANING = {
     "ordinary": "normal results — both lords touch it, but do not reinforce",
     "limited": "slight results — only the current sub-period (bhukti) lord touches it",
     "feeble": "faint results — only the major-period (Mahadasha) lord touches it",
+    # USER DECISION 2026-10-24 (timing gap check fix 3): the Mahadasha lord's own bhukti.
+    # Raman's par-excellence test is for "the sub-period of another" (HTJAH-I:1635).
+    "same lord": "the major-period lord's own sub-period — it touches the house, and "
+                 "Raman's association test between two lords does not apply",
 }
 
 
@@ -1741,14 +1791,21 @@ def graded_buckets(tp, chart) -> tuple[bool, dict[str, list]]:
 
     Hoisted here so BOTH renderers consume one implementation — the doctrine grading must never
     be duplicated in presentation code where the two could silently drift apart.
+
+    Each row already carries its tier (``ActiveHouse.grade``, graded on the house's OWN timer
+    set by `vimshottari.period_tier`); this only buckets it. ``associated`` is False for the
+    Mahadasha lord's own bhukti, where Raman's association test does not apply ("the sub-period
+    of another", HTJAH-I:1635) and the rows bucket as "same lord" (USER DECISION 2026-10-24,
+    timing gap check fix 3).
     """
     from app.raman_saab.primitives import vimshottari as vd
     maha, antar = tp.period.maha, tp.period.antar
-    associated = antar is not None and vd.lords_associated(chart, maha, antar)
-    buckets: dict[str, list] = {"par excellence": [], "ordinary": [], "limited": [], "feeble": []}
+    associated = (antar is not None and antar != maha
+                  and vd.lords_associated(chart, maha, antar))
+    buckets: dict[str, list] = {t: [] for t in vd.TIER_ORDER}
     for a in tp.activated:
-        tier = vd.bhukti_tier(a.md_activates, a.antar_activates, associated)
-        if tier:
+        tier = str(a.grade).replace("_", " ")
+        if tier in buckets:
             buckets[tier].append(a)
     return associated, buckets
 
@@ -1803,9 +1860,22 @@ def gochara_synthesis_sentence(g) -> str:
         return (f"{head}, but obstructed by vedha from {', '.join(g.vedha_by)}: "
                 f"the good is withheld.")
     if g.gochara_good:
+        if g.planet in ("Rahu", "Ketu"):
+            # fix 9: Raman's Vedhanka table has no node row (HPA-34:185-226)
+            return f"{head}; a node's own Vedha point is {tr.NODE_VEDHA_NOTE}: the indication stands."
         return f"{head}, no vedha: the indication stands."
-    return (f"{head}; vedha applies to favourable stations only, "
-            f"so the adverse reading stands as classical colour.")
+    # fix 9 (2026-10-24): reverse Vedha — an adverse station on a Vedha point is relieved by
+    # another planet in the paired good house (HPA-34:161-165).
+    rv_by = tuple(getattr(g, "reverse_vedha_by", ()) or ())
+    rv_house = getattr(g, "reverse_vedha_house", None)
+    if rv_by:
+        return (f"{head}; reverse vedha from {', '.join(rv_by)} in the {_ordinal(rv_house)}: "
+                f"the evil is relieved (HPA-34:161-164).")
+    if rv_house:
+        return (f"{head}; no planet holds the {_ordinal(rv_house)} to relieve it by reverse "
+                f"vedha, so the adverse reading stands as classical colour.")
+    return (f"{head}; the station is no Vedha point, so the adverse reading stands as "
+            f"classical colour.")
 
 
 def planet_rows(chart: RamanChart) -> tuple[tuple[str, PlanetPos], ...]:
@@ -1891,12 +1961,16 @@ def plain_bhukti_summary(rows, associated: bool) -> str:
     """A lay-reader gloss of one bhukti: its overall intensity (from the association tier) and the
     life-areas under strain (the afflicted houses at that tier, named). A plain restatement of
     Raman's reading — never a prediction of real events."""
-    from app.raman_saab.primitives.vimshottari import bhukti_tier
-    top = "par excellence" if associated else "ordinary"
+    from app.raman_saab.primitives.vimshottari import running_top_tier
+    first = rows[0] if rows else None
+    top = (running_top_tier(first.md_lord, first.antar_lord, associated) if first is not None
+           else ("par excellence" if associated else "ordinary"))
     strained = sorted({(a.house, _PLAIN_AREA[a.house]) for a in rows
                        if a.natal_verdict == "afflicted"
-                       and bhukti_tier(a.md_activates, a.antar_activates, associated) == top})
-    intensity = ("a strong, well-supported stretch" if associated
+                       and str(a.grade).replace("_", " ") == top})
+    intensity = ("the major-period lord's own sub-period, its results unmixed with another "
+                 "lord's" if top == "same lord"
+                 else "a strong, well-supported stretch" if associated
                  else "a steady, ordinary stretch")
     s = f"In plain terms: {intensity}; most matters run supportively"
     if strained:
@@ -2005,11 +2079,13 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
         from app.raman_saab.primitives.vargavisesha import vargavisesha
         vv = vargavisesha(chart)
     except Exception:  # noqa: BLE001 — Track-B sparse
+        logger.info("report section skipped (Track-B sparse)", exc_info=True)
         vv = ()
     for label, build, render in _DIVISIONAL:
         try:
             body = _clean_box(render(build(chart)))
         except Exception:  # noqa: BLE001 — same silent-skip contract as synthesis
+            logger.info("report section skipped (same silent-skip contract as synthesis)", exc_info=True)
             continue
         dtag = label.split(" ", 1)[0]                 # e.g. "D-9"
         own = [v.planet for v in vv
@@ -2043,6 +2119,10 @@ class ConfluenceWindow:
     sign: int
     bav_bindus: int | None
     vedha_sample_fraction: float
+    # append-only 2026-10-24 (fix 9): on ADVERSE rows, the segment's sampled reverse-Vedha
+    # share (HPA-34:161-165) and the station from the Moon it was judged at.
+    reverse_vedha_sample_fraction: float = 0.0
+    house_from_moon: Optional[int] = None
 
 
 def _dasha_transit_confluences(
@@ -2101,6 +2181,7 @@ def _dasha_transit_adverse(
                 try:
                     bav = ashtakavarga.bhinnashtakavarga(chart, planet)[sign]
                 except Exception:  # noqa: BLE001 — sparse chart
+                    logger.info("report section skipped (sparse chart)", exc_info=True)
                     bav = None
             bav_of[key] = bav
         return bav_of[key]
@@ -2119,7 +2200,9 @@ def _dasha_transit_adverse(
                         planet=lord, role=role, period_start_jd=p.start_jd,
                         period_end_jd=p.end_jd, overlap_start_jd=lo, overlap_end_jd=hi,
                         sign=seg.sign, bav_bindus=_bav(lord, seg.sign),
-                        vedha_sample_fraction=seg.vedha_sample_fraction))
+                        vedha_sample_fraction=seg.vedha_sample_fraction,
+                        reverse_vedha_sample_fraction=seg.reverse_vedha_sample_fraction,
+                        house_from_moon=seg.house_from_moon))
     out.sort(key=lambda c: c.overlap_start_jd)
     return tuple(out)
 
@@ -2441,10 +2524,18 @@ class MarakaSaturnConfluence:
     sign: int
     score: int                  # the DeathWindow's own maraka tier-score (MD-weight + AD-weight)
     # append-only 2026-08-17 (report critique): the score's addends spelled out, e.g.
-    # "Saturn 3 + Venus 3" for score 6 — the same MarakaSet.weight() values death_window
-    # summed (primary=3/secondary=2/tertiary=1). "" when the recomputed weights do not
+    # "Saturn 3 + Venus 3" for score 6 — the same per-lord weights death_window summed
+    # (since 2026-10-24: primary 5/4/3 by HTJAH-I:783-784, secondary 2, tertiary 1, a node
+    # carrying a delegated maraka's weight). "" when the recomputed weights do not
     # reproduce `score` (never expected; a guard, not a behaviour).
     score_parts: str = ""
+    # append-only 2026-10-24 (timing gap check fix 7): the AMSA half of the signal — "Death
+    # occurs when Saturn in his transit passes through the Rashi and Amsa occupied by him at
+    # birth or its trines" (HTJAH-I:11226-11228). The sub-spans of the overlap in which
+    # transiting Saturn's Navamsa sign is also natal Saturn's Navamsa sign or a trine of it
+    # ("" when none), and the signature that holds: "Rasi and Amsa" or "Rasi only".
+    amsa_spans: str = ""
+    signature: str = "Rasi only"
 
 
 def _maraka_saturn_confluences(
@@ -2468,13 +2559,34 @@ def _maraka_saturn_confluences(
         chart, ref_jd, years_back, years_forward, ayanamsa=ayanamsa,
         planets=("Saturn",)).get("Saturn", ())
     trines = {sat.sign, (sat.sign - 1 + 4) % 12 + 1, (sat.sign - 1 + 8) % 12 + 1}
-    # The score's addends, from the SAME MarakaSet death_window itself summed — pure
-    # re-read (maraka_set is deterministic on the chart), shown so "6" is checkable as
+    # The score's addends, from the SAME weights death_window itself summed — pure
+    # re-read (deterministic on the chart), shown so "6" is checkable as
     # "Saturn 3 + Venus 3". Guarded to "" if the recomputation ever disagreed.
-    ms = vd.maraka_set(chart)
+    weight = vd.death_weight_fn(chart)
+    nav_trines = {(sat.navamsa_sign - 1 + k) % 12 + 1 for k in (0, 4, 8)}
+    from app.raman_saab.chart import varga as _varga
+
+    def _amsa_spans(lo: float, hi: float) -> str:
+        """Sub-spans of [lo, hi) where transiting Saturn's Navamsa sign is in natal Saturn's
+        Navamsa trines, sampled every 5 days (edges good to about 5 days)."""
+        spans: list[tuple[float, float]] = []
+        jd, start = lo, None
+        while jd < hi:
+            hit = _varga.navamsa_sign(tr.planet_longitude(jd, "Saturn", ayanamsa=ayanamsa)) \
+                in nav_trines
+            if hit and start is None:
+                start = jd
+            if not hit and start is not None:
+                spans.append((start, jd))
+                start = None
+            jd += 5.0
+        if start is not None:
+            spans.append((start, hi))
+        return ", ".join(_outlook_window_label(a, b) for a, b in spans)
+
     out: list[MarakaSaturnConfluence] = []
     for dw in dws:
-        w_md, w_ad = ms.weight(dw.maha), ms.weight(dw.antar)
+        w_md, w_ad = weight(dw.maha), weight(dw.antar)
         parts = (f"{dw.maha} {w_md} + {dw.antar} {w_ad}"
                  if w_md + w_ad == dw.score else "")
         for seg in sat_segments:
@@ -2482,10 +2594,12 @@ def _maraka_saturn_confluences(
                 continue
             lo, hi = max(dw.start_jd, seg.start_jd), min(dw.end_jd, seg.end_jd)
             if lo < hi:
+                amsa = _amsa_spans(lo, hi)
                 out.append(MarakaSaturnConfluence(
                     maha=dw.maha, antar=dw.antar, window_start_jd=dw.start_jd,
                     window_end_jd=dw.end_jd, overlap_start_jd=lo, overlap_end_jd=hi,
-                    sign=seg.sign, score=dw.score, score_parts=parts))
+                    sign=seg.sign, score=dw.score, score_parts=parts,
+                    amsa_spans=amsa, signature="Rasi and Amsa" if amsa else "Rasi only"))
     out.sort(key=lambda c: c.overlap_start_jd)
     return tuple(out)
 
@@ -2506,10 +2620,11 @@ _SADE_SATI_PHASE: Final[dict[int, str]] = {
 @dataclass(frozen=True)
 class SadeSatiPhase:
     """One dated span of transiting Saturn in the 12th/1st/2nd sign from the natal Moon.
-    DATES ONLY: no Sade-Sati x Moon result doctrine is on record in the encoded corpus (the
-    same absence the report's method notes already disclose), so this row carries plain
-    gochara arithmetic — Saturn's transiting sign against the natal Moon sign — and no
-    intensity or result judgment. Boundaries inherit `gochara_timeline`'s ~week sampling
+    DATES ONLY: this row carries plain gochara arithmetic — Saturn's transiting sign against
+    the natal Moon sign. Raman's result doctrine (the round since birth, the ruling period's
+    strength, the SAV of the three signs: AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616)
+    is read in `raman_timing`'s Sade-Sati rounds table (corrected 2026-10-24: an earlier note
+    here said no such doctrine was on record). Boundaries inherit `gochara_timeline`'s ~week sampling
     resolution."""
     phase: str            # rising / peak / setting (the 12th / 1st / 2nd from the Moon)
     house_from_moon: int  # 12, 1 or 2
@@ -2590,6 +2705,7 @@ def _pratyantar_rows(chart: RamanChart, ref_jd: float) -> tuple[vd.DashaPeriod, 
     try:
         bh = vd.dasha_on(chart, ref_jd)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         return ()
     if bh is None or bh.antar is None:
         return ()
@@ -2605,8 +2721,9 @@ def adverse_transit_windows(
     Bhinnashtakavarga bindus in the transited sign, read by Raman's proportion law as the
     extent to which the evil is neutralised ("neutralises the evil to the extent of 75%" at
     6 of 8 bindus, ASP-13:416); None for the nodes (no classical Ashtakavarga — the 7-graha
-    lock). Vedha (obstruction) is defined for favourable transits only, so no interference
-    fraction exists for these rows — rendered as not-computed, never as zero."""
+    lock). Vedha (obstruction) acts on favourable transits, so no interference fraction exists
+    for these rows; since 2026-10-24 (fix 9) the segment carries the REVERSE-Vedha share instead
+    (HPA-34:161-165), rendered by `relief_word`."""
     rows: list[tuple[str, tr.GocharaSegment, Optional[int]]] = []
     for segs in r.gochara_outlook.values():
         for seg in segs:
@@ -2617,6 +2734,7 @@ def adverse_transit_windows(
                 try:
                     bav = ashtakavarga.bhinnashtakavarga(r.chart, seg.planet)[seg.sign]
                 except Exception:  # noqa: BLE001 — sparse chart
+                    logger.info("report section skipped (sparse chart)", exc_info=True)
                     bav = None
             rows.append((seg.planet, seg, bav))
     rows.sort(key=lambda t: t[1].start_jd)
@@ -2651,6 +2769,7 @@ def _av_dasha_seats(chart: RamanChart, timeline: DashaTimeline) -> tuple[AvDasha
         try:
             bav = ashtakavarga.bhinnashtakavarga(chart, maha)
         except Exception:  # noqa: BLE001 — nodes have no BAV
+            logger.info("report section skipped (nodes have no BAV)", exc_info=True)
             bav = None
         bindus = bav.get(pos.sign) if bav else None
         read = ("no data" if bindus is None else
@@ -2787,7 +2906,7 @@ class DetailedReport:
     gochara: tuple[tr.TransitRow, ...]               # transits at ref date, WITH Vedha/net
     gochara_outlook: dict[str, tuple[tr.GocharaSegment, ...]]  # Jupiter/Saturn/Rahu/Ketu, over time
     dasha_transit: tuple[ConfluenceWindow, ...]      # MD/AD lord x its own favourable transit
-    maraka_period_now: bool                          # is the running period maraka-tier?
+    maraka_period_now: bool | None                   # is the running period maraka-tier? None = undetermined
     insights: tuple[FiredInsight, ...]               # fired cross-feature synthesis rules
     longevity_years: float
     longevity_ymd: tuple[int, int, int]
@@ -2838,6 +2957,10 @@ class DetailedReport:
     restraint: object = None                         # {house: Restraint} (v34)
     analogy: object = None                           # tuple[Resemblance, ...] (v34)
     sitting: object = None                           # Sitting (v35 — the continuous reading)
+    # append-only 2026-10-24 (timing gap check, all 16 fixes — USER DECISION): Raman's own
+    # period and transit checks as `raman_timing.TimingTable`s. Report-only (PREC-10).
+    raman_period_checks: tuple = ()                  # fixes 4, 5, 6, 7, 15, 16
+    raman_transit_checks: tuple = ()                 # fixes 7, 8, 10, 11, 12, 13
 
 
 @dataclass(frozen=True)
@@ -2919,7 +3042,7 @@ class HealthReadout:
     maraka_tiers: tuple[tuple[str, str], ...]    # (graha, tier), primary/secondary/tertiary
     drekkana22_lord: str
     navamsa64_lord: str
-    maraka_period_now: bool
+    maraka_period_now: bool | None
     longevity_band: str                          # e.g. "Madhyayu — a band, not a date"
     caveat: str
 
@@ -2965,6 +3088,7 @@ def build_health_readout(r: DetailedReport) -> HealthReadout:
     try:
         core = build_trimsamsa_health_reading(r.chart).core
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         return _EMPTY_HEALTH_READOUT
 
     rows: list[HealthIndicatorRow] = [
@@ -3179,6 +3303,7 @@ def build_ruler(r: DetailedReport) -> RulerOfNativity:
             ll_dignity = _dignity_of(lagna_lord, chart)
             ll_avastha = _deeptadi_state(lagna_lord, chart)
         except Exception:  # noqa: BLE001 — Track-B sparse chart
+            logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
             pass
         ll_aspects = tuple(_drishti.aspecting_planets(lagna_lord, chart))
         ll_dispositor = SIGN_LORDS[ll_pos.sign]
@@ -3226,6 +3351,7 @@ def build_ruler(r: DetailedReport) -> RulerOfNativity:
                 _parts.append(f"{_dignity_of(ch_lord, chart)} sign")
                 _parts.append(f"{_deeptadi_state(ch_lord, chart)} avastha")
             except Exception:  # noqa: BLE001 — Track-B sparse chart
+                logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
                 pass
             if _cp.shadbala_rupas is not None:
                 _parts.append(f"{_cp.shadbala_rupas.total / 60.0:.2f} rupas")
@@ -3370,6 +3496,7 @@ def signature_first_glance(r: DetailedReport) -> tuple[tuple[str, str], ...]:
         rows.append(("Balance of dasha at birth (HPA-13:130-160)",
                      f"{_first.maha} {_y}y {_m}m {_d}d"))
     except Exception:  # noqa: BLE001 — Track-B sparse chart (no jd_ut)
+        logger.info("report section skipped (Track-B sparse chart (no jd_ut))", exc_info=True)
         pass
     # exact degrees — the same sign-degree form the Planetary positions table prints
     if getattr(chart, "asc_lon", None) is not None:
@@ -3412,6 +3539,7 @@ def signature_first_glance(r: DetailedReport) -> tuple[tuple[str, str], ...]:
             _bits.append(f"{_dignity_of(_ll, chart)} sign")
             _bits.append(f"{_deeptadi_state(_ll, chart)} avastha")
         except Exception:  # noqa: BLE001 — Track-B sparse chart
+            logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
             pass
         rows.append(("Lagna lord at a glance", f"{_ll} " + ", ".join(_bits)))
     # day-lord observation — only when the weekday lord IS the strongest planet
@@ -3786,7 +3914,7 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
 #: Tier order for the best-tier-per-house aggregation in Life-chapters — Raman's own four
 #: grades in descending strength (HTJAH-I:1592-1596, 1635-1640; the same vocabulary
 #: `graded_buckets` buckets by). Ordering only — no new grading is invented here.
-_TIER_ORDER: Final[tuple[str, ...]] = ("par excellence", "ordinary", "limited", "feeble")
+_TIER_ORDER: Final[tuple[str, ...]] = vd.TIER_ORDER   # incl. "same lord" (fix 3, 2026-10-24)
 
 
 @dataclass(frozen=True)
@@ -4036,7 +4164,7 @@ def build_nichod(r: DetailedReport) -> Nichod:
                   if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
     if cur_tp is not None:
         associated, buckets = graded_buckets(cur_tp, chart)
-        tier = "par excellence" if associated else "ordinary"
+        tier = vd.running_top_tier(cur_tp.period.maha, cur_tp.period.antar, associated)
         focus_houses = sorted({a.house for a in buckets[tier]})
         current_period = (f"{cur_tp.period.maha} MD / {cur_tp.period.antar or cur_tp.period.maha} "
                           f"AD, {tier}"
@@ -4391,7 +4519,7 @@ def _windowed_timeline(
 
 
 def build_detailed_report(
-    birth: BirthData, *, on: Optional[tuple[int, int, int]] = None, ayanamsa: str = "lahiri",
+    birth: BirthData, *, on: Optional[tuple[int, int, int]] = None, ayanamsa: str = "raman",
     years_back: int = 10, years_forward: int = 20,
 ) -> DetailedReport:
     """Assemble the full reading + calibration for one chart (no verdict is re-judged).
@@ -4408,12 +4536,14 @@ def build_detailed_report(
     try:
         sav = ashtakavarga.sarvashtakavarga(chart)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         sav = {}
     try:
         bav_matrix = _bav_matrix_rows(chart)
         bav_reduced = _bav_reduced_rows(chart)
         sodya_pinda = _sodya_pinda_rows(chart)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         bav_matrix, bav_reduced, sodya_pinda = (), (), ()
     import swisseph as swe
 
@@ -4422,16 +4552,20 @@ def build_detailed_report(
     try:
         gochara_rows = tr.gochara(chart, int(ry), int(rm), int(rd), ayanamsa=ayanamsa)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         gochara_rows = ()
     try:
         gochara_outlook = tr.gochara_timeline(
             chart, ref_jd, years_back, years_forward, ayanamsa=ayanamsa)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         gochara_outlook = {}
     try:
-        maraka_now = is_maraka_period(chart, ref_jd)
+        maraka_now: bool | None = is_maraka_period(chart, ref_jd)
     except Exception:  # noqa: BLE001
-        maraka_now = False
+        # Unknown is reported as unknown — never as "no maraka-tier lord".
+        logger.warning("maraka check failed; reporting it as undetermined", exc_info=True)
+        maraka_now = None
     dasha_transit = _dasha_transit_confluences(timeline, gochara_outlook)
     # Wave-2 (2026-08-18): the adverse mirror — a separate builder so the favourable rows
     # stay byte-identical (see _dasha_transit_adverse's docstring).
@@ -4451,6 +4585,7 @@ def build_detailed_report(
     try:
         maraka_saturn = _maraka_saturn_confluences(chart, ref_jd, ayanamsa)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         maraka_saturn = ()
     av_dasha_seats = _av_dasha_seats(chart, timeline)
     provisional = DetailedReport(
@@ -4500,10 +4635,12 @@ def build_detailed_report(
     try:
         _graph = build_judgment_graph(enriched)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         _graph = None
     try:
         _recs = narrate_tensions(enriched)
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         _recs = ()
     _bios: tuple = ()
     _deep: tuple = ()
@@ -4511,11 +4648,13 @@ def build_detailed_report(
         try:
             _bios = build_planet_biographies(enriched, _graph)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _bios = ()
         try:
             from app.raman_saab.yoga_deep_read import build_yoga_deep_reads
             _deep = build_yoga_deep_reads(enriched, _graph)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _deep = ()
     enriched = _dc_replace(enriched, planet_bios=_bios, yoga_deep=_deep,
                            life_chapters=build_life_chapters(
@@ -4540,6 +4679,7 @@ def build_detailed_report(
         try:
             enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
         except Exception:  # noqa: BLE001 — sparse/Track-B chart
+            logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
             pass
     # v35: the HPA-29 medical read. Its own try, like every chapter above — and it is
     # report-only: `medical_reading` is imported by nothing in the verdict path.
@@ -4547,22 +4687,26 @@ def build_detailed_report(
         from app.raman_saab.judges.medical_reading import build_medical_reading
         enriched = _dc_replace(enriched, medical=build_medical_reading(enriched.chart))
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         pass
     from app.raman_saab.life_arc import build_decade_timeline
     try:
         enriched = _dc_replace(enriched, decades=build_decade_timeline(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     from app.raman_saab.karmic_evolution import build_karmic_evolution
     try:
         enriched = _dc_replace(enriched, karmic=build_karmic_evolution(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     from app.raman_saab.rect_confidence import build_rect_confidence
     try:
         enriched = _dc_replace(
             enriched, rect_confidence=build_rect_confidence(enriched, ayanamsa=ayanamsa))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     # v34 intuition layer — dominance must precede restraint (restraint reads which houses
     # dominance settled), and all three are best-effort: a failure here must never cost the
@@ -4571,16 +4715,19 @@ def build_detailed_report(
         from app.raman_saab.dominance import house_dominance
         enriched = _dc_replace(enriched, dominance=house_dominance(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     try:
         from app.raman_saab.restraint import house_restraint
         enriched = _dc_replace(enriched, restraint=house_restraint(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     try:
         from app.raman_saab.analogy import resembles
         enriched = _dc_replace(enriched, analogy=resembles(enriched.chart))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
 
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
@@ -4593,6 +4740,7 @@ def build_detailed_report(
     try:
         final = _dc_replace(final, life_synthesis=build_life_synthesis(final))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     # Wave-1 timing additions (2026-08-17): the pratyantar drill-down for the current
     # bhukti, the dated Sade-Sati phase spans, and the dated Chara dasha sequence —
@@ -4604,7 +4752,24 @@ def build_detailed_report(
             sade_sati_phases=_sade_sati_phases(chart, ref_jd, ayanamsa),
             chara_sequence=_chara_sequence(chart, ref_jd))
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         pass
+    # 2026-10-24 (timing gap check, all 16 fixes): Raman's period and transit checks — one
+    # try each, report-only, never a verdict input.
+    try:
+        from app.raman_saab import raman_timing as _rt
+        final = _dc_replace(final, raman_period_checks=_rt.period_checks(
+            chart, ref_jd, final.yogas,
+            tuple((t.yoga_name, t.planet) for t in final.yoga_timing)))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("Raman period checks skipped", exc_info=True)
+    try:
+        from app.raman_saab import raman_timing as _rt
+        final = _dc_replace(final, raman_transit_checks=_rt.transit_checks(
+            chart, ref_jd, years_back=years_back, years_forward=years_forward,
+            outlook=final.gochara_outlook))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("Raman transit checks skipped", exc_info=True)
     # v34 — the integrated interpretation layer reads the FULLY-built report (every section
     # above) and judges nothing anew; it re-reads finished verdicts into one coherent theme
     # synthesis (docs/raman_saab/SYNTHESIS_LAYER_ARCHITECTURE.md).
@@ -4622,6 +4787,7 @@ def build_detailed_report(
     try:
         final = _dc_replace(final, sitting=build_sitting(final))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     return final
 
@@ -4748,9 +4914,7 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                      f"this reading names is {lf.reading_reaches or 'none'} — "
                      + ("inside the span." if lf.within_span else "OUTSIDE the span, disclosed "
                         "where it appears."))
-        L.append("- **Running period** — "
-                 + ("carries a maraka-tier lord." if lf.maraka_now
-                    else "carries no maraka-tier lord."))
+        L.append("- **Running period** — " + maraka_running_phrase(lf.maraka_now) + ".")
         if lf.maraka_windows:
             L.append("- **Maraka-tier bhuktis ahead carrying the classical Saturn signal** "
                      "(Raman's step two, after the band):")
@@ -5129,6 +5293,7 @@ def _plain_section(section_id: str, r: "DetailedReport") -> str:
         from app.raman_saab.plainspoken import plain_for_section
         return plain_for_section(r, section_id)
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         return ""
 
 
@@ -5149,7 +5314,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.append(f"**Born** {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d} "
              f"(tz {b.tz_offset:+g}) at lat {b.latitude:.4f}, lon {b.longitude:.4f}  |  "
-             f"ayanamsa Lahiri sidereal")
+             f"ayanamsa {ayanamsa_label(r.chart.ayanamsa)}")
     L.append("")
 
     # ── the two-voice preamble ────────────────────────────────────────────────
@@ -5168,6 +5333,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         from app.raman_saab.report_json import simple_summary_for
         _ss = simple_summary_for(r)
     except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        logger.info("report section skipped (a sparse chart must not lose the whole reading)", exc_info=True)
         _ss = None
     if _ss:
         L.append("")
@@ -5247,6 +5413,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  ", ".join(f"{k} {v}" for k, v in sorted(_by_rel.items())) + ".")
         L.append("")
     except Exception:  # noqa: BLE001 — sparse/Track-B chart; the graph is a re-read, not a verdict
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         L.append("_Graph unavailable for this chart (sparse data) — the readings above stand "
                  "on their own evidence regardless._")
         L.append("")
@@ -6153,6 +6320,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         head = f"### House {mr.house} — {mr.name}: {mr.verdict.upper()}"
         if driver:
             head += f" (driven by _{driver}_)"
+        if pf is not None:
+            from app.raman_saab.judges.house_template import matter_breakdown
+            head += f" · matters: {matter_breakdown(pf)}"
         L.append(head)
         # v35 — say it to the person first, then the pillars. Adds; the technical rows below
         # are untouched.
@@ -6160,6 +6330,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             from app.raman_saab.plainspoken import plain_for_house
             _hp = plain_for_house(r, mr.house)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _hp = ""
         if _hp:
             L.append("")
@@ -6511,8 +6682,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- **22nd drekkana class (the cause Raman reads the manner from)**: "
                      f"{_dc}")
         L.append(f"- **Running period ({s.running_md} MD / {s.running_ad} AD)**: "
-                 + ("carries a maraka-tier lord" if r.maraka_period_now
-                    else "carries no maraka-tier lord")
+                 + maraka_running_phrase(r.maraka_period_now)
                  + " (broad, low-discrimination flag by design)")
         L.append("")
 
@@ -6525,9 +6695,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "period — Ayushkaraka Saturn transiting back over the sign it occupied at your "
                  "birth, or its trines, during a maraka-tier Dasha/Bhukti (HTJAH-II:4846-4849). "
                  "The windows below are where BOTH conditions the classical method asks for line "
-                 "up. This shows only the RASI half of that signature — the Navamsa half is not "
-                 "computed here. \"Maraka tier\" is how strong a death-signal the Bhukti's own "
-                 "lords carry (primary=3, secondary=2, tertiary=1 per lord, summed) — a higher "
+                 "up, with the Navamsa half checked in its own column. \"Maraka tier\" is how "
+                 "strong a death-signal the Bhukti's own "
+                 "lords carry (primary=5/4/3, secondary=2, tertiary=1 per lord, summed) — a higher "
                  "number means both the MD and AD lord are more central to the classical maraka "
                  "set, not a stronger prediction.")
         L.append("")
@@ -6536,8 +6706,21 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "(REAL_OUTCOME_GENERALIZATION.md). This section exists to show what Raman's "
                  "textbook method says, faithfully — never as a strengthened death signal._")
         L.append("")
-        L.append("| Maraka Bhukti | Bhukti window | Confluence window | Sign | Maraka tier |")
-        L.append("|---|---|---|---|---|")
+        L.append("_Amsa half (added 2026-10-24): \"Death occurs when Saturn in his transit "
+                 "passes through the Rashi and Amsa occupied by him at birth or its trines\" "
+                 "(HTJAH-I:11226-11228). The last two columns name the stretches in which "
+                 "transiting Saturn's Navamsa sign is ALSO natal Saturn's Navamsa sign or a "
+                 "trine (sampled every 5 days), and which half of the signature holds. "
+                 "Maraka tier weights since 2026-10-24: a planet conjunct a 2nd/7th lord 5, an "
+                 "occupant of the 2nd/7th or a planet aspecting their lord 4, the lord itself 3 "
+                 "(\"planets in conjunction with lords of 2nd and 7th are the most powerful "
+                 "... while the lords themselves are least powerful\", HTJAH-I:783-784); a "
+                 "node holding a late maraka's delegated power carries that maraka's weight "
+                 "(HTJAH-I:11194-11203)._")
+        L.append("")
+        L.append("| Maraka Bhukti | Bhukti window | Confluence window | Sign | Maraka tier "
+                 "| Amsa half (Saturn's Navamsa trines) | Signature |")
+        L.append("|---|---|---|---|---|---|---|")
         for c in r.maraka_saturn:
             # tier addends spelled out (2026-08-17): "6 = Saturn 3 + Venus 3" — the same
             # per-lord weights the death-window summed, so the number is checkable.
@@ -6545,7 +6728,8 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"| {c.maha}/{c.antar} | "
                      f"{_outlook_window_label(c.window_start_jd, c.window_end_jd)} | "
                      f"{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)} | "
-                     f"{_SIGN_NAME[c.sign]} | {tier_cell} |")
+                     f"{_SIGN_NAME[c.sign]} | {tier_cell} | {c.amsa_spans or '-'} | "
+                     f"{c.signature} |")
         L.append("")
 
     # ── health & vulnerability read-out (v17, pure re-read of existing verdicts) ─────
@@ -6577,8 +6761,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- **22nd drekkana lord**: {h.drekkana22_lord}  |  "
                      f"**64th navamsa lord**: {h.navamsa64_lord}")
         L.append(f"- **Running period**: "
-                 + ("carries a maraka-tier lord" if h.maraka_period_now
-                    else "carries no maraka-tier lord")
+                 + maraka_running_phrase(h.maraka_period_now)
                  + " (broad, low-discrimination flag by design)")
         L.append(f"- **Longevity band** (re-read from Longevity): {h.longevity_band}")
         L.append("")
@@ -6647,14 +6830,18 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     from app.raman_saab.primitives import vimshottari as vd
     L.append(f"_Mahadasha -> Antardasha across the near term ({r.window_back} years back, "
              f"{r.window_forward} years ahead). A planet influences a house by owning, occupying or "
-             f"aspecting the house OR its lord (HTJAH-I:1586-1629). Grades (uniform for every house, "
+             f"aspecting the house OR its lord (HTJAH-I:1586-1629), each house on its OWN printed "
+             f"factor list. Grades (uniform for every house, "
              f"HTJAH-I:1592-1640, 2588-2599): both lords influence + AD associated with MD = PAR "
-             f"EXCELLENCE, both but not associated = ORDINARY, bhukti lord only = LIMITED, MD lord "
+             f"EXCELLENCE, both but not associated = ORDINARY, the MD lord's own bhukti = SAME "
+             f"LORD (the association test is for 'the sub-period of another', HTJAH-I:1635), "
+             f"bhukti lord only = LIMITED, MD lord "
              f"only = FEEBLE. Verdicts are the UNCHANGED natal readings above._")
     L.append("")
     L.append("**What the grades mean:** " + "; ".join(
         f"_{k}_ = {v}" for k, v in _TIER_MEANING.items()) + ".")
     _TIER_LABEL = {"par excellence": "par excellence", "ordinary": "ordinary",
+                   "same lord": "same lord (own bhukti)",
                    "limited": "limited (bhukti lord only)", "feeble": "feeble (MD lord only)"}
     # Wave-1 (2026-08-17): the lord_quality delivery tags were computed for every activation
     # row but dropped by this renderer — now shown per row (HTJAH-II:10004-10008: the activated
@@ -6680,9 +6867,13 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("**Influence basis** (per lit house, the table's last column): BY WHICH of Raman's "
              "enumerated factors (HTJAH-I:1586-1596) each period-lord influences the house - "
              "owns / karaka / occupies / aspects house / conjoins lord / aspects lord / lord "
-             "from Moon / node of a timer's sign. 'via H11' (and 2/9/12 likewise) marks a "
-             "lord reaching the house only through its allied event house (gains 2/11, "
-             "travel 9/12), stated rather than implied.")
+             "from Moon (from the 2nd house on) / conjoins or aspects karaka (3rd house) / "
+             "and a node by its sign lord, the planet it joins, its star lord, or Sanivad "
+             "Rahu / Kujavad Ketu (HTJAH-I:4478-4479, 8566-8567, 11740-11741, 12762-12763). "
+             "A karaka counts only where Raman prints one (3rd, 4th, 5th, 6th, 7th, the Sun "
+             "for the 9th, 12th). 'allied via H11' (and 2/9/12 likewise) notes a lord that "
+             "ALSO reaches the house through its allied event house (gains 2/11, travel "
+             "9/12); that note has no Raman citation and never enters the grade.")
     _basis_table = influence_basis_table(r.chart)
 
     def _delivery(a) -> str:
@@ -6699,6 +6890,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             bits.append(f"MD {influence_basis(_basis_table, a.house, a.md_lord)}".rstrip())
         if a.antar_activates and a.antar_lord is not None:
             bits.append(f"AD {influence_basis(_basis_table, a.house, a.antar_lord)}".rstrip())
+        allied = getattr(a, "allied_via", ())
+        if allied:
+            bits.append("allied via " + ", ".join(f"H{h}" for h in allied))
         return f" [{'; '.join(bits)}]" if bits else ""
 
     cur_md: Optional[str] = None
@@ -6773,6 +6967,16 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- {_SIGN_NAME[cs.sign]} - {cs.years}y "
                      f"({_jd_to_date(cs.start_jd)} .. {_jd_to_date(cs.end_jd)}){now}")
         L.append("")
+
+    # ── 2026-10-24 (timing gap check): Raman's own period checks ──
+    if r.raman_period_checks:
+        L.append("")
+        L.append("_Raman's period checks (added 2026-10-24, timing gap check): the lifespan "
+                 "gate, star lords, bhukti relations, antaras, yoga lords and maraka order, "
+                 "each row with its citation. Report-only — no verdict reads them._")
+        L.append("")
+        for line in _timing_tables_md(r.raman_period_checks):
+            L.append(line)
 
     # ── ishta/kashta outlook: the SAME windowed timeline, painted good/hard ────
     if r.ishta_kashta:
@@ -6988,8 +7192,14 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "applies Vedha (obstruction): a favourable transit obstructed by a planet in its "
                  "Vedha position does not deliver._")
         L.append("")
-        L.append("| planet | sign | from Moon | classical | AV bindus | proportion | Kakshya | Vedha by | **net** |")
-        L.append("|---|---|---:|---|---|---|---|---|---|")
+        L.append("_Reverse Vedha (added 2026-10-24): an adverse station on a Vedha point is "
+                 "relieved when another planet holds the paired good house (HPA-34:161-164). "
+                 "Mercury's 10th is obstructed from the 7th, as Raman's table prints it "
+                 "(HPA-34:203, 207); the nodes have no row in that table, so their own Vedha "
+                 "point is unspecified by Raman._")
+        L.append("")
+        L.append("| planet | sign | from Moon | classical | AV bindus | proportion | Kakshya | Vedha by | **net** | reverse Vedha |")
+        L.append("|---|---|---:|---|---|---|---|---|---|---|")
         for g in r.gochara:
             av = str(g.bav_bindus) if g.bav_bindus is not None else "-"
             vedha = ", ".join(g.vedha_by) if g.vedha_by else "-"
@@ -7001,7 +7211,8 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                    f"{g.kakshya_lord} ({'donated' if g.kakshya_favourable else 'no bindu'})")
             L.append(f"| {g.planet} | {_SIGN_NAME[g.sign]} | {g.house_from_moon} | "
                      f"{'favourable' if g.gochara_good else 'adverse'} | {av} | {prop} | {kak} | "
-                     f"{vedha} | **{'favourable' if g.net_good else 'obstructed/adverse'}** |")
+                     f"{vedha} | **{'favourable' if g.net_good else 'obstructed/adverse'}** | "
+                     f"{_reverse_vedha_cell(g)} |")
         L.append("")
         # Wave-2 (2026-08-18): the synthesis sentences Raman's own transit paragraphs speak —
         # one per row, a deterministic join of the columns above (the table stays in full).
@@ -7070,21 +7281,28 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                      "rather than supported; 'mitigation' applies Raman's own proportion law - "
                      "the planet's bindus in the transited sign neutralise the evil to that "
                      "extent (\"neutralises the evil to the extent of 75%\" at 6 of 8 bindus, "
-                     "ASP-13:416); Vedha (interference) is defined for favourable transits "
-                     "only, so that column reads '-' here - not computed, not zero. Per Raman "
+                     "ASP-13:416); Vedha (interference) obstructs favourable transits, so that "
+                     "column reads '-' here; the 'relief' column applies Raman's REVERSE Vedha "
+                     "(added 2026-10-24) - an adverse station on a Vedha point is relieved when "
+                     "another planet holds the paired good house (\"conversely, if the Sun is in "
+                     "the 5th ... no evil will be produced provided the 11th is being transitted "
+                     "at the same time by any other planet, excepting Saturn\", HPA-34:161-164); "
+                     "the nodes have no row in his table. Per Raman "
                      "a transit stays secondary to the Dasha (HTJAH-II:4679): read an adverse "
                      "window as reduced transit support during whatever the running period "
                      "already indicates, never a stand-alone prediction.")
             L.append("")
             L.append("| Planet | Window | What it concerns | Mitigation (own AV bindus) | "
-                     "Interference |")
-            L.append("|---|---|---|---|---|")
+                     "Interference | Relief (reverse Vedha) |")
+            L.append("|---|---|---|---|---|---|")
             for planet_b, seg_b, bav_b in bad:
                 mit = (f"{bav_b}/8 of the evil neutralised" if bav_b is not None
                        else "- (node: no classical Ashtakavarga)")
+                rel = relief_word(planet_b, seg_b.house_from_moon,
+                                  seg_b.reverse_vedha_sample_fraction)
                 L.append(f"| {planet_b} | "
                          f"{_outlook_window_label(seg_b.start_jd, seg_b.end_jd)} | "
-                         f"{_PLANET_THEME[planet_b]} | {mit} | - |")
+                         f"{_PLANET_THEME[planet_b]} | {mit} | - | {rel} |")
             L.append("")
 
     # ── Wave-1: Sade-Sati phase windows, dated (method-only; no result doctrine) ──
@@ -7094,18 +7312,31 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("**In simple terms:** Sade-Sati is Saturn's roughly 7.5-year passage across "
                  "the 12th, 1st and 2nd signs from the natal Moon (see glossary). Below are "
                  "the dated phase spans of the episode nearest the reference date, with the "
-                 "current position marked. **Method note (dates only):** no Sade-Sati x Moon "
-                 "result doctrine is on record in the encoded corpus, so no intensity or "
-                 "result reading is offered - the dates are plain gochara arithmetic "
+                 "current position marked. The dates are plain gochara arithmetic "
                  "(transiting Saturn's sign against the natal Moon sign), at the outlook's "
                  "~week sampling resolution; a retrograde re-entry shows as its own dated "
-                 "row.")
+                 "row. **Raman's result doctrine (corrected 2026-10-24):** this section once "
+                 "said no Sade-Sati result doctrine was on record; Raman gives one - the "
+                 "round since birth, the ruling period's strength and the Sarvashtakavarga "
+                 "of the three signs (AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616). "
+                 "The 'Sade-Sati rounds' table below reads each round by it.")
         L.append("")
         for ph in r.sade_sati_phases:
             now = "  **<- now**" if ph.current else ""
             L.append(f"- **{ph.phase}** - Saturn in {_SIGN_NAME[ph.sign]}: "
                      f"{_outlook_window_label(ph.start_jd, ph.end_jd)}{now}")
         L.append("")
+
+    # ── 2026-10-24 (timing gap check): Raman's own transit checks ──
+    if r.raman_transit_checks:
+        L.append("_Raman's transit checks (added 2026-10-24, timing gap check): Sade-Sati "
+                 "rounds, each transit window gated by the Dasa, Saturn and Rahu over natal "
+                 "points, malefic meetings on the Moon's signs, Saturn over the 8th/12th "
+                 "lords' signs, the marriage points and the sign parts. Transits stay "
+                 "subordinate to the Dasa (ASP-13:62-74)._")
+        L.append("")
+        for line in _timing_tables_md(r.raman_transit_checks):
+            L.append(line)
 
     # ── dasha x transit confluence: where the running period's own lord is well-transited ──
     if r.dasha_transit:
@@ -7151,8 +7382,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "transit support during what the period already indicates, never a "
                  "stand-alone prediction. 'Mitigation' applies Raman's own proportion law "
                  "(the planet's bindus in the transited sign neutralise the evil to that "
-                 "extent, ASP-13:416); Vedha (interference) is defined for favourable "
-                 "transits only, so that column reads '-' here - not computed, not zero.")
+                 "extent, ASP-13:416); Vedha (interference) obstructs favourable transits, "
+                 "so that column reads '-' here; the 'relief' column applies Raman's reverse "
+                 "Vedha (HPA-34:161-164, added 2026-10-24).")
         L.append("")
         L.append("_Same coverage and sampling honesty as above: only Jupiter, Saturn, Rahu "
                  "and Ketu are tracked long-range, so a period led by a fast planet has no "
@@ -7160,15 +7392,16 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "sampling - method windows, not exact dates._")
         L.append("")
         L.append("| Period | Planet | Overlap | What it concerns | "
-                 "Mitigation (own AV bindus) | Interference |")
-        L.append("|---|---|---|---|---|---|")
+                 "Mitigation (own AV bindus) | Interference | Relief (reverse Vedha) |")
+        L.append("|---|---|---|---|---|---|---|")
         for c in r.dasha_transit_adverse:
             mit = (f"{c.bav_bindus}/8 of the evil neutralised" if c.bav_bindus is not None
                    else "- (node: no classical Ashtakavarga)"
                    if c.planet in ("Rahu", "Ketu") else "- (not computed)")
+            rel = relief_word(c.planet, c.house_from_moon, c.reverse_vedha_sample_fraction)
             L.append(f"| {c.role} | {c.planet} | "
                      f"{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)} | "
-                     f"{_PLANET_THEME[c.planet]} | {mit} | - |")
+                     f"{_PLANET_THEME[c.planet]} | {mit} | - | {rel} |")
         L.append("")
 
     # ── muhurtha pointer (2026-08-17, report-critique item: the one interactive-only surface).
@@ -7705,8 +7938,11 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("_Excluded by project locks (recorded, not encoded): BPHS rasi-dasha Argala "
              "grading; the KP sub-lord chain (non-Lahiri); nodal Vedha. Absence findings "
              "honoured: Raman states no direct Shadbala x Ashtakavarga rule, no numeric "
-             "requisite-Shadbala minima, no Bhava Bala cutoff, no Sade-Sati x Moon doctrine "
-             "— none were invented._")
+             "requisite-Shadbala minima, no Bhava Bala cutoff — none were invented. "
+             "(Corrected 2026-10-24: Raman does give a Sade-Sati doctrine — the rounds since "
+             "birth, AFB-12:169-174 — now read in the Sade-Sati rounds table; Vedha for the "
+             "nodes' own transits stays unencoded because Raman's table has no node row, "
+             "HPA-34:185-226.)_")
 
     # ── glossary ──────────────────────────────────────────────────────────────
     L.append("")
@@ -7898,6 +8134,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         from app.raman_saab.report_json import feedback_instrument_for
         inst = feedback_instrument_for(r)
     except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        logger.info("report section skipped (a sparse chart must not lose the whole reading)", exc_info=True)
         inst = None
     if inst:
         L.append("")

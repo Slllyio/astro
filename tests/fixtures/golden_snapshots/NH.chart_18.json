@@ -69,7 +69,7 @@
         "verdict": "mixed"
       },
       "speech": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "mixed"
       },
@@ -89,7 +89,6 @@
     "citations": [
       "HTJAH-I:4184",
       "HTJAH-I:4211",
-      "NH:4961",
       "NH:4963"
     ],
     "fired_rule_ids": [

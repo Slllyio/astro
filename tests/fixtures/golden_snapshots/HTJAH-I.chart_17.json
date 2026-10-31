@@ -26,22 +26,22 @@
       "H1.M.S12",
       "H1.P.Ketu"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "body": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "health": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "self": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   }

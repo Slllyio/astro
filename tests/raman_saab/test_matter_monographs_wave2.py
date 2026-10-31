@@ -23,7 +23,7 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 
 @pytest.fixture(scope="module")
 def report():
-    return build_detailed_report(_CANONICAL)
+    return build_detailed_report(_CANONICAL, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
 
 
 @pytest.fixture(scope="module")
@@ -128,7 +128,9 @@ class TestMarriageWave2:
         sec = _section(markdown, "## Marriage monograph")
         fine = [ln for ln in sec.splitlines() if "Encoding-scope notes" in ln]
         assert len(fine) == 1
-        assert "v1-OOS" in fine[0] and "owned by H7.C.60" in fine[0]
+        # "v1-OOS" belonged to H7.KD.1, descriptive since R2 (2026-10-24), so it no longer
+        # reaches the fired-rule list at all; the H7.C.60 note still routes to fine print.
+        assert "owned by H7.C.60" in fine[0]
         bullets = [ln for ln in sec.splitlines()
                    if ln.strip().startswith("- (") and "Encoding-scope" not in ln]
         assert all("v1-OOS" not in ln and "owned by H7" not in ln for ln in bullets)
@@ -291,12 +293,16 @@ class TestWealthWave2:
 
     def test_expansion_self_disclosure_fires_when_lens_is_non_differential(
             self, report, markdown):
-        """Canonical chart: all five MDs light H2/H11 at par excellence — the
-        chapter applies its own calibration standard to itself."""
-        assert len(report.wealth.expansion_periods) == \
-            len(report.life_chapters.chapters)
-        assert "non-differential" in report.wealth.expansion_note
-        assert "Self-disclosure" in _section(markdown, "## Wealth chapter")
+        """The chapter applies its own calibration standard to itself: the self-disclosure
+        fires exactly when every MD lights H2/H11 at par excellence. Timing gap check fix 3
+        (2026-10-24, HTJAH-I:1586-1589: each house on its own list, no 2/11 union) means the
+        canonical chart's Moon MD now reaches H11 only at 'ordinary', so the lens
+        discriminates here and the disclosure correctly stays silent."""
+        exp = report.wealth.expansion_periods
+        saturated = (len(exp) == len(report.life_chapters.chapters) and all(
+            "(par excellence)" in e and "(ordinary)" not in e for e in exp))
+        assert ("non-differential" in report.wealth.expansion_note) == saturated
+        assert ("Self-disclosure" in _section(markdown, "## Wealth chapter")) == saturated
 
 
 class TestLongevityArishtaWave2:
@@ -404,7 +410,8 @@ class TestWave2HtmlParity:
                       "One planet, several hats", "The Dasamsa D-10",
                       "H10 activations in the window",
                       "Dhana / Daridra yogas", "Lord condition",
-                      "Self-disclosure", "population context",
+                      # "Self-disclosure" is conditional since fix 3 (see the test above)
+                      "population context",
                       "screened:", "none present", "Purnayu (purna band)",
                       "never converts the band into a date",
                       "no planet is debilitated in this chart"):

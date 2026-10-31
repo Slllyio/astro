@@ -62,8 +62,10 @@ _STRENGTH: dict[str, tuple[str, str]] = {
     "ordinary": ("a steady, ordinary stretch", "एक स्थिर, सामान्य दौर"),
     "limited": ("a quieter stretch", "एक अपेक्षाकृत शांत दौर"),
     "feeble": ("a thin stretch", "एक कमज़ोर दौर"),
+    # the MD lord's own bhukti (timing gap check fix 3, 2026-10-24; HTJAH-I:1635)
+    "same lord": ("one planet's own stretch", "एक ही ग्रह का अपना दौर"),
 }
-_TIER_ORDER = ("par excellence", "ordinary", "limited", "feeble")
+_TIER_ORDER = ("par excellence", "ordinary", "same lord", "limited", "feeble")
 
 #: Tone by combination family — the one thing the family alone honestly settles.
 _TONE: dict[str, tuple[str, str, str]] = {

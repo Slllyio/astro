@@ -54,7 +54,7 @@
   "H4": {
     "citations": [
       "HTJAH-I:4184",
-      "HTJAH-I:4550",
+      "HTJAH-I:4551",
       "HTJAH-I:4717"
     ],
     "fired_rule_ids": [
@@ -133,7 +133,6 @@
   "H7": {
     "citations": [
       "HTJAH-II:1773",
-      "HTJAH-II:2579",
       "HTJAH-II:271",
       "HTJAH-II:274",
       "HTJAH-II:374",
@@ -143,7 +142,6 @@
       "H7.C.77",
       "H7.C.86",
       "H7.K.2",
-      "H7.KD.1",
       "H7.L.5",
       "H7.L.5a"
     ],
@@ -157,7 +155,7 @@
       "marital_happiness": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "insufficient-evidence"
       },
       "partnership": {
         "degree": "mild",

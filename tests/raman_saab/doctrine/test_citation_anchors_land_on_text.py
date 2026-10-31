@@ -28,6 +28,10 @@ from app.raman_saab.doctrine import sources
 _APP = pathlib.Path(__file__).resolve().parents[3] / "app"
 #: WORK:line or WORK:start-end, as the tokens appear in code and report prose.
 _TOKEN = re.compile(r"\b([A-Z][A-Za-z]*(?:-[A-Za-z0-9]+)*):(\d+)(?:-(\d+))?\b")
+#: Citation("WORK", line) objects — the form every RuleRecord/YogaRecord uses. `_TOKEN` alone
+#: never sees them (no colon), which is how H4.C.48 (HTJAH-I:4550) and H4.C.49 (NH:4961)
+#: stayed on blank lines with this file green (audit 2026-10-23).
+_CITATION = re.compile(r'Citation\(\s*"([^"]+)"\s*,\s*(\d+)\s*\)')
 
 
 def _tokens() -> set[str]:
@@ -46,6 +50,8 @@ def _tokens() -> set[str]:
             continue
         for m in _TOKEN.finditer(text):
             tokens.add(m.group(0))
+        for m in _CITATION.finditer(text):
+            tokens.add(f"{m.group(1)}:{m.group(2)}")
     return tokens
 
 
@@ -79,6 +85,12 @@ class TestAnchorsLandOnText:
         assert not blank, (
             f"{len(blank)} citation(s) land on a blank line — the file they point into has "
             f"almost certainly changed under them: {sorted(blank)}")
+
+    def test_citation_objects_are_scanned(self):
+        """Guard the scanner: the `Citation(...)` form must contribute tokens, or the blank
+        check silently skips every rule and yoga in the engine."""
+        assert _CITATION.search('source=Citation("NH", 7628)),')
+        assert "HTJAH-I:4551" in _tokens()
 
     def test_the_re_mined_yoga_anchors_name_their_own_yoga(self):
         """`NH_EXAMPLES` promises the passage around each line names the nativity in which

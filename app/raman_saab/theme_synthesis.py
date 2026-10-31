@@ -36,6 +36,7 @@ from typing import TYPE_CHECKING, Final, Literal, Optional
 import swisseph as swe
 
 from app.raman_saab.doctrine import varga_domains as vd
+from app.raman_saab.primitives.vimshottari import maraka_running_phrase
 
 logger = logging.getLogger(__name__)
 
@@ -490,7 +491,7 @@ class LongevityFrame:
     span_year: int                  # calendar year the band reaches, for the within-span test
     reading_reaches: int            # furthest calendar year any theme window names (0 if none)
     within_span: bool               # every window this reading names falls inside the band
-    maraka_now: bool                # does the RUNNING period carry a maraka-tier lord
+    maraka_now: bool | None         # does the RUNNING period carry a maraka-tier lord (None = undetermined)
     #: (bhukti, span, tier-score, standing-vs-band), ahead only. The fourth element is the
     #: cross-check the two methods force on each other: the maraka scheme runs the whole
     #: Vimshottari timeline while the ayurdaya band ends where it ends, so some maraka-tier
@@ -1275,8 +1276,9 @@ def _varga_relation(r, prim_house, domain) -> str:
     return "neutral (D9 neither confirms nor weakens)"
 
 
-#: Raman's four fructification grades, strongest first (HTJAH-I:1592-1596, 1635-1640).
-_TIER_ORDER = ("par excellence", "ordinary", "limited", "feeble")
+#: Raman's fructification grades, strongest first (HTJAH-I:1592-1596, 1635-1640), with "same
+#: lord" for the MD lord's own bhukti (timing gap check fix 3, 2026-10-24; HTJAH-I:1635).
+_TIER_ORDER = ("par excellence", "ordinary", "same lord", "limited", "feeble")
 
 
 def _theme_timing(r, name, prim_house, houses, dom_planets) -> tuple[str, Optional[tuple[int, int]]]:
@@ -2325,7 +2327,7 @@ def _longevity_frame(r, themes) -> Optional[LongevityFrame]:
         if m:
             reaches = max(reaches, int(m.group(2) or m.group(1)))
     within = bool(span_year and reaches and reaches <= span_year)
-    maraka_now = bool(getattr(r, "maraka_period_now", False))
+    maraka_now = getattr(r, "maraka_period_now", None)
     windows = _maraka_window_rows(r)
 
     frame = (f"Raman judges the span FIRST and the maraka periods second (PREC-8; "
@@ -2343,8 +2345,7 @@ def _longevity_frame(r, themes) -> Optional[LongevityFrame]:
                   f"{reaches}). " if within else
                   f"One or more windows this reading names ({reaches}) fall outside that span; "
                   f"each is disclosed as such where it appears. ")
-    frame += ("The running period carries a maraka-tier lord."
-              if maraka_now else "The running period carries no maraka-tier lord.")
+    frame += "The running period " + maraka_running_phrase(maraka_now) + "."
     if windows:
         first = windows[0]
         frame += (f" Ahead, {len(windows)} maraka-tier bhukti"

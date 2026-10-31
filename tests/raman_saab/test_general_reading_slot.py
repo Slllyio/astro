@@ -424,4 +424,6 @@ class TestGeneralSlotIsVerdictInert:
             rule = _rule(f"H1.L.{n}")
             assert rule.condition is not None
             assert rule.polarity in ("benefic", "malefic", "neutral", "maraka")
-            assert rule.kind == "evaluable"
+            # H1.L.7 and H1.L.8 became descriptive in the 2026-10-28 rule-defect review
+            # (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): shown, no vote.
+            assert rule.kind == ("descriptive" if n in (7, 8) else "evaluable")

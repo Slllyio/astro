@@ -1,48 +1,42 @@
 {
   "H2": {
     "citations": [
-      "HTJAH-I:2380",
-      "HTJAH-I:2385",
-      "HTJAH-I:2444",
+      "HTJAH-I:2355",
+      "HTJAH-I:2452",
       "HTJAH-I:2458",
-      "HTJAH-I:2497",
       "HTJAH-I:2498",
-      "HTJAH-I:2549",
-      "HTJAH-I:2800",
+      "HTJAH-I:2802",
       "HTJAH-I:2945"
     ],
     "fired_rule_ids": [
+      "H2.C.13",
       "H2.C.16",
-      "H2.C.39",
       "H2.C.40",
-      "H2.C.6",
       "H2.C.65a",
       "H2.C.69",
-      "H2.L.7",
-      "H2.L.7b",
-      "H2.P.Mars"
+      "H2.L.4"
     ],
-    "rollup": "afflicted",
+    "rollup": "favourable",
     "significations": {
       "family": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "speech": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "vision": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "wealth": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       }
     }
   }

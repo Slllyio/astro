@@ -108,6 +108,41 @@ class _KendraTrikonaLordsConjoined(C.Condition):
         return False
 
 
+#: HTJAH-I:641-645 — "wherever Raja yoga is noticed, the extent to which it will be realised
+#: depends upon the inherent strength it has gained ... The Yoga can really be of some
+#: substantial effect provided the planets causing the yoga are within 12° of each other."
+RAJA_VITALITY_ORB_DEG: Final[float] = 12.0
+
+
+def raja_yoga_vital(chart: RamanChart, yoga_id: str) -> bool:
+    """True when a fired raja yoga passes Raman's vitality test (HTJAH-I:643-644): its two
+    causing planets are within 12° of each other.
+
+    Only the association yoga (Y.RAJA.KT — a kendra lord conjoined with a distinct trikona
+    lord) names a causing PAIR the engine can measure. Every other raja yoga (exchange,
+    mutual aspect, the positional yogas, the completed 3HC 245-263) has no measurable pair
+    under this test and returns False: it is detected, cited and reported, but does not move a
+    verdict. This is the one rule for old and new raja yogas alike — the 3HC Remarks
+    (3HCC:8580-8584) ask for "inherent vitality" and HTJAH-I:641-645 is where Raman states the
+    test (audit 2026-10-23)."""
+    if yoga_id != "Y.RAJA.KT":
+        return False
+    kendra_lords = {_house_lord(h, chart) for h in _KENDRAS}
+    trikona_lords = {_house_lord(h, chart) for h in _TRIKONAS}
+    for k in kendra_lords:
+        pk = chart.planets.get(k)
+        if pk is None:
+            continue
+        for tl in trikona_lords:
+            pt = chart.planets.get(tl)
+            if tl == k or pt is None or pt.rasi_house != pk.rasi_house:
+                continue
+            diff = abs(pk.lon - pt.lon) % 360.0
+            if min(diff, 360.0 - diff) <= RAJA_VITALITY_ORB_DEG:
+                return True
+    return False
+
+
 class _LordsMutualAspect(C.Condition):
     """The lords of houses `h1` and `h2` (distinct planets) fully aspect each
     other (HTJAH-I:634 for the 9th/10th lords)."""
@@ -3201,16 +3236,16 @@ YOGAS: tuple[YogaRecord, ...] = (
                source=Citation("3HC", 6732)),
     YogaRecord(id="Y.KEDARA", name="Kedara Yoga", kind="other", condition=_SankhyaSignCount(4),
                effect="An agriculturist, useful to many, truthful and happy.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6888)),
     YogaRecord(id="Y.SULA", name="Sula Yoga", kind="other", condition=_SankhyaSignCount(3),
                effect="Sharp/aggressive, valorous but indigent; cruel-natured.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6912)),
     YogaRecord(id="Y.YUGA", name="Yuga Yoga", kind="other", condition=_SankhyaSignCount(2),
                effect="A heretic or outcaste; poor and devoid of wealth.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6914)),
     YogaRecord(id="Y.GOLA", name="Gola Yoga", kind="other", condition=_SankhyaSignCount(1),
                effect="Poor, dirty, devoid of learning, strength and comfort.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6916)),
     # — Nabhasa: Akriti (the 4 contiguous-house forms; the 16 other Akriti shapes are a backlog) —
     YogaRecord(id="Y.YUPA", name="Yupa Yoga", kind="other", condition=_AllSevenInHouses((1, 2, 3, 4)),
                effect="Liberal, self-possessed, noted for charitable and sacrificial deeds.",

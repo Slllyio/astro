@@ -140,6 +140,7 @@ TOPIC: dict[str, tuple[str, str]] = {
     "status_honour": ("public standing and honour", "सार्वजनिक प्रतिष्ठा और सम्मान"),
     # H11
     "gains": ("income and gains", "आय और लाभ"),
+    "means_of_gain": ("how you earn", "आप कैसे कमाते हैं"),
     "acquisitions": ("the things you have acquired", "आपकी अर्जित वस्तुओं"),
     "friends": ("friends", "मित्रों"),
     "elder_siblings": ("your elder brothers and sisters", "आपके बड़े भाई-बहनों"),

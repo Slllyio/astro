@@ -2,7 +2,6 @@
   "H3": {
     "citations": [
       "HTJAH-I:3351",
-      "HTJAH-I:3405",
       "HTJAH-I:3423",
       "HTJAH-I:3430",
       "HTJAH-I:3432",
@@ -27,7 +26,7 @@
       "H3.C.8",
       "H3.L.11"
     ],
-    "rollup": "mixed",
+    "rollup": "afflicted",
     "significations": {
       "courage": {
         "degree": "moderate",
@@ -35,9 +34,9 @@
         "verdict": "mixed"
       },
       "ear_throat": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "short_journeys": {
         "degree": "moderate",

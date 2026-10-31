@@ -66,16 +66,18 @@ class TestEventSuggestions:
 
 
 class TestFactSuggestions:
-    def test_property_is_surfaced_as_the_ayanamsa_discriminator(self, ranked_and_cache):
-        """A sharp H4 splitter is surfaced as a zero-date question: raman judges property
-        favourable, lahiri afflicted -> answering it picks the ayanamsa. (The mother
-        discriminator was retired when the catastrophic-nodal fix made raman's mother
-        favourable too.)"""
+    def test_a_polar_splitter_is_surfaced_as_the_ayanamsa_discriminator(self, ranked_and_cache):
+        """A sharp splitter is surfaced as a zero-date question: one ayanamsa judges the
+        matter favourable, the other afflicted -> answering it picks the ayanamsa. Property
+        held this role until 2026-10-23 (raman's property now reads mixed after the Bhava
+        Bala pillar was withdrawn); ear_throat (H3) is the surviving polar splitter. (Mother
+        was retired earlier, when the catastrophic-nodal fix made raman's mother favourable.)"""
         ranked, cache, _ = ranked_and_cache
         sugg = SG.suggest_facts(ranked, cache, frozenset())
-        assert any(s.key == "property" for s in sugg)
-        prop = next(s for s in sugg if s.key == "property")
-        assert "ayanamsa" in prop.detail
+        assert any(s.key == "ear_throat" for s in sugg)
+        assert all(s.key != "property" for s in sugg)
+        hit = next(s for s in sugg if s.key == "ear_throat")
+        assert "ayanamsa" in hit.detail
 
     def test_supplied_subjects_are_excluded(self, ranked_and_cache):
         ranked, cache, _ = ranked_and_cache

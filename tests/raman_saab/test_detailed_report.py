@@ -12,7 +12,7 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 
 @pytest.fixture(scope="module")
 def report():
-    return build_detailed_report(_CANONICAL)
+    return build_detailed_report(_CANONICAL, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
 
 
 @pytest.fixture(scope="module")
@@ -93,13 +93,19 @@ class TestDetailedReport:
     def test_plain_summary_reads_for_a_layperson(self, report):
         """The plain gloss names life-areas, not house numbers, and grades intensity."""
         from app.raman_saab.detailed_report import plain_bhukti_summary
-        # a strongly-associated (par-excellence) bhukti reads as a strong stretch
-        assoc_rows = next(tp.activated for tp in report.timeline.periods
-                          if tp.period.antar == tp.period.maha)   # own bhukti = associated
-        s = plain_bhukti_summary(assoc_rows, associated=True)
+        # timing gap check fix 3 (HTJAH-I:1635): the MD lord's own bhukti is no longer read
+        # as "associated" with itself; it reads as that lord's own, unmixed stretch.
+        own_rows = next(tp.activated for tp in report.timeline.periods
+                        if tp.period.antar == tp.period.maha and tp.activated)
+        s = plain_bhukti_summary(own_rows, associated=False)
         assert s.startswith("In plain terms:")
-        assert "strong, well-supported" in s
+        assert "own sub-period" in s
         assert "H10" not in s and "career" in s.lower()   # named area, not a house number
+        # a genuinely associated bhukti (two lords) still reads as a strong stretch
+        two = next(tp for tp in report.timeline.periods
+                   if tp.period.antar != tp.period.maha
+                   and any(a.grade == "par_excellence" for a in tp.activated))
+        assert "strong, well-supported" in plain_bhukti_summary(two.activated, associated=True)
 
     def test_lords_associated_conjunction_and_self(self):
         """Sun/Jupiter/Venus conjoin in H10 on the canonical chart -> associated; a lord is
@@ -158,6 +164,19 @@ class TestDetailedReport:
         """A house states WHY it rolled up as it did — no silent contradiction."""
         assert "driven by _" in markdown
         assert "weakest decided matter" in markdown         # the rule is stated
+
+    def test_house_head_leads_with_its_matters_on_every_surface(self, report, markdown):
+        """Each house names its matter breakdown beside the worst-matter headline (2026-10-30)."""
+        from app.raman_saab.judges.house_template import matter_breakdown
+        from app.raman_saab.report_html import to_html
+        from app.raman_saab.report_json import to_report_dict
+        html, js = to_html(report), to_report_dict(report)
+        for pf in report.proformas:
+            b = matter_breakdown(pf)
+            head = next(ln for ln in markdown.splitlines() if ln.startswith(f"### House {pf.house} "))
+            assert f"matters: {b}" in head
+            assert b in html.replace("&#x27;", "'")
+            assert js["proformas"][pf.house - 1]["matter_breakdown"] == b
 
     def test_longevity_is_band_first_and_not_false_precision(self, markdown):
         """Raman's order (band, then period) and no two-decimal lifespan."""
@@ -243,13 +262,15 @@ class TestDetailedReport:
         assert "Nav?" not in markdown and "k?raka" not in markdown
 
     def test_split_status_note_when_majority_disagrees_with_headline(self, report, markdown):
-        """H10/H12 on the canonical chart are afflicted headlines driven by one signification
+        """H10 on the canonical chart is an afflicted headline driven by one signification
         while the majority reads favourable — the split status must say so, without touching
-        the verdict itself."""
+        the verdict itself. (H12 was pinned here too until 2026-10-23: the one-sided-rasi
+        navamsa guard stopped the D9 lifting three malefic-only H12 matters to favourable, so
+        its majority now reads mixed.)"""
         from app.raman_saab.detailed_report import (
             driver_entry, signification_tenor_split, tenor_note,
         )
-        for house in (10, 12):
+        for house in (10,):
             mr = next(m for m in report.synthesis.matters if m.house == house)
             cal = report.calibration[house]
             split = signification_tenor_split(cal)
@@ -259,19 +280,17 @@ class TestDetailedReport:
         assert "Split status" in markdown
         assert "the headline follows the single weakest decided matter" in markdown
 
-    def test_split_status_notes_headline_minority_on_canonical_h6(self, report):
-        """The canonical chart's H6 headline diverged from its majority on 2026-08-23 when
-        the doctrine-reviewed H6.C.19 (HTJAH-I:6105, 6th lord in a benefic's sign aspected by
-        a benefic -> many friends) began firing here, lifting `enemies` to favourable: the
-        matter headline reads mixed while 3 of 5 sub-readings stay afflicted — exactly the
-        false-alarm case the tenor note EXISTS to annotate, so the pin now asserts the note
-        is PRESENT (previously: majority==headline and no note)."""
+    def test_canonical_h6_headline_follows_its_afflicted_majority(self, report):
+        """The canonical chart's H6 has 3 of 5 sub-readings afflicted, 1 favourable, 1 mixed.
+        Until 2026-10-23 the rollup's mixed+favourable rule fired first and the headline read
+        mixed over three afflicted sub-matters (the masking the audit found); an afflicted
+        sub-matter now always reaches the headline, so headline and majority agree and no
+        tenor note is needed."""
         from app.raman_saab.detailed_report import signification_tenor_split, tenor_note
         mr6 = next(m for m in report.synthesis.matters if m.house == 6)
         split = signification_tenor_split(report.calibration[6])
-        assert split.majority == "afflicted" and mr6.verdict == "mixed"
-        note = tenor_note(split, mr6.verdict)
-        assert note is not None and "3 of 5" in note
+        assert split.majority == "afflicted" and mr6.verdict == "afflicted"
+        assert tenor_note(split, mr6.verdict) is None
 
     def test_tenor_split_tie_reads_as_even_split_not_zero_mixed(self):
         """A 2-favourable/2-afflicted tie must read as 'an even split', never as a nonsensical
@@ -1233,7 +1252,8 @@ class TestLifeChapters:
             for m in ch.maraka_overlaps:
                 assert m.overlap_start_jd < ch.end_jd and m.overlap_end_jd > ch.start_jd
             for h, tier, natal in ch.houses_lit:
-                assert tier in ("par excellence", "ordinary", "limited", "feeble")
+                # timing gap check fix 3 (HTJAH-I:1635): "same lord" = the MD lord's own bhukti
+                assert tier in ("par excellence", "ordinary", "same lord", "limited", "feeble")
                 assert natal == rollup[h]
 
     def test_narrative_orders_natal_before_transits(self, report):
@@ -1819,8 +1839,8 @@ class TestWave1TimingSurfaces:
         assert "HTJAH-II:668-702" in section          # the recorded three-level citation
 
     def test_sade_sati_strip_is_dated_and_method_only(self, report, markdown):
-        """The three phase spans (12th/1st/2nd from the Moon) carry calendar dates and the
-        strip states the no-result-doctrine absence note; dates are gochara arithmetic."""
+        """The three phase spans (12th/1st/2nd from the Moon) carry calendar dates, the strip
+        points to Raman's rounds doctrine (AFB-12:169-174), and dates are gochara arithmetic."""
         import re
         phases = report.sade_sati_phases
         assert phases
@@ -1836,7 +1856,10 @@ class TestWave1TimingSurfaces:
         s = markdown.find("### Sade-Sati phase windows (Saturn from the natal Moon)")
         assert s >= 0
         section = markdown[s:markdown.find("\n## ", s)]
-        assert "no Sade-Sati x Moon result doctrine is on record" in section
+        # fix 8 (2026-10-24): the absence note was wrong — Raman gives a rounds doctrine
+        # (AFB-12:169-174); the strip now points to the Sade-Sati rounds table instead.
+        assert "AFB-12:161, 169-174" in section
+        assert "### Sade-Sati rounds since birth" in section
         assert "plain gochara arithmetic" in section
         for label in ("rising (12th from Moon)", "peak (over the Moon)",
                       "setting (2nd from Moon)"):
@@ -1860,9 +1883,11 @@ class TestWave1TimingSurfaces:
             assert (seg.end_jd - seg.start_jd) >= 25  # same noise floor as favourable
         section = markdown[a:markdown.find("###", a + 10)]
         assert "| Planet | Window | What it concerns | Mitigation (own AV bindus) | " \
-               "Interference |" in section
+               "Interference | Relief (reverse Vedha) |" in section
         assert "ASP-13:416" in section                # Raman's own proportion law, recorded
-        assert "not computed, not zero" in section    # the honest Vedha disclosure
+        # fix 9 (2026-10-24): the "not computed" Vedha disclosure became Raman's reverse
+        # Vedha, which he does define for adverse stations (HPA-34:161-164).
+        assert "HPA-34:161-164" in section
 
     def test_chara_sequence_is_dated_with_one_now_marker(self, report, markdown):
         """Chara rows are dated by JD arithmetic from birth (years x 365.2425), contiguous,
@@ -2259,7 +2284,8 @@ class TestWave2TimingDivisionalSoul:
         section = markdown[a:markdown.find("\n## ", a)]
         assert "HPA-34:369-381" in section            # the recorded blending doctrine
         assert "ASP-13:416" in section                # Raman's own mitigation proportion
-        assert "not computed, not zero" in section    # honest Vedha disclosure
+        # fix 9 (2026-10-24): reverse Vedha replaces "not computed" (HPA-34:161-164)
+        assert "HPA-34:161-164" in section
         assert "method windows, not exact dates" in section   # coarse-sampling honesty
         assert section.count("| MD |") + section.count("| AD |") == \
             len(report.dasha_transit_adverse)

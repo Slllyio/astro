@@ -39,6 +39,7 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Callable, Final, Literal, Optional
 
@@ -55,6 +56,8 @@ from app.raman_saab.primitives.functional_nature import is_yogakaraka
 from app.raman_saab.primitives.shadbala import total as _sb_total
 from app.raman_saab.primitives.transits import TransitRow
 from app.raman_saab.ordinals import ordinal
+
+logger = logging.getLogger(__name__)
 
 Band = Literal["raman", "classical", "av"]
 Kind = Literal["evaluable", "descriptive"]
@@ -493,6 +496,20 @@ RAMAN_RULES: Final[tuple[SynthesisRule, ...]] = (
         # birth-details block: e773041's NH re-scrape moved the dictum +3,195 lines.
         ("Life-narrative", "Chart signature"), Citation("NH", 12775)),
     SynthesisRule(
+        # Fix 6 (timing gap check, USER DECISION 2026-10-24): Raman's own bhukti relation,
+        # beside the classical SYN_N4. "Unfavourable results will be realised when the
+        # sub-lord and the major lord are situated in the 6th and 8th or 12th and 2nd from
+        # each other respectively" (HPA-24:150-152), with the 3/11, mutual-quadrant,
+        # mutual-aspect, 5th/9th-lord and Saturn-Venus readings in raman_timing.bhukti_relation.
+        "SYN_R15_BHUKTI_RELATION", "raman", "R15",
+        "The bhukti lord's relation to the major lord, as Raman reads it", "evaluable", _R,
+        "The sub-lord and the major lord in the 6th and 8th or 12th and 2nd from each other give "
+        "unfavourable results; in the 3rd and 11th, an ideal combination; in mutual quadrants or "
+        "mutual aspect, favourable; the 5th and 9th lords in each other's periods, good; the "
+        "mutual periods of Saturn and Venus damage Raja-Yogas unless the yoga is powerful.",
+        "Where the sub-period's lord stands from the main period's lord colours the stretch.",
+        ("Life-narrative", "Planetary positions"), Citation("HPA-24", 150)),
+    SynthesisRule(
         "SYN_R8_TRANSIT_CATALYST", "raman", "R8",
         "Transits are catalysts gated by the dasha", "evaluable", _R,
         "Transits must be looked into only after determining the operative Dasha; they are "
@@ -586,6 +603,12 @@ def _chk_r2(ctx: SynthesisContext) -> Optional[str]:
     p = ctx.period
     if p is None or p.antar is None:
         return None
+    if p.antar == p.maha:
+        # timing gap check fix 3 (2026-10-24): Raman's test is for "the sub-period of
+        # another" (HTJAH-I:1635); the MD lord's own bhukti is not graded par excellence
+        return (f"running {p.maha} MD / {p.antar} AD: the MD lord's own sub-period — Raman's "
+                f"association test is for the sub-period of another planet (HTJAH-I:1635), so "
+                f"the houses {p.maha} influences grade 'same lord', not par excellence")
     assoc = vd.lords_associated(ctx.chart, p.maha, p.antar)
     tier = "par excellence" if assoc else "ordinary"
     rel = "associated (conjunct/mutual aspect)" if assoc else "NOT associated"
@@ -687,18 +710,45 @@ def _chk_r7(ctx: SynthesisContext) -> Optional[str]:
     says how much of the house the period can express, not what will happen."""
     if ctx.period is None:
         return None
-    lord = ctx.period.maha
-    p = ctx.chart.planets.get(lord)
     # from_stated_positions charts carry no cusps (jd_ut None) — nothing to measure against.
-    if p is None or len(ctx.chart.bhava_madhyas) != 12 or len(ctx.chart.bhava_sandhis) != 12:
+    if len(ctx.chart.bhava_madhyas) != 12 or len(ctx.chart.bhava_sandhis) != 12:
         return None
-    bhava, strength = residential_strength(
-        p.lon, ctx.chart.bhava_madhyas, ctx.chart.bhava_sandhis)
-    near = ("sitting close to the Bhava Madhya, so nearly the whole of it" if strength >= 0.8
-            else "close to a Bhava Sandhi, so very little of it" if strength <= 0.2
-            else "part-way between the Madhya and a Sandhi, so a moderate part of it")
-    return (f"running MD lord {lord} holds {strength:.2f} of bhava {bhava}'s residential "
-            f"strength — {near} can find expression through him this period")
+
+    def _line(role: str, lord: str) -> Optional[str]:
+        p = ctx.chart.planets.get(lord)
+        if p is None:
+            return None
+        bhava, strength = residential_strength(
+            p.lon, ctx.chart.bhava_madhyas, ctx.chart.bhava_sandhis)
+        near = ("sitting close to the Bhava Madhya, so nearly the whole of it" if strength >= 0.8
+                else "close to a Bhava Sandhi, so very little of it" if strength <= 0.2
+                else "part-way between the Madhya and a Sandhi, so a moderate part of it")
+        return (f"running {role} lord {lord} holds {strength:.2f} of bhava {bhava}'s residential "
+                f"strength — {near} can find expression through him this period")
+
+    lines = [_line("MD", ctx.period.maha)]
+    # Fix 16 (timing gap check, USER DECISION 2026-10-24): the same measure for the BHUKTI
+    # lord — "The dasa periods of planets in Bhava sandhis (junctional points) will be unable
+    # to produce their full results" (HPA-24:98-100) holds for a sub-period lord as much as a
+    # major one; Raman's quantity "will materialise during his Dasa or Bhukthi" (GBB-1:203).
+    if ctx.period.antar is not None and ctx.period.antar != ctx.period.maha:
+        lines.append(_line("AD", ctx.period.antar))
+    lines = [ln for ln in lines if ln]
+    return "; ".join(lines) or None
+
+
+def _chk_r15(ctx: SynthesisContext) -> Optional[str]:
+    """Fix 6: the running bhukti read by Raman's relation rules (raman_timing.bhukti_relation)."""
+    p = ctx.period
+    if p is None or p.antar is None or p.antar == p.maha:
+        return None
+    from app.raman_saab.raman_timing import bhukti_relation
+    raja = tuple(y.name for y in ctx.yogas if y.kind == "raja")
+    seat, reads = bhukti_relation(ctx.chart, p.maha, p.antar, raja)
+    if not reads:
+        return None
+    return (f"AD lord {p.antar} stands in the {ordinal(seat)} from MD lord {p.maha}: "
+            + "; ".join(reads))
 
 
 def _chk_r14(ctx: SynthesisContext) -> Optional[str]:
@@ -746,11 +796,29 @@ def _chk_r9(ctx: SynthesisContext) -> Optional[str]:
     trines = {sat.sign, (sat.sign - 1 + 4) % 12 + 1, (sat.sign - 1 + 8) % 12 + 1}
     on_signal = sat_row.sign in trines
     if ctx.maraka_now and on_signal:
-        # the classical signature is Rasi AND Amsa (HTJAH-II:4846-4849); transit navamsa is
-        # not computed here, so only the rasi half is claimed.
+        # the classical signature is Rasi AND Amsa: "Death occurs when Saturn in his transit
+        # passes through the Rashi and Amsa occupied by him at birth or its trines"
+        # (HTJAH-I:11226-11228). Fix 7 (2026-10-24): the Amsa half is now computed from
+        # transiting Saturn's longitude at ctx.jd.
+        amsa_on = None
+        try:
+            from app.raman_saab.chart import varga as _varga
+            from app.raman_saab.primitives import transits as _tr
+            nav = _varga.navamsa_sign(_tr.planet_longitude(
+                ctx.jd, "Saturn", ayanamsa=getattr(ctx.chart, "ayanamsa", None) or "raman"))
+            amsa_on = nav in {(sat.navamsa_sign - 1 + k) % 12 + 1 for k in (0, 4, 8)}
+        except Exception:  # noqa: BLE001 — the Amsa half is a refinement, never a crash
+            logger.warning("R9 Amsa half not computed", exc_info=True)
+        if amsa_on is None:
+            half = "the RASI half of the classical signature (the Amsa half could not be computed)"
+        elif amsa_on:
+            half = ("BOTH halves of the classical signature (transit Saturn's Navamsa is also on "
+                    "natal Saturn's Navamsa trines)")
+        else:
+            half = ("the RASI half of the classical signature only (transit Saturn's Navamsa is "
+                    "NOT on natal Saturn's Navamsa trines)")
         return (f"maraka-tier period runs AND transit Saturn ({_SIGN[sat_row.sign]}) is on the "
-                f"natal-Saturn rasi/trine signal — the RASI half of the classical signature "
-                f"(the Amsa half is not computed here; still not a prediction)")
+                f"natal-Saturn rasi/trine signal — {half}; still not a prediction")
     if ctx.maraka_now:
         return (f"a maraka-tier period runs, but transit Saturn ({_SIGN[sat_row.sign]}) is NOT "
                 f"on the natal rasi/trine signal ({_SIGN[sat.sign]} trines) — the classical "
@@ -842,6 +910,7 @@ _CHECKERS: Final[dict[str, Callable[[SynthesisContext], Optional[str]]]] = {
     "SYN_R12_YOGA_FUNCTIONAL_DILUTION": _chk_r12,
     "SYN_R13_RAJA_VARGOTTAMA_RANK": _chk_r13,
     "SYN_R14_BR_LIBRA_SATURN_DASA": _chk_r14,
+    "SYN_R15_BHUKTI_RELATION": _chk_r15,
 }
 
 

@@ -1,0 +1,1809 @@
+[
+ {
+  "chart_no": 1,
+  "name": "Sri Krishna",
+  "first_line": 947,
+  "last_line": 1238,
+  "raw_birth": "Birth Details. — *19th July 3228 B.C., at about midnight (Lat. 27° 25' N., long. 77° 41' E.)",
+  "birth": {
+   "date": "-3227-07-19",
+   "time": "00:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 27,
+   "lat_min": 25,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 41,
+   "lon_dir": "E",
+   "place": "Mathura (not named; coordinates only)"
+  },
+  "date_note": "3228 B.C. (Julian) = astronomical year -3227. Raman: 'midnight of 19th (20th) July 3228 B.C.' (NH:1081); time is local midnight, basis not printed.",
+  "raw_positions": "The Sun 139° 48'; the Moon 47° 42' ; Mars 91 ° 6' ; Mercury 152° 48' ; Jupiter 148° 54' ; Venus 102° 54'; Saturn 224° 42'; Rahu 106° 24'; and Lagna 50°. Ayanamsa + 50° 40'.",
+  "ayanamsa_printed": "+50° 40'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Leo",
+    "deg": 19.8,
+    "longitude_printed": 139.8
+   },
+   "Moon": {
+    "sign": "Taurus",
+    "deg": 17.7,
+    "longitude_printed": 47.7
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": 1.1,
+    "longitude_printed": 91.1
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": 2.8,
+    "longitude_printed": 152.8
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": 28.9,
+    "longitude_printed": 148.9
+   },
+   "Venus": {
+    "sign": "Cancer",
+    "deg": 12.9,
+    "longitude_printed": 102.9
+   },
+   "Saturn": {
+    "sign": "Scorpio",
+    "deg": 14.7,
+    "longitude_printed": 224.7
+   },
+   "Rahu": {
+    "sign": "Cancer",
+    "deg": 16.4,
+    "longitude_printed": 106.4
+   },
+   "Ketu": {
+    "sign": "Capricorn",
+    "deg": 16.4,
+    "longitude_printed": 286.4
+   }
+  },
+  "lagna_sign_printed": "Taurus",
+  "lagna_longitude_printed": 50.0,
+  "uncertain": [
+   "birth.date: midnight of 19th/20th July — could be entered as 20th 00:00",
+   "Ketu not printed; derived as Rahu+180 (Capricorn), consistent with prose 'Ketu is in the 9th'"
+  ],
+  "dasa_balance": "Moon 4-2-21",
+  "lagna_sign_stated": "Taurus",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "it is occupied by the Moon and aspected ... by Saturn making Sri Krishna extremely handsome.",
+    "line": 1007,
+    "why": "Raman concludes the native was extremely handsome."
+   },
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "His invincible prowess in the field of battle is brought out by the neecha-bhanga of the martial planet Mars in the 3rd or house of courage.",
+    "line": 1023,
+    "why": "Invincible prowess/courage stated as a fact of his life."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "This is a unique combination denoting wonderful intelligence and extraordinary conversational ability. His was a giant intellect unequalled in analytic understanding.",
+    "line": 1055,
+    "why": "Giant intellect is Raman's conclusion about the native."
+   },
+   {
+    "house": "H2",
+    "signification": "speech",
+    "verdict": "favourable",
+    "quote": "wonderful intelligence and extraordinary conversational ability",
+    "line": 1056,
+    "why": "Extraordinary conversational ability, tied by Raman to the 2nd lord (speech)."
+   },
+   {
+    "house": "H9",
+    "signification": "dharma",
+    "verdict": "favourable",
+    "quote": "Consequently He possessed a passionate zeal to safeguard Dharma.",
+    "line": 1086,
+    "why": "Zeal for Dharma stated as outcome."
+   },
+   {
+    "house": "H12",
+    "signification": "incarceration",
+    "verdict": "afflicted",
+    "quote": "Krishna's birth in prison is justified by the association of the lords of Lagna (Venus) and the 12th (Mars) with Rahu.",
+    "line": 1087,
+    "why": "Birth in prison = 12th-house confinement realised."
+   },
+   {
+    "house": "H11",
+    "signification": "elder_siblings",
+    "verdict": "afflicted",
+    "quote": "It must be noted that Krishna was the 8th issue, all the eider ones having been put to death by Kamsa.",
+    "line": 1091,
+    "why": "Raman links 11th lord (elder siblings) to all elder siblings being killed."
+   },
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "favourable",
+    "quote": "Due to the exaltation of Matrukaraka Moon and the situation of Pitrukaraka Sun in his own house with Jupiter, his parents were long-lived.",
+    "line": 1093,
+    "why": "Mother long-lived."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "favourable",
+    "quote": "Due to the exaltation of Matrukaraka Moon and the situation of Pitrukaraka Sun in his own house with Jupiter, his parents were long-lived.",
+    "line": 1093,
+    "why": "Father long-lived."
+   },
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "favourable",
+    "quote": "Putrakaraka is in association with the Sun, with the result He had innumerable children born to Him.",
+    "line": 1127,
+    "why": "Innumerable children."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "The 4th or house of education is considerably fortified ... It is said that Krishna became an expert in \"siksha, kalpas, vedangas and all the vedas ...\"",
+    "line": 1128,
+    "why": "Became expert in all learning."
+   },
+   {
+    "house": "H6",
+    "signification": "enemies",
+    "verdict": "favourable",
+    "quote": "enabled Krishna to achieve victory over His greatest enemy and thus tide over the maraka period.",
+    "line": 1164,
+    "why": "Victory over enemies (Kamsa and other foes)."
+   },
+   {
+    "house": "H4",
+    "signification": "happiness",
+    "verdict": "favourable",
+    "quote": "In the remaining Dasas of Venus, the Sun and the Moon, Krishna passed a peaceful and happy life.",
+    "line": 1186,
+    "why": "Peaceful happy life stated."
+   },
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "Consistent with the nature of Mars, Krishna departed by being hit by an arrow.",
+    "line": 1196,
+    "why": "Violent manner of death (arrow wound)."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "favourable",
+    "quote": "Since Saturn happens to be Ayushkaraka also, his strong disposition conferred a long life of 125 years.",
+    "line": 1213,
+    "why": "Long life of 125 years."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "This combination plus the kendra position of Jupiter and the Sun indicates perfection of all aspects of His personality.",
+    "line": 1217,
+    "why": "Perfection of personality; ideal in every role."
+   }
+  ]
+ },
+ {
+  "chart_no": 2,
+  "name": "Sri Gautama Buddha",
+  "first_line": 1240,
+  "last_line": 1515,
+  "raw_birth": "Birth Details. — *14th April 623 B.C, at about midday (Lat. 27°8' N., Long. 83° 5' E.)",
+  "birth": {
+   "date": "-0622-04-14",
+   "time": "12:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 27,
+   "lat_min": 8,
+   "lat_dir": "N",
+   "lon_deg": 83,
+   "lon_min": 5,
+   "lon_dir": "E",
+   "place": null
+  },
+  "date_note": "623 B.C. (Julian) = astronomical year -622; Full Moon of Vaisakha, Kali 2479, Tuesday (NH:1361). 'about midday', local.",
+  "raw_positions": "The Sun 29° 3' ; the Moon 200' 45'; Mars 26° 54' ; Mercury 53° 6' ; Jupiter 11°; Venus 6° 12'; Saturn 24° 36'; Rahu 86° 54' ; and Lagna 116° 45', Ayanamsa + 14° 16'.",
+  "ayanamsa_printed": "+14° 16'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": 29.05,
+    "longitude_printed": 29.05
+   },
+   "Moon": {
+    "sign": "Libra",
+    "deg": 20.75,
+    "longitude_printed": 200.75
+   },
+   "Mars": {
+    "sign": "Aries",
+    "deg": 26.9,
+    "longitude_printed": 26.9
+   },
+   "Mercury": {
+    "sign": "Taurus",
+    "deg": 23.1,
+    "longitude_printed": 53.1
+   },
+   "Jupiter": {
+    "sign": "Aries",
+    "deg": 11.0,
+    "longitude_printed": 11.0
+   },
+   "Venus": {
+    "sign": "Aries",
+    "deg": 6.2,
+    "longitude_printed": 6.2
+   },
+   "Saturn": {
+    "sign": "Aries",
+    "deg": 24.6,
+    "longitude_printed": 24.6
+   },
+   "Rahu": {
+    "sign": "Gemini",
+    "deg": 26.9,
+    "longitude_printed": 86.9
+   },
+   "Ketu": {
+    "sign": "Sagittarius",
+    "deg": 26.9,
+    "longitude_printed": 266.9
+   }
+  },
+  "lagna_sign_printed": "Cancer",
+  "lagna_longitude_printed": 116.75,
+  "uncertain": [
+   "Moon printed \"200' 45'\" read as 200°45' (Libra; consistent with Visakha birth star and Full Moon)",
+   "Ketu not printed; derived Sagittarius"
+  ],
+  "dasa_balance": "Jupiter 15-1-6 (raw 'Years 1 5-1-6')",
+  "lagna_sign_stated": "Cancer (prose: 'lord of Lagna Moon')",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "These dispositions conferred on the Buddha, great physical beauty and a magnetic personality. Because of the aspects of Venus, Mars and Jupiter on Lagna lord, He was handsome, fair in colour, stately to behold and of majestic mien.",
+    "line": 1302,
+    "why": "Physical beauty stated as fact."
+   },
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "afflicted",
+    "quote": "This explains the affliction of Kalatrabhava and want of happiness, in the conventional sense of the term, on this account.",
+    "line": 1337,
+    "why": "Want of marital happiness concluded."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "Gnanakaraka Jupiter and the philosophical planet Saturn ... gave Him unexcelled philosophical power.",
+    "line": 1401,
+    "why": "Unexcelled philosophical/intellectual power."
+   },
+   {
+    "house": "H12",
+    "signification": "moksha",
+    "verdict": "favourable",
+    "quote": "In his 35th year, in Mercury Dasa, Mercury Bhukti, sitting under the Bodhi tree, on the Full Moon day of Vaisakha, He is said to have attained enlightenment. Mercury as lord of the 12th — Mokshsathana",
+    "line": 1437,
+    "why": "Enlightenment tied to 12th lord."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "It was in Venus Dasa that his triumphant spiritual conquest of the land took place",
+    "line": 1446,
+    "why": "Triumphant mission/life-work."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "favourable",
+    "quote": "At the age of 80, He passed away",
+    "line": 1452,
+    "why": "Lived to 80."
+   },
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "favourable",
+    "quote": "The Buddha knew about His end which was peaceful.",
+    "line": 1458,
+    "why": "Peaceful death."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "He was a pioneering lover of men and a radiant personality, arousing in His followers affectionate devotion.",
+    "line": 1511,
+    "why": "Summing-up verdict on the person."
+   }
+  ]
+ },
+ {
+  "chart_no": 3,
+  "name": "Alexander the Great",
+  "first_line": 1517,
+  "last_line": 1706,
+  "raw_birth": "Birth Details. — *Born on 22nd July 356 B. C. between 10 and 12 at night. (Lat 40° 43' N„ Long. 22° 35' E.)",
+  "birth": {
+   "date": "-0355-07-22",
+   "time": "23:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 40,
+   "lat_min": 43,
+   "lat_dir": "N",
+   "lon_deg": 22,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": "Pella (named in footnote)"
+  },
+  "date_note": "356 B.C. (Julian) = astronomical -355 (Fagan, NH:1614). Time printed only as 'between 10 and 12 at night'; 23:00 is the midpoint. Raman calls the horoscope speculative; Lagna fixed by him as Aries (NH:1654).",
+  "raw_positions": "The Sun 123° 35' ; the Moon 208° 31* ; Mars 86° 18' ; Mercury 105° 3V ; Jupiter 185° 54' ; Venus 1 26° 20' ; Saturn 59° 54' ; Rahu 314° 2' ; Ketu 134° 2'; and Lagna 19° 31' ; Ayanamsa + 10 0 32'.",
+  "ayanamsa_printed": "+10° 32'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Leo",
+    "deg": 3.58,
+    "longitude_printed": 123.583
+   },
+   "Moon": {
+    "sign": "Libra",
+    "deg": 28.52,
+    "longitude_printed": 208.517
+   },
+   "Mars": {
+    "sign": "Gemini",
+    "deg": 26.3,
+    "longitude_printed": 86.3
+   },
+   "Mercury": {
+    "sign": "Cancer",
+    "deg": 15.52,
+    "longitude_printed": 105.517
+   },
+   "Jupiter": {
+    "sign": "Libra",
+    "deg": 5.9,
+    "longitude_printed": 185.9
+   },
+   "Venus": {
+    "sign": "Leo",
+    "deg": 6.33,
+    "longitude_printed": 126.333
+   },
+   "Saturn": {
+    "sign": "Taurus",
+    "deg": 29.9,
+    "longitude_printed": 59.9
+   },
+   "Rahu": {
+    "sign": "Aquarius",
+    "deg": 14.03,
+    "longitude_printed": 314.033
+   },
+   "Ketu": {
+    "sign": "Leo",
+    "deg": 14.03,
+    "longitude_printed": 134.033
+   }
+  },
+  "lagna_sign_printed": "Aries",
+  "lagna_longitude_printed": 19.516666666666666,
+  "uncertain": [
+   "birth.time: range 22:00-24:00, 23:00 chosen",
+   "Mercury '105° 3V' read as 105°31' (could be 105°3')",
+   "Moon '208° 31*' read 208°31'",
+   "Venus '1 26° 20'' read 126°20'"
+  ],
+  "dasa_balance": "Jupiter 5-9-11 (raw '5-9-1 1')",
+  "lagna_sign_stated": "Aries",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "Alexander's immense physical courage, impulsive energy and vivid imagination stand out prominent by virtue of Aries rising",
+    "line": 1597,
+    "why": "Immense courage."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "His \"lasting reputation even long after death\" is due to his conquests and ambitions.",
+    "line": 1622,
+    "why": "Lasting fame."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "The 4th lord the Moon with Jupiter in the 7th richly endowed Alexander with natural abilities. He was educated by no less a person than Aristotle.",
+    "line": 1626,
+    "why": "Excellent education."
+   },
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "afflicted",
+    "quote": "The 5th house is considerably afflicted as the 5th lord the Sun is with Venus in the constellation of Ketu. No child was born to him during his lifetime.",
+    "line": 1637,
+    "why": "No child in his lifetime."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Alexander succeeded his father Philip II in Saturn Dasa Rahu Bhukti. Mark Saturn is lord of the 10th",
+    "line": 1641,
+    "why": "Succeeded to the throne; conquests followed."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "Under the same directions, his father died by assassination.",
+    "line": 1659,
+    "why": "Father assassinated."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "First : it is an Alpayu horoscope",
+    "line": 1694,
+    "why": "Short life (died at 32, NH:1682)."
+   }
+  ]
+ },
+ {
+  "chart_no": 4,
+  "name": "Augustus Caesar",
+  "first_line": 1708,
+  "last_line": 1929,
+  "raw_birth": "Birth Details. — 'Born on 23rd September 63 B.C. at about 5-48 a.m. (Lat. 41° 53' N., Long. 12° 28' E.)",
+  "birth": {
+   "date": "-0062-09-23",
+   "time": "05:48",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 41,
+   "lat_min": 53,
+   "lat_dir": "N",
+   "lon_deg": 12,
+   "lon_min": 28,
+   "lon_dir": "E",
+   "place": "Rome (coordinates)"
+  },
+  "date_note": "63 B.C. (Julian) = astronomical -62. Footnote: 'A little before sunrise' according to Suetonius.",
+  "raw_positions": "The Sun 183° 25' ; the Moon 303° 55'; Mars 39° 25'; Mercury 173° 25'; Jupiter 111° 25'; Venus 230 = 25'; Saturn 36° 55' ; Rahu 39° 25' ; and Lagna 180° 30' ; Ayanamsa +6° 25'.",
+  "ayanamsa_printed": "+6° 25'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Libra",
+    "deg": 3.42,
+    "longitude_printed": 183.417
+   },
+   "Moon": {
+    "sign": "Aquarius",
+    "deg": 3.92,
+    "longitude_printed": 303.917
+   },
+   "Mars": {
+    "sign": "Taurus",
+    "deg": 9.42,
+    "longitude_printed": 39.417
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": 23.42,
+    "longitude_printed": 173.417
+   },
+   "Jupiter": {
+    "sign": "Cancer",
+    "deg": 21.42,
+    "longitude_printed": 111.417
+   },
+   "Venus": {
+    "sign": "Scorpio",
+    "deg": 20.42,
+    "longitude_printed": 230.417
+   },
+   "Saturn": {
+    "sign": "Taurus",
+    "deg": 6.92,
+    "longitude_printed": 36.917
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": 9.42,
+    "longitude_printed": 39.417
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": 9.42,
+    "longitude_printed": 219.417
+   }
+  },
+  "lagna_sign_printed": "Libra",
+  "lagna_longitude_printed": 180.5,
+  "uncertain": [
+   "Venus '230 = 25'' read 230°25' (Scorpio, 2nd house — consistent with prose 'Lagna lord ... situated in the 2nd, in the sign of Mars')",
+   "Ketu not printed; derived Scorpio. Prose NH:1895 says 'Ketu is in the 8th in conjunction with Mars' but table/longitudes put Rahu with Mars in Taurus (8th); prose likely means Rahu",
+   "Mars and Rahu both printed 39°25' (suspicious identical values)"
+  ],
+  "dasa_balance": "Mars 1-5-10",
+  "lagna_sign_stated": "Libra",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "He was \"exceptionally good looking, with very delicately modelled features, grey eyes, luminous and penetrating\"",
+    "line": 1765,
+    "why": "Good looks stated."
+   },
+   {
+    "house": "H3",
+    "signification": "ear_throat",
+    "verdict": "afflicted",
+    "quote": "Three malefics aspecting the 2nd rendered him suffer, all his life, from throat trouble.",
+    "line": 1774,
+    "why": "Lifelong throat trouble (Raman judges it from the 2nd house; vocabulary places throat under H3)."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "While the 4th lord is no doubt afflicted, the 4th is aspected by exalted Jupiter. It is said that he was a scholar from his youth.",
+    "line": 1786,
+    "why": "Scholar from youth."
+   },
+   {
+    "house": "H7",
+    "signification": "spouse",
+    "verdict": "mixed",
+    "quote": "He was married twice — the first a marriage of convenience lasting for only two years and the second marriage endured to the end of his life.",
+    "line": 1791,
+    "why": "Two marriages: first brief, second lasting (though with slander, NH:1793)."
+   },
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "afflicted",
+    "quote": "The 5th lord Saturn is equally well afflicted. He had only one daughter who disappointed him.",
+    "line": 1795,
+    "why": "One disappointing daughter; 'greatest calamity' was her conduct (NH:1919)."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "His father died in his 5th year, when he was having Rahu Dasa Jupiter Bhukti.",
+    "line": 1852,
+    "why": "Early loss of father."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "In Rahu Dasa Venus Bhukti, he was elected into the pontifical college, an exceptional honour",
+    "line": 1855,
+    "why": "Exceptional honour."
+   },
+   {
+    "house": "H6",
+    "signification": "enemies",
+    "verdict": "favourable",
+    "quote": "his disposition in the 6th from the Moon (success over enemies) is unique. Jupiter's Dasa lasted from 44 B.C. to 28 B.C. And as soon as this commenced, Antonius was defeated.",
+    "line": 1867,
+    "why": "Success over enemies."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "As soon as Saturn's Dasa commenced, Augustus was awarded the civic crown ... and he became undisputed head of the Roman world.",
+    "line": 1884,
+    "why": "Supreme ruler."
+   },
+   {
+    "house": "H12",
+    "signification": "expenditure",
+    "verdict": "afflicted",
+    "quote": "Mercury though exalted is in the 12th or house of loss ... and consequently Mercury Dasa brought losses.",
+    "line": 1887,
+    "why": "Losses via 12th."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "favourable",
+    "quote": "his political career lasted for a long time and ended only when he was 77 years old.",
+    "line": 1911,
+    "why": "Lived to 77."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "made him \"one of the world's great men, a statesman, who conceived and carried through a scheme of political reconstruction",
+    "line": 1923,
+    "why": "Overall eminence."
+   }
+  ]
+ },
+ {
+  "chart_no": 6,
+  "name": "Jesus Christ",
+  "first_line": 2266,
+  "last_line": 2501,
+  "raw_birth": "Birth Details. — *Born on 25th December 7 B.C. on Friday at about 10-18 p.m. (A.V.C. 747). (Lat. 31° 43' N., Long. 35° 13' E.)",
+  "birth": {
+   "date": "-0006-12-25",
+   "time": "22:18",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 31,
+   "lat_min": 43,
+   "lat_dir": "N",
+   "lon_deg": 35,
+   "lon_min": 13,
+   "lon_dir": "E",
+   "place": "Bethlehem (coordinates)"
+  },
+  "date_note": "7 B.C. (Julian) = astronomical -6. Data after Cyril Fagan; Lagna fixed by Raman (NH:2431).",
+  "raw_positions": "The Sun 247° 59' ; the Moon 336' 41'; Mars 314° 29' ; Mercury 255° 58' ; Jupiter 353° 17': Venus 233° 1 ' ; Saturn 351° 47' ; Rahu 210° 35' ; and Lagna 165 g 29'. Ayanamsa : 5° 27'.",
+  "ayanamsa_printed": "5° 27'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Sagittarius",
+    "deg": 7.98,
+    "longitude_printed": 247.983
+   },
+   "Moon": {
+    "sign": "Pisces",
+    "deg": 6.68,
+    "longitude_printed": 336.683
+   },
+   "Mars": {
+    "sign": "Aquarius",
+    "deg": 14.48,
+    "longitude_printed": 314.483
+   },
+   "Mercury": {
+    "sign": "Sagittarius",
+    "deg": 15.97,
+    "longitude_printed": 255.967
+   },
+   "Jupiter": {
+    "sign": "Pisces",
+    "deg": 23.28,
+    "longitude_printed": 353.283
+   },
+   "Venus": {
+    "sign": "Scorpio",
+    "deg": 23.02,
+    "longitude_printed": 233.017
+   },
+   "Saturn": {
+    "sign": "Pisces",
+    "deg": 21.78,
+    "longitude_printed": 351.783
+   },
+   "Rahu": {
+    "sign": "Scorpio",
+    "deg": 0.58,
+    "longitude_printed": 210.583
+   },
+   "Ketu": {
+    "sign": "Taurus",
+    "deg": 0.58,
+    "longitude_printed": 30.583
+   }
+  },
+  "lagna_sign_printed": "Virgo",
+  "lagna_longitude_printed": 165.48333333333332,
+  "uncertain": [
+   "Moon \"336' 41'\" read 336°41'",
+   "Venus '233° 1 '' read 233°1'",
+   "Lagna '165 g 29'' read 165°29'",
+   "Ketu not printed; derived Taurus (prose: Ketu in 9th from Lagna, 3rd from Moon — consistent)"
+  ],
+  "dasa_balance": "Saturn 14-0-21",
+  "lagna_sign_stated": "Virgo",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "dharma",
+    "verdict": "favourable",
+    "quote": "The presence of Ketu in the 9th from Lagna gave him Atmagnana or the knowledge of the Self",
+    "line": 2349,
+    "why": "Self-knowledge via the 9th."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "This is a unique combination indicating the high degree of soul-force possessed by Jesus.",
+    "line": 2381,
+    "why": "Great soul-force."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "afflicted",
+    "quote": "Throughout Saturn Dasa, life must have been one of poverty, toil and simplicity",
+    "line": 2409,
+    "why": "Poverty."
+   },
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "He was crucified in 30 A.D., at the end of Ketu Dasa. His death occurred by torture",
+    "line": 2443,
+    "why": "Death by torture."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "Jupiter and the Moon are quite powerful indicating keen mental perception and righteous conduct.",
+    "line": 2470,
+    "why": "Keen mental perception."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "His popularity with the masses, his public life and accessibility ... bespeak an exceptionally powerful disposition of Jupiter and the 9th house.",
+    "line": 2481,
+    "why": "Popularity / public eminence."
+   }
+  ]
+ },
+ {
+  "chart_no": 7,
+  "name": "Emperor Nero",
+  "first_line": 2503,
+  "last_line": 2741,
+  "raw_birth": "Birth Details. — Born on 15th December 37 A.D.(O.S.) at about 7.28 a.m. (Long. 12° 46' E„ Lat. 41 ° 29' N.)",
+  "birth": {
+   "date": "0037-12-15",
+   "time": "07:28",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 41,
+   "lat_min": 29,
+   "lat_dir": "N",
+   "lon_deg": 12,
+   "lon_min": 46,
+   "lon_dir": "E",
+   "place": "Antium (not named; coordinates)"
+  },
+  "date_note": "Old Style (Julian).",
+  "raw_positions": "The Sun 267° 30'; the Moon 139° 2'; Mars 271° 2'; Mercury 245° 2'; Jupiter 229° 32'; Venus298° 2'; Saturn 182° 2'; Rahu 278° 50': Ketu 98° 50'; and Lagna 267° 32'. Ayanamsa +5° 2'.",
+  "ayanamsa_printed": "+5° 2'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Sagittarius",
+    "deg": 27.5,
+    "longitude_printed": 267.5
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": 19.03,
+    "longitude_printed": 139.033
+   },
+   "Mars": {
+    "sign": "Capricorn",
+    "deg": 1.03,
+    "longitude_printed": 271.033
+   },
+   "Mercury": {
+    "sign": "Sagittarius",
+    "deg": 5.03,
+    "longitude_printed": 245.033
+   },
+   "Jupiter": {
+    "sign": "Scorpio",
+    "deg": 19.53,
+    "longitude_printed": 229.533
+   },
+   "Venus": {
+    "sign": "Capricorn",
+    "deg": 28.03,
+    "longitude_printed": 298.033
+   },
+   "Saturn": {
+    "sign": "Libra",
+    "deg": 2.03,
+    "longitude_printed": 182.033
+   },
+   "Rahu": {
+    "sign": "Capricorn",
+    "deg": 8.83,
+    "longitude_printed": 278.833
+   },
+   "Ketu": {
+    "sign": "Cancer",
+    "deg": 8.83,
+    "longitude_printed": 98.833
+   }
+  },
+  "lagna_sign_printed": "Sagittarius",
+  "lagna_longitude_printed": 267.53333333333336,
+  "uncertain": [],
+  "dasa_balance": "Venus 11-5-12",
+  "lagna_sign_stated": "Sagittarius",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "afflicted",
+    "quote": "has a predominance of malefic influences over it rendering the native wily, unscrupulous and headstrong.",
+    "line": 2568,
+    "why": "Bad character."
+   },
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "Sagittarius rising with the Sun and Mercury endowed Nero with a wonderful physique and robust health. He was said to be remarkably beautiful",
+    "line": 2580,
+    "why": "Physique, health, beauty."
+   },
+   {
+    "house": "H2",
+    "signification": "speech",
+    "verdict": "favourable",
+    "quote": "He was no mean singer, he was famed throughout Italy and Greece for the possession of a superb voice.",
+    "line": 2600,
+    "why": "Superb voice (Venus in the 2nd)."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "He had Alpayu or short life",
+    "line": 2614,
+    "why": "Short life."
+   },
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "afflicted",
+    "quote": "The 7th house is ill-disposed and hence the intrigues and scandals characterising the married life of this Emperor.",
+    "line": 2624,
+    "why": "Scandalous married life."
+   },
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "afflicted",
+    "quote": "Nero killed his mother, of course at the instance of his mistress",
+    "line": 2644,
+    "why": "Mother killed; also banished, 'highly cruel, immoral' (NH:2697)."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "When Nero was hardly three years old, his father died",
+    "line": 2681,
+    "why": "Early loss of father."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "mixed",
+    "quote": "Consistent with the dictum that Saturn's position in the 10th drags one from power suddenly, we find that Nero had an ignominious flight and death.",
+    "line": 2739,
+    "why": "Empire conferred (NH:2641) then sudden fall from power."
+   },
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "we find that Nero had an ignominious flight and death.",
+    "line": 2740,
+    "why": "Ignominious death after popular revolt."
+   }
+  ]
+ },
+ {
+  "chart_no": 8,
+  "name": "Prophet Mahamud",
+  "first_line": 2743,
+  "last_line": 2902,
+  "raw_birth": "Birth Details. — *Born on 20th April 571 A.D. (O.S.) at 1-10 a.m. (Lat. 21 ° 20' N Long. 40° 14' E.)",
+  "birth": {
+   "date": "0571-04-20",
+   "time": "01:10",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 21,
+   "lat_min": 20,
+   "lat_dir": "N",
+   "lon_deg": 40,
+   "lon_min": 14,
+   "lon_dir": "E",
+   "place": "Mecca (coordinates)"
+  },
+  "date_note": "Old Style (Julian); time is Raman's rectified time (NH:2802).",
+  "raw_positions": "The Sun 28° 45' ; The Moon 136° ; Mars 90° 35' ; Mercury 2° 24' ; Jupiter 209° 50' ; Venus 39° 29' ; Saturn 211° 46' ; Rahu 35° 31' ; Ketu 215° 31 ; Lagna 304° 47' ; 10th house 227° 1 Ayanamsa 2° 26'.",
+  "ayanamsa_printed": "2° 26'",
+  "tenth_house_printed": "227° 1(?)'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": 28.75,
+    "longitude_printed": 28.75
+   },
+   "Moon": {
+    "sign": "Leo",
+    "deg": 16.0,
+    "longitude_printed": 136.0
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": 0.58,
+    "longitude_printed": 90.583
+   },
+   "Mercury": {
+    "sign": "Aries",
+    "deg": 2.4,
+    "longitude_printed": 2.4
+   },
+   "Jupiter": {
+    "sign": "Libra",
+    "deg": 29.83,
+    "longitude_printed": 209.833
+   },
+   "Venus": {
+    "sign": "Taurus",
+    "deg": 9.48,
+    "longitude_printed": 39.483
+   },
+   "Saturn": {
+    "sign": "Scorpio",
+    "deg": 1.77,
+    "longitude_printed": 211.767
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": 5.52,
+    "longitude_printed": 35.517
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": 5.52,
+    "longitude_printed": 215.517
+   }
+  },
+  "lagna_sign_printed": "Aquarius",
+  "lagna_longitude_printed": 304.78333333333336,
+  "uncertain": [
+   "10th house '227° 1' minutes truncated"
+  ],
+  "dasa_balance": "Venus 15-3-0",
+  "lagna_sign_stated": "Aquarius",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "speech",
+    "verdict": "favourable",
+    "quote": "The 2nd lord being Jupiter and the 2nd house being unafflicted gave him a \"deep and pleasant voice\".",
+    "line": 2812,
+    "why": "Pleasant voice."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "afflicted",
+    "quote": "The 4th house is highly afflicted indicating that he was illiterate.",
+    "line": 2818,
+    "why": "Illiterate."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "the Sun is in the 3rd and the Lagna has fallen in Meena (Pisces) Dwadasamsa, suggesting clearly that he was a posthumous child.",
+    "line": 2840,
+    "why": "Posthumous child — father died before birth."
+   },
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "afflicted",
+    "quote": "His mother died in his 6th year when he was having Venus Dasa Rahu Bhukti. Mark the position of these two planets in the house of the mother.",
+    "line": 2866,
+    "why": "Early loss of mother."
+   },
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "afflicted",
+    "quote": "One of his sons died in Jupiter Dasa Mercury Bhukti.",
+    "line": 2880,
+    "why": "Loss of a son."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "In the world's religious history, Mahamud is certainly a most extraordinary character. He was a prophet, philosopher and politician.",
+    "line": 2887,
+    "why": "Overall eminence."
+   },
+   {
+    "house": "H9",
+    "signification": "dharma",
+    "verdict": "favourable",
+    "quote": "Deep thinkers ... admit the grandeur of his religious system and the depth of his wisdom and ali this is due to the blessings of Jupiter's position in the 9th.",
+    "line": 2894,
+    "why": "Grand religious system attributed to the 9th."
+   },
+   {
+    "house": "H12",
+    "signification": "moksha",
+    "verdict": "favourable",
+    "quote": "Mokshakaraka Ketu's situation in the 10th in the house of Mars is significant. This made Mahamud a real gnani",
+    "line": 2896,
+    "why": "Real gnani."
+   }
+  ]
+ },
+ {
+  "chart_no": 9,
+  "name": "Sri Ramanujacharya",
+  "first_line": 2904,
+  "last_line": 3088,
+  "raw_birth": "Birth Details. — 'Born on the 4th April 1017 A.D. (O.S.)at about 12 Noon. (Lat. 11° 14' N., Long. 78° 56' E.)",
+  "birth": {
+   "date": "1017-04-04",
+   "time": "12:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 11,
+   "lat_min": 14,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 56,
+   "lon_dir": "E",
+   "place": "Sriperumbudur (not named; coordinates)"
+  },
+  "date_note": "Old Style (Julian). Thursday, Chaitra 13, Aridra, Salivahana 939 (NH:2966).",
+  "raw_positions": "The Sun 1 1° 32'; the Moon 73 50'; Mars 1 21 c 24' ; Mercury 24° 42' ; Jupiter 63” ; Venus 1 6° 36' ; Saturn 260° 18'; Rahu 43° 42 ; and Lagna 102'* 2'. Ayanamsa 8° 40'.",
+  "ayanamsa_printed": "8° 40'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": 11.53,
+    "longitude_printed": 11.533
+   },
+   "Moon": {
+    "sign": "Gemini",
+    "deg": 13.83,
+    "longitude_printed": 73.833
+   },
+   "Mars": {
+    "sign": "Leo",
+    "deg": 1.4,
+    "longitude_printed": 121.4
+   },
+   "Mercury": {
+    "sign": "Aries",
+    "deg": 24.7,
+    "longitude_printed": 24.7
+   },
+   "Jupiter": {
+    "sign": "Gemini",
+    "deg": 3.0,
+    "longitude_printed": 63.0
+   },
+   "Venus": {
+    "sign": "Aries",
+    "deg": 16.6,
+    "longitude_printed": 16.6
+   },
+   "Saturn": {
+    "sign": "Sagittarius",
+    "deg": 20.3,
+    "longitude_printed": 260.3
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": 13.7,
+    "longitude_printed": 43.7
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": 13.7,
+    "longitude_printed": 223.7
+   }
+  },
+  "lagna_sign_printed": "Cancer",
+  "lagna_longitude_printed": 102.03333333333333,
+  "uncertain": [
+   "Sun '1 1° 32'' read 11°32'",
+   "Moon '73 50'' read 73°50'",
+   "Mars '1 21 c 24'' read 121°24' (Leo; consistent with Mars aspecting 5th Scorpio)",
+   "Jupiter '63”' read 63°0'",
+   "Venus '1 6° 36'' read 16°36'",
+   "Lagna \"102'* 2'\" read 102°2'",
+   "Ketu not printed; derived Scorpio (prose: Ketu in 5th)"
+  ],
+  "dasa_balance": "Rahu 8-3-27",
+  "lagna_sign_stated": "Cancer (prose: 'lord of Lagna' Moon)",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "Jupiter-Saturn influences focussed on Lagna lord in Rasi and Lagna in Navamsa indicate attractive physical features and handsome appearance",
+    "line": 2962,
+    "why": "Handsome appearance."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "suggesting uncommon powers of intellect but great humility also as Saturn aspects Lagna lord.",
+    "line": 2976,
+    "why": "Uncommon intellect."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "all aspecting the house of education and otherwise unafflicted, gave Ramanuja erudition, intellectual vigour and intense yearning for knowledge.",
+    "line": 2981,
+    "why": "Erudition."
+   },
+   {
+    "house": "H7",
+    "signification": "marital_happiness",
+    "verdict": "afflicted",
+    "quote": "Consequently, Ramanuja's domestic life does not appear to have been very happy. It is said that he did not find in his wife that ready sympathy",
+    "line": 3014,
+    "why": "Unhappy domestic life; sent wife away."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "Ramanuja married Kantimati, his father died and the family had to shift to Kancheepuram.",
+    "line": 3026,
+    "why": "Father's death (in his youth)."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "favourable",
+    "quote": "But owing to the Purnayu nature of the horoscope, nothing untoward happened.",
+    "line": 3046,
+    "why": "Purnayu; died at 120 (NH:3059)."
+   },
+   {
+    "house": "H6",
+    "signification": "enemies",
+    "verdict": "afflicted",
+    "quote": "Ramanuja, during Venus' Dasa, had to undergo considerable persecution under the Chola king Kulottunga.",
+    "line": 3053,
+    "why": "Persecution and attempts on his life by enemies."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "In the Sun's Dasa — mark his exalted position in the 10th — Ramanuja received considerable support from Vishnuvardhana which enabled him to actively spread his doctrines",
+    "line": 3055,
+    "why": "Successful life-work."
+   },
+   {
+    "house": "H12",
+    "signification": "moksha",
+    "verdict": "favourable",
+    "quote": "there was a certain amount of spiritual attainment which enabled him to save himself from the clutches of desires and attachments.",
+    "line": 3074,
+    "why": "Spiritual attainment/detachment."
+   },
+   {
+    "house": "H9",
+    "signification": "dharma",
+    "verdict": "favourable",
+    "quote": "Ramanuja played a notable part as a fearless and faithful worker in the field of religious and social reform.",
+    "line": 3079,
+    "why": "Religious reformer."
+   }
+  ]
+ },
+ {
+  "chart_no": 11,
+  "name": "Chengiz Khan",
+  "first_line": 3230,
+  "last_line": 3377,
+  "raw_birth": "Birth Details. — *Born on 16/15 September 1186 A.D. (O.S ) at about 1-30 a m. (L.M.T.). (Lat. 37° N., Long. 65° E.)",
+  "birth": {
+   "date": "1186-09-16",
+   "time": "01:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 37,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 65,
+   "lon_min": 0,
+   "lon_dir": "E",
+   "place": null
+  },
+  "date_note": "Old Style. 'night corresponding to 16-9-1186' (footnote NH:3292), i.e. night of 15th/16th; 01:30 belongs to the 16th. Lat/long only approximate; Lagna Cancer fixed by Raman from life events.",
+  "raw_positions": "The Sun 169° 23' ; the Moon 198° 12'; Mars 179° 38'; Mercury 155° 33'; Jupiter 170°; Venus 155° 24'; Saturn 174° 18'; Rahu 3° 10'; What about Ketu and Lagna 100° 40'. Ayanamsa 11 ° 2'.",
+  "ayanamsa_printed": "11° 2'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Virgo",
+    "deg": 19.38,
+    "longitude_printed": 169.383
+   },
+   "Moon": {
+    "sign": "Libra",
+    "deg": 18.2,
+    "longitude_printed": 198.2
+   },
+   "Mars": {
+    "sign": "Virgo",
+    "deg": 29.63,
+    "longitude_printed": 179.633
+   },
+   "Mercury": {
+    "sign": "Virgo",
+    "deg": 5.55,
+    "longitude_printed": 155.55
+   },
+   "Jupiter": {
+    "sign": "Virgo",
+    "deg": 20.0,
+    "longitude_printed": 170.0
+   },
+   "Venus": {
+    "sign": "Virgo",
+    "deg": 5.4,
+    "longitude_printed": 155.4
+   },
+   "Saturn": {
+    "sign": "Virgo",
+    "deg": 24.3,
+    "longitude_printed": 174.3
+   },
+   "Rahu": {
+    "sign": "Aries",
+    "deg": 3.17,
+    "longitude_printed": 3.167
+   },
+   "Ketu": {
+    "sign": "Libra",
+    "deg": 3.17,
+    "longitude_printed": 183.167
+   }
+  },
+  "lagna_sign_printed": "Cancer",
+  "lagna_longitude_printed": 100.66666666666667,
+  "uncertain": [
+   "birth.date 16th vs 15th (printed '16/15')",
+   "Ketu not printed (OCR 'What about Ketu'); derived Libra, consistent with Moon+Ketu in 4th",
+   "Coordinates approximate per Raman"
+  ],
+  "dasa_balance": "Rahu 2-5-5",
+  "lagna_sign_stated": "Cancer",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "afflicted",
+    "quote": "Here as the Moon is with Ketu an incendiary planet, it signified a crafty, violent and dangerous person.",
+    "line": 3315,
+    "why": "Character verdict."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "He lost his father at the age of 13 in Jupiter Dasa Venus Bhukti.",
+    "line": 3327,
+    "why": "Early loss of father."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Chengiz Khan was one of the greatest conquerors that has ever lived.",
+    "line": 3358,
+    "why": "Supreme career as conqueror/ruler."
+   },
+   {
+    "house": "H6",
+    "signification": "enemies",
+    "verdict": "favourable",
+    "quote": "Son of a petty Mongol chieftain, he lived to see his armies victorious from the China sea to the banks of the Dneiper.",
+    "line": 3368,
+    "why": "Victory over enemies (Raman's Rajayoga reading 'certain victory over enemies', NH:3325)."
+   }
+  ]
+ },
+ {
+  "chart_no": 12,
+  "name": "Swami Vidyaranya",
+  "first_line": 3379,
+  "last_line": 3686,
+  "raw_birth": "Birth Details.— 'Born on the 11th April 1296 A.D. (O.S.) at 10-58 p.m. (L.M.T). (Lat. 15° N, Long. 77° E.)",
+  "birth": {
+   "date": "1296-04-11",
+   "time": "22:58",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 15,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 0,
+   "lon_dir": "E",
+   "place": null
+  },
+  "date_note": "Old Style. From Renuka Tantra: Vaisakha sukla saptami, Kali 4397, Wednesday. Lat/long approximate (NH:3478, 3504).",
+  "raw_positions": "The Sun 16° 30' ; the Moon 100° 7' ; Mercury 358° 48' ; Jupiter 260° 6' ; Venus 346° 24' ; Saturn 64° ; Rahu 42° 30' ; and Lagna 262° 29'. Ayanamsa 12° 34'.",
+  "ayanamsa_printed": "12° 34'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aries",
+    "deg": 16.5,
+    "longitude_printed": 16.5
+   },
+   "Moon": {
+    "sign": "Cancer",
+    "deg": 10.12,
+    "longitude_printed": 100.117
+   },
+   "Mars": {
+    "sign": "Aquarius",
+    "deg": null,
+    "longitude_printed": null,
+    "source": "not in longitude list; prose 'Mars as lord of the 5th in the 3rd' (NH:3489) and verse 'bhoume kumbha samsthe' (NH:3517)"
+   },
+   "Mercury": {
+    "sign": "Pisces",
+    "deg": 28.8,
+    "longitude_printed": 358.8
+   },
+   "Jupiter": {
+    "sign": "Sagittarius",
+    "deg": 20.1,
+    "longitude_printed": 260.1
+   },
+   "Venus": {
+    "sign": "Pisces",
+    "deg": 16.4,
+    "longitude_printed": 346.4
+   },
+   "Saturn": {
+    "sign": "Gemini",
+    "deg": 4.0,
+    "longitude_printed": 64.0
+   },
+   "Rahu": {
+    "sign": "Taurus",
+    "deg": 12.5,
+    "longitude_printed": 42.5
+   },
+   "Ketu": {
+    "sign": "Scorpio",
+    "deg": 12.5,
+    "longitude_printed": 222.5
+   }
+  },
+  "lagna_sign_printed": "Sagittarius",
+  "lagna_longitude_printed": 262.48333333333335,
+  "uncertain": [
+   "Mars longitude omitted from printed list; sign Aquarius inferred from prose + Sanskrit verse",
+   "Ketu not printed; derived Scorpio (prose: Ketu in 12th)",
+   "Raman notes original horoscope had Mercury in Aries; printed 358°48' (Pisces) is modern calculation"
+  ],
+  "dasa_balance": "Saturn 9-4-0",
+  "lagna_sign_stated": "Sagittarius",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "Jupiter rising almost in conjunction with Lagna, which is Sagittarius, conferred a manly and noble appearance, with well-proportioned limbs, broad chest and a magnetic personality.",
+    "line": 3433,
+    "why": "Noble appearance."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "It will be seen that Vidyaranya was an intellectual giant.",
+    "line": 3481,
+    "why": "Intellectual giant."
+   },
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "This made him an independent character with clear and decided ideas and a spirit that is fearless, dauntless and aspiring.",
+    "line": 3491,
+    "why": "Fearless spirit (Mars in 3rd)."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "mixed",
+    "quote": "Throughout Saturn Dasa which lasted till about the age of 9 years 4 months, financially, the family was in very bad circumstances.",
+    "line": 3562,
+    "why": "Early poverty, yet later 'he used his great spiritual influence in collecting huge funds' (NH:3544, from the strong Dhanabhava)."
+   },
+   {
+    "house": "H12",
+    "signification": "moksha",
+    "verdict": "favourable",
+    "quote": "These planetary influences made him a real Yogi and Sanyasi and enabled him to lead a life of complete detach- ment, austerity and simplicity.",
+    "line": 3550,
+    "why": "Real yogi and sanyasi."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "Due to the highly dignified situation of Mercury, in respect of the house of education, Vidyaranya attained unparalleled distinction in all the Vedas and Vedanta.",
+    "line": 3576,
+    "why": "Unparalleled learning."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "It was in Venus Dasa Venus Bhukti that Madhava was ordained as Jagat Guru in Sringeri",
+    "line": 3582,
+    "why": "Highest spiritual office."
+   },
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "favourable",
+    "quote": "Lagna lord strong in Lagna and lord of the 8th in his own house conferred a long life of 91 years.",
+    "line": 3609,
+    "why": "Long life."
+   },
+   {
+    "house": "H9",
+    "signification": "dharma",
+    "verdict": "favourable",
+    "quote": "Therefore Vidyaranya's ambition to found an empire for safeguarding and reviving the national Dharma (signified by the 9th house) was fulfilled.",
+    "line": 3627,
+    "why": "Dharma mission fulfilled."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Hence Vidyaranya was able to found the empire of Vijayanagar and earn the gratitude of posterity.",
+    "line": 3643,
+    "why": "Founded an empire."
+   }
+  ]
+ },
+ {
+  "chart_no": 15,
+  "name": "Akbar the Great",
+  "first_line": 4060,
+  "last_line": 4265,
+  "raw_birth": "Birth Details. — Born on 24th/23rd November 1542 A.D. (O.S.) at 4-9 a.m. (L.M.T.). (Lat. 25° 19' N„ Long. 69° 47' E.)",
+  "birth": {
+   "date": "1542-11-24",
+   "time": "04:09",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 25,
+   "lat_min": 19,
+   "lat_dir": "N",
+   "lon_deg": 69,
+   "lon_min": 47,
+   "lon_dir": "E",
+   "place": "Umarkot, Sind"
+  },
+  "date_note": "Old Style; printed '24th/23rd' (civil 24th, night of 23rd/24th).",
+  "raw_positions": "The Sun 235° 12' ; the Moon 70° 0'; Mars 294° 42' ; Mercury 251° 30' ; Jupiter 187° 18' ; Venus 200° 2' ; Saturn 209° 12' ; Rahu 309° 36' ; and Lagna 203° 22' . Ayanamsa 16° 1'.",
+  "ayanamsa_printed": "16° 1'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Scorpio",
+    "deg": 25.2,
+    "longitude_printed": 235.2
+   },
+   "Moon": {
+    "sign": "Gemini",
+    "deg": 10.0,
+    "longitude_printed": 70.0
+   },
+   "Mars": {
+    "sign": "Capricorn",
+    "deg": 24.7,
+    "longitude_printed": 294.7
+   },
+   "Mercury": {
+    "sign": "Sagittarius",
+    "deg": 11.5,
+    "longitude_printed": 251.5
+   },
+   "Jupiter": {
+    "sign": "Libra",
+    "deg": 7.3,
+    "longitude_printed": 187.3
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": 20.03,
+    "longitude_printed": 200.033
+   },
+   "Saturn": {
+    "sign": "Libra",
+    "deg": 29.2,
+    "longitude_printed": 209.2
+   },
+   "Rahu": {
+    "sign": "Aquarius",
+    "deg": 9.6,
+    "longitude_printed": 309.6
+   },
+   "Ketu": {
+    "sign": "Leo",
+    "deg": 9.6,
+    "longitude_printed": 129.6
+   }
+  },
+  "lagna_sign_printed": "Libra",
+  "lagna_longitude_printed": 203.36666666666667,
+  "uncertain": [
+   "birth.date 24th vs 23rd (printed '24th/23rd')",
+   "Ketu not printed; derived Leo",
+   "Prose says Mars in 4th 'with Rahu' but Rahu 309°36' is Aquarius (sign 5th) — bhava association only"
+  ],
+  "dasa_balance": "Rahu 13-3-1",
+  "lagna_sign_stated": "Libra",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "Venus rising within four degrees of ascending point rendered his physical appearance \"most captivating and handsome\".",
+    "line": 4122,
+    "why": "Handsome."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "As Meadows Taylor observes, \"he had no deceits, no falsehood, no shifts, no intrigues\".",
+    "line": 4135,
+    "why": "Character verdict from unafflicted Moon."
+   },
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "afflicted",
+    "quote": "Rahu is in the 9th from Pitrusthana and Pitrusthana being aspected by Jupiter ... explains the birth of Akbar under strange circumstances, at a fortress when his father Humayun, driven from the throne of Delhi, was escaping to Persia.",
+    "line": 4142,
+    "why": "Father dethroned/exiled at birth; father died in Rahu Dasa (NH:4193)."
+   },
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "His military prowess and personal courage are accounted for by Mars.",
+    "line": 4176,
+    "why": "Courage."
+   },
+   {
+    "house": "H6",
+    "signification": "enemies",
+    "verdict": "favourable",
+    "quote": "The confusion of his enemies and his career of conquest are due to the disposition of Jupiter",
+    "line": 4183,
+    "why": "Victory over enemies (Hemu routed, NH:4201)."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "But the colossal wealth, which history tells us Akbar was possessed of, is most certainly the result of lord of the 11th the Sun occupying the 2nd",
+    "line": 4186,
+    "why": "Colossal wealth."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "it was during Saturn Dasa that Akbar's career as an Emperor reached its zenith.",
+    "line": 4216,
+    "why": "Imperial career at zenith."
+   },
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "mixed",
+    "quote": "In Mercury Dasa the Moon Bhukti, his son Murad died. Another son Danial died in Jupiter Bhukti of Mercury Dasa.",
+    "line": 4221,
+    "why": "Three sons born (NH:4211) but two died."
+   }
+  ]
+ },
+ {
+  "chart_no": 50,
+  "name": "Benito Mussolini",
+  "first_line": 10626,
+  "last_line": 10818,
+  "raw_birth": "Birth Details. -Bom on 29th July 1883 at 2 p.m. (L.M.T.) (Lat. 41° N, Long. 16° E.)",
+  "birth": {
+   "date": "1883-07-29",
+   "time": "14:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 41,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 16,
+   "lon_min": 0,
+   "lon_dir": "E",
+   "place": null
+  },
+  "date_note": "NOTE: 1883-07-29 appears in skip_birth_dates.txt; extracted anyway per caller's explicit instruction.",
+  "raw_positions": "The Sun 105° 13'; the Moon 48° 21'; Mars 52° 13'; Mercury 104° 43'; Jupiter 87° 43'; Venus 90° 43'; Saturn 46° 43'; Rahu 196° 4'; Ketu 16° 4'; and Lagna 21 T 43'. Ayanamsa 20° 47'.",
+  "ayanamsa_printed": "20° 47'",
+  "stated_positions": {
+   "Sun": {
+    "sign": "Cancer",
+    "deg": 15.22,
+    "longitude_printed": 105.217
+   },
+   "Moon": {
+    "sign": "Taurus",
+    "deg": 18.35,
+    "longitude_printed": 48.35
+   },
+   "Mars": {
+    "sign": "Taurus",
+    "deg": 22.22,
+    "longitude_printed": 52.217
+   },
+   "Mercury": {
+    "sign": "Cancer",
+    "deg": 14.72,
+    "longitude_printed": 104.717
+   },
+   "Jupiter": {
+    "sign": "Gemini",
+    "deg": 27.72,
+    "longitude_printed": 87.717
+   },
+   "Venus": {
+    "sign": "Cancer",
+    "deg": 0.72,
+    "longitude_printed": 90.717
+   },
+   "Saturn": {
+    "sign": "Taurus",
+    "deg": 16.72,
+    "longitude_printed": 46.717
+   },
+   "Rahu": {
+    "sign": "Libra",
+    "deg": 16.07,
+    "longitude_printed": 196.067
+   },
+   "Ketu": {
+    "sign": "Aries",
+    "deg": 16.07,
+    "longitude_printed": 16.067
+   }
+  },
+  "lagna_sign_printed": "Scorpio",
+  "lagna_longitude_printed": 217.71666666666667,
+  "uncertain": [
+   "Lagna '21 T 43'' read 217°43' (T->7; Scorpio confirmed by prose) — alternatives 211°43', 219°43'",
+   "Raman places Jupiter+Venus 'in the 8th house' (bhava); Venus 90°43' is Cancer by sign"
+  ],
+  "dasa_balance": "Moon 3-8-26",
+  "lagna_sign_stated": "Scorpio",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "afflicted",
+    "quote": "Saturn has sapped up all the vitality so that he brouhgt ruin not only to himself but to his mother country also.",
+    "line": 10696,
+    "why": "Ruin of self and country."
+   },
+   {
+    "house": "H6",
+    "signification": "enemies",
+    "verdict": "afflicted",
+    "quote": "Mars receives both favourable and unfavourable aspects — the bad ones producing many enemies and many dangers.",
+    "line": 10709,
+    "why": "Many enemies and dangers."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "mixed",
+    "quote": "These led him to power and that power he lost.",
+    "line": 10747,
+    "why": "Rose to dictatorship then fell (NH:10733, 10816)."
+   },
+   {
+    "house": "H7",
+    "signification": "partnership",
+    "verdict": "afflicted",
+    "quote": "And with that affliction to the 7th house it was not surprising that his relations with other powers were inharmonious.",
+    "line": 10768,
+    "why": "Inharmonious foreign relations via 7th."
+   },
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "Hence Mussolini had a 'violent end.",
+    "line": 10792,
+    "why": "Violent death."
+   }
+  ]
+ }
+]

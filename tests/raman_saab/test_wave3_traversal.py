@@ -42,7 +42,7 @@ _FINE_PRINT_LABEL = "Encoding-scope notes"
 
 @pytest.fixture(scope="module")
 def report():
-    return build_detailed_report(_CANONICAL)
+    return build_detailed_report(_CANONICAL, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
 
 
 @pytest.fixture(scope="module")
@@ -404,7 +404,8 @@ class TestMaintainerNotesRouted:
         for _sig, _rid, text, _cite in h7:
             assert not any(mk in text for mk in _MAINTAINER_MARKERS), text
         notes = house_maintainer_notes(report, 7)
-        assert "v1-OOS" in notes and "owned by H7.C.60" in notes
+        # "v1-OOS" was H7.KD.1's note; that rule is descriptive since R2 (2026-10-24).
+        assert "owned by H7.C.60" in notes
 
     def test_the_shared_helper_is_reused_not_reimplemented(self):
         """One splitter (monographs.split_maintainer_notes), used by both composers."""

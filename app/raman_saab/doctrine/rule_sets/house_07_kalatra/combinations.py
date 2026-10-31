@@ -268,6 +268,12 @@ class _HouseHemmedBy(C.Condition):
         return all(have.values())
 
 
+#: N1 (FIDELITY_FIXES_PREREG Addendum 16, HELD until measured and decided): Rahu and Ketu are
+#: always opposite, so a node in the 7th always brings the other's 7th aspect; under N1 the axis
+#: counts as ONE affliction in H7.C.82. Read live, so a measurement can flip it.
+NODE_AXIS_AS_ONE: bool = False
+
+
 class _SeventhBesiegedByMalefics(C.Condition):
     """TWO OR MORE distinct natural malefics each afflict the 7th house (occupy it or cast a
     whole-sign drishti on it) AND no FULL benefic (Jupiter/Venus/Mercury) occupies or aspects
@@ -296,7 +302,10 @@ class _SeventhBesiegedByMalefics(C.Condition):
             return p is not None and (p.rasi_house == 7
                                       or drishti.aspects_house(name, 7, chart))
 
-        if sum(afflicts(m) for m in NATURAL_MALEFICS) < 2:
+        hits = {m for m in NATURAL_MALEFICS if afflicts(m)}
+        if NODE_AXIS_AS_ONE and {"Rahu", "Ketu"} <= hits:
+            hits.discard("Ketu")                  # the axis is one testimony (N1)
+        if len(hits) < 2:
             return False
         return not any(afflicts(b) for b in self._RELIEVERS)
 
@@ -813,7 +822,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # ===== Kuja-Dosha (single-chart, HTJAH-II:2579-2632) — sig marital_happiness =====
     RuleRecord(
         id="H7.KD.1", house=7, signification="marital_happiness", group="combination",
-        kind="evaluable", condition=_KujaDosha(),
+        # R2 DESCRIPTIVE (2026-10-24, engine-blind citation review): Raman opens this dictum as
+        # "one of the most misunderstood and misapplied astrological dicta" (HTJAH-II:2579-2581),
+        # writes "The Dosha is not absolute" (:2605), and uses it only as units weighed against
+        # the partner's chart in matching (:2627) — never as a verdict on one chart. Shown, no vote.
+        kind="descriptive", condition=_KujaDosha(),
         fortified=None,
         afflicted="Kuja/Mangal Dosha — Mars in the 2/4/7/8/12 from the Lagna, the Moon or Venus "
                   "(not neutralised by a Mars+Jupiter or Mars+Moon conjunction) → affliction to "

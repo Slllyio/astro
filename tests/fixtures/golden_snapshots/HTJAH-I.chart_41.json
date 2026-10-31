@@ -11,8 +11,8 @@
       "HTJAH-I:2540",
       "HTJAH-I:2549",
       "HTJAH-I:2553",
-      "HTJAH-I:2800",
-      "NH:5655"
+      "HTJAH-I:2802",
+      "NH:7628"
     ],
     "fired_rule_ids": [
       "H2.C.16",
@@ -28,7 +28,7 @@
       "H2.P.Mercury",
       "H2.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "strong",
@@ -36,9 +36,9 @@
         "verdict": "favourable"
       },
       "speech": {
-        "degree": "strong",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
         "degree": "strong",

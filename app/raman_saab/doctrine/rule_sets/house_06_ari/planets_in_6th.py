@@ -125,6 +125,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         source=Citation("HTJAH-I", 6145)),
     RuleRecord(
         id="H6.P.Rahu", house=6, signification="enemies_disease", group="planet_in_house",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): cite, cite 6181.
         kind="evaluable", condition=C.InRashiHouse("Rahu", 6),
         # SENTIMENT-SPLIT. 6150 is ONE unconditioned sentence - 'Long-lived and wealthy,
         # troubled by enemies, ghosts and diseases in private parts' - cut in half. Raman
@@ -139,7 +140,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "conjunction) the Moon and Saturn joining Rahu -> mental derangement and a "
                   "psychological misfit",
         frame="LAGNA", varga="D1", polarity="malefic",
-        source=Citation("HTJAH-I", 6150)),
+        source=Citation("HTJAH-I", 6181)),
     RuleRecord(
         id="H6.P.Ketu", house=6, signification="enemies_disease", group="planet_in_house",
         kind="evaluable", condition=C.InRashiHouse("Ketu", 6),

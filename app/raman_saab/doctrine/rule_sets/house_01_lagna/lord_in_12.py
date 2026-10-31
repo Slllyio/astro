@@ -130,7 +130,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 1039)),
     RuleRecord(
-        id="H1.L.7", house=1, signification="self", group="lord_in_house", kind="evaluable",
+        id="H1.L.7", house=1, signification="self", group="lord_in_house", kind="descriptive",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 1054.
         condition=C.LordIn(1, 7),
         fortified="spends most time in foreign countries, leads a licentious life; or a puppet "
                   "of parents-in-law",
@@ -138,15 +139,16 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                 "worldly affairs and tries an ascetic life; much travelling; rich or poor "
                 "according to other factors",
         afflicted=None,
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1048)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1054)),
     RuleRecord(
-        id="H1.L.8", house=1, signification="self", group="lord_in_house", kind="evaluable",
+        id="H1.L.8", house=1, signification="self", group="lord_in_house", kind="descriptive",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 1059.
         condition=C.LordIn(1, 8),
         fortified="takes pride in helping others, many friends, religiously inclined, peaceful "
                   "and sudden end",
         general="learned, gambling tendencies, interested in occultism, mean character",
         afflicted=None,
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1057)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 1059)),
     RuleRecord(
         id="H1.L.9", house=1, signification="self", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(1, 9),

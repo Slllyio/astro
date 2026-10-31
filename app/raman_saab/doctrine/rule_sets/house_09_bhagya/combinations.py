@@ -206,7 +206,14 @@ class _LordAfflictedBy(C.Condition):
 
 class _SunMoonTrineToMarsSaturn(C.Condition):
     """The Sun AND the Moon each stand in a trine (5th/9th, i.e. trikona distance)
-    to Mars or to Saturn — Raman's "Sun and Moon in trine to Mars and Saturn"."""
+    to Mars AND to Saturn — Raman's "If the Sun and Moon be in trine to Mars and
+    Saturn, the child will be abandoned by both parents" (HTJAH-II:7452-7453).
+
+    Repaired 2026-10-30: the condition used to read Mars OR Saturn (``any``), which
+    the printed "and" does not say; it fired on 19 goldens against 2 for the
+    printed reading. "In trine" counts the 5th and 9th signs only, not the same sign. The
+    sentence is about abandonment (separation), not the father's death; the mirror on the
+    4th-house mother matter is not encoded (engine-blind review, prereg Addendum 26)."""
     _TRINE: Final[frozenset[int]] = frozenset({5, 9})
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
@@ -219,7 +226,7 @@ class _SunMoonTrineToMarsSaturn(C.Condition):
         targets = (mars.rasi_house, sat.rasi_house)
 
         def trines(lum_house: int) -> bool:
-            return any(((t - lum_house) % 12) + 1 in self._TRINE for t in targets)
+            return all(((t - lum_house) % 12) + 1 in self._TRINE for t in targets)
         return trines(sun.rasi_house) and trines(moon.rasi_house)
 
 
@@ -318,6 +325,21 @@ class _MaleficInHouseDignified(C.Condition):
                    for name, p in ctx.chart.planets.items())
 
 
+class _UndignifiedMaleficInHouse(C.Condition):
+    """Some natural malefic occupies `house` and is NOT exalted / own / moolatrikona / friendly.
+    R2 NARROW (2026-10-24, engine-blind citation review): HTJAH-II:7468-7470 qualifies its own
+    malefics-in-the-9th clause — "But if the malefic in the 9th be exalted, in own or a
+    friendly sign, the opposite results are produced." A dignified malefic is not an affliction
+    to fortune in Raman's sentence, so it must not vote as one."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return any(name in NATURAL_MALEFICS and p.rasi_house == self.house
+                   and dignity(name, ctx.chart) not in _MaleficInHouseDignified._GOOD
+                   for name, p in ctx.chart.planets.items())
+
+
 class _MaleficOrEclipsedOrDebilInHouse(C.Condition):
     """A malefic, an eclipsed (combust), or a debilitated planet occupies `house`."""
     def __init__(self, house: int) -> None:
@@ -327,8 +349,9 @@ class _MaleficOrEclipsedOrDebilInHouse(C.Condition):
         for name, p in ctx.chart.planets.items():
             if p.rasi_house != self.house:
                 continue
-            if name in NATURAL_MALEFICS:
-                return True
+            if name in NATURAL_MALEFICS and \
+                    dignity(name, ctx.chart) not in _MaleficInHouseDignified._GOOD:
+                return True                  # R2 NARROW: HTJAH-II:7468-7470 exception
             if p.combust_fraction > 0.0:
                 return True
             if dignity(name, ctx.chart) == "debil":
@@ -721,7 +744,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # shashtyamsa"), and adding one part as a bare OR-disjunct to an already-broad rule
         # encodes his vocabulary without his threshold. Re-open with the 'weak' gate
         # (effective_strength) applied TOGETHER with the D9 leg, not beside it.
-        condition=C.Or(_LordDebilitated(9), C.CountInHouse(9, 1, "malefic")),
+        condition=C.Or(_LordDebilitated(9), _UndignifiedMaleficInHouse(9)),  # R2 NARROW: HTJAH-II:7468-7470
         fortified=None,
         afflicted="the 9th lord debilitated (in sign or Navamsa) / weak / in a malefic shashtyamsa, "
                   "OR malefics occupying the 9th → unfortunate in life. Encoded on 9th-lord "
@@ -816,7 +839,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 7498)),
     RuleRecord(
-        id="H9.C.35", house=9, signification="higher_learning", group="combination", kind="evaluable",
+        id="H9.C.35", house=9, signification="fortune", group="combination", kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): reroute -> fortune.
         condition=_PlanetInHouseNotWith(9, ("Mercury", "Jupiter")),
         fortified=None,
         afflicted="planets in the 9th not associated with Mercury and Jupiter → diseased, forlorn, "
@@ -858,7 +882,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "malefic sign) → goes abroad but good fortune evades him",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7501)),
     RuleRecord(
-        id="H9.D.40", house=9, signification="long_journeys", group="combination", kind="evaluable",
+        id="H9.D.40", house=9, signification="long_journeys", group="combination", kind="descriptive",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
         condition=C.And(C.Conjunct("Sun", "Moon"), C.Conjunct("Moon", "Saturn")),
         fortified=None,
         afflicted="the Sun, the Moon and Saturn in the same sign → wicked and deceitful, tries to "

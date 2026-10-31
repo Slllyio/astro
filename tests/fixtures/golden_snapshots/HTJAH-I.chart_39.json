@@ -7,7 +7,7 @@
       "HTJAH-I:2472",
       "HTJAH-I:2498",
       "HTJAH-I:2577",
-      "HTJAH-I:2800",
+      "HTJAH-I:2802",
       "HTJAH-I:2948"
     ],
     "fired_rule_ids": [
@@ -25,7 +25,7 @@
       "family": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "speech": {
         "degree": "mild",
@@ -35,12 +35,12 @@
       "vision": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "wealth": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   }

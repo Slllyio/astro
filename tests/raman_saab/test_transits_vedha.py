@@ -33,9 +33,48 @@ class TestVedhaLogic:
         assert obstr == ()
 
     def test_vedha_table_covers_every_benefic_gochara_house(self) -> None:
-        """Raman's Vedha table is complete: every benefic Gochara house has a Vedha pair."""
+        """Raman's Vedha table covers every benefic house of the seven grahas; the nodes have no
+        row (fix 9, 2026-10-24: HPA-34:185-226 prints seven rows only)."""
         for planet, good in tr._GOCHARA_GOOD.items():
+            if planet in ("Rahu", "Ketu"):
+                assert planet not in tr._VEDHA, planet
+                continue
             assert set(good) == set(tr._VEDHA[planet]), planet
+
+
+class TestRamanVedhaTable:
+    def test_mercury_tenth_is_obstructed_from_the_seventh(self) -> None:
+        """Raman prints Mercury's row 2-4-6-8-10-11 over 5-3-9-1-7-12 (HPA-34:203, 207): the
+        10th's Vedha point is the 7th, not the 8th of the common table (fix 9)."""
+        assert tr._VEDHA["Mercury"][10] == 7
+        vh, obstr = tr._vedha("Mercury", 10, {"Mercury": 10, "Jupiter": 7})
+        assert vh == 7 and obstr == ("Jupiter",)
+
+    def test_a_node_obstructs_another_planet(self) -> None:
+        """The nodes are among "any other planet" that obstructs (HPA-34:159-160)."""
+        _vh, obstr = tr._vedha("Jupiter", 5, {"Jupiter": 5, "Rahu": 4})
+        assert obstr == ("Rahu",)
+
+    def test_a_nodes_own_transit_has_no_vedha_point(self) -> None:
+        """Raman gives no node row, so a node's good transit carries no Vedha point (fix 9)."""
+        assert tr._vedha("Rahu", 3, {"Rahu": 3, "Saturn": 12}) == (None, ())
+
+
+class TestReverseVedha:
+    def test_sun_in_fifth_is_relieved_by_a_planet_in_eleventh(self) -> None:
+        """"if the Sun is in the 5th ... no evil ... provided the 11th is being transitted at
+        the same time by any other planet, excepting Saturn" (HPA-34:161-164)."""
+        assert tr._reverse_vedha("Sun", 5, {"Sun": 5, "Mars": 11}) == (11, ("Mars",))
+
+    def test_saturn_does_not_relieve_the_sun(self) -> None:
+        """The Sun-Saturn exemption holds in reverse too ("excepting Saturn", HPA-34:164)."""
+        assert tr._reverse_vedha("Sun", 5, {"Sun": 5, "Saturn": 11}) == (11, ())
+
+    def test_a_good_house_or_non_vedha_point_has_no_reverse_vedha(self) -> None:
+        """Reverse Vedha applies only to an adverse station that is a Vedha point."""
+        assert tr.reverse_vedha_pair("Sun", 11) is None      # a good house
+        assert tr.reverse_vedha_pair("Sun", 1) is None       # not a Vedha point
+        assert tr.reverse_vedha_pair("Rahu", 12) is None     # nodes have no row
 
 
 class TestGocharaIntegration:

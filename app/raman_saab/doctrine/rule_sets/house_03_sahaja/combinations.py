@@ -244,7 +244,7 @@ class _KarakaOrLordVargaDignity(C.Condition):
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
         for who in (_KARAKA, _third_lord(ctx.chart)):
-            if C.VargaDignity(who, "D9", {"exalt", "own"}).evaluate(ctx):
+            if C.VargaDignity(who, "D9", {"own"}).evaluate(ctx):   # R2 2026-10-24: "own Navamsha" only; D9 exaltation is not in the sentence
                 return True
             p = ctx.chart.planets.get(who)
             if p is not None and SIGN_LORDS[p.navamsa_sign] in NATURAL_BENEFICS:
@@ -599,7 +599,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # #14 — Jupiter in the 11th -> worry on account of the ELDER brother.
     RuleRecord(
         id="H3.C.14", house=3, signification="siblings", group="combination",
-        kind="evaluable",
+        # RS1 (prereg Addendum 36, 2026-10-31): DESCRIPTIVE here. Raman's own next sentence
+        # says the elder brother "should be judged by a consideration of the 11th house"
+        # (HTJAH-I:3444-3445), so this is an elder-sibling rule, not a 3rd-house one. It is
+        # scored from the 11th as H11.C.RS1 (house_11_labha/combinations.py).
+        kind="descriptive",
         condition=C.InRashiHouse("Jupiter", 11),
         fortified=None,
         afflicted="Jupiter in the 11th -> worry on account of the elder brother (the "
@@ -735,7 +739,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     #       the lord of the 3rd is placed in a house of loss/affliction.
     RuleRecord(
         id="H3.C.31", house=3, signification="ear_throat", group="combination",
-        kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
+        kind="descriptive",
         condition=C.Or(C.LordIn(3, 6), C.LordIn(3, 8), C.LordIn(3, 12)),
         fortified=None,
         afflicted="the 3rd lord placed in a dusthana (6th, 8th, or 12th) -> ear/throat "

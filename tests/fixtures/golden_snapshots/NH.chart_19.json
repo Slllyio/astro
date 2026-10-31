@@ -69,10 +69,10 @@
       "HTJAH-I:2637",
       "HTJAH-I:2652",
       "HTJAH-I:2710",
-      "HTJAH-I:2800",
+      "HTJAH-I:2802",
       "HTJAH-I:2879",
       "HTJAH-I:2948",
-      "NH:5655"
+      "NH:7628"
     ],
     "fired_rule_ids": [
       "H2.C.1",
@@ -170,7 +170,6 @@
       "HTJAH-II:7467",
       "HTJAH-II:7477",
       "HTJAH-II:7479",
-      "HTJAH-II:7503",
       "HTJAH-II:7505",
       "HTJAH-II:7507",
       "HTJAH-II:7588",
@@ -190,7 +189,6 @@
       "H9.B.29",
       "H9.B.30",
       "H9.C.35",
-      "H9.D.40",
       "H9.D.41",
       "H9.D.42",
       "H9.D.43",

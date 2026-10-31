@@ -27,3 +27,8 @@ def sidereal_mode(name: str) -> Iterator[None]:
             swe.set_sid_mode(*prior)
         else:
             swe.set_sid_mode(prior)
+
+
+def ayanamsa_label(name: str) -> str:
+    """The reader-facing name of the ayanamsa a chart was cast with ("Raman sidereal")."""
+    return f"{name.strip().capitalize()} sidereal" if name else "sidereal"

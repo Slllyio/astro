@@ -304,8 +304,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14357)),
     RuleRecord(
-        id="H11.C.2", house=11, signification="gains", group="combination", kind="evaluable",
-        condition=C.CountInHouse(11, 1, "malefic"),
+        # R2 RE-SCOPE (2026-10-24, engine-blind citation review): the sentence is about HOW the
+        # native earns ("resorts to unfair and unscrupulous methods of earning", HTJAH-II:14358),
+        # not how much he gains, so it votes on its own matter. The mixed case (benefic AND
+        # malefic in the 11th) has its own result in the next clause (:14360), so it is excluded.
+        id="H11.C.2", house=11, signification="means_of_gain", group="combination", kind="evaluable",
+        condition=C.And(C.CountInHouse(11, 1, "malefic"),
+                        C.Not(C.CountInHouse(11, 1, "benefic"))),
         fortified=None,
         afflicted="malefics in the 11th Bhava → resorts to unfair and unscrupulous methods of "
                   "earning",
@@ -741,4 +746,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "loss. The 11th lord in the 6/8/12 from Navamsa Lagna → runs into debts. "
                   "TODO(predicate: Navamsa 6/8/12 overlay for the debt qualifier)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14731)),
+    # RS1 (prereg Addendum 36, 2026-10-31): moved from H3.C.14. Printed in the 3rd-house
+    # chapter, but Raman's next sentence routes it here: "The elder brother, his prosperity and
+    # his adversity should be judged by a consideration of the 11th house" (HTJAH-I:3444-3445).
+    RuleRecord(
+        id="H11.C.RS1", house=11, signification="elder_siblings", group="combination",
+        kind="evaluable",
+        condition=C.InRashiHouse("Jupiter", 11),
+        fortified=None,
+        afflicted="Jupiter in the 11th -> the person suffers worry on account of his elder "
+                  "brother",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 3444)),
 )

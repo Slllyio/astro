@@ -9,6 +9,8 @@ tags: [raman-saab, analysis, validation]
 ---
 # Engine-vs-Raman MISS TABLE — every house-verdict where the engine disagrees with B.V. Raman
 
+> **STALE as a list of current errors (2026-10-23).** This table analyses the June 2026 240-row corpus. For the rows the engine gets wrong today, see `REAL_ERRORS_2026-10-23.md`; the per-case readings below remain useful background.
+
 _Generated 2026-06-27. 69 misses across the validated corpus (engine 206/240 exact, 226/240 within-1)._  
 Each **Raman** cell is read from the cited book line; each **engine** cell is the deterministic `judge_house` trace. 
 Direction `Raman→Engine` = the golden (Raman) verdict vs what the engine produced.

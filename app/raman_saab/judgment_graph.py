@@ -82,7 +82,7 @@ class JudgmentGraph:
 
 #: strongest -> weakest, Raman's four-tier fructification scheme (HTJAH-I:1592-1596).
 #: Mirrors `detailed_report._TIER_ORDER`; kept local so this module stays import-light.
-_TIER_RANK: Final[tuple[str, ...]] = ("par excellence", "ordinary", "limited", "feeble")
+_TIER_RANK: Final[tuple[str, ...]] = ("par excellence", "ordinary", "same lord", "limited", "feeble")   # "same lord": fix 3, 2026-10-24
 
 
 def _tier_rank(grade: str) -> int:
@@ -280,6 +280,7 @@ DOCTRINE_CONSTANT_RELATIONS: Final[frozenset[str]] = frozenset({
 #: section where the four-tier scheme is explained in full.
 PLAIN_TIER: Final[dict[str, str]] = {
     "par excellence": "full, strong results", "ordinary": "normal results",
+    "same lord": "one planet's own results",
     "limited": "slight results", "feeble": "faint results"}
 
 

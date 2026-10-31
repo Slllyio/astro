@@ -48,12 +48,14 @@
   },
   "H6": {
     "citations": [
+      "HTJAH-I:1972",
       "HTJAH-I:6018",
       "HTJAH-I:6080",
       "HTJAH-I:6106",
       "HTJAH-I:6155"
     ],
     "fired_rule_ids": [
+      "H1.N.66",
       "H6.C.20",
       "H6.C.5",
       "H6.L.4",

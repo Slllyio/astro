@@ -284,6 +284,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 3399)),
     RuleRecord(
         id="H3.L.11", house=3, signification="siblings", group="lord_in_house", kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): benefic, cite 3351.
         condition=C.LordIn(3, 11),
         fortified="a number of younger brothers when 3rd lord is in 3rd, 6th or 11th",
         # HTJAH-I:3405-3407, a single unconditioned paragraph. `fortified` here is genuine
@@ -301,7 +302,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # afflicted text is Raman verbatim at 3405-3407. A reader following the old citation
         # to check the affliction would land on a sentence about younger brothers and
         # reasonably conclude the affliction had been invented.
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 3405)),
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 3351)),
     RuleRecord(
         id="H3.L.12", house=3, signification="siblings", group="lord_in_house", kind="evaluable",
         condition=C.LordIn(3, 12),

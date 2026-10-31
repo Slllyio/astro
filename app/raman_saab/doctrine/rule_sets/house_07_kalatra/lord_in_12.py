@@ -259,7 +259,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 295)),
     RuleRecord(
-        id="H7.L.8", house=7, signification="spouse", group="lord_in_house", kind="evaluable",
+        id="H7.L.8", house=7, signification="spouse", group="lord_in_house", kind="descriptive",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
         # 2026-10-13 House-7 sweep (0/12 correct): affliction clauses (300-305) -> H7.L.8a.
         condition=C.LordIn(7, 8),
         fortified="marriage with relatives or a rich partner",

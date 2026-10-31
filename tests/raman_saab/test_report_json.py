@@ -16,7 +16,7 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 
 @pytest.fixture(scope="module")
 def report():
-    return build_detailed_report(_CANONICAL)
+    return build_detailed_report(_CANONICAL, ayanamsa="lahiri")  # canonical pins are Lahiri-sourced (external refs); engine default is raman since 2026-10-23
 
 
 @pytest.fixture(scope="module")
@@ -85,7 +85,8 @@ class TestSerializer:
         page shows the same grading as the standalone report, not a bare count (a real regression
         that dropped the houses-lit detail to a length)."""
         tiers = {a.get("tier") for t in rjson["timeline"] for a in t["activated"]}
-        assert tiers <= {"par excellence", "ordinary", "limited", "feeble"}
+        # timing gap check fix 3 (HTJAH-I:1635): "same lord" is the MD lord's own bhukti
+        assert tiers <= {"par excellence", "ordinary", "same lord", "limited", "feeble"}
         assert tiers - {None}                                 # at least one house is graded
         row = next(t for t in rjson["timeline"] if t["activated"])
         assert "associated" in row

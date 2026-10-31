@@ -213,7 +213,8 @@ class TestRamanOpeningOrder:
         if ti is None:
             pytest.skip("no running chapter resolved on this chart")
         assert "by Raman's four-tier scheme" in ti.detail
-        assert ("par excellence" in ti.detail) or ("ordinary" in ti.detail)
+        # timing gap check fix 3 (HTJAH-I:1635): an MD lord's own bhukti grades "same lord"
+        assert any(t in ti.detail for t in ("par excellence", "ordinary", "'same lord'"))
         assert "different axes" in ti.detail
         assert "HTJAH-I:1592-1596" in ti.cites
 

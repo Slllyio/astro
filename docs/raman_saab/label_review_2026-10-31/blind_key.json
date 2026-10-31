@@ -1,0 +1,422 @@
+{
+ "L01": {
+  "key": "NH.chart_73 H2/wealth",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L02": {
+  "key": "HTJAH-I.x75 H4/mother",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L03": {
+  "key": "HTJAH-II.h7_04 H7/marital_happiness",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L04": {
+  "key": "HTJAH-I.h5_16 H5/children",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L05": {
+  "key": "NH.chart_64 H10/career",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L06": {
+  "key": "HTJAH-II.h11_02 H7/spouse",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L07": {
+  "key": "HTJAH-I.h5_01 H5/children",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L08": {
+  "key": "HTJAH-I.chart_48 H2/wealth",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L09": {
+  "key": "NH.chart_55 H1/self",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L10": {
+  "key": "HTJAH-I.chart_24 H1/self",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L11": {
+  "key": "NH.chart_34 H10/career",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L12": {
+  "key": "HTJAH-I.chart_31 H1/self",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L13": {
+  "key": "NH.chart_19 H10/career",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L14": {
+  "key": "NH.chart_39 H5/children",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L15": {
+  "key": "HTJAH-II.h9_12 H9/father",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L16": {
+  "key": "HTJAH-I.h6_02 H6/disease_chronic",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L17": {
+  "key": "NH.chart_30 H9/fortune",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L18": {
+  "key": "HTJAH-I.h5_05 H5/children",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L19": {
+  "key": "NH.chart_55 H7/spouse",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L20": {
+  "key": "NH.chart_23 H9/dharma",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L21": {
+  "key": "HTJAH-I.x65 H4/mother",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L22": {
+  "key": "NH.chart_38 H10/career",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L23": {
+  "key": "HTJAH-I.h4_03 H4/education",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L24": {
+  "key": "HTJAH-I.chart_56 H3/ear_throat",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L25": {
+  "key": "NH.chart_36 H9/father",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L26": {
+  "key": "HTJAH-I.chart_38 H2/wealth",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L27": {
+  "key": "NH.chart_42 H10/career",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L28": {
+  "key": "NH.chart_74 H7/marital_happiness",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "insufficient-evidence"
+ },
+ "L29": {
+  "key": "NH.chart_62 H7/marital_happiness",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L30": {
+  "key": "NH.chart_22 H7/marital_happiness",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L31": {
+  "key": "NH.chart_42 H1/self",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L32": {
+  "key": "HTJAH-I.h6_05 H6/enemies_disease",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L33": {
+  "key": "HTJAH-II.x224 H11/gains",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L34": {
+  "key": "NH.chart_27 H5/children",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L35": {
+  "key": "HTJAH-I.chart_51 H2/wealth",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L36": {
+  "key": "HTJAH-II.h7_16 H7/spouse",
+  "grp": "ctrl",
+  "gold": "mixed",
+  "engine": "mixed"
+ },
+ "L37": {
+  "key": "NH.chart_45 H10/career",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L38": {
+  "key": "HTJAH-I.x73 H4/mother",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L39": {
+  "key": "NH.chart_46 H12/moksha",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L40": {
+  "key": "HTJAH-I.chart_49 H2/wealth",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L41": {
+  "key": "NH.chart_66 H10/career",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L42": {
+  "key": "HTJAH-I.chart_60 H3/siblings",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L43": {
+  "key": "NH.chart_28 H2/wealth",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L44": {
+  "key": "HTJAH-I.x69 H4/mother",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L45": {
+  "key": "HTJAH-I.h6_03 H6/enemies_disease",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L46": {
+  "key": "HTJAH-II.h11_08 H11/gains",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L47": {
+  "key": "HTJAH-I.h5_15 H5/children",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L48": {
+  "key": "NH.chart_75 H7/spouse",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L49": {
+  "key": "NH.chart_48 H5/children",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L50": {
+  "key": "HTJAH-I.h6_07 H6/enemies_disease",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L51": {
+  "key": "HTJAH-II.h11_01 H11/elder_siblings",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L52": {
+  "key": "HTJAH-I.h6_04 H6/disease_chronic",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L53": {
+  "key": "HTJAH-I.h4_02 H4/education",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L54": {
+  "key": "NH.chart_42 H4/mother",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L55": {
+  "key": "NH.chart_36 H10/profession_learned",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L56": {
+  "key": "NH.chart_69 H10/career",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L57": {
+  "key": "HTJAH-II.h10_04 H10/profession_authority",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L58": {
+  "key": "HTJAH-II.h12_16 H12/left_eye",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L59": {
+  "key": "NH.chart_40 H7/marital_happiness",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L60": {
+  "key": "NH.chart_47 H10/career",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L61": {
+  "key": "HTJAH-I.h5_10 H5/children",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L62": {
+  "key": "NH.chart_74 H5/children",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L63": {
+  "key": "HTJAH-I.chart_42 H2/wealth",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L64": {
+  "key": "NH.chart_30 H10/career",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L65": {
+  "key": "HTJAH-I.x68 H4/mother",
+  "grp": "err",
+  "gold": "afflicted",
+  "engine": "favourable"
+ },
+ "L66": {
+  "key": "NH.chart_36 H7/spouse",
+  "grp": "err",
+  "gold": "favourable",
+  "engine": "afflicted"
+ },
+ "L67": {
+  "key": "HTJAH-II.h9_10 H9/father",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ },
+ "L68": {
+  "key": "NH.chart_24 H8/death",
+  "grp": "ctrl",
+  "gold": "afflicted",
+  "engine": "afflicted"
+ },
+ "L69": {
+  "key": "NH.chart_18 H4/education",
+  "grp": "ctrl",
+  "gold": "mixed",
+  "engine": "mixed"
+ },
+ "L70": {
+  "key": "NH.chart_40 H10/career",
+  "grp": "ctrl",
+  "gold": "favourable",
+  "engine": "favourable"
+ }
+}

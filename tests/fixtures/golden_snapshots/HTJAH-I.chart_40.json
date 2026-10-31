@@ -15,10 +15,10 @@
       "HTJAH-I:2553",
       "HTJAH-I:2637",
       "HTJAH-I:2710",
-      "HTJAH-I:2800",
+      "HTJAH-I:2802",
       "HTJAH-I:2879",
       "HTJAH-I:2937",
-      "NH:5655"
+      "NH:7628"
     ],
     "fired_rule_ids": [
       "H2.C.1",
@@ -40,7 +40,7 @@
       "H2.P.Mercury",
       "H2.P.Moon"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "strong",
@@ -48,9 +48,9 @@
         "verdict": "favourable"
       },
       "speech": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
         "degree": "strong",

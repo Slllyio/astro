@@ -446,6 +446,21 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         classical_ref_prefix="PrasnaMarga",
         header_regex=_DEFAULT_HEADER_REGEX,
     ),
+    # PM2F (2026-10-24): NOT an archive.org import. The archive.org djvu text above is missing
+    # about 40% of Part II (59k of ~98k words); this is a tesseract OCR of the owner's epub page
+    # scans, one continuous document with `<!-- page_N.html -->` markers back to the scans. Like
+    # ASP, `identifier`/`filename` record the local pipeline; a re-import re-runs that OCR.
+    _Book(
+        identifier="(local-scan; no archive.org identifier)",
+        filename="Prasna Marga 2.epub",
+        book_slug="prasna_marga_vol2_full",
+        book_title="Prasna Marga Vol II (complete)",
+        author="(traditional Kerala)",
+        translator="B. V. Raman",
+        classical_ref_prefix="PrasnaMarga",
+        header_regex=_DEFAULT_HEADER_REGEX,
+        never_split=True,
+    ),
     _Book(
         identifier="ashtakavarga",
         filename="Ashtakavarga 1957 Ed. by C S Patel & Aiyar_djvu.txt",

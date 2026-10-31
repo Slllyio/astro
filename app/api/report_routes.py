@@ -61,7 +61,7 @@ class ReportRequest(BaseModel):
     longitude: float = Field(..., ge=-180.0, le=180.0)
     tz_offset: float = Field(..., ge=-12.0, le=14.0)
     name: str = Field("api", max_length=120)
-    ayanamsa: Literal["raman", "lahiri"] = "lahiri"
+    ayanamsa: Literal["raman", "lahiri"] = "raman"
     fmt: Literal["markdown", "html", "json"] = Field("markdown", alias="format")
     years_back: int = Field(10, ge=0, le=120)
     years_forward: int = Field(20, ge=0, le=120)

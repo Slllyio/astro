@@ -217,7 +217,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 9504)),
     RuleRecord(
-        id="H10.L.6", house=10, signification="career", group="lord_in_house", kind="evaluable",
+        id="H10.L.6", house=10, signification="career", group="lord_in_house", kind="descriptive",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 9508.
         # 2026-10-13 House-10 sweep (0/12 correct): Saturn's aspect, benefic aspects and
         # Rahu/afflicted malefics joining (9509-9515) -> H10.L.6a-d.
         condition=C.LordIn(10, 6),

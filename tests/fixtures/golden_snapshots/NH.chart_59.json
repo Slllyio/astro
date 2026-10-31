@@ -63,7 +63,6 @@
       "H12.C.D1",
       "H12.C.H2",
       "H12.C.H4",
-      "H12.L.4",
       "H12.P.Rahu"
     ],
     "rollup": "afflicted",
@@ -81,7 +80,7 @@
       "incarceration": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "left_eye": {
         "degree": "mild",

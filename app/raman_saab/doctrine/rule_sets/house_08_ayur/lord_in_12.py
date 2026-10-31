@@ -69,17 +69,18 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # minimum-required table), so the mapping needs no interpretation.
     RuleRecord(
         id="H8.L.1", house=8, signification="longevity", group="lord_in_house",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 2905.
         # 2026-10-13: the fortified text ('the 8th lord strong - ... undiminished') was an
         # inference -- Raman states the penury unconditionally (HTJAH-II:2902-2904) and
         # qualifies only the weak case; the general slot already carries it.
-        kind="evaluable", condition=C.And(C.LordIn(8, 1), C.LordsConjunct(8, 1)),
+        kind="descriptive", condition=C.And(C.LordIn(8, 1), C.LordsConjunct(8, 1)),
         # Raman gives NO strong-lord sentence. The licensed reading is the unconditioned one
         # at full force: the only mitigation offered is conditioned on weakness, so its
         # absence leaves the misfortune undiminished.
         fortified=None,
         general="penury, heavy debts, misfortune at every step",
         afflicted="the 8th lord weak - the intensity of the misfortune is reduced",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2902)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2905)),
     # (b)'s second disjunct, re-homed. A Navamsa PLACEMENT, not a strength test, so it can
     # never be reached by a branch — it needed a predicate, and could not have one until the
     # varga gate opened to name-addressed divisions (2026-09-02). This is the first rule in
@@ -147,7 +148,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2927)),
     RuleRecord(
         id="H8.L.4", house=8, signification="longevity", group="lord_in_house",
-        kind="evaluable", condition=C.And(C.LordIn(8, 4), C.LordsConjunct(8, 4)),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 2945.
+        kind="descriptive", condition=C.And(C.LordIn(8, 4), C.LordsConjunct(8, 4)),
         fortified=None,
         general="mental peace shattered; domestic bickerings and financial problems; the "
                 "mother's health may suffer; problems regarding house, land and conveyance",
@@ -155,7 +157,7 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "conveyances lost or destroyed, pets sicken and die; malefics furthering "
                   "the affliction force him to seek his fortune abroad, where he meets "
                   "troubles and losses",
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2940)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2945)),
     # RE-SLOTTED 2026-09-02, same review, same defect class as H8.L.1 — but this entry packed
     # FOUR distinct antecedents into three slots (HTJAH-II:2957-2976):
     #   (a) unconditioned  — children in trouble/crime, father misunderstandings, child falls
@@ -180,14 +182,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # intensification reading, the exact opposite of nothing.
     RuleRecord(
         id="H8.L.5", house=8, signification="longevity", group="lord_in_house",
-        kind="evaluable", condition=C.And(C.LordIn(8, 5), C.LordsConjunct(8, 5)),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive, cite 2965.
+        kind="descriptive", condition=C.And(C.LordIn(8, 5), C.LordsConjunct(8, 5)),
         fortified="the 8th lord fortified - the evil results are intensified",
         general="the children may get into trouble, commit some crime and invite situations "
                 "affecting the native's reputation; or the native and his father develop "
                 "misunderstandings; the child may fall sick; and since the 5th is the "
                 "buddhisthana, nervous debility, breakdown or mental aberration",
         afflicted=None,
-        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2957)),
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 2965)),
     # (c) re-homed to the predicate it always needed.
     RuleRecord(
         id="H8.L.5a", house=8, signification="longevity", group="lord_in_house",
@@ -374,7 +377,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D9", polarity="neutral", source=Citation("HTJAH-II", 3023)),
     RuleRecord(
         id="H8.L.10", house=8, signification="longevity", group="lord_in_house",
-        kind="evaluable", condition=C.And(C.LordIn(8, 10), C.LordsConjunct(8, 10)),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
+        kind="descriptive", condition=C.And(C.LordIn(8, 10), C.LordsConjunct(8, 10)),
         # RE-SLOTTED 2026-09-02. `fortified` was ALSO mis-gated, which the first pass missed:
         # HTJAH-II:3038-3040 reads "The 8th lord in the 10th may ALSO confer unexpected
         # gains..." — restating the PLACEMENT as its antecedent, with no strength term. It is
@@ -425,7 +429,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 3042)),
     RuleRecord(
         id="H8.L.12", house=8, signification="longevity", group="lord_in_house",
-        kind="evaluable", condition=C.And(C.LordIn(8, 12), C.LordsConjunct(8, 12)),
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
+        kind="descriptive", condition=C.And(C.LordIn(8, 12), C.LordsConjunct(8, 12)),
         # RE-SLOTTED 2026-09-02. The Rajayoga (HTJAH-II:3053-3054) is the entry's
         # unconditioned base and was misfiled in `fortified`, leaving `general` empty. The old
         # `afflicted` welded together two DIFFERENT antecedents — "If benefics join" (a

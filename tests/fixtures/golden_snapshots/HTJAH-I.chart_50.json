@@ -3,34 +3,34 @@
     "citations": [
       "HTJAH-I:2395",
       "HTJAH-I:2498",
-      "HTJAH-I:2800"
+      "HTJAH-I:2802"
     ],
     "fired_rule_ids": [
       "H2.C.40",
       "H2.C.69",
       "H2.L.9"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "speech": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "vision": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "wealth": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   }

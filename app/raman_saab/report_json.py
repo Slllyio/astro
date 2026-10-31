@@ -25,6 +25,7 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import Any, Optional
 
+from app.raman_saab.chart.ayanamsa import ayanamsa_label
 from app.raman_saab.detailed_report import (PREPONDERANCE_RULES, DetailedReport,
                                             distinctive_gloss,
                                             gochara_synthesis_sentence, graded_buckets,
@@ -158,7 +159,11 @@ def _timeline_dict(timeline, chart) -> list:
                               if a.md_activates else None),
                  "antar_basis": (influence_basis(basis, a.house, a.antar_lord)
                                  if a.antar_activates and a.antar_lord is not None
-                                 else None)}
+                                 else None),
+                 # append-only 2026-10-24 (timing gap check fix 3): the allied event
+                 # house(s) a period lord ALSO reaches this house through — a labelled
+                 # note, never part of the grade.
+                 "allied_via": list(getattr(a, "allied_via", ()))}
                 for a in tp.activated
             ],
         })
@@ -197,12 +202,18 @@ def house_general_readings(r, house):
     return _g(r, house)
 
 
+def _matter_breakdown(pf) -> str:
+    from app.raman_saab.judges.house_template import matter_breakdown
+    return matter_breakdown(pf)
+
+
 def _proforma_dict(pf, r=None) -> dict:
     """Trimmed house proforma: the verdict + per-signification verdicts (not the full ledger)."""
     return {
         "house": pf.house,
         "lord": pf.lord,
         "rollup": str(pf.rollup),
+        "matter_breakdown": _matter_breakdown(pf),     # append-only 2026-10-30
         "significations": [
             # `indications` (append-only 2026-09-01) is the verdict-INVARIANT lookup channel
             # `judge_signification` already fills: the cause-of-end decanate, the source of
@@ -339,6 +350,12 @@ def _indications_json(r: DetailedReport) -> list:
              "rows": [{"house": h, "kind": kind, "matter": matter, "text": text, "cite": cite}
                       for h, kind, matter, text, cite in rows]}
             for label, rows in collected_indications(r)]
+
+
+def _timing_table(t) -> dict:
+    """A `raman_timing.TimingTable` as plain JSON."""
+    return {"key": t.key, "title": t.title, "note": t.note, "columns": list(t.columns),
+            "rows": [list(r) for r in t.rows]}
 
 
 def to_report_dict(r: DetailedReport) -> dict:
@@ -558,15 +575,24 @@ def to_report_dict(r: DetailedReport) -> dict:
         "soul": _ad(r.soul),
         "pitru": _ad(r.pitru),
 
-        "window": {"ref_jd": r.ref_jd, "back": r.window_back, "forward": r.window_forward},
+        "window": {"ref_jd": r.ref_jd, "back": r.window_back, "forward": r.window_forward,
+                   "ayanamsa": ayanamsa_label(r.chart.ayanamsa)},
 
         # Wave-1 timing additions (2026-08-17, append-only): the current bhukti's
-        # pratyantar drill-down, the dated Sade-Sati phase spans (method-only; no
-        # result doctrine on record) and the dated Chara dasha sequence — the same
+        # pratyantar drill-down, the dated Sade-Sati phase spans (dates only; Raman's
+        # result doctrine is read in raman_transit_checks' Sade-Sati rounds table since
+        # 2026-10-24) and the dated Chara dasha sequence — the same
         # objects the markdown and standalone-HTML surfaces render.
         "pratyantar_now": _each(r.pratyantar_now),
         "sade_sati_phases": _each(r.sade_sati_phases),
         "chara_sequence": _each(r.chara_sequence),
+        # append-only 2026-10-24 (timing gap check, all 16 fixes): Raman's period and
+        # transit checks, each a table {key, title, note, columns, rows} — every cell the
+        # markdown and standalone HTML print.
+        "raman_period_checks": [_timing_table(t) for t in
+                                getattr(r, "raman_period_checks", ())],
+        "raman_transit_checks": [_timing_table(t) for t in
+                                 getattr(r, "raman_transit_checks", ())],
     }
     # The plain-words summary is composed FROM the finished dict — it re-reads the house
     # verdicts, the distinctive readings, the honesty counts and the running period, all of

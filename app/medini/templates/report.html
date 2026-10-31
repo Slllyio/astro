@@ -1803,6 +1803,7 @@ const SCOPE={'Your Reading':'summary','Chart signature':'section:synthesis','Rul
 const SEC_ID={
   'What matters most':'digest','Your Reading':'plain_reading','Judgment graph':'judgment_graph',
   'How to read this report':'interpretation_guide',
+  'How Raman would weigh this chart':'philosophy',
   'Planet biographies (dominant grahas)':'planet_bios',
   'Plain terms — every technical word, with why it matters':'plain_terms_panel',
   'Chart signature':'chart_signature','Ruler of the nativity':'ruler','Psychological profile':'psych',
@@ -2915,6 +2916,26 @@ function render(R, S, FQ){
       for(const x of ig.not_a_contradiction) add(para('· '+(typeof x==='string'?x:JSON.stringify(x)),'muted')); }
     if((ig.relation_vocabulary||[]).length)
       add(para(t('Relation vocabulary (closed set): ')+ig.relation_vocabulary.join(' · '),'muted'));
+  }
+
+  // ===== How Raman would weigh this chart (v42, philosophy.py) — his frame for holding a
+  // verdict, the Lagna foundation, and the weighing principle at work in each house. =====
+  const ph=R.philosophy;
+  if(ph){
+    sec('philosophy'); add(H2('How Raman would weigh this chart')); plainLead('philosophy');
+    add(para(t('Raman’s own reasons for how a verdict should be held, in his words, then '+
+      'applied to this chart. Nothing here changes a verdict.'),'lede'));
+    for(const f of (ph.frame||[]))
+      add(para(f.heading+'. “'+f.quote+'” ('+f.cite+') '+f.means));
+    add(para(t('The foundation. ')+'“'+(ph.foundation_quote||'')+'” (HTJAH-I:3871-3878) '+ph.foundation));
+    add(para(t('Telling it. ')+ph.telling));
+    if((ph.houses||[]).length){
+      for(const w of ph.houses){
+        const lvl=(w.principle==='relieved'||w.principle==='obstructed-carrier');
+        const where=lvl?((w.houses.length===1?'house ':'houses ')+w.houses.map(x=>x[0]).join(', '))
+          :w.houses.map(x=>'house '+x[0]+' ('+x[1].join(', ')+')').join('; ');
+        add(para(w.title+' — '+where+': '+w.how+' “'+w.quote+'” ('+w.cite+')')); }
+    } else add(para(t('No house on this chart turns on one of these weighing principles.'),'muted'));
   }
 
   // ===== The integrated reading (v34) — the theme synthesis, ABOVE the technical sections.

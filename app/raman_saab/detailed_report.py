@@ -785,6 +785,11 @@ _SECTION_SPECS: tuple[SectionSpec, ...] = (
     # it is a cross-reference chapter, and a reader meets the houses first. _FROZEN grown in
     # the same commit, per the procedure.
     SectionSpec("indications", "## What Raman's rules indicate", 'id="indications"', "v41"),
+    # v42 (2026-10-30, user-requested: "use the findings" of RAMAN_PHILOSOPHY_2026-10-30): how
+    # Raman would weigh this chart — his frame (tendency, remedies, timing, context), the Lagna
+    # foundation, and which weighing principle is at work in each house. Appended at the END
+    # per the append-only default; placed by the arc right after the interpretation guide.
+    SectionSpec("philosophy", "## How Raman would weigh this chart", 'id="philosophy"', "v42"),
     # (The six empirical-engine rows above were appended at the END of the SET per the
     # append-only default; since the 2026-10-14 merge their reading position is set
     # by the arc in `report_movements`, like every other section.)
@@ -2961,6 +2966,9 @@ class DetailedReport:
     # period and transit checks as `raman_timing.TimingTable`s. Report-only (PREC-10).
     raman_period_checks: tuple = ()                  # fixes 4, 5, 6, 7, 15, 16
     raman_transit_checks: tuple = ()                 # fixes 7, 8, 10, 11, 12, 13
+    # append-only 2026-10-30 (v42, user-requested: "use the findings" of the philosophy study):
+    # how Raman would weigh this chart. Report-only (PREC-10). `philosophy.ChartPhilosophy`.
+    philosophy: object = None
 
 
 @dataclass(frozen=True)
@@ -4728,6 +4736,11 @@ def build_detailed_report(
         enriched = _dc_replace(enriched, analogy=resembles(enriched.chart))
     except Exception:  # noqa: BLE001
         logger.info("report section skipped (unexpected error)", exc_info=True)
+    try:
+        from app.raman_saab.philosophy import chart_philosophy
+        enriched = _dc_replace(enriched, philosophy=chart_philosophy(enriched))
+    except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
 
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
@@ -5287,6 +5300,11 @@ class _SectionedLines:
         return "\n".join(out)
 
 
+def _PH_FOUNDATION_QUOTE() -> str:
+    from app.raman_saab.philosophy import FOUNDATION_QUOTE
+    return FOUNDATION_QUOTE
+
+
 def _plain_section(section_id: str, r: "DetailedReport") -> str:
     """A person-facing lead for a section, or "" — never lets a phrasing failure cost content."""
     try:
@@ -5439,6 +5457,33 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.append(f"_{POPULATION_NOTE}_")
     L.append("")
+
+    # ── v42 how Raman would weigh this chart (philosophy) ─────────────────────
+    _ph = getattr(r, "philosophy", None)
+    if _ph is not None:
+        from app.raman_saab.philosophy import FRAME as _PF
+        L.start("philosophy")
+        L.append("## How Raman would weigh this chart")
+        L.append("")
+        L.append("_Raman's own reasons for how a verdict should be held, in his words, then "
+                 "applied to this chart. Nothing here changes a verdict._")
+        L.append("")
+        for head, quote, cite, means in _PF:
+            L.append(f"- **{head}.** _\"{quote}\"_ ({cite}) {means}")
+        L.append("")
+        L.append(f"**The foundation.** _\"{_PH_FOUNDATION_QUOTE()}\"_ (HTJAH-I:3871-3878) "
+                 f"{_ph.foundation}")
+        L.append("")
+        L.append(f"**Telling it.** {_ph.telling}")
+        L.append("")
+        if _ph.houses:
+            L.append("**How each house is weighed:**")
+            L.append("")
+            for w in _ph.houses:
+                L.append(f"- **{w.title}** — {w.where}: {w.how} _\"{w.quote}\"_ ({w.cite})")
+        else:
+            L.append("_No house on this chart turns on one of these weighing principles._")
+        L.append("")
 
     # ── how to read this report (v18, chart-independent interpretation guide) ─
     from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as _IG

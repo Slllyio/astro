@@ -1,4 +1,4 @@
-"""Pre-registered fidelity-fix variants R1, R3b, R4, G1, N1, G2, S1, S2 (docs/raman_saab/FIDELITY_FIXES_PREREG.md).
+"""Pre-registered fidelity-fix variants R1, R3b, R4, G1, N1, G2, S1, S2, C2 (docs/raman_saab/FIDELITY_FIXES_PREREG.md).
 
 Measurement only: every variant is applied by rebinding judge functions at run time, so the
 shipped engine is untouched until a variant passes the pre-registered decision rule.
@@ -148,6 +148,9 @@ def apply(variants: set[str]) -> None:
     from app.raman_saab.doctrine.rule_sets.house_07_kalatra import combinations as h7c
     ht.G1_FERTILITY_ONE_STEP = "G1" in variants          # Addendum 16
     h7c.NODE_AXIS_AS_ONE = "N1" in variants              # Addendum 16
+    ht.C2_OBSTRUCTED_CARRIER = "C2" in variants          # Addendum 29
+    ht.C1_WEAKNESS_NOT_AFFLICTION = "C1" in variants     # Addendum 33
+    ht.C4_KARAKA_VETO_RELIEF = "C4" in variants          # Addendum 33
     sphutas.G2_PRINTED_SPHUTA_TEST = "PARITY" not in variants  # G2 shipped (Addendum 20); PARITY = old test
     rf.fire_rules.__defaults__ = (                       # Addendum 24
         (_ORIG_FIRE_DEFAULTS[0] + (_s1_rule(),),) if "S1" in variants else _ORIG_FIRE_DEFAULTS)

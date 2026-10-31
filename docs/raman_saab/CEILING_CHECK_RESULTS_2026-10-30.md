@@ -62,3 +62,19 @@ to measure.
 3. **Next step (user decision: rebuild).** The rebuilt judge must beat B3 (131/198 exact, 60 real
    errors, macro recall 0.43) on fresh data before it replaces anything. Hold-out 5 (sealed,
    unspent) is the natural test; hold-outs 1-3 are now development data.
+
+## Addendum (2026-10-31): the same comparison on fresh data
+
+Hold-outs 4 and 5 (64 never-seen conclusions) were scored once by the philosophy thread
+(FIDELITY_FIXES_PREREG Addendum 34, commit 7d7de394 on claude/project-thread-1ztlhb), with the
+two no-fit baselines included at this thread's request:
+
+| | exact | within one | real errors | macro recall |
+|---|---|---|---|---|
+| Engine (clause judge) | 29 | **50** | **14** | 0.369 |
+| B3 (plain rule count) | **40** | 45 | 19 | **0.408** |
+| Always favourable | 38 | 43 | 21 | 0.333 |
+
+The pattern of hold-outs 1-3 repeats on fresh data: the plain count beats the clause judge on
+exact matches (40 vs 29) and macro recall, while the clause judge makes fewer outright
+reversals because it answers "mixed" more often. No unspent Raman hold-out remains.

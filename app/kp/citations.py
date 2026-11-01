@@ -27,21 +27,33 @@ from typing import Final
 SOURCE_FILE: Final[str] = (
     "data/knowledge_library/sources/kp_reader3_predictive/chapter_001_full-text-unsplit.md"
 )
+#: Reader 4 ("Marriage, Married Life & Children"), OCR'd 2026-11-01 with tesseract 4.1.1 from
+#: the page scans in ``sources/kp-readers/J_KP reader_4_..._jp2.zip``. Each page is preceded
+#: by ``<!-- page N (scan NNNN) -->``; book page = scan number - 3.
+READER4_FILE: Final[str] = (
+    "data/knowledge_library/sources/kp_reader4_marriage/chapter_001_full-text-unsplit.md"
+)
 
 
 @dataclass(frozen=True, slots=True)
 class Citation:
-    """One verbatim passage of KP Reader 3."""
+    """One verbatim passage of a KP Reader.
+
+    ``source`` is ``"KPR3"`` (Reader 3, cited by line of the library file) or
+    ``"KPR4"`` (Reader 4, cited by printed book page; the OCR file marks each
+    page, see ``READER4_FILE``).
+    """
 
     key: str
     lines: str
     quote: str
     status: str = "cited"
     note: str = ""
+    source: str = "KPR3"
 
     def ref(self) -> str:
-        """Short reference such as ``KPR3:3402-3404``."""
-        return f"KPR3:{self.lines}"
+        """Short reference such as ``KPR3:3402-3404`` or ``KPR4:p.106``."""
+        return f"{self.source}:{self.lines}"
 
 
 _C = Citation
@@ -139,4 +151,37 @@ CITATIONS: Final[dict[str, Citation]] = {c.key: c for c in (
     _C("KPR3-CALMLY", "6918-6919",
        "Thus one is to find out to which house a planet is the significator and calmly judge what "
        "it can do.", note="Krishnamurti leaves the final weighing to the astrologer."),
+    _C("KPR4-LADDER", "p.118",
+       "You have clearly said that occupants are stronger than owners. Constellations are stronger "
+       "than signs.", source="KPR4",
+       note="Followed on the same page by the ladder (1)-(5), identical to Reader 3's."),
+    _C("KPR4-NODES", "p.121",
+       "The nodes having no sign of their own first offer the results of the planets with which "
+       "they are conjoined and secondly of the lord of the sign in which they are placed.",
+       source="KPR4", note="No aspect step: supports ruling R6/R8."),
+    _C("KPR4-PROMISE", "p.121",
+       "Note the sub-lord of the 7th cusp. If it is a significator of house 7 or 2 or 11, "
+       "marriage is promised", source="KPR4"),
+    _C("KPR4-DENIAL", "p.105",
+       "According to Krishnamurti Padhdhati a person is denied of marriage when the 7th Cusp sub "
+       "lord is deposited in tbe constellation of the significators of 4, 6 and 10 because the "
+       "houses 2, 7 and 11 show the marriage,", source="KPR4", note="'tbe' is OCR for 'the'."),
+    _C("KPR4-DENIAL-SIMPLE", "p.106",
+       "The simple rule is, note the sublord of the 7th Cusp; if the sub lord is connected with "
+       "4, 6, 10th houses, one will be denied of marriage.", source="KPR4"),
+    _C("KPR4-STRONGER", "p.106",
+       "Rahu occupying Venus sign and conjoined with it shows that 6th house result is stronger "
+       "than 7. Further Rahu is in the sub of Saturn in the 12th house.", source="KPR4",
+       note="His worked denial case: the 7th sub-lord is tied to 6 and to 7; the stronger tie "
+            "(occupation of 6 over agency for 7) decides, and Rahu's own sub-lord confirms."),
+    _C("KPR4-SUB-RESPONSIBLE", "p.106",
+       "it is the sub lord which is mainly responsible to give clear idea, and correct picture.",
+       source="KPR4"),
+    _C("KPR4-SUB-1-6-10-12", "p.118",
+       "But if the sub is lord of 1, 6, 10 and is the significator of 12 houses, marriage cannot "
+       "take place.", source="KPR4",
+       note="Stated for choosing among significators (timing), not for the 7th cusp itself."),
+    _C("KPR4-SATURN-DELAY", "p.109",
+       "Whenever Sani happens to be a significator of a particular matter, it will not deny but "
+       "will cause delay.", source="KPR4"),
 )}

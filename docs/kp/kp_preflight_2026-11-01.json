@@ -1,0 +1,104 @@
+{
+  "n": 2000,
+  "seed": 20261031,
+  "verdict_share": {
+    "marriage": {
+      "PROMISED": 0.4785,
+      "DENIED": 0.443,
+      "NOT_SIGNIFIED": 0.0205,
+      "MIXED": 0.058
+    },
+    "health": {
+      "PROMISED": 0.3505,
+      "DENIED": 0.55,
+      "MIXED": 0.055,
+      "NOT_SIGNIFIED": 0.0445
+    },
+    "wealth": {
+      "PROMISED": 0.8165,
+      "NOT_SIGNIFIED": 0.1835
+    },
+    "service": {
+      "DENIED": 0.435,
+      "PROMISED": 0.4645,
+      "MIXED": 0.0815,
+      "NOT_SIGNIFIED": 0.019
+    }
+  },
+  "raw_verdict_share": {
+    "marriage": {
+      "MIXED": 0.6865,
+      "DENIED": 0.154,
+      "PROMISED": 0.139,
+      "NOT_SIGNIFIED": 0.0205
+    },
+    "health": {
+      "MIXED": 0.5685,
+      "DENIED": 0.272,
+      "PROMISED": 0.115,
+      "NOT_SIGNIFIED": 0.0445
+    },
+    "wealth": {
+      "PROMISED": 0.8165,
+      "NOT_SIGNIFIED": 0.1835
+    },
+    "service": {
+      "MIXED": 0.743,
+      "PROMISED": 0.1245,
+      "DENIED": 0.1135,
+      "NOT_SIGNIFIED": 0.019
+    }
+  },
+  "resolution_share": {
+    "marriage": {
+      "level": 0.607,
+      "direct": 0.3135,
+      "unresolved": 0.058,
+      "sub_lord": 0.0215
+    },
+    "health": {
+      "level": 0.4915,
+      "direct": 0.4315,
+      "unresolved": 0.055,
+      "sub_lord": 0.022
+    },
+    "wealth": {
+      "direct": 1.0
+    },
+    "service": {
+      "level": 0.647,
+      "sub_lord": 0.0145,
+      "direct": 0.257,
+      "unresolved": 0.0815
+    }
+  },
+  "changes_within_window": {
+    "marriage": {
+      "\u00b12min": 0.3235,
+      "\u00b15min": 0.6095,
+      "\u00b115min": 0.722
+    },
+    "health": {
+      "\u00b12min": 0.332,
+      "\u00b15min": 0.5895,
+      "\u00b115min": 0.7105
+    },
+    "wealth": {
+      "\u00b12min": 0.1975,
+      "\u00b15min": 0.3545,
+      "\u00b115min": 0.429
+    },
+    "service": {
+      "\u00b12min": 0.353,
+      "\u00b15min": 0.605,
+      "\u00b115min": 0.7215
+    }
+  },
+  "marriage_timing_coverage_age20_40": {
+    "charts": 500,
+    "mean": 0.598,
+    "min": 0.0,
+    "max": 1.0
+  },
+  "marriage_csl_houses_signified_mean": 5.03
+}

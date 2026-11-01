@@ -1,0 +1,146 @@
+{
+  "n": 2000,
+  "seed": 20261031,
+  "verdict_share": {
+    "marriage": {
+      "PROMISED": 0.4825,
+      "DENIED": 0.4395,
+      "NOT_SIGNIFIED": 0.0305,
+      "MIXED": 0.0475
+    },
+    "health": {
+      "PROMISED": 0.3495,
+      "DENIED": 0.5435,
+      "MIXED": 0.045,
+      "NOT_SIGNIFIED": 0.062
+    },
+    "wealth": {
+      "PROMISED": 0.773,
+      "NOT_SIGNIFIED": 0.227
+    },
+    "children": {
+      "DENIED": 0.4475,
+      "PROMISED": 0.479,
+      "NOT_SIGNIFIED": 0.0425,
+      "MIXED": 0.031
+    },
+    "service": {
+      "DENIED": 0.439,
+      "PROMISED": 0.4655,
+      "MIXED": 0.0675,
+      "NOT_SIGNIFIED": 0.028
+    }
+  },
+  "raw_verdict_share": {
+    "marriage": {
+      "MIXED": 0.624,
+      "DENIED": 0.177,
+      "PROMISED": 0.1685,
+      "NOT_SIGNIFIED": 0.0305
+    },
+    "health": {
+      "MIXED": 0.5015,
+      "DENIED": 0.301,
+      "PROMISED": 0.1355,
+      "NOT_SIGNIFIED": 0.062
+    },
+    "wealth": {
+      "PROMISED": 0.773,
+      "NOT_SIGNIFIED": 0.227
+    },
+    "children": {
+      "MIXED": 0.58,
+      "DENIED": 0.1875,
+      "PROMISED": 0.19,
+      "NOT_SIGNIFIED": 0.0425
+    },
+    "service": {
+      "MIXED": 0.6735,
+      "PROMISED": 0.154,
+      "DENIED": 0.1445,
+      "NOT_SIGNIFIED": 0.028
+    }
+  },
+  "resolution_share": {
+    "marriage": {
+      "level": 0.5565,
+      "direct": 0.376,
+      "unresolved": 0.0475,
+      "sub_lord": 0.02
+    },
+    "health": {
+      "level": 0.4355,
+      "direct": 0.4985,
+      "unresolved": 0.045,
+      "sub_lord": 0.021
+    },
+    "wealth": {
+      "direct": 1.0
+    },
+    "children": {
+      "level": 0.5305,
+      "direct": 0.42,
+      "unresolved": 0.031,
+      "sub_lord": 0.0185
+    },
+    "service": {
+      "level": 0.589,
+      "direct": 0.3265,
+      "unresolved": 0.0675,
+      "sub_lord": 0.017
+    }
+  },
+  "changes_within_window": {
+    "marriage": {
+      "\u00b12min": 0.3255,
+      "\u00b15min": 0.609,
+      "\u00b115min": 0.726
+    },
+    "health": {
+      "\u00b12min": 0.3385,
+      "\u00b15min": 0.6005,
+      "\u00b115min": 0.7195
+    },
+    "wealth": {
+      "\u00b12min": 0.2325,
+      "\u00b15min": 0.416,
+      "\u00b115min": 0.5045
+    },
+    "children": {
+      "\u00b12min": 0.331,
+      "\u00b15min": 0.595,
+      "\u00b115min": 0.7285
+    },
+    "service": {
+      "\u00b12min": 0.348,
+      "\u00b15min": 0.6005,
+      "\u00b115min": 0.723
+    }
+  },
+  "marriage_timing_coverage_age20_40": {
+    "charts": 500,
+    "mean": 0.5249,
+    "min": 0.0,
+    "max": 1.0
+  },
+  "event_coverage_age20_40_mean": {
+    "marriage": 0.5249,
+    "engagement": 0.5249,
+    "childbirth": 0.5176,
+    "service_start": 0.5645,
+    "service_end": 0.5867,
+    "business": 0.5326,
+    "money": 0.5412,
+    "building": 0.5263,
+    "disposal": 0.5027,
+    "study": 0.3089,
+    "study_abroad": 0.3146,
+    "scholarship": 0.2828,
+    "transfer": 0.5299,
+    "deputation": 0.5645,
+    "overseas": 0.0907,
+    "regain_position": 0.3249,
+    "confinement": 0.5247
+  },
+  "marriage_csl_houses_signified_mean": 4.58
+}

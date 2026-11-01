@@ -5,13 +5,20 @@ read from the sub-lord of cusp H (the CSL) and the houses that CSL is a
 significator of. For each matter the engine holds a favourable house group
 (the houses Krishnamurti names for it) and a denial group, each cited.
 
-Verdict, with no weighing beyond what the source states (ruling R12):
+Verdict (rulings R12 and R18):
 
   PROMISED      CSL signifies a favourable house and no denial house
   DENIED        CSL signifies a denial house and no favourable house
-  MIXED         CSL signifies both. Reader 3 gives no tie-break; the engine
-                does not invent one ("calmly judge", KPR3-CALMLY).
   NOT_SIGNIFIED CSL signifies neither group
+  both groups   resolved the way Krishnamurti resolves his own worked case in
+                Reader 4 (KPR4-STRONGER): the group the CSL reaches at the
+                stronger ladder level wins (occupants over owners,
+                constellations over signs, KPR4-LADDER); if both are reached
+                at the same level, the CSL's own sub-lord decides
+                (KPR4-SUB-RESPONSIBLE); if that also touches both or neither,
+                the verdict stays MIXED.
+
+The raw (pre-tie-break) verdict and how it was resolved are always reported.
 
 Every result lists the fired rules (each signification with its level and
 reason) and the citations, and, when the birth time carries an uncertainty
@@ -75,14 +82,18 @@ def _rel(h: int, *offsets: int) -> frozenset[int]:
 
 MATTERS: Final[dict[str, Matter]] = {m.key: m for m in (
     Matter("marriage", "Is marriage promised?", 7,
-           frozenset({2, 7, 11}), frozenset({1, 6, 10, 12}),
-           ("KPR3-MARRIAGE-HOUSES", "KPR3-H7-DENIAL", "KPR3-CUSP-SUB"), "extended", "R7"),
+           frozenset({2, 7, 11}), frozenset({4, 6, 10}),
+           ("KPR4-PROMISE", "KPR4-DENIAL", "KPR4-DENIAL-SIMPLE", "KPR4-STRONGER",
+            "KPR3-MARRIAGE-HOUSES"), "cited", "R7"),
     Matter("health", "Is good health promised?", 1,
            frozenset({1, 11}), frozenset({6, 8, 12}),
            ("KPR3-HEALTH", "KPR3-ASC-SICK", "KPR3-ASC-11", "KPR3-CUSP-SUB"), "extended", "R13"),
     Matter("wealth", "Is gain of money promised?", 2,
            frozenset({2, 6, 11}), frozenset(),
            ("KPR3-FINANCE-SUB", "KPR3-CUSP-SUB"), "cited", "R14"),
+    Matter("children", "Are children promised?", 5,
+           frozenset({2, 5, 11}), frozenset({1, 4, 10}),
+           ("KPR3-CHILD", "KPR4-CHILD-HOUSES", "KPR4-CHILD-DENIAL", "KPR3-CUSP-SUB"), "cited", "R19"),
     Matter("service", "Is employment (service) promised?", 10,
            frozenset({2, 6, 10}), frozenset({1, 5, 9}),
            ("KPR3-RETIRE", "KPR3-CUSP-SUB"), "extended", "R15"),
@@ -145,6 +156,8 @@ class Verdict:
     stability: dict[str, int] = field(default_factory=dict)
     window_minutes: float = 0.0
     timing: tuple[TimingWindow, ...] = ()
+    raw_verdict: str = ""
+    resolution: str = "direct"
 
     @property
     def stable(self) -> bool:
@@ -155,6 +168,7 @@ class Verdict:
         """Plain record for sealed storage / blind scoring."""
         return {
             "matter": self.matter.key, "cusp": self.matter.cusp, "verdict": self.verdict,
+            "raw_verdict": self.raw_verdict, "resolution": self.resolution,
             "csl": self.csl, "csl_houses": sorted(self.csl_houses),
             "favourable_hit": sorted(self.csl_houses & self.matter.favourable),
             "denial_hit": sorted(self.csl_houses & self.matter.denial),
@@ -171,7 +185,9 @@ class Verdict:
         """Human-readable reading: verdict, fired rules, citations, stability, timing."""
         m = self.matter
         lines = [
-            f"### {m.question}  ->  **{self.verdict}**",
+            f"### {m.question}  ->  **{self.verdict}**"
+            + ("" if self.resolution == "direct" else
+               f"  (raw {self.raw_verdict}; resolved by {self.resolution.replace('_', '-')}, ruling R18)"),
             f"Sub-lord of cusp {m.cusp}: **{self.csl}** (in the star of {self.csl_star_lord}, "
             f"sub of {self.csl_sub_lord}). It signifies houses {sorted(self.csl_houses)}.",
             f"Favourable houses {sorted(m.favourable)}: hit {sorted(self.csl_houses & m.favourable)}. "
@@ -179,8 +195,8 @@ class Verdict:
             "", "Fired rules:",
         ]
         lines += [f"- {s.explain()}" for s in self.fired]
-        lines += ["", f"Supplementary (not used in the verdict, KPR3-SUB-DECIDES): the CSL's own "
-                      f"sub-lord {self.csl_sub_lord} signifies {sorted(self.sub_lord_houses)}.", "",
+        lines += ["", f"The CSL's own sub-lord {self.csl_sub_lord} signifies "
+                      f"{sorted(self.sub_lord_houses)} (used only to settle a same-level tie, R18).", "",
                   f"Rule status: {m.status} (ruling {m.ruling}). Citations:"]
         for c in m.citations:
             cit = CITATIONS[c]
@@ -195,12 +211,46 @@ class Verdict:
         return "\n".join(lines)
 
 
+_LEVEL_RANK: Final[dict[str, int]] = {"A": 0, "B": 1, "C": 2, "D": 3}
+
+
+def resolve(chart: KPChart, m: Matter, csl: str,
+            sigs: dict[str, tuple[Signification, ...]]) -> tuple[str, str, str]:
+    """Ruling R18: settle a CSL that signifies both groups.
+
+    Returns ``(verdict, raw_verdict, resolution)`` where resolution is one of
+    ``direct`` (no tie), ``level`` (stronger ladder level won), ``sub_lord``
+    (the CSL's sub-lord decided) or ``unresolved`` (still MIXED).
+    """
+    rows = sigs[csl]
+    houses = frozenset(r.house for r in rows)
+    raw = classify(houses & m.favourable, houses & m.denial)
+    if raw != MIXED:
+        return raw, raw, "direct"
+    best_f = min(_LEVEL_RANK[r.level] for r in rows if r.house in m.favourable)
+    best_d = min(_LEVEL_RANK[r.level] for r in rows if r.house in m.denial)
+    if best_f != best_d:
+        return (PROMISED if best_f < best_d else DENIED), raw, "level"
+    sub = chart.planets[csl].sub_lord
+    sh = frozenset(r.house for r in sigs[sub])
+    by_sub = classify(sh & m.favourable, sh & m.denial)
+    if by_sub in (PROMISED, DENIED):
+        return by_sub, raw, "sub_lord"
+    return MIXED, raw, "unresolved"
+
+
 def _core(chart: KPChart, m: Matter) -> tuple[str, str, frozenset[int], tuple[Signification, ...]]:
+    v, _, _, csl, houses, fired = _core_full(chart, m)
+    return v, csl, houses, fired
+
+
+def _core_full(chart: KPChart, m: Matter):
     sigs = planet_significations(chart)
     csl = chart.cusp(m.cusp).sub_lord
     houses = houses_signified(chart, csl, sigs)
     fired = tuple(s for s in sigs[csl] if s.house in (m.favourable | m.denial))
-    return classify(houses & m.favourable, houses & m.denial), csl, houses, fired
+    verdict, raw, how = resolve(chart, m, csl, sigs)
+    return verdict, raw, how, csl, houses, fired
 
 
 def timing_windows(chart: KPChart, matter: str | Matter, jd0: float, jd1: float) -> tuple[TimingWindow, ...]:
@@ -228,7 +278,7 @@ def judge(birth: Birth, matter: str | Matter, *, node_mode: str = "mean",
     """
     m = _matter(matter)
     chart = cast(birth, node_mode=node_mode)
-    verdict, csl, houses, fired = _core(chart, m)
+    verdict, raw, how, csl, houses, fired = _core_full(chart, m)
     cpt = chart.planets[csl]
     sub_houses = houses_signified(chart, cpt.sub_lord)
 
@@ -245,10 +295,10 @@ def judge(birth: Birth, matter: str | Matter, *, node_mode: str = "mean",
         timing = timing_windows(chart, m, chart.jd_ut + a * 365.2425, chart.jd_ut + b * 365.2425)
 
     return Verdict(m, verdict, csl, houses, fired, cpt.star_lord, cpt.sub_lord, sub_houses,
-                   dict(stability), w, timing)
+                   dict(stability), w, timing, raw, how)
 
 
 __all__ = [
     "PROMISED", "DENIED", "MIXED", "NOT_SIGNIFIED", "Matter", "MATTERS", "generic_matter",
-    "classify", "TimingWindow", "Verdict", "timing_windows", "judge",
+    "classify", "resolve", "TimingWindow", "Verdict", "timing_windows", "judge",
 ]

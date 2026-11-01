@@ -1,9 +1,9 @@
 # KP engine rulings
 
-The KP engine (`app/kp/`) encodes K. S. Krishnamurti's *KP Reader 3: Predictive Stellar
-Astrology* (library source `kp_reader3_predictive`, OCR). Every rule cites its line range in
-that file as `KPR3:<lines>`; the quotes live in `app/kp/citations.py` and
-`tests/kp/test_citations.py` checks each one against the file wherever the library is present.
+The KP engine (`app/kp/`) encodes K. S. Krishnamurti's KP Readers 1, 3, 4, 5 and 6 (library
+sources, OCR). Reader 3 rules cite a line range as `KPR3:<lines>`; the other Readers cite a page
+marker as `KPR<n>:p.N`. The quotes live in `app/kp/citations.py` (82 of them) and
+`tests/kp/test_citations.py` checks each one against its file wherever the library is present.
 
 Where Reader 3 is silent, ambiguous, or contradicts itself, the engine makes one named choice
 below. Each ruling says what was chosen, why, and what the alternative was. **These rulings are
@@ -15,11 +15,18 @@ every other engine, and the KP caster restores Lahiri as swisseph's global mode 
 
 ## Sources held and not held
 
-| Held | Not held |
-|---|---|
-| Reader 2, Fundamental Principles (`kp_reader2_fundamentals`) | Reader 1 (casting, sub tables) |
-| Reader 3, Predictive Stellar Astrology (`kp_reader3_predictive`): **the engine's authority** | Reader 4, Marriage, Married Life and Children |
-| KP E-zine 2015-2020 (`kp_readers_complete`, **mislabelled**: later authors, not KSK) | Reader 5 (Transits), Reader 6 (Horary) |
+| Source | Library id | Used for |
+|---|---|---|
+| Reader 1, Casting the Horoscope | `kp_reader1_casting` (OCR 2026-11-01) | Placidus, ayanamsa table (pinned) |
+| Reader 2, Fundamental Principles | `kp_reader2_fundamentals` | not cited |
+| Reader 3, Predictive Stellar Astrology | `kp_reader3_predictive` | **general authority** |
+| Reader 4, Marriage, Married Life & Children | `kp_reader4_marriage` (OCR 2026-11-01) | marriage, children |
+| Reader 5, Transits | `kp_reader5_transits` (OCR 2026-11-01) | transits; significator table (pinned) |
+| Reader 6, Horary Astrology | `kp_reader6_horary` (OCR 2026-11-01) | horary, ruling-planet timing and birth-time correction |
+| KP E-zine 2015-2020 | `kp_readers_complete` (**mislabelled**: later authors, not KSK) | R10 only, flagged |
+
+The other books in `kp-readers/` (KP E-zine 2020-21, *KP Navratnamala*, *KP Sublord* by SPK,
+*Astro Secrets & KP*, *Astrology for Beginners*) are by later authors and are not encoded.
 
 The E-zine is never cited as Krishnamurti. One ruling (R10) takes a convention from it and says so.
 
@@ -36,7 +43,7 @@ The E-zine is never cited as Krishnamurti. One ruling (R10) takes a convention f
 
 ## Rulings
 
-**R1. Authority.** Reader 3 only. Where later KP practice (4-step theory, cuspal interlinks,
+**R1. Authority.** Reader 3, and Reader 4 for marriage. Where later KP practice (4-step theory, cuspal interlinks,
 sub-sub lord as final judge, KP New ayanamsa) differs, the engine follows Reader 3.
 
 **R2. Ayanamsa.** `SIDM_KRISHNAMURTI`, not KP New (Khullar) or `SIDM_KRISHNAMURTI_VP291`. It
@@ -57,12 +64,23 @@ aspecting it, then of its sign lord (KPR3:2571-2573). "Conjoined" = same sign (K
 examples use rasi-chart conjunction). The node's agent houses are the occupied and owned houses
 of the planets it represents, and they are tagged `agent` in every output.
 
-**R7. Marriage = 7th cusp sub-lord against 2, 7, 11 and 1, 6, 10, 12 (status: extended).** The
-favourable houses 2, 7, 11 are Krishnamurti's (KPR3:14306-14307). The denial houses come from
-his answer to a horary marriage question (KPR3:21495-21497). The engine applies that horary test
-to the natal chart. Reader 3's own natal marriage chapter lists 26 alternative Hindu and Western
-conditions (KPR3:14329-14401) that are not encoded, because they are alternatives with no stated
-rule for combining them. Reader 4, which Reader 3 points to for detail, is not held.
+**R6a. A planet in a node's star takes only the node's occupied house.** The node's agent
+houses (from the planet it represents) belong to the node alone. Krishnamurti's significator
+table for the Alibag chart (KPR5:p.152-154) gives Sun and Jupiter, both in Ketu's star, only
+Ketu's house 7, not Ketu's agent houses 4 and 8. With this ruling all nine planets in that table
+are reproduced exactly (`tests/kp/test_reader5.py`). *Changed 2026-11-01*; the first build passed
+the agent houses through.
+
+**R7. Marriage = 7th cusp sub-lord against 2, 7, 11 and 4, 6, 10 (status: cited, Reader 4).**
+"Note the sub-lord of the 7th cusp. If it is a significator of house 7 or 2 or 11, marriage is
+promised" (KPR4:p.121). "The simple rule is, note the sublord of the 7th Cusp; if the sub lord is
+connected with 4, 6, 10th houses, one will be denied of marriage" (KPR4:p.106; reason given at
+p.105: these are the 12th houses to 5, 7 and 11). *Changed 2026-11-01*: the first build used
+1, 6, 10, 12 from a horary passage of Reader 3 (KPR3:21495-21497), because Reader 4 was not yet
+held. Reader 4 also says "if the sub is lord of 1, 6, 10 and is the significator of 12 houses,
+marriage cannot take place" (KPR4:p.118), but there it is choosing among significators for
+timing, not judging the 7th cusp, so it is not used for the promise verdict. Reader 3's 26
+alternative Hindu and Western conditions (KPR3:14329-14401) remain unencoded.
 
 **R8. Level E (conjunction and aspect) is not encoded.** The ladder's last level, "planets
 conjoined with or aspected by them", needs a definition of aspect, and Krishnamurti mixes
@@ -81,12 +99,10 @@ chapter 15, line 34310). Flagged as a non-KSK source.
 **R11. Year length 365.2425 days.** Reader 3 does not state one. The repo's locked
 `DAYS_PER_VEDIC_YEAR` is used. Over a 20-year dasa the difference from 365.25 is about 5 days.
 
-**R12. Verdicts are not weighed.** The cusp sub-lord (CSL) signifies a set of houses (levels A-D).
+**R12. Raw verdict.** The cusp sub-lord (CSL) signifies a set of houses (levels A-D).
 PROMISED if it hits the favourable group only; DENIED if it hits the denial group only; MIXED if
-both; NOT_SIGNIFIED if neither. Reader 3 gives no tie-break for MIXED and leaves weighing to the
-astrologer ("calmly judge what it can do", KPR3:6918-6919). The engine does not invent one. The
-CSL's own sub-lord (the "sub decides" rule, KPR3:6704-6706) is reported beside the verdict but
-does not change it, because Reader 3 does not say how the two levels combine.
+both; NOT_SIGNIFIED if neither. Reader 3 leaves the weighing of MIXED to the astrologer ("calmly
+judge what it can do", KPR3:6918-6919). The raw verdict is always reported.
 
 **R13. Health (status: extended).** Ascendant CSL against favourable 1, 11 (KPR3:6814-6815) and
 denial 6, 8, 12 (KPR3:6663-6664, 6774-6776). The 6/8/12 rule is stated for "the significator of
@@ -102,6 +118,81 @@ loss. So wealth can come out PROMISED or NOT_SIGNIFIED only, and that limit is p
 **R16. Any house (status: general).** For house H, favourable H and denial 6, 8, 12 counted from
 H, Krishnamurti's "general principle" (KPR3:6671-6677).
 
+**R18. Settling MIXED (user decision 2026-11-01: "Find Reader 4 first").** Reader 4 shows how
+Krishnamurti settles a 7th sub-lord tied to both groups. In his denial case the sub-lord Rahu
+occupies the 6th and, conjoined with Venus, stands for the lord of 7: "Rahu occupying Venus sign
+and conjoined with it shows that 6th house result is stronger than 7. Further Rahu is in the sub
+of Saturn in the 12th house" (KPR4:p.106). The engine follows that order:
+(1) the group the CSL reaches at the stronger ladder level wins (A > B > C > D; "occupants are
+stronger than owners. Constellations are stronger than signs", KPR4:p.118); (2) if both groups are
+reached at the same strongest level, the CSL's own sub-lord decides ("it is the sub lord which is
+mainly responsible", KPR4:p.106); (3) if the sub-lord also touches both or neither, the verdict
+stays MIXED. Every verdict records `raw_verdict` and `resolution` (direct / level / sub_lord /
+unresolved). The same procedure is applied to health, wealth and service, which extends a
+marriage example to other matters. Saturn as a significator "will not deny but will cause delay"
+(KPR4:p.109) is noted in the citations but not encoded as a separate output.
+
+**R19. Children and timed events (status: cited).** Children: 5th cusp sub-lord against 2, 5, 11
+and 1, 4, 10 (KPR3:21258-21262; Reader 4 pp.106, 216). Seventeen events Reader 3 times by the
+conjoined periods of a house group (marriage, engagement, childbirth, getting and ending service,
+business, money, building, disposal, studies, study abroad, scholarship, transfer, deputation,
+overseas, regaining position, imprisonment) are in `app/kp/events.py`, each with its citation.
+They have no cusp or denial group in the text, so they are timing rules only. Where Krishnamurti
+adds a condition on the same significators (3 and 9 for engagement, 6 or 10 for transfer), each
+window reports which lords meet it; windows are not dropped for it.
+
+**R20. Longevity and maraka are not encoded.** Reader 3 judges houses 1, 8, 3 against 2, 7, 12
+(KPR3:7966-7970). The engine does not time death, matching the project rule for every engine.
+
+**R21. Transits (Reader 5).** A transiting planet brings the matters of the houses its star lord
+signifies, through the matters it signifies itself, and the sub lord shows whether it
+materialises (KPR5:p.159). The sensitive points of a dasa-bhukti-antara are the positions whose
+sign, star and sub lords are those three planets in any order (KPR5:p.160); the engine's table
+reproduces his printed points for Mars/Saturn/Mercury, Mars/Venus/Venus and Mars/Venus/Sun.
+`transit_hits` reports when the Sun, the Moon and the period lords pass those points inside the
+period. The Ascendant's pass is computed for where the native lives (KPR5:p.160).
+
+## Horary (Reader 6), walled in `app/kp/horary/`
+
+Natal KP code never imports the horary package (tested). Death, lifespan and self-harm questions
+are refused in code.
+
+**RH1. Horary cusps.** The number gives the Ascendant at the start of its sub; add the
+Krishnamurti ayanamsa of the day of judgment, find the Placidus cusps for the latitude of the
+place of judgment, deduct the ayanamsa; planets are for the moment judgment starts
+(KPR6:p.99-103). Krishnamurti read Raphael's tables and interpolated; the engine computes the
+same Placidus cusps exactly. His Madras example (number 48) is reproduced within 30' on every
+printed cusp, and exactly on the 10th. His Delhi example (number 74) prints cusps 7-8° from any
+Placidus value for that latitude; the OCR of that page is poor, so it is not pinned.
+
+**RH2. Ruling planets for timing.** The five RPs plus node agents (KPR6:p.123), minus any in the
+star of a retrograde planet (KPR6:p.123). Fruitful planets are the RPs that also signify the
+matter's houses (KPR6:p.126). The body to move: Ascendant for hours, Moon within a month, Sun
+beyond a month, Jupiter for years (KPR6:p.131).
+
+**RH3. Which position (reconstructed).** Krishnamurti picks the position by judgment. The engine
+takes the first position whose sign, star and sub lords are all fruitful and as many different
+planets as possible (three, or all if fewer). This one rule reproduces all three of his printed
+answers: the trunk call (Libra 29°20', engine 9:39 against his 9:41), the servant (Taurus, Sun
+star, Saturn sub; engine 15:59 against his 4 P.M.) and the friend's arrival (Rohini, Sun sub;
+the position matches, but the engine's clock time is 13:29 against his 1:48 P.M.).
+
+**RH4. Sub-sub (reconstructed).** The first fruitful planet not already used; if all are used,
+the Ascendant lord at judgment. This matches all three cases and his second birth-time case.
+
+**RH5. Retrograde star lord.** "If the lord of the constellation in which third cusp sub-lord is
+deposited is retrograde, the call will not materialise" (KPR6:p.124; again for the child's
+return, p.130). He states it for those questions, so the engine reports it as a flag on every
+horary verdict and does not change the verdict.
+
+**RH6. Birth-time correction by ruling planets.** "The ruling planets at the time of judgment
+will rule (a) the sign, star sub and sub sub of the position of lagna" (KPR6:p.141). Inside the
+stated birth window the engine lists every Ascendant position meeting RH3/RH4 and when it rises.
+His second case leaves one candidate, Virgo 23°10' at 3:36 A.M. (engine 23°05' at 3:36:19). In
+his first case several remain; he chose among them by judgment (a number the native gave) and
+his choice is among the engine's candidates. The engine never picks; it is a candidate list,
+separate from the event-based rectifier on the rectification branch.
+
 **R17. Timing.** Candidate periods are dasa-bhukti-antaras whose three lords all signify a
 favourable house (KPR3:8741-8742, 9447-9449). Krishnamurti picks the "strongest" among
 significators by judgment; the engine lists every candidate and flags lords that also signify
@@ -109,6 +200,6 @@ denial houses. It does not rank them.
 
 ## What this engine is
 
-A faithful instrument for "what would Krishnamurti's Reader 3 rules say", with every step shown.
+A faithful instrument for "what would Krishnamurti's Readers say", with every step shown.
 It is **not** a validated predictor. Nothing has been tested against real lives yet; see
-`docs/kp/KP_PREFLIGHT_2026-10-31.md` for the first checks on ordinary charts.
+`docs/kp/KP_PREFLIGHT_2026-10-31.md` (Reader 3 rules) and `KP_PREFLIGHT_2026-11-01.md` (Reader 4 rules, R18) for checks on ordinary charts.

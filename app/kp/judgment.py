@@ -211,7 +211,7 @@ class Verdict:
         return "\n".join(lines)
 
 
-_LEVEL_RANK: Final[dict[str, int]] = {"A": 0, "B": 1, "C": 2, "D": 3}
+_LEVEL_RANK: Final[dict[str, int]] = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4}
 
 
 def resolve(chart: KPChart, m: Matter, csl: str,

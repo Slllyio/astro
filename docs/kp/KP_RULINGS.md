@@ -152,6 +152,30 @@ reproduces his printed points for Mars/Saturn/Mercury, Mars/Venus/Venus and Mars
 `transit_hits` reports when the Sun, the Moon and the period lords pass those points inside the
 period. The Ascendant's pass is computed for where the native lives (KPR5:p.160).
 
+**R8a. Level E (opt-in).** "(5) Very weak but yet those connected with a bhava are those planets
+conjoined with or aspected by the significators found out already" (KPR5:p.153; KPR6:p.197).
+`planet_significations(chart, level_e=True)` adds, for each planet, the houses it does not already
+hold at A-D, when it shares a sign with, or receives a Hindu sign aspect from, a planet that
+signifies them. Aspects are the ones Krishnamurti names (Saturn "by its 10th aspect", Jupiter "by
+its 5th aspect", KPR6:p.288): every planet the 7th, Mars 4 and 8, Jupiter 5 and 9, Saturn 3 and
+10; the nodes cast none. Off by default, and verdicts never use it: he calls it "very weak", and
+his worked tables (Alibag, KPR5:p.154) list A-D only.
+
+**R22. Natal indications.** `app/kp/indications.py` holds 59 one-line rules of the form "If the
+sub-lord of the Nth cusp ..." from Reader 3 (ascendant CSL signifying 1 and N; 2nd CSL signifying
+2 and N; 2nd CSL by planet; ascendant CSL in the star of a planet in each sign; and others) and
+Reader 4 (ascendant CSL signifying N, career partner, more than one marriage, second marriage via
+the 2nd cusp). "And"/"or" are kept as printed (RH7). They are descriptive and never timed. Left
+out: every death, lifespan or partner-death rule; rules whose cusp is not named (KPR4:p.69);
+rules resting on an undefined "connected in any manner"; rules needing a second person's chart
+(KPR4:p.177); and "chaste wife" (KPR4:p.100), whose "occupying" clause has no single reading.
+
+**R23. Descriptive tables.** The partner table (KPR4:pp.86-97, 7 planets x 12 signs) is read for
+the 7th CSL and, as each heading says, for its star lord, each in the sign it occupies; a node is
+read through its conjoined planet, else an aspecting planet, else its star lord (KPR4:p.97). "Love
+and life" (KPR4:pp.156-170) is read by the sign of the 5th CSL. The text is parsed from the OCR
+file at run time and never committed.
+
 ## Horary (Reader 6), walled in `app/kp/horary/`
 
 Natal KP code never imports the horary package (tested). Death, lifespan and self-harm questions
@@ -192,6 +216,15 @@ His second case leaves one candidate, Virgo 23°10' at 3:36 A.M. (engine 23°05'
 his first case several remain; he chose among them by judgment (a number the native gave) and
 his choice is among the engine's candidates. The engine never picks; it is a candidate list,
 separate from the event-based rectifier on the rectification branch.
+
+**RH7. Question rules.** `app/kp/horary/questions.py` encodes the 35 question rules Reader 6
+prints (appeal, exchange, love affair, lottery, passport, servant, start a business, and so on).
+Each judges one cusp's sub-lord, either through the planet whose star it sits in or itself, as the
+rule says. Houses joined by "and" are separate groups that must each be hit; "or" is one group.
+Where he says failing gives "no" (children, lottery, promotion, going abroad, second marriage) the
+engine says NO; elsewhere a failed condition is NOT_SIGNIFIED, not NO. Retrograde and dual-sign
+conditions are applied as printed. Extra conditions resting on "connected in any manner" are
+reported as not evaluated. Death, lifespan, suicide, murder and the vehicle rule are left out.
 
 **R17. Timing.** Candidate periods are dasa-bhukti-antaras whose three lords all signify a
 favourable house (KPR3:8741-8742, 9447-9449). Krishnamurti picks the "strongest" among

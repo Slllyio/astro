@@ -25,8 +25,10 @@ every other engine, and the KP caster restores Lahiri as swisseph's global mode 
 | Reader 6, Horary Astrology | `kp_reader6_horary` (OCR 2026-11-01) | horary, ruling-planet timing and birth-time correction |
 | KP E-zine 2015-2020 | `kp_readers_complete` (**mislabelled**: later authors, not KSK) | R10 only, flagged |
 
-The other books in `kp-readers/` (KP E-zine 2020-21, *KP Navratnamala*, *KP Sublord* by SPK,
-*Astro Secrets & KP*, *Astrology for Beginners*) are by later authors and are not encoded.
+The other books in `kp-readers/` (KP E-zine 2020-21, *KP Navratnamala*, *Sublord Speaks*,
+*Astro Secrets & KP* 1-6, *Astrology for Beginners*) are by later authors. They are encoded only
+in the walled `app/kp/later/` layer (rulings LR1-LR7 below), OCR'd 2026-11-01 to
+`kp_later_<id>` in the library, and never feed Krishnamurti's verdicts.
 
 The E-zine is never cited as Krishnamurti. One ruling (R10) takes a convention from it and says so.
 
@@ -230,6 +232,59 @@ reported as not evaluated. Death, lifespan, suicide, murder and the vehicle rule
 favourable house (KPR3:8741-8742, 9447-9449). Krishnamurti picks the "strongest" among
 significators by judgment; the engine lists every candidate and flags lords that also signify
 denial houses. It does not rank them.
+
+## Later authors, walled in `app/kp/later/`
+
+The user chose (2026-11-01) to encode the KP books written after Krishnamurti as a separate,
+labelled layer. Nothing else in `app/kp/` imports it (tested). It holds 132 rules from eight
+books: *Astro Secrets & KP* 1-6 (M. P. Shanmugam; K. Subramaniam and contributors), *Astrology for
+Beginners* (K. Subramaniam), *Sublord Speaks* (K. M. Subramaniam), the KP E-zine 2020-21 (various
+authors, ed. Kanak Bosmia), and the Gulbarga yes/no horary rule. Every quote is checked against
+its page in `tests/kp/test_later.py`. Every result names its author and book and says "A later
+author's rule, not Krishnamurti's; ... not a validated prediction."
+
+**LR1. "Connected to" a house** is read as "signifies" it on the A-D ladder. The authors use the
+words interchangeably in their worked examples.
+
+**LR2. House lists.** A hyphenated list ("4-5-11") or an "or" list is one group, any house of
+which counts. Houses joined by "and" ("6 and 11") are separate groups, each needed. Same as RH7.
+
+**LR3. Left out.** Death, its manner or timing, lifespan, "life threat", suicide and murder (as
+everywhere in this engine); rules resting on an undefined "connection" with a planet or sign
+(the vehicle rule AS6:p.1554, diabetes KNR:p.288, deaf-and-dumb KNR:p.226, spouse "connected to
+Rahu" EZN:p.491, the Mercury/Jupiter arm of EZN:p.713, the "connected to Saturn" arm of
+EZN:p.450); general method passages that name no cusp (AFB:pp.316-322, KNR:p.135, SPK:p.49);
+and restatements of Krishnamurti's own rules that add nothing (7th CSL signifying 2, 7 or 11 at
+AS6:p.1566, p.1694 and E-zine pp.217, 338, 924).
+
+**LR4. The E-zine's "significator (in the star of the occupant or owner)"** is read as ladder
+levels A and C only, the houses the CSL carries through its star lord (kind `signifies_ac`).
+Two consequences, both recorded on the rule: at that level a planet carries at most three
+houses, so a four-house "and" list could never be met; for the lawsuit rule (EZN:p.909) the
+article's own worked example declares the win with the 4th CSL hitting 10 and 11 but not 2 or 6,
+so the list is read as one group. The permanent/temporary job rule says "through its Starlord or
+Sublord" (EZN:p.709): the star-lord route is levels A and C, the sub-lord route the houses the
+CSL's own sub-lord occupies or owns (kind `signifies_ss`).
+
+**LR5. Gulbarga rule.** "If the sub lord of the Horary Number furnished happens to be either the
+Moon star lord or the lagna star-lord among the ruling planets ... the affirmative" (AS6:p.1603).
+The ruling planets are those of the moment of judgment with the Ascendant then rising, as both
+worked examples do ("the Moon star lord of the day", p.1603; "the ruling planets at the moment",
+p.1613). Pinned on the p.1603 example: number 245 is Jupiter-Mercury-Moon and the Moon's star lord
+that evening was the Moon, so yes.
+
+**LR6. "Strong signification"** (SPK:p.480, the 8th CSL diverting the 8th house's troubles) is
+read as ladder levels A or B, the occupant levels, which Krishnamurti ranks strongest.
+
+**LR7. Moral character and punishment are left out**: criminal mind, illicit affair, bad habits,
+elopement, timidity (EZN:pp.750, 790, 881), court punishment (EZN:p.521) and criminal
+prosecution (AFB:p.912). They are a choice, not a gap in the reading: the user can ask for them.
+
+**Not yet encoded.** Tin Win's *KP House Grouping* tables (KNR:pp.151-172), event rows giving the house groups the "cuspal sub lord of the house (mentioned in Column 1)"
+must signify (KNR:p.172). The scans are clean tables but need table OCR and row-by-row checking.
+
+Pre-flight (`docs/kp/KP_LATER_PREFLIGHT_2026-11-01.md`): on 2,000 random charts the median chart
+fires 28 of the 88 natal later rules; nine rules fire on over 80% of charts.
 
 ## What this engine is
 

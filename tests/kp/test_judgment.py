@@ -107,3 +107,10 @@ class TestTieBreak:
         v = self._resolve([self._sig("Rahu", 6, "B"), self._sig("Rahu", 7, "B")],
                           [self._sig("Saturn", 2, "C"), self._sig("Saturn", 4, "C")])
         assert v == (MIXED, MIXED, "unresolved")
+
+
+class TestChildren:
+    def test_children_houses(self) -> None:
+        """KPR3:21258-21262: 5th sub-lord on 2, 5, 11 gives a child; on 1, 4, 10 never."""
+        m = MATTERS["children"]
+        assert (m.cusp, m.favourable, m.denial) == (5, {2, 5, 11}, {1, 4, 10})

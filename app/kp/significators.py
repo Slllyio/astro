@@ -20,7 +20,9 @@ them. Lastly, those of the lord of the sign" (KPR3-NODE-AGENT). The engine
 encodes conjunction (same sign, ruling R6) and the sign lord; the aspect step
 is not encoded (ruling R8). The node's agent houses count as its "owned"
 houses at levels C/D, tagged ``agent`` so the reader can see where they came
-from.
+from. Those agent houses belong to the node alone: a planet in a node's star
+takes only the house the node occupies (ruling R6a, Krishnamurti's own
+significator table for the Alibag chart, KPR5 pp.154-156).
 
 Usage:
     from app.kp.significators import planet_significations, house_significators
@@ -101,8 +103,12 @@ def planet_significations(chart: KPChart) -> dict[str, tuple[Signification, ...]
         rows: list[Signification] = []
         star = pt.star_lord
         for h, kind, via, agent in _own_levels(chart, star):
+            if agent:
+                # Ruling R6a (KPR5 pp.154-156): a planet in a node's star takes the house
+                # the node occupies; the node's agent houses stay with the node itself.
+                continue
             level = "A" if kind == "occupied" else "C"
-            rows.append(Signification(p, h, level, star if not agent else f"{star}->{via}", agent))
+            rows.append(Signification(p, h, level, star, agent))
         for h, kind, via, agent in _own_levels(chart, p):
             level = "B" if kind == "occupied" else "D"
             rows.append(Signification(p, h, level, via, agent))

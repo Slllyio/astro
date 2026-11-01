@@ -29,6 +29,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from app.kp.chart import Birth, cast
+from app.kp.events import EVENTS, coverage as ev_coverage, event_windows
 from app.kp.judgment import MATTERS, _core, _core_full, timing_windows
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,7 @@ def run(n: int, seed: int) -> dict:
     hows: dict[str, Counter] = defaultdict(Counter)
     changed: dict[str, Counter] = defaultdict(Counter)
     coverage: list[float] = []
+    ev_cov: dict[str, list[float]] = defaultdict(list)
     csl_breadth: list[int] = []
     for i in range(n):
         b = random_birth(rng)
@@ -80,6 +82,8 @@ def run(n: int, seed: int) -> dict:
             tw = timing_windows(chart, "marriage", j0, j1)
             covered = sum(min(t.period.end_jd, j1) - max(t.period.start_jd, j0) for t in tw)
             coverage.append(covered / (j1 - j0))
+            for ek in EVENTS:
+                ev_cov[ek].append(ev_coverage(event_windows(chart, ek, from_age=20, to_age=40), j0, j1))
     out = {
         "n": n, "seed": seed,
         "verdict_share": {k: {v: round(c / n, 4) for v, c in cnt.items()} for k, cnt in verdicts.items()},
@@ -93,6 +97,7 @@ def run(n: int, seed: int) -> dict:
             "mean": round(sum(coverage) / len(coverage), 4),
             "min": round(min(coverage), 4), "max": round(max(coverage), 4),
         },
+        "event_coverage_age20_40_mean": {k: round(sum(v) / len(v), 4) for k, v in ev_cov.items()},
         "marriage_csl_houses_signified_mean": round(sum(csl_breadth) / len(csl_breadth), 2),
     }
     return out

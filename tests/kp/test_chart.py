@@ -103,3 +103,14 @@ class TestPolar:
         """Inside the polar circle Placidus is undefined; no substitute system is used."""
         with pytest.raises(KPUndefined):
             cast(Birth(2000, 6, 21, 12, 0, tz=1.0, lat=78.0, lon=15.0))
+
+
+class TestReader1Ayanamsa:
+    def test_matches_his_table_within_one_minute(self) -> None:
+        """KPR1 p.58 table: 1870 21°57', 1900 22°22', 1924 22°42', 1948 23°02', 1969 23°20', 1990 23°37'."""
+        import swisseph as swe
+        from app.kp.chart import kp_ayanamsa
+        table = {1870: (21, 57), 1900: (22, 22), 1924: (22, 42), 1948: (23, 2), 1969: (23, 20), 1990: (23, 37)}
+        for y, (d, m) in table.items():
+            got = kp_ayanamsa(swe.julday(y, 7, 1, 0.0)) * 60
+            assert abs(got - (d * 60 + m)) <= 1.0, y

@@ -103,7 +103,7 @@ def _ss(chart: KPChart, sigs, csl: str) -> frozenset[int]:
 
 def holds(chart: KPChart, kind: str, arg, csl: str, star: str, sigs) -> bool:
     """Evaluate one condition for the CSL ``csl`` (star lord ``star``); ``sigs`` includes level E."""
-    sign = lambda p: sign_index(chart.planets[p].longitude)  # noqa: E731
+    sign = lambda p: sign_index(chart.planets[p].longitude)
     if kind == "is":
         return csl in arg
     if kind == "star_is":

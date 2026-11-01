@@ -88,7 +88,7 @@ class TestRegistry:
     def test_excluded_topics_are_absent(self) -> None:
         """No death, lifespan, life-threat, suicide, murder, punishment or moral-character rule (LR3, LR7)."""
         bad = re.compile(r"death|\bdie|dead|lifespan|longevity|life threat|suicid|murder|punish|criminal|"
-                         r"illicit|elope|bad habit|timid", re.I)
+                         r"illicit|elope|bad habit|timid", re.IGNORECASE)
         for r in LATER_RULES.values():
             assert not bad.search(r.indicates + " " + LATER_CITATIONS[r.citation].quote), r.key
 

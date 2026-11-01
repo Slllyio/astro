@@ -62,4 +62,4 @@ SOURCES: Final[dict[str, LaterSource]] = {s.id: s for s in (
        "KP E-zine contributors (ed. Kanak Bosmia)", _p("EZN")),
 )}
 
-__all__ = ["LaterSource", "SOURCES"]
+__all__ = ["SOURCES", "LaterSource"]

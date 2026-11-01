@@ -185,4 +185,4 @@ _RULES: Final[tuple[LaterRule, ...]] = (
 )
 LATER_RULES: Final[dict[str, LaterRule]] = {r.key: r for r in _RULES}
 
-__all__ = ["LaterRule", "LATER_RULES"]
+__all__ = ["LATER_RULES", "LaterRule"]

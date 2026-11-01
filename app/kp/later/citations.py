@@ -194,4 +194,4 @@ LATER_CITATIONS: Final[dict[str, LaterCitation]] = {c.key: c for c in (
     _C('EZN-eleventh_sixth_match', 'EZN', 979, 'if the cuspal sub lord of the 11th (success) and that of the 6th (defeat to the rival) be the sig- nificator of houses 1, 2, 3, 6, 10 or 11, the team under query can win the match'),
 )}
 
-__all__ = ["LaterCitation", "LATER_CITATIONS"]
+__all__ = ["LATER_CITATIONS", "LaterCitation"]

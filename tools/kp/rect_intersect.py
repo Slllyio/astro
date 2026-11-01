@@ -19,7 +19,7 @@ For one native with a stated time and a set of dated events and life facts:
 5. Hard-constraint intersection: the minutes where every "sharp" boolean (b_e < 0.3) is hit.
 
 Usage:
-    python -m tools.kp.rect_intersect --spec mainpuri.json --out intersect.md
+    python -m tools.kp.rect_intersect --spec my_spec.json --out intersect.md
 """
 
 from __future__ import annotations

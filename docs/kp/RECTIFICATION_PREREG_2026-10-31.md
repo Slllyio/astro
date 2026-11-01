@@ -72,3 +72,14 @@ events are redrawn. All events are used (no split). This tests the search code o
 KSK's ruling-planet rectification (lagna sub-lord among the ruling planets at the moment of
 judgment) is not in Reader 3, and Readers 1 and 6 are not held (ruling RR4). Prenatal epoch
 (HPA ch.12) and Prasna-based discovery are deferred, as in the Raman module.
+
+## Addendum 1 (2026-11-01): KP base changes, T0 re-run
+
+The KP engine under this rectifier changed (base commit 06d8fcf0): ruling R6a (a planet in a
+node's star takes only the node's own house), marriage denial houses 4, 6, 10 from Reader 4 with
+MIXED settled by R18, and a cited children matter (2, 5, 11 against 1, 4, 10; Readers 3/4).
+`KP_EVENT_TYPES` now takes marriage and childbirth houses from the engine's `MATTERS`, so the two
+cannot drift. No constant of the test changed. T0 is re-run on the new base and reported as T0b
+beside the original T0. T1 stays untestable on Astro-Databank (n = 0) and is not re-run.
+Ruling-planet rectification (Reader 6) now exists as `app.kp.horary.rectify` and is a separate
+method, not a track of this test.

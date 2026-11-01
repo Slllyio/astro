@@ -20,12 +20,13 @@ Rectification rulings (named because Reader 3 states no rectification method):
   RR1  An event scores 1 for a timing match and 1 for a consistent promise. The two are
        added with equal weight. Reader 3 gives no weights; equal is the no-choice choice.
   RR2  Event types and their houses are only those the KP engine already cites
-       (KP_EVENT_TYPES). Childbirth uses the general principle (R16, status general).
+       (KP_EVENT_TYPES), taken from its MATTERS so the two never drift (marriage per
+       Reader 4, children per Readers 3/4, since KP base 06d8fcf0).
   RR3  Resolution honesty: a dasa level counts only if one period of that level covers
        the event's whole date interval (day, month or year).
-  RR4  Ruling-planet rectification (the lagna sub-lord among the ruling planets at the
-       moment of judgment) is NOT encoded. It is not stated in Reader 3, and Readers 1
-       and 6, where it would be, are not held.
+  RR4  Ruling-planet rectification (Reader 6) is a separate method in
+       ``app.kp.horary.rectify.rp_candidates``. It depends on the moment and place of
+       judgment, so it is not blended into this event score.
   RR5  The answer is the set of minutes sharing the top score, reported as intervals,
        never a single minute. When that set covers most of the window the report says
        the events do not discriminate.
@@ -60,7 +61,7 @@ import swisseph as swe
 from app.kp.chart import Birth, KPChart, cast
 from app.kp.citations import CITATIONS
 from app.kp.dasa import Period, periods_on
-from app.kp.judgment import DENIED, MIXED, PROMISED, MATTERS, Matter, generic_matter
+from app.kp.judgment import DENIED, MIXED, PROMISED, MATTERS, Matter
 from app.kp.judgment import _core as _judge_core
 from app.kp.significators import houses_signified, planet_significations
 
@@ -86,10 +87,10 @@ class KPEventType:
 
 KP_EVENT_TYPES: Final[dict[str, KPEventType]] = {t.key: t for t in (
     KPEventType("marriage", "When did the marriage take place?",
-                frozenset({2, 7, 11}), frozenset({1, 6, 10, 12}),
+                MATTERS["marriage"].favourable, MATTERS["marriage"].denial,
                 MATTERS["marriage"], frozenset({PROMISED, MIXED}),
-                ("KPR3-MARRIAGE-HOUSES", "KPR3-H7-DENIAL", "KPR3-PERIODS", "KPR3-DBA-PICK"),
-                "extended", "R7, R17"),
+                MATTERS["marriage"].citations + ("KPR3-PERIODS", "KPR3-DBA-PICK"),
+                "cited", "R7, R17"),
     KPEventType("service_start", "When did employment (service) begin?",
                 frozenset({2, 6, 10}), frozenset({1, 5, 9}),
                 MATTERS["service"], frozenset({PROMISED, MIXED}),
@@ -107,9 +108,9 @@ KP_EVENT_TYPES: Final[dict[str, KPEventType]] = {t.key: t for t in (
                 MATTERS["health"], frozenset({DENIED, MIXED}),
                 ("KPR3-HEALTH", "KPR3-ASC-SICK", "KPR3-PERIODS"), "extended", "R13, R17"),
     KPEventType("childbirth", "When was a child born?",
-                frozenset({5}), frozenset({10, 12, 4}),
-                generic_matter(5), frozenset({PROMISED, MIXED}),
-                ("KPR3-6812", "KPR3-GENERAL", "KPR3-PERIODS"), "general", "R16, R17"),
+                MATTERS["children"].favourable, MATTERS["children"].denial,
+                MATTERS["children"], frozenset({PROMISED, MIXED}),
+                MATTERS["children"].citations + ("KPR3-PERIODS",), "cited", "R19, R17"),
 )}
 
 

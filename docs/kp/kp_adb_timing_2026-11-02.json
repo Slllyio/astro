@@ -1,0 +1,142 @@
+{
+ "digest": "a5eaaa3990849dec7898b05889391651869b18150b1b29a112e2d34bfc6bc5ee",
+ "engine_commit": "6f73687bb2eae2b8390c17c51e1d292a6063a9b1",
+ "people": 245,
+ "primary_people": 116,
+ "primary": [
+  {
+   "matter": "marriage",
+   "rule": "r25",
+   "events": 92,
+   "hits": 33,
+   "shuffled_mean": 34.381,
+   "p_value": 0.7236,
+   "lift": 0.96,
+   "lift_shuffled_95": 1.163,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "matter": "marriage",
+   "rule": "r17",
+   "events": 92,
+   "hits": 49,
+   "shuffled_mean": 48.837,
+   "p_value": 0.5272,
+   "lift": 1.003,
+   "lift_shuffled_95": 1.126,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "matter": "children",
+   "rule": "r25",
+   "events": 0,
+   "hits": 0,
+   "shuffled_mean": 0.0,
+   "p_value": 1.0,
+   "lift": NaN,
+   "lift_shuffled_95": NaN,
+   "verdict": "UNDERPOWERED"
+  },
+  {
+   "matter": "children",
+   "rule": "r17",
+   "events": 0,
+   "hits": 0,
+   "shuffled_mean": 0.0,
+   "p_value": 1.0,
+   "lift": NaN,
+   "lift_shuffled_95": NaN,
+   "verdict": "UNDERPOWERED"
+  },
+  {
+   "matter": "service",
+   "rule": "r25",
+   "events": 12,
+   "hits": 5,
+   "shuffled_mean": 5.723,
+   "p_value": 0.7661,
+   "lift": 0.874,
+   "lift_shuffled_95": 1.398,
+   "verdict": "UNDERPOWERED"
+  },
+  {
+   "matter": "service",
+   "rule": "r17",
+   "events": 12,
+   "hits": 7,
+   "shuffled_mean": 7.565,
+   "p_value": 0.7481,
+   "lift": 0.925,
+   "lift_shuffled_95": 1.322,
+   "verdict": "UNDERPOWERED"
+  }
+ ],
+ "all_times": [
+  {
+   "matter": "marriage",
+   "rule": "r25",
+   "events": 206,
+   "hits": 71,
+   "shuffled_mean": 77.16,
+   "p_value": 0.8911,
+   "lift": 0.92,
+   "lift_shuffled_95": 1.115,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "matter": "marriage",
+   "rule": "r17",
+   "events": 206,
+   "hits": 108,
+   "shuffled_mean": 110.522,
+   "p_value": 0.6862,
+   "lift": 0.977,
+   "lift_shuffled_95": 1.086,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "matter": "children",
+   "rule": "r25",
+   "events": 0,
+   "hits": 0,
+   "shuffled_mean": 0.0,
+   "p_value": 1.0,
+   "lift": NaN,
+   "lift_shuffled_95": NaN,
+   "verdict": "UNDERPOWERED"
+  },
+  {
+   "matter": "children",
+   "rule": "r17",
+   "events": 0,
+   "hits": 0,
+   "shuffled_mean": 0.0,
+   "p_value": 1.0,
+   "lift": NaN,
+   "lift_shuffled_95": NaN,
+   "verdict": "UNDERPOWERED"
+  },
+  {
+   "matter": "service",
+   "rule": "r25",
+   "events": 17,
+   "hits": 6,
+   "shuffled_mean": 7.918,
+   "p_value": 0.8851,
+   "lift": 0.758,
+   "lift_shuffled_95": 1.389,
+   "verdict": "UNDERPOWERED"
+  },
+  {
+   "matter": "service",
+   "rule": "r17",
+   "events": 17,
+   "hits": 9,
+   "shuffled_mean": 10.263,
+   "p_value": 0.8196,
+   "lift": 0.877,
+   "lift_shuffled_95": 1.267,
+   "verdict": "UNDERPOWERED"
+  }
+ ]
+}

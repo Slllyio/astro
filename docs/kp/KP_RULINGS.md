@@ -415,5 +415,8 @@ fires 28 of the 88 natal later rules; nine rules fire on over 80% of charts.
 ## What this engine is
 
 A faithful instrument for "what would Krishnamurti's Readers say", with every step shown.
-It is **not** a validated predictor. Nothing has been tested against real lives yet; see
+It is **not** a validated predictor. The first real-life test (Astro-Databank, 2026-11-02,
+`KP_REAL_OUTCOME_RESULTS_ADB_2026-11-02.md`) was null: marriage windows caught 33 of 92 dated
+marriages against 34.4 for other people's windows at the same age, and Reader 2's sign rules did
+not match the traits they name. For checks on ordinary charts see
 `docs/kp/KP_PREFLIGHT_2026-10-31.md` (Reader 3 rules) and `KP_PREFLIGHT_2026-11-01.md` (Reader 4 rules, R18) for checks on ordinary charts.

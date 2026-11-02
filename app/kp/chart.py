@@ -19,6 +19,8 @@ Usage:
 
 from __future__ import annotations
 
+import math
+
 import logging
 from dataclasses import dataclass, field, replace
 from typing import Final
@@ -76,6 +78,9 @@ class Birth:
         jd = self.jd_ut() + minutes / 1440 + self.tz / 24
         y, m, d, h = swe.revjul(jd, swe.GREG_CAL)
         total = round(h * 3600, 3)
+        if total >= 86400:  # rounding reached midnight: carry into the next calendar day
+            y, m, d, _ = swe.revjul(math.floor(jd + 0.5) + 0.5, swe.GREG_CAL)
+            total -= 86400
         hh, rem = divmod(total, 3600)
         mm, ss = divmod(rem, 60)
         return replace(self, year=y, month=m, day=d, hour=int(hh), minute=int(mm), second=ss)

@@ -374,6 +374,13 @@ child 80%; gain and loss of money 80%). Read his way, a CSL carries most houses 
 the tables as written do not tell charts apart. They are kept as a faithful record of what he
 wrote, not as a reader to trust.
 
+Transcription check (2026-11-02): Column 4 of every row was read a second time by machine OCR from
+column crops of the scans at full resolution, independent of the by-eye pass. 449 rows have a
+Column 4; the two readings agree on 392. All 57 differences were checked against the scan: each is
+an OCR misread ("/" for 7, "50r9" for "5 or 9", dropped brackets) or OCR pairing a cell with the
+wrong row where two rows share a subject. No by-eye transcription error was found (spot check:
+row 174, "Intelligent thinking", 5,11,3,9,10,1, matches the scan).
+
 Pre-flight (`docs/kp/KP_LATER_PREFLIGHT_2026-11-01.md`): on 2,000 random charts the median chart
 fires 28 of the 88 natal later rules; nine rules fire on over 80% of charts.
 

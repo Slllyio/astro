@@ -2,6 +2,8 @@
 
 Source: *KP Navratnamala* (KNR), scans 151-172, printed pp.70-91. All 457 rows were transcribed by eye from the scans (the book's own OCR of these pages is unusable) and are listed here. 316 are encoded in `app/kp/later/tin_win.py`; the rest are left out with the reason. Readings: rulings LR8-LR10 in `KP_RULINGS.md`.
 
+Second check: Column 4 was re-read by machine OCR from full-resolution column crops. Of 449 rows with a Column 4, 392 agree; the 57 differences are all OCR misreads or wrong-row pairings, checked against the scan. No transcription error was found.
+
 Column 4 = houses the cusp sub-lord must signify for the event to be promised; Column 5 = houses whose significators' joint period times it (shown, not used).
 
 | # | Page | Cusp | Event (Column 3) | Column 4 | Column 5 | Status |

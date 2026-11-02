@@ -30,7 +30,12 @@ AREA_OF_ETYPE = {"(7,)": "marriage", "(10,)": "career", "(6,)": "health", "(5,)"
 def _runs(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [json.loads(x) for x in path.read_text().splitlines() if x.strip()]
+    seen = {}
+    for x in path.read_text().splitlines():
+        if x.strip():
+            r = json.loads(x)
+            seen.setdefault(r.get("run"), r)          # duplicate runs are identical (seeded by index)
+    return list(seen.values())
 
 
 def _append(path: Path, rec: dict) -> None:
@@ -205,7 +210,7 @@ def stage_gauquelin(a) -> dict:
     runs_path = a.out / "gauquelin_runs.jsonl"
     rng = np.random.default_rng(E.SEED + 1)
     done = _runs(runs_path)
-    for i in range(len(done), a.n1 if a.n1 else 50):
+    for i in _todo(runs_path, 50, a):
         rng_i = np.random.default_rng([E.SEED, 1, i])
         r = stat(F.natal_G(g, random_time_jd(g, rng_i))[0])
         _append(runs_path, {"run": i, **r})

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Birth-Time Rectifier</title>
+<style>
+  :root{
+    --ink:#2b1810; --ink-2:#5c4a37; --ink-3:#8b6f47;
+    --leaf:#f5e3b8; --leaf-deep:#efd9a4; --leaf-edge:#d4b87a; --card:#fbf1d6;
+    --saffron:#c77a2e; --saffron-deep:#9d5c1a; --gold:#c9a04a; --madder:#a02828; --ok:#3d6b35;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#f1e4c8; --ink-2:#d2bf9b; --ink-3:#a8916b;
+      --leaf:#1d1510; --leaf-deep:#261c15; --leaf-edge:#4a3826; --card:#2a2018;
+      --saffron:#e0954a; --saffron-deep:#f0ad66; --gold:#d8b25e; --madder:#e06464; --ok:#8cc47f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#f1e4c8; --ink-2:#d2bf9b; --ink-3:#a8916b;
+    --leaf:#1d1510; --leaf-deep:#261c15; --leaf-edge:#4a3826; --card:#2a2018;
+    --saffron:#e0954a; --saffron-deep:#f0ad66; --gold:#d8b25e; --madder:#e06464; --ok:#8cc47f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--leaf);color:var(--ink);line-height:1.5}
+  main{max-width:980px;margin:0 auto;padding:24px 16px 64px}
+  h1{font-size:1.7rem;margin:0 0 4px}
+  h2{font-size:1.15rem;margin:28px 0 8px;color:var(--saffron-deep)}
+  h3{font-size:1rem;margin:16px 0 6px}
+  p.lead{color:var(--ink-2);margin:0 0 16px}
+  .card{background:var(--card);border:1px solid var(--leaf-edge);border-radius:10px;padding:14px 16px;margin:10px 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  label{display:block;font-size:.85rem;color:var(--ink-2)}
+  input,select{width:100%;padding:7px 8px;border:1px solid var(--leaf-edge);border-radius:6px;background:var(--leaf);color:var(--ink);font:inherit}
+  button{font:inherit;padding:7px 12px;border-radius:6px;border:1px solid var(--saffron);background:transparent;color:var(--saffron-deep);cursor:pointer;margin:3px 4px 3px 0}
+  button.primary{background:var(--saffron);color:var(--leaf);border-color:var(--saffron)}
+  button:disabled{opacity:.5;cursor:wait}
+  button.small{padding:3px 8px;font-size:.85rem}
+  .muted{color:var(--ink-3);font-size:.9rem}
+  .bits{font-variant-numeric:tabular-nums;color:var(--saffron-deep);font-weight:600}
+  .split{font-size:.85rem;color:var(--ink-2);margin-top:4px;overflow-wrap:anywhere}
+  .row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .row input,.row select{width:auto}
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--leaf-edge);vertical-align:top}
+  .tablewrap{overflow-x:auto}
+  .status{margin:10px 0;color:var(--ink-2)}
+  .warn{border-left:4px solid var(--madder)}
+  .good{border-left:4px solid var(--ok)}
+  .chip{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--leaf-edge);margin:2px;font-size:.85rem}
+  svg text{fill:var(--ink-2);font-size:10px}
+  details summary{cursor:pointer;color:var(--ink-2)}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+  <h1>Birth-Time Rectifier</h1>
+  <p class="lead">Narrow an uncertain birth time with questions chosen for your own chart. Each candidate minute gives
+    a slightly different chart, so each predicts different life facts. The page asks the questions that best tell
+    those minutes apart, then updates after every answer. Nothing you enter is stored.</p>
+
+  <section class="card" id="birthCard">
+    <h3>1. Birth details</h3>
+    <div class="grid">
+      <div><label for="bDate">Date of birth</label><input id="bDate" type="date" value="1990-07-15"></div>
+      <div><label for="bTime">Recorded time (local)</label><input id="bTime" type="time" value="12:00"></div>
+      <div><label for="bTz">UTC offset (hours)</label><input id="bTz" type="number" step="0.25" value="5.5"></div>
+      <div><label for="bPlace">Place</label><select id="bPlace"></select></div>
+      <div><label for="bLat">Latitude (N +)</label><input id="bLat" type="number" step="0.01" value="12.97"></div>
+      <div><label for="bLon">Longitude (E +)</label><input id="bLon" type="number" step="0.01" value="77.59"></div>
+      <div><label for="bWin">Time could be off by</label>
+        <select id="bWin"><option value="15">15 min</option><option value="30" selected>30 min</option>
+          <option value="45">45 min</option><option value="60">60 min</option></select></div>
+      <div><label for="bEng">Rules</label>
+        <select id="bEng"><option value="kp">KP only (fast)</option><option value="kp,raman">KP and Raman (slower)</option></select></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="startBtn">Start</button>
+      <span class="muted">The example values are a test chart. Replace them with your own.</span>
+    </div>
+  </section>
+
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <section id="results" class="hidden">
+    <h2>2. Where the answers point</h2>
+    <div class="card" id="summary"></div>
+    <div class="card"><div id="chart" aria-label="Chance of each candidate minute"></div>
+      <div class="muted" id="chartNote"></div></div>
+
+    <h2>3. Questions chosen for this chart</h2>
+    <p class="muted">Bits are how much an answer is expected to narrow the window if the rules are right. Answer what
+      you can; skip the rest. "Does not apply" carries no evidence.</p>
+    <h3>Ask everyone</h3>
+    <div id="qEveryone"></div>
+    <h3>Only if it happened in your life</h3>
+    <div id="qCond"></div>
+    <div class="card"><div class="muted" id="qDead"></div></div>
+
+    <h2>4. Your answers and what each did</h2>
+    <div class="card"><div class="tablewrap"><table id="effects"></table></div>
+      <p class="muted">Ratio is how strongly an answer favours its best minute over its worst. "Peak without it" shows
+        whether the result hangs on that one answer.</p>
+      <div class="row"><button id="exportBtn" class="small">Download session file</button>
+        <button id="resetBtn" class="small">Clear all answers</button></div></div>
+
+    <h2>5. Hand-off to the KP engine</h2>
+    <div class="card" id="handoff"></div>
+
+    <h2>6. What changes inside the window</h2>
+    <div class="card"><details open><summary id="cpSummary"></summary><div class="tablewrap"><table id="changes"></table></div></details></div>
+
+    <h2>7. How to read this</h2>
+    <div class="card" id="caveats"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var PLACES = [["Custom", null, null], ["Bengaluru", 12.97, 77.59], ["Chennai", 13.08, 80.27], ["Delhi", 28.61, 77.21],
+    ["Hyderabad", 17.39, 78.49], ["Jaipur", 26.91, 75.79], ["Kolkata", 22.57, 88.36], ["Lucknow", 26.85, 80.95],
+    ["Mumbai", 19.08, 72.88], ["Nagpur", 21.15, 79.09], ["Pune", 18.52, 73.86], ["Varanasi", 25.32, 82.97]];
+  var state = { birth: null, answers: [], last: null, busy: false };
+  var $ = function (id) { return document.getElementById(id); };
+
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === "text") n.textContent = attrs[k];
+      else if (k === "cls") n.className = attrs[k];
+      else if (k.slice(0, 2) === "on") n.addEventListener(k.slice(2), attrs[k]);
+      else n.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+
+  var sel = $("bPlace");
+  PLACES.forEach(function (p, i) { sel.appendChild(el("option", { value: String(i), text: p[0] })); });
+  sel.value = "1";
+  sel.addEventListener("change", function () {
+    var p = PLACES[+sel.value];
+    if (p[1] !== null) { $("bLat").value = p[1]; $("bLon").value = p[2]; }
+  });
+
+  function readBirth() {
+    var d = $("bDate").value.split("-").map(Number), t = $("bTime").value.split(":").map(Number);
+    if (d.length !== 3 || t.length < 2 || d.some(isNaN) || t.some(isNaN)) throw new Error("Enter a full date and time.");
+    return { year: d[0], month: d[1], day: d[2], hour: t[0], minute: t[1], tz: +$("bTz").value,
+      lat: +$("bLat").value, lon: +$("bLon").value, half_window: +$("bWin").value,
+      engines: $("bEng").value.split(",") };
+  }
+
+  function setStatus(msg) { $("status").textContent = msg || ""; }
+
+  function run() {
+    if (state.busy) return;
+    var body = Object.assign({}, state.birth, { answers: state.answers });
+    state.busy = true; $("startBtn").disabled = true;
+    setStatus(state.last ? "Updating…" : "Casting every candidate minute… (a few seconds; longer with Raman)");
+    fetch("/kp-rectify/round", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(typeof res.j.detail === "string" ? res.j.detail : JSON.stringify(res.j.detail));
+        state.last = res.j; render(res.j); setStatus("");
+      })
+      .catch(function (e) { setStatus("Could not update: " + e.message); })
+      .then(function () { state.busy = false; $("startBtn").disabled = false; });
+  }
+
+  $("startBtn").addEventListener("click", function () {
+    try {
+      var b = readBirth();
+      if (state.birth && JSON.stringify(b) !== JSON.stringify(state.birth) && state.answers.length &&
+          !window.confirm("Birth details changed. Keep your answers?")) state.answers = [];
+      state.birth = b; run();
+    } catch (e) { setStatus(e.message); }
+  });
+  $("resetBtn").addEventListener("click", function () { state.answers = []; run(); });
+  $("exportBtn").addEventListener("click", function () {
+    var b = state.birth, t = new Date();
+    var s = { name: "session", date: [b.year, b.month, b.day], time: [b.hour, b.minute], tz: b.tz, lat: b.lat, lon: b.lon,
+      window: [-b.half_window, b.half_window], today: [t.getFullYear(), t.getMonth() + 1, t.getDate()],
+      engines: b.engines, answers: state.answers };
+    var a = el("a", { href: URL.createObjectURL(new Blob([JSON.stringify(s, null, 1)], { type: "application/json" })),
+      download: "rectification_session.json" });
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  function addAnswer(fact, answer) {
+    if (fact !== "date_move") state.answers = state.answers.filter(function (a) { return a.fact !== fact; });
+    state.answers.push({ fact: fact, answer: answer });
+    run();
+  }
+
+  function dateControl(q) {
+    var wrap = el("div", { cls: "row" });
+    var prec = el("select", { "aria-label": "precision" }, [el("option", { value: "d", text: "exact day" }),
+      el("option", { value: "m", text: "month only" }), el("option", { value: "y", text: "year only" })]);
+    var inp = el("input", { type: "date", "aria-label": "date" });
+    var list = [];
+    var chips = el("span");
+    function parts() {
+      var v = inp.value.split("-").map(Number);
+      if (v.length !== 3 || v.some(isNaN)) return null;
+      return prec.value === "d" ? v : prec.value === "m" ? v.slice(0, 2) : v.slice(0, 1);
+    }
+    function redraw() { clear(chips); list.forEach(function (d) { chips.appendChild(el("span", { cls: "chip", text: d.join("-") })); }); }
+    wrap.appendChild(inp); wrap.appendChild(prec);
+    if (q.key === "date_move") {
+      wrap.appendChild(el("button", { cls: "small", text: "Add date", onclick: function () { var p = parts(); if (p) { list.push(p); redraw(); inp.value = ""; } } }));
+      wrap.appendChild(chips);
+      wrap.appendChild(el("button", { cls: "small primary", text: "Submit dates", onclick: function () {
+        var p = parts(); if (p) list.push(p); if (list.length) addAnswer(q.key, list); } }));
+    } else {
+      wrap.appendChild(el("button", { cls: "small primary", text: "Submit", onclick: function () { var p = parts(); if (p) addAnswer(q.key, p); else setStatus("Pick a date first."); } }));
+    }
+    wrap.appendChild(el("button", { cls: "small", text: "Does not apply", onclick: function () { addAnswer(q.key, null); } }));
+    return wrap;
+  }
+
+  function questionCard(q, n) {
+    var head = el("div", {}, [el("strong", { text: n + ". " + q.text }), " ", el("span", { cls: "bits", text: q.bits.toFixed(2) + " bits" })]);
+    var c = el("div", { cls: "card" }, [head]);
+    if (q.ask_if) c.appendChild(el("div", { cls: "muted", text: "Ask only if: " + q.ask_if }));
+    if (q.note) c.appendChild(el("div", { cls: "muted", text: q.note }));
+    if (q.kind === "yesno") {
+      c.appendChild(el("div", { cls: "row" }, [
+        el("button", { cls: "small primary", text: "Yes", onclick: function () { addAnswer(q.key, true); } }),
+        el("button", { cls: "small primary", text: "No", onclick: function () { addAnswer(q.key, false); } }),
+        el("button", { cls: "small", text: "Does not apply / don't know", onclick: function () { addAnswer(q.key, null); } })]));
+    } else if (q.kind === "choice") {
+      var r = el("div", { cls: "row" });
+      q.options.forEach(function (o) { r.appendChild(el("button", { cls: "small primary", text: o, onclick: function () { addAnswer(q.key, o); } })); });
+      r.appendChild(el("button", { cls: "small", text: "Don't know", onclick: function () { addAnswer(q.key, null); } }));
+      c.appendChild(r);
+    } else {
+      c.appendChild(dateControl(q));
+    }
+    c.appendChild(el("div", { cls: "split", text: "Which minutes expect which answer: " + q.split }));
+    var rules = q.rules.map(function (x) { return x.engine.toUpperCase() + ": " + x.rule + " (" + x.source + ")"; });
+    c.appendChild(el("details", {}, [el("summary", { text: "Rules behind this question" }),
+      el("div", { cls: "split" }, rules.map(function (t) { return el("div", { text: t }); }))]));
+    return c;
+  }
+
+  function drawChart(r) {
+    var host = $("chart"); clear(host);
+    var NS = "http://www.w3.org/2000/svg", W = 900, H = 170, pad = 24;
+    var pts = r.posterior, n = pts.length, mx = Math.max.apply(null, pts.map(function (p) { return p.p; })) || 1;
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("width", "100%"); svg.setAttribute("role", "img");
+    var bw = (W - 2 * pad) / n;
+    var in90 = {};
+    r.bands.p90.forEach(function (b) { for (var o = b.from; o <= b.to; o++) in90[o] = true; });
+    pts.forEach(function (p, i) {
+      var h = (H - 2 * pad) * p.p / mx, rect = document.createElementNS(NS, "rect");
+      rect.setAttribute("x", pad + i * bw + 0.5); rect.setAttribute("width", Math.max(bw - 1, 1));
+      rect.setAttribute("y", H - pad - h); rect.setAttribute("height", Math.max(h, 0.5));
+      rect.setAttribute("fill", in90[p.offset] ? "var(--saffron)" : "var(--leaf-edge)");
+      var t = document.createElementNS(NS, "title"); t.textContent = p.clock + ": " + (100 * p.p).toFixed(1) + "%";
+      rect.appendChild(t); svg.appendChild(rect);
+      if (p.offset === 0) {
+        var l = document.createElementNS(NS, "line");
+        l.setAttribute("x1", pad + (i + 0.5) * bw); l.setAttribute("x2", pad + (i + 0.5) * bw);
+        l.setAttribute("y1", pad / 2); l.setAttribute("y2", H - pad); l.setAttribute("stroke", "var(--madder)");
+        l.setAttribute("stroke-dasharray", "3 3"); svg.appendChild(l);
+      }
+      if (i % Math.ceil(n / 10) === 0 || i === n - 1) {
+        var tx = document.createElementNS(NS, "text"); tx.setAttribute("x", pad + i * bw); tx.setAttribute("y", H - 6);
+        tx.textContent = p.clock; svg.appendChild(tx);
+      }
+    });
+    host.appendChild(svg);
+    $("chartNote").textContent = "Each bar is one candidate minute. Orange bars are inside the 90 % band. The dashed line is the recorded time.";
+  }
+
+  function render(r) {
+    $("results").classList.remove("hidden");
+    var s = $("summary"); clear(s);
+    if (!r.answers_used) {
+      s.appendChild(el("p", { text: "No answers yet, so every minute from " + r.window.from + " to " + r.window.to +
+        " is equally likely. Answer the questions below; the band updates after each one." }));
+    } else {
+      s.appendChild(el("p", {}, [el("strong", { text: "Peak " + r.peak.clock }), " (" + (100 * r.peak.p).toFixed(0) + " %). "]));
+      s.appendChild(el("p", { text: "50 % band: " + r.bands.p50.map(function (b) { return b.text; }).join(", ") }));
+      s.appendChild(el("p", { text: "90 % band: " + r.bands.p90.map(function (b) { return b.text; }).join(", ") }));
+      if (r.stated_p !== null) s.appendChild(el("p", { cls: "muted", text: "Recorded time " + r.stated + ": " +
+        (100 * r.stated_p).toFixed(1) + " % (equal chance would be " + (100 / r.window.minutes).toFixed(1) + " %)." }));
+    }
+    s.appendChild(el("p", { cls: "muted", text: "Uncertainty left: " + r.entropy_bits.toFixed(2) + " of " + r.max_bits.toFixed(2) + " bits." }));
+    drawChart(r);
+
+    var qe = $("qEveryone"); clear(qe);
+    r.ask_everyone.forEach(function (q, i) { qe.appendChild(questionCard(q, i + 1)); });
+    if (!r.ask_everyone.length) qe.appendChild(el("p", { cls: "muted", text: "No questions left in this group." }));
+    var qc = $("qCond"); clear(qc);
+    r.ask_if_applies.forEach(function (q, i) { qc.appendChild(questionCard(q, i + 1)); });
+    if (!r.ask_if_applies.length) qc.appendChild(el("p", { cls: "muted", text: "No questions left in this group." }));
+    $("qDead").textContent = r.not_worth_asking.length ? "Not worth asking for this chart (same predicted answer at every minute): " +
+      r.not_worth_asking.join(", ") + "." : "Every remaining question can still split the window.";
+
+    var t = $("effects"); clear(t);
+    t.appendChild(el("tr", {}, ["Question", "Answer", "Strongest support", "Weakest", "Ratio", "Peak without it", ""].map(function (h) { return el("th", { text: h }); })));
+    r.effects.forEach(function (e, i) {
+      var ans = e.answer === null ? "does not apply" : Array.isArray(e.answer) ? JSON.stringify(e.answer) : String(e.answer);
+      t.appendChild(el("tr", {}, [el("td", { text: e.fact }), el("td", { text: ans }),
+        el("td", { text: e.applies ? e.best : "-" }), el("td", { text: e.applies ? e.worst : "-" }),
+        el("td", { text: e.applies ? e.ratio.toFixed(1) : "-" }), el("td", { text: e.applies ? e.peak_without : "-" }),
+        el("td", {}, [el("button", { cls: "small", text: "Remove", onclick: function () { state.answers.splice(i, 1); run(); } })])]));
+    });
+    if (!r.effects.length) t.appendChild(el("tr", {}, [el("td", { colspan: "7", text: "No answers yet." })]));
+
+    var h = $("handoff"); clear(h); h.className = "card";
+    if (!r.handoff) h.appendChild(el("p", { text: "Answer some questions first." }));
+    else {
+      h.classList.add(r.handoff.ready ? "good" : "warn");
+      h.appendChild(el("p", { text: r.handoff.ready ? "Ready: the 90 % band is " + r.handoff.from + " to " + r.handoff.to + "." :
+        "Not ready: the 90 % band runs from " + r.handoff.from + " to " + r.handoff.to +
+        ". Keep the recorded time for now, or answer more questions." }));
+      h.appendChild(el("p", { text: "Centre " + r.handoff.centre + ", uncertainty ± " + r.handoff.uncertainty_minutes + " min." }));
+      var sc = Object.keys(r.handoff.stable_cusps);
+      h.appendChild(el("p", { cls: "muted", text: "Cusp sub-lords stable across the band: " +
+        (sc.length ? sc.map(function (k) { return k + ": " + r.handoff.stable_cusps[k]; }).join(", ") : "none") + "." }));
+    }
+
+    $("cpSummary").textContent = r.change_points.length + " change points (lagna sign, navamsa, cusp sub-lords). Without date " +
+      "questions the yes/no answers can split the window into " + r.classes_without_dates + " groups.";
+    var ch = $("changes"); clear(ch);
+    ch.appendChild(el("tr", {}, [el("th", { text: "From" }), el("th", { text: "What changes" })]));
+    r.change_points.forEach(function (c) { ch.appendChild(el("tr", {}, [el("td", { text: c.clock }), el("td", { text: c.change })])); });
+
+    var cv = $("caveats"); clear(cv);
+    r.caveats.forEach(function (c) { cv.appendChild(el("p", { text: c })); });
+  }
+})();
+</script>
+</body>
+</html>

@@ -361,8 +361,13 @@ def _month_mass(b: Built, key: str) -> np.ndarray:
     e = np.clip(b.bins, lo, b.life[1])
     width = np.diff(e)
     rows = []
+    lo_e, hi_e = e[:-1], e[1:]
     for ws in b.windows[key]:
-        inn = np.array([_cover(ws, e[j], e[j + 1]) for j in range(len(e) - 1)])
+        if ws:
+            arr = np.array(ws)
+            inn = np.clip(np.minimum(arr[:, 1:2], hi_e) - np.maximum(arr[:, 0:1], lo_e), 0.0, None).sum(axis=0)
+        else:
+            inn = np.zeros(len(width))
         S, L = inn.sum(), width.sum()
         p = (R_DATE * inn / S if S > 0 else 0.0) + ((1 - R_DATE) if S > 0 else 1.0) * (width - inn) / max(L - S, 1e-9)
         rows.append(np.clip(p, 1e-12, None))
@@ -435,6 +440,10 @@ def explain(b: Built, key: str, post: Optional[np.ndarray] = None) -> str:
             others = [_merge(b.windows[key][j]) for j in picks if j != i]
             own = [(s, e) for s, e in _minus(ws, [w for o in others for w in o]) if e - s >= 15]
             shown = "; ".join(f"{_ymd(s)} to {_ymd(e)}" for s, e in own[:4]) + (" ..." if len(own) > 4 else "")
+            if cov >= 0.95:
+                parts.append(f"at {_clock(b, b.offsets[i])} the windows cover all of life, so any date fits "
+                             "and the answer says little about this minute")
+                continue
             parts.append(f"at {_clock(b, b.offsets[i])} windows cover {cov:.0%} of the span"
                          + (f"; only this time: {shown}" if own else "; no window unique to this time"))
         return " | ".join(parts)

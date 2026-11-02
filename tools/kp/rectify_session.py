@@ -45,6 +45,7 @@ from typing import Optional
 import numpy as np
 
 from app.kp.chart import Birth, cast
+from app.kp.rect_session import batch_questions as _batch, stable_csl
 from app.kp.rect_questions import (FACT_BY_KEY, Built, answer_probs, boundaries, build, credible, explain,
                                    info_gain, likelihood, rank, resolution_classes, runs, uniform)
 
@@ -63,40 +64,14 @@ def band_text(b: Birth, rs: list[tuple[int, int]]) -> str:
     return ", ".join(clock(b, a) if a == z else f"{clock(b, a)}-{clock(b, z)}" for a, z in rs)
 
 
+def batch_questions(q: Built, prior: np.ndarray, n: int, skip: set[str], seed: int = SEED) -> list[tuple[str, float]]:
+    """See :func:`app.kp.rect_session.batch_questions` (shared with the web page)."""
+    return _batch(q, prior, n, skip, sims=BATCH_SIMS, seed=seed)
+
+
 def _H(p: np.ndarray) -> float:
     p = p[p > 0]
     return float(-(p * np.log2(p)).sum())
-
-
-def _ig(post: np.ndarray, mat: np.ndarray) -> float:
-    return _H(post @ mat) - float(sum(pi * _H(row) for pi, row in zip(post, mat)))
-
-
-def batch_questions(q: Built, prior: np.ndarray, n: int, skip: set[str], seed: int = SEED) -> list[tuple[str, float]]:
-    """Pick n questions to ask together: each step adds the question with the highest expected
-    information gain AFTER the ones already picked, averaged over simulated answers."""
-    rng = np.random.default_rng(seed)
-    P = {f.key: answer_probs(q, f.key) for f in q.facts() if f.key not in skip}
-    M = len(q.offsets)
-    truths = rng.choice(M, size=BATCH_SIMS, p=prior)
-    posts = np.tile(prior, (BATCH_SIMS, 1))
-    picked: list[tuple[str, float]] = []
-    for _ in range(min(n, len(P))):
-        best, bits = None, -1.0
-        for k, mat in P.items():
-            if k in dict(picked):
-                continue
-            v = float(np.mean([_ig(posts[s], mat) for s in range(BATCH_SIMS)]))
-            if v > bits:
-                best, bits = k, v
-        picked.append((best, bits))
-        mat = P[best]
-        for s in range(BATCH_SIMS):
-            row = mat[truths[s]]
-            a = rng.choice(len(row), p=row / row.sum())
-            posts[s] = posts[s] * mat[:, a]
-            posts[s] /= posts[s].sum()
-    return picked
 
 
 def marks_likelihood(birth: Birth, offsets: list[int]) -> dict[str, np.ndarray]:
@@ -105,11 +80,6 @@ def marks_likelihood(birth: Birth, offsets: list[int]) -> dict[str, np.ndarray]:
     for e in classical_evidence(birth, offsets):
         out[e.key] = np.array([math.exp(e.llr(o)) for o in offsets])
     return out
-
-
-def stable_csl(birth: Birth, offs: list[int]) -> dict[int, Optional[str]]:
-    lords = [{h: cast(birth.shifted(o)).cusp(h).sub_lord for h in range(1, 13)} for o in offs]
-    return {h: (lords[0][h] if all(l[h] == lords[0][h] for l in lords) else None) for h in range(1, 13)}
 
 
 def run(S: dict, n_questions: int) -> str:

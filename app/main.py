@@ -20,6 +20,7 @@ from app.api.forecast_routes import almanac_router, forecast_router
 from app.api.horary_routes import horary_router
 from app.api.interpret_routes import interpret_router
 from app.api.knowledge_routes import knowledge_router
+from app.api.kp_rectify_routes import kp_rectify_router
 from app.api.medini_routes import medini_router
 from app.api.parashara_routes import parashara_router
 from app.api.reading_routes import reading_router
@@ -113,6 +114,7 @@ app.include_router(almanac_router)   # Phase 2: backward-looking Mundane Almanac
 app.include_router(reading_router)   # Round 10: per-chart RAG-grounded reader (/medini/reading/*)
 app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
 app.include_router(rectification_router)  # Birth-time rectification / discovery (/rectify/*)
+app.include_router(kp_rectify_router)  # KP rectification with chart-chosen questions (/kp-rectify/*)
 app.include_router(varga_router)  # Shodasavarga 16-divisional-chart reading (/vargas/*)
 app.include_router(report_router)  # Full detailed reading (/report/*)
 app.include_router(soul_router)  # EXPERIMENT: soul-destiny reading (/soul/*) — Jaimini firewall lifted

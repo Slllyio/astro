@@ -25,8 +25,10 @@ every other engine, and the KP caster restores Lahiri as swisseph's global mode 
 | Reader 6, Horary Astrology | `kp_reader6_horary` (OCR 2026-11-01) | horary, ruling-planet timing and birth-time correction |
 | KP E-zine 2015-2020 | `kp_readers_complete` (**mislabelled**: later authors, not KSK) | R10 only, flagged |
 
-The other books in `kp-readers/` (KP E-zine 2020-21, *KP Navratnamala*, *KP Sublord* by SPK,
-*Astro Secrets & KP*, *Astrology for Beginners*) are by later authors and are not encoded.
+The other books in `kp-readers/` (KP E-zine 2020-21, *KP Navratnamala*, *Sublord Speaks*,
+*Astro Secrets & KP* 1-6, *Astrology for Beginners*) are by later authors. They are encoded only
+in the walled `app/kp/later/` layer (rulings LR1-LR7 below), OCR'd 2026-11-01 to
+`kp_later_<id>` in the library, and never feed Krishnamurti's verdicts.
 
 The E-zine is never cited as Krishnamurti. One ruling (R10) takes a convention from it and says so.
 
@@ -152,6 +154,78 @@ reproduces his printed points for Mars/Saturn/Mercury, Mars/Venus/Venus and Mars
 `transit_hits` reports when the Sun, the Moon and the period lords pass those points inside the
 period. The Ascendant's pass is computed for where the native lives (KPR5:p.160).
 
+**R8a. Level E (opt-in).** "(5) Very weak but yet those connected with a bhava are those planets
+conjoined with or aspected by the significators found out already" (KPR5:p.153; KPR6:p.197).
+`planet_significations(chart, level_e=True)` adds, for each planet, the houses it does not already
+hold at A-D, when it shares a sign with, or receives a Hindu sign aspect from, a planet that
+signifies them. Aspects are the ones Krishnamurti names (Saturn "by its 10th aspect", Jupiter "by
+its 5th aspect", KPR6:p.288): every planet the 7th, Mars 4 and 8, Jupiter 5 and 9, Saturn 3 and
+10; the nodes cast none. Off by default, and verdicts never use it: he calls it "very weak", and
+his worked tables (Alibag, KPR5:p.154) list A-D only.
+
+**R22. Natal indications.** `app/kp/indications.py` holds 59 one-line rules of the form "If the
+sub-lord of the Nth cusp ..." from Reader 3 (ascendant CSL signifying 1 and N; 2nd CSL signifying
+2 and N; 2nd CSL by planet; ascendant CSL in the star of a planet in each sign; and others) and
+Reader 4 (ascendant CSL signifying N, career partner, more than one marriage, second marriage via
+the 2nd cusp). "And"/"or" are kept as printed (RH7). They are descriptive and never timed. Left
+out: every death, lifespan or partner-death rule; rules whose cusp is not named (KPR4:p.69);
+rules resting on an undefined "connected in any manner"; rules needing a second person's chart
+(KPR4:p.177); and "chaste wife" (KPR4:p.100), whose "occupying" clause has no single reading.
+
+**R23. Descriptive tables.** The partner table (KPR4:pp.86-97, 7 planets x 12 signs) is read for
+the 7th CSL and, as each heading says, for its star lord, each in the sign it occupies; a node is
+read through its conjoined planet, else an aspecting planet, else its star lord (KPR4:p.97). "Love
+and life" (KPR4:pp.156-170) is read by the sign of the 5th CSL. The text is parsed from the OCR
+file at run time and never committed.
+
+## Selecting the useful significators (`app/kp/selection.py`, added 2026-11-02)
+
+The A-D ladder names many planets for any matter. Krishnamurti then asks "how to eliminate the
+useless ones and select the useful ones" (KPR4:p.118). R17 timing used every ladder significator;
+R24-R26 encode his three further steps. None of them changes a verdict.
+
+**R24. Strong significators (ranking, not a filter).** For each occupant of a house, the planets
+in its stars give the house's results (KPR5:p.208); "if there is no planet in any of the 3 stars
+of the occupant, then the occupant offers the results ... and it is stronger than the lord"
+(KPR5:p.209). An empty house goes to the planets in its lord's stars, else to the lord (KPR5:p.147).
+A node standing for a strong significator is taken (KPR6:p.162), and so are planets in that
+node's star (KPR4:p.190). Pinned on two printed examples: KPR5 pp.208-209 (Kethu and Venus in
+Sun's star give 2nd-house results; Moon, with no planet in its stars, is strong for the 4th) and
+KPR4 p.190 ("Rahu, Kethu, Sani, Jupiter are the significators", with Mercury for the 2nd).
+It ranks and does not filter, because his own worked periods use ladder lords that R24 would
+pass over (a "lord of 6" bhukti when 6 is occupied, KPR5:p.150).
+
+**R25. Fruitful significators (filter).** "Further the sub lord of each of the significators. If a
+planet is in such a position that its sub lord is connected with the houses 2, 7 and 11 then this
+planet is useful" (KPR4:p.118); "in unfavourable sub ... will suffer" (KPR5:p.147). A significator
+is kept when its own sub-lord signifies (A-D) a favourable house of the matter. A sub-lord that
+also signifies a denial house is flagged, not dropped (as R12 keeps MIXED visible). Stated for
+marriage; applied to every matter, which is an extension.
+
+**R26. Ruling planets (filter, only with a moment of judgment).** "Ruling planets at the moment of
+judgement must agree" (KPR4:p.118); they "are the real benefactors" (KPR4:p.189). Given the
+moment and place of judgment, only significators among the five ruling planets and their node
+agents are kept. This makes the answer depend on when it is asked, as his method does. The
+pre-flight measures how much.
+
+Flags, never filters: Saturn among the selected ("will not deny but will cause delay",
+KPR4:p.109); selected planets that are retrograde or in a retrograde planet's star (failure "when
+the significator ... is retrograde", KPR6:p.280).
+
+`selected_windows` returns the R17 periods whose three lords all survive R25 (and R26 when
+given), each labelled with how many of its lords are strong (R24). Pre-flight
+(`docs/kp/KP_SELECTION_PREFLIGHT_2026-11-02.md`, 2,000 charts, ages 20-40, marriage): R17
+covers a median 53% of those years, R25 27%, R26 2%. With R26, 41% of charts get no window at
+all, and for 81% the selected planets change if the question is judged one day later.
+
+**R27. Day-fixing by transit (`day_fix`).** "Sun, lord of 2, to fix the day must transit in Venus
+sign, Moon star Saturn or Ketu sub" (KPR4:p.133); "the date of marriage will be on the day when
+Sun transits in Venus sign, Moon star, Rahu sub" (KPR4:p.189). A day point is any of the 249
+divisions whose sign, star and sub lords are all R25 significators of the matter. The R26 cut is
+not applied: at p.189 the sign lord Venus is a strongest significator but not a ruling planet.
+`day_fix` lists when the Sun (or the Moon, if asked) passes those divisions inside a window,
+normally an R17/R25 period. It narrows a period to days; it does not prove the period right.
+
 ## Horary (Reader 6), walled in `app/kp/horary/`
 
 Natal KP code never imports the horary package (tested). Death, lifespan and self-harm questions
@@ -193,10 +267,72 @@ his first case several remain; he chose among them by judgment (a number the nat
 his choice is among the engine's candidates. The engine never picks; it is a candidate list,
 separate from the event-based rectifier on the rectification branch.
 
+**RH7. Question rules.** `app/kp/horary/questions.py` encodes the 35 question rules Reader 6
+prints (appeal, exchange, love affair, lottery, passport, servant, start a business, and so on).
+Each judges one cusp's sub-lord, either through the planet whose star it sits in or itself, as the
+rule says. Houses joined by "and" are separate groups that must each be hit; "or" is one group.
+Where he says failing gives "no" (children, lottery, promotion, going abroad, second marriage) the
+engine says NO; elsewhere a failed condition is NOT_SIGNIFIED, not NO. Retrograde and dual-sign
+conditions are applied as printed. Extra conditions resting on "connected in any manner" are
+reported as not evaluated. Death, lifespan, suicide, murder and the vehicle rule are left out.
+
 **R17. Timing.** Candidate periods are dasa-bhukti-antaras whose three lords all signify a
 favourable house (KPR3:8741-8742, 9447-9449). Krishnamurti picks the "strongest" among
 significators by judgment; the engine lists every candidate and flags lords that also signify
 denial houses. It does not rank them.
+
+## Later authors, walled in `app/kp/later/`
+
+The user chose (2026-11-01) to encode the KP books written after Krishnamurti as a separate,
+labelled layer. Nothing else in `app/kp/` imports it (tested). It holds 132 rules from eight
+books: *Astro Secrets & KP* 1-6 (M. P. Shanmugam; K. Subramaniam and contributors), *Astrology for
+Beginners* (K. Subramaniam), *Sublord Speaks* (K. M. Subramaniam), the KP E-zine 2020-21 (various
+authors, ed. Kanak Bosmia), and the Gulbarga yes/no horary rule. Every quote is checked against
+its page in `tests/kp/test_later.py`. Every result names its author and book and says "A later
+author's rule, not Krishnamurti's; ... not a validated prediction."
+
+**LR1. "Connected to" a house** is read as "signifies" it on the A-D ladder. The authors use the
+words interchangeably in their worked examples.
+
+**LR2. House lists.** A hyphenated list ("4-5-11") or an "or" list is one group, any house of
+which counts. Houses joined by "and" ("6 and 11") are separate groups, each needed. Same as RH7.
+
+**LR3. Left out.** Death, its manner or timing, lifespan, "life threat", suicide and murder (as
+everywhere in this engine); rules resting on an undefined "connection" with a planet or sign
+(the vehicle rule AS6:p.1554, diabetes KNR:p.288, deaf-and-dumb KNR:p.226, spouse "connected to
+Rahu" EZN:p.491, the Mercury/Jupiter arm of EZN:p.713, the "connected to Saturn" arm of
+EZN:p.450); general method passages that name no cusp (AFB:pp.316-322, KNR:p.135, SPK:p.49);
+and restatements of Krishnamurti's own rules that add nothing (7th CSL signifying 2, 7 or 11 at
+AS6:p.1566, p.1694 and E-zine pp.217, 338, 924).
+
+**LR4. The E-zine's "significator (in the star of the occupant or owner)"** is read as ladder
+levels A and C only, the houses the CSL carries through its star lord (kind `signifies_ac`).
+Two consequences, both recorded on the rule: at that level a planet carries at most three
+houses, so a four-house "and" list could never be met; for the lawsuit rule (EZN:p.909) the
+article's own worked example declares the win with the 4th CSL hitting 10 and 11 but not 2 or 6,
+so the list is read as one group. The permanent/temporary job rule says "through its Starlord or
+Sublord" (EZN:p.709): the star-lord route is levels A and C, the sub-lord route the houses the
+CSL's own sub-lord occupies or owns (kind `signifies_ss`).
+
+**LR5. Gulbarga rule.** "If the sub lord of the Horary Number furnished happens to be either the
+Moon star lord or the lagna star-lord among the ruling planets ... the affirmative" (AS6:p.1603).
+The ruling planets are those of the moment of judgment with the Ascendant then rising, as both
+worked examples do ("the Moon star lord of the day", p.1603; "the ruling planets at the moment",
+p.1613). Pinned on the p.1603 example: number 245 is Jupiter-Mercury-Moon and the Moon's star lord
+that evening was the Moon, so yes.
+
+**LR6. "Strong signification"** (SPK:p.480, the 8th CSL diverting the 8th house's troubles) is
+read as ladder levels A or B, the occupant levels, which Krishnamurti ranks strongest.
+
+**LR7. Moral character and punishment are left out**: criminal mind, illicit affair, bad habits,
+elopement, timidity (EZN:pp.750, 790, 881), court punishment (EZN:p.521) and criminal
+prosecution (AFB:p.912). They are a choice, not a gap in the reading: the user can ask for them.
+
+**Not yet encoded.** Tin Win's *KP House Grouping* tables (KNR:pp.151-172), event rows giving the house groups the "cuspal sub lord of the house (mentioned in Column 1)"
+must signify (KNR:p.172). The scans are clean tables but need table OCR and row-by-row checking.
+
+Pre-flight (`docs/kp/KP_LATER_PREFLIGHT_2026-11-01.md`): on 2,000 random charts the median chart
+fires 28 of the 88 natal later rules; nine rules fire on over 80% of charts.
 
 ## What this engine is
 

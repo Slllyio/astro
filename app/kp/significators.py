@@ -7,7 +7,7 @@ by him to every house) ranks a house's significators:
   B  the occupants
   C  planets in the constellation of the lord of the house
   D  the lord
-  E  planets conjoined with or aspected by them   <- NOT encoded (ruling R8)
+  E  planets conjoined with or aspected by them   <- opt-in only (rulings R8, R8a)
 
 "Tenant is stronger than owner" (KPR3-TENANT), so A > B > C > D. The planet's
 side of the same fact: a planet offers the results of the house occupied by
@@ -37,15 +37,25 @@ from typing import Final
 
 from app.kp.chart import NODES, KPChart, sign_index
 
-LEVELS: Final[tuple[str, ...]] = ("A", "B", "C", "D")
+LEVELS: Final[tuple[str, ...]] = ("A", "B", "C", "D", "E")
 LEVEL_TEXT: Final[dict[str, str]] = {
     "A": "in the star of an occupant",
     "B": "occupant",
     "C": "in the star of the lord",
     "D": "lord",
+    "E": "conjoined with or aspected by a significator",
 }
 LEVEL_CITE: Final[dict[str, str]] = {
     "A": "KPR3-LADDER", "B": "KPR3-LADDER", "C": "KPR3-LADDER-C", "D": "KPR3-LADDER-D",
+    "E": "KPR5-LEVEL-E",
+}
+
+#: Hindu sign aspects (drishti), counted inclusively: every planet the 7th; Mars also 4 and 8;
+#: Jupiter 5 and 9; Saturn 3 and 10. Reader 6 uses them by name ("Jupiter ... aspects Moon by
+#: its 5th aspect", "Saturn ... by its 10th aspect", KPR6-DRISHTI). Nodes cast none (ruling R8a).
+DRISHTI: Final[dict[str, tuple[int, ...]]] = {
+    "Sun": (7,), "Moon": (7,), "Mercury": (7,), "Venus": (7,),
+    "Mars": (4, 7, 8), "Jupiter": (5, 7, 9), "Saturn": (3, 7, 10),
 }
 
 
@@ -65,6 +75,8 @@ class Signification:
             how = f"occupies {self.house}"
         elif self.level == "D":
             how = f"owns {self.house}" if not self.agent else f"represents {self.via}, lord of {self.house}"
+        elif self.level == "E":
+            how = f"conjoined with or aspected by {self.via}, a significator of {self.house}"
         elif self.level == "A":
             how = f"in the star of {self.via}, which occupies {self.house}"
         else:
@@ -96,8 +108,21 @@ def _own_levels(chart: KPChart, planet: str) -> list[tuple[int, str, str, bool]]
     return out
 
 
-def planet_significations(chart: KPChart) -> dict[str, tuple[Signification, ...]]:
-    """Every planet's significations, strongest level first, deduplicated per (house, level)."""
+def _aspects(chart: KPChart, a: str, b: str) -> bool:
+    """Does ``a`` cast a Hindu sign aspect on ``b``?"""
+    if a not in DRISHTI:
+        return False
+    d = (sign_index(chart.planets[b].longitude) - sign_index(chart.planets[a].longitude)) % 12 + 1
+    return d in DRISHTI[a]
+
+
+def planet_significations(chart: KPChart, *, level_e: bool = False) -> dict[str, tuple[Signification, ...]]:
+    """Every planet's significations, strongest level first, deduplicated per (house, level).
+
+    ``level_e=True`` adds the ladder's last level (ruling R8a, off by default):
+    a planet conjoined with (same sign) or aspected by (Hindu drishti) a
+    significator of a house signifies that house at level E.
+    """
     result: dict[str, tuple[Signification, ...]] = {}
     for p, pt in chart.planets.items():
         rows: list[Signification] = []
@@ -119,11 +144,32 @@ def planet_significations(chart: KPChart) -> dict[str, tuple[Signification, ...]
                 seen.add((r.house, r.level))
                 uniq.append(r)
         result[p] = tuple(uniq)
-    return result
+    if not level_e:
+        return result
+    extra: dict[str, list[Signification]] = {p: [] for p in result}
+    for src, rows in result.items():
+        houses = {r.house for r in rows}
+        s_sign = sign_index(chart.planets[src].longitude)
+        for x in chart.planets:
+            if x == src:
+                continue
+            if sign_index(chart.planets[x].longitude) == s_sign or _aspects(chart, src, x):
+                extra[x] += [Signification(x, h, "E", src) for h in sorted(houses)]
+    out = {}
+    for p, rows in result.items():
+        have = {r.house for r in rows}
+        seen: set[int] = set()
+        add = []
+        for r in extra[p]:
+            if r.house not in have and r.house not in seen:
+                seen.add(r.house)
+                add.append(r)
+        out[p] = rows + tuple(add)
+    return out
 
 
 def houses_signified(chart: KPChart, planet: str, sigs: dict[str, tuple[Signification, ...]] | None = None) -> frozenset[int]:
-    """All houses ``planet`` signifies at levels A-D."""
+    """All houses ``planet`` signifies in ``sigs`` (levels A-D unless built with ``level_e``)."""
     sigs = sigs or planet_significations(chart)
     return frozenset(s.house for s in sigs[planet])
 

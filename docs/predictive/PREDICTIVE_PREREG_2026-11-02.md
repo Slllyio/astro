@@ -215,3 +215,21 @@ used now; the tool is built so it can start whenever someone consents.
 **7. Noted for later, not in Phases 0-2:** a prospective multi-system challenge (human Vedic, KP and
 Western astrologers, AI readers, a chart-blind baseline and a random baseline, same anonymised
 cases, predictions locked, same scoring). It needs outside participants and is the owner's call.
+
+## Addendum 2 (2026-11-02, before any number): compute budget
+
+Measured on synthetic data only: one Task A full-model fit takes 3-6 s on the 4-core machine
+available, so one Task A null run (12 targets x 5 folds x full model + 13 families) takes about
+12 minutes. Changes, made before any outcome-linked number exists:
+
+- Task A: N2 runs 100 -> **40**, N1 runs 50 -> **20**. With 40 runs the smallest attainable p is
+  1/41 = 0.024, which still reaches the 0.025 co-primary alpha only if no null run equals or beats
+  the observed value. This is stricter, not looser.
+- Phase 1 plants (Task A): one null distribution per plant type (20 N2 runs on the first replicate's
+  synthetic labels); all five replicates and the five all-null replicates are compared with it.
+- Task B keeps 100 N3 runs; its N1 runs 50 -> 20.
+- Gauquelin positive control keeps 50 N1 runs (one target, cheap).
+
+The forward log (addendum 1, item 6) follows the Arm B format of the domain protocol written in the
+thread "Write up why prediction failed": a 12-24 month yes/no with a quarter, the question time
+logged for ruling planets, the asker's own expectation recorded, scored against it.

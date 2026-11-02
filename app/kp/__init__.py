@@ -9,7 +9,9 @@ Modules: ``subs`` (249 divisions), ``chart`` (cast), ``significators`` (A-D ladd
 marriage, children, health, wealth, service and any house; stability; timing), ``events``
 (17 cited event-timing rules), ``transit`` (Reader 5 transit reading and sensitive points),
 ``indications`` (59 one-line Reader 3/4 rules), ``descriptions`` (Reader 4 partner and
-"love and life" tables, parsed from the library at run time), ``citations`` (verbatim quotes).
+"love and life" tables, parsed from the library at run time), ``selection`` (Krishnamurti's
+strong and fruitful significators and ruling-planet agreement, which narrow the timing),
+``citations`` (verbatim quotes).
 The walled ``horary`` package (Reader 6) holds the horary cast, judgment, the 35 printed
 question rules, ruling-planet timing and ruling-planet birth-time correction. The walled
 ``later`` package holds 132 rules from KP books by authors after Krishnamurti, each labelled

@@ -178,6 +178,46 @@ read through its conjoined planet, else an aspecting planet, else its star lord 
 and life" (KPR4:pp.156-170) is read by the sign of the 5th CSL. The text is parsed from the OCR
 file at run time and never committed.
 
+## Selecting the useful significators (`app/kp/selection.py`, added 2026-11-02)
+
+The A-D ladder names many planets for any matter. Krishnamurti then asks "how to eliminate the
+useless ones and select the useful ones" (KPR4:p.118). R17 timing used every ladder significator;
+R24-R26 encode his three further steps. None of them changes a verdict.
+
+**R24. Strong significators (ranking, not a filter).** For each occupant of a house, the planets
+in its stars give the house's results (KPR5:p.208); "if there is no planet in any of the 3 stars
+of the occupant, then the occupant offers the results ... and it is stronger than the lord"
+(KPR5:p.209). An empty house goes to the planets in its lord's stars, else to the lord (KPR5:p.147).
+A node standing for a strong significator is taken (KPR6:p.162), and so are planets in that
+node's star (KPR4:p.190). Pinned on two printed examples: KPR5 pp.208-209 (Kethu and Venus in
+Sun's star give 2nd-house results; Moon, with no planet in its stars, is strong for the 4th) and
+KPR4 p.190 ("Rahu, Kethu, Sani, Jupiter are the significators", with Mercury for the 2nd).
+It ranks and does not filter, because his own worked periods use ladder lords that R24 would
+pass over (a "lord of 6" bhukti when 6 is occupied, KPR5:p.150).
+
+**R25. Fruitful significators (filter).** "Further the sub lord of each of the significators. If a
+planet is in such a position that its sub lord is connected with the houses 2, 7 and 11 then this
+planet is useful" (KPR4:p.118); "in unfavourable sub ... will suffer" (KPR5:p.147). A significator
+is kept when its own sub-lord signifies (A-D) a favourable house of the matter. A sub-lord that
+also signifies a denial house is flagged, not dropped (as R12 keeps MIXED visible). Stated for
+marriage; applied to every matter, which is an extension.
+
+**R26. Ruling planets (filter, only with a moment of judgment).** "Ruling planets at the moment of
+judgement must agree" (KPR4:p.118); they "are the real benefactors" (KPR4:p.189). Given the
+moment and place of judgment, only significators among the five ruling planets and their node
+agents are kept. This makes the answer depend on when it is asked, as his method does. The
+pre-flight measures how much.
+
+Flags, never filters: Saturn among the selected ("will not deny but will cause delay",
+KPR4:p.109); selected planets that are retrograde or in a retrograde planet's star (failure "when
+the significator ... is retrograde", KPR6:p.280).
+
+`selected_windows` returns the R17 periods whose three lords all survive R25 (and R26 when
+given), each labelled with how many of its lords are strong (R24). Pre-flight
+(`docs/kp/KP_SELECTION_PREFLIGHT_2026-11-02.md`, 2,000 charts, ages 20-40, marriage): R17
+covers a median 53% of those years, R25 27%, R26 2%. With R26, 41% of charts get no window at
+all, and for 81% the selected planets change if the question is judged one day later.
+
 ## Horary (Reader 6), walled in `app/kp/horary/`
 
 Natal KP code never imports the horary package (tested). Death, lifespan and self-harm questions

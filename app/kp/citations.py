@@ -516,4 +516,41 @@ CITATIONS: Final[dict[str, Citation]] = {c.key: c for c in (
     _C("KPR4-LOVE", "p.156",
        'LOVE AND LIFE IF THE SUB LORD OF THE Sth CUSP IS IN Aries: Male:', source="KPR4",
        note="'Sth' is the OCR of '5th'."),
+    # --- Selecting strong and fruitful significators (rulings R24-R26, added 2026-11-02) ---
+    _C("KPR4-ELIMINATE", "p.118",
+       '"When majority of the planets are connected with the houses 2, 7 and 11, how to eliminate '
+       'the useless ones and select the useful ones".', source="KPR4"),
+    _C("KPR5-STAR-DWELLERS", "p.208",
+       "If there is planet in the star of the occupant, the planet situated in the star will give "
+       "the results of the Bhava occupied by the lord of the star", source="KPR5"),
+    _C("KPR5-OCCUPANT-EMPTY", "p.209",
+       "If there is no planet in any of the 3 stars of the occupant, then the occupant offers the "
+       "results of the bhava occupied by it and it is stronger than the lord of the house.",
+       source="KPR5"),
+    _C("KPR5-LORD-EMPTY", "p.147",
+       "Planets, if deposited in these stars will refer the matters signified by first house. If "
+       "there is no planet, Sun gives lagna bhava results.", source="KPR5",
+       note="Sun is the lord of an unoccupied lagna in his example: the lord's star-dwellers, else the lord."),
+    _C("KPR6-TAKE-NODE", "p.162", "Kethu in Virgo represents Mercury. Take Kethu.", source="KPR6"),
+    _C("KPR4-NODE-STAR", "p.190",
+       "No planet in 7 lord is Saturn. Kethu represents Saturn Rahu is in Kethu star and Rahu is a "
+       "significator.", source="KPR4"),
+    _C("KPR4-USEFUL", "p.118",
+       "Ruling planets at the moment of judgement must agree. Further the sub lord of each of the "
+       "significators. If a planet is in such a position that its sub lord is connected with the "
+       "houses 2, 7 and 11 then this planet is useful.", source="KPR4"),
+    _C("KPR5-SUB-THRIVE", "p.147",
+       "the depositor in that constellation is in the favourable sub matters indicated by lagna "
+       "will thrive. Ifthe depositor in that constellation is in unfavourable sub the matters "
+       "indicated by the lord of the constellation as per its occupation or ownership will suffer.",
+       source="KPR5"),
+    _C("KPR6-RETRO-FAIL", "p.280",
+       "When the significator touches that point, one has his matter materialised in one\u2019s "
+       "favour if it is in direct motion. One meets with f ailure on that day when the significator "
+       "touches that point and it is retrograde.", source="KPR6",
+       note="'f ailure' is OCR for 'failure'. Stated for the day a significator transits the point."),
+    _C("KPR4-RP-BENEFACTORS", "p.189",
+       "Now the question arises how to select the strongest and the fruitful ones. I have "
+       "discovered that the ruling planets at the moment of judgment will be helpful and they are "
+       "the real benefactors.", source="KPR4"),
 )}

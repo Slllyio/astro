@@ -1,0 +1,164 @@
+{
+ "people": 197,
+ "tier_a": 88,
+ "ages": {
+  "median": 28.2,
+  "q10": 20.8,
+  "q90": 37.7
+ },
+ "coverage": {
+  "r25": {
+   "mean": 0.3704,
+   "hit_rate": 0.3503
+  },
+  "r17": {
+   "mean": 0.5317,
+   "hit_rate": 0.5279
+  }
+ },
+ "saturation": {
+  "significators_of_2_7_11_of_9": {
+   "3": 3,
+   "4": 9,
+   "5": 26,
+   "6": 43,
+   "7": 45,
+   "8": 45,
+   "9": 26
+  },
+  "fruitful_of_9": {
+   "0": 2,
+   "1": 8,
+   "2": 14,
+   "3": 21,
+   "4": 22,
+   "5": 34,
+   "6": 26,
+   "7": 22,
+   "8": 22,
+   "9": 26
+  },
+  "bodies_also_signifying_1_6_10": {
+   "3": 3,
+   "4": 7,
+   "5": 21,
+   "6": 34,
+   "7": 50,
+   "8": 54,
+   "9": 28
+  }
+ },
+ "levels": {
+  "dasa": {
+   "lord_signifies_2_7_11": {
+    "observed": 163,
+    "expected": 159.6
+   },
+   "lord_fruitful_R25": {
+    "observed": 126,
+    "expected": 124.3
+   }
+  },
+  "bhukti": {
+   "lord_signifies_2_7_11": {
+    "observed": 142,
+    "expected": 150.6
+   },
+   "lord_fruitful_R25": {
+    "observed": 113,
+    "expected": 121.7
+   }
+  },
+  "antara": {
+   "lord_signifies_2_7_11": {
+    "observed": 145,
+    "expected": 152.2
+   },
+   "lord_fruitful_R25": {
+    "observed": 120,
+    "expected": 122.5
+   }
+  },
+  "sookshma": {
+   "lord_signifies_2_7_11": {
+    "observed": 153,
+    "expected": 152.3
+   },
+   "lord_fruitful_R25": {
+    "observed": 127,
+    "expected": 122.5
+   }
+  }
+ },
+ "birth_time_sensitivity_tier_a": {
+  "-5 min": {
+   "r25_window_overlap": 0.7329,
+   "event_hit_flips": 0.1477,
+   "csl7_changes": 0.625,
+   "fruitful_set_changes": 0.2045
+  },
+  "-3 min": {
+   "r25_window_overlap": 0.8075,
+   "event_hit_flips": 0.1023,
+   "csl7_changes": 0.3636,
+   "fruitful_set_changes": 0.1364
+  },
+  "-2 min": {
+   "r25_window_overlap": 0.8547,
+   "event_hit_flips": 0.0682,
+   "csl7_changes": 0.2841,
+   "fruitful_set_changes": 0.1023
+  },
+  "-1 min": {
+   "r25_window_overlap": 0.9338,
+   "event_hit_flips": 0.0227,
+   "csl7_changes": 0.1023,
+   "fruitful_set_changes": 0.0341
+  },
+  "+1 min": {
+   "r25_window_overlap": 0.9418,
+   "event_hit_flips": 0.0227,
+   "csl7_changes": 0.1932,
+   "fruitful_set_changes": 0.0227
+  },
+  "+2 min": {
+   "r25_window_overlap": 0.9089,
+   "event_hit_flips": 0.0227,
+   "csl7_changes": 0.3182,
+   "fruitful_set_changes": 0.0227
+  },
+  "+3 min": {
+   "r25_window_overlap": 0.8369,
+   "event_hit_flips": 0.0341,
+   "csl7_changes": 0.4773,
+   "fruitful_set_changes": 0.0795
+  },
+  "+5 min": {
+   "r25_window_overlap": 0.7601,
+   "event_hit_flips": 0.0795,
+   "csl7_changes": 0.6932,
+   "fruitful_set_changes": 0.125
+  }
+ },
+ "same_day_control": {
+  "own_time_hit_rate_r25": 0.3503,
+  "random_time_same_day_hit_rate_r25": 0.3594,
+  "random_time_same_day_coverage_r25": 0.3666
+ },
+ "attenuation_planted_hit_rate": {
+  "up to 0 min": 1.0,
+  "up to 2 min": 0.9595,
+  "up to 5 min": 0.8959,
+  "up to 10 min": 0.8191
+ },
+ "attenuation_note": "chance level = mean R25 coverage; 1.0 = a true KP effect fully recovered",
+ "recorded_minutes_tier_a": {
+  "n": 13408,
+  "on_00_15_30_45": 0.0,
+  "on_multiple_of_5": 0.624,
+  "expected_if_uniform": {
+   "15": 0.0667,
+   "5": 0.2
+  }
+ }
+}

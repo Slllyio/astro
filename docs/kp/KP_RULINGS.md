@@ -345,8 +345,34 @@ read as ladder levels A or B, the occupant levels, which Krishnamurti ranks stro
 elopement, timidity (EZN:pp.750, 790, 881), court punishment (EZN:p.521) and criminal
 prosecution (AFB:p.912). They are a choice, not a gap in the reading: the user can ask for them.
 
-**Not yet encoded.** Tin Win's *KP House Grouping* tables (KNR:pp.151-172), event rows giving the house groups the "cuspal sub lord of the house (mentioned in Column 1)"
-must signify (KNR:p.172). The scans are clean tables but need table OCR and row-by-row checking.
+**Tin Win's House Grouping tables (`app/kp/later/tin_win.py`, added 2026-11-02).** KNR scans
+151-172 (printed pp.70-91): all 457 rows transcribed by eye from the scans, because the book's own
+OCR of these tables is unusable. Every row and what happened to it is in
+`docs/kp/KP_TIN_WIN_ROWS_2026-11-02.md`; 316 are encoded, 141 left out. His method (KNR:p.172):
+"if the cuspal sub lord of the house (mentioned in Column 1) is the significator (by occupation or
+ownership at the planet, star and sub levels) of the house or houses (mentioned in Column 4), then
+the event (shown in Column 3) is promised."
+
+**LR8. "Planet, star and sub levels"** = the houses the CSL itself occupies or owns (levels B, D),
+those its star lord occupies or owns (A, C), and those its own sub-lord occupies or owns.
+
+**LR9. House groups.** A comma list needs any one house, as his own example reads "2,7,11" ("signifies
+the required marriage houses 2 or 7 or 11", same page). "&" joins groups that must all be met. A
+remark that the houses "should operate jointly, not separately" needs two or more. A remark "not
+connected to ..." needs none of them. Bracketed houses are not required: he never says what the
+brackets mean, and leaving them out can only drop a condition, never add one.
+
+**LR10. Left out:** rows that read the Lagna lord rather than a CSL; alternatives ("or", several "&"
+pairs); rows naming a planet, sign, Badhaka or Maraka; starred planet or sign conditions; death and
+danger to life (LR3); moral character and punishment (LR7). Column 5 (the timing houses) is listed,
+not used.
+
+Pre-flight (`docs/kp/kp_tin_win_rates_2026-11-02.json`, 1,000 random births): the median chart meets
+269 of the 310 natal rows, 220 rows fire on over 80% of charts, and opposite rows fire together
+(good and ill health on the 1st cusp for 73% of charts; exam success and failure 83%; child and no
+child 80%; gain and loss of money 80%). Read his way, a CSL carries most houses at three levels, so
+the tables as written do not tell charts apart. They are kept as a faithful record of what he
+wrote, not as a reader to trust.
 
 Pre-flight (`docs/kp/KP_LATER_PREFLIGHT_2026-11-01.md`): on 2,000 random charts the median chart
 fires 28 of the 88 natal later rules; nine rules fire on over 80% of charts.

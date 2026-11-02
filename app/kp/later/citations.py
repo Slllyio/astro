@@ -33,6 +33,12 @@ class LaterCitation:
 
 _C = LaterCitation
 LATER_CITATIONS: Final[dict[str, LaterCitation]] = {c.key: c for c in (
+    _C("KNR-tin_win_method", "KNR", 172,
+       "In the House Grouping Tables, if the cuspal sub lord of the house (mentioned in Column 1) is the "
+       "significator (by occupation or ownership at the planet, star and sub levels) of the house or houses "
+       "(mentioned in Column 4), then the event (shown in Column 3) is promised.",
+       note="Tin Win's own instructions after the tables (printed p.91). Same page: 'marriage is promised, "
+            "if the 7th cuspal sub lord signifies the required marriage houses 2 or 7 or 11' (ruling LR9)."),
     _C("AS6-gulbarga", "AS6", 1603,
        "As per ‘Gulbarga Theory’ if the sub lord of the Horary Number furnished happens to be either the Moon "
        "star lord or the lagna star-lord among the ruling planets also, then the query is to be answered in the "

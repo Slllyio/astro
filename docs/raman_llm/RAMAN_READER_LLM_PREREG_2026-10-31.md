@@ -100,3 +100,24 @@ nf4 pre-quantization with double-quant, bf16 compute and lm_head left unquantize
 same settings train_eval.py applies on load. The reason is download size: 9.9 GB instead of
 29.5 GB on a connection of about 0.2-1 MB/s. Nothing else changes: same split, pass bar,
 LoRA r/alpha, epochs, lr, batch, max length and seed.
+
+## Addendum 2026-11-02 (written after seeing interim numbers on 4 of 5 folds, before final scoring)
+
+The pass bar in section 6 does not change and stays the primary result. Two problems turned up in
+interim checks. Both analyses below were chosen AFTER seeing interim scores, so they are
+exploratory and must be labelled that way in any report.
+
+1. **Section 4's claim does not hold as written.** The script's assertion checks chart ids, and
+   the same nativity appears under different ids. Comparing the signs of the lagna and nine
+   planets: 370 chart ids are 293 nativities, and 115 ids (229 of 651 rows) share a nativity with
+   a chart in another fold. So some rows were scored by a model that trained on that nativity.
+   tools/raman_llm/check_nativity_leak.py. Report the hold-out result on rows whose nativity
+   stays in one fold beside the primary number.
+
+2. **A chart-blind baseline nearly matches the model.** Predicting the most common verdict for
+   the matter (for example "house 2, wealth"), learned from the other folds with no chart input,
+   scored 159/210 on the hold-out rows scored so far against the model's 163/210 and the count's
+   141/210. The model agrees with it on 191 of 210. On rows with a clean nativity: model 102/125,
+   matter prior 101/125, count 84/125. tools/raman_llm/check_matter_prior.py. Report this baseline
+   beside the count. Beating the count is not evidence of reading the chart unless the model also
+   beats this baseline.

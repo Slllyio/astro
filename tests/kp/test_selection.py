@@ -92,3 +92,26 @@ def test_flags_never_filter(birth: Birth) -> None:
         assert set(s.retrograde) <= set(s.selected)
         for p in s.retrograde:
             assert c.planets[p].retrograde or c.planets[c.planets[p].star_lord].retrograde
+
+
+class TestDayFix:
+    def test_day_points_use_fruitful_significators(self) -> None:
+        """R27: every day-fixing position has sign, star and sub lords among the R25 significators."""
+        from app.kp.selection import day_points
+
+        c = cast(BANGALORE)
+        keep = set(select(c, "marriage").selected)
+        pts = day_points(c, "marriage")
+        assert pts and all({d.sign_lord, d.star_lord, d.sub_lord} <= keep for d in pts)
+
+    def test_passes_fall_inside_the_window(self) -> None:
+        """Each Sun or Moon pass starts inside the window and sits on a day-fixing position."""
+        from app.kp.selection import day_fix, day_points
+
+        c = cast(BANGALORE)
+        a, b = c.jd_ut + 30 * 365.2425, c.jd_ut + 31 * 365.2425
+        pts = set(day_points(c, "marriage"))
+        passes = day_fix(c, "marriage", a, b, bodies=("Sun", "Moon"))
+        assert passes
+        for p in passes:
+            assert a <= p.start_jd < p.end_jd <= b and p.division in pts

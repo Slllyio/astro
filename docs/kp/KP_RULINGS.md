@@ -218,6 +218,14 @@ given), each labelled with how many of its lords are strong (R24). Pre-flight
 covers a median 53% of those years, R25 27%, R26 2%. With R26, 41% of charts get no window at
 all, and for 81% the selected planets change if the question is judged one day later.
 
+**R27. Day-fixing by transit (`day_fix`).** "Sun, lord of 2, to fix the day must transit in Venus
+sign, Moon star Saturn or Ketu sub" (KPR4:p.133); "the date of marriage will be on the day when
+Sun transits in Venus sign, Moon star, Rahu sub" (KPR4:p.189). A day point is any of the 249
+divisions whose sign, star and sub lords are all R25 significators of the matter. The R26 cut is
+not applied: at p.189 the sign lord Venus is a strongest significator but not a ruling planet.
+`day_fix` lists when the Sun (or the Moon, if asked) passes those divisions inside a window,
+normally an R17/R25 period. It narrows a period to days; it does not prove the period right.
+
 ## Horary (Reader 6), walled in `app/kp/horary/`
 
 Natal KP code never imports the horary package (tested). Death, lifespan and self-harm questions

@@ -553,4 +553,13 @@ CITATIONS: Final[dict[str, Citation]] = {c.key: c for c in (
        "Now the question arises how to select the strongest and the fruitful ones. I have "
        "discovered that the ruling planets at the moment of judgment will be helpful and they are "
        "the real benefactors.", source="KPR4"),
+    # --- Day-fixing by transit (ruling R27, added 2026-11-02) ---
+    _C("KPR4-DAY-FIX", "p.133",
+       "Sun, lord of 2, to fix the day must transit in Venus sign, Moon star Saturn or Ketu sub.",
+       source="KPR4", note="Venus, Moon, Saturn and Ketu are the favourable significators he selected (same page)."),
+    _C("KPR4-DAY-FIX-2", "p.189",
+       "Hence the date of marriage will be on the day when Sun transits in Venus sign, Moon star, "
+       "Rahu sub, i.e., 25th May 1970", source="KPR4",
+       note="Venus is among his 'strongest' significators on this page but not among the ruling "
+            "planets, so day-fixing draws on the significators before the ruling-planet cut."),
 )}

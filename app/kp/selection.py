@@ -35,6 +35,13 @@ star (failure "when the significator ... is retrograde", KPR6:p.280). Nothing he
 changes a verdict. :func:`selected_windows` narrows the R17 timing candidates to periods whose
 three lords all survive steps 2-3, and reports how many of them are strong.
 
+Day-fixing (R27): inside a selected window the day comes when the Sun (or, for a
+finer day, the Moon) transits a position whose sign, star and sub lords are all
+fruitful significators ("Sun, lord of 2, to fix the day must transit in Venus sign,
+Moon star Saturn or Ketu sub", KPR4:p.133; again KPR4:p.189, where the sign lord
+Venus is a significator but not a ruling planet, so R26 is not applied to it).
+:func:`day_points` lists those positions and :func:`day_fix` finds the passes.
+
 Usage:
     from app.kp.chart import Birth, cast
     from app.kp.selection import select, selected_windows
@@ -49,10 +56,14 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Final
 
+import swisseph as swe
+
 from app.kp.chart import NODES, Birth, KPChart, cast
 from app.kp.dasa import Period, periods_between
 from app.kp.judgment import Matter, _matter
 from app.kp.ruling import ruling_planets
+from app.kp.subs import Division, divisions
+from app.kp.transit import transit_longitude
 from app.kp.significators import (
     houses_signified,
     node_represents,
@@ -62,7 +73,7 @@ from app.kp.significators import (
 CITATIONS: Final[tuple[str, ...]] = (
     "KPR4-ELIMINATE", "KPR5-STAR-DWELLERS", "KPR5-OCCUPANT-EMPTY", "KPR5-LORD-EMPTY", "KPR6-TAKE-NODE", "KPR4-NODE-STAR",
     "KPR4-USEFUL", "KPR5-SUB-THRIVE", "KPR4-RP-BENEFACTORS",
-    "KPR4-SATURN-DELAY", "KPR6-RETRO-FAIL",
+    "KPR4-SATURN-DELAY", "KPR6-RETRO-FAIL", "KPR4-DAY-FIX", "KPR4-DAY-FIX-2",
 )
 
 
@@ -213,7 +224,53 @@ def selected_windows(chart: KPChart, matter: str | Matter, jd0: float, jd1: floa
                  for p in periods_between(chart, jd0, jd1, depth=3) if set(p.lords) <= chosen)
 
 
-__all__ = [
+def day_points(chart: KPChart, matter: str | Matter) -> tuple[Division, ...]:
+    """Divisions whose sign, star and sub lords are all fruitful significators (R27)."""
+    keep = set(select(chart, matter).selected)
+    return tuple(d for d in divisions() if {d.sign_lord, d.star_lord, d.sub_lord} <= keep)
+
+
+@dataclass(frozen=True, slots=True)
+class DayPass:
+    """A body passing a day-fixing position."""
+
+    body: str
+    division: Division
+    start_jd: float
+    end_jd: float
+
+    def label(self) -> str:
+        y, m, d, _ = swe.revjul(self.start_jd, swe.GREG_CAL)
+        dv = self.division
+        return (f"{self.body} in {dv.sign_lord} sign, {dv.star_lord} star, {dv.sub_lord} sub "
+                f"from {y:04d}-{m:02d}-{d:02d}")
+
+
+def day_fix(chart: KPChart, matter: str | Matter, jd0: float, jd1: float, *,
+            bodies: tuple[str, ...] = ("Sun",), step_days: float = 0.05) -> tuple[DayPass, ...]:
+    """When ``bodies`` pass the R27 positions inside ``[jd0, jd1)``, in time order."""
+    pts = day_points(chart, matter)
+    if not pts:
+        return ()
+    out: list[DayPass] = []
+    for b in bodies:
+        cur: tuple[Division, float] | None = None
+        jd = jd0
+        while jd < jd1:
+            lon = transit_longitude(b, jd, chart.node_mode)
+            inside = next((d for d in pts if float(d.start) <= lon < float(d.end)), None)
+            if inside is not None and cur is None:
+                cur = (inside, jd)
+            elif cur is not None and inside is not cur[0]:
+                out.append(DayPass(b, cur[0], cur[1], jd))
+                cur = (inside, jd) if inside is not None else None
+            jd += step_days
+        if cur is not None:
+            out.append(DayPass(b, cur[0], cur[1], jd1))
+    return tuple(sorted(out, key=lambda p: p.start_jd))
+
+
+__all__ = ["day_points", "DayPass", "day_fix", 
     "CITATIONS",
     "Fruit",
     "SelectedWindow",

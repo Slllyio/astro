@@ -97,6 +97,40 @@ until the sub-lords fit, and the significators are chosen by judgment among many
 the outcome, so it gets the rule without the hindsight. This matches the earlier finding on Raman's
 verdicts (his stated reasons fit the known lives; chart-only rules do not generalise).
 
+## Krishnamurti's own fixes, tested
+
+He saw this problem himself. Reader 6 (p.166), on a second-marriage chart: "All the nine planets
+are significators of houses 2 & 11. When many signify, the best course to eliminate the tempters
+and select the beneficial ones is to go for Ruling planets ... at the moment of judgement." The
+Readers give four ways to cut the list. Three can be applied to past charts; each was tried on the
+same 197 marriages (`kp_adb_filter_check_2026-11-02.json`, `tools/kp/adb_filter_check.py`), on top
+of R25:
+
+| Filter (source) | Share of ages 18-45 covered | Marriages caught | Hit ÷ coverage | Random times, same day | People left with no window |
+|---|---|---|---|---|---|
+| R25 alone (KPR4 p.118) | 37.0% | 35.0% | 0.95 | 35.8% | 24 |
+| Drop significators in a retrograde planet's star (KPR6 pp.146-147) | 26.0% | 25.9% | 1.00 | 26.5% | 31 |
+| Drop "tempters": sub-lord also signifies 1, 6 or 10 (KPR5 pp.201-202) | 2.2% | 1.0% | 0.46 | 2.5% | 150 |
+| Strong significators only (KPR4 p.118, KPR5 pp.208-209) | 17.9% | 18.3% | 1.02 | 17.7% | 44 |
+| Retrograde + strong | 13.1% | 14.2% | 1.09 | 13.7% | 54 |
+| All three | 1.0% | 1.0% | 1.01 | 1.0% | 169 |
+
+Every filter shrinks the windows and the catches by the same proportion. None lifts the hit rate
+above the share of life covered, and random birth times on the same day do as well. The "tempter"
+filter shows the saturation again from the other side: sub-lords nearly always also signify a
+denial house, so applying it strictly leaves 150 of 197 people with no marriage window at all,
+though all of them married.
+
+The fourth fix, **ruling planets at the moment of judgment**, is the one he leans on most, and it
+cannot be tested on past lives: it needs the moment a question is put to the astrologer, before
+the event.
+
+**The promise rule fails the same way** (`tools/kp/adb_verdict_check.py`). All 220 of these people
+married, yet the 7th cusp sub-lord says DENIED for 109 of them (50%). Charts cast for random clock
+times on the same day say DENIED 47% of the time. His Saturn-delay sign (Saturn among the fruitful
+significators) is on 70% of these charts (62% at random times), and their median marriage age is
+29.0 against 28.4 without it.
+
 ## What is left untested
 
 Ruling planets at the moment of a question (R26, and horary) cannot be tested retrospectively,

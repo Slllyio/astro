@@ -38,6 +38,7 @@ READER4_FILE: Final[str] = (
 #: p.150 on is two higher than the marker (the book reuses Reader 3 pages); citations use markers. Key = the ``source`` field of a :class:`Citation`.
 PAGE_SOURCES: Final[dict[str, str]] = {
     "KPR1": "data/knowledge_library/sources/kp_reader1_casting/chapter_001_full-text-unsplit.md",
+    "KPR2": "data/knowledge_library/sources/kp_reader2_fundamentals_scan/chapter_001_full-text-unsplit.md",
     "KPR4": READER4_FILE,
     "KPR5": "data/knowledge_library/sources/kp_reader5_transits/chapter_001_full-text-unsplit.md",
     "KPR6": "data/knowledge_library/sources/kp_reader6_horary/chapter_001_full-text-unsplit.md",
@@ -573,4 +574,107 @@ CITATIONS: Final[dict[str, Citation]] = {c.key: c for c in (
     _C("KPR4-MARRIAGE-HOUSES", "p.70",
        "That is why houses 2, 7 and 11 are examined to find out whether— (a) marriage is promised or not",
        source="KPR4", note="Read as the 'favourable' or 'beneficial' houses in the conditions above."),
+# Reader 2 (Fundamental Principles), OCR'd 2026-11-02 from the scans; book page = scan - 8.
+    # The older archive.org text (kp_reader2_fundamentals) has no page markers. Ruling R29.
+    _C("KPR2-QUALITIES", "p.105",
+       "Mesha, Kataka, Thulam and Makara are movable signs, Rishaba, Sim ha, Vrischika and "
+       "Kumbha are fixed ones. Mithuna, Kanya, Dhanus and Meena are common signs.", source="KPR2"),
+    _C("KPR2-ASC-MOVABLE", "p.106",
+       "Movable signs on the Ascendant incline to ailments affecting the head, stomach, kidneys "
+       "and all movable or functional disorders.", source="KPR2"),
+    _C("KPR2-SECOND-MOVABLE", "p.106",
+       "Movable signs on the cusp of the 2nd house help one to earn money through name, fame and "
+       "public recognition.", source="KPR2"),
+    _C("KPR2-THIRD-MOVABLE", "p.106",
+       "If the third house cusps falls in a movable sign, it signifies that the mind is often "
+       "aspiring, active, ambitions, enterprising but changeable.", source="KPR2"),
+    _C("KPR2-ANGLES-MOVABLE", "p.107",
+       "When, in horoscope, the majority of the planets are placed in movable signs or when these "
+       "signs are on the ist, 4th, 7th and 10th houses called angles or kendras, it shows that one "
+       "will hold a prominent position, be it trade, business, politics or profession.",
+       source="KPR2", note="'ist' = 1st (OCR)."),
+    _C("KPR2-ELEVENTH-JUPITER", "p.107",
+       "If Jupiter occupies the 11th house falling in a movable sign, it indicates executive "
+       "ability and progress ; if this happens to be a fixed sign, jealousy and pride among "
+       "friends is the result ; If it is a common sign, one may have friends who are "
+       "scientifically inclined or religious minded.", source="KPR2"),
+    _C("KPR2-ELEVENTH-SATURN", "p.108",
+       "Saturn placed in the 11th house in a fixed sign signifies that there will be delay and "
+       "hindrance through friends. If the 11th cusp is in a common sign and Saturn is also there, "
+       "one may not achieve one's hopes.", source="KPR2"),
+    _C("KPR2-THIRD-FIXED", "p.109",
+       "If the third house falls in a fixed sign, then the native will have a fixed and rigid "
+       "attitude.", source="KPR2"),
+    _C("KPR2-ANGLES-FIXED", "p.110",
+       "When fixed signs are on the cusps of the ist, 4th 7th and 10th houses in a horoscope or "
+       "most of the planets are found in in fixed signs, one will be firm, determined, dignified "
+       "and self-reliant.", source="KPR2"),
+    _C("KPR2-THIRD-COMMON", "p.112",
+       "Common signs on the 3rd house cusp make the mind more receptive, methodical, systematic "
+       "and easily affected by surroundings.", source="KPR2"),
+    _C("KPR2-PARTNERSHIP", "p.112",
+       "If the 1st and 7th lords are in harmonious aspect or in parivartana (mutUal exchange), "
+       "partnership is advisable ; a good mutual working arrangement is indicated. If the cusp of "
+       "the 11th house and the lord of 11 is in common signs, one will acquire doubtful "
+       "friendships.", source="KPR2"),
+    _C("KPR2-ANGLES-COMMON", "p.112",
+       "When the common signs are on the cusps of the angles (1st 4th, 7th and 10th houses in the "
+       "chart) or when a number of planets are posited in these signs, the mind is often fickle, "
+       "lightly superficial, wavering and versatile.", source="KPR2"),
+    _C("KPR2-FRUITFUL-SIGNS", "p.113",
+       "Cancer (Kataka), Scorpio (Vrischika) and Pisces (Meena) are said to be fruitful in nature, "
+       "all watery signs being fruitful. Taurus (Rishaba) Libra (Thulam), Capricorn (Makara) and "
+       "Sagittarius (Dhanus) are said to be semi-fruitful.", source="KPR2"),
+    _C("KPR2-FRUITFUL-RULES", "p.113",
+       "Fruitful signs in the cusps of the 5th and 7th houses an their lords in fruitful signs, the "
+       "indication is an early union Barren signs in the cusps of the 5th and 1st houses indicate "
+       "that the native is not likely to marry in time (provided other testimonies also point to "
+       "the same view). Fruitful signs covering the 11th and 5th houses and the lords of 5 and 11 "
+       "in fruitful signs promise progeny. Barren signs in the cusps of the ist, 5th and 11th or "
+       "the lords of these in barren signs lessen chances of children.", source="KPR2"),
+    _C("KPR2-BARREN-SIGNS", "p.113",
+       "Aries (Mesha), Gemini (Mithuna), Leo (Simha) and Virgo (Kanya) are called barren or "
+       "sterile signs.", source="KPR2",
+       note="The 5th-house chapter lists only Aries, Leo and Virgo; this definition is used (R29)."),
+    _C("KPR2-NO-CHILDREN", "p.113",
+       "Barren signs on the cusps of the 5th and 1ith house (11th house being 5th to the partner) "
+       "and the lords of these not fruitful signs, Moon not in a fruitful sign, the lagna not "
+       "fruitful sign the lord of lagna not occupying a fruitful sign a no fruitful planet in 5th "
+       "or 11th houses are indications of no children.", source="KPR2", note="'1ith' = 11th (OCR)."),
+    _C("KPR2-MUTE-SIGNS", "p.114",
+       "All watery signs (namely, Kataka, Vrischika and Meena) are mute signs.", source="KPR2"),
+    _C("KPR2-SPEECH", "p.114",
+       "If Mercury being lord of 6 is in the 2nd house in a mute sign or the lord of 6 is in the "
+       "2nd in a mute sign afflicted by Mars or Saturn, perceptible stammer, lisp or other "
+       "impediment will be the result.", source="KPR2"),
+    _C("KPR2-SPEECH-2", "p.114",
+       "When Mercury happens to be in a mute sign in opposition to Moon, the native will have a "
+       "defect in speech. Saturn in the lagna in a mute sign causes an impediment in speech. The "
+       "2nd house governs vocal organs. If a voice sign be found in the 2nd house in a horoscope, "
+       "more especially if Venus or Mercury be therein free from affliction, then eloquence or "
+       "some vocal gift may be predicted.", source="KPR2"),
+    _C("KPR2-VIOLENT-SIGNS", "p.114",
+       "Aries (Mesha), as also Scorpio (Virschika) are said to be violent signs.", source="KPR2"),
+    _C("KPR2-HUMAN-SIGNS", "p.115",
+       "Gemini (Mithuna) Virgo (Kenya), Aquarius (Kumbha) and the ist half of Sagittarius "
+       "(Dhanus) are called human or humane signs", source="KPR2"),
+    _C("KPR2-VOICE-SIGNS", "p.115",
+       "Gemini (Mithuna), Libra (Thulam) and Aquarius (Kumbha), which are airy signs, are also "
+       "called musical. or voice signs.", source="KPR2"),
+    _C("KPR2-BESTIAL-SIGNS", "p.115",
+       "Mesha (Ram), Rishaba (bull), Simha (Lion), Makara (goat) and the 2nd half of Dhanus "
+       "symbolised by the figures of animals whose names they bear are the bestial or four-legged "
+       "signs.", source="KPR2"),
+    _C("KPR2-DUAL-SIGNS", "p.116",
+       "Gemini (Mithuna), Sagittarius (Dhanus and Pisces (Meena) are called twin signs or dual "
+       "signs meaning plurality.", source="KPR2"),
+    _C("KPR2-FIFTH-HOUSE", "p.287",
+       "Fruitful signs (Cancer-Kataka, Scorpio-Vrischika and Pisces-Meena) on the cusp of the 5th "
+       "or the 11th promise children, if the other testimonies also lend support.", source="KPR2"),
+    _C("KPR2-MOON-FRUITFUL", "p.357",
+       "Sun is a fiery planet whereas Moon is a watery one; hence Moon is a fruitful planet.",
+       source="KPR2"),
+    _C("KPR2-JUPITER-FRUITFUL", "p.402",
+       "Jupiter is a fiery, noble, benevolent, fruitful, masculine, jovial, buoyant, optimistic, "
+       "expansive, positive and dignified planet.", source="KPR2"),
 )}

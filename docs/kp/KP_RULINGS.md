@@ -18,7 +18,7 @@ every other engine, and the KP caster restores Lahiri as swisseph's global mode 
 | Source | Library id | Used for |
 |---|---|---|
 | Reader 1, Casting the Horoscope | `kp_reader1_casting` (OCR 2026-11-01) | Placidus, ayanamsa table (pinned) |
-| Reader 2, Fundamental Principles | `kp_reader2_fundamentals` | not cited |
+| Reader 2, Fundamental Principles | `kp_reader2_fundamentals_scan` (OCR 2026-11-02; the older archive.org text has no pages) | R29 sign classes and sign rules, descriptive only |
 | Reader 3, Predictive Stellar Astrology | `kp_reader3_predictive` | **general authority** |
 | Reader 4, Marriage, Married Life & Children | `kp_reader4_marriage` (OCR 2026-11-01) | marriage, children |
 | Reader 5, Transits | `kp_reader5_transits` (OCR 2026-11-01) | transits; significator table (pinned) |
@@ -242,6 +242,34 @@ two ways), (x)-(z) and late (b), (e), (g) (Western aspects, Uranus, orbs).
 Pre-flight (`docs/kp/kp_marriage_condition_rates_2026-11-02.json`, 2,000 random births): 94.7%
 of charts meet at least one "youth" condition, 48.5% at least one "late" one, and 46.8% meet both.
 Because the list is joined by "or", it says little about any one chart.
+
+**R29. Reader 2's sign classes and sign rules (`fundamentals.py`, descriptive only).** Reader 2 is
+mostly signification lists and philosophy; its chapter on the classes of signs (KPR2:pp.105-116)
+is the one place with rules a chart can be checked against. Encoded: the classes (movable, fixed,
+common; fruitful, semi-fruitful, barren; mute, violent, human, voice, bestial, dual) and 28 rules
+on the angles, single cusps, the 11th house, partnership, marriage, children and speech. Like R28
+they never touch a KP verdict, window or selection. Readings: "cusp" is the KP (Placidus) cusp; a
+house's lord is the lord of its cusp sign; "in the Nth house" is the KP bhava; "majority of the
+planets" is five or more of the nine bodies; "fruitful planet" is the Moon (KPR2:p.357) or Jupiter
+(KPR2:p.402), the two Reader 2 calls fruitful; Mercury "in opposition to Moon" is the Moon in the
+7th sign from Mercury; "barren" follows the signs section (Aries, Gemini, Leo, Virgo; the 5th-house
+chapter, KPR2:p.287, omits Gemini); semi-fruitful signs are not fruitful. Left out, each with its
+reason in `EXCLUDED`: every condition resting on "afflicted", "bad aspect", "harmonious aspect" or
+"free from affliction" (not defined in Reader 2), and the common-sign rule's "a number of planets".
+
+**Three of the rules cannot fire as printed.** The 5th and 11th cusps are always opposite signs,
+and the sign opposite a watery sign is never watery, nor the sign opposite a barren sign barren.
+So "fruitful signs covering the 11th and 5th houses" (progeny promised), the "no children"
+conjunction (barren 5th and 11th) and the all-barren arm of "barren signs in the cusps of the 1st,
+5th and 11th" never hold. They are kept as printed, not repaired. The 5th-house chapter gives the
+promise with "or" (KPR2:p.287), encoded as `progeny.promised_either`. "Fruitful signs in the
+cusps of the 5th and 7th" needs the two cusps 120 degrees apart and fired on none of 2,000 charts.
+
+Pre-flight (`docs/kp/kp_fundamentals_rates_2026-11-02.json`, 2,000 random births): the cusp-quality
+rules fire on about a third of charts each (as they must: a cusp is in one of three qualities);
+movable, fixed or common angles about a quarter each; voice sign on the 2nd 24%, with Venus or
+Mercury in the 2nd 4%; married late 6%; children lessened 6%; children promised (5th or 11th
+fruitful) 49%; the three speech rules 0.6-3%.
 
 ## Horary (Reader 6), walled in `app/kp/horary/`
 

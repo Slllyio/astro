@@ -14,7 +14,7 @@ SEED = 20261102
 ROUNDS = 300
 PARAMS = dict(objective="binary", learning_rate=0.05, num_leaves=8, min_data_in_leaf=50,
               feature_fraction=0.5, bagging_fraction=0.8, bagging_freq=1, lambda_l2=1.0,
-              seed=SEED, verbose=-1, num_threads=4)
+              seed=SEED, verbose=-1, num_threads=1)
 
 
 def oof(X: np.ndarray, y: np.ndarray, folds: list[tuple[np.ndarray, np.ndarray]], params=None) -> np.ndarray:

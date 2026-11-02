@@ -38,6 +38,11 @@ def _append(path: Path, rec: dict) -> None:
         f.write(json.dumps(rec) + "\n")
 
 
+def _todo(path: Path, n: int, a) -> list[int]:
+    done = {r["run"] for r in _runs(path)}
+    return [i for i in range(n) if i not in done and i % a.nshards == a.shard]
+
+
 def random_time_jd(people: pd.DataFrame, rng) -> np.ndarray:
     """Null N1: a uniform random clock time on the real local birth date."""
     day0 = np.array([swe.julday(y, m, d, 0.0 - tz, swe.GREG_CAL)
@@ -197,7 +202,6 @@ def stage_gauquelin(a) -> dict:
         best = max(fd, key=fd.get)
         return {"d_full": full, "scan": fd[best], "scan_family": best, "d_fam": fd}
 
-    obs = stat(F.natal_G(g)[0])
     runs_path = a.out / "gauquelin_runs.jsonl"
     rng = np.random.default_rng(E.SEED + 1)
     done = _runs(runs_path)
@@ -206,6 +210,9 @@ def stage_gauquelin(a) -> dict:
         r = stat(F.natal_G(g, random_time_jd(g, rng_i))[0])
         _append(runs_path, {"run": i, **r})
         print(f"[gauquelin] N1 run {i}: full {r['d_full']:+.4f} scan {r['scan']:+.4f}", flush=True)
+    if a.runs_only:
+        return {}
+    obs = stat(F.natal_G(g)[0])
     null = _runs(runs_path)
     res = {"n": int(len(y)), "n_sports": int(y.sum()), "auc_base": ab, "observed": obs,
            "p_full": p_value(obs["d_full"], [r["d_full"] for r in null]),
@@ -239,11 +246,13 @@ def stage_plants_A(a) -> dict:
         tA = TaskA(base, pd.DataFrame({"plant": labels[0]}, index=p.index), {"plant": "plant"},
                    p.quality_tier.to_numpy())
         runs_path = a.out / f"plants_A_{name}_runs.jsonl"
-        for i in range(len(_runs(runs_path)), 20):
+        for i in _todo(runs_path, 20, a):
             perm, _ = n2_perm(p, np.random.default_rng([E.SEED, 3, i]))
             s, _ = tA.stats(astro[perm], fams)
             _append(runs_path, {"run": i, "d_full": s["pooled"]["d_full"], "scan": s["pooled"]["scan"]})
             print(f"[plants_A {name}] null {i}", flush=True)
+        if a.runs_only:
+            continue
         null = _runs(runs_path)
         reps = []
         for k, lab in enumerate(labels + nulls_lab):
@@ -305,15 +314,17 @@ def _summ_null(obs: dict, null: list[dict], sesoi: float, key_list) -> dict:
 def stage_phase2_B(a) -> dict:
     p, B, tB = _load_B(a.cache)
     case = tB.B.case.to_numpy()
-    obs = tB.stats(case)
-    per_set = np.array(obs.pop("_per_set"))
-    lo, hi = E.boot_ci(per_set, tB.set_person, np.random.default_rng([E.SEED, 6]))
     runs_path = a.out / "phase2_B_N3_runs.jsonl"
-    for i in range(len(_runs(runs_path)), 100):
+    for i in _todo(runs_path, 100, a):
         s = tB.stats(permute_within_sets(tB.B, np.random.default_rng([E.SEED, 7, i])))
         s.pop("_per_set")
         _append(runs_path, {"run": i, **s})
         print(f"[phase2_B] N3 run {i}: full {s['pooled']['d_full']:+.4f}", flush=True)
+    if a.runs_only:
+        return {}
+    obs = tB.stats(case)
+    per_set = np.array(obs.pop("_per_set"))
+    lo, hi = E.boot_ci(per_set, tB.set_person, np.random.default_rng([E.SEED, 6]))
     null = _runs(runs_path)
     res = {"observed": obs, "ci95_d_full": [lo, hi], "n_null": len(null),
            "pooled": _summ_null(obs["pooled"], [n["pooled"] for n in null], 0.03, ("d_full", "scan")),
@@ -331,6 +342,16 @@ def stage_phase2_A(a) -> dict:
     cols = list(astro_df.columns)
     fams = {k: [cols.index(c) for c in v] for k, v in F.natal_families(cols).items()}
     tA = TaskA(base, Y, F.AREA_OF_TARGET, p.quality_tier.to_numpy())
+    runs_path = a.out / "phase2_A_N2_runs.jsonl"
+    A = astro_df.to_numpy(float)
+    for i in _todo(runs_path, 40, a):
+        perm, alone = n2_perm(p, np.random.default_rng([E.SEED, 9, i]))
+        s, _ = tA.stats(A[perm], fams)
+        _append(runs_path, {"run": i, "alone_share": alone, "pooled": s["pooled"], "areas": s["areas"],
+                            "targets": {t: v["auc_full"] - v["auc_base"] for t, v in s["targets"].items()}})
+        print(f"[phase2_A] N2 run {i}: full {s['pooled']['d_full']:+.4f} scan {s['pooled']['scan']:+.4f}", flush=True)
+    if a.runs_only:
+        return {}
     obs, oofs = tA.stats(astro_df.to_numpy(float), fams, keep_oof=True)
     rng = np.random.default_rng([E.SEED, 8])
     for t, pf in oofs.items():
@@ -338,20 +359,63 @@ def stage_phase2_A(a) -> dict:
         obs["targets"][t]["ci95_d_full"] = E.auc_boot_ci(y, pf, pb, rng, reps=500)
         obs["targets"][t]["n_pos"], obs["targets"][t]["n"] = int(y.sum()), int(len(y))
     (a.out / "phase2_A_observed.json").write_text(json.dumps(obs, indent=1))
-    runs_path = a.out / "phase2_A_N2_runs.jsonl"
-    A = astro_df.to_numpy(float)
-    for i in range(len(_runs(runs_path)), 40):
-        perm, alone = n2_perm(p, np.random.default_rng([E.SEED, 9, i]))
-        s, _ = tA.stats(A[perm], fams)
-        _append(runs_path, {"run": i, "alone_share": alone, "pooled": s["pooled"], "areas": s["areas"],
-                            "targets": {t: v["auc_full"] - v["auc_base"] for t, v in s["targets"].items()}})
-        print(f"[phase2_A] N2 run {i}: full {s['pooled']['d_full']:+.4f} scan {s['pooled']['scan']:+.4f}", flush=True)
     null = _runs(runs_path)
     res = {"observed": obs, "n_null": len(null), "alone_share": null[0]["alone_share"] if null else None,
            "pooled": _summ_null(obs["pooled"], [n["pooled"] for n in null], 0.02, ("d_full", "scan")),
            "areas": {ar: _summ_null(obs["areas"][ar], [n["areas"][ar] for n in null], 0.02, ("d_full", "scan"))
                      for ar in obs["areas"]}}
     return res
+
+
+def stage_n1_B(a) -> dict:
+    """Null N1 for Task B (secondary): same-day random birth times; store activation tiers kept."""
+    from tools.predictive.build import timing_features
+    p, B, tB = _load_B(a.cache)
+    obs = json.loads((a.out / "phase2_B_results.json").read_text())["observed"]
+    case = tB.B.case.to_numpy()
+    sub = p.loc[tB.B.person_id.unique()]
+    store_cols = [c for c in tB.B.columns if c.startswith("s_")]
+    runs_path = a.out / "phase2_B_N1_runs.jsonl"
+    for i in _todo(runs_path, 20, a):
+        jd = random_time_jd(sub, np.random.default_rng([E.SEED, 10, i]))
+        _G, pos = F.natal_G(sub, jd)
+        _k, sig = F.kp_natal(sub, jd)
+        rows = tB.B[["set_id", "person_id", "etype", "jd", "case"]]
+        X = timing_features(rows, sub.assign(jd_ut=jd), pos, sig, None, None)
+        X[store_cols] = tB.B[store_cols].to_numpy()
+        s = tB.stats(case, X)
+        s.pop("_per_set")
+        _append(runs_path, {"run": i, **s})
+        print(f"[n1_B] run {i}: full {s['pooled']['d_full']:+.4f}", flush=True)
+    null = _runs(runs_path)
+    return {"n_null": len(null), "pooled": _summ_null(obs["pooled"], [n["pooled"] for n in null], 0.03, ("d_full", "scan")),
+            "areas": {ar: _summ_null(obs["areas"][ar], [n["areas"][ar] for n in null], 0.03, ("d_full", "scan"))
+                      for ar in obs["areas"]}}
+
+
+def stage_n1_A(a) -> dict:
+    """Null N1 for Task A (secondary): G and KP recomputed at same-day random times; Raman/Parashara kept."""
+    p, base, G, T = _load_A(a.cache)
+    Y = pd.read_parquet(a.cache / "targets_A.parquet").loc[p.index]
+    obs = json.loads((a.out / "phase2_A_observed.json").read_text())
+    keep = [c for c in T.columns if not c.startswith("t_kp_")]
+    tA = TaskA(base, Y, F.AREA_OF_TARGET, p.quality_tier.to_numpy())
+    runs_path = a.out / "phase2_A_N1_runs.jsonl"
+    for i in _todo(runs_path, 20, a):
+        jd = random_time_jd(p, np.random.default_rng([E.SEED, 11, i]))
+        Gr, _ = F.natal_G(p, jd)
+        kp, _ = F.kp_natal(p, jd)
+        astro_df = pd.concat([Gr, T[keep], kp.reindex(columns=[c for c in T.columns if c.startswith("t_kp_")],
+                                                         fill_value=0)], axis=1)[list(G.columns) + list(T.columns)]
+        cols = list(astro_df.columns)
+        fams = {k: [cols.index(c) for c in v] for k, v in F.natal_families(cols).items()}
+        s, _ = tA.stats(astro_df.fillna(0).to_numpy(float), fams)
+        _append(runs_path, {"run": i, "pooled": s["pooled"], "areas": s["areas"]})
+        print(f"[n1_A] run {i}: full {s['pooled']['d_full']:+.4f}", flush=True)
+    null = _runs(runs_path)
+    return {"n_null": len(null), "pooled": _summ_null(obs["pooled"], [n["pooled"] for n in null], 0.02, ("d_full", "scan")),
+            "areas": {ar: _summ_null(obs["areas"][ar], [n["areas"][ar] for n in null], 0.02, ("d_full", "scan"))
+                      for ar in obs["areas"]}}
 
 
 def main(argv=None) -> int:
@@ -362,12 +426,18 @@ def main(argv=None) -> int:
     ap.add_argument("--gauq", type=Path)
     ap.add_argument("--overlap", type=Path)
     ap.add_argument("--n1", type=int, default=0)
+    ap.add_argument("--shard", type=int, default=0)
+    ap.add_argument("--nshards", type=int, default=1)
+    ap.add_argument("--runs-only", action="store_true")
     a = ap.parse_args(argv)
     a.out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     fn = {"gauquelin": stage_gauquelin, "plants_A": stage_plants_A, "plants_B": stage_plants_B,
-          "phase2_B": stage_phase2_B, "phase2_A": stage_phase2_A}[a.stage]
+          "phase2_B": stage_phase2_B, "phase2_A": stage_phase2_A,
+          "n1_B": stage_n1_B, "n1_A": stage_n1_A}[a.stage]
     res = fn(a)
+    if a.runs_only:
+        return 0
     res["seconds"] = round(time.time() - t0)
     (a.out / f"{a.stage}_results.json").write_text(json.dumps(res, indent=1, default=float))
     print(json.dumps({k: v for k, v in res.items() if k not in ("observed", "replicates")}, indent=1, default=float)[:3000])

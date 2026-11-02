@@ -160,3 +160,58 @@ alone fails while the plants pass, that is recorded and Phase 2 goes ahead, with
 Every number above, pass or fail, per target and per family, with N1, in
 `docs/predictive/PREDICTIVE_RESULTS_*.md`. No change of target, feature, model, null or rule after
 this commit without a dated addendum written before the affected number is computed.
+
+## Addendum 1 (2026-11-02, before any feature or number): outcome questions, reporting, success
+
+Written after an external audit of the project synthesis, which the owner shared and asked to be
+folded in. Still no feature has been computed against any outcome.
+
+**1. Results by life area, each with its own question.** Every result is reported per area as well
+as pooled, each area with its question, its sample size, its smallest detectable effect and a 95%
+interval:
+
+| Area | Natal question (Task A) | Timing question (Task B event types) |
+|---|---|---|
+| Career | Does the chart separate actors, public office holders, writers, sports people, military, music and law from everyone else? (A1-A7) | Does the chart sky at a career event (new job, prize, publication, retirement, firing) differ from the same person's other dates? (house 10) |
+| Marriage and relationships | Does the chart separate people with noted divorces? (A8) | Same, for marriage, divorce, start or end of a relationship (house 7) |
+| Children | More than 3 children? (A9) | Children born, adopted, miscarriage (house 5) |
+| Health | Cancer diagnosis? (A10) | Illness, diagnosis, surgery, accident (house 6) |
+| Life span and violent death | Short life, homicide victim (A11, A12) | not tested within person (see Task B) |
+| Parents, siblings, money, law | not tested natally | Death of a parent (4, 9), sibling (3), money (2, 11), arrest (12), inheritance (8): reported, too small to judge alone |
+
+**2. Uncertainty and equivalence, not only p-values.** For every target and every area: the
+observed Δ, the null mean, a 95% interval for Δ by person-level bootstrap (1,000 resamples), and an
+equivalence verdict: BOUNDED_NULL only if the whole interval lies below the SESOI (two one-sided
+tests at 5%), UNDERPOWERED if it does not. The smallest detectable effect at 80% power is computed
+from the null runs and printed beside each result.
+
+**3. Birth-time accuracy.** Every result is also reported separately for tier A (minute-exact birth
+certificate times) and tier B (quarter-hour times).
+
+**4. Person-level separation.** Already required: no person appears in both a training and a test
+fold, and the sealed sets contain no development person (tier C is disjoint from A and B).
+
+**5. What a positive result looks like (stated as plainly as the failure).** The test is built so
+that astrology can win:
+- **Signal found:** for any area, the learned model (or one feature family) beats its null at
+  p < 0.025 with Δ at least SESOI above the null mean. That is reported as "the birth sky carries
+  information about <area> that season, cohort, age and place do not explain", in the summary's
+  first line, with the features responsible.
+- **Credit to the texts:** if the winning family is a Track T family (Raman rules, Parashara
+  verdicts, KP significators or activation tiers), the rules carrying the weight are listed with
+  their book citations, and the result is reported as support for those rules.
+- **Then confirmation:** C1 is read once with the frozen model; C2 replicates. A confirmed result
+  goes into the app as a measured, cited finding, with its size stated.
+- A Track G win with no text counterpart is still reported as a signal, and studied before any use.
+- Failure is reported only within these bounds: "these systems and this learned model did not
+  find a signal larger than X in this data". It is not reported as "astrology does not work".
+
+**6. Prospective tests (from the audit's strongest recommendation).** The forward log is widened:
+besides KP ruling-planet questions, it accepts dasa and transit predictions for consenting people,
+each locked (hashed and committed) with its predicted event, area and time window before the
+window opens, and scored against an outcome recorded after it closes. No such person's data is
+used now; the tool is built so it can start whenever someone consents.
+
+**7. Noted for later, not in Phases 0-2:** a prospective multi-system challenge (human Vedic, KP and
+Western astrologers, AI readers, a chart-blind baseline and a random baseline, same anonymised
+cases, predictions locked, same scoring). It needs outside participants and is the owner's call.

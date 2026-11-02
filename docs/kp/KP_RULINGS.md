@@ -226,6 +226,23 @@ not applied: at p.189 the sign lord Venus is a strongest significator but not a 
 `day_fix` lists when the Sun (or the Moon, if asked) passes those divisions inside a window,
 normally an R17/R25 period. It narrows a period to days; it does not prove the period right.
 
+**R28. The traditional marriage conditions (`marriage_conditions.py`, descriptive only).** Reader 4
+lists, "according to Hindu system", when "Marriage is celebrated in youth or in proper age"
+(KPR4:pp.70-71, conditions (a)-(w), then (x)-(z) "according to Western System") and when
+"Marriage is Promised but it comes off late in life" (KPR4:pp.72-73, (a)-(g)). He gives them as
+the tradition, not as his method, so they never touch a KP verdict, window or selection. Readings:
+houses by sign from the Lagna sign, "conjoined" = same sign, aspects = full sign aspects (Saturn
+3/7/10, Mars 4/7/8, Jupiter 5/7/9, others 7); condition (b) alone uses the KP 7th cusp, because
+it names the cusp. Benefics are Jupiter, Venus, Mercury and the Moon. A "favourable" or
+"beneficial" house is the 2nd, 7th or 11th ("houses 2, 7 and 11 are examined", KPR4:p.70).
+Condition (q) follows KPR4 ("exalted"); KPR3 prints "strong". Left out, each with its reason in
+`EXCLUDED`: youth (f), (j), (k), (r) (undefined strength or "favourable connection"), (s) (reads
+two ways), (x)-(z) and late (b), (e), (g) (Western aspects, Uranus, orbs).
+
+Pre-flight (`docs/kp/kp_marriage_condition_rates_2026-11-02.json`, 2,000 random births): 94.7%
+of charts meet at least one "youth" condition, 48.5% at least one "late" one, and 46.8% meet both.
+Because the list is joined by "or", it says little about any one chart.
+
 ## Horary (Reader 6), walled in `app/kp/horary/`
 
 Natal KP code never imports the horary package (tested). Death, lifespan and self-harm questions

@@ -562,4 +562,15 @@ CITATIONS: Final[dict[str, Citation]] = {c.key: c for c in (
        "Rahu sub, i.e., 25th May 1970", source="KPR4",
        note="Venus is among his 'strongest' significators on this page but not among the ruling "
             "planets, so day-fixing draws on the significators before the ruling-planet cut."),
+    # --- Traditional marriage conditions, descriptive only (ruling R28, added 2026-11-02) ---
+    _C("KPR4-MARRIAGE-YOUTH", "p.70",
+       "Marriage is celebrated in youth or in proper age if (according to Hindu system)", source="KPR4",
+       note="Conditions (a)-(w), then (x)-(z) 'according to Western System'. Same list in KPR3, where "
+            "(q) reads 'Jupiter is strong in the 7th house' instead of 'exalted'."),
+    _C("KPR4-MARRIAGE-LATE", "p.72",
+       "Marriage is Promised but it comes off late in life:", source="KPR4",
+       note="Conditions (a)-(g); (b), (e) and (g) use Jupiter or Uranus aspects."),
+    _C("KPR4-MARRIAGE-HOUSES", "p.70",
+       "That is why houses 2, 7 and 11 are examined to find out whether— (a) marriage is promised or not",
+       source="KPR4", note="Read as the 'favourable' or 'beneficial' houses in the conditions above."),
 )}

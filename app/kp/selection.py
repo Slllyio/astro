@@ -62,13 +62,13 @@ from app.kp.chart import NODES, Birth, KPChart, cast
 from app.kp.dasa import Period, periods_between
 from app.kp.judgment import Matter, _matter
 from app.kp.ruling import ruling_planets
-from app.kp.subs import Division, divisions
-from app.kp.transit import transit_longitude
 from app.kp.significators import (
     houses_signified,
     node_represents,
     planet_significations,
 )
+from app.kp.subs import Division, divisions
+from app.kp.transit import transit_longitude
 
 CITATIONS: Final[tuple[str, ...]] = (
     "KPR4-ELIMINATE", "KPR5-STAR-DWELLERS", "KPR5-OCCUPANT-EMPTY", "KPR5-LORD-EMPTY", "KPR6-TAKE-NODE", "KPR4-NODE-STAR",

@@ -1,0 +1,332 @@
+{
+ "run": "data\\raman_llm\\runs\\v1",
+ "rows_scored": 650,
+ "complete": true,
+ "subsets": {
+  "PRIMARY hold-outs H1-H5": {
+   "LLM (fine-tuned, out-of-fold)": {
+    "n": 262,
+    "exact": 201,
+    "within1": 213,
+    "real_errors": 49,
+    "says": {
+     "favourable": 168,
+     "mixed": 0,
+     "afflicted": 94
+    }
+   },
+   "count B3": {
+    "n": 262,
+    "exact": 171,
+    "within1": 183,
+    "real_errors": 79,
+    "says": {
+     "favourable": 178,
+     "mixed": 0,
+     "afflicted": 84
+    }
+   },
+   "always favourable": {
+    "n": 262,
+    "exact": 164,
+    "within1": 176,
+    "real_errors": 86,
+    "says": {
+     "favourable": 262,
+     "mixed": 0,
+     "afflicted": 0
+    }
+   },
+   "engine clause judge": {
+    "n": 262,
+    "exact": 117,
+    "within1": 216,
+    "real_errors": 46,
+    "says": {
+     "favourable": 104,
+     "mixed": 93,
+     "afflicted": 65
+    }
+   },
+   "LLM untrained base": {
+    "n": 262,
+    "exact": 94,
+    "within1": 126,
+    "real_errors": 136,
+    "says": {
+     "favourable": 17,
+     "mixed": 24,
+     "afflicted": 221
+    }
+   },
+   "LLM vs count McNemar": {
+    "a_only": 40,
+    "b_only": 10,
+    "p": 0.0
+   },
+   "outcome": "SIGNAL (beats the count)"
+  },
+  "H4+H5 (the 40/64 comparison)": {
+   "LLM (fine-tuned, out-of-fold)": {
+    "n": 64,
+    "exact": 46,
+    "within1": 51,
+    "real_errors": 13,
+    "says": {
+     "favourable": 42,
+     "mixed": 0,
+     "afflicted": 22
+    }
+   },
+   "count B3": {
+    "n": 64,
+    "exact": 40,
+    "within1": 45,
+    "real_errors": 19,
+    "says": {
+     "favourable": 47,
+     "mixed": 0,
+     "afflicted": 17
+    }
+   },
+   "always favourable": {
+    "n": 64,
+    "exact": 38,
+    "within1": 43,
+    "real_errors": 21,
+    "says": {
+     "favourable": 64,
+     "mixed": 0,
+     "afflicted": 0
+    }
+   },
+   "engine clause judge": {
+    "n": 64,
+    "exact": 30,
+    "within1": 56,
+    "real_errors": 8,
+    "says": {
+     "favourable": 26,
+     "mixed": 25,
+     "afflicted": 13
+    }
+   },
+   "LLM untrained base": {
+    "n": 64,
+    "exact": 19,
+    "within1": 37,
+    "real_errors": 27,
+    "says": {
+     "favourable": 3,
+     "mixed": 13,
+     "afflicted": 48
+    }
+   },
+   "LLM vs count McNemar": {
+    "a_only": 8,
+    "b_only": 2,
+    "p": 0.1094
+   },
+   "outcome": "NULL (no detectable difference from the count)"
+  },
+  "H1-H3": {
+   "LLM (fine-tuned, out-of-fold)": {
+    "n": 198,
+    "exact": 155,
+    "within1": 162,
+    "real_errors": 36,
+    "says": {
+     "favourable": 126,
+     "mixed": 0,
+     "afflicted": 72
+    }
+   },
+   "count B3": {
+    "n": 198,
+    "exact": 131,
+    "within1": 138,
+    "real_errors": 60,
+    "says": {
+     "favourable": 131,
+     "mixed": 0,
+     "afflicted": 67
+    }
+   },
+   "always favourable": {
+    "n": 198,
+    "exact": 126,
+    "within1": 133,
+    "real_errors": 65,
+    "says": {
+     "favourable": 198,
+     "mixed": 0,
+     "afflicted": 0
+    }
+   },
+   "engine clause judge": {
+    "n": 198,
+    "exact": 87,
+    "within1": 160,
+    "real_errors": 38,
+    "says": {
+     "favourable": 78,
+     "mixed": 68,
+     "afflicted": 52
+    }
+   },
+   "LLM untrained base": {
+    "n": 198,
+    "exact": 75,
+    "within1": 89,
+    "real_errors": 109,
+    "says": {
+     "favourable": 14,
+     "mixed": 11,
+     "afflicted": 173
+    }
+   },
+   "LLM vs count McNemar": {
+    "a_only": 32,
+    "b_only": 8,
+    "p": 0.0002
+   },
+   "outcome": "SIGNAL (beats the count)"
+  },
+  "pool (engine tuned here; LLM still out-of-fold)": {
+   "LLM (fine-tuned, out-of-fold)": {
+    "n": 388,
+    "exact": 274,
+    "within1": 312,
+    "real_errors": 76,
+    "says": {
+     "favourable": 208,
+     "mixed": 0,
+     "afflicted": 180
+    }
+   },
+   "count B3": {
+    "n": 388,
+    "exact": 252,
+    "within1": 290,
+    "real_errors": 98,
+    "says": {
+     "favourable": 235,
+     "mixed": 0,
+     "afflicted": 153
+    }
+   },
+   "always favourable": {
+    "n": 388,
+    "exact": 182,
+    "within1": 220,
+    "real_errors": 168,
+    "says": {
+     "favourable": 388,
+     "mixed": 0,
+     "afflicted": 0
+    }
+   },
+   "engine clause judge": {
+    "n": 388,
+    "exact": 262,
+    "within1": 354,
+    "real_errors": 34,
+    "says": {
+     "favourable": 167,
+     "mixed": 82,
+     "afflicted": 139
+    }
+   },
+   "LLM untrained base": {
+    "n": 388,
+    "exact": 174,
+    "within1": 241,
+    "real_errors": 147,
+    "says": {
+     "favourable": 23,
+     "mixed": 33,
+     "afflicted": 332
+    }
+   },
+   "LLM vs count McNemar": {
+    "a_only": 48,
+    "b_only": 26,
+    "p": 0.0141
+   },
+   "outcome": "SIGNAL (beats the count)"
+  },
+  "all 651": {
+   "LLM (fine-tuned, out-of-fold)": {
+    "n": 650,
+    "exact": 475,
+    "within1": 525,
+    "real_errors": 125,
+    "says": {
+     "favourable": 376,
+     "mixed": 0,
+     "afflicted": 274
+    }
+   },
+   "count B3": {
+    "n": 650,
+    "exact": 423,
+    "within1": 473,
+    "real_errors": 177,
+    "says": {
+     "favourable": 413,
+     "mixed": 0,
+     "afflicted": 237
+    }
+   },
+   "always favourable": {
+    "n": 650,
+    "exact": 346,
+    "within1": 396,
+    "real_errors": 254,
+    "says": {
+     "favourable": 650,
+     "mixed": 0,
+     "afflicted": 0
+    }
+   },
+   "engine clause judge": {
+    "n": 650,
+    "exact": 379,
+    "within1": 570,
+    "real_errors": 80,
+    "says": {
+     "favourable": 271,
+     "mixed": 175,
+     "afflicted": 204
+    }
+   },
+   "LLM untrained base": {
+    "n": 650,
+    "exact": 268,
+    "within1": 367,
+    "real_errors": 283,
+    "says": {
+     "favourable": 40,
+     "mixed": 57,
+     "afflicted": 553
+    }
+   },
+   "LLM vs count McNemar": {
+    "a_only": 88,
+    "b_only": 36,
+    "p": 0.0
+   },
+   "outcome": "SIGNAL (beats the count)"
+  }
+ },
+ "prose": {
+  "n": 262,
+  "rougeL_llm_mean": 0.1667,
+  "rougeL_template_mean": 0.0769,
+  "llm_better_rows": 192,
+  "template_better_rows": 52,
+  "generated_verdict_parsable": 262,
+  "generated_verdict_agrees_with_scored": 262,
+  "human_blind_judged": false
+ }
+}

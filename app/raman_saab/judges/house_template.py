@@ -211,6 +211,9 @@ class FrameLedger:
     #: C2 — the LORD is joined by a node AND touched by Saturn or Mars (see
     #: `_lord_obstructed`). None unless `C2_OBSTRUCTED_CARRIER` is on.
     lord_obstructed: Optional[bool] = None
+    #: C4 — Jupiter or Venus joins or aspects the karaka (see `_benefic_relief`). None unless
+    #: `C4_KARAKA_VETO_RELIEF` is on.
+    karaka_relieved: Optional[bool] = None
     #: Y1 — blemish-grade malefic rules set aside because a benefic rule also fired (kept here
     #: so every renderer still shows them). Empty unless `Y1_BLEMISH_TIER` is on.
     fired_blemish: tuple[rf.FiredRule, ...] = ()
@@ -494,6 +497,21 @@ def _lord_obstructed(lord: str, chart: RamanChart) -> Optional[bool]:
     return False
 
 
+def _benefic_relief(planet: str, chart: RamanChart) -> Optional[bool]:
+    """C4: is Jupiter or Venus (never the planet itself) in its sign or aspecting it (Raman's
+    whole-sign drishti)? NH:6230-6231."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return None
+    for b in ("Jupiter", "Venus"):
+        q = chart.planets.get(b)
+        if b == planet or q is None:
+            continue
+        if q.sign == p.sign or drishti.aspects_planet(b, planet, chart):
+            return True
+    return False
+
+
 def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:
     p = chart.planets.get(planet)
     if p is None or p.shadbala_rupas is None:
@@ -587,6 +605,12 @@ G1_FERTILITY_ONE_STEP: bool = False
 #: strong-pillar favourable lift (clauses 2 and 5) is blocked and the matter falls to 'mixed',
 #: the same shape as the B1 guard. Sign-only: no orb, no star lord.
 C2_OBSTRUCTED_CARRIER: bool = False
+#: C1 (Addendum 33, held): weakness is not affliction. A clause-6 afflicted that rests on weak
+#: Bhava Bala or maraka pressure alone, with no fired malefic, is mixed (3HCC:877-881).
+C1_WEAKNESS_NOT_AFFLICTION: bool = False
+#: C4 (Addendum 33, held): the karaka veto is relieved one step to mixed when Jupiter or Venus
+#: joins or aspects the broken karaka (3HCC:11228-11230, NH:6230-6231).
+C4_KARAKA_VETO_RELIEF: bool = False
 
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 
@@ -628,6 +652,8 @@ def _decide_clauses(L: FrameLedger) -> tuple[Verdict, bool]:
     if not L.karaka_intact:
         if guarded:
             return _navamsa_modulate("insufficient-evidence", L)
+        if C4_KARAKA_VETO_RELIEF and L.karaka_relieved:
+            return _navamsa_modulate("mixed", L)
         return _navamsa_modulate("afflicted", L)
     # 1.5 DUSTHANA-AFFLICTION CONFIRMATION (Stage-3, user-signed-off "B"). For an inherently
     # malefic signification (6th disease/enemies/debts/accidents; 12th incarceration/left_eye;
@@ -728,6 +754,9 @@ def _decide_clauses(L: FrameLedger) -> tuple[Verdict, bool]:
         # the lord's dual ownership+karaka role HTJAH-I:985): a decisively strong karaka
         # can still deliver a weak-lord, lone-malefic matter -> demote afflicted to mixed.
         elif L.karaka_strong and not L.lord_strong and L.fired_malefic and not L.fired_benefic:
+            base = "mixed"
+        # C1 (Addendum 33): no malefic agent fired, so the weakness alone gives mixed.
+        elif C1_WEAKNESS_NOT_AFFLICTION and not L.fired_malefic:
             base = "mixed"
     # 7. nothing fired at all -> insufficient-evidence.
     elif not (L.fired_benefic or L.fired_malefic or L.fired_neutral):
@@ -1445,6 +1474,7 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         fired_benefic=benefic, fired_malefic=malefic, fired_neutral=neutral,
         flags=tuple(dict.fromkeys(flags)), lord_hard_afflicted=lord_hard,
         lord_obstructed=(_lord_obstructed(lord, chart) if C2_OBSTRUCTED_CARRIER else None),
+        karaka_relieved=(_benefic_relief(karaka, chart) if C4_KARAKA_VETO_RELIEF else None),
         fired_blemish=blemish)
 
 

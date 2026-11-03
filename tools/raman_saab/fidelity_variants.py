@@ -149,6 +149,8 @@ def apply(variants: set[str]) -> None:
     ht.G1_FERTILITY_ONE_STEP = "G1" in variants          # Addendum 16
     h7c.NODE_AXIS_AS_ONE = "N1" in variants              # Addendum 16
     ht.C2_OBSTRUCTED_CARRIER = "C2" in variants          # Addendum 29
+    ht.C1_WEAKNESS_NOT_AFFLICTION = "C1" in variants     # Addendum 33
+    ht.C4_KARAKA_VETO_RELIEF = "C4" in variants          # Addendum 33
     sphutas.G2_PRINTED_SPHUTA_TEST = "PARITY" not in variants  # G2 shipped (Addendum 20); PARITY = old test
     rf.fire_rules.__defaults__ = (                       # Addendum 24
         (_ORIG_FIRE_DEFAULTS[0] + (_s1_rule(),),) if "S1" in variants else _ORIG_FIRE_DEFAULTS)

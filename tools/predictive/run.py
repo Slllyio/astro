@@ -228,8 +228,20 @@ def stage_gauquelin(a) -> dict:
     return res
 
 
+COVERED = False          # addendum 3: restrict Task A to people present in both rule stores
+
+
+def _SFX() -> str:
+    return "_covered" if COVERED else ""
+
+
 def _load_A(cache: Path):
     p = pd.read_parquet(cache / "people.parquet")
+    if COVERED:
+        d = cache.parent / "derived"
+        ids = set(pd.read_parquet(d / "raman" / "rule_fires.parquet", columns=["person_id"]).person_id)
+        ids &= set(pd.read_parquet(d / "parashara" / "verdicts.parquet", columns=["person_id"]).person_id)
+        p = p[p.index.isin(ids)]
     base = pd.read_parquet(cache / "base_A.parquet").loc[p.index]
     G = pd.read_parquet(cache / "G_A.parquet").loc[p.index]
     T = pd.read_parquet(cache / "T_A.parquet").loc[p.index]
@@ -347,7 +359,7 @@ def stage_phase2_A(a) -> dict:
     cols = list(astro_df.columns)
     fams = {k: [cols.index(c) for c in v] for k, v in F.natal_families(cols).items()}
     tA = TaskA(base, Y, F.AREA_OF_TARGET, p.quality_tier.to_numpy())
-    runs_path = a.out / "phase2_A_N2_runs.jsonl"
+    runs_path = a.out / f"phase2_A{_SFX()}_N2_runs.jsonl"
     A = astro_df.to_numpy(float)
     for i in _todo(runs_path, 40, a):
         perm, alone = n2_perm(p, np.random.default_rng([E.SEED, 9, i]))
@@ -363,7 +375,7 @@ def stage_phase2_A(a) -> dict:
         ok, y, _f, pb, _ab = tA.cache[t]
         obs["targets"][t]["ci95_d_full"] = E.auc_boot_ci(y, pf, pb, rng, reps=500)
         obs["targets"][t]["n_pos"], obs["targets"][t]["n"] = int(y.sum()), int(len(y))
-    (a.out / "phase2_A_observed.json").write_text(json.dumps(obs, indent=1))
+    (a.out / f"phase2_A{_SFX()}_observed.json").write_text(json.dumps(obs, indent=1))
     null = _runs(runs_path)
     res = {"observed": obs, "n_null": len(null), "alone_share": null[0]["alone_share"] if null else None,
            "pooled": _summ_null(obs["pooled"], [n["pooled"] for n in null], 0.02, ("d_full", "scan")),
@@ -404,7 +416,7 @@ def stage_n1_A(a) -> dict:
     Y = pd.read_parquet(a.cache / "targets_A.parquet").loc[p.index]
     keep = [c for c in T.columns if not c.startswith("t_kp_")]
     tA = TaskA(base, Y, F.AREA_OF_TARGET, p.quality_tier.to_numpy())
-    runs_path = a.out / "phase2_A_N1_runs.jsonl"
+    runs_path = a.out / f"phase2_A{_SFX()}_N1_runs.jsonl"
     for i in _todo(runs_path, 20, a):
         jd = random_time_jd(p, np.random.default_rng([E.SEED, 11, i]))
         Gr, _ = F.natal_G(p, jd)
@@ -418,7 +430,7 @@ def stage_n1_A(a) -> dict:
         print(f"[n1_A] run {i}: full {s['pooled']['d_full']:+.4f}", flush=True)
     if a.runs_only:
         return {}
-    obs = json.loads((a.out / "phase2_A_observed.json").read_text())
+    obs = json.loads((a.out / f"phase2_A{_SFX()}_observed.json").read_text())
     null = _runs(runs_path)
     return {"n_null": len(null), "pooled": _summ_null(obs["pooled"], [n["pooled"] for n in null], 0.02, ("d_full", "scan")),
             "areas": {ar: _summ_null(obs["areas"][ar], [n["areas"][ar] for n in null], 0.02, ("d_full", "scan"))
@@ -436,7 +448,10 @@ def main(argv=None) -> int:
     ap.add_argument("--shard", type=int, default=0)
     ap.add_argument("--nshards", type=int, default=1)
     ap.add_argument("--runs-only", action="store_true")
+    ap.add_argument("--covered", action="store_true", help="addendum 3: Task A on people with all tracks")
     a = ap.parse_args(argv)
+    global COVERED
+    COVERED = a.covered
     a.out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     fn = {"gauquelin": stage_gauquelin, "plants_A": stage_plants_A, "plants_B": stage_plants_B,
@@ -446,7 +461,7 @@ def main(argv=None) -> int:
     if a.runs_only:
         return 0
     res["seconds"] = round(time.time() - t0)
-    (a.out / f"{a.stage}_results.json").write_text(json.dumps(res, indent=1, default=float))
+    (a.out / f"{a.stage}{'_covered' if a.covered else ''}_results.json").write_text(json.dumps(res, indent=1, default=float))
     print(json.dumps({k: v for k, v in res.items() if k not in ("observed", "replicates")}, indent=1, default=float)[:3000])
     return 0
 

@@ -233,3 +233,33 @@ available, so one Task A null run (12 targets x 5 folds x full model + 13 famili
 The forward log (addendum 1, item 6) follows the Arm B format of the domain protocol written in the
 thread "Write up why prediction failed": a 12-24 month yes/no with a quarter, the question time
 logged for ruling planets, the asker's own expectation recorded, scored against it.
+
+## Addendum 3 (2026-11-03, after the Task A number, written before any corrected number): coverage defect
+
+**What happened.** The pre-registered Task A run passed on paper (pooled ΔAUC excess 0.026 over the
+N2 null mean, p = 1/41; driven by A8 divorces +0.090, A9 more than 3 children +0.098, A12 short life
++0.074, through the Raman-rule and Parashara-verdict families). Before reporting it, the size
+(ΔAUC near 0.1 where every geometry family is negative) was checked for leakage, and a defect was
+found in the feature build, not in the sky:
+
+- The Raman rule-fire store and the Parashara verdict store exist only for the 22,177 "verified"
+  charts, which are 16,448 of the 47,036 development people (35%). `raman_rules` and
+  `parashara_verdicts` filled the other 65% with zeros.
+- The divorce, children and short-life tags occur only inside that covered subset (prevalence
+  4.8%, 9.0%, 7.8% covered vs 0.0%, 0.0%, 0.02% uncovered). So "any rule fired" encoded "this
+  person is in the verified, well-documented subset", which is what the model found.
+- N2 shuffles feature rows between people of the same birth year, half-month and latitude band,
+  which breaks the coverage-to-label link, so the null could not catch it.
+
+**Ruling.** The pre-registered Task A result is void: it is neither a signal nor a null. It is
+reported in full, with this explanation, and no claim is made from it.
+
+**Corrected analysis (the only change).** Task A is re-run on the 16,448 people who have all three
+tracks computed (present in both stores; 6,244 tier A, 10,204 tier B). Everything else is as
+pre-registered and as amended in addenda 1 and 2: same targets (A12 again only among the
+deceased, 8,378), baseline, features, model, folds, N2 with 40 runs and N1 with 20 runs, SESOI
+ΔAUC 0.02, alpha 0.025, per-area, per-tier and interval reporting. N2 strata are formed within
+the subset. Because this correction is made after one number was seen, the corrected result is
+labelled "corrected after a defect" wherever it is quoted, and a pass would still need the Phase 3
+pre-registration and sealed C1/C2 reads before any claim. Task B is unaffected: its features are
+compared within each person, so coverage is constant inside every set.

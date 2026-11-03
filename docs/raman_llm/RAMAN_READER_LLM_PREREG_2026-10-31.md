@@ -132,3 +132,5 @@ higher? 0.5 means no information from the chart. Hold-out, 330 pairs: fine-tuned
 one fold, 134 pairs: 0.530, 0.567, 0.597. None is distinguishable from 0.5 on the hold-outs. The
 sample is small, and the permutation ignores that rows from one chart are related. The SIGNAL
 therefore reflects knowing the verdict typical of each matter; no chart reading was detected.
+
+Note 2026-11-03: the final adapter (section 8) was stopped unfinished at the user's request, so no final model exists; the five-fold scores above are unaffected.

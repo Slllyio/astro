@@ -109,7 +109,7 @@ near the size that would count.
 Tier split (ΔAUC, before subtracting the null): A and B are close for every target, with no pattern
 of tier A (exact times) doing better, which is what a birth-time-sensitive effect would show.
 
-N1 (random birth time) for Task A: running (20 runs, secondary); this line is updated when it finishes.
+N1 (random birth time, 20 runs, secondary) for Task A: real birth times score no better than random times on the same day. Pooled excess +0.002 (p 0.14), family scan +0.001 (p 0.19); career +0.001, children 0.000, health +0.002, life span +0.010 (p 0.14), marriage −0.007. The life-span lead does not depend on the exact birth time, so it does not behave like a chart effect.
 
 ## 4. The defect that looked like a pass (addendum 3)
 

@@ -1,0 +1,59 @@
+{
+ "people": 197,
+ "r25": {
+  "coverage": 0.3704,
+  "hit_rate": 0.3503,
+  "lift_vs_coverage": 0.946,
+  "same_day_random_time_hit_rate": 0.3579,
+  "people_with_no_window": 24
+ },
+ "retro": {
+  "coverage": 0.2596,
+  "hit_rate": 0.2589,
+  "lift_vs_coverage": 0.997,
+  "same_day_random_time_hit_rate": 0.2645,
+  "people_with_no_window": 31
+ },
+ "tempter": {
+  "coverage": 0.0219,
+  "hit_rate": 0.0102,
+  "lift_vs_coverage": 0.464,
+  "same_day_random_time_hit_rate": 0.0249,
+  "people_with_no_window": 150
+ },
+ "strong": {
+  "coverage": 0.1786,
+  "hit_rate": 0.1827,
+  "lift_vs_coverage": 1.023,
+  "same_day_random_time_hit_rate": 0.1772,
+  "people_with_no_window": 44
+ },
+ "retro+tempter": {
+  "coverage": 0.0153,
+  "hit_rate": 0.0102,
+  "lift_vs_coverage": 0.664,
+  "same_day_random_time_hit_rate": 0.0178,
+  "people_with_no_window": 156
+ },
+ "retro+strong": {
+  "coverage": 0.1309,
+  "hit_rate": 0.1421,
+  "lift_vs_coverage": 1.086,
+  "same_day_random_time_hit_rate": 0.1371,
+  "people_with_no_window": 54
+ },
+ "tempter+strong": {
+  "coverage": 0.0134,
+  "hit_rate": 0.0102,
+  "lift_vs_coverage": 0.757,
+  "same_day_random_time_hit_rate": 0.0122,
+  "people_with_no_window": 166
+ },
+ "retro+tempter+strong": {
+  "coverage": 0.0101,
+  "hit_rate": 0.0102,
+  "lift_vs_coverage": 1.005,
+  "same_day_random_time_hit_rate": 0.0102,
+  "people_with_no_window": 169
+ }
+}

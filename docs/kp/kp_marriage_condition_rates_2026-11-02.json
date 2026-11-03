@@ -1,0 +1,33 @@
+{
+ "n": 2000,
+ "seed": 7,
+ "rate": {
+  "youth.a": 0.163,
+  "youth.b": 0.451,
+  "youth.c": 0.438,
+  "youth.d": 0.03,
+  "youth.e": 0.027,
+  "youth.g": 0.024,
+  "youth.h": 0.332,
+  "youth.i": 0.414,
+  "youth.l": 0.074,
+  "youth.m": 0.007,
+  "youth.n": 0.008,
+  "youth.o": 0.004,
+  "youth.p": 0.024,
+  "youth.q": 0.002,
+  "youth.t": 0.009,
+  "youth.u": 0.663,
+  "youth.v": 0.018,
+  "youth.w": 0.023,
+  "late.a": 0.347,
+  "late.c": 0.088,
+  "late.d": 0.081,
+  "late.f": 0.09
+ },
+ "median_youth_met": 3.0,
+ "share_any_youth": 0.947,
+ "median_late_met": 0.0,
+ "share_any_late": 0.485,
+ "share_both": 0.468
+}

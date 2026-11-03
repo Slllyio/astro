@@ -1,0 +1,800 @@
+{
+ "n": 2000,
+ "seed": 20261101,
+ "rules": {
+  "third_trade": {
+   "fire": 0.9355,
+   "flip5": 0.1475,
+   "context": "natal",
+   "source": "AS1"
+  },
+  "fourth_mercury_music": {
+   "fire": 0.1405,
+   "flip5": 0.3315,
+   "context": "natal",
+   "source": "AS1"
+  },
+  "fourth_mars_martial": {
+   "fire": 0.046,
+   "flip5": 0.14,
+   "context": "natal",
+   "source": "AS1"
+  },
+  "fourth_venus_tailoring": {
+   "fire": 0.1255,
+   "flip5": 0.269,
+   "context": "natal",
+   "source": "AS1"
+  },
+  "ninth_astrologer_research": {
+   "fire": 0.244,
+   "flip5": 0.532,
+   "context": "natal",
+   "source": "AS1"
+  },
+  "fourth_star_saturn_in_4": {
+   "fire": 0.0065,
+   "flip5": 0.0135,
+   "context": "natal",
+   "source": "AS2"
+  },
+  "asc_star_in_6": {
+   "fire": 0.0945,
+   "flip5": 0.172,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "asc_star_in_1_11": {
+   "fire": 0.169,
+   "flip5": 0.296,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_node_mute": {
+   "fire": 0.0475,
+   "flip5": 0.1145,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_5_11": {
+   "fire": 0.134,
+   "flip5": 0.25,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_7_11": {
+   "fire": 0.1215,
+   "flip5": 0.244,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_6_11": {
+   "fire": 0.143,
+   "flip5": 0.288,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_7_10": {
+   "fire": 0.1445,
+   "flip5": 0.289,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_to_7": {
+   "fire": 0.38,
+   "flip5": 0.5485,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_star_6_11": {
+   "fire": 0.1345,
+   "flip5": 0.229,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_star_2_10": {
+   "fire": 0.1085,
+   "flip5": 0.1935,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_star_1_3": {
+   "fire": 0.1365,
+   "flip5": 0.2105,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_jupiter_11": {
+   "fire": 0.0475,
+   "flip5": 0.111,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_saturn": {
+   "fire": 0.1525,
+   "flip5": 0.327,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "second_2_12": {
+   "fire": 0.1225,
+   "flip5": 0.2445,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "third_bold": {
+   "fire": 0.7865,
+   "flip5": 0.3975,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "third_mars": {
+   "fire": 0.0545,
+   "flip5": 0.1775,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "third_letter": {
+   "fire": 0.112,
+   "flip5": 0.2315,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "third_appeal": {
+   "fire": 0.131,
+   "flip5": 0.2365,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "third_daring": {
+   "fire": 0.372,
+   "flip5": 0.5685,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fourth_adoption": {
+   "fire": 0.175,
+   "flip5": 0.3405,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fourth_treasure": {
+   "fire": 0.746,
+   "flip5": 0.3905,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "fourth_reach_home": {
+   "fire": 0.111,
+   "flip5": 0.2405,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "fourth_medical_exam": {
+   "fire": 0.151,
+   "flip5": 0.2775,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "fourth_construct": {
+   "fire": 0.043,
+   "flip5": 0.1045,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fourth_residence_change": {
+   "fire": 0.1185,
+   "flip5": 0.2255,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_no_child": {
+   "fire": 0.054,
+   "flip5": 0.1175,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_cards_win": {
+   "fire": 0.1435,
+   "flip5": 0.2765,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_cards_loss": {
+   "fire": 0.145,
+   "flip5": 0.306,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_music": {
+   "fire": 0.015,
+   "flip5": 0.0285,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_love_marriage": {
+   "fire": 0.1095,
+   "flip5": 0.1925,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_property_lost": {
+   "fire": 0.1065,
+   "flip5": 0.241,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_speculation": {
+   "fire": 0.018,
+   "flip5": 0.0395,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "fifth_exchange": {
+   "fire": 0.1435,
+   "flip5": 0.2765,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "sixth_litigation": {
+   "fire": 0.046,
+   "flip5": 0.111,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "seventh_stopped": {
+   "fire": 0.8755,
+   "flip5": 0.264,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "seventh_partner": {
+   "fire": 0.125,
+   "flip5": 0.2175,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "seventh_opponent": {
+   "fire": 0.011,
+   "flip5": 0.0305,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "seventh_happy": {
+   "fire": 0.0485,
+   "flip5": 0.108,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "eighth_borrow": {
+   "fire": 0.013,
+   "flip5": 0.0285,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "eighth_repay": {
+   "fire": 0.766,
+   "flip5": 0.414,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "ninth_astrologer": {
+   "fire": 0.043,
+   "flip5": 0.086,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "tenth_service": {
+   "fire": 0.387,
+   "flip5": 0.5635,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "tenth_business": {
+   "fire": 0.369,
+   "flip5": 0.554,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "tenth_both": {
+   "fire": 0.05,
+   "flip5": 0.1145,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "eleventh_water": {
+   "fire": 0.254,
+   "flip5": 0.3935,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "eleventh_interview": {
+   "fire": 0.123,
+   "flip5": 0.2535,
+   "context": "horary",
+   "source": "AS3"
+  },
+  "eleventh_harmony": {
+   "fire": 0.8715,
+   "flip5": 0.2765,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "twelfth_foreign_trip": {
+   "fire": 0.2825,
+   "flip5": 0.492,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "twelfth_left_eye": {
+   "fire": 0.0095,
+   "flip5": 0.0225,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "seventh_marriage_star": {
+   "fire": 0.7495,
+   "flip5": 0.3735,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "twelfth_debts_repaid": {
+   "fire": 0.7925,
+   "flip5": 0.4115,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "seventh_business_wound_up": {
+   "fire": 0.0585,
+   "flip5": 0.118,
+   "context": "natal",
+   "source": "AS3"
+  },
+  "sixth_star_retro": {
+   "fire": 0.113,
+   "flip5": 0.2295,
+   "context": "horary",
+   "source": "AS5"
+  },
+  "sixth_direct_borrow": {
+   "fire": 0.7745,
+   "flip5": 0.3495,
+   "context": "horary",
+   "source": "AS5"
+  },
+  "ninth_mercury_pretender": {
+   "fire": 0.124,
+   "flip5": 0.255,
+   "context": "natal",
+   "source": "AS5"
+  },
+  "eighth_troubles_diverted": {
+   "fire": 0.733,
+   "flip5": 0.415,
+   "context": "natal",
+   "source": "SPK"
+  },
+  "eleventh_ambition": {
+   "fire": 0.3805,
+   "flip5": 0.5385,
+   "context": "natal",
+   "source": "AS6"
+  },
+  "twelfth_abroad_direct_star": {
+   "fire": 0.6775,
+   "flip5": 0.519,
+   "context": "natal",
+   "source": "AS6"
+  },
+  "twelfth_ninth_interlinked": {
+   "fire": 0.135,
+   "flip5": 0.304,
+   "context": "natal",
+   "source": "AS6"
+  },
+  "third_line_out_of_order": {
+   "fire": 0.117,
+   "flip5": 0.2225,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "third_call_pending": {
+   "fire": 0.136,
+   "flip5": 0.2715,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "eleventh_cannot_hear": {
+   "fire": 0.1155,
+   "flip5": 0.221,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "third_appeal_success": {
+   "fire": 0.131,
+   "flip5": 0.2365,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "third_appeal_fails": {
+   "fire": 0.1435,
+   "flip5": 0.2335,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "fifth_love_materialises": {
+   "fire": 0.1095,
+   "flip5": 0.1925,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "fifth_love_dropped": {
+   "fire": 0.375,
+   "flip5": 0.4545,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "fourth_mars_land": {
+   "fire": 0.061,
+   "flip5": 0.1805,
+   "context": "natal",
+   "source": "AS6"
+  },
+  "eleventh_water_tapped": {
+   "fire": 0.418,
+   "flip5": 0.5075,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "eleventh_water_quickly": {
+   "fire": 0.166,
+   "flip5": 0.3025,
+   "context": "horary",
+   "source": "AS6"
+  },
+  "fourth_construct_house": {
+   "fire": 0.5995,
+   "flip5": 0.5325,
+   "context": "horary",
+   "source": "AFB"
+  },
+  "fourth_construct_negative": {
+   "fire": 0.0315,
+   "flip5": 0.061,
+   "context": "horary",
+   "source": "AFB"
+  },
+  "seventh_marriage_conjoined": {
+   "fire": 0.934,
+   "flip5": 0.145,
+   "context": "natal",
+   "source": "AFB"
+  },
+  "seventh_jupiter_aspect": {
+   "fire": 0.004,
+   "flip5": 0.0115,
+   "context": "natal",
+   "source": "AFB"
+  },
+  "lagna_returned_home": {
+   "fire": 0.1305,
+   "flip5": 0.267,
+   "context": "horary",
+   "source": "AFB"
+  },
+  "twelfth_overseas": {
+   "fire": 0.1305,
+   "flip5": 0.2655,
+   "context": "natal",
+   "source": "AFB"
+  },
+  "tenth_election": {
+   "fire": 0.79,
+   "flip5": 0.392,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eleventh_recovery": {
+   "fire": 0.1205,
+   "flip5": 0.2415,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "lagna_health_not_good": {
+   "fire": 0.7995,
+   "flip5": 0.3865,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "sixth_disease": {
+   "fire": 0.2855,
+   "flip5": 0.4965,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "twelfth_cheated": {
+   "fire": 0.7925,
+   "flip5": 0.4115,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "lagna_accident_recovery": {
+   "fire": 0.8025,
+   "flip5": 0.3745,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "third_rumour_false": {
+   "fire": 0.1555,
+   "flip5": 0.3525,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "second_second_marriage": {
+   "fire": 0.6395,
+   "flip5": 0.529,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "ninth_second_marriage": {
+   "fire": 0.764,
+   "flip5": 0.4365,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eleventh_lottery": {
+   "fire": 0.053,
+   "flip5": 0.1105,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "tenth_sell_property": {
+   "fire": 0.7915,
+   "flip5": 0.421,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "sixth_service_ac": {
+   "fire": 0.494,
+   "flip5": 0.5835,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "tenth_service_ac": {
+   "fire": 0.4925,
+   "flip5": 0.599,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "third_lottery": {
+   "fire": 0.154,
+   "flip5": 0.311,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eleventh_lottery_abroad": {
+   "fire": 0.129,
+   "flip5": 0.2965,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "seventh_law_making": {
+   "fire": 0.781,
+   "flip5": 0.389,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "third_courier": {
+   "fire": 0.6555,
+   "flip5": 0.5375,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "eleventh_courier": {
+   "fire": 0.664,
+   "flip5": 0.545,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "eleventh_visa": {
+   "fire": 0.783,
+   "flip5": 0.3635,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "sixth_permanent_job": {
+   "fire": 0.023,
+   "flip5": 0.044,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "sixth_temporary_job": {
+   "fire": 0.028,
+   "flip5": 0.068,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eleventh_provident_fund": {
+   "fire": 0.8645,
+   "flip5": 0.2835,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eighth_accident": {
+   "fire": 0.6335,
+   "flip5": 0.557,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "twelfth_accident": {
+   "fire": 0.672,
+   "flip5": 0.534,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "tenth_leave_job": {
+   "fire": 0.8225,
+   "flip5": 0.352,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "sixth_leave_job": {
+   "fire": 0.7925,
+   "flip5": 0.382,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "ninth_higher_education": {
+   "fire": 0.462,
+   "flip5": 0.5915,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "third_marriage_negotiation": {
+   "fire": 0.7805,
+   "flip5": 0.411,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "fifth_childbirth_female": {
+   "fire": 0.774,
+   "flip5": 0.4255,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eleventh_childbirth_male": {
+   "fire": 0.759,
+   "flip5": 0.45,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "fifth_not_pregnant": {
+   "fire": 0.1495,
+   "flip5": 0.2625,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "fifth_no_child_female": {
+   "fire": 0.783,
+   "flip5": 0.41,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eleventh_no_cure": {
+   "fire": 0.1185,
+   "flip5": 0.2535,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "fourth_discharge": {
+   "fire": 0.6215,
+   "flip5": 0.5645,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "seventh_marriage_ac": {
+   "fire": 0.477,
+   "flip5": 0.5685,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eighth_theft_recovery": {
+   "fire": 0.1155,
+   "flip5": 0.259,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "seventh_gain": {
+   "fire": 0.476,
+   "flip5": 0.5725,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "eleventh_meeting": {
+   "fire": 0.8075,
+   "flip5": 0.3845,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "lagna_eleventh_exam": {
+   "fire": 0.006,
+   "flip5": 0.018,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "fourth_lawsuit": {
+   "fire": 0.604,
+   "flip5": 0.5825,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "lagna_normal_health": {
+   "fire": 0.3595,
+   "flip5": 0.539,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "twelfth_foreign_travel": {
+   "fire": 0.778,
+   "flip5": 0.4235,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "sixth_new_tenant": {
+   "fire": 0.6,
+   "flip5": 0.563,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "sixth_cured": {
+   "fire": 0.503,
+   "flip5": 0.575,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "eighth_cured": {
+   "fire": 0.484,
+   "flip5": 0.5815,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "twelfth_cured": {
+   "fire": 0.498,
+   "flip5": 0.581,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "eleventh_cured": {
+   "fire": 0.508,
+   "flip5": 0.5695,
+   "context": "horary",
+   "source": "EZN"
+  },
+  "fifth_education_abroad": {
+   "fire": 0.518,
+   "flip5": 0.5615,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "fourth_own_property": {
+   "fire": 0.026,
+   "flip5": 0.061,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "sixth_chronic": {
+   "fire": 0.266,
+   "flip5": 0.4905,
+   "context": "natal",
+   "source": "EZN"
+  },
+  "eleventh_sixth_match": {
+   "fire": 0.9375,
+   "flip5": 0.133,
+   "context": "horary",
+   "source": "EZN"
+  }
+ },
+ "natal_fired_per_chart_median": 28,
+ "natal_rules": 88
+}

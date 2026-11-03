@@ -1,0 +1,303 @@
+{
+ "digest": "426f35617f52e52e67da82fdef895d507c4bdf76dbf05fcc7c1eae2897adf2bd",
+ "results": [
+  {
+   "test": "T1",
+   "rule": "progeny.lessened",
+   "role": "primary",
+   "sample": "A+B",
+   "direction": "more in cases",
+   "cases": 337,
+   "cases_firing": 18,
+   "controls": 4758,
+   "controls_firing": 282,
+   "rate_cases": 0.0534,
+   "rate_controls": 0.0593,
+   "risk_ratio": 0.901,
+   "rr_low": 0.567,
+   "rr_high": 1.433,
+   "p_value": 0.70526,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T1",
+   "rule": "progeny.promised_either",
+   "role": "secondary",
+   "sample": "A+B",
+   "direction": "fewer in cases",
+   "cases": 337,
+   "cases_firing": 174,
+   "controls": 4758,
+   "controls_firing": 2394,
+   "rate_cases": 0.5163,
+   "rate_controls": 0.5032,
+   "risk_ratio": 1.026,
+   "rr_low": 0.922,
+   "rr_high": 1.142,
+   "p_value": 0.69965,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T2",
+   "rule": "marriage.late",
+   "role": "primary",
+   "sample": "A+B",
+   "direction": "more in cases",
+   "cases": 251,
+   "cases_firing": 14,
+   "controls": 3424,
+   "controls_firing": 249,
+   "rate_cases": 0.0558,
+   "rate_controls": 0.0727,
+   "risk_ratio": 0.767,
+   "rr_low": 0.455,
+   "rr_high": 1.294,
+   "p_value": 0.87363,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T3",
+   "rule": "voice.second",
+   "role": "primary",
+   "sample": "A+B",
+   "direction": "more in cases",
+   "cases": 416,
+   "cases_firing": 110,
+   "controls": 35039,
+   "controls_firing": 8941,
+   "rate_cases": 0.2644,
+   "rate_controls": 0.2552,
+   "risk_ratio": 1.036,
+   "rr_low": 0.882,
+   "rr_high": 1.218,
+   "p_value": 0.35149,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T3",
+   "rule": "voice.second_venus_mercury",
+   "role": "secondary",
+   "sample": "A+B",
+   "direction": "more in cases",
+   "cases": 416,
+   "cases_firing": 13,
+   "controls": 35039,
+   "controls_firing": 1240,
+   "rate_cases": 0.0312,
+   "rate_controls": 0.0354,
+   "risk_ratio": 0.883,
+   "rr_low": 0.516,
+   "rr_high": 1.512,
+   "p_value": 0.71261,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T4",
+   "rule": "speech.any",
+   "role": "primary",
+   "sample": "A+B",
+   "direction": "more in cases",
+   "cases": 20,
+   "cases_firing": 1,
+   "controls": 35435,
+   "controls_firing": 1577,
+   "rate_cases": 0.05,
+   "rate_controls": 0.0445,
+   "risk_ratio": 1.123,
+   "rr_low": 0.166,
+   "rr_high": 7.594,
+   "p_value": 0.5978,
+   "verdict": "UNDERPOWERED"
+  },
+  {
+   "test": "T1",
+   "rule": "progeny.lessened",
+   "role": "primary",
+   "sample": "A",
+   "direction": "more in cases",
+   "cases": 110,
+   "cases_firing": 4,
+   "controls": 2069,
+   "controls_firing": 124,
+   "rate_cases": 0.0364,
+   "rate_controls": 0.0599,
+   "risk_ratio": 0.607,
+   "rr_low": 0.228,
+   "rr_high": 1.612,
+   "p_value": 0.89875,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T1",
+   "rule": "progeny.promised_either",
+   "role": "secondary",
+   "sample": "A",
+   "direction": "fewer in cases",
+   "cases": 110,
+   "cases_firing": 60,
+   "controls": 2069,
+   "controls_firing": 1005,
+   "rate_cases": 0.5455,
+   "rate_controls": 0.4857,
+   "risk_ratio": 1.123,
+   "rr_low": 0.941,
+   "rr_high": 1.339,
+   "p_value": 0.90639,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T2",
+   "rule": "marriage.late",
+   "role": "primary",
+   "sample": "A",
+   "direction": "more in cases",
+   "cases": 87,
+   "cases_firing": 2,
+   "controls": 1448,
+   "controls_firing": 105,
+   "rate_cases": 0.023,
+   "rate_controls": 0.0725,
+   "risk_ratio": 0.317,
+   "rr_low": 0.08,
+   "rr_high": 1.263,
+   "p_value": 0.98778,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T3",
+   "rule": "voice.second",
+   "role": "primary",
+   "sample": "A",
+   "direction": "more in cases",
+   "cases": 124,
+   "cases_firing": 33,
+   "controls": 13284,
+   "controls_firing": 3353,
+   "rate_cases": 0.2661,
+   "rate_controls": 0.2524,
+   "risk_ratio": 1.054,
+   "rr_low": 0.786,
+   "rr_high": 1.414,
+   "p_value": 0.39672,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T3",
+   "rule": "voice.second_venus_mercury",
+   "role": "secondary",
+   "sample": "A",
+   "direction": "more in cases",
+   "cases": 124,
+   "cases_firing": 4,
+   "controls": 13284,
+   "controls_firing": 457,
+   "rate_cases": 0.0323,
+   "rate_controls": 0.0344,
+   "risk_ratio": 0.938,
+   "rr_low": 0.356,
+   "rr_high": 2.469,
+   "p_value": 0.62131,
+   "verdict": "BOUNDED_NULL"
+  },
+  {
+   "test": "T4",
+   "rule": "speech.any",
+   "role": "primary",
+   "sample": "A",
+   "direction": "more in cases",
+   "cases": 11,
+   "cases_firing": 1,
+   "controls": 13397,
+   "controls_firing": 604,
+   "rate_cases": 0.0909,
+   "rate_controls": 0.0451,
+   "risk_ratio": 2.016,
+   "rr_low": 0.311,
+   "rr_high": 13.088,
+   "p_value": 0.39835,
+   "verdict": "UNDERPOWERED"
+  }
+ ],
+ "diagnostics": {
+  "T1/A+B": {
+   "cases": {
+    "mean_abs_lat": 43.92,
+    "median_year": 1922
+   },
+   "controls": {
+    "mean_abs_lat": 39.9,
+    "median_year": 1942
+   }
+  },
+  "T2/A+B": {
+   "cases": {
+    "mean_abs_lat": 44.22,
+    "median_year": 1925
+   },
+   "controls": {
+    "mean_abs_lat": 40.57,
+    "median_year": 1934
+   }
+  },
+  "T3/A+B": {
+   "cases": {
+    "mean_abs_lat": 40.11,
+    "median_year": 1948
+   },
+   "controls": {
+    "mean_abs_lat": 42.15,
+    "median_year": 1947
+   }
+  },
+  "T4/A+B": {
+   "cases": {
+    "mean_abs_lat": 40.97,
+    "median_year": 1946
+   },
+   "controls": {
+    "mean_abs_lat": 42.13,
+    "median_year": 1947
+   }
+  },
+  "T1/A": {
+   "cases": {
+    "mean_abs_lat": 39.9,
+    "median_year": 1945
+   },
+   "controls": {
+    "mean_abs_lat": 38.8,
+    "median_year": 1943
+   }
+  },
+  "T2/A": {
+   "cases": {
+    "mean_abs_lat": 41.77,
+    "median_year": 1941
+   },
+   "controls": {
+    "mean_abs_lat": 39.09,
+    "median_year": 1939
+   }
+  },
+  "T3/A": {
+   "cases": {
+    "mean_abs_lat": 40.29,
+    "median_year": 1949
+   },
+   "controls": {
+    "mean_abs_lat": 41.42,
+    "median_year": 1952
+   }
+  },
+  "T4/A": {
+   "cases": {
+    "mean_abs_lat": 40.69,
+    "median_year": 1942
+   },
+   "controls": {
+    "mean_abs_lat": 41.41,
+    "median_year": 1952
+   }
+  }
+ }
+}

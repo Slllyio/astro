@@ -38,6 +38,14 @@ python -m tools.predictive.forward_log ask --log docs/predictive/forward_log/que
 ...). The tool computes KP's verdict and the ruling planets right away and prints a hash; commit the
 log file straight after, so the lock carries a public date.
 
+## Public-event questions
+
+A second log, `docs/predictive/forward_log/public.jsonl`, holds questions about public events with
+fixed result dates (rules: `PREDICTIVE_PREREG_2026-11-03_FORWARD_PUBLIC.md`). The horary number is
+derived from a hash of the wording and moment, the place is New Delhi, the matter is house 11, and
+the "asker" prior is Claude's. It is scored on its own, never pooled with personal questions
+(`questions.jsonl`).
+
 ## Settling a question
 
 When the event happens: `resolve --id N --outcome yes --date YYYY-MM-DD --evidence "..."`.

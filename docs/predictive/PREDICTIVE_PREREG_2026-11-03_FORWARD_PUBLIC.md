@@ -20,3 +20,5 @@ test (2026-11-03, "do it"); public questions are added so the log fills faster t
   asker on the same questions, McNemar), but the public arm is scored and reported on its own and
   is never pooled with personal questions.
 - Entries are committed to git right after logging, so each lock carries a public date.
+
+Log file: `docs/predictive/forward_log/public.jsonl` (personal questions stay in `questions.jsonl`).

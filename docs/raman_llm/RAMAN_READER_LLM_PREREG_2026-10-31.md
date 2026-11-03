@@ -121,3 +121,14 @@ exploratory and must be labelled that way in any report.
    matter prior 101/125, count 84/125. tools/raman_llm/check_matter_prior.py. Report this baseline
    beside the count. Beating the count is not evidence of reading the chart unless the model also
    beats this baseline.
+
+## Addendum 2026-11-03 (exploratory, after the final five-fold score)
+
+Official label: SIGNAL, 201/262 against count 171/262. Within-matter check of what that signal is
+(tools/raman_llm/check_within_matter.py): for pairs of rows on the same matter where Raman said
+favourable on one and afflicted on the other, how often does the score rank the favourable row
+higher? 0.5 means no information from the chart. Hold-out, 330 pairs: fine-tuned 14B 0.512
+(p 0.87), count 0.564 (p 0.28), untrained 14B 0.570 (p 0.27). Hold-out rows with the nativity in
+one fold, 134 pairs: 0.530, 0.567, 0.597. None is distinguishable from 0.5 on the hold-outs. The
+sample is small, and the permutation ignores that rows from one chart are related. The SIGNAL
+therefore reflects knowing the verdict typical of each matter; no chart reading was detected.

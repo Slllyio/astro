@@ -14,7 +14,17 @@ Commit or share the printed head hash after each `ask` so the lock is independen
 
 `--question` is a key of app.kp.horary.questions.QUESTIONS (Reader 6 question rules) or, with
 --matter, a KP matter (marriage, children, health, wealth, service, house<N>) judged by horary.
-Only the moment of the question is used: no birth data is needed or stored.
+By default only the moment of the question is used: no birth data is needed or stored.
+
+Optional natal KP (ruling R26), only with the asker's consent: add
+    --birth "1990-07-15 12:00" --birth-tz 5.5 --birth-lat 12.97 --birth-lon 77.59 \
+        --birth-matter marriage --consent-birth
+and the entry also seals, from the natal chart judged at the question moment:
+`app.kp.selection.select(chart, matter, judged=<question moment>)`, the R26 windows
+(`selected_windows`) inside the question window, and Sun day-fixing passes (`day_fix`, R27). The
+birth data is then stored in the hashed entry, because the lock must show what was judged.
+KP's natal prediction is "yes" if any R26 window falls in the question window; its quarter is the
+quarter of the first day-fixing pass inside a window, else of the first window's start.
 """
 from __future__ import annotations
 
@@ -65,6 +75,42 @@ def judge(a) -> dict:
     return {"rule": "horary_matter", **hv.to_dict()}
 
 
+def _jd(d: str) -> float:
+    import swisseph as swe
+    x = date.fromisoformat(d)
+    return swe.julday(x.year, x.month, x.day, 0.0)
+
+
+def _iso(jd: float) -> str:
+    import swisseph as swe
+    y, m, d, _ = swe.revjul(jd, swe.GREG_CAL)
+    return f"{y:04d}-{m:02d}-{d:02d}"
+
+
+def natal(a, w0: str, w1: str) -> dict:
+    """R26 selection, windows and day-fixing for the asker's chart, judged at the question moment."""
+    from app.kp.chart import Birth, cast
+    from app.kp.selection import day_fix, select, selected_windows
+    t = datetime.strptime(a.when, "%Y-%m-%d %H:%M")
+    q = Birth(t.year, t.month, t.day, t.hour, t.minute, a.tz, a.lat, a.lon)
+    bt = datetime.strptime(a.birth, "%Y-%m-%d %H:%M")
+    chart = cast(Birth(bt.year, bt.month, bt.day, bt.hour, bt.minute, a.birth_tz, a.birth_lat, a.birth_lon))
+    j0, j1 = _jd(w0), _jd(w1)
+    sel = select(chart, a.birth_matter, judged=q)
+    wins = [(w.period.start_jd, w.period.end_jd, w.period.label())
+            for w in selected_windows(chart, a.birth_matter, j0, j1, judged=q)]
+    passes = [p for p in day_fix(chart, a.birth_matter, j0, j1)
+              if any(s <= p.start_jd < e for s, e, _ in wins)] if wins else []
+    first = passes[0].start_jd if passes else (max(wins[0][0], j0) if wins else None)
+    return {"birth_local": a.birth, "birth_tz": a.birth_tz, "birth_lat": a.birth_lat, "birth_lon": a.birth_lon,
+            "matter": a.birth_matter, "selection": sel.to_dict(),
+            "windows": [[_iso(max(s, j0)), _iso(min(e, j1)), lab] for s, e, lab in wins],
+            "day_fix": [[_iso(p.start_jd), _iso(p.end_jd), p.label()] for p in passes],
+            "window_coverage": round(sum(min(e, j1) - max(s, j0) for s, e, _ in wins) / (j1 - j0), 4),
+            "verdict": "YES" if wins else "NO",
+            "quarter": _quarter(_iso(first)) if first is not None else None}
+
+
 def cmd_ask(a) -> None:
     if a.area not in AREAS:
         raise SystemExit(f"--area must be one of {AREAS}")
@@ -76,9 +122,19 @@ def cmd_ask(a) -> None:
            "text": a.text, "area": a.area, "when_local": a.when, "tz": a.tz, "lat": a.lat, "lon": a.lon,
            "number": a.number, "asker_prior_yes": a.prior, "asker_quarter": a.quarter,
            "window": [w0, w1], "judgment": judge(a)}
+    if a.birth:
+        if not a.consent_birth:
+            raise SystemExit("natal KP stores the birth data in the log: pass --consent-birth only with the asker's consent")
+        if not a.birth_matter or a.birth_tz is None or a.birth_lat is None or a.birth_lon is None:
+            raise SystemExit("--birth needs --birth-tz, --birth-lat, --birth-lon and --birth-matter")
+        rec["natal"] = natal(a, w0, w1)
     rec = _write(a.log, rec)
     j = rec["judgment"]
-    print(f"locked #{rec['id']}: KP says {j['verdict']}; head {rec['hash']}")
+    extra = ""
+    if "natal" in rec:
+        n = rec["natal"]
+        extra = f"; natal KP says {n['verdict']}" + (f" ({n['quarter']})" if n["quarter"] else "")
+    print(f"locked #{rec['id']}: KP says {j['verdict']}{extra}; head {rec['hash']}")
 
 
 def cmd_resolve(a) -> None:
@@ -127,6 +183,15 @@ def score(entries: list[dict]) -> dict:
                      "asker_brier": (prior - yes) ** 2,
                      "quarter_hit_asker": bool(yes and res[i].get("event_date")
                                                and _quarter(res[i]["event_date"]) == q["asker_quarter"])})
+        n = q.get("natal")
+        if n:
+            ev = res[i].get("event_date")
+            rows[-1].update({
+                "natal_kp": n["verdict"] == "YES",
+                "natal_right": (n["verdict"] == "YES") == yes,
+                "window_hit": bool(yes and ev and any(s <= ev < e for s, e, _ in n["windows"])),
+                "quarter_hit_kp": bool(yes and ev and n["quarter"] and _quarter(ev) == n["quarter"]),
+            })
     decided = [r for r in rows if r["kp"] is not None]
     out = {"resolved": len(rows), "kp_decided": len(decided),
            "kp_accuracy": sum(r["kp_right"] for r in decided) / len(decided) if decided else None,
@@ -134,6 +199,20 @@ def score(entries: list[dict]) -> dict:
            "kp_right_asker_wrong": sum(r["kp_right"] and not r["asker_right"] for r in decided),
            "kp_wrong_asker_right": sum((not r["kp_right"]) and r["asker_right"] for r in decided),
            "bar": "KP accuracy >= 65% on >= 85 decided questions, and above the asker's own accuracy"}
+    nat = [r for r in rows if "natal_kp" in r]
+    happened = [r for r in nat if r["yes"]]
+    out["natal"] = {
+        "with_birth_data": len(nat),
+        "natal_accuracy": sum(r["natal_right"] for r in nat) / len(nat) if nat else None,
+        "asker_accuracy_same_rows": sum(r["asker_right"] for r in nat) / len(nat) if nat else None,
+        "events_that_happened": len(happened),
+        "event_inside_kp_window": sum(r["window_hit"] for r in happened),
+        "quarter_hit_kp": sum(r["quarter_hit_kp"] for r in happened),
+        "quarter_hit_asker": sum(r["quarter_hit_asker"] for r in happened),
+        "mean_window_coverage": (sum(q["natal"]["window_coverage"] for q in asks.values() if q.get("natal"))
+                                 / sum(1 for q in asks.values() if q.get("natal"))) if nat else None,
+        "note": "descriptive; the window hit rate must be read against the share of the question window the KP windows cover",
+    }
     if len(decided) >= 85:
         from scipy.stats import binomtest
         b, c = out["kp_right_asker_wrong"], out["kp_wrong_asker_right"]
@@ -160,6 +239,12 @@ def main(argv=None) -> int:
     s.add_argument("--prior", type=float, required=True, help="asker's own probability of yes, 0-1")
     s.add_argument("--quarter", required=True, help="asker's own best-guess quarter, e.g. 2027Q1")
     s.add_argument("--window", required=True, help="YYYY-MM-DD:YYYY-MM-DD")
+    s.add_argument("--birth", help="optional asker's birth, local YYYY-MM-DD HH:MM (stored; needs --consent-birth)")
+    s.add_argument("--birth-tz", type=float)
+    s.add_argument("--birth-lat", type=float)
+    s.add_argument("--birth-lon", type=float)
+    s.add_argument("--birth-matter", help="KP matter for the natal reading, e.g. marriage, service, children")
+    s.add_argument("--consent-birth", action="store_true", help="the asker agreed to their birth data being stored")
     r = sub.add_parser("resolve")
     r.add_argument("--log", type=Path, required=True)
     r.add_argument("--id", type=int, required=True)

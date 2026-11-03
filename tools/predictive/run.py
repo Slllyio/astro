@@ -402,7 +402,6 @@ def stage_n1_A(a) -> dict:
     """Null N1 for Task A (secondary): G and KP recomputed at same-day random times; Raman/Parashara kept."""
     p, base, G, T = _load_A(a.cache)
     Y = pd.read_parquet(a.cache / "targets_A.parquet").loc[p.index]
-    obs = json.loads((a.out / "phase2_A_observed.json").read_text())
     keep = [c for c in T.columns if not c.startswith("t_kp_")]
     tA = TaskA(base, Y, F.AREA_OF_TARGET, p.quality_tier.to_numpy())
     runs_path = a.out / "phase2_A_N1_runs.jsonl"
@@ -417,6 +416,9 @@ def stage_n1_A(a) -> dict:
         s, _ = tA.stats(astro_df.fillna(0).to_numpy(float), fams)
         _append(runs_path, {"run": i, "pooled": s["pooled"], "areas": s["areas"]})
         print(f"[n1_A] run {i}: full {s['pooled']['d_full']:+.4f}", flush=True)
+    if a.runs_only:
+        return {}
+    obs = json.loads((a.out / "phase2_A_observed.json").read_text())
     null = _runs(runs_path)
     return {"n_null": len(null), "pooled": _summ_null(obs["pooled"], [n["pooled"] for n in null], 0.02, ("d_full", "scan")),
             "areas": {ar: _summ_null(obs["areas"][ar], [n["areas"][ar] for n in null], 0.02, ("d_full", "scan"))

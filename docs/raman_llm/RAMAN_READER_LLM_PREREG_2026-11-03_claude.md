@@ -36,3 +36,12 @@ positions cannot be ruled out. A gain over the matter rule would need that cavea
 ## Prose
 Reported: distinct conclusions, median length, and a blind packet (Raman's words vs Claude's)
 for a human reader. No one has judged it blind at the time of writing.
+
+## Addendum 2026-11-03: local model instead (written before any local call)
+The user declined the ~$8 API cost, so the Claude run is NOT done and no Claude call was made.
+The same 262 requests (requests.jsonl, unchanged: system prompt, 16 examples, JSON shape) go to
+the stock local model the report already uses, gemma4:12b via Ollama on the user's PC:
+temperature 0, seed 20261103, thinking off, num_ctx 16384, one pass, errors and unparsable answers
+scored wrong. Tool: tools/raman_llm/local_reader.py. Same bar as above (vs the chart-blind matter
+rule, McNemar), same secondary comparisons, plus vs the fine-tuned 14B. Expected: NULL.
+This also answers whether a stock model with worked examples matches the 2.5-day fine-tune.

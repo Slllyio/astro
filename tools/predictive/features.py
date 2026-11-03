@@ -51,10 +51,10 @@ AREA_OF_TARGET = {"A1_actor": "career", "A2_public_office": "career", "A3_writer
 
 # ----------------------------------------------------------------------------- people
 
-def load_people(derived: Path) -> pd.DataFrame:
-    """Development people (tiers A+B) with a full birth date, time, place and tz. Tier C is dropped."""
+def load_people(derived: Path, tiers: tuple[str, ...] = DEV_TIERS) -> pd.DataFrame:
+    """People of the given tiers (default: development tiers A+B) with a full birth date, time, place and tz."""
     m = pd.read_parquet(Path(derived) / "raman" / "person_master.parquet")
-    m = m[m.quality_tier.isin(DEV_TIERS)]
+    m = m[m.quality_tier.isin(tiers)]
     m = m[m.birth_date.str.match(r"^\d{4}-\d\d-\d\d$", na=False)
           & m.birth_time.str.match(r"^\d{1,2}:\d\d", na=False)
           & m.latitude.notna() & m.longitude.notna() & m.tz_offset.notna()].copy()

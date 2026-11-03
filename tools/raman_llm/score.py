@@ -112,7 +112,7 @@ def main(run):
     rows = [data[k] for k in llm]
     b3p = {r["key"]: b3(r) for r in rows}
     fav = {r["key"]: "favourable" for r in rows}
-    eng = {r["key"]: r["engine_verdict"] or "mixed" for r in rows}
+    eng = {r["key"]: r["engine_verdict"] if r["engine_verdict"] in ORD else "mixed" for r in rows}  # no verdict counts as mixed
     subsets = {"PRIMARY hold-outs H1-H5": lambda r: r["split"] != "pool",
                "H4+H5 (the 40/64 comparison)": lambda r: r["split"] in ("H4", "H5"),
                "H1-H3": lambda r: r["split"] in ("H1", "H2", "H3"),

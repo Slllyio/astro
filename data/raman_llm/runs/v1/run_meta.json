@@ -1,0 +1,25 @@
+{
+ "model": "unsloth/Qwen3-14B-bnb-4bit",
+ "device": "cuda",
+ "gpu": "AMD Radeon RX 9060 XT",
+ "gpu_gb": 15.9,
+ "torch": "2.9.1+rocm7.13.0",
+ "args": {
+  "model": "unsloth/Qwen3-14B-bnb-4bit",
+  "out": "data/raman_llm/runs/v1",
+  "epochs": 2,
+  "lr": 0.0002,
+  "lora_r": 16,
+  "grad_accum": 8,
+  "max_len": 1536,
+  "max_new": 220,
+  "seed": 20261031,
+  "folds": "0,1,2,3,4",
+  "skip_done": false,
+  "no_final": false,
+  "smoke": false,
+  "four_bit": true
+ },
+ "n_rows": 651,
+ "started": "2026-10-31T14:42:27"
+}

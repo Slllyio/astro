@@ -21,7 +21,7 @@ from collections import defaultdict
 import swisseph as swe
 
 from app.raman_saab.chart.model import BirthData
-from app.raman_saab.rectification.arithmetic import sunrise_jd
+from app.raman_saab.primitives.sunrise import sunrise_jd
 
 SIGNS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio",
          "sagittarius", "capricorn", "aquarius", "pisces"]

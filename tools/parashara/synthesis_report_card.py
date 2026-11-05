@@ -111,7 +111,7 @@ def score_field_case() -> dict[str, Any]:
     a hit that chance would deliver 90% of the time proves little.
     """
     from app.parashara.synthesis.activation import active_windows
-    from app.raman_saab.rectification.events import EVENT_TAXONOMY
+    from app.raman_saab.life_events import EVENT_TAXONOMY
 
     case = json.loads(_FIELD_CASE.read_text(encoding="utf-8"))
     b = case["birth"]

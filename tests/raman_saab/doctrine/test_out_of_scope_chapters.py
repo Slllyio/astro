@@ -13,7 +13,7 @@ from __future__ import annotations
 from app.raman_saab.doctrine.rule_sets import ALL_RULES
 from app.raman_saab.doctrine.significations import SIGNIFICATIONS
 from app.raman_saab.doctrine.yogas import YOGAS
-from app.raman_saab.rectification.events import EVENT_TAXONOMY
+from app.raman_saab.life_events import EVENT_TAXONOMY
 
 _BANNED_WORKS: frozenset[str] = frozenset({
     "AFB-11", "AFB-12",                      # horary, gochara

@@ -1,135 +1,81 @@
-"""HTTP endpoint for birth-time rectification & time discovery.
+"""/rectify — retired. The engine no longer fits a birth time to a person's life events.
 
-Wraps the ``app.raman_saab.rectification`` engine (see
-``docs/raman_saab/methodology/rectification.md``). Stateless by design: HTTP is
-naturally single-shot, so the client holds the accumulating list of life events and
-re-POSTs the full set each round (the CLI's stateful session is the local-file
-equivalent). Both ayanamsas (raman + Lahiri) are always searched; the response ranks
-birth-time equivalence CLASSES, never a single point time.
+Until 2026-11-05 this endpoint searched the window around a stated birth time for the
+moment whose dasha periods best matched the user's dated life events (marriage, job,
+childbirth, a parent's death) and natal facts ("mother afflicted"), then returned that
+time. The rest of the app would then read the chart cast at that time, including the very
+dasha periods the events had been fitted to. That is circular: with a window of an hour
+or two there is always some time whose periods line up with a handful of events, so the
+"fit" is guaranteed by construction and the later reading "confirms" what was put in.
+Published blind tests of astrology (Carlson 1985; Dean & Kelly 2003; Narlikar 2009) and
+this project's own null results give no reason to trust the fit as evidence either way.
 
-Endpoint:
-    POST /rectify   JSON birth data + dated life events (+ optional natal facts) ->
-                    ranked candidate classes, the ayanamsa verdict, and the next
-                    most-discriminating questions to ask.
+What replaces it (see ``docs/raman_saab/BIRTH_TIME_POLICY.md``):
+
+* the birth time is taken as RECORDED, with its source stated (hospital record, birth
+  certificate, family recollection, estimate);
+* the reading reports how sensitive it is to that time instead of "correcting" it — the
+  detailed report's "Rectification confidence" chapter re-casts the chart minute by minute
+  out to +-60 minutes and names which pillars flip where, and the cited reader re-judges
+  each house at -20 .. +20 minutes;
+* the feedback form may ask non-event physical questions (build, apparent age, the
+  two-sign portrait when the ascendant sits near a cusp); those are recorded, never used
+  to move the time automatically.
+
+Every /rectify call now answers 410 Gone with this policy, so an old client fails
+loudly instead of silently getting a fitted time.
 """
 from __future__ import annotations
 
-import asyncio
-import logging
-from typing import Literal, Optional
+from fastapi import APIRouter, status
+from fastapi.responses import JSONResponse
 
-from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel, ConfigDict, Field
+rectification_router = APIRouter(prefix="/rectify", tags=["Birth-Time Rectification (retired)"])
 
-from app.raman_saab.rectification.events import EVENT_TAXONOMY, LifeEvent, resolve_fact
-from app.raman_saab.rectification.report import to_dict
-from app.raman_saab.rectification.session import RectificationSession
-
-logger = logging.getLogger(__name__)
-
-rectification_router = APIRouter(prefix="/rectify", tags=["Birth-Time Rectification"])
-
-#: Bounds on the CPU an unauthenticated POST can trigger (each event/ayanamsa multiplies
-#: the swisseph work; discover mode sweeps the whole day).
-_MAX_EVENTS = 24
-_MAX_FACTS = 12
-_MAX_WINDOW_MIN = 240
-
-
-class EventInput(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    event_type: str = Field(..., description="a key of the event taxonomy, e.g. 'marriage'")
-    year: int = Field(..., ge=1800, le=2200)
-    month: Optional[int] = Field(None, ge=1, le=12)
-    day: Optional[int] = Field(None, ge=1, le=31)
-    weight: float = Field(1.0, gt=0.0, le=10.0)
-
-
-class FactInput(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    subject: str = Field(..., description="a signification key, e.g. 'mother'")
-    observed: Literal["favourable", "mixed", "afflicted"]
-    weight: float = Field(1.0, gt=0.0, le=10.0)
+POLICY: dict = {
+    "status": "retired",
+    "retired_on": "2026-11-05",
+    "reason": (
+        "Event-based rectification picked the birth time whose dasha periods best matched "
+        "the user's own dated life events, and the reading then read those same periods "
+        "back. The fit is guaranteed by construction, so it is not evidence, and the "
+        "reading built on it would look right for the wrong reason."),
+    "what_the_engine_does_instead": [
+        "Uses the birth time as recorded and asks where it came from (hospital record, "
+        "birth certificate, family recollection, estimate).",
+        "Reports birth-time sensitivity: the detailed report re-casts the chart minute by "
+        "minute to +-60 minutes and names which pillars (lagna, navamsa lagna, Moon "
+        "nakshatra, planet houses) flip and where; the cited reader re-judges each house "
+        "at -20 .. +20 minutes.",
+        "May record non-event physical observations (build, apparent age, the two-sign "
+        "portrait near a cusp). These are shown to the user and never move the time "
+        "automatically.",
+    ],
+    "never_used_to_set_a_birth_time": [
+        "dated life events (marriage, job, children, a parent's death, surgery)",
+        "life facts judged by the same house rules the reading uses (e.g. 'mother afflicted')",
+    ],
+    "policy_doc": "docs/raman_saab/BIRTH_TIME_POLICY.md",
+}
 
 
-class RectifyRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    mode: Literal["rectify", "discover"] = "rectify"
-    year: int = Field(..., ge=1800, le=2100)
-    month: int = Field(..., ge=1, le=12)
-    day: int = Field(..., ge=1, le=31)
-    latitude: float = Field(..., ge=-90.0, le=90.0)
-    longitude: float = Field(..., ge=-180.0, le=180.0)
-    tz_offset: float = Field(..., ge=-12.0, le=14.0)
-    stated_hour: Optional[int] = Field(None, ge=0, le=23,
-                                       description="required for mode='rectify'")
-    stated_minute: Optional[int] = Field(0, ge=0, le=59)
-    window_minutes: int = Field(60, ge=1, le=_MAX_WINDOW_MIN)
-    ayanamsas: tuple[str, ...] = ("raman", "lahiri")
-    events: list[EventInput] = Field(default_factory=list)
-    facts: list[FactInput] = Field(default_factory=list)
-    top_k: int = Field(8, ge=1, le=20)
+def _gone() -> JSONResponse:
+    return JSONResponse(status_code=status.HTTP_410_GONE, content=POLICY)
+
+
+@rectification_router.get("/policy")
+async def policy() -> dict:
+    """The birth-time policy that replaced event-based rectification."""
+    return POLICY
 
 
 @rectification_router.get("/event-types")
-async def event_types() -> dict:
-    """The rectification event taxonomy — each typed event, its fructification house,
-    the doctrine citation, and the human question the UI can present."""
-    return {
-        "count": len(EVENT_TAXONOMY),
-        "event_types": [
-            {"key": s.key, "house": s.house, "aux_houses": list(s.aux_houses),
-             "question": s.question,
-             "citation": f"{s.source.work}:{s.source.line}"}
-            for s in EVENT_TAXONOMY.values()
-        ],
-    }
+async def event_types() -> JSONResponse:
+    """Retired: there is no event taxonomy for rectification any more."""
+    return _gone()
 
 
 @rectification_router.post("")
-async def post_rectify(req: RectifyRequest) -> dict:
-    """Rectify (stated time ± window) or discover (unknown time) a birth time from dated
-    life events, searching both ayanamsas. Returns ranked candidate CLASSES + the
-    ayanamsa verdict + next questions. Compute is offloaded to a worker thread (a
-    discover-mode search casts many charts)."""
-    if req.mode == "rectify" and req.stated_hour is None:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST,
-                            detail="mode='rectify' requires stated_hour (and stated_minute)")
-    if len(req.events) > _MAX_EVENTS:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST,
-                            detail=f"too many events (max {_MAX_EVENTS})")
-    if len(req.facts) > _MAX_FACTS:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST,
-                            detail=f"too many facts (max {_MAX_FACTS})")
-    if not req.events and not req.facts:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            detail="rectification needs evidence: supply at least one life event or "
-                   "natal fact (GET /rectify/event-types lists valid event keys)")
-    bad_ay = [a for a in req.ayanamsas if a not in ("raman", "lahiri")]
-    if bad_ay:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST,
-                            detail=f"unsupported ayanamsa(s) {bad_ay}; use raman / lahiri")
-
-    def _build_and_run() -> dict:
-        session = RectificationSession.new(
-            mode=req.mode, date=(req.year, req.month, req.day),
-            lat=req.latitude, lon=req.longitude, tz=req.tz_offset,
-            time=((req.stated_hour, req.stated_minute or 0)
-                  if req.stated_hour is not None else None),
-            window_minutes=req.window_minutes, ayanamsas=tuple(req.ayanamsas))
-        for ev in req.events:
-            session.add_event(LifeEvent(ev.event_type, ev.year, ev.month, ev.day,
-                                        weight=ev.weight))
-        for f in req.facts:
-            session.add_fact(resolve_fact(f.subject, f.observed, weight=f.weight))
-        return to_dict(session.evaluate(top_k=req.top_k))
-
-    try:
-        return await asyncio.to_thread(_build_and_run)
-    except ValueError as exc:                       # bad event_type / fact subject
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
-    except Exception as exc:  # noqa: BLE001
-        logger.exception("rectification failed")
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"rectification failed: {exc}") from exc
+async def post_rectify() -> JSONResponse:
+    """Retired: always 410 Gone with the policy, whatever the body."""
+    return _gone()

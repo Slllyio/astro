@@ -27,7 +27,7 @@ from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.judges import house_template as ht
 from app.raman_saab.primitives import vimshottari as vim
-from app.raman_saab.rectification.events import LifeEvent
+from app.raman_saab.life_events import LifeEvent
 
 _DEFAULT = Path("data/private/real_outcomes.json")
 _POS = {"afflicted": 0, "mixed": 1, "favourable": 2}

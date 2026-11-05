@@ -35,7 +35,7 @@ def _natal_sources():
         PLANET_ORGANS, PLANET_SEASONS, PLANET_TRIDOSHAS)
     from app.raman_saab.doctrine.lookups.source_of_gains import (
         PLANET_IN_11TH_GAINS, SECOND_LORD_HOUSE_GAINS)
-    from app.raman_saab.rectification.events import EVENT_TAXONOMY
+    from app.raman_saab.life_events import EVENT_TAXONOMY
 
     for rule in ALL_RULES:
         yield ("rule", rule.source)

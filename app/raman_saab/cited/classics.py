@@ -210,9 +210,12 @@ def label(f: ShelfFile, locs: list[tuple[Optional[int], Optional[int]]], lo: int
           lines: tuple[str, ...]) -> str:
     """The human location of lines ``lo..hi`` (1-based): "ch. 12, vv. 4-9", "ch. 12, v. 4
     (cont.)", "ch. 12" or ""."""
-    ch = locs[lo - 1][0]
-    opened = [v for i in range(lo - 1, hi) if (v := verse_at(lines[i])) is not None
-              and locs[i][1] == v[1]]
+    opened_at = [i for i in range(lo - 1, hi) if (v := verse_at(lines[i])) is not None
+                 and locs[i][1] == v[1]]
+    opened = [verse_at(lines[i]) for i in opened_at]
+    # the chapter of the first verse the passage opens (a passage can start just before a
+    # chapter heading), else the chapter in force at its first line
+    ch = locs[opened_at[0]][0] if opened_at else locs[lo - 1][0]
     if opened:
         a, b = opened[0][0], opened[-1][1]
         vtxt = f"v. {a}" if a == b else f"vv. {a}-{b}"

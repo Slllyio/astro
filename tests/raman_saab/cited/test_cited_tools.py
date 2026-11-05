@@ -414,6 +414,14 @@ class TestClassicalShelf:
         rows = list(classics.passages(classics.shelf_files(src), corpus.lines_of, library.chunk_lines))
         hr = [r[4] for r in rows if r[0].book == "HRAT"]
         assert hr and all(x.startswith("ch. 5") for x in hr)
+        (src / "hora_ratnam_santhanam" / "chapter_019_pages-901-950.md").write_text(
+            "12. The last verse of the fifth chapter is printed here for the reader.\n"
+            "Thus ends the 5th Chapter of the work.\n\n"
+            "Glossary: Dasa Varga means the ten divisional charts used by the author.\n\n"
+            "Hora Ratnam / Chapter 5\n", encoding="utf-8")
+        f19 = [f for f in classics.shelf_files(src) if f.prefix == "HRAT-19"][0]
+        chs = [c for c, _, _ in classics.line_locations(f19, corpus.lines_of(f19.path), 5)]
+        assert chs[0] == 5 and chs[3] is None and chs[5] is None    # back matter left blank
         bj = [f for f in classics.shelf_files(src) if f.book == "BJ"][0]
         lines = corpus.lines_of(bj.path)
         chs = [c for c, _, _ in classics.line_locations(bj, lines)]

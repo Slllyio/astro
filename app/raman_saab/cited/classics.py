@@ -252,21 +252,33 @@ def _file_chapter(f: ShelfFile) -> Optional[int]:
 
 def _footer_chapters(lines: tuple[str, ...], max_ch: int, start: Optional[int]) -> list[Optional[int]]:
     """Chapter per line from page footers ('Hora Ratnam / Chapter N'): a footer closes its page,
-    so the lines before it are chapter N. The scraper's own '# ...' header lines are ignored,
-    footers may only stay or rise by one, and lines after the file's last footer keep it."""
+    so the lines before it are chapter N. The scraper's own '# ...' header lines are ignored and
+    footers may only stay or rise by one. A 'Thus ends the Nth Chapter' colophon closes chapter
+    N: what follows it is unlabelled until a footer names a later chapter (so back matter after
+    the last chapter, which still carries the old footer, is left blank)."""
     out: list[Optional[int]] = [None] * len(lines)
-    prev, cur = 0, start
+    prev, cur, closed = 0, start, None
     for i, line in enumerate(lines):
         if line.lstrip().startswith("#"):
+            continue
+        m = _ENDS.search(line)
+        if m and (n := _number(m.group("n"))) and cur is not None and n == cur:
+            for j in range(prev, i + 1):
+                out[j] = n
+            prev, closed = i + 1, n
             continue
         n = chapter_heading(line, "hora-ratnam")
         if n is None or n > max_ch or (cur is not None and not cur <= n <= cur + 1):
             continue
+        if closed is not None and n <= closed:
+            prev = i + 1                       # an old footer on back matter: stays blank
+            continue
         for j in range(prev, i + 1):
             out[j] = n
-        prev, cur = i + 1, n
-    for j in range(prev, len(lines)):
-        out[j] = cur
+        prev, cur, closed = i + 1, n, None
+    if closed is None:
+        for j in range(prev, len(lines)):
+            out[j] = cur
     return out
 
 

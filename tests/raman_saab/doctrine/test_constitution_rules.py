@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.rule_sets.house_01_lagna.constitution import RULES
 from app.raman_saab.doctrine.sources import verify
@@ -35,6 +37,7 @@ def _rule(rule_id: str):
 
 # ── citation guard ────────────────────────────────────────────────────────────
 
+@needs_corpus
 @pytest.mark.parametrize("rule", list(RULES), ids=lambda r: r.id)
 def test_citation_resolves_on_disk(rule) -> None:
     """Every constitution rule must cite a real on-disk HTJAH-I corpus line."""

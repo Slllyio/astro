@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.rule_sets.house_01_lagna import moon_mind
 from app.raman_saab.doctrine.sources import verify
@@ -38,6 +40,7 @@ def _rule(rule_id: str):
 
 # ── citation integrity ────────────────────────────────────────────────────────
 
+@needs_corpus
 @pytest.mark.parametrize("rule", list(moon_mind.RULES), ids=lambda r: r.id)
 def test_every_moon_mind_rule_cites_real_corpus_line(rule):
     """Every RuleRecord must cite a line that exists on disk (HTJAH-I corpus)."""

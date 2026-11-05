@@ -63,7 +63,7 @@ def main(argv: list[str] | None = None) -> int:
                                         "ci": [round(float(r["ci_lo"]), 4), round(float(r["ci_hi"]), 4)]}
 
     base = {
-        "mapping_version": 2,
+        "mapping_version": 3,  # v3 2026-08-23: +H9_FATHER/H4_MOTHER childhood-composite rows (supporting tier)
         "mapping_sha256": _sha(_MAP),
         "person_master_sha256": _sha(_OUT / "person_master.parquet"),
         "engine_git_sha": _engine_sha(),

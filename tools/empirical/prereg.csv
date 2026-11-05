@@ -1,0 +1,7 @@
+test_id,feature_bank,target,statistic,baseline_model,control_arms,min_n,tier_requirement,stage,direction,status,notes
+T001,chartless,marriage,auc,,chartless_baseline|era_stratification|person_leak_preflight|sham_target,2000,AB,screening,greater,draft,DRAFT — the baseline arm itself; establishes the bar the chart banks must beat (lat/lon/date reached 0.744 on marriage previously)
+T002,western,marriage,auc,T001,chartless_baseline|era_stratification|person_leak_preflight|sham_target,2000,AB,screening,greater,draft,DRAFT — needs sign-off before locking
+T003,vedic_timing,marriage,auc,T001,chartless_baseline|era_stratification|person_leak_preflight|sham_target,2000,AB,screening,greater,draft,DRAFT — reuses existing dasha windows; no new computation
+T004,raw_astronomy,marriage,auc,T001,chartless_baseline|era_stratification|person_leak_preflight|sham_target,2000,AB,screening,greater,draft,DRAFT — bank seed unresolved: unified_engine/audit/frontier_registry.py is not in the repo
+T005,western,occupation_class,auc,T001,chartless_baseline|era_stratification|person_leak_preflight|sham_target,1500,A,screening,greater,draft,DRAFT — decode target; occupation harmonization table must be registered before locking
+T006,western,event_timing_within_person,within_person_rank,T001,chartless_baseline|era_stratification|immortal_time_capping|person_leak_preflight|sham_target|within_person_control_dates,1000,A,screening,greater,draft,DRAFT — the headline timing design; structurally immune to geography and era leaks

@@ -1,0 +1,2863 @@
+{
+ "slug": "Justin_Trudeau",
+ "name": "Justin Trudeau",
+ "instrument": {
+  "version": "v2",
+  "lang": "en",
+  "parts": [
+   {
+    "part": "A",
+    "title_en": "Your life, in your own words",
+    "title_hi": "आपका जीवन, आपके अपने शब्दों में",
+    "note_en": "Nothing here mentions astrology, and nothing is being checked against a prediction yet. Answer this part BEFORE reading the rest of the report — once you have read what a chart says about you, you can no longer report what you would have said on your own, and that is the only answer worth measuring. Every question is answered by choosing, not by writing.",
+    "note_hi": "यहाँ ज्योतिष का कोई ज़िक्र नहीं है, और अभी किसी भविष्यवाणी से कुछ नहीं मिलाया जा रहा। यह भाग बाक़ी फलादेश पढ़ने से पहले भरें — एक बार पढ़ लेने के बाद आप वह नहीं बता सकते जो आप अपनी ओर से कहते, और मापने लायक़ वही एक उत्तर है। हर प्रश्न का उत्तर चुनकर दिया जाता है, लिखकर नहीं।",
+    "questions": [
+     {
+      "qid": "inst.v2.A1",
+      "part": "A",
+      "group": "birth_record",
+      "group_label_en": "The birth record",
+      "group_label_hi": "जन्म का विवरण",
+      "kind": "choice",
+      "text_en": "Where did your birth time come from?",
+      "text_hi": "आपका जन्म-समय कहाँ से आया?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "hospital",
+        "text_en": "a hospital record",
+        "text_hi": "अस्पताल का रिकॉर्ड"
+       },
+       {
+        "value": "certificate",
+        "text_en": "a birth certificate",
+        "text_hi": "जन्म प्रमाण-पत्र"
+       },
+       {
+        "value": "horoscope_then",
+        "text_en": "a horoscope cast at the time",
+        "text_hi": "उस समय बनी कुंडली"
+       },
+       {
+        "value": "family_memory",
+        "text_en": "someone's memory",
+        "text_hi": "किसी की याददाश्त"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.source"
+     },
+     {
+      "qid": "inst.v2.A2",
+      "part": "A",
+      "group": "birth_record",
+      "group_label_en": "The birth record",
+      "group_label_hi": "जन्म का विवरण",
+      "kind": "choice",
+      "text_en": "How precise is that time?",
+      "text_hi": "वह समय कितना सटीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "exact",
+        "text_en": "an exact clock reading",
+        "text_hi": "घड़ी का सटीक समय"
+       },
+       {
+        "value": "to_5",
+        "text_en": "right to within about 5 minutes",
+        "text_hi": "लगभग 5 मिनट तक सही"
+       },
+       {
+        "value": "to_15",
+        "text_en": "right to within about 15 minutes",
+        "text_hi": "लगभग 15 मिनट तक सही"
+       },
+       {
+        "value": "round_hour",
+        "text_en": "a round number — the hour or the half hour",
+        "text_hi": "गोल समय — घंटा या आधा घंटा"
+       },
+       {
+        "value": "part_of_day",
+        "text_en": "only a part of the day",
+        "text_hi": "केवल दिन का एक पहर"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.precision"
+     },
+     {
+      "qid": "inst.v2.A3",
+      "part": "A",
+      "group": "birth_record",
+      "group_label_en": "The birth record",
+      "group_label_hi": "जन्म का विवरण",
+      "kind": "choice",
+      "text_en": "Has an astrologer already changed or corrected this time?",
+      "text_hi": "क्या किसी ज्योतिषी ने यह समय पहले बदला या शोधित किया है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "yes",
+        "text_en": "yes",
+        "text_hi": "हाँ"
+       },
+       {
+        "value": "no",
+        "text_en": "no",
+        "text_hi": "नहीं"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.already_rectified"
+     },
+     {
+      "qid": "inst.v2.A4",
+      "part": "A",
+      "group": "health",
+      "group_label_en": "Body and health",
+      "group_label_hi": "शरीर और स्वास्थ्य",
+      "kind": "choice",
+      "text_en": "How many times have you been admitted to hospital?",
+      "text_hi": "आप कितनी बार अस्पताल में भर्ती हुए हैं?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "never",
+        "text_hi": "कभी नहीं"
+       },
+       {
+        "value": "one",
+        "text_en": "once",
+        "text_hi": "एक बार"
+       },
+       {
+        "value": "two_three",
+        "text_en": "two or three times",
+        "text_hi": "दो या तीन बार"
+       },
+       {
+        "value": "four_plus",
+        "text_en": "four or more",
+        "text_hi": "चार या अधिक"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "health.hospitalisations"
+     },
+     {
+      "qid": "inst.v2.A5",
+      "part": "A",
+      "group": "health",
+      "group_label_en": "Body and health",
+      "group_label_hi": "शरीर और स्वास्थ्य",
+      "kind": "choice",
+      "text_en": "How many surgeries have you had?",
+      "text_hi": "आपके कितने ऑपरेशन हुए हैं?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "none",
+        "text_hi": "कोई नहीं"
+       },
+       {
+        "value": "one",
+        "text_en": "one",
+        "text_hi": "एक"
+       },
+       {
+        "value": "two_plus",
+        "text_en": "two or more",
+        "text_hi": "दो या अधिक"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "health.surgeries"
+     },
+     {
+      "qid": "inst.v2.A6",
+      "part": "A",
+      "group": "health",
+      "group_label_en": "Body and health",
+      "group_label_hi": "शरीर और स्वास्थ्य",
+      "kind": "multi",
+      "text_en": "Which parts of your body give you recurring trouble?",
+      "text_hi": "शरीर के कौन-से हिस्से बार-बार परेशान करते हैं?",
+      "hint_en": "Choose any that apply, or the last option if nothing troubles you regularly.",
+      "hint_hi": "जितने लागू हों चुनें, या यदि कुछ भी नियमित रूप से परेशान नहीं करता तो अंतिम विकल्प।",
+      "options": [
+       {
+        "value": "head",
+        "text_en": "head, brain",
+        "text_hi": "सिर, मस्तिष्क"
+       },
+       {
+        "value": "eyes",
+        "text_en": "eyes, sight",
+        "text_hi": "आँखें, दृष्टि"
+       },
+       {
+        "value": "ears",
+        "text_en": "ears, hearing",
+        "text_hi": "कान, श्रवण"
+       },
+       {
+        "value": "throat_neck",
+        "text_en": "throat, neck, thyroid, voice",
+        "text_hi": "गला, गर्दन, थायरॉइड, आवाज़"
+       },
+       {
+        "value": "teeth_jaw",
+        "text_en": "teeth, jaw",
+        "text_hi": "दाँत, जबड़ा"
+       },
+       {
+        "value": "chest_lungs",
+        "text_en": "chest, lungs, breathing",
+        "text_hi": "छाती, फेफड़े, साँस"
+       },
+       {
+        "value": "heart",
+        "text_en": "heart, blood pressure",
+        "text_hi": "हृदय, रक्तचाप"
+       },
+       {
+        "value": "stomach",
+        "text_en": "stomach, digestion, bowels",
+        "text_hi": "पेट, पाचन, आँतें"
+       },
+       {
+        "value": "liver",
+        "text_en": "liver, bile",
+        "text_hi": "यकृत, पित्त"
+       },
+       {
+        "value": "kidney_urinary",
+        "text_en": "kidneys, urinary system",
+        "text_hi": "गुर्दे, मूत्र-तंत्र"
+       },
+       {
+        "value": "reproductive",
+        "text_en": "reproductive system",
+        "text_hi": "प्रजनन-तंत्र"
+       },
+       {
+        "value": "skin",
+        "text_en": "skin",
+        "text_hi": "त्वचा"
+       },
+       {
+        "value": "joints",
+        "text_en": "joints, arthritis",
+        "text_hi": "जोड़, गठिया"
+       },
+       {
+        "value": "back_spine",
+        "text_en": "back, spine",
+        "text_hi": "पीठ, रीढ़"
+       },
+       {
+        "value": "nerves",
+        "text_en": "nerves, sleep, anxiety",
+        "text_hi": "स्नायु, नींद, चिंता"
+       },
+       {
+        "value": "blood_sugar",
+        "text_en": "blood sugar, metabolism",
+        "text_hi": "रक्त-शर्करा, चयापचय"
+       },
+       {
+        "value": "legs_feet",
+        "text_en": "legs, feet",
+        "text_hi": "पैर, तलवे"
+       },
+       {
+        "value": "none",
+        "text_en": "nothing recurring",
+        "text_hi": "कुछ भी बार-बार नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "medical.regions"
+     },
+     {
+      "qid": "inst.v2.A7",
+      "part": "A",
+      "group": "health",
+      "group_label_en": "Body and health",
+      "group_label_hi": "शरीर और स्वास्थ्य",
+      "kind": "choice",
+      "text_en": "How was your health as a small child?",
+      "text_hi": "छोटी उम्र में आपका स्वास्थ्य कैसा था?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "sickly",
+        "text_en": "sickly — often ill",
+        "text_hi": "कमज़ोर — अक्सर बीमार"
+       },
+       {
+        "value": "average",
+        "text_en": "about average",
+        "text_hi": "सामान्य"
+       },
+       {
+        "value": "robust",
+        "text_en": "robust — rarely ill",
+        "text_hi": "मज़बूत — कम बीमार"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "arishta.balarishta"
+     },
+     {
+      "qid": "inst.v2.A8",
+      "part": "A",
+      "group": "health",
+      "group_label_en": "Body and health",
+      "group_label_hi": "शरीर और स्वास्थ्य",
+      "kind": "choice",
+      "text_en": "Was there danger to your life before the age of eight?",
+      "text_hi": "आठ वर्ष की आयु से पहले जान का कोई ख़तरा था?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "yes",
+        "text_en": "yes",
+        "text_hi": "हाँ"
+       },
+       {
+        "value": "no",
+        "text_en": "no",
+        "text_hi": "नहीं"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "arishta.balarishta"
+     },
+     {
+      "qid": "inst.v2.A9",
+      "part": "A",
+      "group": "health",
+      "group_label_en": "Body and health",
+      "group_label_hi": "शरीर और स्वास्थ्य",
+      "kind": "choice",
+      "text_en": "How long did your grandparents live, on average?",
+      "text_hi": "आपके दादा-दादी / नाना-नानी औसतन कितने वर्ष जिए?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "under60",
+        "text_en": "under 60",
+        "text_hi": "60 से कम"
+       },
+       {
+        "value": "60_70",
+        "text_en": "60 to 70",
+        "text_hi": "60 से 70"
+       },
+       {
+        "value": "70_80",
+        "text_en": "70 to 80",
+        "text_hi": "70 से 80"
+       },
+       {
+        "value": "80_90",
+        "text_en": "80 to 90",
+        "text_hi": "80 से 90"
+       },
+       {
+        "value": "over90",
+        "text_en": "over 90",
+        "text_hi": "90 से अधिक"
+       },
+       {
+        "value": "mixed",
+        "text_en": "very mixed",
+        "text_hi": "बहुत भिन्न"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "longevity.family"
+     },
+     {
+      "qid": "inst.v2.A10",
+      "part": "A",
+      "group": "family",
+      "group_label_en": "Parents and siblings",
+      "group_label_hi": "माता-पिता और भाई-बहन",
+      "kind": "choice",
+      "text_en": "Your relationship with your father:",
+      "text_hi": "पिता से आपका संबंध:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "close",
+        "text_en": "close and supportive",
+        "text_hi": "निकट और सहयोगी"
+       },
+       {
+        "value": "distant",
+        "text_en": "distant but not hostile",
+        "text_hi": "दूर, पर वैमनस्य नहीं"
+       },
+       {
+        "value": "conflicted",
+        "text_en": "conflicted",
+        "text_hi": "मतभेदपूर्ण"
+       },
+       {
+        "value": "absent",
+        "text_en": "absent for long stretches",
+        "text_hi": "लंबे समय अनुपस्थित"
+       },
+       {
+        "value": "died_early",
+        "text_en": "he died while I was young",
+        "text_hi": "मेरे बचपन में उनकी मृत्यु हुई"
+       },
+       {
+        "value": "na",
+        "text_en": "does not apply",
+        "text_hi": "लागू नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h9.father"
+     },
+     {
+      "qid": "inst.v2.A11",
+      "part": "A",
+      "group": "family",
+      "group_label_en": "Parents and siblings",
+      "group_label_hi": "माता-पिता और भाई-बहन",
+      "kind": "choice",
+      "text_en": "Your father's fortunes during your childhood:",
+      "text_hi": "आपके बचपन में पिता की आर्थिक स्थिति:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "prospered",
+        "text_en": "prospered",
+        "text_hi": "समृद्ध हुई"
+       },
+       {
+        "value": "steady",
+        "text_en": "steady",
+        "text_hi": "स्थिर रही"
+       },
+       {
+        "value": "reversal",
+        "text_en": "suffered a reversal",
+        "text_hi": "बड़ा नुक़सान हुआ"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h9.father"
+     },
+     {
+      "qid": "inst.v2.A12",
+      "part": "A",
+      "group": "family",
+      "group_label_en": "Parents and siblings",
+      "group_label_hi": "माता-पिता और भाई-बहन",
+      "kind": "choice",
+      "text_en": "Your relationship with your mother:",
+      "text_hi": "माता से आपका संबंध:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "close",
+        "text_en": "close and supportive",
+        "text_hi": "निकट और सहयोगी"
+       },
+       {
+        "value": "distant",
+        "text_en": "distant but not hostile",
+        "text_hi": "दूर, पर वैमनस्य नहीं"
+       },
+       {
+        "value": "conflicted",
+        "text_en": "conflicted",
+        "text_hi": "मतभेदपूर्ण"
+       },
+       {
+        "value": "absent",
+        "text_en": "absent for long stretches",
+        "text_hi": "लंबे समय अनुपस्थित"
+       },
+       {
+        "value": "died_early",
+        "text_en": "she died while I was young",
+        "text_hi": "मेरे बचपन में उनकी मृत्यु हुई"
+       },
+       {
+        "value": "na",
+        "text_en": "does not apply",
+        "text_hi": "लागू नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h4.mother"
+     },
+     {
+      "qid": "inst.v2.A13",
+      "part": "A",
+      "group": "family",
+      "group_label_en": "Parents and siblings",
+      "group_label_hi": "माता-पिता और भाई-बहन",
+      "kind": "choice",
+      "text_en": "Your brothers and sisters:",
+      "text_hi": "आपके भाई-बहन:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "I have none",
+        "text_hi": "कोई नहीं"
+       },
+       {
+        "value": "close",
+        "text_en": "close to them",
+        "text_hi": "उनसे निकट"
+       },
+       {
+        "value": "distant",
+        "text_en": "distant from them",
+        "text_hi": "उनसे दूर"
+       },
+       {
+        "value": "conflicted",
+        "text_en": "in conflict with them",
+        "text_hi": "उनसे मतभेद"
+       },
+       {
+        "value": "lost",
+        "text_en": "I have lost one",
+        "text_hi": "एक की मृत्यु हो चुकी"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h3.siblings"
+     },
+     {
+      "qid": "inst.v2.A14",
+      "part": "A",
+      "group": "education",
+      "group_label_en": "Education",
+      "group_label_hi": "शिक्षा",
+      "kind": "choice",
+      "text_en": "Your highest completed education:",
+      "text_hi": "आपकी उच्चतम पूर्ण शिक्षा:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "no formal schooling",
+        "text_hi": "औपचारिक शिक्षा नहीं"
+       },
+       {
+        "value": "school",
+        "text_en": "school",
+        "text_hi": "विद्यालय"
+       },
+       {
+        "value": "higher_secondary",
+        "text_en": "higher secondary",
+        "text_hi": "उच्चतर माध्यमिक"
+       },
+       {
+        "value": "graduate",
+        "text_en": "graduate",
+        "text_hi": "स्नातक"
+       },
+       {
+        "value": "postgraduate",
+        "text_en": "postgraduate",
+        "text_hi": "स्नातकोत्तर"
+       },
+       {
+        "value": "doctorate",
+        "text_en": "doctorate",
+        "text_hi": "पीएच.डी."
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h9.higher_learning"
+     },
+     {
+      "qid": "inst.v2.A15",
+      "part": "A",
+      "group": "education",
+      "group_label_en": "Education",
+      "group_label_hi": "शिक्षा",
+      "kind": "choice",
+      "text_en": "Was your education interrupted?",
+      "text_hi": "क्या आपकी पढ़ाई बीच में रुकी?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "no",
+        "text_en": "no",
+        "text_hi": "नहीं"
+       },
+       {
+        "value": "brief",
+        "text_en": "briefly",
+        "text_hi": "थोड़े समय के लिए"
+       },
+       {
+        "value": "serious",
+        "text_en": "seriously",
+        "text_hi": "गंभीर रूप से"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h4.education"
+     },
+     {
+      "qid": "inst.v2.A16",
+      "part": "A",
+      "group": "work",
+      "group_label_en": "Work",
+      "group_label_hi": "काम",
+      "kind": "multi",
+      "text_en": "How do you earn? Choose everything that applies.",
+      "text_hi": "आप कैसे कमाते हैं? जितने लागू हों चुनें।",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "salary_government",
+        "text_en": "salaried, government or public body",
+        "text_hi": "वेतनभोगी, सरकारी या सार्वजनिक संस्था"
+       },
+       {
+        "value": "salary_private",
+        "text_en": "salaried, private employer",
+        "text_hi": "वेतनभोगी, निजी नियोक्ता"
+       },
+       {
+        "value": "own_business",
+        "text_en": "own business or firm",
+        "text_hi": "अपना व्यवसाय या फर्म"
+       },
+       {
+        "value": "trade",
+        "text_en": "trade, buying and selling",
+        "text_hi": "व्यापार, ख़रीद-बिक्री"
+       },
+       {
+        "value": "commission",
+        "text_en": "commission or brokerage",
+        "text_hi": "कमीशन या दलाली"
+       },
+       {
+        "value": "professional_practice",
+        "text_en": "professional practice of my own",
+        "text_hi": "अपनी पेशेवर प्रैक्टिस"
+       },
+       {
+        "value": "farming",
+        "text_en": "farming or land",
+        "text_hi": "खेती या भूमि"
+       },
+       {
+        "value": "manual",
+        "text_en": "manual or service work",
+        "text_hi": "श्रम या सेवा कार्य"
+       },
+       {
+        "value": "not_earning",
+        "text_en": "not earning at present",
+        "text_hi": "इस समय कोई आय नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h10.modes"
+     },
+     {
+      "qid": "inst.v2.A17",
+      "part": "A",
+      "group": "work",
+      "group_label_en": "Work",
+      "group_label_hi": "काम",
+      "kind": "choice",
+      "text_en": "Which has gone better for you — working under an authority, or working for yourself?",
+      "text_hi": "आपके लिए कौन बेहतर रहा — किसी के अधीन काम, या अपना काम?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "under_authority",
+        "text_en": "under an employer, government or senior",
+        "text_hi": "नियोक्ता, सरकार या वरिष्ठ के अधीन"
+       },
+       {
+        "value": "own",
+        "text_en": "for myself",
+        "text_hi": "अपने लिए"
+       },
+       {
+        "value": "both_equal",
+        "text_en": "about the same",
+        "text_hi": "दोनों बराबर"
+       },
+       {
+        "value": "untested",
+        "text_en": "I have only tried one",
+        "text_hi": "मैंने केवल एक ही आज़माया है"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h10.authority_vs_trade"
+     },
+     {
+      "qid": "inst.v2.A18",
+      "part": "A",
+      "group": "work",
+      "group_label_en": "Work",
+      "group_label_hi": "काम",
+      "kind": "multi",
+      "text_en": "Which kinds of work have you actually done, or been strongly drawn to?",
+      "text_hi": "आपने वास्तव में किस तरह का काम किया है, या किसकी ओर प्रबल आकर्षण रहा है?",
+      "hint_en": "Include work you only tried briefly, and attractions that went nowhere.",
+      "hint_hi": "थोड़े समय किया हुआ काम और अधूरे आकर्षण भी शामिल करें।",
+      "options": [
+       {
+        "value": "metals_machinery",
+        "text_en": "metals, machinery, engineering",
+        "text_hi": "धातु, मशीन, इंजीनियरिंग"
+       },
+       {
+        "value": "construction",
+        "text_en": "construction, buildings, land",
+        "text_hi": "निर्माण, भवन, भूमि"
+       },
+       {
+        "value": "fire_heat",
+        "text_en": "fire or heat trades, chemicals",
+        "text_hi": "आग/गर्मी वाले काम, रसायन"
+       },
+       {
+        "value": "military_police",
+        "text_en": "military, police, security",
+        "text_hi": "सेना, पुलिस, सुरक्षा"
+       },
+       {
+        "value": "medicine_surgery",
+        "text_en": "medicine, surgery, pharmacy",
+        "text_hi": "चिकित्सा, सर्जरी, दवा"
+       },
+       {
+        "value": "transport",
+        "text_en": "driving, transport, logistics",
+        "text_hi": "ड्राइविंग, परिवहन"
+       },
+       {
+        "value": "writing_media",
+        "text_en": "writing, journalism, media",
+        "text_hi": "लेखन, पत्रकारिता, मीडिया"
+       },
+       {
+        "value": "maths_accounts",
+        "text_en": "mathematics, accounts, analysis",
+        "text_hi": "गणित, लेखा, विश्लेषण"
+       },
+       {
+        "value": "teaching",
+        "text_en": "teaching, research",
+        "text_hi": "अध्यापन, शोध"
+       },
+       {
+        "value": "astrology_occult",
+        "text_en": "astrology, the occult, priestcraft",
+        "text_hi": "ज्योतिष, गूढ़ विद्या, पौरोहित्य"
+       },
+       {
+        "value": "design_art",
+        "text_en": "design, art, music, performance",
+        "text_hi": "डिज़ाइन, कला, संगीत, प्रदर्शन"
+       },
+       {
+        "value": "law",
+        "text_en": "law, courts",
+        "text_hi": "क़ानून, न्यायालय"
+       },
+       {
+        "value": "counselling",
+        "text_en": "counselling, advisory work",
+        "text_hi": "परामर्श, सलाहकार कार्य"
+       },
+       {
+        "value": "banking_finance",
+        "text_en": "banking, finance, insurance",
+        "text_hi": "बैंकिंग, वित्त, बीमा"
+       },
+       {
+        "value": "religious",
+        "text_en": "religious or charitable work",
+        "text_hi": "धार्मिक या सेवा कार्य"
+       },
+       {
+        "value": "agriculture",
+        "text_en": "agriculture, horticulture",
+        "text_hi": "कृषि, बाग़वानी"
+       },
+       {
+        "value": "textiles_luxury",
+        "text_en": "textiles, jewellery, luxury goods",
+        "text_hi": "वस्त्र, आभूषण, विलासिता"
+       },
+       {
+        "value": "trade_retail",
+        "text_en": "trade, retail, buying and selling",
+        "text_hi": "व्यापार, दुकानदारी"
+       },
+       {
+        "value": "none",
+        "text_en": "none of these",
+        "text_hi": "इनमें से कोई नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "career.trades"
+     },
+     {
+      "qid": "inst.v2.A19",
+      "part": "A",
+      "group": "work",
+      "group_label_en": "Work",
+      "group_label_hi": "काम",
+      "kind": "choice",
+      "text_en": "Recognition compared with the work you actually did:",
+      "text_hi": "आपके वास्तविक काम की तुलना में मिली पहचान:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "above",
+        "text_en": "more than it deserved",
+        "text_hi": "काम से ज़्यादा"
+       },
+       {
+        "value": "about_right",
+        "text_en": "about right",
+        "text_hi": "उचित"
+       },
+       {
+        "value": "short",
+        "text_en": "less than it deserved",
+        "text_hi": "काम से कम"
+       },
+       {
+        "value": "na",
+        "text_en": "does not apply",
+        "text_hi": "लागू नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h10.status_honour"
+     },
+     {
+      "qid": "inst.v2.A20",
+      "part": "A",
+      "group": "money",
+      "group_label_en": "Money",
+      "group_label_hi": "धन",
+      "kind": "choice",
+      "text_en": "Money earned far from your birthplace, or abroad:",
+      "text_hi": "जन्मस्थान से दूर या विदेश से अर्जित धन:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "none",
+        "text_hi": "कोई नहीं"
+       },
+       {
+        "value": "some",
+        "text_en": "some of my income",
+        "text_hi": "आय का कुछ हिस्सा"
+       },
+       {
+        "value": "most",
+        "text_en": "most of my income",
+        "text_hi": "आय का अधिकांश"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h12.foreign_residence"
+     },
+     {
+      "qid": "inst.v2.A21",
+      "part": "A",
+      "group": "money",
+      "group_label_en": "Money",
+      "group_label_hi": "धन",
+      "kind": "choice",
+      "text_en": "Speculation, betting, lottery or shares — how has it gone overall?",
+      "text_hi": "सट्टा, लॉटरी या शेयर — कुल मिलाकर कैसा रहा?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "never",
+        "text_en": "I have never done it",
+        "text_hi": "मैंने कभी नहीं किया"
+       },
+       {
+        "value": "net_loss",
+        "text_en": "a net loss",
+        "text_hi": "कुल मिलाकर हानि"
+       },
+       {
+        "value": "about_even",
+        "text_en": "about even",
+        "text_hi": "बराबर"
+       },
+       {
+        "value": "net_gain",
+        "text_en": "a net gain",
+        "text_hi": "कुल मिलाकर लाभ"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h5.poorvapunya"
+     },
+     {
+      "qid": "inst.v2.A22",
+      "part": "A",
+      "group": "money",
+      "group_label_en": "Money",
+      "group_label_hi": "धन",
+      "kind": "choice",
+      "text_en": "Inheritance, insurance, or an unexpected windfall:",
+      "text_hi": "विरासत, बीमा, या अप्रत्याशित धन:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "none",
+        "text_hi": "कोई नहीं"
+       },
+       {
+        "value": "small",
+        "text_en": "something small",
+        "text_hi": "छोटी राशि"
+       },
+       {
+        "value": "significant",
+        "text_en": "something significant",
+        "text_hi": "बड़ी राशि"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h8.legacies"
+     },
+     {
+      "qid": "inst.v2.A23",
+      "part": "A",
+      "group": "money",
+      "group_label_en": "Money",
+      "group_label_hi": "धन",
+      "kind": "choice",
+      "text_en": "Debt:",
+      "text_hi": "कर्ज़:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "none",
+        "text_hi": "कोई नहीं"
+       },
+       {
+        "value": "manageable",
+        "text_en": "some, manageable",
+        "text_hi": "कुछ, संभाला जा सकता है"
+       },
+       {
+        "value": "serious_past",
+        "text_en": "serious trouble in the past",
+        "text_hi": "पहले गंभीर संकट रहा"
+       },
+       {
+        "value": "serious_now",
+        "text_en": "serious trouble now",
+        "text_hi": "अभी गंभीर संकट"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h6.debts"
+     },
+     {
+      "qid": "inst.v2.A24",
+      "part": "A",
+      "group": "marriage",
+      "group_label_en": "Marriage and partnership",
+      "group_label_hi": "विवाह और साझेदारी",
+      "kind": "choice",
+      "text_en": "Your marital status:",
+      "text_hi": "आपकी वैवाहिक स्थिति:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "never_married",
+        "text_en": "never married",
+        "text_hi": "अविवाहित"
+       },
+       {
+        "value": "engaged",
+        "text_en": "engaged, not yet married",
+        "text_hi": "सगाई हुई, विवाह नहीं"
+       },
+       {
+        "value": "married",
+        "text_en": "married",
+        "text_hi": "विवाहित"
+       },
+       {
+        "value": "separated",
+        "text_en": "separated",
+        "text_hi": "अलग"
+       },
+       {
+        "value": "divorced",
+        "text_en": "divorced",
+        "text_hi": "तलाक़शुदा"
+       },
+       {
+        "value": "widowed",
+        "text_en": "widowed",
+        "text_hi": "विधुर/विधवा"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "marriage.status"
+     },
+     {
+      "qid": "inst.v2.A25",
+      "part": "A",
+      "group": "marriage",
+      "group_label_en": "Marriage and partnership",
+      "group_label_hi": "विवाह और साझेदारी",
+      "kind": "year",
+      "text_en": "If you married, in which year?",
+      "text_hi": "यदि विवाह हुआ, तो किस वर्ष?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "marriage.year"
+     },
+     {
+      "qid": "inst.v2.A26",
+      "part": "A",
+      "group": "marriage",
+      "group_label_en": "Marriage and partnership",
+      "group_label_hi": "विवाह और साझेदारी",
+      "kind": "choice",
+      "text_en": "By your family's usual pattern, was the marriage early or late?",
+      "text_hi": "आपके परिवार के सामान्य ढर्रे के हिसाब से विवाह जल्दी हुआ या देर से?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "early",
+        "text_en": "early",
+        "text_hi": "जल्दी"
+       },
+       {
+        "value": "on_time",
+        "text_en": "about usual",
+        "text_hi": "सामान्य समय पर"
+       },
+       {
+        "value": "late",
+        "text_en": "late",
+        "text_hi": "देर से"
+       },
+       {
+        "value": "very_late",
+        "text_en": "much later than usual",
+        "text_hi": "बहुत देर से"
+       },
+       {
+        "value": "na",
+        "text_en": "does not apply",
+        "text_hi": "लागू नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "marriage.delay"
+     },
+     {
+      "qid": "inst.v2.A27",
+      "part": "A",
+      "group": "marriage",
+      "group_label_en": "Marriage and partnership",
+      "group_label_hi": "विवाह और साझेदारी",
+      "kind": "choice",
+      "text_en": "The marriage or your closest partnership has been:",
+      "text_hi": "विवाह या आपकी निकटतम साझेदारी रही है:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "happy",
+        "text_en": "happy",
+        "text_hi": "सुखी"
+       },
+       {
+        "value": "mixed",
+        "text_en": "mixed",
+        "text_hi": "मिली-जुली"
+       },
+       {
+        "value": "strained",
+        "text_en": "strained",
+        "text_hi": "तनावपूर्ण"
+       },
+       {
+        "value": "ended",
+        "text_en": "it ended",
+        "text_hi": "समाप्त हो गई"
+       },
+       {
+        "value": "na",
+        "text_en": "does not apply",
+        "text_hi": "लागू नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h7.marital_happiness"
+     },
+     {
+      "qid": "inst.v2.A28",
+      "part": "A",
+      "group": "children",
+      "group_label_en": "Children",
+      "group_label_hi": "संतान",
+      "kind": "choice",
+      "text_en": "Children:",
+      "text_hi": "संतान:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "none",
+        "text_hi": "कोई नहीं"
+       },
+       {
+        "value": "one",
+        "text_en": "one",
+        "text_hi": "एक"
+       },
+       {
+        "value": "two",
+        "text_en": "two",
+        "text_hi": "दो"
+       },
+       {
+        "value": "three_plus",
+        "text_en": "three or more",
+        "text_hi": "तीन या अधिक"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h5.children"
+     },
+     {
+      "qid": "inst.v2.A29",
+      "part": "A",
+      "group": "children",
+      "group_label_en": "Children",
+      "group_label_hi": "संतान",
+      "kind": "choice",
+      "text_en": "Difficulty conceiving, or the loss of a child:",
+      "text_hi": "संतान होने में कठिनाई, या संतान की हानि:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "no",
+        "text_en": "no",
+        "text_hi": "नहीं"
+       },
+       {
+        "value": "yes",
+        "text_en": "yes",
+        "text_hi": "हाँ"
+       },
+       {
+        "value": "na",
+        "text_en": "does not apply",
+        "text_hi": "लागू नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h5.children"
+     },
+     {
+      "qid": "inst.v2.A30",
+      "part": "A",
+      "group": "mind",
+      "group_label_en": "Mind and temperament",
+      "group_label_hi": "मन और स्वभाव",
+      "kind": "multi",
+      "text_en": "Which of these describe you? Choose as many as fit.",
+      "text_hi": "इनमें से कौन आप पर लागू होते हैं? जितने ठीक बैठें चुनें।",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "outspoken",
+        "text_en": "outspoken, says it plainly",
+        "text_hi": "स्पष्टवादी, सीधा कहने वाला"
+       },
+       {
+        "value": "reserved",
+        "text_en": "reserved, keeps things back",
+        "text_hi": "संयमित, बात रखने वाला"
+       },
+       {
+        "value": "quick_tempered",
+        "text_en": "quick-tempered",
+        "text_hi": "जल्दी क्रोधित"
+       },
+       {
+        "value": "patient",
+        "text_en": "patient",
+        "text_hi": "धैर्यवान"
+       },
+       {
+        "value": "cautious",
+        "text_en": "cautious",
+        "text_hi": "सतर्क"
+       },
+       {
+        "value": "bold",
+        "text_en": "bold",
+        "text_hi": "साहसी"
+       },
+       {
+        "value": "solitary",
+        "text_en": "happiest alone",
+        "text_hi": "एकांत में प्रसन्न"
+       },
+       {
+        "value": "sociable",
+        "text_en": "happiest among people",
+        "text_hi": "लोगों के बीच प्रसन्न"
+       },
+       {
+        "value": "practical",
+        "text_en": "practical",
+        "text_hi": "व्यावहारिक"
+       },
+       {
+        "value": "philosophical",
+        "text_en": "philosophical",
+        "text_hi": "दार्शनिक"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "psych.temperament"
+     },
+     {
+      "qid": "inst.v2.A31",
+      "part": "A",
+      "group": "mind",
+      "group_label_en": "Mind and temperament",
+      "group_label_hi": "मन और स्वभाव",
+      "kind": "choice",
+      "text_en": "Have you had a period of depression, severe anxiety, or treatment for the mind?",
+      "text_hi": "क्या आपको अवसाद, गंभीर चिंता, या मानसिक उपचार का कोई दौर रहा है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "no",
+        "text_en": "no",
+        "text_hi": "नहीं"
+       },
+       {
+        "value": "brief",
+        "text_en": "yes, briefly",
+        "text_hi": "हाँ, थोड़े समय"
+       },
+       {
+        "value": "extended",
+        "text_en": "yes, for an extended period",
+        "text_hi": "हाँ, लंबे समय"
+       },
+       {
+        "value": "prefer_not",
+        "text_en": "I would rather not say",
+        "text_hi": "मैं नहीं बताना चाहूँगा/चाहूँगी"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "psych.mind_screen"
+     },
+     {
+      "qid": "inst.v2.A32",
+      "part": "A",
+      "group": "mind",
+      "group_label_en": "Mind and temperament",
+      "group_label_hi": "मन और स्वभाव",
+      "kind": "choice",
+      "text_en": "Religion, philosophy, the occult, or solitary practice:",
+      "text_hi": "धर्म, दर्शन, गूढ़ विद्या, या एकांत साधना:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "none",
+        "text_en": "no interest",
+        "text_hi": "कोई रुचि नहीं"
+       },
+       {
+        "value": "mild",
+        "text_en": "mild interest",
+        "text_hi": "थोड़ी रुचि"
+       },
+       {
+        "value": "strong",
+        "text_en": "strong interest",
+        "text_hi": "प्रबल रुचि"
+       },
+       {
+        "value": "central",
+        "text_en": "central to my life",
+        "text_hi": "मेरे जीवन का केंद्र"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h12.moksha"
+     },
+     {
+      "qid": "inst.v2.A33",
+      "part": "A",
+      "group": "mind",
+      "group_label_en": "Mind and temperament",
+      "group_label_hi": "मन और स्वभाव",
+      "kind": "choice",
+      "text_en": "Time lived away from your birthplace:",
+      "text_hi": "जन्मस्थान से दूर बिताया समय:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "never",
+        "text_en": "never",
+        "text_hi": "कभी नहीं"
+       },
+       {
+        "value": "under1",
+        "text_en": "under a year",
+        "text_hi": "एक वर्ष से कम"
+       },
+       {
+        "value": "1_5",
+        "text_en": "one to five years",
+        "text_hi": "एक से पाँच वर्ष"
+       },
+       {
+        "value": "over5",
+        "text_en": "more than five years",
+        "text_hi": "पाँच वर्ष से अधिक"
+       },
+       {
+        "value": "abroad",
+        "text_en": "abroad",
+        "text_hi": "विदेश में"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h12.foreign_residence"
+     },
+     {
+      "qid": "inst.v2.A34",
+      "part": "A",
+      "group": "mind",
+      "group_label_en": "Mind and temperament",
+      "group_label_hi": "मन और स्वभाव",
+      "kind": "choice",
+      "text_en": "Time in a hostel, institution, hospital, or any kind of confinement:",
+      "text_hi": "छात्रावास, संस्था, अस्पताल, या किसी बंदिश में बिताया समय:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "never",
+        "text_en": "never",
+        "text_hi": "कभी नहीं"
+       },
+       {
+        "value": "brief",
+        "text_en": "briefly",
+        "text_hi": "थोड़े समय"
+       },
+       {
+        "value": "extended",
+        "text_en": "for an extended period",
+        "text_hi": "लंबे समय"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "h12.incarceration"
+     },
+     {
+      "qid": "inst.v2.A35",
+      "part": "A",
+      "group": "turning_points",
+      "group_label_en": "The turning points",
+      "group_label_hi": "जीवन के मोड़",
+      "kind": "events",
+      "text_en": "The turning points of your life so far. Add a row for each: the year, the month if you remember it, and what kind of event it was.",
+      "text_hi": "अब तक के जीवन के निर्णायक मोड़। हर एक के लिए एक पंक्ति जोड़ें: वर्ष, महीना (यदि याद हो), और वह किस तरह की घटना थी।",
+      "hint_en": "Five to eight is plenty. This is the most valuable answer here — fill it in before you read the rest of the report, and do not go back and change it afterwards.",
+      "hint_hi": "पाँच से आठ पर्याप्त हैं। यह यहाँ का सबसे मूल्यवान उत्तर है — बाक़ी फलादेश पढ़ने से पहले भरें, और बाद में बदलें नहीं।",
+      "options": [
+       {
+        "value": "move_home",
+        "text_en": "moved home or city",
+        "text_hi": "घर या शहर बदला"
+       },
+       {
+        "value": "moved_abroad",
+        "text_en": "moved abroad",
+        "text_hi": "विदेश गए"
+       },
+       {
+        "value": "job_start",
+        "text_en": "started a job or business",
+        "text_hi": "नौकरी या व्यवसाय शुरू किया"
+       },
+       {
+        "value": "job_loss",
+        "text_en": "lost a job, or a business failed",
+        "text_hi": "नौकरी गई, या व्यवसाय बंद हुआ"
+       },
+       {
+        "value": "promotion",
+        "text_en": "promotion or public recognition",
+        "text_hi": "पदोन्नति या सार्वजनिक पहचान"
+       },
+       {
+        "value": "marriage",
+        "text_en": "marriage or engagement",
+        "text_hi": "विवाह या सगाई"
+       },
+       {
+        "value": "separation",
+        "text_en": "separation or divorce",
+        "text_hi": "अलगाव या तलाक़"
+       },
+       {
+        "value": "child_born",
+        "text_en": "a child was born",
+        "text_hi": "संतान का जन्म"
+       },
+       {
+        "value": "bereavement",
+        "text_en": "a death in the family",
+        "text_hi": "परिवार में मृत्यु"
+       },
+       {
+        "value": "own_illness",
+        "text_en": "serious illness or surgery of my own",
+        "text_hi": "अपनी गंभीर बीमारी या ऑपरेशन"
+       },
+       {
+        "value": "family_illness",
+        "text_en": "serious illness of someone close",
+        "text_hi": "किसी निकट की गंभीर बीमारी"
+       },
+       {
+        "value": "money_gain",
+        "text_en": "a significant financial gain",
+        "text_hi": "बड़ा आर्थिक लाभ"
+       },
+       {
+        "value": "money_loss",
+        "text_en": "a significant financial loss or debt",
+        "text_hi": "बड़ी आर्थिक हानि या कर्ज़"
+       },
+       {
+        "value": "education",
+        "text_en": "started or finished a course of study",
+        "text_hi": "पढ़ाई शुरू या पूरी की"
+       },
+       {
+        "value": "legal",
+        "text_en": "a court case or legal trouble",
+        "text_hi": "मुक़दमा या क़ानूनी परेशानी"
+       },
+       {
+        "value": "accident",
+        "text_en": "an accident",
+        "text_hi": "दुर्घटना"
+       },
+       {
+        "value": "spiritual",
+        "text_en": "a turn toward religion or practice",
+        "text_hi": "धर्म या साधना की ओर मोड़"
+       },
+       {
+        "value": "other",
+        "text_en": "something else",
+        "text_hi": "कुछ और"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "spine.events"
+     },
+     {
+      "qid": "inst.v2.A36",
+      "part": "A",
+      "group": "turning_points",
+      "group_label_en": "The turning points",
+      "group_label_hi": "जीवन के मोड़",
+      "kind": "choice",
+      "text_en": "Compared with the six years before it, the time since the middle of 2023 has been:",
+      "text_hi": "उससे पहले के छह वर्षों की तुलना में, मध्य-2023 के बाद का समय रहा है:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "much_better",
+        "text_en": "much better",
+        "text_hi": "बहुत बेहतर"
+       },
+       {
+        "value": "better",
+        "text_en": "better",
+        "text_hi": "बेहतर"
+       },
+       {
+        "value": "same",
+        "text_en": "about the same",
+        "text_hi": "लगभग वैसा ही"
+       },
+       {
+        "value": "worse",
+        "text_en": "worse",
+        "text_hi": "ख़राब"
+       },
+       {
+        "value": "much_worse",
+        "text_en": "much worse",
+        "text_hi": "बहुत ख़राब"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "spine.recent"
+     }
+    ]
+   },
+   {
+    "part": "B",
+    "title_en": "Checking the birth time",
+    "title_hi": "जन्म-समय की जाँच",
+    "note_en": "A round birth time is usually a rounded one. If the true time is even a few minutes off, the rising sign can change and no part of the reading stands.",
+    "note_hi": "गोल जन्म-समय अक्सर अनुमानित होता है। यदि वास्तविक समय कुछ मिनट भी अलग है, तो लग्न बदल सकता है और फलादेश का कोई हिस्सा नहीं टिकता।",
+    "questions": [
+     {
+      "qid": "inst.v2.B1",
+      "part": "B",
+      "group": "rectification",
+      "group_label_en": "Checking the birth time",
+      "group_label_hi": "जन्म-समय की जाँच",
+      "kind": "choice",
+      "text_en": "Which of these two fits you better?",
+      "text_hi": "इनमें से कौन-सा आप पर ज़्यादा ठीक बैठता है?",
+      "hint_en": "Your ascendant stands at 11.7° of Leo — about 47 minutes of clock time after the Cancer cusp. An error of that many minutes changes every house in the chart, not part of it.",
+      "hint_hi": "आपका लग्न सिंह में 11.7° पर है — कर्क की सीमा से लगभग 47 मिनट बाद। इतने मिनट की गड़बड़ी भी पूरी कुंडली बदल देती है, उसका कोई हिस्सा नहीं।",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "feeling runs close to the surface, attached to home and mother, remembers slights",
+        "text_hi": "भावुक, घर और माता से गहरा लगाव, बातें मन में रख लेने वाले"
+       },
+       {
+        "value": "opt2",
+        "text_en": "wants to be seen and respected, generous, proud, does not take correction easily",
+        "text_hi": "मान-सम्मान चाहने वाले, उदार, स्वाभिमानी, टोका जाना पसंद नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.portrait"
+     },
+     {
+      "qid": "inst.v2.B2",
+      "part": "B",
+      "group": "rectification",
+      "group_label_en": "Checking the birth time",
+      "group_label_hi": "जन्म-समय की जाँच",
+      "kind": "choice",
+      "text_en": "Your build:",
+      "text_hi": "आपकी शारीरिक बनावट:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "lean_tall",
+        "text_en": "lean and tall-ish",
+        "text_hi": "दुबला और कुछ लंबा"
+       },
+       {
+        "value": "lean_short",
+        "text_en": "lean and short",
+        "text_hi": "दुबला और नाटा"
+       },
+       {
+        "value": "medium",
+        "text_en": "medium",
+        "text_hi": "मध्यम"
+       },
+       {
+        "value": "solid_heavy",
+        "text_en": "solid, puts on weight easily",
+        "text_hi": "भारी, वज़न जल्दी बढ़ता है"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.build"
+     },
+     {
+      "qid": "inst.v2.B3",
+      "part": "B",
+      "group": "rectification",
+      "group_label_en": "Checking the birth time",
+      "group_label_hi": "जन्म-समय की जाँच",
+      "kind": "choice",
+      "text_en": "People usually guess your age as:",
+      "text_hi": "लोग आमतौर पर आपकी उम्र आँकते हैं:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "older",
+        "text_en": "older than I am",
+        "text_hi": "मेरी उम्र से ज़्यादा"
+       },
+       {
+        "value": "right",
+        "text_en": "about right",
+        "text_hi": "लगभग सही"
+       },
+       {
+        "value": "younger",
+        "text_en": "younger than I am",
+        "text_hi": "मेरी उम्र से कम"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.apparent_age"
+     },
+     {
+      "qid": "inst.v2.B4",
+      "part": "B",
+      "group": "rectification",
+      "group_label_en": "Checking the birth time",
+      "group_label_hi": "जन्म-समय की जाँच",
+      "kind": "choice",
+      "text_en": "Your birth order:",
+      "text_hi": "जन्म-क्रम:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "only",
+        "text_en": "only child",
+        "text_hi": "इकलौता"
+       },
+       {
+        "value": "eldest",
+        "text_en": "eldest",
+        "text_hi": "सबसे बड़ा"
+       },
+       {
+        "value": "middle",
+        "text_en": "middle",
+        "text_hi": "मंझला"
+       },
+       {
+        "value": "youngest",
+        "text_en": "youngest",
+        "text_hi": "सबसे छोटा"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.birth_order"
+     },
+     {
+      "qid": "inst.v2.B5",
+      "part": "B",
+      "group": "rectification",
+      "group_label_en": "Checking the birth time",
+      "group_label_hi": "जन्म-समय की जाँच",
+      "kind": "choice",
+      "text_en": "You were born:",
+      "text_hi": "आपका जन्म हुआ:",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "hospital",
+        "text_en": "in a hospital",
+        "text_hi": "अस्पताल में"
+       },
+       {
+        "value": "home",
+        "text_en": "at home",
+        "text_hi": "घर पर"
+       },
+       {
+        "value": "unknown",
+        "text_en": "I don't know",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.birth_place"
+     },
+     {
+      "qid": "inst.v2.B6",
+      "part": "B",
+      "group": "rectification",
+      "group_label_en": "Checking the birth time",
+      "group_label_hi": "जन्म-समय की जाँच",
+      "kind": "events",
+      "text_en": "The events a birth time is actually corrected against. Give the year and, where you can, the month.",
+      "text_hi": "जिन घटनाओं से जन्म-समय शोधित होता है। वर्ष और यदि संभव हो तो महीना बताएँ।",
+      "hint_en": "Exact months matter more here than anywhere else on the form.",
+      "hint_hi": "यहाँ सटीक महीने बाक़ी फ़ॉर्म से ज़्यादा मायने रखते हैं।",
+      "options": [
+       {
+        "value": "father_death",
+        "text_en": "father's death or major illness",
+        "text_hi": "पिता की मृत्यु या गंभीर बीमारी"
+       },
+       {
+        "value": "mother_death",
+        "text_en": "mother's death or major illness",
+        "text_hi": "माता की मृत्यु या गंभीर बीमारी"
+       },
+       {
+        "value": "marriage",
+        "text_en": "marriage",
+        "text_hi": "विवाह"
+       },
+       {
+        "value": "first_job",
+        "text_en": "first job",
+        "text_hi": "पहली नौकरी"
+       },
+       {
+        "value": "own_surgery",
+        "text_en": "a surgery of my own",
+        "text_hi": "अपना ऑपरेशन"
+       },
+       {
+        "value": "child_born",
+        "text_en": "the birth of a first child",
+        "text_hi": "पहली संतान का जन्म"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "rect.anchors"
+     }
+    ]
+   },
+   {
+    "part": "C",
+    "title_en": "Which one is closer?",
+    "title_hi": "कौन-सा ज़्यादा नज़दीक है?",
+    "note_en": "Each pair holds one statement drawn from your chart and one that is its exact opposite, and you are not told which is which. A coin gets half of them right — that is the point, and it is why an answer here is worth something.",
+    "note_hi": "हर जोड़ी में एक कथन आपकी कुंडली से लिया गया है और दूसरा उसका ठीक उल्टा; आपको बताया नहीं जाएगा कि कौन-सा कौन है। सिक्का उछालने पर भी आधे सही आ जाते हैं — इसीलिए यहाँ दिया गया उत्तर कुछ मायने रखता है।",
+    "questions": [
+     {
+      "qid": "inst.v2.C1",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Your career — which is closer to your life?",
+      "text_hi": "आपके करियर — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "Genuinely both — real good and real difficulty together, not one or the other.",
+        "text_hi": "यह सचमुच मिला-जुला रहा है — अच्छा और कठिन साथ-साथ, कोई एक नहीं।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "Clearly one way — either solidly good, or solidly difficult.",
+        "text_hi": "यह साफ़ तौर पर एक ही तरफ़ रहा है — या तो अच्छा, या कठिन।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C2",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Working under authority — an employer, government, seniors — which is closer to your life?",
+      "text_hi": "किसी के अधीन काम — नियोक्ता, सरकार, वरिष्ठ — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "Genuinely both — real good and real difficulty together, not one or the other.",
+        "text_hi": "यह सचमुच मिला-जुला रहा है — अच्छा और कठिन साथ-साथ, कोई एक नहीं।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "Clearly one way — either solidly good, or solidly difficult.",
+        "text_hi": "यह साफ़ तौर पर एक ही तरफ़ रहा है — या तो अच्छा, या कठिन।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C3",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Long-term illness — which is closer to your life?",
+      "text_hi": "लंबी बीमारी — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C4",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "People who work against you — which is closer to your life?",
+      "text_hi": "आपके विरोधियों — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C5",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Inheritance — which is closer to your life?",
+      "text_hi": "विरासत — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C6",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Sudden unexpected money — which is closer to your life?",
+      "text_hi": "अचानक मिले धन — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C7",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Land and property — which is closer to your life?",
+      "text_hi": "ज़मीन और संपत्ति — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C8",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "The things you have acquired — which is closer to your life?",
+      "text_hi": "आपकी अर्जित वस्तुओं — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C9",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Income and gains — which is closer to your life?",
+      "text_hi": "आय और लाभ — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C10",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Your build and constitution — which is closer to your life?",
+      "text_hi": "आपकी शारीरिक बनावट — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C11",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Your general health — which is closer to your life?",
+      "text_hi": "आपके सामान्य स्वास्थ्य — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     },
+     {
+      "qid": "inst.v2.C12",
+      "part": "C",
+      "group": "forced_choice",
+      "group_label_en": "Which one is closer?",
+      "group_label_hi": "कौन-सा ज़्यादा नज़दीक है?",
+      "kind": "choice",
+      "text_en": "Your intelligence and judgement — which is closer to your life?",
+      "text_hi": "आपकी बुद्धि और निर्णय-क्षमता — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "opt1",
+        "text_en": "This has been a real difficulty for you.",
+        "text_hi": "इस मामले में आपको वास्तविक कठिनाई रही है।"
+       },
+       {
+        "value": "opt2",
+        "text_en": "This has gone well for you.",
+        "text_hi": "इस मामले में आपका अनुभव अच्छा रहा है।"
+       }
+      ],
+      "confidence": true,
+      "allow_free_text": true,
+      "maps_to": "forced_choice"
+     }
+    ]
+   },
+   {
+    "part": "D",
+    "title_en": "After the reading",
+    "title_hi": "फलादेश पढ़ने के बाद",
+    "note_en": "This part is about the reading itself, not about the chart. Naming the chapters that got you wrong is more useful than being kind about them.",
+    "note_hi": "यह भाग फलादेश के बारे में है, कुंडली के बारे में नहीं। जिन अध्यायों ने ग़लत कहा उन्हें नाम से बताना, उनके बारे में सँभालकर कहने से ज़्यादा उपयोगी है।",
+    "questions": [
+     {
+      "qid": "inst.v2.D1",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "multi",
+      "text_en": "Which chapters said something plainly WRONG about your life?",
+      "text_hi": "किन अध्यायों ने आपके जीवन के बारे में साफ़ ग़लत बात कही?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "plain_reading",
+        "text_en": "The plain-English reading",
+        "text_hi": "सरल भाषा का फलादेश"
+       },
+       {
+        "value": "houses",
+        "text_en": "The twelve matters, house by house",
+        "text_hi": "बारह भाव, एक-एक करके"
+       },
+       {
+        "value": "longevity",
+        "text_en": "Longevity and the span",
+        "text_hi": "आयु और जीवन-काल"
+       },
+       {
+        "value": "health_readout",
+        "text_en": "Health and vulnerability",
+        "text_hi": "स्वास्थ्य और दुर्बलता"
+       },
+       {
+        "value": "medical",
+        "text_en": "The medical read — body areas",
+        "text_hi": "चिकित्सा पाठ — शरीर के अंग"
+       },
+       {
+        "value": "marriage",
+        "text_en": "Marriage",
+        "text_hi": "विवाह"
+       },
+       {
+        "value": "children",
+        "text_en": "Children",
+        "text_hi": "संतान"
+       },
+       {
+        "value": "profession",
+        "text_en": "Profession and career",
+        "text_hi": "व्यवसाय और करियर"
+       },
+       {
+        "value": "wealth",
+        "text_en": "Wealth and money",
+        "text_hi": "धन और सम्पत्ति"
+       },
+       {
+        "value": "psych",
+        "text_en": "Temperament and the inner portrait",
+        "text_hi": "स्वभाव और आंतरिक चित्र"
+       },
+       {
+        "value": "aptitude",
+        "text_en": "Aptitude and working style",
+        "text_hi": "योग्यता और कार्यशैली"
+       },
+       {
+        "value": "timeline",
+        "text_en": "The dasha timeline — when things happen",
+        "text_hi": "दशा-काल — कब क्या होता है"
+       },
+       {
+        "value": "gochara",
+        "text_en": "Transits",
+        "text_hi": "गोचर"
+       },
+       {
+        "value": "divisional",
+        "text_en": "The divisional charts",
+        "text_hi": "वर्ग कुंडलियाँ"
+       },
+       {
+        "value": "karmic",
+        "text_en": "Soul, karma and destiny",
+        "text_hi": "आत्मा, कर्म और भाग्य"
+       },
+       {
+        "value": "nichod",
+        "text_en": "The Nichod — the distilled essence",
+        "text_hi": "निचोड़ — सार"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "reaction.wrong"
+     },
+     {
+      "qid": "inst.v2.D2",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "multi",
+      "text_en": "Which chapters said something right that could NOT have been guessed about anyone?",
+      "text_hi": "किन अध्यायों ने ऐसा सही कहा जो किसी के भी बारे में अंदाज़े से नहीं कहा जा सकता था?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "plain_reading",
+        "text_en": "The plain-English reading",
+        "text_hi": "सरल भाषा का फलादेश"
+       },
+       {
+        "value": "houses",
+        "text_en": "The twelve matters, house by house",
+        "text_hi": "बारह भाव, एक-एक करके"
+       },
+       {
+        "value": "longevity",
+        "text_en": "Longevity and the span",
+        "text_hi": "आयु और जीवन-काल"
+       },
+       {
+        "value": "health_readout",
+        "text_en": "Health and vulnerability",
+        "text_hi": "स्वास्थ्य और दुर्बलता"
+       },
+       {
+        "value": "medical",
+        "text_en": "The medical read — body areas",
+        "text_hi": "चिकित्सा पाठ — शरीर के अंग"
+       },
+       {
+        "value": "marriage",
+        "text_en": "Marriage",
+        "text_hi": "विवाह"
+       },
+       {
+        "value": "children",
+        "text_en": "Children",
+        "text_hi": "संतान"
+       },
+       {
+        "value": "profession",
+        "text_en": "Profession and career",
+        "text_hi": "व्यवसाय और करियर"
+       },
+       {
+        "value": "wealth",
+        "text_en": "Wealth and money",
+        "text_hi": "धन और सम्पत्ति"
+       },
+       {
+        "value": "psych",
+        "text_en": "Temperament and the inner portrait",
+        "text_hi": "स्वभाव और आंतरिक चित्र"
+       },
+       {
+        "value": "aptitude",
+        "text_en": "Aptitude and working style",
+        "text_hi": "योग्यता और कार्यशैली"
+       },
+       {
+        "value": "timeline",
+        "text_en": "The dasha timeline — when things happen",
+        "text_hi": "दशा-काल — कब क्या होता है"
+       },
+       {
+        "value": "gochara",
+        "text_en": "Transits",
+        "text_hi": "गोचर"
+       },
+       {
+        "value": "divisional",
+        "text_en": "The divisional charts",
+        "text_hi": "वर्ग कुंडलियाँ"
+       },
+       {
+        "value": "karmic",
+        "text_en": "Soul, karma and destiny",
+        "text_hi": "आत्मा, कर्म और भाग्य"
+       },
+       {
+        "value": "nichod",
+        "text_en": "The Nichod — the distilled essence",
+        "text_hi": "निचोड़ — सार"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "reaction.specific"
+     },
+     {
+      "qid": "inst.v2.D3",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "multi",
+      "text_en": "Which chapters felt true of you AND of most people you know?",
+      "text_hi": "कौन-से अध्याय आप पर और आपके अधिकांश परिचितों पर भी सही लगे?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "plain_reading",
+        "text_en": "The plain-English reading",
+        "text_hi": "सरल भाषा का फलादेश"
+       },
+       {
+        "value": "houses",
+        "text_en": "The twelve matters, house by house",
+        "text_hi": "बारह भाव, एक-एक करके"
+       },
+       {
+        "value": "longevity",
+        "text_en": "Longevity and the span",
+        "text_hi": "आयु और जीवन-काल"
+       },
+       {
+        "value": "health_readout",
+        "text_en": "Health and vulnerability",
+        "text_hi": "स्वास्थ्य और दुर्बलता"
+       },
+       {
+        "value": "medical",
+        "text_en": "The medical read — body areas",
+        "text_hi": "चिकित्सा पाठ — शरीर के अंग"
+       },
+       {
+        "value": "marriage",
+        "text_en": "Marriage",
+        "text_hi": "विवाह"
+       },
+       {
+        "value": "children",
+        "text_en": "Children",
+        "text_hi": "संतान"
+       },
+       {
+        "value": "profession",
+        "text_en": "Profession and career",
+        "text_hi": "व्यवसाय और करियर"
+       },
+       {
+        "value": "wealth",
+        "text_en": "Wealth and money",
+        "text_hi": "धन और सम्पत्ति"
+       },
+       {
+        "value": "psych",
+        "text_en": "Temperament and the inner portrait",
+        "text_hi": "स्वभाव और आंतरिक चित्र"
+       },
+       {
+        "value": "aptitude",
+        "text_en": "Aptitude and working style",
+        "text_hi": "योग्यता और कार्यशैली"
+       },
+       {
+        "value": "timeline",
+        "text_en": "The dasha timeline — when things happen",
+        "text_hi": "दशा-काल — कब क्या होता है"
+       },
+       {
+        "value": "gochara",
+        "text_en": "Transits",
+        "text_hi": "गोचर"
+       },
+       {
+        "value": "divisional",
+        "text_en": "The divisional charts",
+        "text_hi": "वर्ग कुंडलियाँ"
+       },
+       {
+        "value": "karmic",
+        "text_en": "Soul, karma and destiny",
+        "text_hi": "आत्मा, कर्म और भाग्य"
+       },
+       {
+        "value": "nichod",
+        "text_en": "The Nichod — the distilled essence",
+        "text_hi": "निचोड़ — सार"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "reaction.barnum"
+     },
+     {
+      "qid": "inst.v2.D4",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "multi",
+      "text_en": "Which chapters did you skip, or not understand?",
+      "text_hi": "कौन-से अध्याय आपने छोड़ दिए, या समझ नहीं आए?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "plain_reading",
+        "text_en": "The plain-English reading",
+        "text_hi": "सरल भाषा का फलादेश"
+       },
+       {
+        "value": "houses",
+        "text_en": "The twelve matters, house by house",
+        "text_hi": "बारह भाव, एक-एक करके"
+       },
+       {
+        "value": "longevity",
+        "text_en": "Longevity and the span",
+        "text_hi": "आयु और जीवन-काल"
+       },
+       {
+        "value": "health_readout",
+        "text_en": "Health and vulnerability",
+        "text_hi": "स्वास्थ्य और दुर्बलता"
+       },
+       {
+        "value": "medical",
+        "text_en": "The medical read — body areas",
+        "text_hi": "चिकित्सा पाठ — शरीर के अंग"
+       },
+       {
+        "value": "marriage",
+        "text_en": "Marriage",
+        "text_hi": "विवाह"
+       },
+       {
+        "value": "children",
+        "text_en": "Children",
+        "text_hi": "संतान"
+       },
+       {
+        "value": "profession",
+        "text_en": "Profession and career",
+        "text_hi": "व्यवसाय और करियर"
+       },
+       {
+        "value": "wealth",
+        "text_en": "Wealth and money",
+        "text_hi": "धन और सम्पत्ति"
+       },
+       {
+        "value": "psych",
+        "text_en": "Temperament and the inner portrait",
+        "text_hi": "स्वभाव और आंतरिक चित्र"
+       },
+       {
+        "value": "aptitude",
+        "text_en": "Aptitude and working style",
+        "text_hi": "योग्यता और कार्यशैली"
+       },
+       {
+        "value": "timeline",
+        "text_en": "The dasha timeline — when things happen",
+        "text_hi": "दशा-काल — कब क्या होता है"
+       },
+       {
+        "value": "gochara",
+        "text_en": "Transits",
+        "text_hi": "गोचर"
+       },
+       {
+        "value": "divisional",
+        "text_en": "The divisional charts",
+        "text_hi": "वर्ग कुंडलियाँ"
+       },
+       {
+        "value": "karmic",
+        "text_en": "Soul, karma and destiny",
+        "text_hi": "आत्मा, कर्म और भाग्य"
+       },
+       {
+        "value": "nichod",
+        "text_en": "The Nichod — the distilled essence",
+        "text_hi": "निचोड़ — सार"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "reaction.skipped"
+     },
+     {
+      "qid": "inst.v2.D5",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "choice",
+      "text_en": "Was anything upsetting or frightening?",
+      "text_hi": "क्या कुछ परेशान करने वाला या डरावना था?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "no",
+        "text_en": "no",
+        "text_hi": "नहीं"
+       },
+       {
+        "value": "mildly",
+        "text_en": "mildly",
+        "text_hi": "थोड़ा"
+       },
+       {
+        "value": "yes",
+        "text_en": "yes",
+        "text_hi": "हाँ"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "reaction.harm"
+     },
+     {
+      "qid": "inst.v2.D6",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "scale",
+      "text_en": "Overall, how well did this reading match your life?",
+      "text_hi": "कुल मिलाकर, यह फलादेश आपके जीवन से कितना मेल खाता है?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "agree",
+        "text_en": "agree",
+        "text_hi": "सहमत"
+       },
+       {
+        "value": "partly",
+        "text_en": "partly",
+        "text_hi": "कुछ हद तक"
+       },
+       {
+        "value": "disagree",
+        "text_en": "disagree",
+        "text_hi": "असहमत"
+       },
+       {
+        "value": "not sure",
+        "text_en": "not sure",
+        "text_hi": "पता नहीं"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "reaction.overall"
+     },
+     {
+      "qid": "inst.v2.D7",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "choice",
+      "text_en": "Would this have been worth paying for?",
+      "text_hi": "क्या यह पैसे देने लायक़ होता?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [
+       {
+        "value": "no",
+        "text_en": "no",
+        "text_hi": "नहीं"
+       },
+       {
+        "value": "maybe",
+        "text_en": "maybe",
+        "text_hi": "शायद"
+       },
+       {
+        "value": "yes",
+        "text_en": "yes",
+        "text_hi": "हाँ"
+       }
+      ],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": "reaction.worth_paying"
+     },
+     {
+      "qid": "inst.v2.D8",
+      "part": "D",
+      "group": "reaction",
+      "group_label_en": "After the reading",
+      "group_label_hi": "फलादेश पढ़ने के बाद",
+      "kind": "open",
+      "text_en": "Anything else you want to say?",
+      "text_hi": "और कुछ कहना चाहेंगे?",
+      "hint_en": "",
+      "hint_hi": "",
+      "options": [],
+      "confidence": false,
+      "allow_free_text": true,
+      "maps_to": ""
+     }
+    ]
+   }
+  ],
+  "boundaries": [
+   {
+    "date": "2006-11-11",
+    "maha": "Sun"
+   },
+   {
+    "date": "2012-11-11",
+    "maha": "Moon"
+   },
+   {
+    "date": "2022-11-11",
+    "maha": "Mars"
+   },
+   {
+    "date": "2029-11-11",
+    "maha": "Rahu"
+   }
+  ],
+  "rectification": {
+   "asc_sign": 5,
+   "asc_sign_name_en": "Leo",
+   "asc_sign_name_hi": "सिंह",
+   "neighbour_sign": 4,
+   "neighbour_sign_name_en": "Cancer",
+   "neighbour_sign_name_hi": "कर्क",
+   "degrees_into_sign": 11.74,
+   "gap_degrees": 11.74,
+   "approx_gap_minutes": 47,
+   "cusp_direction": "earlier",
+   "note_en": "Your ascendant stands at 11.7° of Leo — about 47 minutes of clock time after the Cancer cusp. An error of that many minutes changes every house in the chart, not part of it.",
+   "note_hi": "आपका लग्न सिंह में 11.7° पर है — कर्क की सीमा से लगभग 47 मिनट बाद। इतने मिनट की गड़बड़ी भी पूरी कुंडली बदल देती है, उसका कोई हिस्सा नहीं।",
+   "question_en": "Which of these two fits you better?",
+   "question_hi": "इनमें से कौन-सा आप पर ज़्यादा ठीक बैठता है?",
+   "portrait_here_en": "wants to be seen and respected, generous, proud, does not take correction easily",
+   "portrait_here_hi": "मान-सम्मान चाहने वाले, उदार, स्वाभिमानी, टोका जाना पसंद नहीं",
+   "portrait_neighbour_en": "feeling runs close to the surface, attached to home and mother, remembers slights",
+   "portrait_neighbour_hi": "भावुक, घर और माता से गहरा लगाव, बातें मन में रख लेने वाले",
+   "tight": false
+  },
+  "answer_scale": [
+   "agree",
+   "partly",
+   "disagree",
+   "not sure"
+  ],
+  "answer_scale_hi": {
+   "agree": "सहमत",
+   "partly": "कुछ हद तक",
+   "disagree": "असहमत",
+   "not sure": "पता नहीं"
+  },
+  "confidence_scale": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ],
+  "event_kinds": {
+   "move_home": {
+    "text_en": "moved home or city",
+    "text_hi": "घर या शहर बदला"
+   },
+   "moved_abroad": {
+    "text_en": "moved abroad",
+    "text_hi": "विदेश गए"
+   },
+   "job_start": {
+    "text_en": "started a job or business",
+    "text_hi": "नौकरी या व्यवसाय शुरू किया"
+   },
+   "job_loss": {
+    "text_en": "lost a job, or a business failed",
+    "text_hi": "नौकरी गई, या व्यवसाय बंद हुआ"
+   },
+   "promotion": {
+    "text_en": "promotion or public recognition",
+    "text_hi": "पदोन्नति या सार्वजनिक पहचान"
+   },
+   "marriage": {
+    "text_en": "marriage or engagement",
+    "text_hi": "विवाह या सगाई"
+   },
+   "separation": {
+    "text_en": "separation or divorce",
+    "text_hi": "अलगाव या तलाक़"
+   },
+   "child_born": {
+    "text_en": "a child was born",
+    "text_hi": "संतान का जन्म"
+   },
+   "bereavement": {
+    "text_en": "a death in the family",
+    "text_hi": "परिवार में मृत्यु"
+   },
+   "own_illness": {
+    "text_en": "serious illness or surgery of my own",
+    "text_hi": "अपनी गंभीर बीमारी या ऑपरेशन"
+   },
+   "family_illness": {
+    "text_en": "serious illness of someone close",
+    "text_hi": "किसी निकट की गंभीर बीमारी"
+   },
+   "money_gain": {
+    "text_en": "a significant financial gain",
+    "text_hi": "बड़ा आर्थिक लाभ"
+   },
+   "money_loss": {
+    "text_en": "a significant financial loss or debt",
+    "text_hi": "बड़ी आर्थिक हानि या कर्ज़"
+   },
+   "education": {
+    "text_en": "started or finished a course of study",
+    "text_hi": "पढ़ाई शुरू या पूरी की"
+   },
+   "legal": {
+    "text_en": "a court case or legal trouble",
+    "text_hi": "मुक़दमा या क़ानूनी परेशानी"
+   },
+   "accident": {
+    "text_en": "an accident",
+    "text_hi": "दुर्घटना"
+   },
+   "spiritual": {
+    "text_en": "a turn toward religion or practice",
+    "text_hi": "धर्म या साधना की ओर मोड़"
+   },
+   "other": {
+    "text_en": "something else",
+    "text_hi": "कुछ और"
+   }
+  },
+  "caveat_en": "These questions calibrate the reading; they do not validate it. This project's own measurement found no chart-specific signal against real outcomes, so your answers measure how a faithful rendering of Raman's method meets one real life — never a claim that it predicted it.",
+  "caveat_hi": "ये प्रश्न फलादेश को कैलिब्रेट करते हैं, उसे प्रमाणित नहीं करते। इस परियोजना के अपने मापन में वास्तविक जीवन-घटनाओं के विरुद्ध कोई कुंडली-विशिष्ट संकेत नहीं मिला, इसलिए आपके उत्तर यह मापते हैं कि रामन की पद्धति का निष्ठापूर्ण प्रस्तुतीकरण एक वास्तविक जीवन से कैसे मिलता है — यह दावा कभी नहीं कि उसने भविष्य बताया।",
+  "counts": {
+   "A": 36,
+   "B": 6,
+   "C": 12,
+   "D": 8
+  }
+ }
+}

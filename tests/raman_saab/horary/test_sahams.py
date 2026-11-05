@@ -61,7 +61,7 @@ class TestComputeSahams:
         assert out["Punya"] != base["Punya"] and out["Kirti"] != base["Kirti"]
 
     def test_saham_lord_is_the_rasi_lord(self):
-        """VARSHA-7:190-192."""
+        """VARSHA-7:174-176."""
         from app.raman_saab.chart.constants import SIGN_LORDS
         for s in compute_sahams(_POSITIONS, lagna=185.0, is_day=True):
             assert s.lord == SIGN_LORDS[s.rasi]

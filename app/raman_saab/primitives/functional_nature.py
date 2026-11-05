@@ -99,7 +99,7 @@ def is_yogakaraka(planet: str, asc_sign: int) -> bool:
 
 def kendradhipati_dosha(planet: str, asc_sign: int) -> bool:
     """A NATURAL BENEFIC owning a kendra (4/7/10, not the 1st) acquires malefic
-    tendency — Kendradhipati Dosha. HTJAH-I:582."""
+    tendency — Kendradhipati Dosha. HTJAH-I:583."""
     if planet not in NATURAL_BENEFICS:
         return False
     return bool(set(houses_owned(planet, asc_sign)) & {4, 7, 10})

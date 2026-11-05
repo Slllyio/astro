@@ -4,6 +4,11 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
+from corpus_presence import needs_file
+
+_needs_smoke = needs_file("app/medini/data/dasha_mdadpd_smoke.parquet")
+_needs_full = needs_file("app/medini/data/dasha_mdadpd_corpus.parquet")
+
 from app.medini.ml.stage_d_features import (
     QUALIFYING_EVENT_CLASSES,
     load_corpus,
@@ -27,6 +32,7 @@ class TestQualifyingClasses:
 
 
 class TestLoadCorpus:
+    @_needs_smoke
     def test_load_smoke_returns_dataframe(self) -> None:
         """load_corpus(smoke=True) returns a DataFrame with the leaf-window schema."""
         df = load_corpus(smoke=True)
@@ -35,12 +41,14 @@ class TestLoadCorpus:
                          "window_duration_days"}
         assert required_cols.issubset(df.columns)
 
+    @_needs_full
     def test_load_full_returns_dataframe(self) -> None:
         """load_corpus(smoke=False) loads the full mdadpd corpus."""
         df = load_corpus(smoke=False)
         assert len(df) > 0
 
 
+@_needs_smoke
 class TestJoinNatalTensor:
     def test_join_preserves_window_count(self) -> None:
         """Joining natal Vedic Tensor doesn't drop windows (left-join)."""
@@ -72,6 +80,7 @@ class TestJoinNatalTensor:
         assert 150 <= len(new_cols) <= 1000, f"got {len(new_cols)} new cols"
 
 
+@_needs_smoke
 class TestActiveDashaEncoding:
     def test_md_lord_one_hot_sums_to_one(self) -> None:
         """Each row has exactly one MD lord one-hot active."""
@@ -124,6 +133,7 @@ class TestActiveDashaEncoding:
         assert (with_dasha["n_relevant_lords_general"] == 0).all()
 
 
+@_needs_smoke
 class TestActiveYogas:
     def test_natal_strength_cols_present(self) -> None:
         """Each of 16 yogas contributes a `<yoga>_natal_strength` col."""
@@ -163,6 +173,7 @@ class TestActiveYogas:
             assert (with_yogas[f"{yoga}_dasha_active"] == 0).all()
 
 
+@_needs_smoke
 class TestStageEFeatures:
     def test_lord_house_columns_present(self) -> None:
         """Stage-E adds 'rules_<planet>', 'occ_<planet>', 'aspects_<planet>' cols."""
@@ -209,6 +220,7 @@ class TestStageEFeatures:
         assert list(out.columns) == list(corpus.columns)
 
 
+@_needs_smoke
 class TestMaterialize:
     # Corpus-level metadata that's expected to be in the materialized parquet.
     # These are NOT feature-leak — they're consumed by stage_d_dataset.py

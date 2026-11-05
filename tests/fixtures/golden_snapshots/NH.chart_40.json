@@ -2,32 +2,33 @@
   "H10": {
     "citations": [
       "HTJAH-II:11064",
-      "HTJAH-II:14020",
-      "HTJAH-II:9546",
+      "HTJAH-II:14022",
+      "HTJAH-II:14214",
       "HTJAH-II:9873",
       "HTJAH-II:9881"
     ],
     "fired_rule_ids": [
       "H10.C.33",
+      "H10.C.33m",
       "H10.C.36",
-      "H10.L.10",
+      "H10.C.56",
       "H10.P.Saturn",
       "H10.P.Venus"
     ],
     "rollup": "favourable",
     "significations": {
       "career": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "profession_authority": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "profession_labour": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -37,7 +38,7 @@
         "verdict": "favourable"
       },
       "profession_trade": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -51,10 +52,12 @@
   "H5": {
     "citations": [
       "HTJAH-I:5160",
-      "HTJAH-I:5183"
+      "HTJAH-I:5183",
+      "NH:8937"
     ],
     "fired_rule_ids": [
       "H5.C.1",
+      "H5.C.41",
       "H5.L.10"
     ],
     "rollup": "afflicted",
@@ -72,7 +75,7 @@
       "poorvapunya": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
@@ -97,7 +100,7 @@
         "verdict": "afflicted"
       },
       "marital_happiness": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -107,7 +110,7 @@
         "verdict": "insufficient-evidence"
       },
       "spouse": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },

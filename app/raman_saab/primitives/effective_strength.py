@@ -38,6 +38,7 @@ from app.raman_saab.primitives import relationships
 from app.raman_saab.primitives.bhangas import neecha_bhanga
 from app.raman_saab.primitives.combustion import combust_fraction
 from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED
+from app.raman_saab.ordinals import ordinal
 
 #: Rupas below MIN_REQUIRED still counted "not decisively weak" — the B2 band, already shipped
 #: and golden-tuned in house_template._MARGINAL_BAND. Duplicated as a module constant rather
@@ -118,7 +119,7 @@ def effective_strength(planet: str, chart: RamanChart) -> EffectiveStrength:
 
     in_dusthana = p.bhava in DUSTHANAS
     if in_dusthana:
-        reasons.append(f"placed in the {p.bhava}th, a dusthana (reported, not penalised here)")
+        reasons.append(f"placed in the {ordinal(p.bhava)}, a dusthana (reported, not penalised here)")
 
     return EffectiveStrength(planet, rupas, band, combust, deb_uncancelled, in_dusthana,
                              tuple(reasons))

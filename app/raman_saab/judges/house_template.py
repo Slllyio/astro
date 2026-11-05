@@ -33,6 +33,7 @@ Usage:
 """
 from __future__ import annotations
 
+import contextvars
 import dataclasses
 
 from app.core.avastha import compute_avasthas
@@ -48,9 +49,11 @@ from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine import lookups
 from app.raman_saab.doctrine.conditions import EvalContext, HemmedBy
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
+from app.raman_saab.doctrine import malefic_tiers
 from app.raman_saab.doctrine.significations import Signification, significations_of
 from app.raman_saab.doctrine.sources import Citation
-from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
+from app.raman_saab.doctrine.yoga_routes import routes_to
+from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas, raja_yoga_vital
 from app.raman_saab.judges import rule_firing as rf
 from app.raman_saab.judges.house_judge import HouseVerdict
 from app.raman_saab.primitives import ayurdaya
@@ -102,15 +105,8 @@ _SIGN_NAMES: Final[tuple[str, ...]] = (
 #: Canonical graha iteration order — keeps occupant metadata deterministic.
 _PLANET_ORDER: Final[tuple[str, ...]] = (
     "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
-# Yoga modifier scopes (HTJAH-I consideration #4, :480-482), kind -> matters:
-#   dhana   supports wealth/gains matters (H2 / H11);
-#   arishta (Sakata, uncancelled Kemadruma, et al.) weighs on H1 self/Moon-matters;
-#   raja    supports fortune/career matters (H9 / H10).
-_DHANA_HOUSES: Final[frozenset[int]] = frozenset({2, 11})
-_DHANA_TAGS: Final[frozenset[str]] = frozenset({"wealth", "gains"})
-_ARISHTA_TAGS: Final[frozenset[str]] = frozenset({"self"})
-_RAJA_HOUSES: Final[frozenset[int]] = frozenset({9, 10})
-_RAJA_TAGS: Final[frozenset[str]] = frozenset({"fortune", "career"})
+# Yoga modifier reach (HTJAH-I consideration #4, :480-482) is per YOGA, not per kind:
+# `doctrine.yoga_routes.YOGA_ROUTES` names the house and sub-matter each yoga's text concerns.
 # H5 fertility gate scope (HTJAH-I:5517-5527): children/progeny matters only —
 # intellect/poorvapunya share the H5 'children' rule bucket but are not begetting
 # matters, so the sphuta gate deliberately does NOT touch them.
@@ -135,6 +131,20 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
     "incarceration", "left_eye",                                            # H12
     "death",                                                                # H8 (manner/cause)
 })
+
+#: Death-MANNER rules — corroboration-tier by reviewer amendment (2026-08-30): they sharpen
+#: an affliction established by OTHER testimony and may never be the sole confirming malefic
+#: in clause 1.5 (see AFFLICTION_OWN_EVIDENCE in _build_frame_ledger).
+#:
+#: RENAMED 2026-09-01 from `_DREKKANA_MANNER_RULE_IDS`, which had become a misnomer: the set
+#: now holds manner rules generally, not only drekkana ones. H8.C.33 (the Goutama Samhita
+#: weapon combination) joined on the same review's reasoning — Raman writes at
+#: HTJAH-II:3728-3731 that "when these particular yogas are absent... classical works refer to
+#: the lord of the 22nd drekkana to find out the cause of death", so the weapon-yogas and the
+#: drekkana are ALTERNATE INSTRUMENTS OF ONE APPARATUS. Letting one half confirm while the
+#: other corroborates would make the tier depend on which instrument happened to fire.
+_MANNER_RULE_IDS: Final[frozenset[str]] = frozenset(
+    {"H8.D.3", "H8.D.4", "H8.D.5", "H8.C.21", "H8.C.33"})
 
 # CATASTROPHIC sub-significations — bodily/liberty ruin (imprisonment, blindness, grave
 # accident) that Raman pronounces ONLY on a MULTIPLY-afflicted configuration, never on a
@@ -198,6 +208,15 @@ class FrameLedger:
     #: debilitation) that Raman reads as powerless independently of its Shadbala total.
     #: None on Track-B (no positions to judge). See `_lord_hard_afflicted`.
     lord_hard_afflicted: Optional[bool] = None
+    #: C2 — the LORD is joined by a node AND touched by Saturn or Mars (see
+    #: `_lord_obstructed`). None unless `C2_OBSTRUCTED_CARRIER` is on.
+    lord_obstructed: Optional[bool] = None
+    #: C4 — Jupiter or Venus joins or aspects the karaka (see `_benefic_relief`). None unless
+    #: `C4_KARAKA_VETO_RELIEF` is on.
+    karaka_relieved: Optional[bool] = None
+    #: Y1 — blemish-grade malefic rules set aside because a benefic rule also fired (kept here
+    #: so every renderer still shows them). Empty unless `Y1_BLEMISH_TIER` is on.
+    fired_blemish: tuple[rf.FiredRule, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -325,12 +344,68 @@ def _effective_strength(planet: str, raw_rupas: float, chart: RamanChart) -> flo
     return eff
 
 
-def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
-    """Legacy ``house_judge._strong`` semantics: None on Track-B, else is_powerful — now read off
-    the B1 effective strength (a strict no-op at the shipped all-zero affliction weights)."""
+def _qualitative_strong(planet: str, chart: RamanChart) -> Optional[bool]:
+    """Raman's POSITIONAL-dignity strength reading, for charts that carry no Shadbala.
+
+    Shadbala is a numeric apparatus the engine derives from a birth time. Raman judges his
+    printed book charts without it, and "Considerations in Judging a House" lists what he weighs
+    instead. Factor 5 (HTJAH-I:474) is stated categorically — *"The exaltations and debilitations
+    of the house lords are equally important"* — and he gives its consequence directly:
+    *"If the strength of the lord is full or complete there will be in general a good influence
+    on the house"* (HTJAH-I:497).
+
+    Before this existed, `_strong` returned None on every sparse chart, so both pillars were
+    unknown and `_decide` fell to the Track-B fallback (clause 3), which weighs fired-rule
+    polarity alone and ignores dignity entirely — the largest single bucket (17) in the 52-row
+    error surface.
+
+    **Only the POSITIONAL dignities are read, and that boundary is load-bearing.** Three arms
+    were written first and removed on doctrine review (2026-08-23), each refuted by Raman working
+    a chart the opposite way:
+
+    * *dusthana location → weak* — HTJAH-I:2150 has a lagna lord **in the 12th** of which he
+      writes "Lagnadhipati **gets strength** because he is aspected by Saturn, a Yoga Karaka".
+      Location is overturnable, and the thing that overturns it is the aspect this function does
+      not read. (`_lord_hard_afflicted` had already excluded dusthana for the same pillar
+      semantics, for its own stated reason — see the note at that function.)
+    * *friend + kendra → strong* — HTJAH-I:2202 rates a planet "**moderate** in strength, because,
+      though in a friendly sign, is in conjunction with Mars and Saturn".
+    * *enemy → weak* (the symmetric temptation) — HTJAH-I:1948 has the Sun "in an **inimical
+      sign** but since this happens to be a Kendra he **becomes strong**". Raman also treats an
+      inimical sign as a graded one-third deduction with exemptions (HTJAH-I:10402), never as a
+      class. The friend/neutral/enemy rungs belong to the Sthana-Bala apparatus whose absence
+      this function exists to cover; reinstating them as a binary substitutes a cruder measure
+      for the one that is missing.
+
+    Aspects and conjunctions are excluded NOT because Raman treats them lightly — "plays no mean
+    part" (HTJAH-I:499) is litotes, and he directs the reader to "blend all the influences
+    carefully" (HTJAH-I:1497). They are excluded because they ALREADY reach `_decide` through
+    `fired_benefic` / `fired_malefic`; folding them into the pillar too would weigh the same
+    testimony twice on both sides of clause 2.
+
+    Everything else returns **None** and the matter still abstains. Raman's own middle reading is
+    a third value — "moderate in strength" recurs at HTJAH-I:1868, :2198, :2202 — which an
+    Optional[bool] pillar cannot carry, so silence is the honest answer rather than a guess.
+    """
     p = chart.planets.get(planet)
-    if p is None or p.shadbala_rupas is None:
+    if p is None:
         return None
+    d = dignity(planet, chart)
+    if d in ("exalt", "moolatrikona", "own"):
+        return True                                  # factor 5 — exaltation / own sign
+    if d == "debil" and not neecha_bhanga(planet, chart):
+        return False                                 # factor 5 — debilitation, uncancelled
+    return None                                      # friend/neutral/enemy: no categorical reading
+
+
+def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
+    """Legacy ``house_judge._strong`` semantics, now with Raman's qualitative fallback: the B1
+    effective strength where Shadbala exists, else `_qualitative_strong` (HTJAH-I:468-520)."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return None
+    if p.shadbala_rupas is None:
+        return _qualitative_strong(planet, chart)
     eff = _effective_strength(planet, p.shadbala_rupas.total / 60.0, chart)
     return shadbala_total.is_powerful(planet, eff)
 
@@ -338,6 +413,10 @@ def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
 #: B1 comparative weighing (DOCTRINE_BACKLOG B1). ENABLED 2026-08-03 on an explicit user
 #: decision, knowing it trades strict exact accuracy for fewer catastrophic errors:
 #: strict 261/293 -> 259/293, within-1 ordinal 281/293 -> 283/293, real errors (dist>=2) 12 -> 10.
+#: Those figures are the LINEAGE of this decision and are left as they were recorded. The
+#: denominator has since changed: an engine-blind re-adjudication (2026-08-24) put the live
+#: ratchet at 269/381, so do not read 293 as the current corpus size. The trade this guard made
+#: stands on its own reasoning — an inversion is worse than a one-step miss — independent of it.
 #: Both golden baselines were re-based in the same commit, per the human-bump rule. This is the
 #: first DOWNWARD strict re-base in the project's lineage and it is deliberate: a favourable/
 #: afflicted inversion is a worse failure than a favourable/mixed boundary call, and HTJAH-I:3788
@@ -353,6 +432,24 @@ B1_DOMINANT_FACTOR_GUARD: bool = True
 #: is a HUMAN decision recorded in DOCTRINE_BACKLOG B1, never a tuner move. Read LIVE.
 B1_GUARD_EXEMPT_HOUSES: frozenset[int] = frozenset()
 
+#: DIRECTIONAL PARIVARTANA (DOCTRINE_BACKLOG "Directional parivartana"). Both OFF —
+#: this is a MEASUREMENT, not a shipped rule; enabling either is a human decision on the
+#: recorded numbers, exactly as B1 was. Read LIVE off the module so a sweep can rebind them.
+#:
+#: Today `_decide` credits an exchange as flat relief: a debilitated lord or karaka in a
+#: parivartana has its penalty bypassed regardless of what the partner is doing. Raman's own
+#: worked charts run both ways — "mutually benefiting each other" (HTJAH-I:8837), but also
+#: "Saturn who is the 7th lord ALSO IS AFFLICTED BY THIS PARIVARTANA" (HTJAH-I:9119) and
+#: "his exchange of signs with 5th lord Saturn is not desirable as it can deny marriage or
+#: progeny" (HTJAH-I:9143). On that showing an exchange transmits the partner's condition.
+#:
+#: Arm A — withhold: grant the relief only when the exchange partner is itself unafflicted.
+PARIVARTANA_DIRECTIONAL: bool = False
+#: Arm B — transmit: an exchange with an afflicted or dusthana-lording partner makes the
+#: lord itself count as hard-afflicted (what HTJAH-I:9119 says in as many words), which is
+#: what the B1 dominant-factor guard reads. Strictly stronger than arm A.
+PARIVARTANA_TRANSMITS: bool = False
+
 
 def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:
     """Does the LORD carry an affliction Raman reads as overriding its Shadbala total?
@@ -365,12 +462,54 @@ def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:
     Only the two afflictions Raman treats as making a planet powerless in itself count here:
     combustion and an uncancelled debilitation. Dusthana placement is deliberately excluded —
     Raman's dusthana readings are matter-specific (a strong dusthana lord FEEDS an affliction,
-    clause 1.5), so folding it in would double-count. None on Track-B."""
+    clause 1.5), so folding it in would double-count.
+
+    **Runs on sparse charts too, since 2026-08-24.** It used to return None whenever Shadbala was
+    absent, which was self-contradictory: the citation this guard is BUILT ON is itself a printed
+    book chart. HTJAH-I:3780 is Chart No. 59, where Raman writes of the third lord "in the Rashi
+    he is with an inimical planet Sun and has become combust. This makes him weak in the chart."
+    A rule derived from a book chart could not be applied to book charts. Both inputs it needs
+    are available there — `combust` wants only two longitudes and `debilitated_uncancelled` only
+    a sign — and only `rupas`/`band` require Shadbala, neither of which this reads."""
     p = chart.planets.get(lord)
-    if p is None or p.shadbala_rupas is None:
+    if p is None:
         return None
     es = effective_strength(lord, chart)
     return bool(es.combust > 0.0 or es.debilitated_uncancelled)
+
+
+def _lord_obstructed(lord: str, chart: RamanChart) -> Optional[bool]:
+    """C2: is the lord joined by Rahu or Ketu (same sign) AND joined or aspected by Saturn or
+    Mars (Raman's whole-sign drishti; a planet never obstructs itself)? NH:7196-7199."""
+    p = chart.planets.get(lord)
+    if p is None:
+        return None
+    node = any(q is not None and q.sign == p.sign
+               for q in (chart.planets.get("Rahu"), chart.planets.get("Ketu")))
+    if not node:
+        return False
+    for m in ("Saturn", "Mars"):
+        q = chart.planets.get(m)
+        if m == lord or q is None:
+            continue
+        if q.sign == p.sign or drishti.aspects_planet(m, lord, chart):
+            return True
+    return False
+
+
+def _benefic_relief(planet: str, chart: RamanChart) -> Optional[bool]:
+    """C4: is Jupiter or Venus (never the planet itself) in its sign or aspecting it (Raman's
+    whole-sign drishti)? NH:6230-6231."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return None
+    for b in ("Jupiter", "Venus"):
+        q = chart.planets.get(b)
+        if b == planet or q is None:
+            continue
+        if q.sign == p.sign or drishti.aspects_planet(b, planet, chart):
+            return True
+    return False
 
 
 def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:
@@ -385,17 +524,110 @@ def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:
 # ---------------------------------------------------------------------------
 
 def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
-    """D9 only nudges a BORDERLINE 'mixed'; decisive favourable/afflicted never shift."""
+    """D9 only nudges a BORDERLINE 'mixed'; decisive favourable/afflicted never shift.
+
+    SPARSE-CONTRADICTION EXCEPTION (P2, USER-SIGNED 2026-08-30 — the B1-precedent trade,
+    strict 284->280 / within-1 351->356 / inversions 46->41): when ALL strength pillars are
+    unknown (sparse book-chart, no Shadbala) AND both polarities fired (a genuine
+    contradiction), the D9 does NOT move the mixed. Raman's method sentence is "Every
+    combination mentioned should be applied to the Rashi, Bhava and Navamsha charts and
+    then a conclusion drawn" (HTJAH-I:979-980) — the navamsa is co-testimony weighed WITH a
+    rasi reading ("equally important... the pivot", :975-978), never a substitute for one;
+    with no measured rasi strength and contradicted testimony there is nothing for it to
+    confirm or weaken. Engine-blind review verified all four cost rows (Ford/Srinivasan
+    wealth, Aurangzeb father, Chaitanya body) are rasi-decided in Raman's own text — the D9
+    was carrying those verdicts by coincidence — and that Guru Nanak's dissolved inversion
+    was produced by a D9 PROXY (lord's D9 debility) reading the OPPOSITE sign of Raman's
+    actual navamsa sentence ("even in the Navamsa, the Lagna is unafflicted"). Doctrine is
+    silent on this exact sparse situation (Raman always had the rasi chart): a
+    novel-but-consistent extrapolation, recorded as such. Measured charts and sparse
+    non-contradicted matters are untouched (the latter are D9-immune by construction —
+    clause 3 never emits 'mixed')."""
     if base in ("favourable", "afflicted"):
         return base, False
-    if L.navamsa_status == "confirms" and base == "mixed":
+    if (L.lord_strong is None and L.karaka_strong is None
+            and L.fired_malefic and L.fired_benefic and base == "mixed"):
+        return base, False
+    # ONE-SIDED RASI GUARD (audit 2026-10-23). When every rule that fired points ONE way, the
+    # D9 may not carry the verdict to the OTHER pole. The navamsa is co-testimony weighed WITH
+    # the rasi reading (HTJAH-I:975-980), so it can confirm or weaken what the rasi says; it
+    # cannot reverse rasi testimony that is all on one side. The defect it closes: Lincoln's
+    # death (HTJAH-II chart_73) had four malefic rules and no benefic one, yet a "confirming"
+    # navamsa lifted the matter to favourable. Measured on the ratchet: strict 286->284,
+    # within-1 362->364, real errors 34->32 — the same trade the B1 guard made.
+    one_sided_malefic = bool(L.fired_malefic) and not L.fired_benefic
+    one_sided_benefic = bool(L.fired_benefic) and not L.fired_malefic
+    if L.navamsa_status == "confirms" and base == "mixed" and not one_sided_malefic:
         return "favourable", True
-    if L.navamsa_status == "weakens" and base == "mixed":
+    if L.navamsa_status == "weakens" and base == "mixed" and not one_sided_benefic:
         return "afflicted", True
     return base, False
 
 
+#: NAVAMSA ONE-STEP RULE (USER DECISION 2026-10-24, docs/raman_saab/NAVAMSA_STEP_FINDINGS_2026-10-24.md).
+#: The Navamsa is co-testimony weighed WITH the Rasi ("Every combination mentioned should be
+#: applied to the Rashi, Bhava and Navamsha charts and then a conclusion drawn", HTJAH-I:979-980).
+#: In Raman's worked charts it raises or lowers the grade and never by itself turns a clear Rasi
+#: reading to the other pole: "The moderate affliction... in Navamsha is more than counterbalanced
+#: by his strong disposition in Rashi" (HTJAH-I:4688-4689); "Navamsha cannot deny elder co-borns"
+#: (HTJAH-II:16704); a 9th lord in the 6/8/12 Navamsa gives results "good but their degree will be
+#: only middling" (HTJAH-II:12894-12896). Reversal by the Navamsa is printed only inside named
+#: yogas (3HC 158/244/248) and dasha-result rules (HTJAH-I:1739-1740), which live in their own
+#: code paths and are untouched here. So the Navamsa may move the Rasi-only verdict at most ONE
+#: step (favourable <-> mixed <-> afflicted); the clause-2 guard, which had no citation and was
+#: pool-tuned, now only lowers a favourable to mixed. Read LIVE off the module, like B1.
+NAVAMSA_ONE_STEP: bool = True
+
+#: M1 (FIDELITY_FIXES_PREREG Addendum 10, HELD until the user decides): Raman's maraka chapter
+#: is death-determination doctrine (HTJAH-I:776-814), so maraka pressure would drive the verdict
+#: only for `death`, `longevity` (already guarded) and `wealth` (poverty block, HTJAH-I:2526-2528).
+MARAKA_GUARD_ALL_NON_DEATH: bool = False
+_MARAKA_DEATH_KEYS = frozenset({"death", "longevity", "wealth"})
+
+#: Y1 (FIDELITY_FIXES_PREREG Addendum 13, HELD until measured and decided): a malefic rule
+#: graded `blemish` from its citation (`doctrine.malefic_tiers`) does not open the
+#: benefic-vs-malefic contradiction. Raman weighs a single small touch past a good
+#: combination (3HC 10264-10267; NH 10921-10926). Not applied to inherent-affliction matters.
+Y1_BLEMISH_TIER: bool = False
+
+#: G1 (FIDELITY_FIXES_PREREG Addendum 16): the Beeja/Kshetra fertility gate moves a children
+#: verdict at most one step instead of deciding it. DROPPED 2026-10-30 (user decision "Ship G2,
+#: drop G1", Addendum 20): it kept the parity-only trigger an engine-blind review found unsound;
+#: G2 repaired the trigger itself (`primitives.sphutas.G2_PRINTED_SPHUTA_TEST`). Kept off, for the record.
+G1_FERTILITY_ONE_STEP: bool = False
+
+#: C2 (FIDELITY_FIXES_PREREG Addendum 29, OFF until measured and decided): the obstructed
+#: carrier. Raman reads a strong yoga as a promise whose ENJOYMENT is denied when its own
+#: planets are gripped by a node and a malefic: "Rahu's association and the aspect of Saturn
+#: hardens the political life obstructing the expression of the yoga in concrete terms, i.e.,
+#: the actual enjoyment of the yoga results is denied" (NH:7196-7199); "obstruction of the free
+#: flow of fortunate influences" (NH:7255-7257). When the matter's lord is so obstructed, the
+#: strong-pillar favourable lift (clauses 2 and 5) is blocked and the matter falls to 'mixed',
+#: the same shape as the B1 guard. Sign-only: no orb, no star lord.
+C2_OBSTRUCTED_CARRIER: bool = False
+#: C1 (Addendum 33, held): weakness is not affliction. A clause-6 afflicted that rests on weak
+#: Bhava Bala or maraka pressure alone, with no fired malefic, is mixed (3HCC:877-881).
+C1_WEAKNESS_NOT_AFFLICTION: bool = False
+#: C4 (Addendum 33, held): the karaka veto is relieved one step to mixed when Jupiter or Venus
+#: joins or aspects the broken karaka (3HCC:11228-11230, NH:6230-6231).
+C4_KARAKA_VETO_RELIEF: bool = False
+
+_POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
+
+
 def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
+    """Collapse a ledger to (verdict, borderline_shifted), the Navamsa limited to one step."""
+    v, shifted = _decide_clauses(L)
+    if not NAVAMSA_ONE_STEP or L.navamsa_status in (None, "neutral"):
+        return v, shifted
+    rasi, _ = _decide_clauses(dataclasses.replace(L, navamsa_status="neutral"))
+    if (rasi in _POLE_ORDER and v in _POLE_ORDER
+            and abs(_POLE_ORDER[rasi] - _POLE_ORDER[v]) > 1):
+        return "mixed", True
+    return v, shifted
+
+
+def _decide_clauses(L: FrameLedger) -> tuple[Verdict, bool]:
     """Collapse a ledger to (verdict, borderline_shifted). The clause order matters."""
     # Longevity guard — SPAN only. For the numeric life-SPAN (`longevity` sig) the span class
     # and maraka are owned by the unbuilt ayurdaya pre-pass, so this judge must NOT emit a
@@ -405,11 +637,23 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # afflicted the remaining clauses would produce. The `death` MANNER sig is NOT guarded —
     # it judges the 8th-house affliction directly (see clause 1.5 AFFLICTION_MATTER).
     guarded = "LONGEVITY_GUARD" in L.flags
-    maraka_drives = L.maraka_active and not guarded
+    # B3 — non-death-marital maraka guard (HTJAH-II:2579): maraka pressure speaks to the
+    # DEATH of the spouse ("the death of the husband or wife will occur"), not to marital
+    # HAPPINESS. The 7th being a maraka house lands Venus-the-karaka in the maraka set, so
+    # without this guard a barely-weak Venus over-afflicts the happiness sub-matter on
+    # maraka pressure alone. Same shape as LONGEVITY_GUARD but strictly narrower: only
+    # maraka's verdict-driving effect is suppressed — the karaka veto, fired malefics and
+    # every other clause keep their full force, and the ledger still records maraka_active
+    # honestly for reporting. (The Kuja-dosha CANCELLATIONS are separately encoded in
+    # _KujaDosha, HTJAH-II:2593-2601 — this is not a missing-cancellation patch.)
+    maraka_drives = (L.maraka_active and not guarded
+                     and "MARAKA_NON_DEATH_GUARD" not in L.flags)
     # 1. karaka veto — a broken karaka afflicts the matter regardless of evidence.
     if not L.karaka_intact:
         if guarded:
             return _navamsa_modulate("insufficient-evidence", L)
+        if C4_KARAKA_VETO_RELIEF and L.karaka_relieved:
+            return _navamsa_modulate("mixed", L)
         return _navamsa_modulate("afflicted", L)
     # 1.5 DUSTHANA-AFFLICTION CONFIRMATION (Stage-3, user-signed-off "B"). For an inherently
     # malefic signification (6th disease/enemies/debts/accidents; 12th incarceration/left_eye;
@@ -423,8 +667,12 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # clause 2 (preserving the 'natural death' reading on a beneficially-disposed 8th). Applies
     # to `death` (manner) but NOT to the `longevity` SPAN, which is still guarded. The verdict
     # is decisive — _navamsa_modulate never shifts an 'afflicted'.
-    if ("AFFLICTION_MATTER" in L.flags and not guarded
-            and L.fired_malefic and not L.fired_benefic):
+    # Signification-precision (2026-08-30): the test is the AFFLICTION_OWN_EVIDENCE flag,
+    # computed at ledger build from rules of THE MATTER'S OWN signification only — a pooled
+    # sibling-signification rule (e.g. a benefic `longevity` rule inside the `death` bucket)
+    # neither confirms nor contradicts the matter. See the flag's comment in
+    # _build_frame_ledger for the Marie Antoinette case that forced this.
+    if ("AFFLICTION_OWN_EVIDENCE" in L.flags and not guarded):
         return _navamsa_modulate("afflicted", L)
     # 2. contradiction — weigh the PREPONDERANCE when benefic AND malefic both fire.
     # Faithful to Raman's THREE-FACTORS doctrine: instead of counting fired-rule surplus,
@@ -466,7 +714,8 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
         # painted over, and the AFFLICTED arm stays untouched.
         elif (known and strong >= shadbala_total.CONTRA_PILLAR_FAVOUR
                 and L.navamsa_status != "weakens"
-                and not (B1_DOMINANT_FACTOR_GUARD and L.lord_hard_afflicted)):
+                and not (B1_DOMINANT_FACTOR_GUARD and L.lord_hard_afflicted)
+                and not (C2_OBSTRUCTED_CARRIER and L.lord_obstructed)):
             base = "favourable"
         else:
             base = "mixed"
@@ -488,7 +737,8 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     weak_pillar = (not L.lord_strong) or (not L.karaka_strong)
     # 5. clean strength + supportive bhava + no malefic -> favourable.
     if both_strong and bhava_ok and not L.fired_malefic:
-        base = "favourable"
+        # C2 (Addendum 29): an obstructed lord blocks the lift, as in clause 2.
+        base = "mixed" if (C2_OBSTRUCTED_CARRIER and L.lord_obstructed) else "favourable"
     # 6. a weak pillar with malefic / weak-bhava / maraka pressure -> afflicted...
     elif weak_pillar and (L.fired_malefic or L.bhava_bala_strong is False or maraka_drives):
         base = "afflicted"
@@ -504,6 +754,9 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
         # the lord's dual ownership+karaka role HTJAH-I:985): a decisively strong karaka
         # can still deliver a weak-lord, lone-malefic matter -> demote afflicted to mixed.
         elif L.karaka_strong and not L.lord_strong and L.fired_malefic and not L.fired_benefic:
+            base = "mixed"
+        # C1 (Addendum 33): no malefic agent fired, so the weakness alone gives mixed.
+        elif C1_WEAKNESS_NOT_AFFLICTION and not L.fired_malefic:
             base = "mixed"
     # 7. nothing fired at all -> insufficient-evidence.
     elif not (L.fired_benefic or L.fired_malefic or L.fired_neutral):
@@ -561,6 +814,26 @@ def _planet_avastha_score(avasthas: Optional[dict[str, object]], planet: str) ->
     info = avasthas[planet]
     score = _BALADI_SCORE.get(info["baladi"], 0) + _JAGRADADI_SCORE.get(info["jagradadi"], 0)
     return max(-1, min(1, score))
+
+
+def baladi_jagradadi_states(chart: RamanChart) -> dict[str, dict[str, str]]:
+    """READ-ONLY accessor (2026-08-17, report-completeness): the per-planet Baladi (ageing)
+    and Jagradadi (consciousness) avastha states this judge already computes via
+    ``_safe_avasthas`` and uses ONLY to scale verdict intensity (``_avastha_combined`` ->
+    ``_compute_degree``). Exposed so the report surfaces can SHOW what the judge consumed —
+    it re-reads the same pure computation and touches no verdict logic.
+
+    Provenance (same as the scoring tables above): CLASSICAL_NONCITABLE — Phaladeepika
+    Ch.3 Sl.3/Sl.10/Sl.20 + BPHS Ch.1 Sl.14-16 — outside Raman's own canon.
+
+    Returns {graha: {"baladi": state, "jagradadi": state}}; {} on Track-B stated-position
+    charts where a graha is missing (the same graceful degradation the judge itself uses).
+    """
+    avasthas = _safe_avasthas(chart)
+    if not avasthas:
+        return {}
+    return {planet: {"baladi": str(info["baladi"]), "jagradadi": str(info["jagradadi"])}
+            for planet, info in avasthas.items()}
 
 
 def _avastha_combined(avasthas: Optional[dict[str, object]], lord: str, karaka: str) -> int:
@@ -887,6 +1160,61 @@ def _in_parivartana(planet: str, pairs: frozenset[frozenset[str]]) -> bool:
     return any(planet in pair for pair in pairs)
 
 
+def _parivartana_partners(planet: str, pairs: frozenset[frozenset[str]]) -> frozenset[str]:
+    """Every planet `planet` has exchanged signs with (a graha can hold two exchanges)."""
+    return frozenset(other for pair in pairs if planet in pair
+                     for other in pair if other != planet)
+
+
+#: Which reading of "afflicted partner" the directional arms use. Raman's two counter-
+#: examples do NOT name the same mechanism, so the choice is a doctrine call, not a tuning
+#: knob, and each is measured separately:
+#:   "condition" — the partner is combust, debilitated-uncancelled, or a maraka.
+#:   "dusthana"  — the partner lords a dusthana; this is the mechanism in HTJAH-I:9119
+#:                 ("the 8th and 10th lords have exchanged signs so that Saturn ... also is
+#:                 afflicted by this parivartana"), where the 8th lordship is what travels.
+#:   "either"    — the union.
+#: HTJAH-I:9143 ("exchange ... with 5th lord Saturn is not desirable") fits NEITHER: the 5th
+#: is no dusthana and Saturn is not described as afflicted there, so that objection is to the
+#: exchange itself and is deliberately NOT encoded by any of these.
+PARIVARTANA_PARTNER_TEST: str = "either"
+
+
+def _partner_afflicted(planet: str, pairs: frozenset[frozenset[str]], chart: RamanChart,
+                       marakas: frozenset[str]) -> bool:
+    """Is the far end of the exchange itself in trouble?
+
+    Built only from vocabulary the module ALREADY judges by — combustion, an uncancelled
+    debility, maraka membership, dusthana lordship — so this introduces no new scale, only
+    a direction. ANY partner in trouble counts: a graha holding two exchanges cannot be
+    shielded by the healthy one while the other transmits (HTJAH-I:9119).
+    """
+    test = PARIVARTANA_PARTNER_TEST
+    for partner in _parivartana_partners(planet, pairs):
+        if test in ("condition", "either") and (
+                _combust_graded(partner, chart)
+                or _debilitated_uncancelled(partner, chart)
+                or partner in marakas):
+            return True
+        if test in ("dusthana", "either") and any(
+                _lord_of_sign(chart.asc_sign, d) == partner for d in (6, 8, 12)):
+            return True
+    return False
+
+
+#: Whether the house's Bhava Bala votes as the third strength pillar. OFF since 2026-10-23
+#: (USER DECISION after the engine audit). The vote compared Bhava Bala against a fixed
+#: 300-shashtiamsa bar that `shadbala/total.py` itself labels "GOLDEN-TUNED (not a
+#: Raman-stated threshold)"; 97.5% of houses passed it, so it was close to a constant "strong"
+#: vote. Raman reads Bhava Bala comparatively within one chart (GBB ch.9: in his own worked
+#: example every house is 6.43-10.20 rupas, the 4th "the least powerful Bhava" included), and a
+#: within-chart comparison scored worse, so the pillar is withdrawn rather than replaced.
+#: Measured on the ratchet: strict 284 -> 276 (273 before the dhana floor was re-read over the voting pillars), within-1 364 -> 366, real errors 32 -> 30 — the
+#: B1 trade (fewer opposite verdicts at the cost of exact matches). With it off, the pillar
+#: count runs over lord and karaka only; the value itself is unchanged and still reported.
+BHAVA_BALA_PILLAR_VOTES: Final[bool] = False
+
+
 def _bhava_bala_for(chart: RamanChart, house: int) -> Optional[float]:
     """Total Bhava Bala (Shashtiamsas) for `house`, or None on Track-B (no madhyas)."""
     if not chart.bhava_madhyas or len(chart.bhava_madhyas) < house:
@@ -903,6 +1231,29 @@ def _bhava_bala_for(chart: RamanChart, house: int) -> Optional[float]:
         bhava_sign=bhava_sign, bhava_sign_deg=bhava_sign_deg)
 
 
+#: Rule ids the judge skips while set. Empty by default, so judging is unchanged; the house audit
+#: (``app.raman_saab.house_audit``) sets it to re-judge a house without its doubtful rules.
+EXCLUDED_RULES: contextvars.ContextVar[frozenset[str]] = contextvars.ContextVar(
+    "EXCLUDED_RULES", default=frozenset())
+
+
+#: BS1 (prereg Addendum 34, 2026-10-31). OFF: a MEASUREMENT, not a shipped rule. When on, a
+#: rule bucket a matter BORROWS from a sibling matter of the same house contributes only the
+#: house placements (lord-in-house, planet-in-house), as the H4 `mother_home` bridge already
+#: does; the sibling's own combinations (poverty combos on moksha, Dhana yogas on eyesight)
+#: stop voting on matters their printed result is not about. Read LIVE so a sweep can rebind it.
+BS1_BORROWED_PLACEMENTS_ONLY: bool = False
+
+_PLACEMENT_GROUPS: frozenset[str] = frozenset({"lord_in_house", "planet_in_house"})
+
+
+def _borrowed_keys(sig: Signification) -> frozenset[str]:
+    """Tags in `sig.rule_tags` that are ANOTHER matter's own key in the same house."""
+    from app.raman_saab.doctrine.significations import significations_of
+    keys = {s.key for s in significations_of(sig.house)}
+    return frozenset(t for t in sig.rule_tags if t != sig.key and t in keys)
+
+
 def _bucket_fired(
     chart: RamanChart, sig: Signification, ctx: EvalContext,
 ) -> tuple[tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...]]:
@@ -913,8 +1264,14 @@ def _bucket_fired(
     benefic: list[rf.FiredRule] = []
     malefic: list[rf.FiredRule] = []
     neutral: list[rf.FiredRule] = []
-    for fr in rf.fire_house(chart, sig.house):
+    excluded = EXCLUDED_RULES.get()
+    borrowed = _borrowed_keys(sig) if BS1_BORROWED_PLACEMENTS_ONLY else frozenset()
+    for fr in rf.fire_house_cached(chart, sig.house, ctx):
         if tags and fr.rule.signification not in tags:
+            continue
+        if fr.rule.id in excluded:
+            continue
+        if fr.rule.signification in borrowed and fr.rule.group not in _PLACEMENT_GROUPS:
             continue
         pol = fr.rule.polarity
         if pol in ("malefic", "maraka"):
@@ -980,18 +1337,46 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
 
     # parivartana leniency: a lord/karaka in an exchange bypasses an inimical/debilitation
     # penalty — treat a debil-but-exchanged pillar as not-weak.
+    #
+    # PARIVARTANA_DIRECTIONAL (arm A, OFF): withhold that relief where the exchange partner
+    # is itself afflicted or lords a dusthana — Raman's exchanges transmit the partner's
+    # condition (HTJAH-I:9119, :9143) as readily as they benefit (HTJAH-I:8837).
+    # Both arms ship OFF, and every use below is gated on a flag, so at the shipped defaults
+    # this whole measurement is discarded. `_partner_afflicted` runs `dignity`, `neecha_bhanga`,
+    # a combustion grade and a dusthana-lordship scan per exchange partner, once per
+    # signification per frame — the same reason `_effective_strength` returns early for its own
+    # disabled measurement. Flipping either arm on restores the work unchanged.
+    _arms_on = PARIVARTANA_DIRECTIONAL or PARIVARTANA_TRANSMITS
+    lord_partner_bad = (_arms_on and _in_parivartana(lord, pairs)
+                        and _partner_afflicted(lord, pairs, chart, marakas))
+    karaka_partner_bad = (_arms_on and _in_parivartana(karaka, pairs)
+                          and _partner_afflicted(karaka, pairs, chart, marakas))
     if parivartana_resilient:
         if lord_strong is False and _in_parivartana(lord, pairs) \
-                and _debilitated_uncancelled(lord, chart):
+                and _debilitated_uncancelled(lord, chart) \
+                and not (PARIVARTANA_DIRECTIONAL and lord_partner_bad):
             lord_strong = True
         if karaka_strong is False and _in_parivartana(karaka, pairs) \
-                and _debilitated_uncancelled(karaka, chart):
+                and _debilitated_uncancelled(karaka, chart) \
+                and not (PARIVARTANA_DIRECTIONAL and karaka_partner_bad):
             karaka_strong = True
         if lord_karaka_identical:
             karaka_strong = lord_strong
 
+    # PARIVARTANA_TRANSMITS (arm B, OFF): the exchange does not merely fail to shield, it
+    # carries the affliction across — "Saturn who is the 7th lord ALSO IS AFFLICTED BY THIS
+    # PARIVARTANA" (HTJAH-I:9119). Expressed as the lord counting hard-afflicted, which is
+    # the channel the B1 dominant-factor guard already reads; no new scale is introduced.
+    if PARIVARTANA_TRANSMITS and lord_partner_bad and sig.house not in B1_GUARD_EXEMPT_HOUSES:
+        lord_hard = True
+        flags.append("PARIVARTANA_TRANSMITTED_AFFLICTION")
+
     bb = _bhava_bala_for(chart, sig.house)
-    bb_strong: Optional[bool] = None if bb is None else (bb >= shadbala_total.BHAVA_BALA_MIN_SH)
+    # The Bhava Bala is still computed and carried on the ledger for every report surface, but
+    # it no longer VOTES as a pillar (BHAVA_BALA_PILLAR_VOTES; USER DECISION 2026-10-23).
+    bb_strong: Optional[bool] = (
+        None if bb is None or not BHAVA_BALA_PILLAR_VOTES
+        else (bb >= shadbala_total.BHAVA_BALA_MIN_SH))
 
     # D9-4: a bhava occupant EXALTED in the rashi but DEBILITATED in the navamsa hollows the
     # promise (Raman's explicit "though exalted ... debilitated in Navamsha" — the rasi sets up
@@ -1030,16 +1415,75 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # VALIDATED (HIGH).
     if sig.key == "longevity":
         flags.append("LONGEVITY_GUARD")
+    # B3 (HTJAH-II:2579): marital HAPPINESS is a non-death matter — maraka pressure must
+    # not drive its verdict (see the guard in _decide). The spouse/death matters are NOT
+    # flagged: multiplicity/loss indications keep their maraka sensitivity.
+    #
+    # Extended to the 2nd house's quality matters 2026-08-29 (reviewer VALIDATED/HIGH). The
+    # maraka chapter (HTJAH-I:776-814) is death-determination doctrine, full stop, and
+    # `maraka_active` fires on set MEMBERSHIP of the matter's lord — but the 2nd lord is a
+    # maraka determinant BY DEFINITION (HTJAH-I:779), so every 2nd-house matter carried
+    # permanent maraka pressure by construction: the identical artifact B3 fixed for
+    # Venus/the 7th, on the other maraka sthana. Raman's own worked verdicts run the other
+    # way (Marx's exalted Venus in the 2nd -> favourable speech, NH chart_26; Bose's Jupiter
+    # in the 2nd -> "clear, forceful and convincing speaker", NH:7628), and Laghu Parashari
+    # itself lists "Maraka effects" as a SEPARATE 2nd-house signification alongside
+    # vision/possessions — severable from the quality matters. `wealth` is deliberately NOT
+    # flagged: the poverty block (HTJAH-I:2526-2528, H2.C.41-43) makes maraka ASSOCIATION a
+    # poverty operator for that matter specifically (and those are fired rules, which keep
+    # force under the guard regardless).
+    if (sig.key in ("marital_happiness", "speech", "vision", "family")
+            or (MARAKA_GUARD_ALL_NON_DEATH and sig.key not in _MARAKA_DEATH_KEYS)):
+        flags.append("MARAKA_NON_DEATH_GUARD")
     # AFFLICTION_MATTER (Stage-3 "B"): an inherently-malefic dusthana signification (6th
     # afflictions, 12th incarceration/left_eye). _decide clause-1.5 reads this to confirm the
     # affliction on lone-malefic evidence (a strong dusthana lord strengthens, never rescues).
+    #
+    # AFFLICTION_OWN_EVIDENCE (2026-08-30, span/manner separation fix): a BENEFIC rule of the
+    # `longevity` SPAN signification cannot CONTRADICT the affliction confirmation. The
+    # `death` sig pools `longevity` rules by design (shared 8th apparatus), and a benefic
+    # LONGEVITY rule (H8.L.8) was blocking the death-MANNER confirmation on Marie Antoinette's
+    # chart — a purna span vetoing a guillotine reading, exactly the span/manner confusion the
+    # H8-OPENED decision forbids ("longevity=favourable + death=afflicted is the correct dual
+    # reading", Lincoln/JFK). The favourable span has its own outlet: the separate `longevity`
+    # signification's verdict. The exclusion is deliberately ASYMMETRIC and NARROW — both
+    # wider forms were implemented and MEASURED first, per the honest-hold rule:
+    # (a) fully signification-precise (fr.rule.signification == sig.key) broke 11 correct
+    #     H6/H12/H8 rows — the dusthana keys' cross-signification pooling is load-bearing on
+    #     the malefic side (the 6th's afflictions cross-speak by design);
+    # (b) symmetric span-exclusion (malefic longevity rules also excluded) broke Lincoln and
+    #     Hitler, whose manner confirmations ride on malefic 8th-apparatus rules tagged
+    #     `longevity` — malefic 8th evidence speaks to death however tagged (chart_35's
+    #     record: "afflicted = the maraka apparatus FIRED").
+    # The flag is computed here, where `sig` is in scope; clause 1.5 consumes it.
     if sig.key in _DUSTHANA_AFFLICTION_KEYS:
         flags.append("AFFLICTION_MATTER")
+        manner_ben = [fr for fr in benefic if fr.rule.signification != "longevity"]
+        # Drekkana manner rules cannot be the SOLE confirming malefic (reviewer amendment,
+        # 2026-08-30, HIGH): Raman's drekkana apparatus "gives the clue to the CAUSE of
+        # death" (HTJAH-II:3884-3886) — it names the manner of an affliction established by
+        # orthodox testimony, and in every worked instance it is the "also" clause. Savarkar
+        # is the printed counter-instance: Jupiter in Ayudha, and Raman reads dasha-danger,
+        # NOT death (NH:10563-10570; he died naturally). Letting a lone drekkana fire
+        # confirm the affliction would convert manner evidence into affliction evidence —
+        # something Raman never does.
+        confirming_mal = [fr for fr in malefic
+                          if getattr(fr.rule, "id", "") not in _MANNER_RULE_IDS]
+        if confirming_mal and not manner_ben:
+            flags.append("AFFLICTION_OWN_EVIDENCE")
     # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS
     # (possibly non-longevity) matter, so its maraka pressure is provisional until the
     # longevity engine confirms it. Kept for downstream reporting; not verdict-driving.
     if "longevity" in sig.rule_tags or "death" == sig.key or maraka_active:
         flags.append("LONGEVITY_UNKNOWN")
+
+    blemish: tuple[rf.FiredRule, ...] = ()
+    if Y1_BLEMISH_TIER and benefic and sig.key not in _DUSTHANA_AFFLICTION_KEYS:
+        blemish = tuple(fr for fr in malefic if malefic_tiers.tier(fr.rule.id) == "blemish")
+        if blemish:
+            malefic = tuple(fr for fr in malefic if fr not in blemish)
+            if not malefic:
+                flags.append("BLEMISH_ONLY")
 
     return FrameLedger(
         frame=frame, lord=lord, lord_strong=lord_strong, karaka=karaka,
@@ -1048,7 +1492,10 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         maraka_active=maraka_active, parivartana_resilient=parivartana_resilient,
         lord_karaka_identical=lord_karaka_identical,
         fired_benefic=benefic, fired_malefic=malefic, fired_neutral=neutral,
-        flags=tuple(dict.fromkeys(flags)), lord_hard_afflicted=lord_hard)
+        flags=tuple(dict.fromkeys(flags)), lord_hard_afflicted=lord_hard,
+        lord_obstructed=(_lord_obstructed(lord, chart) if C2_OBSTRUCTED_CARRIER else None),
+        karaka_relieved=(_benefic_relief(karaka, chart) if C4_KARAKA_VETO_RELIEF else None),
+        fired_blemish=blemish)
 
 
 # ---------------------------------------------------------------------------
@@ -1068,36 +1515,34 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
 # one step, and a decisive verdict is NEVER overturned.
 # ---------------------------------------------------------------------------
 
-def _yoga_scope_kinds(sig: Signification) -> frozenset[str]:
-    """The yoga kinds that may bear on this signification (kind-scoped wiring).
+#: The yoga kinds that may move a borderline verdict. 'lunar'-kind yogas (Sunapha / Anapha /
+#: Durudhura et al.) are DELIBERATELY excluded: a conservative encoding of consideration #4
+#: (HTJAH-I:480-482) that lets only dhana/arishta/raja move a verdict.
+_MODULATING_KINDS: Final[frozenset[str]] = frozenset({"dhana", "raja", "arishta"})
 
-    'lunar'-kind yogas (Sunapha / Anapha / Durudhura et al.) are DELIBERATELY
-    excluded from modulation scope in this phase: a conservative encoding of
-    consideration #4 (HTJAH-I:480-482) that lets only dhana/arishta/raja move a
-    borderline verdict. Lunar yogas will be surfaced as ':noted' metadata at
-    Phase G; until then the asymmetry (lunar yogas neither shift a verdict nor
-    appear in metadata) is intentional, not an omission.
-    """
-    tags = set(sig.rule_tags)
-    kinds: set[str] = set()
-    if sig.house in _DHANA_HOUSES and tags & _DHANA_TAGS:
-        kinds.add("dhana")
-    if sig.house == 1 and tags & _ARISHTA_TAGS:
-        kinds.add("arishta")
-    if sig.house in _RAJA_HOUSES and tags & _RAJA_TAGS:
-        kinds.add("raja")
-    return frozenset(kinds)
+
+def _routed_yogas(sig: Signification, fired: tuple[FiredYoga, ...]) -> tuple[FiredYoga, ...]:
+    """The fired yogas that bear on THIS signification: a modulating kind AND a route
+    (`doctrine.yoga_routes`) naming this house and sub-matter. Consideration #4 ties a yoga to
+    "any particular house or houses" (HTJAH-I:480-482) — the matter its own text names — never
+    to every house that shares its kind tag (the pre-2026-10-21 wiring)."""
+    return tuple(y for y in fired
+                 if y.kind in _MODULATING_KINDS and routes_to(y.id, sig.house, sig.key))
 
 
 def _yoga_modulate(
     verdict: Verdict, lead: FrameLedger, sig: Signification,
-    fired: tuple[FiredYoga, ...],
+    fired: tuple[FiredYoga, ...], vital_raja: frozenset[str] = frozenset(),
 ) -> tuple[Verdict, bool, Metadata]:
     """Consideration #4 (HTJAH-I:480-482): fired yogas modulate a BORDERLINE 'mixed'.
 
-    * dhana on H2/H11 wealth/gains: mixed -> favourable, only when no malefic
+    Only yogas ROUTED to this signification take part (`_routed_yogas`); the kind then sets
+    the direction:
+
+    * dhana on its routed wealth/fortune matter: mixed -> favourable, only when no malefic
       fired (a contradiction is never painted over);
-    * arishta (Sakata, uncancelled Kemadruma, et al.) on H1 self: mixed ->
+    * arishta (Sakata, uncancelled Kemadruma, et al.) on its routed matter (H1 self, or H5
+      children for the progeny curses): mixed ->
       afflicted — but only a STRENGTH-SPLIT mixed. A clause-2 contradiction-mixed
       (benefic AND malefic both fired) is never dropped: that would hide live
       benefic testimony behind a chart-level yoga. The pinned HTJAH-I chart_33
@@ -1106,21 +1551,22 @@ def _yoga_modulate(
       this guard. (Kemadruma does NOT form on chart_33: the Moon has planets
       in the 2nd from it.)
     * raja on H9/H10 fortune/career: surfaced as metadata, and lifts a clean
-      borderline mixed -> favourable (same no-fired-malefic bar as dhana).
+      borderline mixed -> favourable (same no-fired-malefic bar as dhana) ONLY when the
+      yoga is in `vital_raja` — it passed Raman's vitality test (causing planets within 12°,
+      HTJAH-I:641-645; `yogas.raja_yoga_vital`). A raja yoga without that vitality is noted.
 
     Decisive verdicts NEVER shift (same discipline as the navamsa modulation).
     Every relevant fired yoga is recorded as ("yoga", "<id>:<direction>") where
     direction is 'lift'/'drop' for the kind that drove a shift, else 'noted'.
 
     LONGEVITY_GUARD note: the ``not guarded`` arm of the arishta branch is
-    currently UNREACHABLE in production wiring — arishta scope is H1 'self'
-    (_ARISHTA_TAGS) while the guard flag is set only on H8 longevity/death
+    currently UNREACHABLE in production wiring — arishta routes reach H1 self/body/health
+    and H5 children (`yoga_routes`) while the guard flag is set only on H8 longevity/death
     matters, two disjoint sets. It is kept as defensive code (unit-pinned by
     test_arishta_noted_not_dropped_under_longevity_guard) in case a future
     signification carries both an arishta scope and the guard.
     """
-    scope = _yoga_scope_kinds(sig)
-    relevant = tuple(y for y in fired if y.kind in scope)
+    relevant = _routed_yogas(sig, fired)
     if not relevant:
         return verdict, False, ()
     guarded = "LONGEVITY_GUARD" in lead.flags
@@ -1136,11 +1582,12 @@ def _yoga_modulate(
             new, shifted_kind = "afflicted", "arishta"
         elif "dhana" in kinds and not lead.fired_malefic:
             new, shifted_kind = "favourable", "dhana"
-        elif "raja" in kinds and not lead.fired_malefic:
+        elif any(y.kind == "raja" and y.id in vital_raja for y in relevant) \
+                and not lead.fired_malefic:
             new, shifted_kind = "favourable", "raja"
     direction = {"arishta": "drop", "dhana": "lift", "raja": "lift"}
     metadata = tuple(
-        ("yoga", f"{y.id}:{direction[y.kind] if y.kind == shifted_kind else 'noted'}")
+        ("yoga", f"{y.id}:{direction[y.kind] if y.kind == shifted_kind and (y.kind != 'raja' or y.id in vital_raja) else 'noted'}")
         for y in relevant)
     return new, shifted_kind is not None, metadata
 
@@ -1277,11 +1724,14 @@ def _dhana_floor(
     if sig.house != 11 or sig.key not in _DHANA_FLOOR_KEYS \
             or "LONGEVITY_GUARD" in lead.flags:
         return verdict, False, ()
-    dhana_ids = tuple(y.id for y in fired if y.kind == "dhana")
+    dhana_ids = tuple(y.id for y in _routed_yogas(sig, fired) if y.kind == "dhana")
     if not dhana_ids:
         return verdict, False, ()
+    # "All pillars strong" = every pillar that VOTES. With the Bhava Bala vote withdrawn
+    # (BHAVA_BALA_PILLAR_VOTES, 2026-10-23) requiring `is True` would silently disable this
+    # floor; the floor keeps its meaning over lord and karaka (276 vs 273 strict, same 366/30).
     all_strong = (lead.lord_strong is True and lead.karaka_strong is True
-                  and lead.bhava_bala_strong is True)
+                  and lead.bhava_bala_strong is not False)
     new: Verdict = verdict
     if all_strong:
         new = "favourable"
@@ -1350,6 +1800,17 @@ _MARITAL_BOND_KEYS: frozenset[str] = frozenset({"spouse", "marital_happiness"})
 _TIMING_MARAKA_KEYS: frozenset[str] = frozenset(
     {"longevity", "death", "coverture", "father", "mother", "spouse"})
 
+# Display caps for the ``active_periods`` line (REPORT_CRITIQUE_2026-08-17 P0). The maraka
+# set can absorb every significator's window (one window per graha, strongest role wins), so
+# an uncapped maraka-first sort made the ENTIRE activation line read "(maraka)" for the
+# relative-death matters (mother/spouse/coverture/father) — five death-labels and zero
+# ordinary fructification windows. At most `_TIMING_MARAKA_DISPLAY_CAP` maraka-tagged windows
+# are shown; ordinary windows (afflictor/lord/karaka/timer) fill the remaining slots up to
+# `_TIMING_DISPLAY_CAP`. DISPLAY-SELECTION ONLY: the computed window set is unchanged, and
+# the verdict is untouched (this composer is metadata-only by contract).
+_TIMING_DISPLAY_CAP: Final[int] = 5
+_TIMING_MARAKA_DISPLAY_CAP: Final[int] = 2
+
 
 def _event_timing(
     chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger, ctx: EvalContext,
@@ -1393,7 +1854,19 @@ def _event_timing(
         # Most event-salient roles first (maraka/afflictor/lord/karaka), then generic timers.
         ordered = sorted(windows, key=lambda w: (
             {"maraka": 0, "afflictor": 1, "lord": 2, "karaka": 3}.get(w.role, 4), w.start_jd))
-        md.append(("active_periods", "; ".join(w.label() for w in ordered[:5])))
+        # Cap the maraka-tagged windows so ordinary fructification windows stay visible
+        # (see _TIMING_MARAKA_DISPLAY_CAP above — selection of what is DISPLAYED only).
+        shown: list[vimshottari.EventWindow] = []
+        n_maraka = 0
+        for w in ordered:
+            if w.role == "maraka":
+                if n_maraka >= _TIMING_MARAKA_DISPLAY_CAP:
+                    continue
+                n_maraka += 1
+            shown.append(w)
+            if len(shown) >= _TIMING_DISPLAY_CAP:
+                break
+        md.append(("active_periods", "; ".join(w.label() for w in shown)))
     return verdict, tuple(md)
 # The CRUEL malefics Raman names in the marital-bond afflictions (Mars/Saturn/Rahu/Ketu) — the
 # Sun is deliberately EXCLUDED: it is never the load-bearing 8th-from-Moon marital affliction in
@@ -1465,6 +1938,7 @@ _MARGINAL_BAND: Final[float] = 0.2  # GBB-1:38-60 borderline band (rupas) below 
 
 def _marginal_karaka_gate(
     chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger,
+    *, bond_demoted: bool = False,
 ) -> tuple[Verdict, Metadata]:
     """GBB B2 marginal-strength band. The MIN_REQUIRED Rupa bars (GBB-8:303-312) are Raman's
     full-strength REFERENCE values, not pass/fail gates — strength is a continuum (GBB-1:38-60,
@@ -1484,7 +1958,21 @@ def _marginal_karaka_gate(
     SOUND-WITH-CAVEAT (KEEP/FLAG) — calibration rests on n=1 confirmed golden + a hand-tuned 0.2
     band + a 2-level lift (vs KARAKA-SALVAGE's conservative 1-level); re-examine if a second
     marriage golden ever enters the band."""
-    if verdict != "afflicted" or sig.key not in _MARITAL_BOND_KEYS:
+    # B3 companion (2026-08-17): with the non-death-marital maraka guard in _decide,
+    # the maraka/cliff artefact this gate was built to lift no longer FORMS as
+    # 'afflicted' — the same chart (e.g. chart_08: strong lord, marginal Venus, no
+    # malefic) now falls through to 'mixed' (on an evidence-empty ledger the artefact
+    # instead surfaces as insufficient-evidence, which this gate deliberately does not
+    # touch). The GBB-1:38-60 continuum principle is unchanged, so the gate's trigger
+    # widens from {afflicted} to {afflicted, mixed} under the SAME strict conditions;
+    # the re-decide semantics are untouched.
+    # ANTI-DOUBLE-MOVE (doctrine-review HIGH, 2026-08-17): a 'mixed' produced by the
+    # _marital_bond_gate DEMOTE (>=2 cruel malefics 8th-from-Moon, HTJAH-II:2664/2877)
+    # is Raman's own troubled-marriage reading, not the marginal-karaka cliff — the
+    # widened trigger must never re-lift it (mirror of the floor's blem_lifted guard).
+    if verdict not in ("afflicted", "mixed") or sig.key not in _MARITAL_BOND_KEYS:
+        return verdict, ()
+    if verdict == "mixed" and bond_demoted:
         return verdict, ()
     if lead.lord_strong is not True or lead.fired_malefic or lead.karaka_strong is not False:
         return verdict, ()
@@ -1582,6 +2070,13 @@ def _putrakaraka_malefic_afflicted(chart: RamanChart) -> bool:
     return False
 
 
+def _fertility_step(verdict: Verdict) -> Verdict:
+    """The fertility gate's effect: decisive denial, or one step toward afflicted under G1."""
+    if not G1_FERTILITY_ONE_STEP:
+        return "afflicted"
+    return {"favourable": "mixed", "mixed": "afflicted"}.get(verdict, verdict)
+
+
 def _fertility_gate(
     chart: RamanChart, sig: Signification, verdict: Verdict,
     lead: FrameLedger, ctx: EvalContext,
@@ -1606,11 +2101,10 @@ def _fertility_gate(
     * Strong sphutas (and the unprinted one-weak partial case) ride along as metadata
       only. None-safe on sparse charts (a missing sphuta planet skips the gate entirely).
 
-    Metadata values are prefixed ``numeric_`` ('numeric_strong' / 'numeric_partial')
-    because only the NUMERIC odd/even sphuta test is evaluated here; the
-    HTJAH-I:5524-5527 aspect/Rahu-association clauses are deferred to the H5
-    judge and NOT checked by this gate — the values deliberately do not claim a
-    full fertility assessment.
+    Metadata values keep their ``numeric_`` prefix ('numeric_strong' / 'numeric_partial').
+    Since G2 (2026-10-30) the strong/weak flags come from Raman's full printed sphuta
+    test (``sphutas.printed_point_strong``, HTJAH-I:5521-5527); the navamsa-layer,
+    saptavarga-majority and sex-routing refinements are still not encoded.
     """
     if sig.house != 5 or not (
             sig.key in _FERTILITY_KEYS or "progeny" in sig.rule_tags):
@@ -1624,7 +2118,7 @@ def _fertility_gate(
         # Both seed and field barren -> denial (decisive; overrides any favourable/mixed
         # the placement evidence produced). A single weak sphuta is handled by the
         # one-weak 'numeric_partial' branch below (weighed, not denied).
-        verdict = "afflicted"
+        verdict = _fertility_step(verdict)
         return verdict, (("beeja_kshetra", "weak"),), lead
     if bk.beeja_strong and bk.kshetra_strong:
         return verdict, (("beeja_kshetra", "numeric_strong"),), lead
@@ -1646,7 +2140,7 @@ def _fertility_gate(
     if arm_a or arm_b:
         lead = dataclasses.replace(
             lead, flags=tuple(dict.fromkeys(lead.flags + ("FERTILITY_GATE",))))
-        verdict = "afflicted"
+        verdict = _fertility_step(verdict)
         return verdict, (("beeja_kshetra", "one_weak_denied"),), lead
     return verdict, (("beeja_kshetra", "numeric_partial"),), lead
 
@@ -1771,8 +2265,21 @@ def _lookup_metadata(chart: RamanChart, sig: Signification,
 
 
 # ---------------------------------------------------------------------------
-# Matter-specific divisional charts (Shodashavarga) — Raman cross-checks each
-# matter in its OWN varga: children -> D7, career -> D10, parents -> D12, siblings -> D3.
+# Matter-specific divisional charts (Shodasavarga): children -> D7, career -> D10,
+# parents -> D12, siblings -> D3, disease -> D30.
+#
+# Provenance corrected 2026-08-19. This block used to assert, uncited, that "Raman
+# cross-checks each matter in its OWN varga". He does not, as a rule. What he does:
+# names the shodasavarga scheme and DEFERS the per-matter assignment to Parashara
+# ("Dwadasamsa for parents, Saptamsa for children, etc.", HPA-11:195-201) — two of
+# these five by name, the rest by pointer. His own working division throughout HTJAH
+# is the NAVAMSA (marriage HTJAH-II:402-413, children via the navamsa lagna
+# HTJAH-II:774-776, profession via the navamsa of the 10th lord HTJAH-II:9729-9811).
+# The full policy, per division, is `doctrine/varga_domains.py`.
+#
+# That thinner footing is exactly why this overlay is verdict-INVARIANT: it surfaces
+# the matter-varga testimony as metadata and lets Raman's own D1 method decide
+# (PREC-11 — the D1 core decides, the divisional corroborates).
 # ---------------------------------------------------------------------------
 
 _MATTER_VARGA: Final[dict[int, tuple[int, str]]] = {
@@ -1866,7 +2373,9 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, cat_md = _catastrophic_severity_gate(sig, verdict, lead)
     fired_yogas: tuple[FiredYoga, ...] = ctx.get_or_compute(
         "fired_yogas", lambda: detect_yogas(chart))
-    verdict, yoga_shifted, yoga_md = _yoga_modulate(verdict, lead, sig, fired_yogas)
+    vital_raja = frozenset(y.id for y in fired_yogas
+                           if y.kind == "raja" and raja_yoga_vital(chart, y.id))
+    verdict, yoga_shifted, yoga_md = _yoga_modulate(verdict, lead, sig, fired_yogas, vital_raja)
     verdict, dhana_shifted, dhana_md = _dhana_floor(verdict, lead, sig, fired_yogas)
     verdict, blem_shifted, blem_md = _blemishless_venus_floor(chart, sig, verdict, lead)
     _v_before_gates = verdict                       # capture for the late-shift (gates/longevity/timing) flag
@@ -1875,7 +2384,8 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict, blem_lifted=blem_shifted)
     verdict, occ_md = _malefic_occupancy_gate(chart, sig, verdict, lead)
-    verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
+    verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead,
+                                             bond_demoted=bool(bond_md))
     verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)
     verdict, dhana_kendra_md = _powerful_dhana_kendra_floor(chart, sig, verdict, lead)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
@@ -1918,17 +2428,43 @@ _ROLLUP_ORDER: dict[Verdict, int] = {
 def _rollup(verdicts: tuple[Verdict, ...]) -> Verdict:
     """Deterministic house rollup precedence:
 
-    * if BOTH a 'mixed' and a 'favourable' are present -> 'mixed' (a contradicted house
-      cannot read as cleanly favourable);
+    * if BOTH a 'mixed' and a 'favourable' are present, and NO sub-matter is 'afflicted'
+      -> 'mixed' (a contradicted house cannot read as cleanly favourable);
     * otherwise the worst DECIDED verdict present, ordered afflicted > mixed > favourable;
       'insufficient-evidence' only wins when no sub-matter was decided (it never masks a real verdict).
+
+    An afflicted sub-matter always reaches the headline (audit 2026-10-23): the mixed+favourable
+    rule used to fire first and report 'mixed' over an afflicted sub-matter, in ~8% of houses.
     """
     if not verdicts:
         return "insufficient-evidence"
     present = set(verdicts)
-    if "mixed" in present and "favourable" in present:
+    if "mixed" in present and "favourable" in present and "afflicted" not in present:
         return "mixed"
     return min(verdicts, key=lambda v: _ROLLUP_ORDER[v])
+
+
+def matter_breakdown(pf: HouseProforma) -> str:
+    """The house told by its matters, e.g. "favourable in 4 of 6 matters, mixed in 1, afflicted
+    in 1 (profession_trade)". A pure re-read of ``pf.significations``; it decides nothing.
+
+    User decision 2026-10-30 (HARSHNESS_DIAGNOSIS_2026-10-30.md): the rollup headline is the
+    worst matter, which on Raman's 389 conclusions gives 80 real errors against 40 for the
+    matters themselves, so every surface leads the house with this breakdown beside it."""
+    n = len(pf.significations)
+    counts = {v: [sv.signification for sv in pf.significations if sv.verdict == v]
+              for v in ("favourable", "mixed", "afflicted", "insufficient-evidence")}
+    parts: list[str] = []
+    for v in ("favourable", "mixed", "afflicted", "insufficient-evidence"):
+        keys = counts[v]
+        if not keys:
+            continue
+        label = "undecided" if v == "insufficient-evidence" else v
+        part = f"{label} in {len(keys)}" + (f" of {n} matters" if not parts else "")
+        if v != "favourable" and len(keys) < n:
+            part += f" ({', '.join(keys)})"
+        parts.append(part)
+    return ", ".join(parts)
 
 
 def judge_house(chart: RamanChart, house: int) -> HouseProforma:

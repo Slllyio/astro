@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import pytest
+
 from app.raman_saab.primitives import bhangas as b
 from app.raman_saab.chart.model import RamanChart
 
@@ -60,3 +63,85 @@ def test_kemadruma_bhanga_absent_when_moon_truly_isolated():
     c = _c({"Moon": 160.0})
     assert b.kemadruma(c) is True
     assert b.kemadruma_bhanga(c) is False
+
+
+class TestKemadrumaBhangaAttribution:
+    """The scope question at 3HC:2187-2188, settled from the mounted text (Track 4b).
+
+    The Remarks report the cancellation as "some authors" and then dismiss "these
+    observations". If that dismissal covered the kendra branches, the engine would be
+    encoding a rule Raman rejected. It does not: he applies those two branches himself, on
+    worked charts, a few lines later — and the earlier pass missed it only because the OCR
+    spells them "Kemadiuma" and "Kemidiumi".
+    """
+
+    def test_raman_applies_the_two_kendra_branches_in_his_own_voice(self):
+        """The passage that settles the scope. Pinned so a corpus re-import that drops or
+        renumbers it fails loudly instead of quietly reopening a closed question."""
+        from app.raman_saab.doctrine.sources import passage
+        p = passage("3HC:2263-2268")
+        if p is None:
+            pytest.skip("corpus not present on this machine")
+        text = p["text"].lower()
+        assert "cam" in text or "cancellation" in text     # "distinct cam < 1 Hi< i" (OCR)
+        assert "moon are occupied" in text
+        assert "lagna are also occupied" in text
+
+    def test_the_converse_is_stated_on_chart_no_8(self):
+        from app.raman_saab.doctrine.sources import passage
+        p = passage("3HC:2255-2261")
+        if p is None:
+            pytest.skip("corpus not present on this machine")
+        text = " ".join(p["text"].lower().split())
+        assert "kendras either from lagna" in text
+
+    def test_the_dismissal_is_still_in_the_text_and_still_before_them(self):
+        """The reading rests on ORDER: the dismissal at :2188 precedes the worked
+        application at :2263, so the application cannot be what is dismissed."""
+        from app.raman_saab.doctrine.sources import passage
+        p = passage("3HC:2185-2188")
+        if p is None:
+            pytest.skip("corpus not present on this machine")
+        assert "not generally" in " ".join(p["text"].lower().split())
+
+    def test_the_conjunction_branch_is_provably_redundant(self):
+        """Branch (c) can never fire where branch (b) has not: `_in_kendra_from` scores the
+        same rasi-house as distance 1 and the 1st is a kendra. Asserted on the mechanism, so
+        it holds for every chart rather than for a sample."""
+        from app.raman_saab.primitives.bhangas import _KENDRA, _in_kendra_from
+        assert 1 in _KENDRA
+
+        class _P:
+            def __init__(self, h): self.rasi_house = h
+
+        class _C:
+            planets = {"Sun": _P(5)}
+        assert _in_kendra_from("Sun", 5, _C()), \
+            "a planet conjunct the reference must already count as in its kendra"
+
+    def test_the_extended_branch_is_not_redundant_and_is_still_labelled_not_ramans(self):
+        """Jupiter in the 5th or 9th from the Moon aspects it from outside every kendra, so
+        unlike (c) this branch could matter — which is exactly why its NOT-3HC label has to
+        survive."""
+        from app.raman_saab.primitives.bhangas import _KENDRA, kemadruma, kemadruma_bhanga
+        assert 5 not in _KENDRA and 9 not in _KENDRA
+        assert "NOT-3HC" in (kemadruma_bhanga.__doc__ or "")
+
+        # Moon in the 2nd, Jupiter in the 6th. Jupiter is 5th from the Moon, so it stands
+        # outside every kendra from the Moon AND outside every kendra from the Lagna — (a)
+        # and (b) both miss — while its 9th drishti still lands on the Moon. Only the
+        # extended branch can cancel here, so deleting that branch fails this assertion.
+        class _P:
+            def __init__(self, h, sign):
+                self.rasi_house, self.sign = h, sign
+
+        class _C:
+            asc_sign = 1
+            planets = {"Moon": _P(2, 2), "Jupiter": _P(6, 6)}
+
+        c = _C()
+        assert kemadruma(c) is True, "the Moon must be isolated for a bhanga to matter"
+        assert 6 not in _KENDRA
+        assert ((6 - 2) % 12) + 1 == 5      # Jupiter is 5th from the Moon: no kendra
+        assert kemadruma_bhanga(c) is True, \
+            "the extended benefic-drishti branch is the only one that can fire here"

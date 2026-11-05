@@ -1,4 +1,7 @@
-"""The reading arc (v33) — the 53 contracted sections grouped into seven movements.
+"""The reading arc (v33) — the contracted sections grouped into seven movements.
+
+(53 sections at v33; v34-v35 added dominance, restraint, analogy and sitting; the six
+empirical-engine sections joined the arc at the 2026-10-14 merge as v36-v41 — 63 in all.)
 
 For 32 versions the report's section order was governed by an append-only contract, so every
 new section landed where the CONTRACT allowed rather than where it READS best: the life
@@ -43,17 +46,31 @@ class Movement:
 #: The reading arc. The ruler opens (Raman's own first-impression move, HTJAH-I:16001); the
 #: honesty frame lands BEFORE any life claim rather than after it; the instrument is shown
 #: before it is used; the twelve fields precede the matters they govern; the matters precede
-#: the timing that qualifies them; the summing up closes with `nichod` last.
+#: the timing that qualifies them; the summing up closes with `nichod`, followed only by
+#: `feedback` (merged 2026-10-14, by user request: the one section that asks rather than
+#: tells, so it comes after the reading is complete).
 #:
 #: `title`, `plain_reading` and `chart_signature` must stay adjacent, in that order: in the
 #: HTML they are one `<header>` element and are emitted as a single chunk.
 MOVEMENTS: Final[tuple[Movement, ...]] = (
     Movement("I", "Who this is", (
-        "title", "plain_reading", "chart_signature", "sitting", "now_box",
+        "title", "plain_reading", "chart_signature",
+        # v40 (merged 2026-10-14; was v37 on the empirical-engine branch) — "In simple
+        # words": a reader has to meet this before anything else, so it follows the header
+        # block directly (which itself must stay adjacent, see above).
+        "simple_summary",
+        "sitting", "now_box",
         "ruler", "planet_bios", "psych",
     )),
     Movement("II", "How to read it honestly", (
-        "info_content", "interpretation_guide", "judgment_graph",
+        "info_content", "interpretation_guide",
+        # v42 — how Raman would weigh this chart: his frame for holding a verdict, read
+        # straight after the guide to reading the report, before any verdict is met.
+        "philosophy",
+        "judgment_graph",
+        # v37 (merged 2026-10-14; was v34 on the empirical-engine branch) — the integrated
+        # reading: the themes that bind the sections together, read before the digest ranks them.
+        "themes",
         "stands_out", "digest", "dashboard",
     )),
     Movement("III", "The instrument", (
@@ -61,16 +78,30 @@ MOVEMENTS: Final[tuple[Movement, ...]] = (
         "ashtakavarga", "divisional",
     )),
     Movement("IV", "The twelve fields", (
-        "houses", "house_strength", "preponderance",
+        "houses",
+        # v43 — for and against, matter by matter: the cited reasons and their count, read
+        # right after the house-by-house verdicts they lay open.
+        "for_against",
+        "house_strength", "preponderance",
         # v34 — what governs a contested house, then how firmly each house stands. They sit
         # here because they are about the twelve fields, and after preponderance because both
         # re-read its ledger.
         "dominance", "restraint",
+        # v41 (merged 2026-10-14; was v38 on the empirical-engine branch) — the per-house
+        # indications, closing the house-by-house reading before the yogas.
+        "indications",
         "yogas", "yoga_deep", "deeptadi",
     )),
     Movement("V", "The matters of life", (
+        # v36 (merged 2026-10-14; was v33 on the empirical-engine branch) — aptitude opens
+        # the matters: what the native is suited to, before the career readers.
+        "aptitude",
         "career", "profession", "wealth", "marriage", "children",
-        "health_readout", "arishta", "longevity", "maraka", "maraka_saturn",
+        "health_readout",
+        # v38 (merged 2026-10-14; was v35 on the empirical-engine branch) — the HPA-29
+        # medical read sits with the health readout it deepens.
+        "medical",
+        "arishta", "longevity", "maraka", "maraka_saturn",
     )),
     Movement("VI", "In time", (
         "timeline", "yoga_timing", "ishta_kashta", "md_condition", "av_dasha_seat",
@@ -82,6 +113,10 @@ MOVEMENTS: Final[tuple[Movement, ...]] = (
         # so it belongs with the summing up rather than among the house readings.
         "analogy",
         "synthesis", "life_synthesis", "glossary", "nichod",
+        # v39 (merged 2026-10-14; was v36 on the empirical-engine branch) — chart feedback:
+        # the one section that asks rather than tells, so it comes at the very end, after
+        # nichod, by user request.
+        "feedback",
     )),
 )
 

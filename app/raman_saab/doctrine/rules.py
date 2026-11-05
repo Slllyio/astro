@@ -40,6 +40,27 @@ class RuleRecord:
     varga: str                           # D1 | D9 | ...
     polarity: Polarity
     source: Citation
+    #: Raman's UNCONDITIONED reading — what the placement gives regardless of strength.
+    #:
+    #: Added 2026-09-01, after an engine-blind doctrine review of HTJAH-I:995-1082. Raman's
+    #: "Results of Lord of the Nth House Occupying Different Houses" sections are written in
+    #: two paragraphs: a general statement, then one conditioned on FORTIFICATION ("If the
+    #: Lagnadhipati is well disposed", "If fortified", "If the lord is strong" — nine such
+    #: openers in House 1, and ZERO affliction openers). He states the design himself at
+    #: HTJAH-I:1003-1007: "the combination is of general application... The same rules apply
+    #: to all Bhavas."
+    #:
+    #: With only two slots the corpus had put that general reading in `afflicted`, so
+    #: `_branch` showed a weak-lord chart Raman's BASE reading under an "afflicted" heading —
+    #: which on H1.L.3 and H1.L.9 means presenting a blessing ("highly courageous, fortunate,
+    #: respectable... intelligent, happy") as an affliction. The reviewer ranked a third slot
+    #: the most faithful repair: his doctrine here is genuinely three-valued (base /
+    #: modulated-up / modulated-down) and two slots cannot hold it without either fabricating
+    #: an afflicted reading he never gave or discarding the base reading he insisted on.
+    #:
+    #: Presentation only — `polarity` decides the verdict and `_branch` picks between
+    #: `fortified` and `afflicted`; neither reads this field.
+    general: Optional[str] = None
 
     def fires(self, chart: RamanChart) -> bool:
         """Evaluable rules: does the condition hold for this chart? Descriptive: always False

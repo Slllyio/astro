@@ -196,6 +196,66 @@
     text-transform:uppercase;color:var(--madder);border-bottom:1px solid rgba(160,40,40,.35);
     padding-bottom:.35rem;margin:1.6rem 0 .7rem}
   .folio-scroll h2.sec:first-child{margin-top:.2rem}
+  /* the plain-language layer under every doctrine heading (section_meta) */
+  .sec-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:.95rem;
+    color:var(--ink-secondary);margin:.1rem 0 .15rem}
+  .sec-answers{font-size:.78rem;color:var(--ink-secondary);opacity:.85;margin:0 0 .55rem}
+  .sec-answers b{font-weight:600}
+  .method{background:rgba(232,213,168,.28);border-left:3px solid var(--saffron-deep);
+    border-radius:4px;padding:.5rem .7rem;margin:.3rem 0 .7rem}
+  .method-why{font-size:.85rem;margin:0 0 .3rem}
+  .method-order{font-size:.8rem;color:var(--ink-secondary);margin:.2rem 0 .1rem 1.1rem;padding:0}
+  .method-order li{margin:.12rem 0}
+  .toc{background:rgba(232,213,168,.22);border:1px solid rgba(139,111,71,.3);border-radius:6px;
+    padding:.6rem .8rem;margin:.4rem 0 1rem}
+  .toc-step{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.08em;color:var(--madder);
+    margin:.45rem 0 .15rem}
+  .toc a{display:inline-block;margin:.1rem .5rem .1rem 0;font-size:.82rem;color:var(--saffron-deep);
+    text-decoration:none;border-bottom:1px dotted rgba(139,111,71,.5)}
+  abbr.gloss{cursor:pointer;text-decoration:underline dotted rgba(139,111,71,.6);
+    text-underline-offset:2px}
+  .quote{font-family:'EB Garamond',serif;font-style:italic;font-size:.92rem;color:var(--ink);
+    border-left:3px solid var(--saffron-deep);padding:.15rem 0 .15rem .6rem;margin:.3rem 0}
+  .rule-id{font-size:.78rem;color:var(--ink-secondary);margin:.15rem 0}
+  .rule-id .tag{display:inline-block;font-family:var(--mono,monospace);font-size:.68rem;
+    background:rgba(139,111,71,.15);border:1px solid rgba(139,111,71,.35);border-radius:3px;
+    padding:0 .3rem;margin-right:.35rem}
+  .timing{font-size:.8rem;color:var(--madder);margin:.12rem 0}
+  .honesty-rules{margin:.3rem 0 .8rem 1.2rem;padding:0;font-size:.88rem;line-height:1.55;
+    color:var(--ink-soft,inherit)}
+  .honesty-rules li{margin:.3rem 0}
+  /* ---- reading-length toggle + the short reading ---- */
+  .rl-toggle{display:flex;align-items:center;gap:.35rem;margin:0 0 .9rem;font-size:.78rem}
+  .rl-label{font-variant:small-caps;letter-spacing:.08em;color:var(--ink-faded)}
+  .rl-btn{border:1px solid var(--ink-faded);background:transparent;color:var(--ink-soft,inherit);
+    border-radius:3px;padding:.1rem .55rem;cursor:pointer;font:inherit}
+  .rl-btn.on{background:var(--saffron-deep,#8b6f47);color:#fbf7ef;border-color:transparent}
+  .short-reading .sr-h{font-size:1rem;margin:1.3rem 0 .3rem}
+  .sr-list{margin:.2rem 0 .6rem 1.1rem;padding:0}
+  .sr-period{border-left:2px solid var(--ink-faded);padding:.1rem 0 .1rem .7rem;margin:.5rem 0}
+  .sr-period.now{border-left-color:var(--saffron-deep,#8b6f47)}
+  .sr-when{font-weight:600}
+  .sr-nowchip{background:var(--saffron-deep,#8b6f47);color:#fbf7ef;font-size:.68rem;
+    border-radius:3px;padding:0 .35rem;margin-left:.45rem;vertical-align:middle}
+  .sr-strength{margin:.1rem 0 .35rem}
+  .sr-comb{margin:.4rem 0}
+  .sr-tone{font-size:.68rem;border-radius:3px;padding:0 .35rem;margin-left:.4rem;
+    background:rgba(139,111,71,.16)}
+  .sr-tone.t-difficult{background:rgba(160,60,40,.18)}
+  .sr-tone.t-supportive{background:rgba(70,120,60,.18)}
+  .decade{border:1px solid rgba(139,111,71,.3);border-radius:6px;padding:.45rem .65rem;margin:.4rem 0}
+  .decade-cols{display:flex;gap:1rem;flex-wrap:wrap}
+  .decade-grid{width:100%;margin:.2rem 0 .5rem;font-size:.82rem}
+  .decade-grid td:nth-child(2){white-space:nowrap;text-align:center}
+  .decade-cols>div{flex:1 1 180px}
+  .decade .chip{display:inline-block;font-size:.74rem;border-radius:3px;padding:0 .35rem;
+    margin:.08rem .2rem .08rem 0;border:1px solid rgba(139,111,71,.3)}
+  .chip.fav{background:color-mix(in srgb, var(--fav) 18%, transparent)}
+  .chip.aff{background:color-mix(in srgb, var(--aff) 18%, transparent)}
+  .step-now{position:sticky;top:0;z-index:5;background:var(--paper,#f4ead2);font-size:.72rem;
+    padding:.2rem .6rem;border-bottom:1px solid rgba(139,111,71,.3);color:var(--ink-secondary);
+    display:none}
+  @media (max-width:700px){ .step-now{display:block} }
   /* v33 movements — the reading arc, layered onto the manuscript folios. A movement outranks
      a section heading, so it takes the display face and a full rule; the passage beneath is
      the connective prose composed from Raman's own rules (report_movements.movement_passage). */
@@ -269,6 +329,54 @@
   .ai-text{color:#e6eaf2;font-size:.98rem;line-height:1.7;margin:.55rem 0}
   .ai-wall .folio-loading{color:#aab4c8}
   .ai-wall .muted{color:#8a94a8}
+  /* the plain-words summary (v37) — the one section aimed at a reader with no astrology.
+     Set a touch larger and looser than the body, because it is meant to be readable at a
+     glance by someone who will not read the chapters. */
+  .ss{margin:.8rem 0 0}
+  .ss-lede{font-size:1.04rem;line-height:1.68}
+  .ss-p{font-size:1rem;line-height:1.66;margin:.85rem 0 0}
+  .ss-list{margin:.4rem 0 .2rem;padding-left:1.25rem}
+  .ss-list li{margin:.28rem 0;line-height:1.5;font-size:.99rem}
+  /* the four-part feedback instrument (v36) — the questionnaire that closes the report.
+     Part A is answerable BEFORE the reading; B/C/D stay shut until it is marked done, which
+     is the whole reason the section can be scored rather than just liked. */
+  .fbi{margin:1.4rem 0 0}
+  .fbi-part{margin:1.4rem 0 0;padding:.9rem 1rem;border:1px solid var(--ink-faded);border-radius:6px;
+    background:rgba(232,213,168,.28)}
+  .fbi-part-head{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.14em;
+    color:var(--madder);margin-bottom:.35rem}
+  .fbi-note{font-size:.88rem;line-height:1.55;margin:.2rem 0 .6rem}
+  .fbi-q{margin:.95rem 0 0;padding-top:.75rem;border-top:1px dashed var(--ink-faded)}
+  .fbi-qt{font-family:'EB Garamond',serif;font-size:1rem;line-height:1.5;margin-bottom:.35rem}
+  .fbi-hint{font-size:.82rem;line-height:1.5;font-style:italic;margin:.1rem 0 .4rem}
+  .fbi-opt{display:flex;align-items:flex-start;gap:.55rem;margin:.35rem 0;padding:.5rem .65rem;
+    border:1px solid var(--ink-faded);border-radius:5px;cursor:pointer;line-height:1.45;
+    font-size:.94rem;background:transparent;text-align:left;width:100%;font-family:inherit;
+    color:var(--ink-primary);touch-action:manipulation}
+  .fbi-opt.sel{background:rgba(139,26,26,.10);border-color:var(--madder)}
+  .fbi-conf{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin:.45rem 0 0}
+  .fbi-conf-lab{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.12em;
+    color:var(--ink-secondary)}
+  .fbi-conf button{min-width:2.1rem;padding:.3rem .45rem;border:1px solid var(--ink-faded);
+    border-radius:4px;background:transparent;cursor:pointer;font-size:.82rem;
+    color:var(--ink-secondary);touch-action:manipulation}
+  .fbi-conf button.sel{background:var(--madder);border-color:var(--madder);color:#fff}
+  .fbi-free{width:100%;margin:.45rem 0 0}
+  .fbi-gate{margin:1rem 0 0;padding:.7rem .9rem;border:1px dashed var(--ink-faded);border-radius:5px;
+    font-size:.9rem;cursor:pointer;display:flex;gap:.6rem;align-items:flex-start;
+    background:transparent;width:100%;text-align:left;font-family:inherit;color:var(--ink-primary)}
+  .fbi-locked{display:none}
+  .fbi-locked.open{display:block}
+  .fbi-invite{margin:1rem 0 0;padding:.75rem .95rem;border-left:3px solid var(--madder);
+    background:rgba(232,213,168,.4);font-size:.92rem;line-height:1.55}
+  .fbi-invite button{margin-top:.5rem}
+  .fbi-rows{display:flex;flex-direction:column;gap:.4rem;margin:.5rem 0 0}
+  .fbi-row{display:flex;gap:.4rem;flex-wrap:wrap}
+  .fbi-row .fbi-year{max-width:6rem}
+  .fbi-row select{flex:1 1 8rem;min-width:0}
+  .fbi-more{margin:.5rem 0 0;font-size:.7rem;padding:.35rem .8rem}
+  .fbi-dates{margin:.5rem 0 0;font-size:.88rem}
+  .fbi-dates td,.fbi-dates th{padding:.25rem .55rem}
   /* feedback card on the colophon — chart-specific calibration questions */
   .fb-card{margin:1.6rem auto 0;max-width:560px;padding:1rem 1.2rem;background:rgba(232,213,168,.55);
     border:1px solid var(--ink-faded);border-radius:6px;text-align:left}
@@ -435,7 +543,7 @@
             </div>
             <div style="margin-top:.45rem"><label class="leaf-label" data-i18n="TIMEZONE (HRS FROM UTC)">TIMEZONE (HRS FROM UTC)</label><input class="leaf-input" id="tz_offset" type="number" step="0.25" value="5.5"></div>
           </details>
-          <div style="margin-bottom:.9rem"><label class="leaf-label" data-i18n="AYANAMSA">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
+          <div style="margin-bottom:.9rem"><label class="leaf-label" data-i18n="AYANAMSA">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>raman</option><option>lahiri</option></select></div>
           <div style="text-align:center"><button class="leaf-button" id="go" type="button" onclick="run()" data-i18n="Cast the Reading">Cast the Reading</button></div>
           <div style="text-align:center;margin-top:.5rem;font-size:.76rem;color:var(--ink-faded);font-style:italic" data-i18n="a few seconds to cast & compose">a few seconds to cast &amp; compose</div>
         </div>
@@ -548,7 +656,329 @@ const el = (t, a={}, ...kids) => { const n=document.createElement(t);
 // app/llm/report_explainer.py:translate_to_hindi). The deep per-house engine prose (verdict
 // words, matter names coming straight from the API) stays English for now — that is a
 // separate, larger undertaking; see docs/raman_saab/PROCESS_AND_METHODOLOGY.md.
+// ---- Wave-0/1 parity captions (2026-08-18): the honesty/method notes for the JSON fields
+// this pass newly renders (BAV matrix, HPA-26 reductions, Sodya Pinda, Pratyantar, Sade-Sati,
+// adverse transit windows, Chara dasha, maraka scheme, Baladi/Jagradadi, delivery tags) —
+// SAME wording as the markdown renderer (detailed_report.to_markdown), defined once so the
+// I18N_HI entries below can key off the exact strings. ----
+const PARITY_NOTES={
+  bav_matrix:"The per-planet tables the SAV row above sums (canonical Parashari benefic-places tables; each planet's total is a fixed checksum and the seven rows always sum to 337). The Gochara table's 'AV bindus' and Kakshya columns, and the AV dasha-seat outlook, all read from these rows. A planet's bold cell is its own natal sign - its seat, shown again in the last column.",
+  bav_reduced:"HPA-26 reductions - used classically for special calculations; shown for completeness; ASP transit application deferred pending corpus. Raman: the bindu tables \"must be subjected to two reductions, viz., Thrikona reduction and Ekadhipathya reduction\" (HPA-26:390-393), in that order - \"After the Thrikona reduction, the Ekadhipathya reduction must be applied\" (HPA-26:466-467). Trikona follows Raman's own stated SUBTRACT reading (HPA-26:423-431), regression-pinned to his worked Sun table (HPA-26:432-462).",
+  sodya_pinda:"Computed from the reduced tables above: each sign's reduced bindus x its fixed zodiacal factor (Rasi Gunakara, HPA-26:1149-1153), plus the reduced bindus in each graha's occupied sign x its fixed planetary factor (Graha Gunakara, HPA-26:1311-1315). The sum is Raman's Sodya Pinda by his own naming (ASP-14:196-198); HPA-26 applies it to LONGEVITY (the x7/27 Ayurdaya use, HPA-26:1400-1404 / ASP-14:199-201). Honesty note, recorded not fudged: on ASP-14's worked Standard Horoscope Raman prints Sun 96/86/182 where this pipeline gives 103/88/191 on his own stated longitudes - the divergence is in HIS printed reduced tables (the 1962 book carries known misprints), so the engine pins the RULES, anchored on HPA-26's own worked reduction, and records this delta.",
+  pratyantar:"The third level of the Vimshottari hierarchy, for the bhukti running now only - the same proportional lord-years/120 split, one level down, in JD space. Raman names all three levels as carriers of a house's results: \"as lords of the Dasas (main-periods), as lords of Bhuktis (Sub-periods) or as lords of the Antaras\" (HTJAH-II:668-702). The running pratyantar is marked; each span reads in the same indication idiom as the bhukti rows above.",
+  sade_sati:"Sade-Sati is Saturn's roughly 7.5-year passage across the 12th, 1st and 2nd signs from the natal Moon (see glossary). These are the dated phase spans of the episode nearest the reference date, with the current position marked. The dates are plain gochara arithmetic (transiting Saturn's sign against the natal Moon sign), at the outlook's ~week sampling resolution; a retrograde re-entry shows as its own dated row. Raman's result doctrine (corrected 2026-10-24 - an earlier note said none was on record): the round since birth, the ruling period's strength and the Sarvashtakavarga of the three signs (AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616), read in the Sade-Sati rounds table.",
+  adverse:"The mirror of the favourable transit lanes above - the stretches when Jupiter, Saturn, Rahu or Ketu sits in a house from your Moon that the classical Gochara scheme does NOT count as supportive for that planet. The same computation always produced these windows; only the favourable half was shown before. Honest labels: 'what it concerns' is the same life-area that planet governs, here classically unsupported rather than supported; 'mitigation' applies Raman's own proportion law - the planet's bindus in the transited sign neutralise the evil to that extent (\"neutralises the evil to the extent of 75%\" at 6 of 8 bindus, ASP-13:416); Vedha (interference) obstructs favourable transits, so that column reads '-' here; the 'relief' column applies Raman's reverse Vedha (added 2026-10-24) - an adverse station on a Vedha point is relieved when another planet holds the paired good house (\"conversely, if the Sun is in the 5th ... no evil will be produced provided the 11th is being transitted at the same time by any other planet, excepting Saturn\", HPA-34:161-164); the nodes have no row in his table. Per Raman a transit stays secondary to the Dasha (HTJAH-II:4679): read an adverse window as reduced transit support during whatever the running period already indicates, never a stand-alone prediction.",
+  dasha_transit_adverse:"The mirror of the confluence table above - the stretches where the running period's own lord is ALSO transiting adversely from your Moon. The favourable builder was one-sided by construction; Raman's blending doctrine reads obstruction too (HPA-34:369-381). Method-only, and coarsely sampled like its favourable twin: the engine is not a validated predictor.",
+  chara:"The parallel sign-based dasha the Chart signature chip names (see glossary). Dates are plain JD arithmetic from birth (period years x 365.2425 days) over the KN Rao sequence already encoded in the engine; the 12-sign cycle repeats. The running sign is marked. No result judgment attaches here - matters are read from Vimshottari.",
+  maraka:"Raman's second step after the longevity band (HTJAH-I:761-814; HTJAH-II:4485-4546): the 2nd and 7th are the houses of death; their lords, occupants and associates carry maraka power in their periods - each graha names why it qualified. A DISCLOSURE OF THE METHOD, not a prediction - the validation program measured no chart-specific death-timing signal (REAL_OUTCOME_GENERALIZATION.md).",
+  baladi:"Baladi (ageing, by degree-in-sign) and Jagradadi (consciousness, by incoming drishti) states - the judge's intensity dial: a house whose deliverers sit in Mrita/Sushupti has its verdict DEGREE demoted one step (never the verdict itself). Provenance: CLASSICAL_NONCITABLE (Phaladeepika Ch.3 Sl.3/Sl.10/Sl.20; BPHS Ch.1 Sl.14-16) - outside Raman's own canon, shown because the judge consumes it.",
+  delivery:"Delivery tags (per lit house): how well each activating period-lord delivers what it lights - the same strength/dignity read the snapshot voice uses (HTJAH-II:10004-10008): well / mixed / poorly / unknown. A limited row carries only its AD tag, a feeble row only its MD tag."
+};
+
 const I18N_HI = {
+  // ---- Wave-0/1 parity additions (2026-08-18): titles, headers and captions for the
+  // newly rendered fields. Long captions key off PARITY_NOTES so EN/HI can never drift. ----
+  "Bhinnashtakavarga (BAV) — each planet's own bindu row":"भिन्नाष्टकवर्ग (BAV) — प्रत्येक ग्रह की अपनी बिंदु-पंक्ति",
+  "HPA-26 reductions (Trikona + Ekadhipathya Sodhana)":"HPA-26 शोधन (त्रिकोण + एकाधिपत्य शोधन)",
+  "After Trikona Sodhana (HPA-26:403-421):":"त्रिकोण शोधन के बाद (HPA-26:403-421):",
+  "After both reductions (Ekadhipathya applied, HPA-26:464-497):":"दोनों शोधनों के बाद (एकाधिपत्य शोधन सहित, HPA-26:464-497):",
+  "Sodya Pinda (Rasi + Graha Gunakara)":"शोध्य पिण्ड (राशि + ग्रह गुणकार)",
+  "Rasi Gunakara":"राशि गुणकार","Graha Gunakara":"ग्रह गुणकार","Sodya Pinda":"शोध्य पिण्ड",
+  "natal seat":"जन्म-स्थान (राशि)","its own natal sign (seat)":"इसकी अपनी जन्म-राशि (स्थान)",
+  "Pratyantardasha drill-down (current bhukti)":"प्रत्यंतर्दशा विवरण (वर्तमान भुक्ति)",
+  "Sade-Sati phase windows (Saturn from the natal Moon)":"साढ़ेसाती चरण-अवधियाँ (जन्म चंद्र से शनि)",
+  "Sade-Sati phases — dated spans":"साढ़ेसाती चरण — तिथि-सहित अवधियाँ",
+  "Adverse transit windows":"प्रतिकूल गोचर अवधियाँ",
+  "Chara dasha (Jaimini) — dated sequence":"चर दशा (जैमिनी) — तिथि-सहित क्रम",
+  "The maraka scheme (death-dealing determinants)":"मारक योजना (मृत्यु-कारक निर्धारक)",
+  "Baladi & Jagradadi avastha states (the judge's intensity dial)":"बालादि व जाग्रदादि अवस्थाएँ (निर्णायक की तीव्रता-मापी)",
+  "22nd drekkana lord":"22वें द्रेष्काण का स्वामी","64th navamsa lord":"64वें नवांश का स्वामी",
+  "Running period":"चालू दशा-काल","carries a maraka-tier lord":"में मारक-स्तर का स्वामी है",
+  "carries no maraka-tier lord":"में कोई मारक-स्तर का स्वामी नहीं",
+  "(broad, low-discrimination flag by design)":"(जान-बूझकर व्यापक, कम-विभेदक संकेत)",
+  "of the evil neutralised":"अंश तक अशुभ निष्फल (ASP-13:416)",
+  "— (node: no classical Ashtakavarga)":"— (छाया ग्रह: शास्त्रीय अष्टकवर्ग नहीं)",
+  "longitude":"भोगांश","nak lord":"नक्षत्र स्वामी","Ascendant":"लग्न",
+  "in plain words":"सरल शब्दों में","Delivery":"फल-वहन",
+  "tier addends":"स्तर-योग के घटक","why (qualifying clauses)":"क्यों (अर्हक कारण)",
+  "Bhava Bala (rupas)":"भाव बल (रूपा)","pratyantar (PD) lord":"प्रत्यंतर्दशा स्वामी",
+  [PARITY_NOTES.bav_matrix]:"ऊपर की सर्वाष्टकवर्ग (SAV) पंक्ति इन्हीं प्रति-ग्रह तालिकाओं का योग है (प्रामाणिक पाराशरी शुभ-स्थान तालिकाएँ; प्रत्येक ग्रह का योग एक निश्चित जाँच-अंक है और सातों पंक्तियाँ सदा 337 पर जुड़ती हैं)। गोचर तालिका के 'AV बिंदु' और कक्ष्या स्तंभ, तथा अष्टकवर्ग दशा-स्थान अवलोकन, इन्हीं पंक्तियों से पढ़े जाते हैं। ग्रह का मोटा कोष्ठ उसकी अपनी जन्म-राशि है - उसका स्थान, जो अंतिम स्तंभ में फिर दिखाया गया है।",
+  [PARITY_NOTES.bav_reduced]:"HPA-26 शोधन - शास्त्रीय रूप से विशेष गणनाओं के लिए प्रयुक्त; पूर्णता के लिए दिखाए गए हैं; ASP गोचर-प्रयोग कॉर्पस की प्रतीक्षा में स्थगित। रामन: बिंदु-तालिकाओं पर \"दो शोधन करने होते हैं, अर्थात् त्रिकोण शोधन और एकाधिपत्य शोधन\" (HPA-26:390-393), उसी क्रम में - \"त्रिकोण शोधन के बाद एकाधिपत्य शोधन लागू करना चाहिए\" (HPA-26:466-467)। त्रिकोण शोधन रामन के अपने कहे घटाव (SUBTRACT) पाठ का पालन करता है (HPA-26:423-431), जो उनकी अपनी सूर्य-तालिका पर पिन किया गया है (HPA-26:432-462)।",
+  [PARITY_NOTES.sodya_pinda]:"ऊपर की शोधित तालिकाओं से गणना: प्रत्येक राशि के शोधित बिंदु x उसका निश्चित राशि गुणकार (HPA-26:1149-1153), तथा प्रत्येक ग्रह की अधिष्ठित राशि के शोधित बिंदु x उसका निश्चित ग्रह गुणकार (HPA-26:1311-1315)। यह योग रामन का अपना शोध्य पिण्ड है (ASP-14:196-198); HPA-26 इसे आयु-गणना (x7/27 आयुर्दाय प्रयोग, HPA-26:1400-1404 / ASP-14:199-201) में लगाता है। ईमानदारी-टिप्पणी, दर्ज की गई है छुपाई नहीं: ASP-14 की मानक कुंडली में रामन सूर्य के लिए 96/86/182 छापते हैं जहाँ यह पाइपलाइन उन्हीं के बताए भोगांशों पर 103/88/191 देती है - अंतर उनकी छपी शोधित तालिकाओं में है (1962 की पुस्तक में ज्ञात मुद्रण-दोष हैं), इसलिए इंजन नियमों को पिन करता है, HPA-26 के अपने सधे शोधन पर टिकाकर, और यह अंतर दर्ज करता है।",
+  [PARITY_NOTES.pratyantar]:"विंशोत्तरी पदानुक्रम का तीसरा स्तर, केवल अभी चल रही भुक्ति के लिए - वही आनुपातिक स्वामी-वर्ष/120 विभाजन, एक स्तर नीचे, JD गणना में। रामन तीनों स्तरों को भाव-फल के वाहक बताते हैं: \"दशाओं के स्वामी रूप में, भुक्तियों के स्वामी रूप में, या अंतरों के स्वामी रूप में\" (HTJAH-II:668-702)। चालू प्रत्यंतर चिह्नित है; हर अवधि ऊपर की भुक्ति-पंक्तियों वाले संकेत-शैली में ही पढ़ी जाती है।",
+  [PARITY_NOTES.dasha_transit_adverse]:"ऊपर की संगम-तालिका का दर्पण - वे कालखंड जब चल रही दशा/अंतर्दशा का स्वामी स्वयं भी आपके चंद्र से प्रतिकूल गोचर में हो। अनुकूल तालिका रचना से ही एकपक्षीय थी; रामन का मिश्रण-सिद्धांत बाधा को भी पढ़ता है (HPA-34:369-381)। केवल पद्धति, और अपनी अनुकूल जोड़ी की तरह मोटे अंतराल पर - इंजन कोई प्रमाणित भविष्यवक्ता नहीं है।",
+  [PARITY_NOTES.sade_sati]:"साढ़ेसाती जन्म चंद्र से 12वीं, 1ली और 2री राशियों में शनि का लगभग साढ़े सात वर्ष का गोचर है (शब्दावली देखें)। ये संदर्भ-तिथि के निकटतम प्रकरण की तिथि-सहित चरण-अवधियाँ हैं, वर्तमान स्थिति चिह्नित। तिथियाँ सादी गोचर-गणना हैं (गोचरस्थ शनि की राशि बनाम जन्म चंद्र-राशि), लगभग साप्ताहिक नमूना-सटीकता पर; वक्री पुनःप्रवेश अपनी अलग तिथि-पंक्ति के रूप में दिखता है। रामन का फल-सिद्धांत (2026-10-24 संशोधित - पहले यहाँ लिखा था कि कोई दर्ज नहीं): जन्म से कौन-सा चक्र, चल रही दशा का बल और तीनों राशियों का सर्वाष्टकवर्ग (AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616), साढ़ेसाती-चक्र तालिका में।",
+  [PARITY_NOTES.adverse]:"ऊपर की अनुकूल गोचर-पट्टियों का प्रतिबिम्ब - वे अवधियाँ जब बृहस्पति, शनि, राहु या केतु आपके चंद्र से ऐसे भाव में बैठता है जिसे शास्त्रीय गोचर-योजना उस ग्रह के लिए सहायक नहीं गिनती। यही गणना ये अवधियाँ सदा से बनाती थी; पहले केवल अनुकूल आधा दिखाया जाता था। ईमानदार स्तंभ-नाम: 'किससे संबंधित' वही जीवन-क्षेत्र है जिस पर वह ग्रह शासन करता है, यहाँ शास्त्रीय समर्थन के बिना; 'शमन' रामन का अपना अनुपात-नियम लगाता है - गोचरस्थ राशि में ग्रह के बिंदु उसी अंश तक अशुभ को निष्फल करते हैं (8 में से 6 बिंदुओं पर \"75% तक अशुभ का शमन\", ASP-13:416); वेध अनुकूल गोचरों में बाधा डालता है, इसलिए वह स्तंभ यहाँ '-' पढ़ता है; 'राहत' स्तंभ रामन का विपरीत वेध लगाता है - वेध-स्थान पर बैठे प्रतिकूल गोचर का अशुभ तब नहीं फलता जब कोई अन्य ग्रह जोड़ी वाले शुभ भाव में हो (HPA-34:161-164); राहु-केतु की उनकी तालिका में कोई पंक्ति नहीं। रामन के अनुसार गोचर दशा के अधीन रहता है (HTJAH-II:4679): प्रतिकूल अवधि को चालू दशा जो भी संकेत दे रही है उसमें घटे हुए गोचर-समर्थन की तरह पढ़ें, कभी स्वतंत्र भविष्यवाणी की तरह नहीं।",
+  [PARITY_NOTES.chara]:"कुंडली-स्वरूप चिप जिस समानांतर राशि-आधारित दशा का नाम लेती है (शब्दावली देखें)। तिथियाँ जन्म से सादी JD गणना हैं (दशा-वर्ष x 365.2425 दिन), इंजन में पहले से संहिताबद्ध केएन राव क्रम पर; 12-राशि चक्र दोहराता है। चालू राशि चिह्नित है। यहाँ कोई फल-निर्णय नहीं जुड़ता - विषय विंशोत्तरी से पढ़े जाते हैं।",
+  [PARITY_NOTES.maraka]:"आयु-वर्ग के बाद रामन का दूसरा चरण (HTJAH-I:761-814; HTJAH-II:4485-4546): 2रा और 7वाँ मृत्यु के भाव हैं; उनके स्वामी, स्थित ग्रह और संबंधी अपनी दशाओं में मारक-शक्ति रखते हैं - प्रत्येक ग्रह बताता है कि वह क्यों अर्ह हुआ। यह पद्धति का प्रकटीकरण है, भविष्यवाणी नहीं - सत्यापन कार्यक्रम ने कुंडली-विशिष्ट मृत्यु-समय का कोई संकेत नहीं मापा (REAL_OUTCOME_GENERALIZATION.md)।",
+  [PARITY_NOTES.baladi]:"बालादि (आयु-अवस्था, राशि में अंश से) और जाग्रदादि (चेतना-अवस्था, आती दृष्टि से) अवस्थाएँ - निर्णायक की तीव्रता-मापी: जिस भाव के फल-वाहक मृत/सुषुप्ति में बैठे हों उसके फल की मात्रा एक सीढ़ी घटा दी जाती है (फल स्वयं कभी नहीं)। स्रोत-श्रेणी: CLASSICAL_NONCITABLE (फलदीपिका अ.3 श्लो.3/10/20; बृ.पा.हो.शा. अ.1 श्लो.14-16) - रामन के अपने ग्रंथों से बाहर, दिखाई इसलिए गई क्योंकि निर्णायक इसका उपयोग करता है।",
+  [PARITY_NOTES.delivery]:"फल-वहन चिह्न (प्रत्येक प्रदीप्त भाव पर): हर सक्रिय दशा-स्वामी जो जलाता है उसे कितनी अच्छी तरह देता है - वही बल/गरिमा पाठ जो तात्कालिक स्वर उपयोग करता है (HTJAH-II:10004-10008): well / mixed / poorly / unknown। limited पंक्ति केवल अपना AD चिह्न रखती है, feeble पंक्ति केवल अपना MD चिह्न।",
+
+  // section headings added by the 2026-08-17 reframe (plain-language layer)
+  'How to read this report':'यह रिपोर्ट कैसे पढ़ें',
+  // v34 integrated reading (theme synthesis) chrome
+  'The integrated reading':'एकीकृत वाचन',
+  'Executive portrait':'सारांश चित्र',
+  'The interpretive spine':'व्याख्या की रीढ़',
+  'Major life-themes':'प्रमुख जीवन-विषय',
+  'One reading across every section above — not a new judgment. Each theme gathers the findings the report already made (house verdict, strength, planetary state, divisional confirmation, yoga, timing) into one mechanism, states how strongly they converge, and names any tension with the precedence rule that resolves it. The direction of every theme is the engine\'s own house verdict, unchanged.':'ऊपर के प्रत्येक अनुभाग का एक साथ वाचन — कोई नया निर्णय नहीं। प्रत्येक विषय उन निष्कर्षों को एकत्र करता है जो रिपोर्ट पहले ही निकाल चुकी है (भाव-निर्णय, बल, ग्रह-अवस्था, वर्ग-पुष्टि, योग, काल) और उन्हें एक तंत्र में जोड़ता है, बताता है कि वे कितनी दृढ़ता से मिलते हैं, तथा किसी भी तनाव को उस वरीयता-नियम सहित नामित करता है जो उसका समाधान करता है। प्रत्येक विषय की दिशा इंजन का अपना भाव-निर्णय है, अपरिवर्तित।',
+  // evidence / dasha / varga table column headers
+  'axis':'अक्ष',
+  'finding':'निष्कर्ष',
+  'source':'स्रोत',
+  'provenance':'प्रामाणिकता',
+  'chapter':'अध्याय',
+  'span':'अवधि',
+  'lean':'झुकाव',
+  'newly emphasized':'नव-प्रमुख',
+  'continuing':'निरंतर',
+  'theme':'विषय',
+  'natal verdict':'जन्मकुंडली-निर्णय',
+  'D9 relation':'D9 संबंध',
+  'now':'अभी',
+  'karakas':'कारक',
+  'the chart':'कुंडली',
+  "Ashtakavarga backing (in this bhava's own sign)":'अष्टकवर्ग समर्थन (इस भाव की अपनी राशि में)',
+  'bindus':'बिंदु',
+  'reduced':'शोधित',
+  'Sodya Pinda':'शोध्य पिंड',
+  'well supported':'भली भाँति समर्थित',
+  'about average':'लगभग औसत',
+  'poorly supported':'अल्प समर्थित',
+  'Transit':'गोचर',
+  'Yoga':'योग',
+  'participants':'सहभागी ग्रह',
+  'strength':'बल',
+  'operates in':'इन कालों में सक्रिय',
+  'cancellation':'भंग',
+  'all of them behind the reference moment':'सभी संदर्भ-क्षण से पूर्व',
+  'lord':'स्वामी',
+  'The span this reading sits inside':'वह आयु-सीमा जिसके भीतर यह फलादेश पढ़ा जाता है',
+  'Band':'आयु-खंड',
+  'Ayurdaya cross-check':'आयुर्दाय जाँच',
+  'about':'लगभग',
+  'years':'वर्ष',
+  'Reach':'विस्तार',
+  'the band runs to about':'यह खंड लगभग यहाँ तक चलता है',
+  'the furthest window this reading names is':'इस फलादेश में नामित सबसे दूर की अवधि है',
+  'inside the span.':'सीमा के भीतर।',
+  'OUTSIDE the span, disclosed where it appears.':'सीमा के बाहर — जहाँ आता है वहीं स्पष्ट किया गया है।',
+  'Running period':'चालू दशा',
+  'carries a maraka-tier lord.':'मारक-श्रेणी का स्वामी वहन करती है।',
+  'carries no maraka-tier lord.':'कोई मारक-श्रेणी का स्वामी नहीं वहन करती।',
+  'Maraka-tier bhuktis ahead carrying the classical Saturn signal':'आगे आने वाली मारक-श्रेणी की भुक्तियाँ जिनमें शास्त्रीय शनि-संकेत है',
+  'bhukti':'भुक्ति',
+  'window':'अवधि',
+  'tier-score':'श्रेणी-अंक',
+  'against the band':'आयु-खंड के सापेक्ष',
+  'inside the band':'खंड के भीतर',
+  'beyond the band':'खंड से परे',
+  'The deep-background divisions':'गहन पृष्ठभूमि के वर्ग',
+  'division':'वर्ग',
+  'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
+  'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* v36 — psych mind stack */
+  'The Moon\u2019s mental disposition':'चन्द्र की मानसिक प्रवृत्ति',
+  'Mercury (buddhi) condition':'बुध (बुद्धि) की स्थिति',
+  'The Moon\u2019s avastha (cross-reference)':'चन्द्र की अवस्था (सन्दर्भ)',
+  /* v36 — marriage timing */
+  'Marriage timing — the giving lords and the delay screens':'विवाह-काल — दाता ग्रह और विलम्ब-परीक्षा',
+  'Planets Raman names as able to give marriage in their periods':'रमण द्वारा नामित विवाह-दाता ग्रह',
+  'planet':'ग्रह',
+  'nominated by':'किस नियम से',
+  'in the ranking?':'क्रम में?',
+  'yes':'हाँ',
+  'no':'नहीं',
+  'Here that is':'यहाँ वह है',
+  'not resolvable':'अनिर्णीत',
+  'FIRES':'सक्रिय',
+  'silent':'मौन',
+  'Found here':'यहाँ प्राप्त',
+  'The lean':'झुकाव',
+  'Jupiter-transit resultant':'गुरु-गोचर फलित राशि',
+  'trines':'त्रिकोण',
+  'Marital happiness (H7)':'वैवाहिक सुख (स7)',
+  'Coverture (H7)':'दाम्पत्य (स7)',
+  'Jupiter transiting the 7th from the Moon':'चन्द्र से सप्तम में गुरु का गोचर',
+  /* v36 — the three career centres */
+  'The 10th reckoned from all three centres':'तीनों केन्द्रों से गणित दशम भाव',
+  'The 10th from Lagna, the Moon and the Sun':'लग्न, चन्द्र और सूर्य से दशम',
+  'centre':'केन्द्र',
+  'strongest':'सर्वाधिक बलवान',
+  'its 10th':'उसका दशम',
+  '10th lord':'दशमेश',
+  'navamsa dispositor':'नवांश स्वामी',
+  'Raman\u2019s vocation words':'रमण के व्यवसाय-शब्द',
+  'strength':'बल',
+  'rupas':'रूप',
+  'measure':'माप',
+  'Strongest centre':'सर्वाधिक बलवान केन्द्र',
+  'Reckoning from it':'उससे गणना',
+  'Blended':'मिश्रित',
+  'Convergent across centres':'केन्द्रों में समान',
+  'On convergence':'समानता पर',
+  'One planet, several hats':'एक ग्रह, कई भूमिकाएँ',
+  'H10 activation in the window (a timing lens, never a promise)':'इस अवधि में दशम भाव की सक्रियता (काल-दृष्टि, वचन नहीं)',
+  /* v35 — the HPA-29 medical read */
+  'Raman\u2019s own procedure':'रमण की अपनी विधि',
+  'The 6th from lagna':'लग्न से षष्ठ भाव',
+  'In the 6th':'षष्ठ में स्थित',
+  'Aspecting the 6th':'षष्ठ पर दृष्टि',
+  'Present but not tabled':'उपस्थित, किन्तु तालिका में नहीं',
+  'testimony':'साक्ष्य',
+  'speaks through':'किसके द्वारा',
+  'body regions':'शरीर के अंग',
+  'complaints indicated':'सूचित रोग',
+  'cite':'सन्दर्भ',
+  'The four testimonies Raman names':'रमण द्वारा नामित चार साक्ष्य',
+  'Body regions this chart marks':'यह कुण्डली जिन अंगों को चिह्नित करती है',
+  'Complaints the tables associate':'तालिकाओं से सम्बद्ध रोग',
+  'union of the testimonies, de-duplicated':'साक्ष्यों का योग, पुनरुक्ति रहित',
+  'in house':'भाव में',
+  'lord':'स्वामी',
+  /* the two kinds of a 'neutral' status — cancelled testimony vs no testimony at all */
+  'contested':'परस्पर विरोधी',
+  'silent':'मौन',
+  'what it rests on':'यह किस पर आधारित है',
+  'Deep-background divisions — modifiers, never votes':'गहन पृष्ठभूमि के वर्ग — संशोधक, मत नहीं',
+  'Provenance':'स्रोत-परंपरा',
+  'citation':'सन्दर्भ',
+  'agrees':'सहमत',
+  'opposes':'विरुद्ध',
+  'no direction':'कोई दिशा नहीं',
+  "restates the verdict's own inputs":'निर्णय के अपने ही आधारों को दोहराता है',
+  'shares the verdict\'s drivers':'निर्णय के संचालक ग्रह साझा करता है',
+  'separate testimony':'पृथक् साक्ष्य',
+  'That window inside the span':'वह अवधि आयु-सीमा के भीतर',
+  'Weather across that window':'उस अवधि पर चलने वाला काल-प्रभाव',
+  'Ancestral screen (separate layer)':'पितृ जाँच (पृथक् स्तर)',
+  'The weather over these years':'इन वर्षों का काल-प्रभाव',
+  'Timing weather across the years this reading names':'इस फलादेश में नामित वर्षों पर काल-प्रभाव',
+  'Subordinate by citation: transits are catalytic, never causal (PREC-6), and the Kakshya split is a timing lens, never a verdict (PREC-7). None of this moved a verdict above.':'सन्दर्भ द्वारा गौण: गोचर उत्प्रेरक हैं, कारण नहीं (PREC-6), और कक्ष्या-विभाजन समय का लेंस है, निर्णय नहीं (PREC-7)। इनमें से किसी ने ऊपर का कोई निर्णय नहीं बदला।',
+  'from':'से',
+  'to':'तक',
+  'scheme':'पद्धति',
+  'stretch':'खण्ड',
+  'what it measures':'यह क्या मापता है',
+  'governing':'शासक नियम',
+  'running now':'अभी चल रहा है',
+  'Citation':'सन्दर्भ',
+  'How settled is this?':'यह कितना निश्चित है?',
+  'On the cross-checks below':'नीचे दी गई प्रति-जाँचों पर',
+  'reads with':'निर्णय के पक्ष में',
+  'reads against':'निर्णय के विरुद्ध',
+  'restates the verdict':'निर्णय को ही दोहराता है',
+  'independent':'स्वतंत्र',
+  'not independent of the verdict':'निर्णय से स्वतंत्र नहीं',
+  'Themes with a cross-check reading against the verdict — an inventory, not a grade. The verdicts stand; each dissent is named at its own tier so it can be weighed, not counted (HTJAH-I:495).':'ऐसे विषय जिनमें कोई प्रति-जाँच निर्णय के विरुद्ध पढ़ती है — यह सूची है, श्रेणी नहीं। निर्णय यथावत् रहते हैं; प्रत्येक असहमति अपने ही स्तर पर नामित है ताकि उसे तौला जाए, गिना नहीं (HTJAH-I:495)।',
+  'How firm is the cast moment?':'जन्म-क्षण कितना दृढ़ है?',
+  'Jaimini chara dasha (walled)':'जैमिनी चर दशा (पृथक्)',
+  'Karmic lens':'कार्मिक दृष्टि',
+  'walled':'पृथक्',
+  'poorvapunya':'पूर्वपुण्य',
+  'dharma':'धर्म',
+  'moksha':'मोक्ष',
+  'How unusual is this?':'यह कितना असामान्य है?',
+  'Divisions that read against the rasi':'वर्ग जो राशि के विरुद्ध पढ़ते हैं',
+  'A varga is the classical confirmation device, so its dissent is worth naming. The D1 Raman core decides and the division corroborates (PREC-11).':'वर्ग शास्त्रीय पुष्टि-साधन है, अतः उसकी असहमति नामित करने योग्य है। D1 रामन् मूल निर्णायक है और वर्ग पुष्टिकारक (PREC-11)।',
+  'against the rasi verdict':'राशि-निर्णय के विरुद्ध',
+  'concurs':'सहमत',
+  'diverges':'असहमत',
+  'reads a facet':'एक पहलू पढ़ता है',
+  'reads its own matter':'अपना ही विषय पढ़ता है',
+  'rare':'दुर्लभ',
+  'notable':'उल्लेखनीय',
+  'common':'सामान्य',
+  'How far the techniques agree':'तकनीकें कितनी सहमत हैं',
+  'Do the techniques agree?':'क्या तकनीकें सहमत हैं?',
+  'Do the techniques agree? — force against intent':'क्या तकनीकें सहमत हैं? — बल बनाम आशय',
+  'Shadbala asks how much force a graha commands; Ishta and Kashta ask to what end. A graha can be strong AND harmful — strength is magnitude, never direction (PREC-2, GBB-9).':'षड्बल पूछता है कि ग्रह के पास कितना बल है; इष्ट और कष्ट पूछते हैं कि किस प्रयोजन हेतु। ग्रह बलवान तथा अनिष्टकारी — दोनों हो सकता है; बल परिमाण है, दिशा कभी नहीं (PREC-2, GBB-9)।',
+  'Each graha, its independent measures set side by side':'प्रत्येक ग्रह, उसके स्वतंत्र मापदंड साथ-साथ',
+  'Contested bhavas — the verdict runs against the weight of the testimony':'विवादित भाव — निर्णय साक्ष्य-भार के विरुद्ध जाता है',
+  'core (lord / karaka / navamsa)':'मूल (स्वामी / कारक / नवांश)',
+  'overlay':'अतिरिक्त',
+  'force vs intent':'बल बनाम आशय',
+  'graha':'ग्रह',
+  'Shadbala':'षड्बल',
+  'Ishta':'इष्ट',
+  'Kashta':'कष्ट',
+  'state':'अवस्था',
+  'measures':'मापदंड',
+  'reading':'वाचन',
+  'none':'कोई नहीं',
+  'for':'पक्ष में',
+  'against':'विपक्ष में',
+  'Who the chart is':'कुंडली कौन है',
+  'Within this house':'इस भाव के भीतर',
+  'reads':'का वाचन है',
+  'Reading frame':'वाचन-आधार',
+  'judged chiefly from the':'मुख्यतः इससे आँका गया',
+  'frame (the stronger of the two lagnas here).':'आधार (यहाँ दोनों लग्नों में अधिक बलवान)।',
+  'Dominant actors':'प्रमुख ग्रह-कर्ता',
+  'Strongest domains':'सबसे बलवान क्षेत्र',
+  'Areas under strain':'दबाव वाले क्षेत्र',
+  'Protective factors':'रक्षक कारक',
+  'Principal tension':'मुख्य तनाव',
+  'Current chapter':'वर्तमान अध्याय',
+  'Network':'तंत्र',
+  'driven by':'द्वारा संचालित',
+  'Convergence':'अभिसरण',
+  'Divisional (D9)':'वर्ग (D9)',
+  'Timing':'काल',
+  'Tension':'तनाव',
+  'Resolved by':'का समाधान',
+  'Evidence chain (every finding, its source)':'प्रमाण-श्रृंखला (प्रत्येक निष्कर्ष, उसका स्रोत)',
+  'How the themes connect':'विषय आपस में कैसे जुड़ते हैं',
+  'Dasha evolution — the horoscope through time':'दशा-विकास — काल के साथ कुंडली',
+  'Each Mahadasha foregrounds the themes its lord drives':'प्रत्येक महादशा अपने स्वामी द्वारा संचालित विषयों को अग्र भूमिका देती है',
+  'acting through':'के माध्यम से कार्यरत',
+  'Rahu and Ketu own no sign, so a nodal chapter is read through the lord of the sign the node occupies and any planet joined with it — the routing is named above rather than assumed.':'राहु-केतु किसी राशि के स्वामी नहीं हैं, अतः छाया-ग्रह की दशा उस राशि के स्वामी तथा उनके साथ स्थित ग्रहों के माध्यम से पढ़ी जाती है — यह मार्ग ऊपर स्पष्ट रूप से नामित है, अनुमानित नहीं।',
+  'Varga confirmation matrix':'वर्ग-पुष्टि सारणी',
+  'Judgment graph':'निर्णय-जाल',
+  'Planet biographies (dominant grahas)':'ग्रह-जीवनियाँ (प्रमुख ग्रह)',
+  'Psychological profile':'मनोवैज्ञानिक चित्र',
+  'Rectification confidence':'जन्म-समय शुद्धि का विश्वास',
+  'Health & vulnerability read-out':'स्वास्थ्य व संवेदनशीलता पाठ',
+  'Arishta & Bhanga':'अरिष्ट और भंग',
+  'Marriage monograph':'विवाह अध्याय',
+  'Children chapter':'संतान अध्याय',
+  'Profession synthesis':'व्यवसाय संश्लेषण',
+  'Wealth chapter':'धन अध्याय',
+  'Aptitude, intelligence & work style':'योग्यता, बुद्धि और कार्यशैली',
+  'Decade indication timeline':'दशक-संकेत समयरेखा',
+  'Today for you (Muhurtha)':'आज आपके लिए (मुहूर्त)',
+
+  // scan-the-day (2026-08-18): "WHEN today is clean" — the same essentials judgment, sampled
+  // across the sunrise-to-sunrise day. Additive to the single-moment Muhurtha read.
+  'When today is clean':'आज कब शुद्ध है',
+  'When today is clean (sunrise → next sunrise)':'आज कब शुद्ध है (सूर्योदय → अगला सूर्योदय)',
+  'Scanning the day…':'दिन का अवलोकन हो रहा है…',
+  'Day scan failed: ':'दिन-अवलोकन विफल: ',
+  ' clean spans':' शुद्ध अवधियाँ',
+  ' samples pass':' नमूने उत्तीर्ण',
+  'sampled every ':'प्रत्येक ',
+  ' min from sunrise to next sunrise: ':' मिनट पर नमूना, सूर्योदय से अगले सूर्योदय तक: ',
+  'Cleanest span: ':'सर्वाधिक शुद्ध अवधि: ',
+  ' of 8 essentials':' / 8 आवश्यक अंग',
+  'passing: ':'उत्तीर्ण: ',
+  'failing: ':'विफल: ',
+  'No clean span at this resolution — every sample of the day carries a hard failure.':
+    'इस विभेदन पर कोई शुद्ध अवधि नहीं — दिन के प्रत्येक नमूने पर एक कठोर दोष खड़ा है।',
+  'clean span':'शुद्ध अवधि',
+  'hard-blocked':'कठोर-अवरुद्ध',
+  'Clean spans ranked by essentials score':'शुद्ध अवधियाँ — आवश्यक-अंग अंक के क्रम में',
+  'Hard-blocked windows of the scanned day':'अवलोकित दिन की कठोर-अवरुद्ध अवधियाँ',
+  'Every sample judged':'प्रत्येक निर्णीत नमूना',
+  'Green = a span in which every sample passed Raman’s essentials ordering (MUHURTHA-10:226-228); red = a hard-blocked window (Rahu Kalam · Durmuhurtha), which can never fall inside a clean span. The number above a span is its guaranteed essentials score.':
+    'हरा = वह अवधि जिसके प्रत्येक नमूने ने रमन के आवश्यक-अंग क्रम (MUHURTHA-10:226-228) को उत्तीर्ण किया; लाल = कठोर-अवरुद्ध अवधि (राहु काल · दुर्मुहूर्त), जो किसी शुद्ध अवधि के भीतर कभी नहीं आ सकती। अवधि के ऊपर का अंक उसका सुनिश्चित आवश्यक-अंग स्कोर है।',
+  'Each row is a run of consecutive samples that ALL passed the same single-moment judgment: `passing` are the factors favourable at every sample, `failing` the ones unfavourable at some sample (none of them a hard failure — a hard failure would have ended the span).':
+    'प्रत्येक पंक्ति लगातार नमूनों की वह शृंखला है जिनमें से हर एक ने वही एकल-क्षण निर्णय उत्तीर्ण किया: `passing` वे कारक हैं जो हर नमूने पर अनुकूल रहे, `failing` वे जो किसी नमूने पर प्रतिकूल रहे (इनमें कोई कठोर दोष नहीं — कठोर दोष अवधि को वहीं समाप्त कर देता)।',
+  'The whole scan, nothing hidden: each sampled instant, whether it passed, its essentials score and the hard failures standing against it.':
+    'सम्पूर्ण अवलोकन, कुछ भी छिपा नहीं: प्रत्येक नमूना-क्षण, वह उत्तीर्ण हुआ या नहीं, उसका आवश्यक-अंग स्कोर और उसके विरुद्ध खड़े कठोर दोष।',
+  'Karmic evolution (Jaimini)':'कार्मिक विकास (जैमिनी)',
+  'Full life synthesis':'सम्पूर्ण जीवन संश्लेषण',
+  'Plain terms — every technical word, with why it matters':'सरल शब्दावली — हर पारिभाषिक शब्द, उसके महत्व सहित',
+
   "Detailed Reading": "विस्तृत फलादेश",
   "THE READING OF THE BIRTH CHART": "जन्म कुंडली का फलादेश",
   "tap or press ↓ to enter birth details": "जन्म विवरण भरने के लिए टैप करें या ↓ दबाएँ",
@@ -580,6 +1010,16 @@ const I18N_HI = {
   "/library": "/library",
   "/home": "/home",
   "folio · birth details": "पत्र · जन्म विवरण",
+  "folio · 1 · the reading": "पत्र · १ · पाठ",
+  "folio · 2 · the twelve matters": "पत्र · २ · बारह विषय",
+  "folio · 2 · matter chapters": "पत्र · २ · विषय-अध्याय",
+  "folio · 2 · body & span": "पत्र · २ · देह और आयु",
+  "folio · 3 · about you, measured": "पत्र · ३ · आपके विषय में, मापा हुआ",
+  "folio · 4 · the machinery": "पत्र · ४ · यंत्र-रचना",
+  "folio · 4 · yogas & ashtakavarga": "पत्र · ४ · योग और अष्टकवर्ग",
+  "folio · 4 · houses": "पत्र · ४ · भाव",
+  "folio · 4 · divisional & soul": "पत्र · ४ · वर्ग और आत्मा",
+  "folio · 5 · when — the timeline": "पत्र · ५ · कब — समयरेखा",
   "folio · what matters most": "पत्र · सबसे महत्वपूर्ण बातें",
   "folio · signature & ruler": "पत्र · पहचान और स्वामी ग्रह",
   "folio · the charts": "पत्र · कुंडलियाँ",
@@ -690,6 +1130,27 @@ const I18N_HI = {
   "graha": "ग्रह",
   "sign": "राशि",
   "house": "भाव",
+  "Reading": "पाठ",
+  "short": "संक्षिप्त",
+  "full": "विस्तृत",
+  "Your reading, in short": "आपका फलादेश, संक्षेप में",
+  "What this reading calls favourable": "जिन्हें यह फलादेश अनुकूल कहता है",
+  "What it calls difficult": "जिन्हें यह कठिन कहता है",
+  "What it reads both ways": "जिन्हें यह दोनों तरह पढ़ता है",
+  "What is coming": "आगे क्या है",
+  "Running well": "अच्छा चलता हुआ",
+  "Meeting friction": "रुकावट का सामना",
+  "The combinations your chart carries": "आपकी कुंडली के योग",
+  "What is unusual here": "यहाँ असामान्य क्या है",
+  "How much of this is true of everyone": "इसमें से कितना सबके लिए सच है",
+  "READ THE FULL READING": "विस्तृत फलादेश पढ़ें",
+  "This chart is too sparse for a short reading — switch to the full reading.": "इस कुंडली के लिए संक्षिप्त फलादेश हेतु पर्याप्त सामग्री नहीं — विस्तृत फलादेश पर जाइए।",
+  "You are reading the short version. The rest of the book fills in when you switch to the full reading.": "आप संक्षिप्त संस्करण पढ़ रहे हैं। विस्तृत फलादेश पर जाते ही शेष पुस्तक भर जाएगी।",
+  "The honesty rules that govern this table — read them before the counts.": "इस तालिका पर लागू ईमानदारी-नियम — गणना पढ़ने से पहले इन्हें पढ़ें।",
+  "life area": "जीवन-क्षेत्र",
+  "MD": "महादशा",
+  "Favourable": "अनुकूल",
+  "Challenged": "चुनौतीपूर्ण",
   "nakshatra": "नक्षत्र",
   "pada": "चरण",
   "navamsa": "नवांश",
@@ -721,6 +1182,7 @@ const I18N_HI = {
   "ordinary": "सामान्य",
   "limited": "सीमित",
   "feeble": "क्षीण",
+  "same lord": "एक ही स्वामी",
   "— no houses lit this bhukti": "— इस अंतर्दशा में कोई भाव सक्रिय नहीं हुआ",
   "running": "चालू",
   "now": "अभी",
@@ -766,11 +1228,43 @@ const I18N_HI = {
   "agree": "सहमत",
   "partly": "आंशिक रूप से",
   "disagree": "असहमत",
-  "not sure": "निश्चित नहीं"
+  "not sure": "निश्चित नहीं",
+  // ---- the four-part feedback instrument (v36) ----
+  "Your feedback": "आपकी प्रतिक्रिया",
+  "In simple words": "सरल शब्दों में",
+  "PART": "भाग",
+  "HOW SURE?": "कितना विश्वास?",
+  "why? (optional)": "क्यों? (वैकल्पिक)",
+  "your answer": "आपका उत्तर",
+  "I have finished Part A — open the rest": "मैंने भाग A पूरा कर लिया — बाक़ी खोलें",
+  "Part A done": "भाग A पूरा हुआ",
+  "Period changes on": "दशा बदलती है",
+  "Mahadasha begins": "महादशा आरंभ",
+  "Settle the birth time before treating any of this reading as measured.":
+    "इस फलादेश को मापा हुआ मानने से पहले जन्म-समय निश्चित करें।",
+  "SEND MY ANSWERS": "मेरे उत्तर भेजें",
+  "Answer at least one question first.": "पहले कम से कम एक प्रश्न का उत्तर दें।",
+  "Thank you — {N} answer(s) stored.": "धन्यवाद — {N} उत्तर सुरक्षित हुए।",
+  "Your answers are not scored back to you: knowing which option the chart took would change how the next person answers.":
+    "आपके उत्तरों का अंक आपको नहीं बताया जाता: यह जान लेना कि कुंडली ने कौन-सा विकल्प लिया, अगले व्यक्ति के उत्तर बदल देगा।",
+  "Before you read: there are a few questions about your own life at the end of this report. Answering them FIRST is what makes your feedback worth anything — once you have read what the chart says, you can no longer say what you would have said on your own.":
+    "पढ़ने से पहले: इस फलादेश के अंत में आपके अपने जीवन के बारे में कुछ प्रश्न हैं। उन्हें पहले भरना ही आपकी प्रतिक्रिया को मूल्यवान बनाता है — एक बार पढ़ लेने के बाद आप वह नहीं कह सकते जो आप अपनी ओर से कहते।",
+  "ANSWER THOSE FIRST": "पहले वे प्रश्न भरें",
+  "year": "वर्ष",
+  "month (if you remember)": "महीना (यदि याद हो)",
+  "what kind of event?": "किस तरह की घटना?",
+  "ADD ANOTHER": "एक और जोड़ें",
+  "anything to add? (optional)": "कुछ और जोड़ना चाहें? (वैकल्पिक)",
 };
 
 let LANG = 'en';
+let RPT = null;
+let CUR_LEAF = 2;      // leaf recorded on each PAGE_TOC entry; corrected after the flush
+let PAGE_TOC = [];     // {label,id,leaf,step} for every rendered H2 — drives the TOC   // the current report JSON — set at render() entry so top-level
+                  // helpers (H2's plain-language layer) can read section_meta.
 function t(s){ return LANG==='hi' ? (I18N_HI[s] || s) : s; }
+// Mirrors primitives.vimshottari.maraka_running_phrase: null = the check could not be made, said so.
+function maraka_phrase(v){ return v==null ? 'could not be determined for this chart' : (v ? 'carries a maraka-tier lord' : 'carries no maraka-tier lord'); }
 // Re-apply translation to every [data-i18n] element (static HTML chrome) — called on load
 // and whenever the toggle changes. JS-CONSTRUCTED content (headings, cards) calls t()
 // directly at render time instead, so it's already correct whenever it's (re)built.
@@ -872,18 +1366,36 @@ function fmtVal(k,v){ if(v==null) return '—';
   return String(v); }
 // generic table over an array of row-objects — renders EVERY column, nested values included
 // (never silently drops a column: locked "report completeness" rule in CLAUDE.md).
+// raw engine column names -> reader-facing headers (presentational only — every
+// column still renders; unknown keys keep the default underscore-to-space path).
+const COL_EN={sav_band:'sign score (SAV) band',bhava_bala_rank:'house strength (Bhava Bala) rank',
+  vedha_by:'obstructed (vedha) by',md_lord:'major-period (MD) lord',ad_lord:'sub-period (AD) lord',
+  natal_verdict:'natal verdict',start_jd:'starts',end_jd:'ends',ishta:'benefic score (ishta)',
+  kashta:'malefic score (kashta)',shadbala_rupas:'strength (rupas)',
+  shadbala_required:'required minimum',navamsa_sign:'navamsa sign',rasi_house:'house (rasi)',
+  combust_fraction:'combustion fraction',in_kakshya_of:'sub-division (kakshya) lord',
+  bindus:'benefic points (bindus)',quality:'window quality',
+  // Wave-0/1 parity (2026-08-18): pretty names for newly rendered columns
+  score_parts:'tier addends',reasons:'why (qualifying clauses)',
+  bhava_bala_rupas:'Bhava Bala (rupas)',pratyantar:'pratyantar (PD) lord'};
 function rows(arr, drop){ drop=drop||[];
   if(!arr||!arr.length) return el('p',{class:'muted'},'—');
   const keys=[]; for(const r of arr) for(const k in r) if(!keys.includes(k)&&!drop.includes(k)) keys.push(k);
-  const tbl=el('table'); tbl.append(el('tr',{},...keys.map(k=>el('th',{},t(k.replace(/_/g,' '))))));
+  const tbl=el('table'); tbl.append(el('tr',{},...keys.map(k=>el('th',{},t(COL_EN[k]||k.replace(/_/g,' '))))));
   for(const r of arr){ const tr=el('tr'); for(const k of keys){ const td=el('td');
     td.append(citeText(fmtVal(k,r[k]))); tr.append(td);} tbl.append(tr);} return tbl; }
 // visible by default (open) — a section's values are never hidden behind a bare count.
-function sectionTable(title, arr, drop){ if(!arr||!arr.length) return;
+function sectionTable(title, arr, drop, note){ if(!arr||!arr.length) return;
   const d=el('details',{class:'card'}); d.setAttribute('open','');
   const sm=el('summary'); sm.append(t(title)+' ('+arr.length+')');
-  d.append(sm); const b=el('div',{class:'body'}); const sc=el('div',{class:'tscroll'});
+  d.append(sm); const b=el('div',{class:'body'});
+  if(note) b.append(para(t(note),'vz-note'));   // plain caption: what the table answers
+  const sc=el('div',{class:'tscroll'});
   sc.append(rows(arr,drop)); b.append(sc); d.append(b); return d; }
+// A raman_timing table ({key,title,note,columns,rows}) as a sectionTable — every column kept.
+function timingTable(tt){ if(!tt||!(tt.rows||[]).length) return;
+  const cols=tt.columns||[];
+  return sectionTable(tt.title, tt.rows.map(r=>{ const o={}; cols.forEach((c,i)=>{ o[c]=r[i]; }); return o; }), [], tt.note); }
 function citeChip(src){ if(!src) return null; const s=el('cite',{class:'src'},src.work+':'+src.line);
   s.onclick=(e)=>{e.preventDefault();openSrc(src.work+':'+src.line);}; return s; }
 
@@ -926,7 +1438,7 @@ function goodVar(b){ return b===true?'var(--fav)':b===false?'var(--aff)':'var(--
 function natureVar(n){ n=String(n||'').toLowerCase();
   if(/benefic|yoga/.test(n)) return 'var(--fav)'; if(/malefic|maraka/.test(n)) return 'var(--aff)'; return 'var(--ink)'; }
 function tintBg(c){ return 'color-mix(in srgb,'+c+' 12%,var(--surface))'; }
-const TIER_OP={'par excellence':1,'ordinary':.72,'limited':.45,'feeble':.28,'par_excellence':1};
+const TIER_OP={'par excellence':1,'ordinary':.72,'same lord':.6,'limited':.45,'feeble':.28,'par_excellence':1,'same_lord':.6};
 
 // --- sign / house / planet lookups ---
 const GABBR={Sun:'Su',Moon:'Mo',Mars:'Ma',Mercury:'Me',Jupiter:'Ju',Venus:'Ve',Saturn:'Sa',Rahu:'Ra',Ketu:'Ke'};
@@ -1285,12 +1797,59 @@ function run(){
 const SCOPE={'Your Reading':'summary','Chart signature':'section:synthesis','Ruler of the nativity':'section:ruler',
   'Preponderance of testimonies':'section:preponderance','Integrated insights':'section:insights','Yogas':'section:yogas',
   'Nichod (the essence)':'section:nichod'};
+// heading label -> SECTION_CONTRACT id, so H2 can pull the section_meta plain-language
+// layer (subtitle + reader-question) without touching any call site. Labels are
+// load-bearing (jumpLink/SCOPE) and stay EXACTLY as they are — this map only annotates.
+const SEC_ID={
+  'What matters most':'digest','Your Reading':'plain_reading','Judgment graph':'judgment_graph',
+  'How to read this report':'interpretation_guide',
+  'How Raman would weigh this chart':'philosophy',
+  'For and against, matter by matter':'for_against',
+  'Planet biographies (dominant grahas)':'planet_bios',
+  'Plain terms — every technical word, with why it matters':'plain_terms_panel',
+  'Chart signature':'chart_signature','Ruler of the nativity':'ruler','Psychological profile':'psych',
+  'Charts — Rasi · Navamsa · Gochara':'chart_grids','Planetary positions':'positions',
+  'Rectification confidence':'rect_confidence','Yogas':'yogas',
+  'Ashtakavarga (Sarvashtakavarga)':'ashtakavarga','House-by-house':'houses',
+  'House strength cross-check':'house_strength','Preponderance of testimonies':'preponderance',
+  'The twelve matters at a glance':'dashboard','Longevity':'longevity',
+  'Health & vulnerability read-out':'health_readout','Arishta & Bhanga':'arishta',
+  'Marriage monograph':'marriage','Children chapter':'children','Profession synthesis':'profession',
+  'Wealth chapter':'wealth','Aptitude, intelligence & work style':'aptitude',
+  'Life-narrative (Vimshottari)':'timeline','Life-chapters':'life_chapters',
+  'Decade indication timeline':'decades','Transits (Gochara)':'gochara',
+  'Today for you (Muhurtha)':'muhurtha','Divisional deep-reads (Shodasavarga)':'divisional',
+  'Soul & destiny (Jaimini)':'soul','Karmic evolution (Jaimini)':'karmic',
+  'Pitru dosha screen (classical, non-Raman)':'pitru','Integrated insights':'synthesis',
+  'What stands out':'stands_out','Information content of this reading':'info_content',
+  'Full life synthesis':'life_synthesis','Nichod (the essence)':'nichod',
+  'Your feedback':'feedback','In simple words':'simple_summary'};
 function birthBody(){ return { name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
   hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
   tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, lang:LANG }; }
 function H2(label){ const h=el('h2',{class:'sec'},t(label)); h.id='sec-'+label.replace(/[^a-z]/gi,'').toLowerCase();
-  const scope=SCOPE[label]; if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
-    b.onclick=()=>explainSection(label,scope,h); h.append(b);} return h; }
+  { const sid=SEC_ID[label], mm=sid&&RPT&&RPT.section_meta&&RPT.section_meta[sid];
+    PAGE_TOC.push({label, id:h.id, leaf:CUR_LEAF, step:(mm?mm.step:0)}); }
+  const sid0=SEC_ID[label], m0=sid0&&RPT&&RPT.section_meta&&RPT.section_meta[sid0];
+  const scope=(m0&&m0.explain_scope)||SCOPE[label];
+  if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
+    b.onclick=()=>explainSection(label,scope,h); h.append(b);}
+  // the plain-language layer: doctrine heading stays; subtitle + the reader's
+  // question + the "why astrologers examine this" preamble are ADDED beneath
+  // (section_meta / section_method from the report JSON — add-only by design).
+  const m=m0;
+  if(!m) return h;
+  const hi=(LANG==='hi');
+  const f=document.createDocumentFragment(); f.append(h);
+  f.append(el('p',{class:'sec-sub'}, hi?m.subtitle_hi:m.subtitle_en));
+  const ans=el('p',{class:'sec-answers'}); ans.append(el('b',{}, hi?'उत्तर देता है: ':'Answers: '));
+  ans.append(hi?m.answers_hi:m.answers_en); f.append(ans);
+  const sm=RPT.section_method&&RPT.section_method[sid0];
+  if(sm){ const d=el('div',{class:'method'});
+    d.append(el('p',{class:'method-why'},(hi?'ज्योतिषी इसे क्यों परखते हैं — ':'Why astrologers examine this — ')+sm.why));
+    const ol=el('ol',{class:'method-order'}); (sm.order||[]).forEach(s=>ol.append(el('li',{},s)));
+    d.append(ol); f.append(d); }
+  return f; }
 
 async function explainSection(title,scope,afterEl){
   let box=afterEl.nextElementSibling;
@@ -1392,6 +1951,7 @@ const JG_ROLE=[['lord_of','rules it'],['occupies','sits in it'],
                ['aspects','aspects it'],['karaka_of','is its natural significator']];
 //: activation tiers in plain words — mirrors judgment_graph.PLAIN_TIER (Python side).
 const JG_PLAIN_TIER={'par excellence':'full, strong results','ordinary':'normal results',
+                     'same lord':"one planet's own results",
                      'limited':'slight results','feeble':'faint results'};
 
 // per-house digest of the graph: who touches this house, and how.
@@ -1680,15 +2240,83 @@ function muhurthaView(d){
   if(d.disclaimer) out.push(para(d.disclaimer,'muted'));
   return out.filter(Boolean);
 }
+// ---- scan-the-day (GET /electional/scan): "WHEN today is clean", not "how is noon" ----
+// Pure iteration over the same scorer: every span below is a run of samples that each passed
+// the single-moment judgment. Additive — the single-moment read above is untouched.
+const hhmm=s=>String(s||'').slice(11,16);
+// A day strip: the scanned sunrise->sunrise span, its hard-blocked windows, its clean spans.
+// Positions come from Date.parse on the route's own local ISO stamps (no second time axis).
+function muhurthaScanStrip(d){
+  const w0=d.scan_window||{}, t0=Date.parse(w0.start), t1=Date.parse(w0.end);
+  if(!isFinite(t0)||!isFinite(t1)||!(t1>t0)) return null;
+  const W=760,H=92,L=10,R=10,BW=W-L-R,Y=30,BH=24;
+  const x=ms=>L+BW*Math.min(1,Math.max(0,(ms-t0)/(t1-t0)));
+  const g=svgBox(W,H);
+  g.append(sv('rect',{x:L,y:Y,width:BW,height:BH,fill:'var(--neu)',opacity:'.25',rx:'3'}));
+  for(const bw of (d.blocked_windows||[])){
+    const a=x(Date.parse(bw.start)), b=x(Date.parse(bw.end));
+    if(!(b>a)) continue;
+    g.append(tip(sv('rect',{x:a,y:Y,width:Math.max(1,b-a),height:BH,fill:'var(--aff)',opacity:'.55'}),
+      bw.label+' · '+hhmm(bw.start)+'–'+hhmm(bw.end)));
+  }
+  for(const sp of (d.clean_spans||[])){
+    const a=x(Date.parse(sp.start)), b=x(Date.parse(sp.end));
+    if(!(b>a)) continue;
+    g.append(tip(sv('rect',{x:a,y:Y,width:Math.max(1.5,b-a),height:BH,fill:'var(--fav)',opacity:'.9',rx:'2'}),
+      '#'+sp.rank+' '+hhmm(sp.start)+'–'+hhmm(sp.end)+' · '+sp.score+'/8 · '+
+      t('passing: ')+(sp.passing||[]).join(', ')+(((sp.failing||[]).length)?' · '+t('failing: ')+sp.failing.join(', '):'')));
+    if(b-a>=16){ const lab=sv('text',{x:(a+b)/2,y:Y-6,'text-anchor':'middle','font-size':'10',fill:'var(--ink)'});
+      lab.append(String(sp.score)); g.append(lab); }
+  }
+  // hour ticks off the sample stamps themselves (every 3rd whole hour of the scan)
+  for(const s of (d.samples||[])){
+    if(hhmm(s.local_iso).slice(3)!=='00') continue;
+    const hr=parseInt(hhmm(s.local_iso).slice(0,2),10); if(hr%3) continue;
+    const px=x(Date.parse(s.local_iso));
+    g.append(sv('line',{x1:px,y1:Y+BH,x2:px,y2:Y+BH+5,stroke:'var(--ink-2)',strokeWidth:'1'}));
+    const lb=sv('text',{x:px,y:Y+BH+17,'text-anchor':'middle','font-size':'9',fill:'var(--ink-2)'});
+    lb.append(hhmm(s.local_iso)); g.append(lb);
+  }
+  const box=el('div',{}); box.append(g,legend([['var(--fav)','clean span'],['var(--aff)','hard-blocked']]));
+  return box;
+}
+function muhurthaScanView(d){
+  const out=[], w0=d.scan_window||{}, spans=d.clean_spans||[], best=d.best;
+  out.push(para((spans.length?'✓ ':'✗ ')+spans.length+t(' clean spans')+' · '+
+    d.clean_sample_count+'/'+d.sample_count+t(' samples pass')+' — '+d.date+' · '+
+    (d.act||t('general'))+' · '+t('sampled every ')+d.interval_minutes+
+    t(' min from sunrise to next sunrise: ')+hhmm(w0.start)+'–'+hhmm(w0.end),'lede'));
+  if(best) out.push(para(t('Cleanest span: ')+hhmm(best.start)+'–'+hhmm(best.end)+' · '+
+    best.score+t(' of 8 essentials')+((best.failing||[]).length?' · '+t('failing: ')+best.failing.join(', '):''),'lede'));
+  else out.push(para(t('No clean span at this resolution — every sample of the day carries a hard failure.'),'mu-fail'));
+  const strip=muhurthaScanStrip(d);
+  if(strip) out.push(vizCard('When today is clean (sunrise → next sunrise)', strip,
+    'Green = a span in which every sample passed Raman’s essentials ordering (MUHURTHA-10:226-228); '+
+    'red = a hard-blocked window (Rahu Kalam · Durmuhurtha), which can never fall inside a clean span. '+
+    'The number above a span is its guaranteed essentials score.'));
+  out.push(sectionTable('Clean spans ranked by essentials score', spans, [],
+    'Each row is a run of consecutive samples that ALL passed the same single-moment judgment: '+
+    '`passing` are the factors favourable at every sample, `failing` the ones unfavourable at some '+
+    'sample (none of them a hard failure — a hard failure would have ended the span).'));
+  out.push(sectionTable('Hard-blocked windows of the scanned day', d.blocked_windows));
+  out.push(sectionTable('Every sample judged', d.samples, [],
+    'The whole scan, nothing hidden: each sampled instant, whether it passed, its essentials '+
+    'score and the hard failures standing against it.'));
+  if(d.scan_note) out.push(para(d.scan_note,'muted'));
+  if(d.disclaimer) out.push(para(d.disclaimer,'muted'));
+  return out.filter(Boolean);
+}
 function muhurthaPanel(){
   const wrap=el('div',{});
   const ctl=el('div',{class:'mu-controls'});
   const sel=el('select',{class:'leaf-input mu-act'});
   for(const a of ELECT_ACTS) sel.append(el('option',{value:a},t(a)));
   const btn=el('button',{class:'digest-read',type:'button'},t('Read today'));
-  ctl.append(el('span',{class:'muted'},t('for: ')),sel,btn);
+  const scanBtn=el('button',{class:'digest-read',type:'button'},t('When today is clean'));
+  ctl.append(el('span',{class:'muted'},t('for: ')),sel,btn,scanBtn);
   const out=el('div',{});
-  wrap.append(ctl,out);
+  const scanOut=el('div',{});
+  wrap.append(ctl,out,scanOut);
   btn.onclick=async()=>{
     btn.disabled=true; out.replaceChildren(el('div',{class:'folio-loading'},t('Reading the day…')));
     try{
@@ -1699,6 +2327,19 @@ function muhurthaPanel(){
     }catch(e){ console.error('muhurtha read failed:',e);
       out.replaceChildren(el('div',{class:'err'},t('Muhurtha reading failed: ')+e.message)); }
     finally{ btn.disabled=false; btn.replaceChildren(t('Read today')); }
+  };
+  scanBtn.onclick=async()=>{
+    scanBtn.disabled=true;
+    scanOut.replaceChildren(el('div',{class:'folio-loading'},t('Scanning the day…')));
+    try{
+      const p=electionalParams(sel.value); p.set('interval_minutes','30');
+      const r=await fetch('/electional/scan?'+p.toString());
+      const d=await r.json();
+      if(!r.ok) throw new Error(d.detail||r.statusText);
+      scanOut.replaceChildren(...muhurthaScanView(d));
+    }catch(e){ console.error('muhurtha day scan failed:',e);
+      scanOut.replaceChildren(el('div',{class:'err'},t('Day scan failed: ')+e.message)); }
+    finally{ scanBtn.disabled=false; scanBtn.replaceChildren(t('When today is clean')); }
   };
   return wrap;
 }
@@ -1758,6 +2399,77 @@ async function prasna(){
 window.prasna=prasna;
 
 // ---- digest: click a "draws on" label to jump to that section (best-effort) ----
+const STEP_Q={1:'1 · What does this chart say, in plain English?',
+  2:'2 · Is this matter favourable?',3:'3 · How much of that is about me?',
+  4:'4 · Why does it read that way?',5:'5 · When?',0:'More'};
+const STEP_Q_HI={1:'१ · यह कुंडली सरल भाषा में क्या कहती है?',
+  2:'२ · क्या यह विषय शुभ है?',3:'३ · इसमें कितना मेरे बारे में है?',
+  4:'४ · यह ऐसा क्यों पढ़ा गया?',5:'५ · कब?',0:'और'};
+function buildToc(){
+  const body=$('leaf2-body'); if(!body||!PAGE_TOC.length) return;
+  const hi=(LANG==='hi');
+  const box=el('div',{class:'toc'});
+  box.append(el('div',{class:'toc-step'}, hi?'इस रिपोर्ट में — पाँच प्रश्न':'In this report — five questions'));
+  for(const step of [1,2,3,4,5,0]){
+    const items=PAGE_TOC.filter(x=>x.step===step);
+    if(!items.length) continue;
+    box.append(el('div',{class:'toc-step'}, hi?STEP_Q_HI[step]:STEP_Q[step]));
+    const row=el('div',{});
+    for(const it of items) row.append(jumpLink(it.label));
+    box.append(row); }
+  body.insertBefore(box, body.firstChild);
+  // mobile continuous mode: a slim sticky indicator tracking the current section
+  if(matchMedia('(max-width:700px)').matches && 'IntersectionObserver' in window){
+    let bar=$('step-now'); if(!bar){ bar=el('div',{class:'step-now'}); bar.id='step-now';
+      const host=$('manuscript')||document.body; host.prepend(bar); }
+    const io=new IntersectionObserver(es=>{ for(const e of es) if(e.isIntersecting){
+      const ent=PAGE_TOC.find(x=>x.id===e.target.id);
+      if(ent) bar.textContent=(hi?STEP_Q_HI[ent.step]:STEP_Q[ent.step])+' — '+t(ent.label); }},
+      {rootMargin:'0px 0px -80% 0px'});
+    document.querySelectorAll('h2.sec').forEach(h=>io.observe(h)); }
+}
+// Walk every folio's text nodes once; wrap the FIRST occurrence of each plain-terms
+// entry in a clickable <abbr class="gloss"> opening the glossary popup. Safe DOM only
+// (splitText + createElement); skips markup where wrapping would corrupt meaning.
+const GLOSS_SKIP=new Set(['CITE','ABBR','SVG','SCRIPT','STYLE','INPUT','BUTTON','SUMMARY','A','CODE']);
+function glossWalk(){
+  const terms=RPT&&RPT.plain_terms; if(!terms) return;
+  const names=Object.keys(terms).sort((a,b)=>b.length-a.length); if(!names.length) return;
+  const seen=new Set();
+  const rx=new RegExp('\\b('+names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','i');
+  for(let leaf=2;leaf<=12;leaf++){
+    const body=$('leaf'+leaf+'-body')||$('leaf'+leaf+'-scroll'); if(!body) continue;
+    const tw=document.createTreeWalker(body,NodeFilter.SHOW_TEXT,{acceptNode(n){
+      for(let e=n.parentElement;e;e=e.parentElement){
+        if(GLOSS_SKIP.has(e.tagName)||e.classList.contains('chip')||e.classList.contains('gloss-chip'))
+          return NodeFilter.FILTER_REJECT; }
+      return NodeFilter.FILTER_ACCEPT; }});
+    const hits=[];
+    for(let n=tw.nextNode();n;n=tw.nextNode()){
+      if(seen.size>=names.length) break;
+      const m=rx.exec(n.nodeValue||''); if(!m) continue;
+      const key=names.find(x=>x.toLowerCase()===m[1].toLowerCase());
+      if(!key||seen.has(key)) continue;
+      seen.add(key); hits.push([n,m.index,m[1].length,key]); }
+    for(const [n,idx,len,key] of hits){
+      const mid=n.splitText(idx); mid.splitText(len);
+      const ab=el('abbr',{class:'gloss'},mid.nodeValue);
+      const g=RPT.plain_terms[key];
+      if(g&&g.plain) ab.title=g.plain+(g.analogy?' — '+g.analogy:'');
+      // show the definition card INLINE beside the term (the #gloss-pop well lives on
+      // another folio, invisible from here in book mode) — click again to dismiss.
+      ab.onclick=(e)=>{e.preventDefault();
+        const host=ab.closest('p,li,td,div')||ab.parentElement;
+        const open=host&&host.nextElementSibling;
+        if(open&&open.classList&&open.classList.contains('gloss-inline')){ open.remove(); return; }
+        const p=glossPopup(RPT,key);
+        if(p&&host){ p.classList.add('gloss-inline'); host.after(p); } };
+      mid.parentNode.replaceChild(ab,mid); } }
+}
+function ruleLine(tag, text, cite){
+  const pp=el('p',{class:'rule-id'});
+  pp.append(el('span',{class:'tag'},String(tag)));
+  pp.append(citeText(String(text)+(cite?' ('+cite+')':''))); return pp; }
 function jumpLink(label){
   const a=el('a',{href:'#'},label);
   a.onclick=(e)=>{ e.preventDefault();
@@ -1765,8 +2477,14 @@ function jumpLink(label){
     let target=$(slug);
     if(!target){ const key=String(label).replace(/[^a-z]/gi,'').toLowerCase().slice(0,6);
       target=[...document.querySelectorAll('h2.sec')].find(h=>h.id.includes(key)); }
-    if(target){ target.scrollIntoView({behavior:'smooth',block:'start'});
-      target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash'); }
+    if(target){
+      const entry=PAGE_TOC.find(x=>x.id===target.id);
+      const flip=(entry&&typeof window.goToManuscriptPage==='function');
+      if(flip) window.goToManuscriptPage(entry.leaf);
+      // wait out the ~550ms page-flip lock before scrolling within the leaf
+      setTimeout(()=>{ target.scrollIntoView({behavior:'smooth',block:'start'});
+        target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash'); },
+        flip?620:0); }
   };
   return a;
 }
@@ -1791,15 +2509,21 @@ async function readAsStory(btn){
 }
 
 // ---- Life-narrative: which houses each bhukti lights, graded per Raman's four-tier scheme ----
-const TIER_ORDER=['par excellence','ordinary','limited','feeble'];
+// 'same lord' (timing gap check fix 3, 2026-10-24): the MD lord's own bhukti — Raman's
+// association test is for "the sub-period of another" (HTJAH-I:1635).
+const TIER_ORDER=['par excellence','ordinary','same lord','limited','feeble'];
 const TIER_MEAN={'par excellence':'both lords influence the house AND the AD lord is associated with the MD lord',
   'ordinary':'both lords influence the house, AD not associated with MD',
+  'same lord':"the MD lord's own bhukti influences the house; the association test (for the sub-period of another, HTJAH-I:1635) does not apply",
   'limited':'only the bhukti (AD) lord influences the house',
   'feeble':'only the MD lord influences the house'};
 function renderTimeline(R, add){
   add(para('A planet influences a house by owning, occupying or aspecting the house or its lord '+
-    '(HTJAH-I:1586-1640). Grades (uniform for every house) — '+
+    '(HTJAH-I:1586-1640), each house on its own printed factor list (a karaka only where Raman prints one; the Moon-counted lord from the 2nd house on; the nodes by sign lord, joined planet, star lord, Sanivad Rahu / Kujavad Ketu). An "allied via H11"-style note (2/11, 9/12) has no Raman citation and never enters the grade. Grades (uniform for every house) — '+
     TIER_ORDER.map(t=>t+': '+TIER_MEAN[t]).join('; ')+'. Verdicts are the unchanged natal readings.','muted'));
+  // 2026-08-18 parity: the per-row delivery tags (md_quality / antar_quality) the rows always
+  // carried — how well each activating lord delivers, HTJAH-II:10004-10008.
+  add(para(t(PARITY_NOTES.delivery),'muted'));
   const refJd=(R.window&&R.window.ref_jd)||null;
   const groups=[];
   for(const t of (R.timeline||[])){ let g=groups[groups.length-1];
@@ -1824,28 +2548,249 @@ function renderTimeline(R, add){
       hd.append(el('span',{class:'muted'},'  '+jdYM(bk.start_jd)+' – '+jdYM(bk.end_jd)));
       if(bk.antar&&bk.antar!==bk.maha) hd.append(el('span',{class:'muted'},
         ' · AD '+(bk.associated?'associated with':'not associated with')+' MD'));
+      else hd.append(el('span',{class:'muted'},' · '+t("the MD lord's own bhukti (same lord)")));
       if(now) hd.append(el('span',{class:'chip',style:'margin-left:.4rem'},t('now')));
       blk.append(hd);
       const byT={}; for(const a of (bk.activated||[])){ const k=a.tier||a.grade; (byT[k]=byT[k]||[]).push(a); }
       let any=false;
       for(const tier of TIER_ORDER){ const items=byT[tier]; if(!items||!items.length) continue; any=true;
-        const row=el('div',{class:'lit-row'+((tier==='limited'||tier==='feeble')?' dim':'')});
+        const row=el('div',{class:'lit-row'+((tier==='limited'||tier==='feeble'||tier==='same lord')?' dim':'')});
         row.append(el('span',{class:'tier-label',title:TIER_MEAN[tier]},tier));
         for(const a of items) row.append(el('span',{class:'chip house-chip v-'+String(a.natal_verdict).replace(/[^a-z-]/gi,''),
-          title:tier+' · natal verdict: '+a.natal_verdict},'H'+a.house));
+          title:tier+' · natal verdict: '+a.natal_verdict+
+            ((a.allied_via||[]).length?(' · allied via '+a.allied_via.map(h=>'H'+h).join(', ')+' (note only, not in the grade)'):'')},
+          'H'+a.house+((a.allied_via||[]).length?(' (allied via '+a.allied_via.map(h=>'H'+h).join(', ')+')'):'')));
         blk.append(row);
       }
       if(!any) blk.append(el('span',{class:'muted'},t('— no houses lit this bhukti')));
+      // delivery tags per lit house — EVERY field of the LordQuality objects rendered
+      // (lord, tag, dignity, strong, combust, vargottama), never dropped to a bare tag.
+      const _dl=(bk.activated||[]).filter(a=>a.md_quality||a.antar_quality);
+      if(_dl.length){
+        const _q=(q)=>q.lord+' '+q.tag+' ('+(q.dignity||'—')+
+          (q.strong===true?', strong':q.strong===false?', weak':'')+
+          (q.combust?', combust':'')+(q.vargottama?', vargottama':'')+')';
+        const _parts=_dl.map(a=>{ const bits=[], tr2=a.tier||a.grade;
+          // markdown parity: a limited row carries only its AD tag, a feeble row only its MD tag
+          if(a.md_quality&&tr2!=='limited') bits.push('MD '+_q(a.md_quality));
+          if(a.antar_quality&&tr2!=='feeble') bits.push('AD '+_q(a.antar_quality));
+          return bits.length?('H'+a.house+': '+bits.join('; ')):null; }).filter(Boolean);
+        if(_parts.length)
+          blk.append(para(t('Delivery')+' (HTJAH-II:10004-10008) — '+_parts.join(' · '),'vz-note'));
+      }
       b.append(blk);
     }
     d.append(b); add(d);
   }
 }
 
+// ===== Wave-0/1 parity builders (2026-08-18) — REPORT COMPLETENESS: render the append-only
+// JSON fields the two shipped waves added. Safe DOM only (el/sv/textContent). =====
+
+// mirrors _PLANET_THEME in detailed_report.py (doctrine-fixed display strings, same as HNAME).
+const PLANET_THEME={Sun:'confidence, authority and recognition',Moon:'emotional life, home and the public',
+  Mars:'action, courage and drive',Mercury:'communication, learning and business',
+  Jupiter:'growth, wisdom and expanding opportunity',Venus:'relationships, comfort and creativity',
+  Saturn:'discipline, patience and long-term effort',Rahu:'ambition and unconventional drive',
+  Ketu:'detachment and inner reflection'};
+
+// one 13-column header row: graha + the 12 sign abbreviations (+ any extra headers)
+function av12Header(extra){ const hd=el('tr',{},el('th',{},t('graha')));
+  for(let sg=1;sg<=12;sg++) hd.append(el('th',{},SIGN[sg].slice(0,3)));
+  for(const x of (extra||[])) hd.append(el('th',{},t(x)));
+  return hd; }
+
+// the 7x12 Bhinnashtakavarga matrix — the natal-seat cell is bolded + tinted (markdown's bold)
+function bavMatrixTable(R){ const bm=R.bav_matrix||[]; if(!bm.length) return null;
+  const tbl=el('table'); tbl.append(av12Header(['total','natal seat']));
+  for(const r of bm){ const tr=el('tr',{},el('td',{},r.planet));
+    (r.bindus||[]).forEach((v,i)=>{ const td=el('td',{},String(v));
+      if(r.seat_sign===i+1){ td.style.fontWeight='700'; td.style.background='var(--chip)';
+        td.title=r.planet+' — '+t('its own natal sign (seat)'); }
+      tr.append(td); });
+    tr.append(el('td',{},String(r.total)),
+      el('td',{},r.seat_sign!=null?(SIGN[r.seat_sign].slice(0,3)+' ('+r.seat_bindus+')'):'—'));
+    tbl.append(tr); }
+  return tbl; }
+
+// one reduced-bindu table (key = 'trikona' | 'reduced') from R.bav_reduced
+function bavReducedTable(R,key){ const br=R.bav_reduced||[]; if(!br.length) return null;
+  const tbl=el('table'); tbl.append(av12Header());
+  for(const r of br){ const tr=el('tr',{},el('td',{},r.planet));
+    for(const v of (r[key]||[])) tr.append(el('td',{},String(v)));
+    tbl.append(tr); }
+  return tbl; }
+
+// dated Sade-Sati phase strip (supplements the table below it, never replaces it)
+function sadeSatiStrip(R){ const ph=R.sade_sati_phases||[]; if(!ph.length) return null;
+  const lo=Math.min(...ph.map(p2=>p2.start_jd)), hi=Math.max(...ph.map(p2=>p2.end_jd));
+  if(!(hi>lo)) return null;
+  const ref=(R.window&&R.window.ref_jd);
+  const W=560,H=64,x0=8,x1=W-8,y=18,bh=20; const jx=jd=>lin(jd,lo,hi,x0,x1);
+  const s=svgBox(W,H);
+  const PHCOL={12:'var(--mix)',1:'var(--aff)',2:'var(--mix)'};
+  for(const p2 of ph){ const xa=jx(p2.start_jd), xb=jx(p2.end_jd);
+    s.append(tip(sv('rect',{x:xa,y:y,width:Math.max(1,xb-xa),height:bh,rx:3,
+      fill:PHCOL[p2.house_from_moon]||'var(--neu)',opacity:p2.house_from_moon===1?.85:.55,
+      stroke:'var(--surface)',strokeWidth:1}),
+      p2.phase+' — Saturn in '+SIGN[p2.sign]+' ('+jdYM(p2.start_jd)+' – '+jdYM(p2.end_jd)+')'+(p2.current?' — '+t('now'):'')));
+    if(xb-xa>44) s.append(sv('text',{x:(xa+xb)/2,y:y+bh-6,'font-size':9,'text-anchor':'middle',
+      fill:'var(--surface)'},p2.phase.split(' ')[0]+' · '+SIGN[p2.sign].slice(0,3)));
+    s.append(sv('text',{x:xa,y:y+bh+12,'font-size':8,fill:'var(--ink-2)'},jdYM(p2.start_jd))); }
+  s.append(sv('text',{x:x1,y:y+bh+12,'font-size':8,'text-anchor':'end',fill:'var(--ink-2)'},jdYM(hi)));
+  if(ref!=null&&ref>=lo&&ref<=hi){ const nx=jx(ref);
+    s.append(sv('line',{x1:nx,y1:6,x2:nx,y2:y+bh+4,stroke:'var(--accent)',strokeWidth:1.5,strokeDasharray:'3 2'}));
+    s.append(sv('text',{x:nx+3,y:12,'font-size':9,fill:'var(--accent)','font-weight':600},t('now'))); }
+  return s; }
+
+// the adverse Gochara windows — the exact client-side mirror of detailed_report.
+// adverse_transit_windows: same >=25-day noise floor, chronological. Segments carry
+// bav_bindus=None when adverse BY CONSTRUCTION (transits.gochara_timeline computes it for
+// favourable spans only), so — like the Python mirror — mitigation reads the planet's OWN
+// Bhinnashtakavarga row (R.bav_matrix) at the transited sign; nodes have no classical AV.
+function adverseTransitRows(R){ const out=[];
+  const bavOf={}; for(const bm of (R.bav_matrix||[])) bavOf[bm.planet]=bm.bindus||[];
+  for(const pl in (R.gochara_outlook||{})) for(const seg of (R.gochara_outlook[pl]||[])){
+    if(seg.gochara_good||(seg.end_jd-seg.start_jd)<25) continue;
+    const bav=(bavOf[seg.planet]&&bavOf[seg.planet][seg.sign-1]!=null)?bavOf[seg.planet][seg.sign-1]:null;
+    out.push({planet:seg.planet,start_jd:seg.start_jd,end_jd:seg.end_jd,sign:seg.sign,
+      house_from_moon:seg.house_from_moon,
+      what_it_concerns:PLANET_THEME[seg.planet]||'—',
+      mitigation:(bav!=null)?(bav+'/8 '+t('of the evil neutralised'))
+        :(seg.planet==='Rahu'||seg.planet==='Ketu')?t('— (node: no classical Ashtakavarga)'):'—',
+      interference:'—',
+      // fix 9 (2026-10-24): reverse Vedha relief (HPA-34:161-164); nodes have no row.
+      relief_reverse_vedha:(seg.planet==='Rahu'||seg.planet==='Ketu')?'— (unspecified by Raman)'
+        :(seg.reverse_vedha_sample_fraction>0?(Math.round(seg.reverse_vedha_sample_fraction*100)+'% of sampled dates relieved'):'none sampled / not on a Vedha point')}); }
+  out.sort((a,b2)=>a.start_jd-b2.start_jd); return out; }
+
+// ---- reading LENGTH: the same cast, read two ways ----------------------------
+// The full reading is the default and stays the default — nothing is hidden unless a reader
+// asks for the gist. Switching re-renders from the payload already in memory: both readings
+// ride in every response, so the toggle never re-casts the chart.
+let READ_LEN = 'full';
+let LAST_RENDER = null;          // [R, S, FQ] — so the toggle can redraw without a fetch
+
+function setReadingLength(v){
+  if(v===READ_LEN || !LAST_RENDER) return;
+  READ_LEN = v;
+  render(LAST_RENDER[0], LAST_RENDER[1], LAST_RENDER[2]);
+  if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2);
+}
+
+// Rendered on EVERY folio, because in the short reading the other folios are where a reader
+// discovers the switch exists — a mode you cannot find your way out of is a trap.
+function readingLengthToggle(){
+  const w=el('div',{class:'rl-toggle'});
+  w.append(el('span',{class:'rl-label'}, t('Reading')));
+  for(const [v,label] of [['short', t('short')], ['full', t('full')]]){
+    const b=el('button',{class:'rl-btn'+(READ_LEN===v?' on':''),type:'button'},label);
+    b.setAttribute('aria-pressed', READ_LEN===v ? 'true' : 'false');
+    b.onclick=()=>setReadingLength(v);
+    w.append(b);
+  }
+  return w;
+}
+
+function shortList(items){
+  const ul=el('ul',{class:'sr-list'});
+  for(const x of (items||[])) ul.append(el('li',{},x));
+  return ul;
+}
+
+// The short reading itself. Every string arrives already written in the reader's language —
+// t() cannot translate a sentence composed at runtime, so the payload carries both and this
+// picks. Safe DOM only, per the project rule.
+function shortReadingCard(sr){
+  const hi = LANG==='hi';
+  const pick=(o,f)=> (hi ? o[f+'_hi'] : o[f+'_en']) || '';
+  const box=el('div',{class:'short-reading'});
+  box.append(H2('Your reading, in short'));
+  if(pick(sr,'opening')) box.append(para(pick(sr,'opening'),'lede'));
+  if(pick(sr,'you')) box.append(para(pick(sr,'you'),'lede'));
+
+  for(const [field,label] of [['strengths','What this reading calls favourable'],
+                              ['difficulties','What it calls difficult'],
+                              ['mixed','What it reads both ways']]){
+    const items = hi ? sr[field+'_hi'] : sr[field+'_en'];
+    if(!(items||[]).length) continue;
+    box.append(el('h3',{class:'sr-h'}, t(label)));
+    box.append(shortList(items));
+  }
+
+  if((sr.periods||[]).length){
+    box.append(el('h3',{class:'sr-h'}, t('What is coming')));
+    if(pick(sr,'ahead_lead')) box.append(para(pick(sr,'ahead_lead'),'muted'));
+    for(const p of sr.periods){
+      const card=el('div',{class:'sr-period'+(p.is_now?' now':'')});
+      const head=el('div',{class:'sr-when'});
+      head.append(pick(p,'from_label')+' – '+pick(p,'to_label'));
+      if(p.is_now) head.append(el('span',{class:'sr-nowchip'}, t('now')));
+      card.append(head);
+      card.append(para(pick(p,'strength'),'sr-strength'));
+      const sup = hi ? p.supportive_hi : p.supportive_en;
+      const str = hi ? p.strained_hi : p.strained_en;
+      if((sup||[]).length){ card.append(el('div',{class:'muted'}, t('Running well'))); card.append(shortList(sup)); }
+      if((str||[]).length){ card.append(el('div',{class:'muted'}, t('Meeting friction'))); card.append(shortList(str)); }
+      box.append(card);
+    }
+  }
+
+  if((sr.combinations||[]).length){
+    box.append(el('h3',{class:'sr-h'}, t('The combinations your chart carries')));
+    if(pick(sr,'combinations_lead')) box.append(para(pick(sr,'combinations_lead'),'muted'));
+    for(const c of sr.combinations){
+      const row=el('div',{class:'sr-comb'});
+      row.append(el('b',{},c.name||''));
+      row.append(el('span',{class:'sr-tone t-'+String(c.tone||'mixed')}, pick(c,'tone')));
+      row.append(' — '+pick(c,'plain')+(pick(c,'when') ? '; '+pick(c,'when') : ''));
+      box.append(row);
+    }
+  }
+
+  for(const [field,label] of [['unusual','What is unusual here'],
+                              ['common','How much of this is true of everyone']]){
+    if(!pick(sr,field)) continue;
+    box.append(el('h3',{class:'sr-h'}, t(label)));
+    box.append(para(pick(sr,field)));
+  }
+  if(pick(sr,'caveat')) box.append(para(pick(sr,'caveat'),'muted'));
+  if(pick(sr,'more')) box.append(para(pick(sr,'more'),'muted'));
+  const b=el('button',{class:'leaf-button secondary',type:'button'}, t('READ THE FULL READING'));
+  b.onclick=()=>setReadingLength('full');
+  box.append(b);
+  return box;
+}
+
 function render(R, S, FQ){
-  // clear every chapter folio, then append each section-group into its leaf via chapter()
+  RPT=R;  // expose to H2's plain-language layer
+  PAGE_TOC=[];
+  INST_ANSWERS={}; INST_CONTEXT='after_reading';
+  // clear every movement folio and the colophon; sections are buffered, then flushed per movement
   for(let i=2;i<=8;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
   const b12=$('leaf12-body'); if(b12) b12.replaceChildren();
+  LAST_RENDER = [R, S, FQ];
+
+  // ---- the SHORT reading: one folio instead of seven ----
+  // The other folios are not left blank — a reader who keeps turning is told what happened
+  // and handed the way back, which is the difference between a mode and a dead end. The
+  // feedback section still renders on the colophon: shortening the reading must not quietly
+  // switch off the thing that measures how well it lands. (Merged 2026-10-14: the empirical-
+  // engine branch wrote into its eleven chapter folios; it now writes into main's seven
+  // movement folios, leaves 2-8, and the colophon.)
+  if(READ_LEN==='short'){
+    const put=(i,...n)=>{ const lf=$('leaf'+i+'-body'); if(lf) lf.append(...n.filter(Boolean)); };
+    put(2, readingLengthToggle(), R.short_reading ? shortReadingCard(R.short_reading)
+      : para(t('This chart is too sparse for a short reading — switch to the full reading.'),'muted'));
+    for(let i=3;i<=8;i++)
+      put(i, readingLengthToggle(),
+        para(t('You are reading the short version. The rest of the book fills in when you switch to the full reading.'),'muted'));
+    if(FQ&&FQ.length) put(12, feedbackCard(FQ));
+    if(R.feedback_instrument) put(12, H2('Your feedback'), feedbackInstrument(R.feedback_instrument));
+    buildToc();
+    return;
+  }
+
 
   // v33: sections are BUFFERED by section_id, then flushed one folio per movement in the
   // arc's own order. The alternative — appending straight into a folio — made the document
@@ -1876,6 +2821,13 @@ function render(R, S, FQ){
     return wrap;
   }
 
+
+  // the reading-length toggle opens the first folio (it rides the pre-section buffer,
+  // which the flush puts at the head of Movement I)
+  add(readingLengthToggle());
+  // the invitation to answer Part A blind rides the same pre-section buffer, so it opens the
+  // reading ahead of every section (merged 2026-10-14; see the note at "In simple words")
+  if(R.feedback_instrument) add(feedbackInvite());
 
   // ===== What matters most (the engine's ranked digest — first thing you see) =====
   const dg=R.digest||{};
@@ -1913,6 +2865,18 @@ function render(R, S, FQ){
     rb.onclick=()=>readAsStory(rb); add(rb);
   }
 
+  // ===== In simple words (v40, was v37) — placed by the arc right after the header block =====
+  if(R.simple_summary){ sec('simple_summary'); add(H2('In simple words')); plainLead('simple_summary');
+    add(simpleSummary(R.simple_summary)); }
+
+  // ===== the invitation to answer Part A blind, offered BEFORE the reading =====
+  // The feedback section itself sits at the end, where a closing section belongs. But its
+  // Part A is only evidence if it is answered before the reader learns what the chart says,
+  // so the offer to jump there has to be made here, at the top, and it is.
+  // (merged 2026-10-14) the pre-section buffer opens Movement I, so the invitation still
+  // comes first, ahead of every section.
+  // (moved to the pre-section buffer at the top of the full render; see there)
+
   // ===== Your Reading (plain) =====
   sec('plain_reading'); add(H2('Your Reading'));
   const pr=R.plain_reading||{};
@@ -1922,9 +2886,263 @@ function render(R, S, FQ){
   if(pr.notable) add(para(pr.notable,'lede'));
   // S3 — tensions woven, never hidden: both poles + the governing v18 rule per sentence.
   if((pr.reconciliations||[]).length){
-    add(para(t('Where readings pull in different directions (both poles shown; the reconciling rule is in How to read this report):'),'muted'));
+    const recIntro=el('p',{class:'muted'});
+    recIntro.append(t('Where readings pull in different directions (both poles shown; the reconciling rule is in '));
+    recIntro.append(jumpLink('How to read this report')); recIntro.append('):');
+    add(recIntro);
     for(const rec of pr.reconciliations) add(para('· '+rec,'muted')); }
   if(pr.closing) add(para(pr.closing,'muted'));
+
+  // ===== How to read this report (v18 interpretation guide — completeness: this
+  // shipped in the JSON since v18 but the page never rendered it; every field shows) =====
+  const ig=R.interpretation_guide;
+  if(ig){
+    sec('interpretation_guide'); add(H2('How to read this report')); plainLead('interpretation_guide');
+    if(ig.preamble) add(para(ig.preamble,'lede'));
+    for(const st of (ig.reading_order||[])){
+      const c=el('details',{class:'card'}); c.setAttribute('open','');
+      const s=el('summary'); s.append((st.step!=null?st.step+' · ':'')+(st.answers||st.title||''));
+      c.append(s); const b=el('div',{class:'body'});
+      if(st.title) b.append(para(st.title,'di-title'));
+      if(st.adds) b.append(para(st.adds,'muted'));
+      if(st.section_id) b.append(para(t('Section: ')+st.section_id,'muted'));
+      if(st.caveat_ref) b.append(para(t('Caveat: ')+st.caveat_ref,'muted'));
+      c.append(b); add(c); }
+    add(sectionTable('Precedence rules — which reading governs when two differ', ig.precedence, [],
+      'When two sections disagree about the same matter, these rules say which one governs, which corroborates, and which are simply different grains of the same answer.'));
+    add(sectionTable('Parallel lenses — side by side, never averaged', ig.parallel_lenses));
+    add(sectionTable('The five axes every section reads on', ig.axes));
+    if((ig.not_a_contradiction||[]).length){
+      add(para(t('Pairs that look contradictory but are not:'),'muted'));
+      for(const x of ig.not_a_contradiction) add(para('· '+(typeof x==='string'?x:JSON.stringify(x)),'muted')); }
+    if((ig.relation_vocabulary||[]).length)
+      add(para(t('Relation vocabulary (closed set): ')+ig.relation_vocabulary.join(' · '),'muted'));
+  }
+
+  // ===== How Raman would weigh this chart (v42, philosophy.py) — his frame for holding a
+  // verdict, the Lagna foundation, and the weighing principle at work in each house. =====
+  const ph=R.philosophy;
+  if(ph){
+    sec('philosophy'); add(H2('How Raman would weigh this chart')); plainLead('philosophy');
+    add(para(t('Raman’s own reasons for how a verdict should be held, in his words, then '+
+      'applied to this chart. Nothing here changes a verdict.'),'lede'));
+    for(const f of (ph.frame||[]))
+      add(para(f.heading+'. “'+f.quote+'” ('+f.cite+') '+f.means));
+    add(para(t('The foundation. ')+'“'+(ph.foundation_quote||'')+'” (HTJAH-I:3871-3878) '+ph.foundation));
+    add(para(t('Telling it. ')+ph.telling));
+    if((ph.houses||[]).length){
+      for(const w of ph.houses){
+        const lvl=(w.principle==='relieved'||w.principle==='obstructed-carrier');
+        const where=lvl?((w.houses.length===1?'house ':'houses ')+w.houses.map(x=>x[0]).join(', '))
+          :w.houses.map(x=>'house '+x[0]+' ('+x[1].join(', ')+')').join('; ');
+        add(para(w.title+' — '+where+': '+w.how+' “'+w.quote+'” ('+w.cite+')')); }
+    } else add(para(t('No house on this chart turns on one of these weighing principles.'),'muted'));
+  }
+
+  // ===== For and against, matter by matter (v43, for_against.py) — every cited rule for and
+  // against each matter, and their plain count. =====
+  const fa=R.for_against;
+  if(fa){
+    sec('for_against'); add(H2('For and against, matter by matter')); plainLead('for_against');
+    add(para(t(fa.notice),'lede'));
+    let cur=null;
+    for(const m of (fa.matters||[])){
+      if(m.house!==cur){ cur=m.house; add(para(t('House '+m.house),'muted')); }
+      const agree=(m.lean==='leans favourable'&&m.judge_verdict==='favourable')||
+                  (m.lean==='leans afflicted'&&m.judge_verdict==='afflicted');
+      add(para(m.matter+' — '+m.count_line+(agree?'':' (the clause judge reads it '+m.judge_verdict+')')));
+      for(const x of (m.reasons_for||[])) add(para('For: '+x.reading+' ('+x.cite+', '+x.rule_id+')','muted'));
+      for(const x of (m.reasons_against||[])) add(para('Against: '+x.reading+' ('+x.cite+', '+x.rule_id+')','muted'));
+    }
+  }
+
+  // ===== The integrated reading (v34) — the theme synthesis, ABOVE the technical sections.
+  // A re-read across every section into one coherent reading; judges nothing anew. =====
+  (function(){
+    const ts=R.themes; if(!ts||!(ts.themes||[]).length) return;
+    const AX={verdict:'verdict',magnitude:'strength',state:'state',dasha:'timing',
+              varga:'divisional',transit:'transit',yoga:'yoga',citation:'cross-feature'};
+    sec('themes'); add(H2('The integrated reading')); plainLead('themes');
+    add(para(t('One reading across every section above — not a new judgment. Each theme gathers the findings the report already made (house verdict, strength, planetary state, divisional confirmation, yoga, timing) into one mechanism, states how strongly they converge, and names any tension with the precedence rule that resolves it. The direction of every theme is the engine\'s own house verdict, unchanged.'),'lede'));
+    const p=ts.portrait||{};
+    const cl=(th)=>th.convergence_label||(String(th.convergence||'').replace(/_/g,' ').toLowerCase()+' convergence');
+    // PREC-8 order: the span is established BEFORE anything is read inside it, so the band
+    // opens the integrated reading rather than sitting in a chapter beside it.
+    const LF=ts.longevity;
+    if(LF){
+      add(para(t('The span this reading sits inside'),'muted'));
+      add(para(LF.frame,'lede'));
+      const lu=el('ul');
+      const lli=(txt)=>{ const x=el('li'); x.append(citeText(String(txt||''))); lu.append(x); };
+      // whole years only — a two-decimal lifespan is false precision the report bans
+      lli(t('Band')+' — '+LF.band+'; '+t('Ayurdaya cross-check')+' '+t('about')+' '+Math.round(LF.years)+' '+t('years')+' ('+LF.ymd[0]+'y '+LF.ymd[1]+'m '+LF.ymd[2]+'d)'+(LF.balarishta?('; Balarishta '+LF.balarishta):'')+'.');
+      if(LF.span_year) lli(t('Reach')+' — '+t('the band runs to about')+' '+LF.span_year+'; '+t('the furthest window this reading names is')+' '+(LF.reading_reaches||t('none'))+' — '+(LF.within_span?t('inside the span.'):t('OUTSIDE the span, disclosed where it appears.')));
+      lli(t('Running period')+' — '+(LF.maraka_now?t('carries a maraka-tier lord.'):t('carries no maraka-tier lord.')));
+      add(lu);
+      if((LF.maraka_windows||[]).length){
+        const mw=LF.maraka_windows.map(w=>({[t('bhukti')]:w[0], [t('window')]:w[1], [t('tier-score')]:w[2], [t('against the band')]:t(w[3]||'—')}));
+        const mt=sectionTable(t('Maraka-tier bhuktis ahead carrying the classical Saturn signal'), mw, null,
+          t('Raman\u2019s step two, after the band: a maraka period is fixed by the 2nd/7th-lord scheme, and Ayushkaraka Saturn transiting the 8th from birth or its trines during it is the classical last signal (HTJAH-II:4846-4849). Method, never a prediction.'));
+        if(mt) add(mt);
+      }
+      add(para(LF.honesty,'muted'));
+      add(para(t('Citation')+': '+LF.citation,'muted'));
+    }
+    add(para(t('Executive portrait'),'muted'));
+    const ul=el('ul',{class:'portrait'});
+    const li=(html)=>{ const x=el('li'); x.append(citeText(String(html||''))); ul.append(x); };
+    if(p.identity) li(t('Who the chart is')+' — '+p.identity);
+    if(p.frame) li(t('Reading frame')+' — '+t('judged chiefly from the')+' '+p.frame+' '+t('frame (the stronger of the two lagnas here).'));
+    if((p.dominant_actors||[]).length) li(t('Dominant actors')+' — '+p.dominant_actors.map(a=>a[0]+' ('+a[1]+')').join('; ')+'.');
+    if((p.strongest_domains||[]).length) li(t('Strongest domains')+' — '+p.strongest_domains.join(', ')+'.');
+    if((p.weakest_domains||[]).length) li(t('Areas under strain')+' — '+p.weakest_domains.join(', ')+'.');
+    if((p.protective_factors||[]).length) li(t('Protective factors')+' — '+p.protective_factors.join('; ')+'.');
+    if(p.principal_tension) li(t('Principal tension')+' — '+p.principal_tension);
+    if(p.concordance_note) li(t('How far the techniques agree')+' — '+p.concordance_note);
+    if(p.reading_stability) li(t('How firm is the cast moment?')+' — '+p.reading_stability);
+    if(p.chara_now) li(t('Jaimini chara dasha (walled)')+' — '+p.chara_now);
+    if(p.current_chapter) li(t('Current chapter')+' — '+p.current_chapter+(p.next_chapter?('; '+p.next_chapter):'')+'.');
+    add(ul);
+    if(p.honesty_note) add(para(p.honesty_note,'muted'));
+    const byId={}; for(const th of ts.themes) byId[th.theme_id]=th;
+    const spine=(ts.spine||[]).map(i=>byId[i]).filter(Boolean);
+    if(spine.length){
+      add(para(t('The interpretive spine'),'muted'));
+      const su=el('ul'); for(const th of spine){ const x=el('li');
+        x.append(th.name+' — '+th.headline_verdict+' ('+cl(th)+')'); su.append(x); }
+      add(su); }
+    add(para(t('Major life-themes'),'muted'));
+    // one constant string across every theme's dissent summary — shown once, not twelve times
+    const _mn=(ts.themes.find(x=>x.dissent&&x.dissent.method_note)||{dissent:{}}).dissent.method_note||'';
+    if(_mn) add(para(t('On the cross-checks below')+': '+_mn,'muted'));
+    for(const th of ts.themes){
+      const card=el('details',{class:'card'}); card.setAttribute('open','');
+      const sm=el('summary'); sm.append(th.name+' — '+th.headline_verdict+' ('+cl(th)+')');
+      card.append(sm); const b=el('div',{class:'body'});
+      b.append(para(th.final_interpretation,'di-title'));
+      b.append(para(t('Network')+' — '+(th.houses||[]).map(h=>'H'+h).join(', ')+((th.karakas||[]).length?('; '+t('karakas')+' '+th.karakas.join(', ')):'')+'; '+t('driven by')+' '+((th.dominant_planets||[]).join(', ')||t('the chart'))+'.','muted'));
+      if((th.sub_matters||[]).length) b.append(para(t('Within this house')+' — '+th.sub_matters.map(f=>f[0]+' '+t('reads')+' '+f[1]).join('; ')+'.','muted'));
+      b.append(para(t('Convergence')+' — '+cl(th)+': '+th.convergence_why,'muted'));
+      for(const ax of (th.convergence_axes||[])){
+        const arrow = ax.direction>0?t('agrees'):(ax.direction<0?t('opposes'):t('no direction'));
+        b.append(para(ax.label+' ('+ax.lean+') — '+arrow+'; '+t(ax.remove)+' — '+ax.why_remove,'muted')); }
+      if(th.activation_in_span) b.append(para(t('That window inside the span')+' — '+th.activation_in_span,'muted'));
+      if(th.weather_on_window) b.append(para(t('Weather across that window')+' — '+th.weather_on_window,'muted'));
+      if(th.pitru_screen) b.append(para(t('Ancestral screen (separate layer)')+' — '+th.pitru_screen,'muted'));
+      if(th.dissent){ const ds=th.dissent;
+        b.append(para(t('How settled is this?')+' — '+ds.reading,'muted'));
+        for(const ck of (ds.checks||[])){
+          const cite=ck.citation?(', '+ck.citation):'';
+          const indep=ck.independent?t('independent'):t('not independent of the verdict');
+          b.append(para(ck.system+' — '+ck.tier+'; '+t(ck.relation)+'; '+indep+' ('+ck.governing+cite+'). '+ck.note,'muted')); }
+        if(ds.walled_note) b.append(para(ds.walled_note,'muted')); }
+      if(th.concordance){ const c=th.concordance;
+        b.append(para(t('Do the techniques agree?')+' — '+c.reading,'muted'));
+        if((c.core_for||[]).length||(c.core_against||[]).length)
+          b.append(para(t('core (lord / karaka / navamsa)')+': '+((c.core_for||[]).join(', ')||t('none'))+' '+t('for')+'; '+((c.core_against||[]).join(', ')||t('none'))+' '+t('against'),'muted'));
+        if((c.overlay_for||[]).length||(c.overlay_against||[]).length)
+          b.append(para(t('overlay')+': '+((c.overlay_for||[]).join(', ')||t('none'))+' '+t('for')+'; '+((c.overlay_against||[]).join(', ')||t('none'))+' '+t('against'),'muted')); }
+      for(const g of (th.driver_concordance||[]))
+        b.append(para(g.planet+' ('+t('force vs intent')+') — '+g.reading,'muted'));
+      for(const d of (th.divisional_checks||[]))
+        b.append(para(d.varga+' ('+t(d.relation)+') — '+d.verdict+'. '+d.note,'muted'));
+      if((th.av_support||[]).length)
+        b.append(para(t('Ashtakavarga backing (in this bhava\'s own sign)')+' — '+th.av_support.map(a=>a.planet+': '+a.bindus+' '+t('bindus')+' ('+t('reduced')+' '+a.reduced+', '+t('Sodya Pinda')+' '+a.sodya_pinda+') — '+t(a.verdict)).join('; '),'muted'));
+      for(const tr of (th.transits||[]))
+        b.append(para(t('Transit')+': '+tr.planet+' — '+tr.note,'muted'));
+      for(const y of (th.yogas||[])){
+        b.append(para(t('Yoga')+' '+(y.rank!=null?('#'+y.rank+' '):'')+y.name+' ('+y.kind+') — '+y.effect,'muted'));
+        if((y.participants||[]).length) b.append(para(t('participants')+': '+y.participants.join(', '),'muted'));
+        if(y.strength_note) b.append(para(t('strength')+': '+y.strength_note,'muted'));
+        if((y.windows||[]).length) b.append(para(t('operates in')+': '+y.windows.join('; ')+(y.ahead?'':(' — '+t('all of them behind the reference moment'))),'muted'));
+        if(y.cancellation) b.append(para(t('cancellation')+': '+y.cancellation,'muted'));
+      }
+      if(th.karmic_lens)
+        b.append(para(t('Karmic lens')+' ('+t(th.karmic_lens.aspect)+', '+t('walled')+') — '+th.karmic_lens.note,'muted'));
+      if((th.distinctive||[]).length)
+        b.append(para(t('How unusual is this?')+' — '+th.distinctive.slice(0,4).map(x=>x.signification+' ('+t(x.rarity)+'): '+x.population_note).join('; '),'muted'));
+      b.append(para(t('Divisional (D9)')+' — '+th.varga_relation+'.','muted'));
+      if(th.activation_span) b.append(para(t('Timing')+' — '+th.activation_span,'muted'));
+      const rows=(th.links||[]).map(l=>({[t('axis')]:AX[l.axis]||l.axis, [t('finding')]:l.label+': '+l.value,
+        [t('source')]:(String(l.accessor||'').split('@').pop()||'').trim(), [t('provenance')]:l.provenance}));
+      const tbl=sectionTable(t('Evidence chain (every finding, its source)'), rows); if(tbl) b.append(tbl);
+      for(const c of (th.contradictions||[])) b.append(para(t('Tension')+' ('+c.kind+') — '+c.poles[0]+' vs '+c.poles[1]+'. '+t('Resolved by')+' '+c.governing+': '+c.resolution,'muted'));
+      card.append(b); add(card);
+    }
+    if((ts.graha_concordance||[]).length){
+      add(para(t('Do the techniques agree? — force against intent'),'muted'));
+      add(para(t('Shadbala asks how much force a graha commands; Ishta and Kashta ask to what end. A graha can be strong AND harmful — strength is magnitude, never direction (PREC-2, GBB-9).'),'muted'));
+      const gc=ts.graha_concordance.map(g=>({[t('graha')]:g.planet,
+        [t('Shadbala')]:(g.rupas==null?'-':g.rupas.toFixed(2)),
+        [t('Ishta')]:(g.ishta==null?'-':g.ishta.toFixed(0)),
+        [t('Kashta')]:(g.kashta==null?'-':g.kashta.toFixed(0)),
+        [t('state')]:g.avastha, [t('measures')]:g.agreement, [t('reading')]:g.pattern}));
+      const gt=sectionTable(t('Each graha, its independent measures set side by side'), gc); if(gt) add(gt);
+    }
+    if((ts.contested_themes||[]).length){
+      add(para(t('Themes with a cross-check reading against the verdict — an inventory, not a grade. The verdicts stand; each dissent is named at its own tier so it can be weighed, not counted (HTJAH-I:495).'),'muted'));
+      const cu2=el('ul'); for(const pair of ts.contested_themes){ const x=el('li');
+        x.append(pair[0]+' — '+pair[1].reading); cu2.append(x); }
+      add(cu2);
+    }
+    if((ts.divisional_divergences||[]).length){
+      add(para(t('Divisions that read against the rasi'),'muted'));
+      add(para(t('A varga is the classical confirmation device, so its dissent is worth naming. The D1 Raman core decides and the division corroborates (PREC-11).'),'muted'));
+      const du=el('ul'); for(const pair of ts.divisional_divergences){ const x=el('li');
+        x.append(pair[0]+' — '+pair[1].varga+' '+t('reads')+' '+pair[1].verdict+', '+t('against the rasi verdict')+'.'); du.append(x); }
+      add(du);
+    }
+    const BGV=ts.background_vargas||[];
+    if(BGV.length){
+      add(para(t('The deep-background divisions'),'muted'));
+      add(para(t('D-27, D-40, D-45 and D-60 resolve no house and carry no matter verdict, so nothing in the reading consulted them — yet the engine judged all four on every chart. They are background modifiers: no direction, no convergence vote, and they can never move a bhava verdict. Raman names the shodasavarga scheme and defers the rest to Parashara (HPA-11:195-201); the domain labels are Rath\u2019s, not Raman\u2019s.'),'lede'));
+      /* a neutral status carries its KIND: 'contested' (both poles fired and cancelled)
+         and 'silent' (neither fired) are opposite findings that the bare word hid. */
+      const bg=BGV.map(b=>({[t('division')]:'D-'+b.varga+' '+b.name, [t('domain (non-Raman label)')]:b.domain,
+        [t('engine\u2019s own reading')]:b.status+(b.status_kind?(' ('+t(b.status_kind)+')'):''),
+        [t('what it rests on')]:b.reading}));
+      const bt=sectionTable(t('Deep-background divisions — modifiers, never votes'), bg, null,
+        t('Read as background only. The strength method is a general principle applied to a division Raman names; the domain labels are classical/non-citable.'));
+      if(bt) add(bt);
+      add(para(t('Provenance')+': '+BGV[0].provenance+'; '+t('citation')+' '+BGV[0].citation,'muted'));
+    }
+    const CAL=ts.calendar;
+    if(CAL&&(CAL.windows||[]).length){
+      add(para(t('The weather over these years'),'muted'));
+      add(para(CAL.frame,'lede'));
+      const cw=CAL.windows.map(w=>({[t('from')]:w.start_year, [t('to')]:w.end_year,
+        [t('scheme')]:w.kind, [t('stretch')]:w.label+(w.current?(' ('+t('running now')+')'):''),
+        [t('what it measures')]:w.detail, [t('governing')]:w.governing+' ('+w.citation+')'}));
+      const ct=sectionTable(t('Timing weather across the years this reading names'), cw, null,
+        t('Subordinate by citation: transits are catalytic, never causal (PREC-6), and the Kakshya split is a timing lens, never a verdict (PREC-7). None of this moved a verdict above.'));
+      if(ct) add(ct);
+      add(para(CAL.honesty,'muted'));
+    }
+    if((ts.contested_bhavas||[]).length){
+      add(para(t('Contested bhavas — the verdict runs against the weight of the testimony'),'muted'));
+      const bu=el('ul'); for(const c of ts.contested_bhavas){ const x=el('li'); x.append('H'+c.house+' — '+c.reading); bu.append(x); }
+      add(bu);
+    }
+    if((ts.connections||[]).length){
+      add(para(t('How the themes connect'),'muted'));
+      const cu=el('ul'); for(const c of ts.connections){ const x=el('li'); x.append(c.note); cu.append(x); }
+      add(cu);
+    }
+    if((ts.dasha_evolution||[]).length){
+      add(para(t('Dasha evolution — the horoscope through time'),'muted'));
+      const rows=ts.dasha_evolution.map(ch=>({[t('chapter')]:ch.maha+' MD'+(ch.is_current?(' ('+t('now')+')'):'')
+          +((ch.acts_through||[]).length?(' ('+t('acting through')+' '+ch.acts_through.join(', ')+')'):'')
+          +(ch.lord_condition?(' — '+t('lord')+' '+ch.lord_condition):'')
+          +(ch.av_seat?('; '+ch.av_seat):''),
+        [t('span')]:ch.span, [t('lean')]:ch.lean, [t('newly emphasized')]:(ch.emerging||[]).join(', ')||'-',
+        [t('continuing')]:(ch.continuing||[]).join(', ')||'-'}));
+      const de=sectionTable(t('Each Mahadasha foregrounds the themes its lord drives'), rows); if(de) add(de);
+      if(ts.dasha_evolution.some(ch=>(ch.acts_through||[]).length))
+        add(para(t('Rahu and Ketu own no sign, so a nodal chapter is read through the lord of the sign the node occupies and any planet joined with it — the routing is named above rather than assumed.'),'muted'));
+    }
+    const vm=ts.themes.map(th=>({[t('theme')]:th.name, [t('natal verdict')]:th.headline_verdict, [t('D9 relation')]:th.varga_relation}));
+    const vt=sectionTable(t('Varga confirmation matrix'), vm); if(vt) add(vt);
+  })();
 
   // ===== Judgment graph (S1) — used already above (Your Reading's dominant-planet census
   // sentence); shown right beside it, not buried later in the chapter =====
@@ -1960,7 +3178,10 @@ function render(R, S, FQ){
       Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
 
     const d=el('details',{class:'card'});
-    const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
+    const sm=el('summary');
+    sm.append(t('Every edge (source · relation · target · provenance)')+' — '+jg.edges.length+' '+t('edges')+': '+
+      Object.entries(byRel).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+' '+v).join(' · '));
+    d.append(sm);
     const body=el('div',{class:'body'});
     body.append(sectionTable('', jg.edges));
     d.append(body); add(d); }
@@ -2022,6 +3243,13 @@ function render(R, S, FQ){
   if(ov.functional_natures&&ov.functional_natures.length)
     add(para('Functional nature for this Lagna — '+ov.functional_natures.map(x=>x[0]+' '+x[1]).join('; '),'muted'));
   if(s.deeptadi&&s.deeptadi.length) add(para('Avasthas (Deeptadi): '+s.deeptadi.join('; '),'muted'));
+  // 2026-08-18 parity: per-planet Baladi + Jagradadi states — computed and USED by the judge
+  // (intensity dial) since always, shown here with their CLASSICAL_NONCITABLE provenance.
+  const _bj=R.baladi_jagradadi;
+  if(_bj&&Object.keys(_bj).length)
+    add(sectionTable("Baladi & Jagradadi avastha states (the judge's intensity dial)",
+      Object.entries(_bj).map(([g2,st])=>({graha:g2,baladi:st.baladi,jagradadi:st.jagradadi})),[],
+      PARITY_NOTES.baladi));
 
   // ===== The Sitting (v35) — the continuous reading =====
   if(R.sitting&&R.sitting.grip){
@@ -2051,6 +3279,27 @@ function render(R, S, FQ){
   if(ru.temperament) add(para('Classical temperament: '+ru.temperament+' (HTJAH-I:6248-6268)','muted'));
   if(ru.signature) add(para(ru.signature));
 
+  // ===== Psychological profile (v27) — completeness repair 2026-08-14: computed since
+  // v27 but never rendered on this page (CLAUDE.md REPORT COMPLETENESS) =====
+  if(R.psych){ const ps=R.psych;
+    sec('psych'); add(H2('Psychological profile')); plainLead('psych');
+    if(ps.woven) add(para(ps.woven,'lede'));
+    if(ps.lagna_quote&&ps.lagna_quote.length===2)
+      add(para('The rising sign\'s portrait (Raman verbatim) — "'+ps.lagna_quote[0]+'" ('+ps.lagna_quote[1]+')'));
+    if(ps.moon_state) add(para('The mind\'s significator — '+ps.moon_state,'muted'));
+    if(ps.temperament) add(para('Temperament of the strongest planet — '+ps.temperament+' (HTJAH-I:6248-6268)','muted'));
+    if(ps.nature_stamp) add(para('Nature & appearance stamped by — '+ps.nature_stamp+' (HTJAH-I:3892-3897)','muted'));
+    if(ps.atmakaraka) add(para('Atmakaraka — '+ps.atmakaraka+' (the 7-karaka scheme)','muted'));
+    /* completeness repair 2026-08-19: the mind-stack completions (the fired H1.M.* Moon
+       disposition rules, the Mercury buddhi line and the Deeptadi cross-reference) ship in
+       the JSON and render on markdown + standalone but never here. */
+    for(const f of (ps.moon_mind||[])) add(ruleLine(f[0],t('The Moon\u2019s mental disposition')+' — '+f[1],f[2]));
+    if(ps.mercury_line) add(para(t('Mercury (buddhi) condition')+' — '+ps.mercury_line,'muted'));
+    if(ps.deeptadi_moon) add(para(t('The Moon\u2019s avastha (cross-reference)')+' — '+ps.deeptadi_moon,'muted'));
+    /* v36 — Raman's affliction-to-the-mind screen: present-or-absent, never a diagnosis. */
+    for(const m of (ps.mind_screen||[])) add(para(m[0]+' — '+m[1]+' ('+m[2]+')','muted'));
+    if(ps.mind_caution) add(para(ps.mind_caution,'muted fineprint')); }
+
   // ===== Charts — Rasi · Navamsa · Gochara (visual grids; supplement the positions table below) =====
   if(R.chart&&R.chart.planets){ sec('chart_grids'); add(H2('Charts — Rasi · Navamsa · Gochara'));
     const cw=el('div',{class:'charts'});
@@ -2062,11 +3311,23 @@ function render(R, S, FQ){
 
   // ===== Planetary positions =====
   sec('positions'); add(H2('Planetary positions'));
-  const pt=el('table'); pt.append(el('tr',{},...['graha','sign','house','nakshatra','pada','navamsa','Shadbala','notes'].map(x=>el('th',{},x))));
+  // 2026-08-18 parity: + exact sidereal longitude (checkable sign-degree form, raw degrees in
+  // the cell title) and the nakshatra's Vimshottari lord (the Moon's row explains the birth
+  // Mahadasha), + the Ascendant as a checkable row of its own (R.chart.ascendant / asc_lon).
+  const pt=el('table'); pt.append(el('tr',{},...['graha','sign','longitude','house','nakshatra','pada','nak lord','navamsa','Shadbala','notes'].map(x=>el('th',{},t(x)))));
+  const _asc=(R.chart||{}).ascendant;
+  if(_asc){ pt.append(el('tr',{},el('td',{},t('Ascendant')),el('td',{},SIGN[_asc.sign]||_asc.sign),
+    el('td',{title:_asc.lon!=null?(_asc.lon+'°'):''},(_asc.longitude||'—')+(_asc.lon!=null?(' · '+_asc.lon+'°'):'')),
+    el('td',{},'1'),el('td',{},nakName(_asc.nakshatra)),el('td',{},String(_asc.pada)),
+    el('td',{},_asc.nakshatra_lord||'—'),el('td',{},SIGN[_asc.navamsa_sign]||_asc.navamsa_sign),
+    el('td',{},'—'),el('td',{class:'muted'},t('lagna')))); }
   for(const [nm,p] of Object.entries(R.chart?.planets||{})){
     const notes=[p.vargottama?'vargottama':'',p.retrograde?'retrograde':'',(p.combust_fraction>=0.5)?'combust':''].filter(Boolean).join(', ');
-    pt.append(el('tr',{},el('td',{},nm),el('td',{},SIGN[p.sign]||p.sign),el('td',{},String(p.rasi_house)),
-      el('td',{},nakName(p.nakshatra)),el('td',{},String(p.pada)),el('td',{},SIGN[p.navamsa_sign]||p.navamsa_sign),
+    pt.append(el('tr',{},el('td',{},nm),el('td',{},SIGN[p.sign]||p.sign),
+      el('td',{title:p.lon!=null?(p.lon+'°'):''},(p.longitude||'—')+(p.lon!=null?(' · '+p.lon+'°'):'')),
+      el('td',{},String(p.rasi_house)),
+      el('td',{},nakName(p.nakshatra)),el('td',{},String(p.pada)),
+      el('td',{},p.nakshatra_lord||'—'),el('td',{},SIGN[p.navamsa_sign]||p.navamsa_sign),
       el('td',{},p.shadbala_rupas==null?'—':p.shadbala_rupas+' rupas'),el('td',{class:'muted'},notes||'—')));
   }
   add(pt);
@@ -2085,7 +3346,18 @@ function render(R, S, FQ){
     p.append(el('b',{},y.name+' ('+y.kind+')')); const s2=citeChip(y.source);
     if(s2){ p.append(' '); p.append(s2);} if(y.effect){ p.append(' — '); p.append(citeText(y.effect)); }
     add(p); }
-  add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing));
+  add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing, [],
+    'A yoga tends to deliver during the periods of the planets that form it — each row shows a yoga and the period windows of its lords.'));
+  // v21 yoga deep-read — completeness: shipped in JSON since v21, never rendered here.
+  if((R.yoga_deep||[]).length){
+    sec('yoga_deep'); add(H2('Yoga deep-read')); plainLead('yoga_deep');
+    for(const y of R.yoga_deep){ const c=el('details',{class:'card'}); c.setAttribute('open','');
+      const s=el('summary'); s.append((y.rank!=null?y.rank+'. ':'')+(y.name||y.id||'')+(y.kind?' ('+y.kind+')':''));
+      c.append(s); const b=el('div',{class:'body'});
+      for(const k in y){ const v=y[k]; if(v==null||v===''||k==='rank'||k==='name'||k==='id'||k==='kind') continue;
+        const row=el('p',{class:(k==='definition_quote'||k==='effect_quote')?'lede':'muted'});
+        row.append(el('b',{},t(k.replace(/_/g,' '))+': ')); row.append(citeText(fmtVal(k,v))); b.append(row); }
+      c.append(b); add(c); } }
 
   // ===== Ashtakavarga (SAV) =====
   if(R.sav){ sec('ashtakavarga'); add(H2('Ashtakavarga (Sarvashtakavarga)')); plainLead('ashtakavarga');
@@ -2095,6 +3367,29 @@ function render(R, S, FQ){
     const t=el('table'); t.append(el('tr',{},...Object.keys(R.sav).map(k=>el('th',{},SIGN[+k]||k))));
     t.append(el('tr',{},...Object.values(R.sav).map(v=>el('td',{},String(v))))); add(t);
     add(para('Average 28 per sign, 337 total. Raman rates Ashtakavarga corroborative, not decisive (HTJAH-II:4453-4456).','muted')); }
+
+  // ===== 2026-08-18 parity (AV completeness): the 7x12 BAV matrix, the HPA-26 reduced
+  // tables and the Sodya Pinda — the SAV visual above stays; these are the tables it sums. =====
+  const _bavM=bavMatrixTable(R);
+  if(_bavM){ const d=el('details',{class:'card'}); d.setAttribute('open','');
+    const sm2=el('summary'); sm2.append(t("Bhinnashtakavarga (BAV) — each planet's own bindu row")+' ('+(R.bav_matrix||[]).length+')');
+    d.append(sm2); const b2=el('div',{class:'body'});
+    b2.append(para(t(PARITY_NOTES.bav_matrix),'vz-note'));
+    const sc2=el('div',{class:'tscroll'}); sc2.append(_bavM); b2.append(sc2); d.append(b2); add(d); }
+  const _bavT=bavReducedTable(R,'trikona');
+  if(_bavT){ const d=el('details',{class:'card'}); d.setAttribute('open','');
+    const sm2=el('summary'); sm2.append(t('HPA-26 reductions (Trikona + Ekadhipathya Sodhana)'));
+    d.append(sm2); const b2=el('div',{class:'body'});
+    b2.append(para(t(PARITY_NOTES.bav_reduced),'vz-note'));
+    b2.append(para(t('After Trikona Sodhana (HPA-26:403-421):'),'muted'));
+    const sc2=el('div',{class:'tscroll'}); sc2.append(_bavT); b2.append(sc2);
+    b2.append(para(t('After both reductions (Ekadhipathya applied, HPA-26:464-497):'),'muted'));
+    const sc3=el('div',{class:'tscroll'}); sc3.append(bavReducedTable(R,'reduced')); b2.append(sc3);
+    d.append(b2); add(d); }
+  if((R.sodya_pinda||[]).length)
+    add(sectionTable('Sodya Pinda (Rasi + Graha Gunakara)',
+      R.sodya_pinda.map(sp=>({graha:sp.planet,'Rasi Gunakara':sp.rasi,'Graha Gunakara':sp.graha,'Sodya Pinda':sp.total})),[],
+      PARITY_NOTES.sodya_pinda));
 
   // ===== House-by-house (proforma + strength + witnesses) =====
   sec('houses'); add(H2('House-by-house'));
@@ -2108,6 +3403,7 @@ function render(R, S, FQ){
     const P=prep[pf.house], HS=hs[pf.house];
     const d=el('details',{class:'card'});
     const sm=el('summary'); sm.append('H'+pf.house+' · ',vchip(pf.rollup),el('span',{class:'muted'},' lord '+pf.lord));
+    if(pf.matter_breakdown) sm.append(el('span',{class:'muted'},' · '+t('matters')+': '+pf.matter_breakdown));
     d.append(sm);
     const b=el('div',{class:'body'});
     // v35 — the person-facing lead, above the pillars. Adds; never replaces.
@@ -2117,6 +3413,37 @@ function render(R, S, FQ){
     const st=el('table'); st.append(el('tr',{},el('th',{},'matter'),el('th',{},'verdict'),el('th',{},'degree'),el('th',{},'karaka')));
     for(const sv of pf.significations) st.append(el('tr',{},el('td',{},sv.signification),el('td',{},vchip(sv.verdict)),el('td',{},sv.degree||'—'),el('td',{},sv.karaka)));
     b.append(st);
+    // What the doctrine indicates — the verdict-invariant lookup channel (cause-of-end
+    // decanate, source of gains, organ/tridosha, divisional readings). Not a grade; shown
+    // in full because the completeness lock forbids collapsing data to a count.
+    const inds=[];
+    for(const sv of pf.significations) for(const t of (sv.indications||[])) inds.push([sv.signification,t[1],t[2]]);
+    if(inds.length){
+      b.append(para('What the doctrine indicates — the kind, cause or channel Raman’s rules name for this house (not a verdict):','muted'));
+      const it=el('table'); it.append(el('tr',{},el('th',{},'matter'),el('th',{},'indication'),el('th',{},'reading')));
+      for(const [isig,ilabel,ival] of inds) it.append(el('tr',{},el('td',{},isig),el('td',{},ilabel),el('td',{},ival)));
+      b.append(it);
+    }
+    // The two non-graded rule lanes. Kept apart deliberately: `further_combinations` FIRED
+    // on this chart and only fell outside the chief-combination cap; `doctrine_on_record`
+    // was never evaluated, and presenting it as a reading would be a false claim.
+    const ruleRows=(rows,tbl)=>{ for(const [rsig,rid,rtext,rcite] of rows)
+      tbl.append(el('tr',{},el('td',{},rsig),el('td',{},rid),el('td',{},rtext),el('td',{},rcite))); };
+    if((pf.general_readings||[]).length){
+      b.append(para('Raman’s general reading — what the placement gives regardless of the lord’s strength (his own “of general application”, HTJAH-I:1003-1007); neither the fortified nor the afflicted branch:','muted'));
+      const gt=el('table'); gt.append(el('tr',{},el('th',{},'matter'),el('th',{},'rule'),el('th',{},'Raman’s reading'),el('th',{},'citation')));
+      ruleRows(pf.general_readings,gt); b.append(gt);
+    }
+    if((pf.further_combinations||[]).length){
+      b.append(para('Further fired combinations — beyond the chief three per matter:','muted'));
+      const ft=el('table'); ft.append(el('tr',{},el('th',{},'matter'),el('th',{},'rule'),el('th',{},'Raman’s effect'),el('th',{},'citation')));
+      ruleRows(pf.further_combinations,ft); b.append(ft);
+    }
+    if((pf.doctrine_on_record||[]).length){
+      b.append(para('Doctrine on record for this house, not yet computed — Raman states these combinations; the engine cannot yet evaluate them, so they are listed, not applied to this chart:','muted'));
+      const ot=el('table'); ot.append(el('tr',{},el('th',{},'matter'),el('th',{},'rule'),el('th',{},'Raman’s effect'),el('th',{},'citation')));
+      ruleRows(pf.doctrine_on_record,ot); b.append(ot);
+    }
     // population context
     const cal=(R.calibration?.[String(pf.house)]||R.calibration?.[pf.house]||{}).entries||[];
     if(cal.length){ const invs=cal.filter(e=>e.inverted_warning);
@@ -2146,11 +3473,23 @@ function render(R, S, FQ){
   const _bb=bhavaBalaBars(R);
   if(_bb) add(vizCard('Bhava-Bala per house — bar = strength, colour = verdict', _bb,
     'House order H1→H12. A long RED bar = an afflicted verdict standing on strong ground; a short GREEN bar = favourable but weakly supported. ★ = the strongest house (rank 1/12). The full table is below.'));
-  add(rows(R.house_strength));
+  // 2026-08-18 parity: + the Bhava Bala value in RUPAS (markdown parity: bhava_bala/60),
+  // beside the raw virupa figure — nothing removed, one derived column added.
+  add(rows((R.house_strength||[]).map(r2=>({...r2,
+    bhava_bala_rupas:r2.bhava_bala!=null?+(r2.bhava_bala/60).toFixed(2):null}))));
 
   // ===== Preponderance of testimonies (full witness ledger per house) =====
   const pp=R.preponderance||{};
   if((pp.houses||[]).length){ sec('preponderance'); add(H2('Preponderance of testimonies')); plainLead('preponderance');
+    // The honesty rules that govern this table. They were on the markdown and the
+    // standalone HTML but had never reached this page — the surface most people read.
+    if((R.preponderance_rules||[]).length){
+      add(para(t('The honesty rules that govern this table — read them before the counts.'),'muted'));
+      const ol=el('ol',{class:'honesty-rules'});
+      for(const rl of R.preponderance_rules){
+        const li=el('li'); li.append(el('b',{},rl.heading+'.'),' '); li.append(citeText(rl.body||''));
+        ol.append(li); }
+      add(ol); }
     add(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its own headline).','muted'));
     const _pb=prepBars(R);
     if(_pb) add(vizCard('Witness balance per house — favourable vs adverse', _pb,
@@ -2184,17 +3523,184 @@ function render(R, S, FQ){
   const _lgg=longevityGauge(R);
   if(_lgg) add(vizCard('Ayurdaya span (numeric cross-check)', _lgg,
     'The numeric Ayurdaya span on a 0–100-year scale, band marked. Raman treats this as a band, never a date — the maraka scheme fixes timing. Detail below.'));
-  add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn));
+  // 2026-08-18 parity: the full tiered maraka scheme with each graha's qualifying clause(s)
+  // (`reasons`, e.g. "Venus — lord of the 2nd") + the 22nd-drekkana / 64th-navamsa lords.
+  if(R.maraka){
+    add(sectionTable('The maraka scheme (death-dealing determinants)', R.maraka.units, [],
+      PARITY_NOTES.maraka));
+    add(para(t('22nd drekkana lord')+': '+(R.maraka.drekkana22_lord||'—')+' · '+
+      t('64th navamsa lord')+': '+(R.maraka.navamsa64_lord||'—')+' · '+
+      t('Running period')+' '+t(maraka_phrase(R.maraka_period_now))+
+      ' '+t('(broad, low-discrimination flag by design)'),'muted')); }
+  add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn, [],
+    'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast. The "tier addends" column spells the score out per lord (primary 5 conjunct a 2nd/7th lord, 4 occupant or aspecting it, 3 the lord itself, HTJAH-I:783-784; secondary=2; tertiary=1; a node holding a late maraka\'s delegated power carries its weight, HTJAH-I:11194-11203), so the number is checkable. The amsa_spans / signature columns add the Amsa half: "the Rashi and Amsa occupied by him at birth or its trines" (HTJAH-I:11226-11228).'));
   // v17 — Health & vulnerability read-out: pure re-read, caveat always shown.
   if(R.health_readout && (R.health_readout.rows||[]).length){ const hr=R.health_readout;
     sec('health_readout'); add(H2('Health & vulnerability read-out')); plainLead('health_readout');
     add(para(hr.caveat,'muted'));
-    add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows));
+    add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows, [],
+    'Body areas the chart marks for attention, each re-read from a section above — care indications, not diagnoses.'));
     if((hr.maraka_tiers||[]).length)
       add(para('Maraka tiers: '+hr.maraka_tiers.map(t=>t[0]+' ('+t[1]+')').join(', ')+
         ' — 22nd drekkana lord: '+hr.drekkana22_lord+', 64th navamsa lord: '+hr.navamsa64_lord+'.','muted'));
-    add(para('Running period '+(hr.maraka_period_now?'carries a maraka-tier lord':'carries no maraka-tier lord')+
+    add(para('Running period '+maraka_phrase(hr.maraka_period_now)+
       ' (broad, low-discrimination flag by design). Longevity band: '+hr.longevity_band+'.','muted')); }
+
+  // ===== Arishta & Bhanga (v22) — completeness repair 2026-08-14 =====
+  if(R.arishta){ const ar=R.arishta;
+    sec('arishta'); add(H2('Arishta & Bhanga')); plainLead('arishta');
+    add(para('Balarishta '+(ar.balarishta_applies?('applies'+(ar.balarishta_cancelled?' but is cancelled':'')):'does not apply')+
+      ((ar.balarishta_reasons||[]).length?(' — '+ar.balarishta_reasons.join('; ')):'')+'. Longevity band: '+(ar.band||'—')+'.'));
+    if(ar.antidote_quote) add(para('Raman\'s antidotes (verbatim) — "'+ar.antidote_quote+'" ('+(ar.antidote_cite||'')+')','quote'));
+    for(const b of (ar.bhangas||[])) add(para('Bhanga: '+b[0]+' — dignity '+b[1]+' → effective '+b[2],'muted'));
+    if(ar.kemadruma_note) add(para(ar.kemadruma_note,'muted'));
+    for(const p2 of (ar.protections||[])) add(para('Protection: '+p2,'muted'));
+    if(ar.maraka_note) add(para(ar.maraka_note,'muted')); }
+
+  // ===== Marriage monograph (v25) — completeness repair 2026-08-14 =====
+  if(R.marriage){ const mg=R.marriage;
+    sec('marriage'); add(H2('Marriage monograph')); plainLead('marriage');
+    add(para('Verdict (H7, unchanged): '+(mg.verdict||'—')+'. The 7th lord sits in house '+mg.lord_placement_house+'. Upapada: '+(mg.upapada||'—')+'.','lede'));
+    if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','quote'));
+    if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','quote'));
+    if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','quote'));
+    for(const f of (mg.fired_kalatra_client||mg.fired_kalatra||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const n of (mg.fired_kalatra_notes||[])) add(para(n[0]+' — '+n[1],'muted fineprint'));
+    if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','quote'));
+    for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'timing'));
+    if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));
+    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, quoted, not composed (this project\'s validation measured no real-outcome signal): "'+mg.separation_quote+'" (HTJAH-II:887)','quote'));
+    /* completeness repair 2026-08-19: the B3 happiness/coverture split, the Kuja-dosha
+       per-frame narration and the Jupiter H7 transit windows all ship in the JSON and
+       render on markdown + standalone but never here. */
+    if(mg.marital_happiness) add(para(t('Marital happiness (H7)')+' — '+mg.marital_happiness,'muted'));
+    if(mg.coverture) add(para(t('Coverture (H7)')+' — '+mg.coverture,'muted'));
+    for(const k of (mg.kuja_narration||[])) add(para(k,'muted'));
+    for(const w of (mg.jupiter_h7_windows||[])) add(para(t('Jupiter transiting the 7th from the Moon')+': '+w,'timing'));
+    /* v36 — the COMPUTED timing layer: `timing_navamsa` above prints Raman's timing
+       paragraph verbatim and computes none of it (HTJAH-II:852-883). */
+    const mt=mg.timing;
+    if(mt){
+      add(para(t('Marriage timing — the giving lords and the delay screens'),'muted'));
+      add(para(mt.caveat,'lede'));
+      const gv=(mt.givers||[]).map(g=>({
+        [t('planet')]:g.planet+(g.planet===mt.strongest?(' ('+t('strongest')+')'):''),
+        [t('nominated by')]:(g.clauses||[]).join('; '),
+        [t('strength')]:g.strength_rupas+' '+t('rupas'),
+        [t('in the ranking?')]:g.ranked?t('yes'):(t('no')+' — '+g.condition)}));
+      const gtab=sectionTable(t('Planets Raman names as able to give marriage in their periods'), gv, null,
+        t('Ranked by strength because Raman says the strongest of these lords gives marriage in his Dasa. A graha nominated by several clauses keeps them all \u2014 that is support, though it does not change the ranking.'));
+      if(gtab) add(gtab);
+      add(para('\u201c'+mt.strongest_rule+'\u201d '+t('Here that is')+' '+(mt.strongest||t('not resolvable'))+' ('+mt.citation+')'));
+      for(const d of (mt.delays||[])){
+        add(para('['+(d.fired?t('FIRES'):t('silent'))+'] '+d.name+' — \u201c'+d.rule+'\u201d ('+d.citation+')'
+                 +((d.because||[]).length?(' '+t('Found here')+': '+d.because.join('; ')+'.'):'')
+                 +' '+d.condition, d.fired?'':'muted'));
+      }
+      add(para(t('The lean')+' — '+mt.lean));
+      for(const sp of (mt.jupiter_sphutas||[])) add(para(t('Jupiter-transit resultant')+' ('+sp[0]+') — '+sp[1]+'; '+t('trines')+' '+sp[2],'timing'));
+      add(para(mt.subordination+' (HTJAH-II:881-883)','muted'));
+    } }
+
+  // ===== Children chapter (v26) — completeness repair 2026-08-14 =====
+  if(R.children){ const cc=R.children;
+    sec('children'); add(H2('Children chapter')); plainLead('children');
+    add(para('Verdict (H5, unchanged): '+(cc.verdict||'—'),'lede'));
+    for(const s2 of (cc.significations||[])) add(para(s2[0]+' — '+s2[1],'muted'));
+    if(cc.combos_quote) add(para('The classical combination block (verbatim) — "'+cc.combos_quote+'" (HTJAH-I:5179)','quote'));
+    for(const f of (cc.fired_rules||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const w of (cc.timing_windows||[])) add(para('Window: '+w,'timing')); }
+
+  // ===== Profession synthesis (v23) — completeness repair 2026-08-14 =====
+  if(R.profession){ const pf=R.profession;
+    sec('profession'); add(H2('Profession synthesis')); plainLead('profession');
+    if((pf.convergent||[]).length) add(para('Convergent trades (named by ≥2 angles): '+pf.convergent.map(c=>c[0]+' ('+c[1]+')').join(', '),'lede'));
+    for(const s2 of (pf.sources||[])) add(para(s2.source+' → '+s2.key+': '+s2.trades+' ('+s2.cite+')'+(s2.note?(' — '+s2.note):''),'muted'));
+    for(const m of (pf.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted'));
+    /* completeness repair 2026-08-19: the D-10 row, the H10 activation windows and the
+       same-graha disclosure ship in the JSON and rendered on markdown + standalone but
+       never here, so the page had been showing a strictly smaller profession chapter. */
+    if((pf.dasamsa_row||[]).length>=4) add(para(pf.dasamsa_row[0]+' → '+pf.dasamsa_row[1]+': '+pf.dasamsa_row[2]+' ('+pf.dasamsa_row[3]+')','muted'));
+    if(pf.convergence_note) add(para(t('One planet, several hats')+' — '+pf.convergence_note,'muted'));
+    for(const w of (pf.h10_windows||[])) add(para(t('H10 activation in the window (a timing lens, never a promise)')+' — '+w,'muted'));
+    /* v36 — the 10th reckoned from all THREE of Raman's centres (HTJAH-I:13960-13962).
+       Every derivation above reckons from the Lagna alone, one frame of the three. */
+    const cfr=pf.career_frames;
+    if(cfr){
+      add(para(t('The 10th reckoned from all three centres'),'muted'));
+      add(para('\u201c'+cfr.rule+'\u201d ('+cfr.citation+')','quote'));
+      const cft=(cfr.frames||[]).map(f=>({
+        [t('centre')]:f.centre+(f.is_strongest?(' ('+t('strongest')+')'):''),
+        [t('its 10th')]:f.tenth_sign_name,
+        [t('10th lord')]:f.tenth_lord+(f.tenth_lord_house?(' (h'+f.tenth_lord_house+')'):''),
+        [t('navamsa dispositor')]:f.navamsa_dispositor||'—',
+        [t('Raman\u2019s vocation words')]:f.trade||f.note||'—',
+        [t('strength')]:f.strength_rupas+' '+t('rupas'),
+        [t('measure')]:f.strength_basis}));
+      const cftab=sectionTable(t('The 10th from Lagna, the Moon and the Sun'), cft, null,
+        t('Raman reckons the 10th from all three centres and reads from the strongest. The Lagna carries a bhava bala and the luminaries a shadbala \u2014 the mixed comparison is his own (HTJAH-I:13986), and each centre\u2019s measure is named beside it.'));
+      if(cftab) add(cftab);
+      add(para(t('Strongest centre')+' — '+cfr.strongest_why,'muted'));
+      add(para(t('Reckoning from it')+' — '+cfr.leading_indication));
+      if(cfr.blended) add(para(t('Blended')+' — '+cfr.blended_note,'muted'));
+      if((cfr.convergent||[]).length) add(para(t('Convergent across centres')+' — '+cfr.convergent.map(c=>c[0]+' ('+c[1]+')').join(', ')));
+      add(para(t('On convergence')+' — '+cfr.convergence_note,'muted'));
+      add(para(cfr.caution,'muted'));
+    } }
+
+  // ===== Wealth chapter (v24) — the empirical-engine branch's completeness repair of
+  // 2026-08-14 rendered it here; at the 2026-10-14 merge main's Movement-V renderer below is
+  // kept instead, because rows() prints every column (incl. the population context). =====
+
+  // ===== Aptitude, intelligence & work style (v36, was v33 — pure re-read) =====
+  if(R.aptitude){ const ap=R.aptitude;
+    sec('aptitude'); add(H2('Aptitude, intelligence & work style')); plainLead('aptitude');
+    if(ap.woven) add(para(ap.woven,'lede'));
+    if(ap.intellect_verdict) add(para('Intellect (H5, Jupiter karaka) — '+ap.intellect_verdict+' (HTJAH-I:5012)'));
+    for(const f of (ap.intellect_fired||[])) add(ruleLine(f[0],'Fired intellect combo — '+f[1],f[2]));
+    if(ap.mercury_state) add(para('Mercury (buddhi) — '+ap.mercury_state));
+    if(ap.mercury_house_text) add(para('Mercury in its house (Raman verbatim) — "'+ap.mercury_house_text[0]+'" ('+ap.mercury_house_text[1]+')','quote'));
+    if(ap.mercury_sign_text) add(para('Mercury in its sign (Raman verbatim) — "'+ap.mercury_sign_text[0]+'" ('+ap.mercury_sign_text[1]+')','quote'));
+    for(const f of (ap.moon_mind_fired||[])) add(ruleLine(f[0],'The Moon\'s mental disposition — '+f[1],f[2]));
+    if(ap.jupiter_state) add(para('Jupiter (intellect karaka) — '+ap.jupiter_state,'muted'));
+    if(ap.courage_verdict) add(para('Courage / initiative (H3) — '+ap.courage_verdict+' (HTJAH-I:3324)'));
+    if(ap.trade_indication) add(para('Navamsa-dispositor trade — 10th lord '+ap.trade_indication[0]+', dispositor '+ap.trade_indication[1]+': '+ap.trade_indication[2]+' (HTJAH-II:10249)'));
+    if(ap.tenth_sign_profile) add(para('10th-sign profile — sign '+ap.tenth_sign_profile[0]+': '+ap.tenth_sign_profile[1]+' (HTJAH-II:10340)'));
+    if(ap.strongest_affinity) add(para('Strongest planet\'s field — '+ap.strongest_affinity[0]+': '+ap.strongest_affinity[1]+' (HTJAH-II:10249)'));
+    for(const m of (ap.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted'));
+    if(ap.tenth_lord_state) add(para('10th lord\'s condition — '+ap.tenth_lord_state,'muted'));
+    if(ap.saturn_state) add(para('Saturn\'s condition — '+ap.saturn_state,'muted'));
+    if(ap.mars_state) add(para('Mars\'s condition — '+ap.mars_state,'muted'));
+    if((ap.style_modern||[]).length) add(para('Modern keywords [MODERN_SYNTHESIS — no Raman citation, no demonstrated predictive weight] — '+ap.style_modern.join('; '),'muted')); }
+
+  // ===== Medical read (v38, was v35 — HPA-29 tables through Raman's own 6th-house rule) =====
+  /* Completeness: every field of every testimony renders — the four clauses, their
+     regions and complaints, the per-row citation, the union lists, the nodes that carry
+     no table, the caveat and the provenance note. */
+  if(R.medical){ const md=R.medical;
+    sec('medical'); add(H2('Medical read (classical correspondence)','medical')); plainLead('medical');
+    add(para(md.caveat,'lede'));
+    add(para(t('Raman\u2019s own procedure')+': \u201c'+md.application+'\u201d (HPA-29:433-440)','quote'));
+    add(para(t('The SIGN supplies the body part; the PLANET supplies the complaint \u2014 that division of labour is Raman\u2019s own last clause.'),'muted'));
+    /* the lord's navamsa rides here on every surface — the markdown and the standalone HTML
+       both print it, and a field the report computes appears in every reading. */
+    add(para(t('The 6th from lagna')+' \u2014 '+md.sixth_sign_name+', '+t('lord')+' '+md.sixth_lord
+             +(md.sixth_lord_house?(' '+t('in house')+' '+md.sixth_lord_house):'')
+             +((md.sixth_lord_navamsa_sign>=1&&md.sixth_lord_navamsa_sign<=12)
+                 ?(', '+t('navamsa')+' '+SIGN[md.sixth_lord_navamsa_sign]):'')));
+    if((md.occupants||[]).length) add(para(t('In the 6th')+' \u2014 '+md.occupants.join(', ')));
+    if((md.aspecting||[]).length) add(para(t('Aspecting the 6th')+' \u2014 '+md.aspecting.join(', ')));
+    if((md.unlisted_bodies||[]).length) add(para(t('Present but not tabled')+' \u2014 '+md.unlisted_bodies.join(', ')
+             +': '+t('Raman\u2019s tables cover the seven visible grahas, so the nodes contribute nothing here. Shown rather than skipped, so the silence is visible.'),'muted'));
+    const mt=(md.testimonies||[]).map(x=>({[t('testimony')]:x.clause, [t('speaks through')]:x.actor,
+      [t('body regions')]:(x.regions||[]).join(', '), [t('complaints indicated')]:(x.complaints||[]).join(', '),
+      [t('cite')]:x.citation}));
+    const mtab=sectionTable(t('The four testimonies Raman names'), mt, null,
+      t('One row per clause of HPA-29 \u00a710. An aspecting planet lends its complaints but claims no body region \u2014 Raman ties the region to the sign and the planet standing in it.'));
+    if(mtab) add(mtab);
+    if((md.regions_marked||[]).length) add(para(t('Body regions this chart marks')+' ('+t('union of the testimonies, de-duplicated')+') \u2014 '+md.regions_marked.join(', ')));
+    if((md.complaints_indicated||[]).length) add(para(t('Complaints the tables associate')+' \u2014 '+md.complaints_indicated.join(', ')));
+    add(para(md.provenance,'muted')); }
 
   // ===== Life-narrative timeline + companions =====
   sec('timeline'); add(H2('Life-narrative (Vimshottari)')); plainLead('timeline');
@@ -2203,16 +3709,59 @@ function render(R, S, FQ){
     'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). Overlaid: ▼ marks now; upward ticks are a yoga ripening (green raja/dhana, larger = its lord strong); faint green bands are dasha×favourable-transit confluences; faint red bands are maraka×Saturn windows (method, not a prediction). The full graded per-bhukti detail is in the cards below.'));
     add(legend([['var(--fav)','favourable / ishta'],['var(--aff)','afflicted / kashta'],['var(--mix)','mixed'],['var(--accent-2)','Mahadasha'],['var(--accent)','par-excellence · now']])); }
   renderTimeline(R, add);            // houses lit per bhukti, graded (restored — was a bare count)
-  add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta));
-  add(sectionTable('MD-lord condition outlook', R.md_condition));
-  add(sectionTable('Dasha Kakshya intervals', R.dasa_kakshya));
-  add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats));
+  // 2026-08-18 parity: the current bhukti's 9 Pratyantardashas, dated, running span marked.
+  if((R.pratyantar_now||[]).length){
+    const _ref=(R.window&&R.window.ref_jd);
+    add(sectionTable('Pratyantardasha drill-down (current bhukti)',
+      R.pratyantar_now.map(p2=>({maha:p2.maha,antar:p2.antar,pratyantar:p2.pratyantar,
+        start_jd:p2.start_jd,end_jd:p2.end_jd,
+        now:(_ref!=null&&p2.start_jd<=_ref&&_ref<p2.end_jd)?('◀ '+t('now')):'—'})),[],
+      PARITY_NOTES.pratyantar)); }
+  add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta, [],
+    'Each period-lord\'s computed benefic (ishta) vs malefic (kashta) balance — a lean for its period, not a verdict.'));
+  add(sectionTable('MD-lord condition outlook', R.md_condition, [],
+    'The state each major-period lord is in — strength, dignity, division — which colours how its period expresses.'));
+  add(sectionTable('Dasha Kakshya intervals', R.dasa_kakshya, [],
+    'The finest sub-division of the running period: which planet holds each short interval.'));
+  add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats, [],
+    'The benefic-point (Ashtakavarga) score of the sign each period-lord sits in — the seat its period rests on.'));
+  // 2026-10-24 (timing gap check, all 16 fixes): Raman's own period checks — every column
+  // and row of each table, as the markdown and standalone HTML print them.
+  for(const tt of (R.raman_period_checks||[])) add(timingTable(tt));
 
   // ===== Life-chapters =====
   sec('life_chapters'); add(H2('Life-chapters')); plainLead('life_chapters');
   for(const ch of (R.life_chapters||[])){ const d=el('details',{class:'card'}); if(ch.is_current) d.setAttribute('open','');
     const sm=el('summary'); sm.append((ch.maha||'')+' Mahadasha'+(ch.is_current?' — now':'')); d.append(sm);
     const b=el('div',{class:'body'}); b.append(para(ch.narrative||'')); d.append(b); add(d); }
+
+  // ===== Decade indication timeline (v28) — completeness repair 2026-08-14 =====
+  if(R.decades&&(R.decades.decades||[]).length){ const dt=R.decades;
+    sec('decades'); add(H2('Decade indication timeline')); plainLead('decades');
+    if(dt.frame) add(para(dt.frame,'muted'));
+    for(const dc of dt.decades){
+      const card=el('div',{class:'decade'});
+      card.append(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
+      // One life-area per ROW, one running Mahadasha per COLUMN. The chip lists carry
+      // the same facts chained into a single semicolon-run — the densest line in the
+      // report — so the grid is what is shown here.
+      const mdl=(dc.md_lords||[]);
+      for(const g of [['Favourable','fav',dc.favourable_grid||[]],
+                      ['Challenged','aff',dc.challenged_grid||[]]]){
+        if(!g[2].length) continue;
+        card.append(para(t(g[0]),'muted'));
+        const gt=el('table',{class:'decade-grid '+g[1]});
+        gt.append(el('tr',{},el('th',{},t('life area')),el('th',{},t('house')),
+                    ...mdl.map(m=>el('th',{},m+' '+t('MD')))));
+        for(const row of g[2])
+          gt.append(el('tr',{},el('td',{},row.area||''),el('td',{},'H'+row.house),
+                      ...(row.grades||[]).map(x=>el('td',{},x||'—'))));
+        card.append(gt);
+      }
+      for(const y of (dc.yogas_ripening||[])) card.append(para('Yoga ripening: '+y,'muted'));
+      for(const l2 of (dc.leans||[])) card.append(para('Lean: '+l2,'timing'));
+      if(dc.note) card.append(para(dc.note,'muted'));
+      add(card); } }
 
   // ===== Transits =====
   sec('gochara'); add(H2('Transits (Gochara)')); plainLead('gochara');
@@ -2222,20 +3771,45 @@ function render(R, S, FQ){
   const _go=gocharaOutlook(R);
   if(_go) add(vizCard('Slow-mover transit outlook over time', _go,
     'Jupiter, Saturn, Rahu and Ketu through the signs across the window — green = favourable transit, red = adverse, opacity by Ashtakavarga bindus; the dashed line is now. The confluence table is below.'));
-  add(sectionTable('Current transits with Vedha', R.gochara));
-  add(sectionTable('Dasha × Transit confluence', R.dasha_transit));
+  add(sectionTable('Current transits with Vedha', R.gochara, [],
+    'Where each planet is today from your Moon-sign, whether that station is classically favourable, and whether another planet obstructs (vedha) it. reverse_vedha_house / reverse_vedha_by: an adverse station on a Vedha point is relieved by a planet in the paired good house (HPA-34:161-164). Mercury\'s 10th is obstructed from the 7th as Raman prints it (HPA-34:203, 207); the nodes have no Vedha row in his table (unspecified by Raman).'));
+  add(sectionTable('Dasha × Transit confluence', R.dasha_transit, [],
+    'Rows where the running period and today\'s transits point the same way — agreement between the two timing systems.'));
+  // 2026-08-18 parity: the ADVERSE confluence rows (period lord ALSO transiting adversely).
+  if((R.dasha_transit_adverse||[]).length)
+    add(sectionTable('Adverse dasha × transit confluence', R.dasha_transit_adverse, [],
+      PARITY_NOTES.dasha_transit_adverse));
+  // 2026-08-18 parity: the ADVERSE half of the gochara outlook — the same segments the lanes
+  // above already carry (gochara_good=false), mirrored as a table exactly like the markdown's
+  // "Adverse transit windows" (>=25-day floor; mitigation = own BAV bindus in the sign).
+  const _adv=adverseTransitRows(R);
+  if(_adv.length) add(sectionTable('Adverse transit windows', _adv, [], PARITY_NOTES.adverse));
+  // 2026-08-18 parity: dated Sade-Sati phase spans (rising / peak / setting), method-only.
+  if((R.sade_sati_phases||[]).length){
+    const _ssv=sadeSatiStrip(R);
+    if(_ssv) add(vizCard('Sade-Sati phase windows (Saturn from the natal Moon)', _ssv,
+      PARITY_NOTES.sade_sati));
+    add(sectionTable('Sade-Sati phases — dated spans',
+      R.sade_sati_phases.map(p2=>({phase:p2.phase,house_from_moon:p2.house_from_moon,
+        sign:p2.sign,start_jd:p2.start_jd,end_jd:p2.end_jd,
+        now:p2.current?('◀ '+t('now')):'—'})),[],
+      (_ssv?null:PARITY_NOTES.sade_sati))); }
+  // 2026-10-24 (timing gap check, all 16 fixes): Raman's own transit checks.
+  for(const tt of (R.raman_transit_checks||[])) add(timingTable(tt));
 
   // ===== Today for you (Muhurtha) — the day judged against THIS native's janma star/rasi =====
   sec('_muhurtha'); add(H2('Today for you (Muhurtha)'));
   add(para('Raman’s Muhurtha read for today at this native’s own janma nakshatra and rasi — '+
     'Tarabala and Chandrabala, the five panchanga limbs, Panchaka, the transit-band elections read '+
     'against this chart’s Bhinnashtakavarga, and the day’s negative windows. It is fetched on '+
-    'request, not with the cast, and is a statement of the electional method, never a prediction.','muted'));
+    'request, not with the cast, and is a statement of the electional method, never a prediction. '+
+    '“When today is clean” re-applies the SAME judgment every half hour from sunrise to the next '+
+    'sunrise and returns the spans in which every sample passed — pure iteration, no new doctrine.','muted'));
   add(muhurthaPanel());
 
   // ===== Divisional deep-reads =====
   if((R.divisional||[]).length){ sec('divisional'); add(H2('Divisional deep-reads (Shodasavarga)')); plainLead('divisional');
-    for(const dv of R.divisional){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(dv.label);
+    let _dvFirst=true; for(const dv of R.divisional){ const d=el('details',{class:'card'}); if(_dvFirst){d.setAttribute('open','');_dvFirst=false;} const sm=el('summary'); sm.append(dv.label+' — '+String(dv.body||'').replace(/\s+/g,' ').trim().slice(0,110)+'…');
       d.append(sm); const b=el('div',{class:'body'}); const pre=el('pre',{}); pre.style.whiteSpace='pre-wrap';
       pre.append(citeText(dv.body||'')); pre.style.fontFamily='inherit'; pre.style.fontSize='.82rem'; b.append(pre); d.append(b); add(d); } }
 
@@ -2243,12 +3817,29 @@ function render(R, S, FQ){
   if(R.soul){ sec('soul'); add(H2('Soul & destiny (Jaimini)'));
     if(R.soul.narrative) add(para(R.soul.narrative));
     const lines=(R.soul.jaimini_overlay&&R.soul.jaimini_overlay.lines)||[];
-    if(lines.length){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
+    if(lines.length){ const d=el('details',{class:'card'}); d.setAttribute('open',''); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
       d.append(sm); const b=el('div',{class:'body'}); for(const ln of lines){ b.append(para('['+(ln.provenance||'')+(ln.cite?' '+ln.cite:'')+'] '+ln.text,'muted')); } d.append(b); add(d); } }
+  // 2026-08-18 parity: the dated Chara dasha sequence (the Chart-signature chip named it
+  // undated) — running sign marked; no result judgment attaches (matters read from Vimshottari).
+  if((R.chara_sequence||[]).length)
+    add(sectionTable('Chara dasha (Jaimini) — dated sequence',
+      R.chara_sequence.map(c2=>({sign:c2.sign,years:c2.years,
+        start_jd:c2.start_jd,end_jd:c2.end_jd,
+        now:c2.current?('◀ '+t('now')):'—'})),[],
+      PARITY_NOTES.chara));
+  // ===== Karmic evolution (v30, Jaimini — walled) — completeness repair 2026-08-14 =====
+  if(R.karmic){ const km=R.karmic;
+    sec('karmic'); add(H2('Karmic evolution (Jaimini)')); plainLead('karmic');
+    if(km.frame) add(para(km.frame,'muted'));
+    add(para('Atmakaraka: '+(km.atmakaraka||'—')+' · Karakamsa: '+(km.karakamsa||'—')+' · Upapada: '+(km.upapada||'—'),'lede'));
+    if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','quote'));
+    if(km.d20_core) add(para('Vimsamsa (D-20) domain re-read — '+km.d20_core,'muted'));
+    if(km.d60_core) add(para('Shashtiamsa (D-60) domain re-read — '+km.d60_core,'muted')); }
+
   if(R.pitru){ sec('pitru'); add(H2('Pitru dosha screen (classical, non-Raman)'));
     add(para('Raman’s own children verdict (authoritative): '+(R.pitru.raman_children_verdict||'—').toUpperCase(),'muted'));
     const cur=R.pitru.curse_yogas||[];
-    if(cur.length){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append('Curse-yogas that fire ('+cur.length+')');
+    if(cur.length){ const d=el('details',{class:'card'}); d.setAttribute('open',''); const sm=el('summary'); sm.append('Curse-yogas that fire ('+cur.length+')');
       d.append(sm); const b=el('div',{class:'body'}); for(const t of cur){ b.append(para('['+(t.provenance||'')+(t.cite?' '+t.cite:'')+'] '+t.text,'muted')); } d.append(b); add(d); }
     else add(para('No classical ancestral-curse yoga fires on this chart.','muted')); }
 
@@ -2267,6 +3858,9 @@ function render(R, S, FQ){
     add(rows(R.distinctive.map(([h,e])=>({house:'H'+h, signification:e.signification, verdict:e.verdict,
       degree:e.degree, 'more favourable than':Math.round((e.favourability_percentile||0)*100)+'% of charts',
       'this reading in':Math.round((e.band_share||0)*100)+'% ('+e.rarity+')',
+      // 2026-08-18 parity: the plain-language midpoint-side sentence (`gloss`) — the list
+      // itself is uncapped upstream and this table has never sliced it, so all rows show.
+      'in plain words':e.gloss||'—',
       inverted:e.inverted_warning?'⚠ inverted channel':'—'})))); }
   // ===== Information content (every field of the honesty headline) =====
   if(R.info){ sec('info_content'); add(H2('Information content of this reading')); const I=R.info;
@@ -2279,7 +3873,15 @@ function render(R, S, FQ){
       (I.inverted_locations&&I.inverted_locations.length?(' ('+I.inverted_locations.join(', ')+') — treat any house driven by one with maximal skepticism'):'')+'. '+
       I.distinctive+' are genuinely distinctive. This is a disclosure about the method’s output, not a statement about a life.','muted')); }
 
+  // ===== Full life synthesis (v29) — completeness repair 2026-08-14 =====
+  if(R.life_synthesis&&(R.life_synthesis.paragraphs||[]).length){ const ls2=R.life_synthesis;
+    sec('life_synthesis'); add(H2('Full life synthesis')); plainLead('life_synthesis');
+    for(const pgh of ls2.paragraphs){ add(para(pgh[0],'lede')); add(para(pgh[1])); }
+    if(ls2.closing) add(para(ls2.closing,'muted')); }
+
   // ===== Walled AI-interpretation panel (opt-in; labeled LLM speculation, NOT the engine) =====
+  // (merged 2026-10-14) it rides with whichever section precedes it in this function, as on
+  // main; re-selecting a bucket here would double-route that section.
   add(aiInterpretPanel());
 
   // ===== Nichod =====
@@ -2309,7 +3911,7 @@ function render(R, S, FQ){
       +p2(_b.hour)+':'+p2(_b.minute)+' (tz '+(_b.tz_offset>=0?'+':'')+_b.tz_offset+')','lede'));
     add(para(t('Latitude')+' '+Number(_b.latitude).toFixed(4)+' · '+t('longitude')+' '
       +Number(_b.longitude).toFixed(4)+' · '+t('ayanamsa')+' '
-      +((R.window&&R.window.ayanamsa)||'Lahiri sidereal'),'muted')); }
+      +((R.window&&R.window.ayanamsa)||'sidereal'),'muted')); }
 
   // the running period lives on R.synthesis; the `summary` object carries only a prebuilt
   // `running_period` string, which is why reading S.running_md here rendered nothing.
@@ -2317,30 +3919,18 @@ function render(R, S, FQ){
   sec('now_box');
   if(_sy.running_md||_sy.running_ad){ add(H2('Running now'));
     add(para('Mahadasha '+(_sy.running_md||'—')+' · Antardasha '+(_sy.running_ad||'—')
-      +(R.maraka_period_now?' · the running period carries a maraka-tier lord'
-                           :' · the running period carries no maraka-tier lord'),'lede'));
+      +' · the running period '+maraka_phrase(R.maraka_period_now),'lede'));
     if(_sy.chara) add(para(t('Chara dasha')+': '+_sy.chara,'muted'));
     if(_sy.sade_sati) add(para(_sy.sade_sati,'muted'));
     if(_sy.panchanga) add(para(t('Panchanga')+': '+_sy.panchanga,'muted')); }
-  const psy=R.psych||{};
-  if(psy.woven||psy.temperament){ sec('psych'); add(H2('Psychological profile')); plainLead('psych');
-    if(psy.woven) add(para(psy.woven));
-    for(const [k,lbl] of [['lagna_quote','Rising sign'],['moon_state','Moon (manas)'],
-                          ['temperament','Temperament'],['nature_stamp','Nature stamp'],
-                          ['atmakaraka','Atmakaraka']])
-      if(psy[k]) add(para(t(lbl)+': '+psy[k],'muted')); }
+
+  // (merged 2026-10-14) main's v33 renderer for psych was removed as a duplicate:
+  // the empirical-engine renderer above shows every field it did, and more.
 
   // ---- Movement II ---------------------------------------------------------------------
-  const ig=R.interpretation_guide||{};
-  if(ig.preamble||(ig.precedence||[]).length){ sec('interpretation_guide');
-    add(H2('How to read this report'));
-    if(ig.preamble) add(para(ig.preamble));
-    if((ig.reading_order||[]).length) add(sectionTable('Reading order',ig.reading_order));
-    if((ig.precedence||[]).length) add(sectionTable('Precedence rules',ig.precedence));
-    if((ig.parallel_lenses||[]).length) add(sectionTable('Parallel lenses',ig.parallel_lenses));
-    if((ig.axes||[]).length) add(sectionTable('Axes',ig.axes));
-    if((ig.not_a_contradiction||[]).length)
-      add(sectionTable('Not a contradiction',ig.not_a_contradiction)); }
+
+  // (merged 2026-10-14) main's v33 renderer for interpretation_guide was removed as a duplicate:
+  // the empirical-engine renderer above shows every field it did, and more.
 
   // ---- Movement III --------------------------------------------------------------------
   const _pl=(R.chart&&R.chart.planets)||null;
@@ -2353,16 +3943,8 @@ function render(R, S, FQ){
       add(rows(sb)); } }
 
   // ---- Movement IV ---------------------------------------------------------------------
-  if((R.yoga_deep||[]).length){ sec('yoga_deep'); add(H2('Yoga deep-read')); plainLead('yoga_deep');
-    for(const y of R.yoga_deep){ const d=el('details',{class:'card'}); d.setAttribute('open','');
-      d.append(el('summary',{},(y.name||'')+(y.kind?' · '+y.kind:'')));
-      const b=el('div',{class:'body'});
-      if(y.effect) b.append(para(y.effect));
-      if(y.definition_quote) b.append(para('“'+y.definition_quote+'”'+(y.cite?' ('+y.cite+')':''),'muted'));
-      if(y.computation) b.append(para(t('How it was computed')+': '+y.computation,'muted'));
-      if((y.participants||[]).length) b.append(para(t('Participants')+': '+y.participants.join(', '),'muted'));
-      if(y.strength_note) b.append(para(y.strength_note,'muted'));
-      d.append(b); add(d); } }
+  // (merged 2026-10-14) main's v33 renderer for yoga_deep was removed as a duplicate:
+  // the empirical-engine renderer above shows every field it did, and more.
   const dp=(R.synthesis||{}).deeptadi;
   if(dp&&dp.length){ sec('deeptadi'); add(H2('Deeptadi avasthas')); plainLead('deeptadi');
     add(para(t('Each graha’s result-state (HPA Ch.7).'),'muted'));
@@ -2373,15 +3955,6 @@ function render(R, S, FQ){
   if(car){ sec('career'); add(H2('Career'));
     add(para(t('HTJAH-II — the navamsa-dispositor of the 10th lord, Raman’s primary method.'),'muted'));
     add(para(car)); }
-  const pf=R.profession||{};
-  if((pf.sources||[]).length){ sec('profession'); add(H2('Profession synthesis')); plainLead('profession');
-    add(para(t('Every encoded derivation angle, then the deterministic convergence count — '+
-      'never a new judgment.'),'muted'));
-    add(rows(pf.sources));
-    if((pf.convergent||[]).length) add(para(t('Convergent trades (named by 2+ derivations)')+': '
-      +pf.convergent.map(c=>Array.isArray(c)?c[0]+' ('+c[1]+')':c).join(', '),'muted'));
-    if((pf.mode_split||[]).length) add(para(t('H10 mode split')+': '
-      +pf.mode_split.map(m=>Array.isArray(m)?m[0]+': '+m[1]:m).join('; '),'muted')); }
   const wl=R.wealth||{};
   if((wl.rows||[]).length){ sec('wealth'); add(H2('Wealth chapter')); plainLead('wealth');
     add(para(t('The CHANNELS, not one verdict — every row re-reads a judged signification '+
@@ -2389,46 +3962,8 @@ function render(R, S, FQ){
     add(rows(wl.rows));
     if((wl.expansion_periods||[]).length) add(para(t('Periods of expansion (a timing lens, '+
       'never a promise)')+': '+wl.expansion_periods.join('; '),'muted')); }
-  const mg=R.marriage||{};
-  if(mg.verdict||(mg.fired_kalatra||[]).length){ sec('marriage'); add(H2('Marriage monograph')); plainLead('marriage');
-    if(mg.seventh_covers) add(para(t('The 7th house’s scope (Raman verbatim)')+': “'+mg.seventh_covers+'”','muted'));
-    if(mg.verdict) add(para(t('Headline (unchanged H7 verdict)')+' — '+mg.verdict
-      +(mg.upapada?' · '+t('Upapada')+' '+mg.upapada:'')));
-    if(mg.lord_period_text) add(para(t('The 7th lord in house ')+mg.lord_placement_house
-      +' — “'+mg.lord_period_text+'” (HTJAH-II:710)','muted'));
-    if((mg.spouse_sign_text||[]).length) add(para('“'+mg.spouse_sign_text[0]+'” ('
-      +(mg.spouse_sign_text[1]||'')+')','muted'));
-    if((mg.fired_kalatra||[]).length){ const ul=el('ul',{class:'doclist'});
-      for(const k of mg.fired_kalatra) ul.append(el('li',{},Array.isArray(k)
-        ? '('+k[0]+') '+k[1]+' ['+(k[2]||'')+']' : String(k)));
-      add(ul); }
-    if(mg.timing_navamsa) add(para(t('Timing doctrine (verbatim)')+' — “'+mg.timing_navamsa+'” (HTJAH-II:853)','muted'));
-    if((mg.timing_windows||[]).length) add(para(t('H7 activations')+' — '+mg.timing_windows.join('; '),'muted')); }
-  const ch=R.children||{};
-  if(ch.verdict||(ch.fired_rules||[]).length){ sec('children'); add(H2('Children chapter')); plainLead('children');
-    if(ch.verdict) add(para(t('Headline (unchanged H5 verdict)')+' — '+ch.verdict));
-    if((ch.significations||[]).length) add(para(ch.significations
-      .map(s=>Array.isArray(s)?s[0]+': '+s[1]:s).join(' · '),'muted'));
-    if((ch.fired_rules||[]).length){ const ul=el('ul',{class:'doclist'});
-      for(const k of ch.fired_rules) ul.append(el('li',{},Array.isArray(k)
-        ? '('+k[0]+') '+k[1]+' ['+(k[2]||'')+']' : String(k)));
-      add(ul); }
-    if((ch.timing_windows||[]).length) add(para(t('H5 activations')+' — '+ch.timing_windows.join('; '),'muted'));
-    if(ch.combos_quote) add(para(t('Raman’s fifth-house combinations, verbatim')+': “'
-      +ch.combos_quote+'” (HTJAH-I:5179)','muted')); }
-  const ar=R.arishta||{};
-  if(ar.antidote_quote||(ar.bhangas||[]).length||ar.balarishta_applies!=null){
-    sec('arishta'); add(H2('Arishta & Bhanga')); plainLead('arishta');
-    add(para(t('Balarishta (early-childhood danger)')+': '
-      +(ar.balarishta_applies?t('applies'):t('does not apply'))
-      +(ar.balarishta_cancelled?' · '+t('cancelled'):'')
-      +(ar.band?' · '+t('band')+' '+ar.band:''),'muted'));
-    if((ar.balarishta_reasons||[]).length) add(para(ar.balarishta_reasons.join('; '),'muted'));
-    if((ar.bhangas||[]).length) add(sectionTable('Bhangas (cancellations)',ar.bhangas));
-    if((ar.protections||[]).length) add(sectionTable('Protections',ar.protections));
-    if(ar.kemadruma_note) add(para(ar.kemadruma_note,'muted'));
-    if(ar.antidote_quote) add(para('“'+ar.antidote_quote+'”'
-      +(ar.antidote_cite?' ('+ar.antidote_cite+')':''),'muted')); }
+  // (merged 2026-10-14) main's v33 renderer for profession / marriage / children / arishta was removed as a duplicate:
+  // the empirical-engine renderer above shows every field it did, and more.
   const mk=R.maraka||{};
   if((mk.units||[]).length){ sec('maraka'); add(H2('The maraka scheme')); plainLead('maraka');
     add(para(t('Raman’s second step after the longevity band (HTJAH-I:761-814): the 2nd '+
@@ -2462,10 +3997,8 @@ function render(R, S, FQ){
   if((R.dasa_kakshya||[]).length){ sec('dasa_kakshya'); add(H2('Dasha Kakshya intervals')); plainLead('dasa_kakshya');
     add(para(t('The ASP-12 eightfold Kakshya division of each Mahadasha run.'),'muted'));
     add(rows(R.dasa_kakshya)); }
-  const dc_=R.decades||{};
-  if((dc_.decades||[]).length){ sec('decades'); add(H2('Decade indication timeline')); plainLead('decades');
-    if(dc_.frame) add(para(dc_.frame,'muted'));
-    add(rows(dc_.decades)); }
+  // (merged 2026-10-14) main's v33 renderer for decades was removed as a duplicate:
+  // the empirical-engine renderer above shows every field it did, and more.
   if((R.dasha_transit||[]).length){ sec('dasha_transit'); add(H2('Dasha × Transit confluence'));
     add(para(t('Where the running period’s own lord is also well-transited — transits are '+
       'subordinate to the Dasha (HTJAH-II:4679).'),'muted'));
@@ -2478,25 +4011,14 @@ function render(R, S, FQ){
     const ul=el('ul',{class:'doclist'});
     for(const x of kr) ul.append(el('li',{},String(x)));
     add(ul); }
-  const kv=R.karmic||{};
-  if(kv.atmakaraka){ sec('karmic'); add(H2('Karmic evolution (Jaimini)')); plainLead('karmic');
-    if(kv.frame) add(para(kv.frame,'muted'));
-    add(para(t('Atmakaraka')+': '+kv.atmakaraka+t(' (the 7-karaka scheme, locked)')));
-    if(kv.karakamsa) add(para(t('Karakamsa')+': '+kv.karakamsa,'muted'));
-    if(kv.upapada) add(para(t('Upapada')+': '+kv.upapada,'muted'));
-    if(kv.d20_core) add(para(t('D-20 Vimsamsa (spiritual) core')+': '+kv.d20_core,'muted'));
-    if(kv.d60_core) add(para(t('D-60 Shashtiamsa (totality) core')+': '+kv.d60_core,'muted'));
-    if(kv.doctrine_quote) add(para('“'+kv.doctrine_quote+'”'
-      +(kv.doctrine_cite?' ('+kv.doctrine_cite+')':''),'muted')); }
-  const ls=R.life_synthesis||{};
-  if((ls.paragraphs||[]).length){ sec('life_synthesis'); add(H2('Full life synthesis')); plainLead('life_synthesis');
-    for(const p of ls.paragraphs) add(para(p));
-    if(ls.closing) add(para(ls.closing,'lede')); }
 
+  // (merged 2026-10-14) main's v33 renderer for karmic / life_synthesis was removed as a duplicate:
+  // the empirical-engine renderer above shows every field it did, and more.
 
   // v35 — the person-facing lead for a section, from R.plain_leads. Adds; never replaces.
-  const plainLead=(sid)=>{ const txt=(R.plain_leads||{})[sid];
-    if(txt) add(el('p',{class:'muted plainspoken'},txt)); };
+  // (a function declaration so it hoists: it is called long before this line runs)
+  function plainLead(sid){ const txt=(R.plain_leads||{})[sid];
+    if(txt) add(el('p',{class:'muted plainspoken'},txt)); }
 
   // ---- v34 intuition layer ---------------------------------------------------------------
   sec('dominance'); add(H2('What governs each house')); plainLead('dominance');
@@ -2557,22 +4079,50 @@ function render(R, S, FQ){
       'worth naming. A forced match would be a coincidence, not a recognition.'),'muted'));
   }
 
+  // ===== What Raman's rules indicate (v41, was v38 on the empirical-engine branch) =====
+  // The collected non-graded lane: every KIND, cause, channel, count or circumstance rather
+  // than a grade, grouped by category. A pure re-read of the house blocks (each row also
+  // appears in its own house card). Added at the 2026-10-14 merge so the interactive page,
+  // like the other two surfaces, renders every contracted section.
+  if((R.indications||[]).length){ sec('indications'); add(H2("What Raman's rules indicate"));
+    plainLead('indications');
+    add(para(t('Every line below is a KIND, cause, channel, count or circumstance rather than a favourable/afflicted grade. Each row states whether it was computed for this chart, fired on it, holds in general, or is merely on record and was never evaluated. Nothing here is new: every line also appears in its own house block.'),'muted'));
+    for(const g of R.indications){
+      const d=el('details',{class:'card'}); d.setAttribute('open','');
+      d.append(el('summary',{},g.category+' ('+(g.rows||[]).length+')'));
+      const b=el('div',{class:'body'});
+      for(const rw of (g.rows||[])){
+        const line=el('p',{class:'muted'});
+        line.append(el('b',{},'H'+rw.house),' ',el('i',{},rw.matter),' ['+rw.kind+'] — ');
+        line.append(citeText(rw.text||''));
+        if(rw.cite) line.append(' ('+rw.cite+')');
+        b.append(line); }
+      d.append(b); add(d); } }
+
   // ===== Chart-specific feedback (questions derived from THIS chart's digest) =====
-  sec('nichod');
+  // (merged 2026-10-14) part of the feedback section, which follows nichod on the colophon
+  sec('feedback');
   if(FQ&&FQ.length) add(feedbackCard(FQ));
+
+  // ===== the four-part feedback instrument (v39, was v36) — the section that asks rather than tells =====
+  // (still the feedback bucket opened for the chart-specific card above)
+  if(R.feedback_instrument){ add(H2('Your feedback'));
+    add(feedbackInstrument(R.feedback_instrument)); }
 
   // ---- flush: one folio per movement, sections in the arc's order ----------------
   // `nichod` stays on the colophon back cover (leaf12) exactly as it closes the printed
-  // report; `_muhurtha` is a page-only section with no contract row, shown with the
+  // report, followed by `feedback` (merged 2026-10-14: the arc puts it after nichod, the
+  // one section that asks rather than tells); `_muhurtha` is a page-only section with no contract row, shown with the
   // timing movement it belongs to.
   const PAGE_ONLY={'_muhurtha':'VI'};
+  const COLOPHON=['nichod','feedback'];
   const pre=_buf.get('_pre')||[];
   (R.movements||[]).forEach((mv,i)=>{
     const leaf=$('leaf'+(i+2)+'-body'); if(!leaf) return;
     if(i===0&&pre.length) leaf.append(...pre);
     const intro=movementIntro(mv.numeral); if(intro) leaf.append(intro);
     for(const sid of (mv.sections||[])){
-      if(sid==='nichod') continue;
+      if(COLOPHON.includes(sid)) continue;
       const nodes=_buf.get(sid); if(nodes&&nodes.length) leaf.append(...nodes);
     }
     for(const sid in PAGE_ONLY){
@@ -2580,8 +4130,18 @@ function render(R, S, FQ){
       const nodes=_buf.get(sid); if(nodes&&nodes.length) leaf.append(...nodes);
     }
   });
-  const colophon=$('leaf12-body'), nich=_buf.get('nichod');
-  if(colophon&&nich&&nich.length) colophon.append(...nich);
+  const colophon=$('leaf12-body');
+  for(const sid of COLOPHON){ const nodes=_buf.get(sid);
+    if(colophon&&nodes&&nodes.length) colophon.append(...nodes); }
+
+  // each TOC entry's leaf is known only now that the flush has placed it (merged
+  // 2026-10-14: H2 recorded the empirical-engine branch's chapter cursor at build time)
+  for(const e of PAGE_TOC){ const h=document.getElementById(e.id), lf=h&&h.closest('.leaf');
+    if(lf) e.leaf=+lf.dataset.page; }
+  // ===== the guided-journey TOC — built from PAGE_TOC after every H2 registered =====
+  buildToc();
+  // ===== first-occurrence glossary marking (client-side _apply_glossary_abbrs) =====
+  glossWalk();
 }
 
 // ---- walled AI-interpretation panel: opt-in LLM speculation, explicitly labeled as
@@ -2623,6 +4183,247 @@ function aiInterpretPanel(){
     finally{ btn.disabled=false; btn.replaceChildren(t('REGENERATE AI INTERPRETATION')); }
   };
   return wall;
+}
+
+// ---- the four-part feedback instrument (v36) ----------------------------------------
+// The questionnaire that closes the report. Part A carries no astrology and is meant to be
+// answered BEFORE the reading is read — a reader who has already been told what the chart
+// says can no longer report what they would have said on their own, and that is the only
+// answer worth measuring. So B/C/D stay shut until Part A is marked done, and whether the
+// reading had been read is RECORDED rather than assumed.
+// Safe DOM only — createElement/textContent, never innerHTML (project rule).
+// ---- the plain-words summary (v37) --------------------------------------------------
+// The section that exists for the reader the technical chapters lose. Rendered FIRST on the
+// reading leaf, before the digest and before "Your Reading": a summary a reader meets after
+// the chapters is not a summary. Prose comes bilingual from the server — t() cannot translate
+// a sentence composed at runtime — so this picks by LANG rather than translating.
+function simpleSummary(ss){
+  const hi = (LANG==='hi');
+  const wrap = el('div',{class:'ss'});
+  const block = (prose, itemsKey) => {
+    const text = ss[prose + (hi?'_hi':'_en')];
+    if(!text) return;
+    wrap.append(para(text, prose==='opening' ? 'ss-lede' : 'ss-p'));
+    const items = itemsKey ? ss[itemsKey + (hi?'_hi':'_en')] : null;
+    if(items && items.length){
+      const ul = el('ul',{class:'ss-list'});
+      for(const it of items) ul.append(el('li',{}, it));
+      wrap.append(ul);
+    }
+  };
+  block('opening'); block('you');
+  block('good','good_items'); block('hard','hard_items'); block('mixed','mixed_items');
+  block('now','now_items');
+  block('unusual'); block('common'); block('how_to_read'); block('caveat');
+  return wrap;
+}
+
+let INST_ANSWERS = {};              // qid -> {answer, free_text}
+let INST_CONTEXT = 'after_reading'; // flipped by the top invitation, flipped back on navigation
+
+function instText(o, field){ return (LANG==='hi' ? o[field+'_hi'] : o[field+'_en']) || o[field+'_en'] || ''; }
+
+function instSet(qid, patch){ INST_ANSWERS[qid] = Object.assign({}, INST_ANSWERS[qid]||{}, patch); }
+
+// A repeating (year, month, kind) row. Turning points are collected as STRUCTURED rows
+// rather than a paragraph, because a paragraph cannot be compared with the period-change
+// dates and a date the reader types in prose cannot be parsed reliably. Each row posts as
+// its own answer, `qid#n`, valued YYYY-MM:kind.
+function instEventRows(q, box){
+  const rows = el('div',{class:'fbi-rows'});
+  let n = 0;
+  const addRow = () => {
+    n += 1;
+    const rid = q.qid + '#' + n;
+    const row = el('div',{class:'fbi-row'});
+    const yr = el('input',{class:'leaf-input fbi-year',type:'number',min:'1900',max:'2100',
+      placeholder:t('year')});
+    const mo = el('select',{class:'leaf-input fbi-month'});
+    mo.append(el('option',{value:''},t('month (if you remember)')));
+    for(let i=1;i<=12;i++) mo.append(el('option',{value:String(i).padStart(2,'0')},
+      String(i).padStart(2,'0')));
+    const kind = el('select',{class:'leaf-input fbi-kind'});
+    kind.append(el('option',{value:''},t('what kind of event?')));
+    for(const o of (q.options||[])) kind.append(el('option',{value:o.value},instText(o,'text')));
+    const sync=()=>{ const y=(yr.value||'').trim(), k=kind.value;
+      if(y.length===4 && k) instSet(rid,{answer: y+(mo.value?('-'+mo.value):'')+':'+k});
+      else instSet(rid,{answer:undefined}); };
+    yr.oninput=sync; mo.onchange=sync; kind.onchange=sync;
+    row.append(yr,mo,kind); rows.append(row);
+  };
+  for(let i=0;i<5;i++) addRow();
+  const more = el('button',{class:'leaf-button secondary fbi-more',type:'button'},
+    t('ADD ANOTHER'));
+  more.onclick=()=>addRow();
+  box.append(rows, more);
+}
+
+function instQuestion(q){
+  const box = el('div',{class:'fbi-q'});
+  box.append(el('div',{class:'fbi-qt'}, instText(q,'text')));
+  const hint = instText(q,'hint');
+  if(hint) box.append(el('div',{class:'fbi-hint muted'}, hint));
+
+  if(q.kind === 'events'){
+    instEventRows(q, box);
+  } else if(q.kind === 'year'){
+    const yr = el('input',{class:'leaf-input fbi-year',type:'number',min:'1900',max:'2100',
+      placeholder:t('year')});
+    yr.oninput=()=>{ const v=(yr.value||'').trim();
+      instSet(q.qid,{answer: v.length===4 ? v : undefined}); };
+    box.append(yr);
+  } else if(q.kind === 'multi'){
+    // Multi-select: the stored answer is the comma-joined codes, which is what the server
+    // validates and the scorer reads. Codes, never display text — so an answer given in
+    // Hindi means exactly what the same answer given in English means.
+    const picked = new Set();
+    for(const o of (q.options||[])){
+      const b=el('button',{class:'fbi-opt',type:'button'});
+      b.append(el('span',{},instText(o,'text')));
+      b.onclick=()=>{ if(picked.has(o.value)) picked.delete(o.value); else picked.add(o.value);
+        b.classList.toggle('sel', picked.has(o.value));
+        instSet(q.qid,{answer: picked.size ? Array.from(picked).join(',') : undefined}); };
+      box.append(b);
+    }
+  } else if(q.options && q.options.length){
+    const btns=[];
+    for(const o of q.options){
+      const b=el('button',{class:'fbi-opt',type:'button'});
+      b.append(el('span',{},instText(o,'text')));
+      b.onclick=()=>{ instSet(q.qid,{answer:o.value});
+        btns.forEach(x=>x.classList.toggle('sel', x===b)); };
+      btns.push(b); box.append(b);
+    }
+  }
+  if(q.confidence){
+    const row=el('div',{class:'fbi-conf'});
+    row.append(el('span',{class:'fbi-conf-lab'}, t('HOW SURE?')));
+    const cbtns=[];
+    for(const v of (RPT.feedback_instrument.confidence_scale||[])){
+      const b=el('button',{type:'button'}, v);
+      b.onclick=()=>{ instSet(q.qid+'.confidence',{answer:v});
+        cbtns.forEach(x=>x.classList.toggle('sel', x===b)); };
+      cbtns.push(b); row.append(b);
+    }
+    box.append(row);
+  }
+  if(q.allow_free_text){
+    const free=el('input',{class:'leaf-input fbi-free',type:'text',maxlength:'4000',
+      placeholder: q.kind==='open' ? t('your answer') : t('anything to add? (optional)')});
+    free.oninput=()=>{ instSet(q.qid,{free_text:free.value}); };
+    box.append(free);
+  }
+  return box;
+}
+
+function instPart(part){
+  const box = el('div',{class:'fbi-part'});
+  box.append(el('div',{class:'fbi-part-head'},
+    t('PART')+' '+part.part+' — '+(LANG==='hi'?part.title_hi:part.title_en)));
+  box.append(el('div',{class:'fbi-note muted'}, LANG==='hi'?part.note_hi:part.note_en));
+  for(const q of (part.questions||[])) box.append(instQuestion(q));
+  return box;
+}
+
+function feedbackInstrument(inst){
+  const wrap = el('div',{class:'fbi'});
+  wrap.append(para(LANG==='hi'?inst.caveat_hi:inst.caveat_en,'muted'));
+
+  const parts = inst.parts||[];
+  const partA = parts.filter(p=>p.part==='A');
+  const rest  = parts.filter(p=>p.part!=='A');
+  for(const p of partA) wrap.append(instPart(p));
+
+  // the gate: everything after Part A stays shut until the reader says Part A is done.
+  const locked = el('div',{class:'fbi-locked'});
+  const gate = el('button',{class:'fbi-gate',type:'button'});
+  gate.append(el('span',{},'☐'));
+  gate.append(el('span',{}, t('I have finished Part A — open the rest')));
+  gate.onclick=()=>{ locked.classList.add('open'); gate.replaceChildren(
+    el('span',{},'☑'), el('span',{}, t('Part A done'))); gate.disabled=true; };
+  wrap.append(gate);
+
+  for(const p of rest){
+    locked.append(instPart(p));
+    if(p.part==='C' && (inst.boundaries||[]).length){
+      const tbl=el('table',{class:'fbi-dates'});
+      const head=el('tr',{}); head.append(el('th',{},t('Period changes on')),
+        el('th',{},t('Mahadasha begins'))); tbl.append(head);
+      for(const b of inst.boundaries){ const tr=el('tr',{});
+        tr.append(el('td',{},b.date), el('td',{},b.maha)); tbl.append(tr); }
+      locked.append(tbl);
+    }
+  }
+  const rect = inst.rectification;
+  if(rect && rect.tight){
+    locked.append(para((LANG==='hi'?rect.note_hi:rect.note_en)+' '+
+      t('Settle the birth time before treating any of this reading as measured.'),'muted'));
+  }
+  wrap.append(locked);
+
+  const send = el('button',{class:'leaf-button fbi-send',type:'button'}, t('SEND MY ANSWERS'));
+  const note = el('div',{class:'fb-note muted'});
+  send.onclick=async()=>{
+    const answers = Object.entries(INST_ANSWERS)
+      .filter(([,v]) => (v.answer!==undefined && v.answer!==null) ||
+                        (v.free_text && v.free_text.trim()))
+      .map(([qid,v]) => ({qid, answer: v.answer===undefined?null:v.answer,
+                          free_text: v.free_text ? v.free_text.slice(0,4000) : null}));
+    if(!answers.length){ note.textContent=t('Answer at least one question first.'); return; }
+    send.disabled=true; note.textContent=t('Sending…');
+    try{
+      const r=await fetch('/report/feedback/instrument',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...birthBody(), answers, context: INST_CONTEXT})});
+      const d=await r.json();
+      if(r.ok){ note.textContent=t('Thank you — {N} answer(s) stored.').replace('{N}',d.stored)+
+        ' '+t('Your answers are not scored back to you: knowing which option the chart took '+
+              'would change how the next person answers.'); }
+      else{ note.textContent=t('Could not store: ')+(d.detail||r.statusText); send.disabled=false; }
+    }catch(e){ note.textContent=t('Could not send: ')+e.message; send.disabled=false; }
+  };
+  wrap.append(send, note);
+  return wrap;
+}
+
+// Once the reader claims to be answering blind, that claim has to survive contact with what
+// they do next: flipping to any leaf other than the feedback one means they went and read.
+// Wrapping the navigator is how the page finds out, and the claim is taken back rather than
+// left standing — a wrong "before_reading" label is worse than an honest "after_reading" one,
+// because it would put a satisfaction survey into the evidence column.
+let INST_NAV_WATCHED = false;
+// The colophon (Nichod + feedback) is manuscript page 9 since the 2026-10-14 merge: cover,
+// birth details, seven movement folios (data-page 2-8), then the colophon. It was page 12 on the
+// empirical-engine branch's eleven-folio layout; its element ids stay leaf12-* (CSS targets them).
+const COLOPHON_PAGE = 9;
+function instWatchNavigation(){
+  if(INST_NAV_WATCHED) return;
+  const go = window.goToManuscriptPage;
+  if(typeof go !== 'function') return;
+  INST_NAV_WATCHED = true;
+  window.goToManuscriptPage = function(n){
+    if(n !== COLOPHON_PAGE) INST_CONTEXT = 'after_reading';
+    return go.apply(this, arguments);
+  };
+}
+
+// The invitation that makes Part A worth answering: offered at the TOP of the reading, so a
+// reader can answer it before learning what the chart says. Clicking it records that this is
+// what happened; navigating anywhere else in the manuscript takes the claim back.
+function feedbackInvite(){
+  const box = el('div',{class:'fbi-invite'});
+  box.append(el('div',{}, t('Before you read: there are a few questions about your own life at '+
+    'the end of this report. Answering them FIRST is what makes your feedback worth anything — '+
+    'once you have read what the chart says, you can no longer say what you would have said '+
+    'on your own.')));
+  const b = el('button',{class:'leaf-button secondary',type:'button'},
+    t('ANSWER THOSE FIRST'));
+  b.onclick=()=>{ INST_CONTEXT='before_reading'; instWatchNavigation();
+    if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(COLOPHON_PAGE);
+    setTimeout(()=>{ const h=document.getElementById('sec-yourfeedback');
+      if(h) h.scrollIntoView({block:'start'}); }, 600); };
+  box.append(b);
+  return box;
 }
 
 // ---- feedback card: the engine's own questions about this chart; answers POST to

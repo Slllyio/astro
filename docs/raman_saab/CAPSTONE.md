@@ -18,9 +18,10 @@ tags: [raman-saab, record, doctrine]
 We built the most faithful digital encoding of Sri B. V. Raman's Parashari-natal system in
 existence — 845 doctrine rules and 72 yogas, each carrying a verbatim citation to his texts, an
 integrated house-judgment engine, numeric Ayurdaya longevity, Vimshottari/maraka timing — and
-verified it two ways: against Raman's own published verdicts (**259/293 = 88.4% exact,
-283/293 = 96.6% within one ordinal step**, with the ceiling proven un-improvable by five
-independent methods) and against external astronomy
+verified it two ways: against Raman's own published verdicts (**269/381 = 70.6% exact,
+329/381 = 86.4% within one ordinal step** — see the correction note below; this document
+originally reported 88.4% against a pool that was selected on engine agreement) and against
+external astronomy
 (ascendants agree with AstroDatabank's published placements at 96.7%, median error 0.5°). We then
 did what the system's own author demanded — Raman: *"the purely mathematical methods... must be
 applied to thousands of horoscopes"* (HTJAH-II:3937-3943) — and tested the encoded doctrine
@@ -59,7 +60,18 @@ nativities, never against engine self-output.
 - **The golden ratchet:** 293 confirmed verdicts extracted from Raman's books; accuracy may never
   regress; every re-base is a human, reasoned act recorded in a lineage log.
 
-**Fidelity result: 259/293 = 88.4% exact, 283/293 = 96.6% within one ordinal step.** (Was
+**Fidelity result: 269/381 = 70.6% exact, 329/381 = 86.4% within one ordinal step.**
+
+> **★ CORRECTION, 2026-08-24 — this section originally read 88.4% and that figure was
+> selection-biased.** The scored pool was grown under a rule that confirmed DRAFT verdicts which
+> AGREED with the engine and left disagreements parked, so it could climb and never fall. An
+> engine-blind review of the entire DRAFT queue against Raman's printed text (59 confirm, 17
+> revise, 18 reject) put the honest figure at 70.6%. **Not one line of judge or doctrine code
+> changed between the two numbers.** The ceiling analysis below remains valid *for the judge* —
+> do not chase accuracy by tuning — but it described a pool, not the corpus. Full record:
+> `DOCTRINE_BACKLOG` "AUDIT + CONFIRMATION-RULE AMENDMENT" and "FULL ADJUDICATION".
+
+(The pre-correction lineage: was
 261/293 = 89.1% exact / 281/293 = 95.9% within-1 until 2026-08-03, when enabling the B1
 dominant-factor guard deliberately traded 2 strict matches for 2 fewer favourable↔afflicted
 inversions — real errors 12 → 10. See `DOCTRINE_BACKLOG` B1.) The ceiling
@@ -183,11 +195,13 @@ practice under unbounded flexibility.
    (`confirmatory_study.py`) awaiting a genuinely large independent sample that does not yet exist.
 6. **The verdicts, side by side, never averaged:**
 
-> **Fidelity to Raman: 88.4% exact / 96.6% within one ordinal step — proven and ceilinged.**
-> *(The ceiling is permanent — five independent methods proved it un-improvable. Where the line
-> falls BETWEEN "exact" and "within one step" is a deliberate, recorded trade: on 2026-08-03 the
-> B1 dominant-factor guard gave up 2 strict matches to remove 2 favourable↔afflicted inversions.
-> The number moved; the ceiling did not.)*
+> **Fidelity to Raman: 70.6% exact / 86.4% within one ordinal step — measured without a thumb
+> on the scale.**
+> *(Corrected 2026-08-24 from a selection-biased 88.4%; the engine did not change, the pool did.
+> The five ceiling proofs still bind the JUDGE — accuracy is not recoverable by tuning — but they
+> characterised the old selected pool, not this corpus. The remaining error surface is 52 rows,
+> re-profiled: 26 on charts with full birth data, 26 on Raman's printed book charts, and 8 where
+> the engine abstains entirely.)*
 > **Correspondence with reality: null everywhere tested, by two methodologically independent
 > programs, by the doctrine's own preferred questions, with every apparent survivor chased down and
 > with controls honest in both directions.**

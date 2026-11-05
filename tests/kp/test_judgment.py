@@ -10,7 +10,7 @@ from app.kp.citations import CITATIONS
 from app.kp.judgment import (
     DENIED, MATTERS, MIXED, NOT_SIGNIFIED, PROMISED, classify, generic_matter, judge,
 )
-from tests.kp.test_chart import NATIVE_1922
+from .test_chart import NATIVE_1922
 
 
 class TestClassify:

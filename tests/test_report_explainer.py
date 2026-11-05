@@ -229,31 +229,42 @@ class TestProvenanceGuard:
         assert "destined" in moves and "predict" in moves
 
     def test_paraphrased_predictions_are_caught(self, rdict):
-        """Genuine forecast/decree evasions still trip the tripwire — dated indications,
-        probability-of-life-event claims, decree contractions, and every death token."""
-        for evasion in ("Marriage is indicated in 2027.",
-                        "You are likely to marry soon.",
-                        "You are going to gain a promotion.",
+        """Decree evasions still trip the tripwire. (2026-08-17 prediction-unblock,
+        user decision: DATED INDICATIONS in classical idiom are now allowed — see
+        test_timed_indications_now_pass; decree voice and decree-dated death stay refused.)"""
+        for evasion in ("You are going to gain a promotion.",
                         "Death around age 62 is likely.",
                         "You'll inherit wealth."):
             pc = provenance_check(evasion + " [Fact 1]", self._ev(rdict))
             assert pc["forbidden_moves"], f"missed: {evasion}"
 
     def test_doctrine_review_evasions_are_caught(self, rdict):
-        """The bphs-doctrine-reviewer's concrete leak list (2026-07-28 hardening): generic
-        third-person futures, age/date-attached indications through the newly-allowed verbs,
-        and active decree verbs must all refuse."""
+        """Third-person futures and certainty-decree verbs must still refuse (the arms
+        the 2026-08-17 unblock deliberately kept). The 2026-07-28 dated-indication and
+        promises/brings/foretells arms were lifted by user decision — those phrasings
+        are classical indication idiom and now pass; see the allowed-list test."""
         for evasion in ("The native will attain great wealth.",
                         "She will face a serious upheaval.",
                         "He shall prosper greatly.",
+                        "He is bound to inherit property."):
+            pc = provenance_check(evasion + " [Fact 1]", self._ev(rdict))
+            assert pc["forbidden_moves"], f"missed: {evasion}"
+
+    def test_timed_indications_now_pass(self, rdict):
+        """The 2026-08-17 prediction-unblock allowed-list (user decision; the assistant's
+        recommendation to keep the death wall and the user's override are recorded in
+        DOCTRINE_BACKLOG 'prediction unblock'): dated/period-attached indications in
+        classical idiom pass the guard on every surface. Decree voice does not."""
+        for allowed in ("Marriage is indicated in 2027.",
+                        "The chart points to marriage around 2028.",
+                        "Wealth is indicated at age 30.",
                         "This yoga promises immense wealth.",
                         "The 10th brings career success.",
                         "The chart foretells an early marriage.",
-                        "He is bound to inherit property.",
-                        "Wealth is indicated at age 30.",
-                        "The chart points to marriage around 2028."):
-            pc = provenance_check(evasion + " [Fact 1]", self._ev(rdict))
-            assert pc["forbidden_moves"], f"missed: {evasion}"
+                        "The maraka periods 2031-2034 are classically sensitive.",
+                        "The span reads at the purna band, around the 83rd year."):
+            pc = provenance_check(allowed + " [Fact 1]", self._ev(rdict))
+            assert not pc["forbidden_moves"], f"over-blocked: {allowed}"
 
     def test_descriptive_interpretation_is_served(self, rdict):
         """The 2026-07-28 narrowing: descriptive-indication idiom ("points to", "tends to",

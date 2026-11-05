@@ -1,6 +1,7 @@
 """Phase 3R store: it reproduces the Raman engine's own activation grading, period by period."""
 from __future__ import annotations
 
+import pytest
 import swisseph as swe
 
 from app.raman_saab.chart.adapter import cast_chart
@@ -33,6 +34,11 @@ class TestRamanActivationStore:
         seq = list(vd._sequence_from(vd.mahadasha_timeline(ch)[0].maha))
         assert timeline(ch, moon_shift=NAK)[0].maha == seq[1]
 
+    @pytest.mark.xfail(strict=True, reason=(
+        "The engine's dasa grading changed on 2026-10-24 (timing gap check fix 3, PR #24): each "
+        "house is now graded on its OWN timer set, and the MD lord's own bhukti gets the 'same lord' "
+        "tier. This store reproduces the pre-fix grading that Phase 3R was measured with, and is kept "
+        "frozen as that instrument. Re-running Phase 3R on the new grading needs its own prereg."))
     def test_tiers_equal_engine_active_houses(self):
         """On a running period, houses graded >=3 here are exactly active_houses' par_excellence set."""
         ch = cast_chart(BIRTH)

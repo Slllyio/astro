@@ -40,6 +40,7 @@ from app.raman_saab.primitives.functional_nature import (
 # ── sign-class data ───────────────────────────────────────────────────────────
 _ODD_SIGNS: Final[frozenset[int]] = frozenset({1, 3, 5, 7, 9, 11})
 _EVEN_SIGNS: Final[frozenset[int]] = frozenset({2, 4, 6, 8, 10, 12})
+_FIXED_SIGNS: Final[frozenset[int]] = frozenset({2, 5, 8, 11})       # sthira: Taurus, Leo, Scorpio, Aquarius
 _COMMON_SIGNS: Final[frozenset[int]] = frozenset({3, 6, 9, 12})        # dwiswabhava
 # Signs owned by a natural malefic (Sun, Mars, Saturn): Ar Le Sc Cp Aq.
 _MALEFIC_SIGNS: Final[frozenset[int]] = frozenset({1, 5, 8, 10, 11})
@@ -69,6 +70,98 @@ def _seventh_sign(chart: RamanChart) -> int:
 
 
 # ── local leaf predicates (conditions.py intentionally untouched) ─────────────
+
+class _LordParity(C.Condition):
+    """The lord of `house` occupies an odd / even rashi."""
+    def __init__(self, house: int, parity: str) -> None:
+        self.house, self.parity = house, parity
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_lord_of(self.house, ctx.chart))
+        if p is None:
+            return False
+        return (p.sign in _ODD_SIGNS) if self.parity == "odd" else (p.sign in _EVEN_SIGNS)
+
+
+class _LordNotCombustOrWeak(C.Condition):
+    """The lord of `house` is neither combust nor decisively weak — Raman's "not combust or
+    otherwise weak" (HTJAH-II:365-366). `effective_strength(...).decisively_weak` is the
+    shipped reading of "otherwise weak"; it is None-safe on a sparse chart, where an unknown
+    strength is NOT treated as weakness (the rule then rests on the combustion leg alone)."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        lord = _lord_of(self.house, ctx.chart)
+        if lord not in ctx.chart.planets:
+            return False
+        if C.Combust(lord).evaluate(ctx):
+            return False
+        try:
+            es = effective_strength(lord, ctx.chart)
+        except Exception:
+            return True                     # strength unknowable -> not asserted weak
+        return not getattr(es, "decisively_weak", False)
+
+
+class _SeventhSignIsBenefic(C.Condition):
+    """The sign on the 7th is owned by a natural benefic — Raman's "benefic sign"
+    (HTJAH-II:370-371). Jupiter/Venus/Mercury/Moon per the project's locked benefic set."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return SIGN_LORDS[_seventh_sign(ctx.chart)] in NATURAL_BENEFICS
+
+
+class _VenusAsSeventhLordAspectedByBenefic(C.Condition):
+    """Venus IS the 7th lord and a natural benefic aspects him (HTJAH-II:371-372). The
+    lordship leg is Raman's own ("Venus AS 7th lord"), not any Venus."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        if _lord_of(7, ctx.chart) != "Venus" or "Venus" not in ctx.chart.planets:
+            return False
+        return any(b != "Venus" and b in ctx.chart.planets
+                   and drishti.aspects_planet(b, "Venus", ctx.chart)
+                   for b in NATURAL_BENEFICS)
+
+
+class _PlanetInNavamsaOwnedBy(C.Condition):
+    """`planet` occupies a NAVAMSA sign owned by one of `owners` — the D9-lordship frame
+    Raman uses for the single-marriage indications (HTJAH-II:479-482). Reads PlanetPos's
+    already-computed `navamsa_sign`, so it needs no extra primitive."""
+    def __init__(self, planet: str, owners: frozenset[str]) -> None:
+        self.planet, self.owners = planet, owners
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(self.planet)
+        return p is not None and SIGN_LORDS[p.navamsa_sign] in self.owners
+
+
+class _BeneficsInKendrasOrTrikonas(C.Condition):
+    """At least `n` natural benefics occupy a kendra or a trikona (HTJAH-II:478)."""
+    def __init__(self, n: int = 1) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        good = {1, 4, 7, 10, 5, 9}
+        return sum(1 for b in NATURAL_BENEFICS
+                   if (q := ctx.chart.planets.get(b)) is not None
+                   and q.rasi_house in good) >= self.n
+
+
+class _FamilyAndWifeLordsConjunctAsEnemies(C.Condition):
+    """H7.C.88 (NH:11140-11143): the lords of the 2nd and the 7th share a whole-sign house
+    AND are MUTUAL natural enemies per the naisargika table (Wadiyar's Sun-Saturn pair is
+    the worked instance; the predicate is his own general terms). Identity excluded."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives import relationships as _rel
+        chart = ctx.chart
+        l2, l7 = _lord_of(2, chart), _lord_of(7, chart)
+        if l2 == l7 or l2 not in chart.planets or l7 not in chart.planets:
+            return False
+        if chart.planets[l2].sign != chart.planets[l7].sign:
+            return False
+        return (l7 in _rel._ENEMIES.get(l2, frozenset())
+                and l2 in _rel._ENEMIES.get(l7, frozenset()))
+
 
 class _PlanetInSigns(C.Condition):
     """`planet` occupies one of `signs` (rashi 1..12)."""
@@ -175,6 +268,12 @@ class _HouseHemmedBy(C.Condition):
         return all(have.values())
 
 
+#: N1 (FIDELITY_FIXES_PREREG Addendum 16, HELD until measured and decided): Rahu and Ketu are
+#: always opposite, so a node in the 7th always brings the other's 7th aspect; under N1 the axis
+#: counts as ONE affliction in H7.C.82. Read live, so a measurement can flip it.
+NODE_AXIS_AS_ONE: bool = False
+
+
 class _SeventhBesiegedByMalefics(C.Condition):
     """TWO OR MORE distinct natural malefics each afflict the 7th house (occupy it or cast a
     whole-sign drishti on it) AND no FULL benefic (Jupiter/Venus/Mercury) occupies or aspects
@@ -203,7 +302,10 @@ class _SeventhBesiegedByMalefics(C.Condition):
             return p is not None and (p.rasi_house == 7
                                       or drishti.aspects_house(name, 7, chart))
 
-        if sum(afflicts(m) for m in NATURAL_MALEFICS) < 2:
+        hits = {m for m in NATURAL_MALEFICS if afflicts(m)}
+        if NODE_AXIS_AS_ONE and {"Rahu", "Ketu"} <= hits:
+            hits.discard("Ketu")                  # the axis is one testimony (N1)
+        if len(hits) < 2:
             return False
         return not any(afflicts(b) for b in self._RELIEVERS)
 
@@ -415,17 +517,36 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="KARAKA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 368)),
     RuleRecord(
+        # UN-DEFERRED 2026-08-31 (stale-TODO audit): the "combust+weak gate" is C.Combust plus
+        # effective_strength(...).decisively_weak, both shipped. All four legs of
+        # HTJAH-II:364-366 are now encoded.
         id="H7.C.5", house=7, signification="marital_happiness", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(_PlanetParity("Venus", "even"),
+                        _SeventhSignIn(_EVEN_SIGNS),
+                        _LordParity(7, "even"),
+                        _LordNotCombustOrWeak(5), _LordNotCombustOrWeak(7)),
         fortified="7th lord & Venus in even signs, the 7th an even sign, and the 5th & 7th lords "
-                  "not combust/weak → good wife and children. TODO(predicate: combust+weak gate)",
+                  "neither combust nor otherwise weak → a good wife and children",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 364)),
     RuleRecord(
+        # BUILDABLE BUT HELD, MEASURED NET-NEGATIVE (2026-08-31). Both legs are one-liners over
+        # SIGN_LORDS / NATURAL_BENEFICS and drishti — the audit was right that nothing was
+        # missing, and `C.Or(_SeventhSignIsBenefic(), _VenusAsSeventhLordAspectedByBenefic())`
+        # is verbatim HTJAH-II:370-372. It was implemented and MEASURED: it fires 110/242
+        # (45%), because SEVEN of the twelve signs are benefic-owned, and it lifts h7_06's
+        # spouse reading mixed -> favourable against Raman (287 -> 286 exact). Held under the
+        # net-negative rule. The diagnosis is the same shape as H9.B.23's: a generic
+        # placement indication ("the 7th house be a benefic sign") carries Raman's vocabulary
+        # but not his weight — he offers it as one testimony among many, and as an
+        # unqualified benefic in a pooled bucket (spouse pools marital_happiness) it
+        # out-votes specific afflictions. Re-open only with a strength or
+        # blemishlessness qualifier attached, per the H7 blemishless-Venus floor precedent.
         id="H7.C.8", house=7, signification="marital_happiness", group="combination",
         kind="descriptive", condition=None,
         fortified="a benefic 7th sign, OR Venus-as-7th-lord aspected by a benefic → a devoted, "
-                  "charming spouse. TODO(predicate: benefic-sign + karaka-is-lord aspect)",
+                  "charming spouse",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 370)),
 
@@ -560,11 +681,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "kept in text)",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 488)),
     RuleRecord(
-        id="H7.C.35", house=7, signification="spouse", group="combination", kind="descriptive",
-        condition=None,
-        fortified="2nd & 7th lords in depression with benefics in kendras/trikonas → only ONE "
-                  "marriage; Jupiter & Mercury in Sun/Mars Navamsas, or Mercury-in-7th-in-Jupiter-"
-                  "Navamsa → marries once. TODO(predicate: multi-lord-depression, Navamsa lordship)",
+        # STAYS DESCRIPTIVE — and the reason is doctrinal, not technical (2026-08-31). The
+        # stale-TODO audit listed this as buildable and it IS: "multi-lord-depression" is
+        # C.LordHasDignity({"debil"}) twice and "Navamsa lordship" reads PlanetPos.navamsa_sign
+        # through SIGN_LORDS. All three of Raman's paths (HTJAH-II:477-482) were encoded and
+        # measured — they fire 28/242 and cost a row (h7_06 spouse mixed -> favourable against
+        # him). But the disqualification is prior to the measurement: "only one marriage is
+        # possible" / "the native will marry only once" is a marriage-COUNT statement, not a
+        # judgment of the spouse or of marital happiness. Marrying once is neither favourable
+        # nor afflicted — Raman himself reads single marriages both ways elsewhere. Encoding a
+        # count as a benefic that lifts spouse QUALITY is the category error the audit's own
+        # taxonomy defers (cf. H3.C.15-17, H11.C.40: "numeric count output, not a boolean
+        # gate"). Re-open only with a marriage-COUNT signification to route it to.
+        id="H7.C.35", house=7, signification="spouse", group="combination",
+        kind="descriptive", condition=None,
+        fortified="2nd & 7th lords in depression with benefics in kendras/trikonas; or Jupiter "
+                  "and Mercury in Navamsas owned by the Sun and Mars; or Mercury in the 7th in "
+                  "a Navamsa of Jupiter → the native marries only once",
         afflicted=None,
         frame="LAGNA", varga="D9", polarity="benefic", source=Citation("HTJAH-II", 477)),
 
@@ -689,7 +822,11 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # ===== Kuja-Dosha (single-chart, HTJAH-II:2579-2632) — sig marital_happiness =====
     RuleRecord(
         id="H7.KD.1", house=7, signification="marital_happiness", group="combination",
-        kind="evaluable", condition=_KujaDosha(),
+        # R2 DESCRIPTIVE (2026-10-24, engine-blind citation review): Raman opens this dictum as
+        # "one of the most misunderstood and misapplied astrological dicta" (HTJAH-II:2579-2581),
+        # writes "The Dosha is not absolute" (:2605), and uses it only as units weighed against
+        # the partner's chart in matching (:2627) — never as a verdict on one chart. Shown, no vote.
+        kind="descriptive", condition=_KujaDosha(),
         fortified=None,
         afflicted="Kuja/Mangal Dosha — Mars in the 2/4/7/8/12 from the Lagna, the Moon or Venus "
                   "(not neutralised by a Mars+Jupiter or Mars+Moon conjunction) → affliction to "
@@ -792,4 +929,102 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the 7th lord heavily afflicted (conjunct a node and malefic-aspected, or "
                   "hemmed by papakartari) → a vitiated spouse / disharmonious marriage",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 1773)),
+
+    # ===== B4 arm 2 (DOCTRINE_BACKLOG, encoded 2026-08-17) =====
+    RuleRecord(
+        id="H7.C.87", house=7, signification="marital_happiness", group="combination",
+        kind="evaluable",
+        condition=C.And(C.IsYogaKaraka("Venus"), _PlanetInSigns("Venus", _FIXED_SIGNS)),
+        fortified="a Yogakaraka Venus in a fixed sign → fixity of affections — constancy "
+                  "in the marital bond (the positive answer to the dual-sign multiplicity "
+                  "indications). Arm 1 (the blemishless-Venus floor, HTJAH-II:1207/368) "
+                  "shipped as a gate; this is the karaka-QUALITY testimony itself.",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 1474)),
+
+    # C.88 — the lords of the 2nd (family) and the 7th (wife) CONJUNCT while mutual natural
+    # BITTER ENEMIES -> domestic life miserable. Wadiyar IV verbatim (NH:11140-11143): "The
+    # Sun-Saturn conjunction in the 11th is doubtless a good combination, but the fact that
+    # the Sun and Saturn are bitter enemies, the Sun ruling the 2nd or house of family and
+    # Saturn ruling the 7th or house of wife, made his domestic life quite miserable."
+    # Encoded in his own general terms (lordships + mutual natural enmity via the
+    # relationships table), not as a Sun-Saturn special case. SATISFIABILITY BY ENUMERATION
+    # (review, playbook rule 3d): the only mutual naisargika enemy pairs are Sun-Saturn and
+    # Sun-Venus; walking all 12 lagnas' (2nd-lord, 7th-lord) pairs, CANCER (Sun, Saturn) is
+    # the SOLE satisfiable case — the general form is extensionally identical to Wadiyar's
+    # own configuration, zero over-generalization risk. Fires on Wadiyar alone across the
+    # confirmed marital rows (his row was an engine abstention). Note his sentence also
+    # teaches that the conjunction can simultaneously be "a good combination" for OTHER
+    # matters — this rule is scoped to marital_happiness only.
+    RuleRecord(
+        id="H7.C.88", house=7, signification="marital_happiness", group="combination",
+        kind="evaluable",
+        condition=_FamilyAndWifeLordsConjunctAsEnemies(),
+        fortified=None,
+        afflicted="the lords of the 2nd and the 7th conjoined while bitter natural enemies "
+                  "→ domestic life is miserable",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 11140)),
 )
+
+
+# ── append-only accessor (2026-08-18, REPORT_CRITIQUE Wave-2 item 1b) ─────────
+# Read-only DISCLOSURE of _KujaDosha's own evaluation path, so report surfaces
+# can narrate WHICH reference point(s) place Mars in a dosha house and each
+# exemption checked with its result (HTJAH-II:2579-2622). The rule's logic and
+# firing are untouched: `fires` is _KujaDosha().evaluate itself, and every frame
+# check below re-runs the SAME predicates the rule composes (InHouseFrom /
+# Conjunct / the exemption sets), never a re-implementation with different math.
+
+from dataclasses import dataclass  # noqa: E402 — appended accessor block
+
+
+@dataclass(frozen=True)
+class KujaFrameCheck:
+    """One reference frame (Lagna / Moon / Venus) of the Kuja-dosha screen."""
+    origin: str          # "the Lagna" | "the Moon" | "Venus"
+    house: int           # the dosha house (2/4/7/8/12) Mars occupies from it; 0 = none
+    sign_exempt: bool    # the per-house sign exemption (HTJAH-II:2593-2599) spares it
+    stands: bool         # this frame contributes dosha (in a dosha house, not sign-exempt)
+
+
+@dataclass(frozen=True)
+class KujaDoshaEvaluation:
+    """The full per-frame evaluation _KujaDosha performs, exposed for narration."""
+    mars_present: bool
+    mars_sign: int                      # rashi 1..12 (0 when Mars is absent)
+    universal_exempt: bool              # Mars in Leo/Aquarius (HTJAH-II:2599-2600)
+    conjunct_jupiter: bool              # Mars+Jupiter neutralisation
+    conjunct_moon: bool                 # Mars+Moon neutralisation
+    frames: tuple[KujaFrameCheck, ...]  # Lagna, Moon, Venus — in the rule's own order
+    fires: bool                         # _KujaDosha().evaluate — the rule's own verdict
+
+
+def evaluate_kuja_dosha(chart: RamanChart) -> KujaDoshaEvaluation:
+    """Disclose the H7.KD.1 (_KujaDosha) evaluation per reference frame — a pure
+    re-read for report narration; does not and must not alter the rule's firing."""
+    ctx = C.EvalContext(chart)
+    mars = chart.planets.get("Mars")
+    if mars is None:
+        return KujaDoshaEvaluation(
+            mars_present=False, mars_sign=0, universal_exempt=False,
+            conjunct_jupiter=False, conjunct_moon=False, frames=(), fires=False)
+    frames: list[KujaFrameCheck] = []
+    for origin, label in (("LAGNA", "the Lagna"), ("MOON", "the Moon"),
+                          ("Venus", "Venus")):
+        hit = 0
+        for h in _KUJA_HOUSES:
+            if C.InHouseFrom("Mars", origin, h).evaluate(ctx):
+                hit = h
+                break                      # houses are disjoint: at most one can hold Mars
+        exempt = bool(hit) and mars.sign in _KUJA_SIGN_EXEMPT[hit]
+        frames.append(KujaFrameCheck(
+            origin=label, house=hit, sign_exempt=exempt,
+            stands=bool(hit) and not exempt))
+    return KujaDoshaEvaluation(
+        mars_present=True,
+        mars_sign=mars.sign,
+        universal_exempt=mars.sign in _KUJA_UNIVERSAL_EXEMPT_SIGNS,
+        conjunct_jupiter=C.Conjunct("Mars", "Jupiter").evaluate(ctx),
+        conjunct_moon=C.Conjunct("Mars", "Moon").evaluate(ctx),
+        frames=tuple(frames),
+        fires=_KujaDosha().evaluate(ctx))

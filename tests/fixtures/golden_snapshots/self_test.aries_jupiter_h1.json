@@ -8,6 +8,7 @@
       "HTJAH-I:1138",
       "HTJAH-I:1260",
       "HTJAH-I:1525",
+      "HTJAH-I:1711",
       "HTJAH-I:19252"
     ],
     "fired_rule_ids": [
@@ -18,22 +19,23 @@
       "H1.C.33",
       "H1.L.10",
       "H1.M.S02",
+      "H1.N.39",
       "H1.P.Jupiter"
     ],
     "rollup": "favourable",
     "significations": {
       "body": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "health": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "self": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

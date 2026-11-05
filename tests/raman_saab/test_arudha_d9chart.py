@@ -31,12 +31,13 @@ def test_arudha_pada_and_upapada_in_range():
     assert 1 <= arudha.upapada_lagna(ch) <= 12
 
 
-def test_lord_in_lagna_arudha_is_tenth():
-    """When the lagna lord sits in the lagna, the Arudha falls in the 1st -> exception -> 10th."""
+def test_lord_in_lagna_arudha_stays_in_lagna():
+    """Lagna lord in the Lagna → Arudha = the Lagna itself. Raman's plain double-count
+    (HTJAH-I:2519-2522) applies no Jaimini 1st/7th redirect."""
     stated = {"Mars": {"lon": 8.0, "bhava": 1}}        # Aries lagna, Mars (lord) in Aries
     from app.raman_saab.chart.model import RamanChart
     ch = RamanChart.from_stated_positions(stated, asc_lon=5.0, ayanamsa="raman")
-    assert arudha.arudha_lagna(ch) == 10               # Capricorn (10th from Aries)
+    assert arudha.arudha_lagna(ch) == 1                # Aries — kept, not bounced to the 10th
 
 
 def test_navamsa_lagna_helpers_mainpuri():

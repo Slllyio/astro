@@ -57,6 +57,22 @@ FEATURES: dict[str, tuple] = {
     "father_died_early": ("event", "Death of Father", 9, "father", "afflicted", None),
     "mother_died_early": ("event", "Death of Mother", 4, "mother", "afflicted", None),
     "legal_trouble":    ("event", r"legal", 6, "enemies", "afflicted", None),
+    # mapping_version 3 (2026-08-23): powered parent-channel features from the childhood-family
+    # composite tags (~1,500/1,100 vs the died_early events' n=26/25). SHARED-SOURCE: the father
+    # and mother features read the SAME tokens — one measurement on two channels (see the
+    # category_house_map.csv confound notes, incl. the disclosed prior ad-hoc null).
+    "father_childhood_adverse": (
+        "cat", r"family : childhood : (?:family traumatic event|parents divorced|disadvantaged|memories bad)",
+        9, "father", "afflicted", "father_childhood_good"),
+    "father_childhood_good": (
+        "cat", r"family : childhood : (?:family close|family supportive|advantaged)",
+        9, "father", "favourable", "father_childhood_adverse"),
+    "mother_childhood_adverse": (
+        "cat", r"family : childhood : (?:family traumatic event|parents divorced|disadvantaged|memories bad)",
+        4, "mother", "afflicted", "mother_childhood_good"),
+    "mother_childhood_good": (
+        "cat", r"family : childhood : (?:family close|family supportive|advantaged)",
+        4, "mother", "favourable", "mother_childhood_adverse"),
 }
 
 _ORD = {"afflicted": 0.0, "mixed": 1.0, "favourable": 2.0}

@@ -4,6 +4,8 @@
       "HTJAH-II:11064",
       "HTJAH-II:11478",
       "HTJAH-II:9525",
+      "HTJAH-II:9527",
+      "HTJAH-II:9534",
       "HTJAH-II:9685",
       "HTJAH-II:9815",
       "HTJAH-II:9850",
@@ -12,13 +14,16 @@
     "fired_rule_ids": [
       "H10.C.1",
       "H10.C.33",
+      "H10.C.33m",
       "H10.C.4",
       "H10.L.8",
+      "H10.L.8a",
+      "H10.L.8c",
       "H10.P.Mercury",
       "H10.P.Rahu",
       "H10.P.Sun"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -43,7 +48,7 @@
       "profession_trade": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "status_honour": {
         "degree": "mild",
@@ -58,21 +63,25 @@
       "HTJAH-I:5183",
       "HTJAH-I:5193",
       "HTJAH-I:5226",
-      "HTJAH-I:5248"
+      "HTJAH-I:5248",
+      "HTJAH-I:5791",
+      "HTJAH-I:5826"
     ],
     "fired_rule_ids": [
       "H5.C.1",
       "H5.C.10",
       "H5.C.35",
+      "H5.C.39",
+      "H5.C.40",
       "H5.L.10",
       "H5.P.Jupiter"
     ],
-    "rollup": "mixed",
+    "rollup": "afflicted",
     "significations": {
       "children": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "afflicted"
       },
       "intellect": {
         "degree": "moderate",
@@ -88,17 +97,17 @@
   },
   "H8": {
     "citations": [
-      "HTJAH-II:2916",
       "HTJAH-II:3084",
       "HTJAH-II:3550",
       "HTJAH-II:3625",
-      "HTJAH-II:3902"
+      "HTJAH-II:3902",
+      "NH:5944"
     ],
     "fired_rule_ids": [
       "H8.C.1",
       "H8.C.25",
+      "H8.D.4",
       "H8.K.3",
-      "H8.L.2",
       "H8.P.Saturn"
     ],
     "rollup": "afflicted",

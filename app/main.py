@@ -12,6 +12,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.auth_routes import auth_router
@@ -19,6 +20,8 @@ from app.api.electional_routes import electional_router
 from app.api.forecast_routes import almanac_router, forecast_router
 from app.api.horary_routes import horary_router
 from app.api.interpret_routes import interpret_router
+from app.api.empirical_natal_routes import natal_router
+from app.api.empirical_routes import empirical_router
 from app.api.knowledge_routes import knowledge_router
 from app.api.medini_routes import medini_router
 from app.api.parashara_routes import parashara_router
@@ -98,6 +101,18 @@ app = FastAPI(
 # Starlette primitive that backs that cookie. Reuses SECRET_KEY for signing.
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
+# A detailed reading is ~947 KB of JSON and was going over the wire uncompressed. It gzips to
+# 132 KB — 14% — because it is repetitive prose and structure, so this one line is worth more
+# than seven times what splitting the chart-independent sections into a separately cacheable
+# endpoint would have saved (that idea was measured at ~120 KB raw, which is ~17 KB once
+# gzipped, and it cost a new route, ETag handling and a page change; it was dropped for this).
+#
+# Added AFTER SessionMiddleware so it ends up OUTERMOST — Starlette applies middleware in
+# reverse registration order — and therefore also compresses the vendored Flask portal mounted
+# below. Safe here because nothing in this app streams: there is no StreamingResponse, no SSE
+# and no FileResponse for it to buffer.
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 # Rate-limit plumbing: register the limiter on app.state so @limiter.limit
 # decorators on routes can find it, and install slowapi's 429 error handler.
 app.state.limiter = limiter
@@ -115,6 +130,8 @@ app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
 app.include_router(rectification_router)  # Birth-time rectification / discovery (/rectify/*)
 app.include_router(varga_router)  # Shodasavarga 16-divisional-chart reading (/vargas/*)
 app.include_router(report_router)  # Full detailed reading (/report/*)
+app.include_router(empirical_router)  # Empirical tournament: validated claims or a measured null (/empirical/*)
+app.include_router(natal_router)  # Western natal decode: tradition's reading, framed as such (/empirical/natal)
 app.include_router(soul_router)  # EXPERIMENT: soul-destiny reading (/soul/*) — Jaimini firewall lifted
 app.include_router(parashara_router)  # Engine #2: BPHS/Parashara reading (/parashara/*)
 app.include_router(electional_router)  # WALLED: Muhurtha elections (/electional/*)
@@ -139,7 +156,7 @@ app.mount(
 # DOB-only matrix-based reader complementing this app's precise natal-chart
 # engine. See `portal/app.py` for its routes.
 if settings.PORTAL_ENABLED:
-    from starlette.middleware.wsgi import WSGIMiddleware
+    from a2wsgi import WSGIMiddleware  # starlette.middleware.wsgi is deprecated for removal
     from portal.app import app as _portal_flask_app  # heavy import: ephemeris
     app.mount("/portal", WSGIMiddleware(_portal_flask_app))
     logger.info("Vendored Flask portal mounted at /portal/")
@@ -168,9 +185,13 @@ async def landing() -> HTMLResponse:
     surface, so the no-CDN rule that protects the report page does not apply here. It does
     reuse the app's own manuscript palette so the pitch and the product look like one thing.
 
-    Its copy is bound by the Measured-Truth directive: the page states the 88.4% fidelity
+    Its copy is bound by the Measured-Truth directive: the page states the CURRENT fidelity
     figure AND the null real-outcome result, and never presents the engine as a validated
-    predictor of lives."""
+    predictor of lives. The fidelity number is 70.6% exact / 86.4% within one ordinal step
+    (269 of 381) as of 2026-08-24 — it read 88.4% until an audit found the scored pool could
+    only admit verdicts the engine already agreed with. **When the ratchet moves, this page
+    moves with it**; a marketing surface quoting a superseded figure is the exact failure the
+    directive exists to prevent. Source of truth: tests/fixtures/golden_accuracy_baseline.json."""
     html_path = _APP_TEMPLATES_DIR / "landing.html"
     if not html_path.exists():
         raise HTTPException(

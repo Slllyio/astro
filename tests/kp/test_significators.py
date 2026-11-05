@@ -6,7 +6,7 @@ import pytest
 
 from app.kp.chart import cast
 from app.kp.significators import house_significators, node_represents, planet_significations
-from tests.kp.test_chart import NATIVE_1922
+from .test_chart import NATIVE_1922
 
 
 @pytest.fixture(scope="module")

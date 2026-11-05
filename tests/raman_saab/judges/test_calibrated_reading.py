@@ -74,6 +74,52 @@ class TestInvertedChannels:
         assert not e.inverted_warning
 
 
+class TestAtlasFailureClassDisclosure:
+    """The 16 non-INVERTED significations carrying a Failure-Atlas finding must disclose it.
+
+    Before 2026-08-22 `atlas_failure_classes` was dead data: only the hardcoded INVERTED pair
+    produced any note, so a reader of a wealth or marriage reading was never told those channels
+    had been measured against real outcomes and found to carry no signal — a disclosure gap in
+    the overlay whose whole job is disclosure.
+    """
+
+    def test_pure_noise_channel_discloses_the_null(self) -> None:
+        e = _calibrate(7, "marital_happiness", "favourable", "mild")
+        assert "real-outcome check (divorced)" in e.note
+        assert "indistinguishable from chance" in e.note
+
+    def test_wealth_discloses_its_atlas_finding(self) -> None:
+        e = _calibrate(2, "wealth", "favourable", "moderate")
+        assert "real-outcome check" in e.note
+
+    def test_under_powered_is_not_reported_as_a_failure(self) -> None:
+        """UNDER-POWERED means the sample was too small, NOT that the reading was refuted."""
+        e = _calibrate(4, "mother", "favourable", "mild")
+        assert "too few cases" in e.note
+        assert "neither supported nor refuted" in e.note
+
+    def test_inverted_channel_does_not_restate_its_class(self) -> None:
+        """The strong hardcoded warning already fired; the generic line must not duplicate it."""
+        e = _calibrate(3, "courage", "afflicted", "mild")
+        assert e.note.count("INVERTED") == 1
+
+    def test_signification_without_an_atlas_finding_stays_silent(self) -> None:
+        e = _calibrate(1, "body", "favourable", "mild")
+        assert "real-outcome check" not in e.note
+
+    def test_every_table_class_has_a_reader_facing_note(self) -> None:
+        """No internal enum may reach a report unrendered — if the atlas is re-run and emits a
+        new class, this fails rather than silently dropping (or leaking) it."""
+        from app.raman_saab.judges.calibrated_reading import _ATLAS_CLASS_NOTES, _table
+        classes = {
+            str(item).partition(":")[2]
+            for row in _table()["table"].values()
+            for item in (row.get("atlas_failure_classes") or ())
+        }
+        unmapped = classes - set(_ATLAS_CLASS_NOTES) - {"INVERTED"}
+        assert not unmapped, f"atlas classes with no reader-facing note: {sorted(unmapped)}"
+
+
 class TestProvenanceAndValidity:
     def test_every_entry_is_tagged_empirical(self) -> None:
         cal = build_calibrated_reading(_chart(_FULL), 7)

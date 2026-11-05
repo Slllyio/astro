@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.detailed_report import (
     HTML_SECTION_ORDER,
@@ -27,6 +29,11 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 #: marker change must consciously touch this file too. Append-only: may only ever GROW.
 _FROZEN = (
     ("title", "# Detailed reading", 'class="name"'),
+    # v40 (merged 2026-10-14; was v37 on the empirical-engine branch):
+    # amendment (2026-08-20, conscious, same-commit as the module, user-requested): the
+    # plain-words summary, inserted FIRST. Third exception to append-at-the-end, after v5 and
+    # v32 — a summary a reader meets after the technical chapters is not a summary.
+    ("simple_summary", "## In simple words", 'id="simple-summary"'),
     # v5 amendment (2026-07-26, conscious, same-commit as the module): "Your Reading" is the
     # ONE deliberate exception to "append at the end" — it must come FIRST after the title,
     # since it exists specifically to be read before every technical section below it.
@@ -41,6 +48,10 @@ _FROZEN = (
     # coherence work): the interpretation guide — the report's own precedence rules
     # collected into one section, placed right after the honesty headline.
     ("interpretation_guide", "## How to read this report", 'id="interpretation-guide"'),
+    # v37 (merged 2026-10-14; was v34 on the empirical-engine branch):
+    # (2026-08-18): the integrated interpretation layer, a conscious near-top amendment
+    # right after "How to read this report" (the v5/v32 exception, grown here in lockstep).
+    ("themes", "## The integrated reading", 'id="integrated-reading"'),
     ("stands_out", "## What stands out in this chart", 'id="stands-out"'),
     # v19 amendment (2026-08-03, conscious, same-commit as the module): the ranked digest,
     # previously JSON/interactive-only — the coherence audit's completeness repair.
@@ -153,6 +164,30 @@ _FROZEN = (
     ("dominance", "## What governs each house", 'id="dominance"'),
     ("restraint", "## How firmly each house stands", 'id="restraint"'),
     ("analogy", "## Charts of Raman's this one recalls", 'id="analogy"'),
+    # v36 (merged 2026-10-14; was v33 on the empirical-engine branch):
+    # amendment (2026-08-14, conscious, same-commit as the module, user-requested):
+    # aptitude, intelligence & work style — appended at the END per the append-only default.
+    ("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"'),
+    # v38 (merged 2026-10-14; was v35 on the empirical-engine branch):
+    # (2026-08-19): the medical read — HPA-29's own tables through Raman's own
+    # 6th-house procedure. Appended likewise; _FROZEN grown in the same commit.
+    ("medical", "## Medical read (classical correspondence)", 'id="medical"'),
+    # v39 (merged 2026-10-14; was v36 on the empirical-engine branch):
+    # (2026-08-20, user-requested): the feedback instrument — the questionnaire the reader
+    # answers about their own life, generated with the reading. Appended at the very END: it is
+    # the one section that asks rather than tells. _FROZEN grown in the same commit.
+    ("feedback", "## Your feedback", 'id="feedback"'),
+    # v41 (merged 2026-10-14; was v38 on the empirical-engine branch):
+    # (2026-09-01, user-requested): the collected non-graded lane — every indication that
+    # is a kind, cause, channel, count or circumstance rather than a grade. A pure re-read of
+    # the house-block composers. Appended at the END; _FROZEN grown in the same commit.
+    ("indications", "## What Raman's rules indicate", 'id="indications"'),
+    # v42 (2026-10-30, user-requested): how Raman would weigh this chart — a pure re-read of the
+    # judged ledgers (app/raman_saab/philosophy.py). Appended at the END; _FROZEN grown here.
+    ("philosophy", "## How Raman would weigh this chart", 'id="philosophy"'),
+    # v43 (2026-10-31, user-requested): for and against, matter by matter — a pure re-read of
+    # the judged ledgers (app/raman_saab/for_against.py). Appended at the END; _FROZEN grown here.
+    ("for_against", "## For and against, matter by matter", 'id="for_against"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -160,28 +195,34 @@ _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 #: derives its sequence from `report_movements.MOVEMENTS`, so a test that only compared those
 #: two would pass silently when both were edited together. Re-sequencing the report means
 #: editing this tuple too, consciously, in the same commit.
-_ORDER_V35: tuple[str, ...] = (
+_ORDER_V41: tuple[str, ...] = (
+    # v41 (merged 2026-10-14): the six empirical-engine sections placed in the arc —
+    # simple_summary after the header trio (a reader has to meet it before anything else),
+    # themes before stands_out, indications after restraint, aptitude opening the matters,
+    # medical after health_readout, feedback after nichod (asks rather than tells; user request).
     # I. Who this is
     # v35: "sitting" enters here — after the signature frames, before the technical hand-off.
-    "title", "plain_reading", "chart_signature", "sitting", "now_box", "ruler", "planet_bios",
-    "psych",
+    "title", "plain_reading", "chart_signature", "simple_summary", "sitting", "now_box",
+    "ruler", "planet_bios", "psych",
     # II. How to read it honestly
-    "info_content", "interpretation_guide", "judgment_graph", "stands_out", "digest",
-    "dashboard",
+    "info_content", "interpretation_guide", "philosophy", "judgment_graph", "themes",
+    "stands_out",
+    "digest", "dashboard",
     # III. The instrument
     "chart_grids", "positions", "rect_confidence", "shadbala", "ashtakavarga", "divisional",
     # IV. The twelve fields
-    "houses", "house_strength", "preponderance", "dominance", "restraint",
+    "houses", "for_against", "house_strength", "preponderance", "dominance", "restraint",
+    "indications",
     "yogas", "yoga_deep", "deeptadi",
     # V. The matters of life
-    "career", "profession", "wealth", "marriage", "children", "health_readout", "arishta",
-    "longevity", "maraka", "maraka_saturn",
+    "aptitude", "career", "profession", "wealth", "marriage", "children", "health_readout",
+    "medical", "arishta", "longevity", "maraka", "maraka_saturn",
     # VI. In time
     "timeline", "yoga_timing", "ishta_kashta", "md_condition", "av_dasha_seat", "dasa_kakshya",
     "life_chapters", "decades", "gochara", "dasha_transit",
     # VII. The summing up
     "karakamsa", "soul", "karmic", "pitru", "analogy", "synthesis", "life_synthesis",
-    "glossary", "nichod",
+    "glossary", "nichod", "feedback",
 )
 
 
@@ -224,12 +265,12 @@ class TestTemplateContract:
 
         `SECTION_CONTRACT` derives its order from `report_movements.MOVEMENTS`, so comparing
         the two would be near-tautological: editing the arc and the registry together would
-        pass silently. `_ORDER_V35` lives here so re-sequencing stays as deliberate an act as
+        pass silently. `_ORDER_V41` lives here so re-sequencing stays as deliberate an act as
         changing a marker.
         """
-        assert tuple(s.section_id for s in SECTION_CONTRACT) == _ORDER_V35
-        assert tuple(HTML_SECTION_ORDER) == _ORDER_V35
-        assert flattened_order() == _ORDER_V35
+        assert tuple(s.section_id for s in SECTION_CONTRACT) == _ORDER_V41
+        assert tuple(HTML_SECTION_ORDER) == _ORDER_V41
+        assert flattened_order() == _ORDER_V41
 
     def test_movements_partition_the_contract(self):
         """Every section sits in exactly one movement — no section lost, none duplicated."""
@@ -240,13 +281,15 @@ class TestTemplateContract:
     def test_nichod_stays_last_and_the_header_trio_stays_together(self):
         """Two structural constraints the arc may never violate.
 
-        `nichod` is the capstone and must close the document. `title`/`plain_reading`/
+        `nichod` is the capstone and closes the reading; since the 2026-10-14 merge only
+        `feedback` follows it (user request — the one section that asks rather than tells). `title`/`plain_reading`/
         `chart_signature` are one `<header>` element in the HTML and are emitted as a single
         chunk, so they must remain adjacent in that internal order.
         """
-        assert _ORDER_V35[-1] == "nichod"
-        assert _ORDER_V35[:3] == ("title", "plain_reading", "chart_signature")
+        assert _ORDER_V41[-2:] == ("nichod", "feedback")
+        assert _ORDER_V41[:3] == ("title", "plain_reading", "chart_signature")
 
+    @needs_corpus
     def test_renderers_emit_the_frozen_markers(self, markdown, html):
         """The OUTPUT (not just the registry) must carry every frozen marker — so changing a
         heading in the renderer without amending this file fails, even if the module's registry
@@ -262,6 +305,7 @@ class TestTemplateContract:
         for spec in SECTION_CONTRACT:
             assert spec.md_marker or spec.html_marker, spec.section_id
 
+    @needs_corpus
     def test_markdown_emits_all_sections_in_contract_order(self, markdown):
         """Every markdown marker present, strictly in registry order."""
         pos = -1
@@ -273,6 +317,7 @@ class TestTemplateContract:
             assert i > pos, f"markdown reordered section {spec.section_id!r}"
             pos = i
 
+    @needs_corpus
     def test_html_emits_all_sections_in_contract_order(self, html):
         """Every HTML marker present, strictly in the HTML document order."""
         by_id = {s.section_id: s for s in SECTION_CONTRACT}
@@ -305,7 +350,18 @@ class TestTemplateContract:
             # v33 was the reading arc — a re-ORDERING, so it added no section and needs no tag.
             # v34 adds the intuition layer: dominance, restraint and analogy.
             # v35 adds the Sitting — the continuous reading in Raman's NH arc.
-            "v34", "v35"}
+            "v34", "v35",
+            # v36-v41: the six empirical-engine sections, renumbered at the 2026-10-14 merge
+            # (they were v33-v38 on that branch): v36 aptitude, v37 the integrated reading
+            # (themes), v38 the medical read, v39 the feedback instrument, v40 "In simple
+            # words", v41 the collected non-graded lane — "What Raman's rules indicate",
+            # grouped by category, a pure re-read of the house-block composers.
+            "v36", "v37", "v38", "v39", "v40", "v41",
+            # v42 (2026-10-30): "How Raman would weigh this chart" (philosophy.py).
+            "v42",
+            # v43 (2026-10-31): "For and against, matter by matter" (for_against.py).
+            "v43",
+        }
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -338,6 +394,20 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v30") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v31") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v32") == 1
+        # v34: dominance, restraint, analogy (the intuition layer); v35: the Sitting.
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v34") == 3
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v35") == 1
+        # v36-v41 (merged 2026-10-14; were v33-v38 on the empirical-engine branch):
+        # aptitude, themes, medical, feedback, simple_summary, indications — one each.
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v36") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v37") == 1
+        # v38: the medical read (HPA-29 sign->anatomy / planet->disease, applied through
+        # Raman's own 6th-house rule) — the audit's largest content gap, closed once the
+        # doctrine corpus was mounted and the chapter's anchors verified line-for-line.
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v38") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v39") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v40") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v41") == 1
 
 
 class TestRectConfidence:
@@ -507,6 +577,7 @@ class TestJudgmentGraphSection:
 class TestKarmicEvolution:
     """v30 — the walled Jaimini layer: verbatim doctrine, resolving cite, walls hold."""
 
+    @needs_corpus
     def test_renders_in_every_surface_with_a_resolving_cite(self, report, markdown, html):
         from app.raman_saab.doctrine.sources import Citation, verify
         from app.raman_saab.report_json import to_report_dict
@@ -560,16 +631,55 @@ class TestWaveB:
         ls = report.life_synthesis
         themes = dict(ls.paragraphs)
         if "Destiny" in themes:
-            assert report.nichod.essence in themes["Destiny"]
+            # Wave-2 rebuild (2026-08-17): Destiny carries its own distinct clause —
+            # identity + longevity band + governing factor — never the Nichod essence
+            # pasted whole (the essence stays complete in the Nichod itself).
+            assert report.nichod.essence not in themes["Destiny"]
+            assert report.nichod.identity in themes["Destiny"]
+            assert report.longevity_class in themes["Destiny"]
+            assert report.ruler.lagna_lord in themes["Destiny"]
         if "Marriage" in themes:
             assert report.marriage.verdict in themes["Marriage"]
+            # content re-read, not a pointer at the monograph's existence
+            assert "monograph carries Raman's own words" not in themes["Marriage"]
         if "Children" in themes:
             assert report.children.verdict in themes["Children"]
+            assert "quotes the classical combination block" not in themes["Children"]
         if "Dominant themes" in themes:
             assert report.planet_bios[0].planet in themes["Dominant themes"]
         from app.llm.report_explainer import _FORBIDDEN_RE
         for _t, para in ls.paragraphs:
             assert _FORBIDDEN_RE.search(para) is None, para
+
+    def test_life_synthesis_has_the_present_chapter_theme(self, report):
+        """Wave-2: the biography-shaped closing pass names the running MD/AD with its tier
+        and lit houses — a re-read of the Nichod's current_period line."""
+        cur = report.nichod.current_period
+        if not cur or cur.startswith("no running period"):
+            pytest.skip("no running period resolved on this chart")
+        themes = dict(report.life_synthesis.paragraphs)
+        assert "Present chapter" in themes
+        assert cur in themes["Present chapter"]
+        assert "a timing lens, never an event" in themes["Present chapter"]
+
+    def test_life_synthesis_pairs_indication_with_period(self, report):
+        """Wave-2: each houses-anchored theme closes by naming the MD lords whose chapters
+        most light its houses (HTJAH-I:1586-1596, the locked timer doctrine) — a re-read
+        of the graded life-chapters."""
+        from app.raman_saab.detailed_report import period_pairing
+        themes = dict(report.life_synthesis.paragraphs)
+        for theme, houses in (("Career", (10,)), ("Wealth", (2, 11)), ("Marriage", (7,)),
+                              ("Children", (5,)), ("Reputation", (10,)),
+                              ("Health", (6, 8))):
+            if theme not in themes:
+                continue
+            lords, _span = period_pairing(report, houses)
+            if not lords:
+                continue
+            assert "ripen most fully under" in themes[theme], theme
+            assert "HTJAH-I:1586-1596" in themes[theme], theme
+            for lord in lords:
+                assert lord in themes[theme], (theme, lord)
 
     def test_dashboard_carries_the_support_column(self, markdown, report):
         assert "| classical support (testimonies) |" in markdown
@@ -581,6 +691,7 @@ class TestWaveB:
 class TestMonographsV25toV27:
     """Wave A: marriage, children, psychology — verbatim quotes resolve, walls hold."""
 
+    @needs_corpus
     def test_all_three_render_in_every_surface(self, report, markdown, html):
         from app.raman_saab.report_json import to_report_dict
         d = to_report_dict(report)
@@ -592,6 +703,7 @@ class TestMonographsV25toV27:
             assert anchor in html, anchor
             assert d[key] is not None, key
 
+    @needs_corpus
     def test_marriage_quotes_and_fired_rules(self, report):
         m = report.marriage
         assert m is not None
@@ -603,11 +715,13 @@ class TestMonographsV25toV27:
             work, line = cite.rsplit(":", 1)
             assert verify(Citation(work, int(line))), cite
 
+    @needs_corpus
     def test_children_combos_quoted_whole(self, report):
         c = report.children
         assert c is not None and len(c.combos_quote) > 200
         assert c.significations and c.verdict
 
+    @needs_corpus
     def test_psych_lagna_quote_matches_the_ascendant(self, report):
         ps = report.psych
         assert ps is not None
@@ -617,6 +731,7 @@ class TestMonographsV25toV27:
         from app.raman_saab.monographs import LAGNA_BLOCKS
         assert int(line) == LAGNA_BLOCKS[report.chart.asc_sign][0]
 
+    @needs_corpus
     def test_composed_prose_passes_the_guard(self, report):
         """The woven/composed strings (not the labeled verbatim quotes) are guard-safe."""
         from app.llm.report_explainer import _FORBIDDEN_RE
@@ -624,9 +739,68 @@ class TestMonographsV25toV27:
         assert _FORBIDDEN_RE.search(ps.woven) is None
 
 
+class TestAptitudeV33:
+    """v36 (was v33 on the empirical-engine branch): aptitude, intelligence & work style — populated, cited, bannered, guard-safe."""
+
+    def test_renders_in_every_surface(self, report, markdown, html):
+        from app.raman_saab.report_json import to_report_dict
+        assert "## Aptitude, intelligence & work style" in markdown
+        assert 'id="aptitude"' in html
+        assert to_report_dict(report)["aptitude"] is not None
+
+    def test_pure_reread_pins(self, report):
+        """The chapter restates already-judged verdicts verbatim — never a new judgment."""
+        ap = report.aptitude
+        assert ap is not None
+        sv5 = next(s for s in report.proformas[4].significations
+                   if s.signification == "intellect")
+        assert ap.intellect_verdict == f"{sv5.verdict} ({sv5.degree})"
+        sv3 = next(s for s in report.proformas[2].significations
+                   if s.signification == "courage")
+        assert ap.courage_verdict == f"{sv3.verdict} ({sv3.degree})"
+        allowed = {"profession_authority", "profession_trade",
+                   "profession_learned", "profession_labour"}
+        assert {k for k, _v in ap.mode_split} <= allowed
+
+    def test_fired_rule_cites_resolve(self, report):
+        """Every fired-rule cite resolves — on a machine that has the corpus.
+        Skipped (not failed) elsewhere, so the CI failure baseline stays put."""
+        from app.raman_saab.doctrine import source_lock
+        if not source_lock.cited_files():
+            pytest.skip("corpus not present on this machine")
+        from app.raman_saab.doctrine.sources import Citation, verify
+        ap = report.aptitude
+        for rows in (ap.intellect_fired, ap.moon_mind_fired):
+            for _rid, _t, cite in rows:
+                work, line = cite.rsplit(":", 1)
+                assert verify(Citation(work, int(line))), cite
+
+    def test_moon_mind_rule_matches_the_moon_sign(self, report):
+        """The fired per-sign rule (H1.M.S<n>) must be the chart's own Moon sign."""
+        ap = report.aptitude
+        sign_rules = [rid for rid, _t, _c in ap.moon_mind_fired if rid.startswith("H1.M.S")]
+        moon_sign = report.chart.planets["Moon"].sign
+        for rid in sign_rules:
+            assert int(rid.removeprefix("H1.M.S")) == moon_sign
+
+    def test_modern_gloss_carries_the_banner(self, report, markdown, html):
+        """Saturn/Mars keyword glosses render ONLY under MODERN_BANNER. Asserted via
+        the fold-stable token: to_markdown ends in _fold_ascii, which folds the
+        banner's em-dash, so the constant never appears in markdown byte-for-byte."""
+        ap = report.aptitude
+        if ap.style_modern:
+            assert "MODERN_SYNTHESIS" in markdown
+            assert "MODERN_SYNTHESIS" in html
+
+    def test_composed_prose_passes_the_guard(self, report):
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        assert _FORBIDDEN_RE.search(report.aptitude.woven) is None
+
+
 class TestChaptersV22toV24:
     """The three user-requested chapters: populated, cited, guard-safe."""
 
+    @needs_corpus
     def test_all_three_render_in_every_surface(self, report, markdown, html):
         from app.raman_saab.report_json import to_report_dict
         d = to_report_dict(report)
@@ -638,6 +812,7 @@ class TestChaptersV22toV24:
             assert anchor in html, anchor
             assert d[key] is not None, key
 
+    @needs_corpus
     def test_arishta_quotes_ramans_antidotes(self, report):
         a = report.arishta
         assert a is not None and len(a.antidote_quote) > 100
@@ -701,15 +876,34 @@ class TestInterpretationGuide:
             for sid in par["sections"]:
                 assert sid in ids, f"{par['id']} names unknown section {sid!r}"
 
+    @needs_corpus
     def test_guide_citations_resolve(self):
-        """Every corpus citation the guide prints must verify against the sources."""
+        """Every corpus citation the guide prints must verify — for books vendored here.
+
+        Citations into a book this machine does not carry are collected and reported rather
+        than failed: ASP is a local OCR of a user-supplied scan with no archive.org source, so
+        its absence is a fact about the box. Failing on it made this read as "the guide's
+        citations are broken" when every citation into a book we actually have was fine."""
+        from corpus_presence import vendored_books
+
         from app.raman_saab.doctrine.sources import Citation, verify
         from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as ig
+        have = vendored_books()
         cites = [c for prec in ig["precedence"] for c in prec["citations"]]
         cites += [a["citation"] for a in ig["axes"]]
+        skipped = []
         for cite in cites:
             work, line = cite.rsplit(":", 1)
+            # Compare the WHOLE tag. `work.split("-")[0]` turned HTJAH-I and HTJAH-II into
+            # "HTJAH", which `vendored_books()` never returns, so every citation into the two
+            # largest books was skipped instead of checked — 12 of 18 in all.
+            if work not in have:
+                skipped.append(cite)
+                continue
             assert verify(Citation(work, int(line))), cite
+        if skipped:
+            pytest.skip(f"book(s) not vendored here, {len(skipped)} citation(s) unchecked: "
+                        f"{sorted(set(c.split(':')[0] for c in skipped))}")
 
 
 class TestHealthReadout:

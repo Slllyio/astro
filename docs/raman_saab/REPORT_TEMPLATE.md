@@ -762,9 +762,13 @@ cutoff (the v14 review had already removed exactly such a threshold); only the s
 pair (rank 1 / rank 12, his own "most powerful... least powerful" vocabulary) triggers a
 tendency clause, and those clauses are verbatim reuses of the already-reviewed v8 note; (3)
 witness-majority as mitigation ("6-1 benefic ⇒ affliction is superficial") — a verdict
-override of Raman's own weakest-link rule, contradicting v14's printed honesty rule and
+override of the weakest-link rollup rule, contradicting v14's printed honesty rule and
 double-counting non-independent witnesses; on contested houses the Conclusion says instead
-"disclosure, not re-weighing: the headline follows the weakest-link rule and stands"; (4)
+"disclosure, not re-weighing: the headline follows the weakest-link rule and stands"
+(*corrected here: the weakest-link rollup is the ENGINE's own aggregation policy, not a rule
+Raman stated — `report_explainer.py:336-344` records this and gives it no citation. The
+original wording of this note called it "Raman's own weakest-link rule", which stamps a
+Raman line on an engine choice; the rest of the finding is unchanged.*); (4)
 real-world severity claims ("rarely causes acute damage") — the null real-outcome finding
 forbids them; a regression test bans the mitigation vocabulary outright. One genuinely new
 hedged clause (rank-12 + afflicted: low strength reads as indications less fully manifest, a
@@ -837,6 +841,31 @@ numbered yogas (the on-disk BPHS-83 source is itself a partial OCR fragment) —
 honest scope note in the function's own docstring; a fuller re-encoding needs a cleaner BPHS-83
 source and is left for a future session.
 
+### v33 — Aptitude, intelligence & work style (2026-08-14, user-requested)
+
+`## Aptitude, intelligence & work style` / `id="aptitude"`, appended at the END of the contract
+(the append-only default; the markdown/HTML section therefore renders after Nichod). A pure
+re-read (PREC-10) in `app/raman_saab/monographs.py: build_aptitude_profile` covering the three
+trait axes the report never had as output fields:
+
+- **Intelligence (buddhi)** — the H5 intellect verdict + its fired combos (karaka Jupiter,
+  HTJAH-I:5012), Mercury's computed condition and its HPA-21/HPA-22 verbatim paragraphs
+  (graha_chapters frozen ranges), the chart's fired `H1.M.*` Moon-mind rule (per-sign, cited),
+  Jupiter's condition.
+- **Aptitude** — the H3 courage verdict (HTJAH-I:3324), the navamsa-dispositor trade
+  (HTJAH-II:10249), the 10th-sign profile (HTJAH-II:10340), the strongest planet's field.
+- **Work style** — the H10 profession-mode split, the computed conditions of the 10th lord,
+  Saturn and Mars; the Saturn=discipline / Mars=drive keyword glosses are `NON_RAMAN_THEMES`
+  and render ONLY under `MODERN_BANNER` (the v20 precedent).
+
+Where this overlaps the Profession synthesis (v23), the synthesis governs. A verbatim block of
+Raman's master Moon-mind instruction (HTJAH-I ~1231) is deliberately absent until its range can
+be pinned against the vendored corpus on a machine that has it — never from memory. The same
+amendment repaired a REPORT COMPLETENESS violation on the interactive page: `psych` (v27) had
+never been rendered there; `profession`/`wealth`/`marriage`/`children`/`arishta`/`karmic`/
+`decades`/`life_synthesis` remain unrendered on that one surface and are recorded in
+DOCTRINE_BACKLOG as a pending repair for user decision.
+
 ## Standing rules
 
 - **Append-only.** Amendment = add a `SectionSpec` row + update this doc + update the contract
@@ -849,3 +878,266 @@ source and is left for a future session.
 - **v2 provenance.** The complementary sections (dashboard, Shadbala, maraka, Gochara/Vedha,
   soul, pitru, and the 9 vargas completing the Shodasavarga) were added 2026-07-25 from surfaces
   the engine already computed; no engine logic changed.
+
+### Interactive-page guided-journey reframe (2026-08-17, user-directed) — page-only, add-only
+
+The interactive page (`app/medini/templates/report.html`) was reframed around the v18
+interpretation guide's five reader-questions, per four user decisions taken this day:
+Sanskrit-first headings with plain subtitles beneath (never renames); the guided-journey
+folio order; interactive page first (markdown/standalone unchanged this pass); every new
+string EN+HI together. Mechanics, all ADD-only per REPORT COMPLETENESS:
+
+- **`app/raman_saab/section_meta.py` (new)** — per-section subtitle/reader-question/step/
+  explain-scope for all contract ids + page-only surfaces, shipped chart-independent as
+  `section_meta` + `section_method` in the report JSON (transport precedent:
+  `interpretation_guide`). Guard tests pin `_FORBIDDEN_RE`-cleanliness, EN+HI presence,
+  and key membership. `TERM_GLOSS` recorded as the page's canonical glossary.
+- **The page renders the two missing surfaces**: "How to read this report" (v18 guide,
+  every field) and "Yoga deep-read" (v21) — closing their render-on-2-of-3-surfaces
+  completeness defects on this surface. The four disclosure violations fixed (Jaimini
+  overlay + curse-yogas opened; divisional summaries made substantive; judgment-graph
+  edge-table summary now carries the byRel census).
+- **Folios re-cut cursor-only** (chapter() calls moved; no section block or heading string
+  changed): 1·the reading — 2·matters/chapters/body&span — 3·about-you-measured —
+  4·machinery/yogas/houses/divisional — 5·when — nichod. PAGE_TOC registry + five-question
+  TOC card; flip-aware jump links; mobile sticky step indicator.
+- **Visual hierarchy**, text unchanged: `.quote` for Raman verbatim, `ruleLine()` chips for
+  fired rules, `.timing`, decade cards; client-side first-occurrence glossary `<abbr>`
+  walker (the page counterpart of `_apply_glossary_abbrs`).
+- **SECTION_METHOD extended** by ten chapters (yogas, timeline, shadbala, ashtakavarga,
+  gochara, divisional, soul, ruler, maraka — method-not-prediction wording — and karmic).
+  Rendered on the page via the generic transport; markdown/standalone continue to call
+  `_method_preamble` per-id and adopt these in a later pass (recorded follow-up).
+- New test gate: `tests/raman_saab/test_report_page_js.py` (node --check over the page's
+  inline scripts) + `tests/raman_saab/test_section_meta.py`.
+
+The markdown/standalone surfaces and every frozen marker, order and guard slice are
+untouched this pass — the contract suite is the proof.
+
+### v34 — the chapter-audit waves (2026-08-18, user-directed "execute all waves")
+
+Six specialist reviewers read every chapter twice (scholar + first-time client); the
+consolidated blueprint is `REPORT_CRITIQUE_2026-08-17.md` and was executed in four waves,
+commits `f4652b2..79e64af`. **No verdict moved: the golden ratchet is byte-identical
+throughout (259/293 exact, 283/293 within-1, 10 real errors); the suite went ~3,660 ->
+3,964 green.** Everything below is add-only or a located fix; no section id, marker string
+or order changed, and no `## ` heading was added inside a frozen section.
+
+**Wave 0 - broken output repaired.** `y`-shadowing repr leak in the Longevity sentence;
+five empty-verbatim-quote sites plus the yoga-definition, psych-portrait and karmic-passage
+paths now render honest corpus-absence lines (two whole chapters had been vanishing);
+`yoga_deep_read` participants resolved semantically via `synthesis_rules._yoga_planets`
+(Sunapha/Gajakesari/Vesi/Amala/Raja were describing the wrong planets or claiming "no
+Shadbala on this chart"); `LordQuality` reprs formatted as prose; maraka-flooded H4/H7/H9
+activation lines capped at 2 with ordinary windows always visible; H3's navamsa
+contradiction resolved by frame disclosure; `render._REPL` gained the central dot,
+plus-minus and the decorative emoji (badges and the "+-60-minute scan" no longer print
+"?"); rare-first sort + plain gloss in What-stands-out; rules badge deduped; nodal
+life-chapter sentence (HTJAH-I:2764/8566); decade chips merged with multi-MD attribution;
+`ordinals.ordinal()` shared helper; 7 missing `_MATTER_HOUSE` keys; stale D-9 Kuja note.
+
+**Wave 1 - computed-but-hidden values surfaced** (the REPORT COMPLETENESS debt): BAV 7x12
+matrix with natal seats, HPA-26 Trikona/Ekadhipathya reductions, per-planet Sodya Pinda;
+SAV deviation row + Lagna/Moon markers; per-row `lord_quality` delivery tags; Pratyantar
+drill-down for the current bhukti (HTJAH-II:668-702); dated Sade-Sati phases and an adverse
+transit-window table; dated chara sequence; longitude column + Ascendant row + nakshatra
+lord; Bhava-Bala rupas restored to markdown; the distinctive cap lifted (all 17 render);
+Baladi/Jagradadi table; per-planet maraka reasons + confluence addends; Muhurtha pointer.
+New fields ship on all four surfaces (`bav_matrix`, `bav_reduced`, `sodya_pinda`,
+`pratyantar_now`, `sade_sati_phases`, `chara_sequence`, `baladi_jagradadi`, `maraka`,
+`signature_first_glance`, `deeptadi_table`, `yoga_coverage`, per-entry `gloss`).
+
+**Wave 2 - Raman-licensed additions** (re-reads only; every citation already on record):
+period-pairing across Your Reading / life synthesis / digest (HTJAH-I:1586-1596, now
+carrying dates under the 2026-08-17 guard decision); digest opens with governing-factor
+(HTJAH-I:16001-16002) and longevity-foundation (HTJAH-I:11703) items; ruler condition block
++ foundation line (HTJAH-I:3880-3882) + Chandra-lagna candidate; signature first-glance
+rows; Deeptadi testimony table (HPA Ch.7:46-83) with secondary-state disclosure; Shadbala
+ratio/weakest-component/scale notes; planet biographies as portraits (functional nature,
+itemized drishti, karakatvas, nodes' no-lordship wording); psych Moon-in-sign
+(HTJAH-I:1452) + Mercury buddhi; yoga coverage honesty (72 of ~300, family breakdown,
+cancelled-Kemadruma, notable absences); deep-read placement/functional tags + SYN_R1
+(3HC:1359); yoga-timing MD context, NOW marker, next-ripening; house chief-combinations,
+frame disclosure, moderating clause, current-period tier; preponderance core/overlay
+witness classes (HTJAH-I:983-991); marriage happiness/coverture split + Kuja dosha frame by
+frame (HTJAH-II:2579-2622); children D-7 row with the reframe note placed first; profession
+D-10 row + H10 windows + convergence annotation; wealth dhana/Daridra row +
+non-differential disclosure; balarishta screen disclosure; `timer_roles()` influence-basis
+tags; adverse dasha-transit confluences; gochara synthesis sentences; divisional
+verdict-first summaries + D-27/40/45/60 domain sentences; karmic one-line re-reads (full
+blocks retained at their home sections); Jaimini AK/Karakamsa header.
+Plus `electional/day_scanner.py` - the Muhurtha panel's scan-the-day mode.
+
+**Wave 3 - traversal**: verdict-first 12-house strip; Conclusion promoted above the Working
+line in every house block; calibration rollups (all rows kept); conditional cross-references
+(H10 dashboard vs bhava -> PREC-1, H8 -> Longevity, INVERTED -> Information content, split
+-> precedence rules); yoga-timing rows grouped by yoga; Pitru leads with its finding;
+maintainer notes routed to fine print everywhere (including a
+`fired_kalatra_client`/`_notes` JSON pair so the interactive page stops showing them).
+
+**Deliberately NOT encoded** (would have required minting citations from memory): twelve
+corpus-gated items are listed in `DOCTRINE_BACKLOG.md` "Corpus-gated worklist from the
+chapter audit (2026-08-18)" - chiefly the anatomical sign->body / planet->disease tables,
+the 10th-from-Moon career derivation, the Studies-in-Jaimini chara-karakamsa pairing, and
+six thin signification sets.
+
+**Side effect on record:** the two new digest head items shift later digest positions, so
+`chart_feedback` rows stored under older qids are position-stale.
+
+---
+
+## v36 amendment (2026-08-20, user-requested) — the feedback instrument
+
+**One section appended at the very END of `SECTION_CONTRACT`: `feedback` / `## Your feedback`
+/ `id="feedback"`.** `_FROZEN` grown in the same commit, per the amendment procedure.
+
+The report gains the one section that asks rather than tells, generated with the reading from
+the chart's own calibration and timeline (`app/raman_saab/feedback_instrument.py`, shipped via
+`to_report_dict` as `feedback_instrument`).
+
+Four parts, in a fixed order:
+
+| Part | What it asks | Chart-specific? |
+|---|---|---|
+| **A** | Plain life questions with no astrology in them | no — deliberately |
+| **B** | How far the ascendant sits from its own cusp, and which of the two neighbouring sign portraits fits | yes, computed |
+| **C** | Each of the chart's own readings against its exact inverse, both unlabelled | yes, ranked by rarity |
+| **D** | What the reading got wrong, and what it could not have guessed | no |
+
+**Why Part C is ordered by `band_share` and not by the digest.** The digest ranks by how loudly
+the engine speaks, and the engine is loudest where every chart agrees — the older
+`feedback_questions` generator therefore leads with a 42%-share wealth reading, a question that
+cannot fail. Ordering by population share ascending leads instead with what only ~4% of the
+16,450-chart population carries, and nothing above the median is asked at all. At most two items
+per house, so the set spreads across a life.
+
+**The answer key is not part of the report and never renders.** This is a deliberate, documented
+exception to the completeness law: the key is not a reading, and printing it beside the questions
+destroys the only property that makes the answers worth collecting.
+`feedback_instrument.instrument_key` recomputes it server-side for scoring, and a test pins that
+the shipped payload carries none of the calibration metadata it is built from, so it cannot be
+reconstructed either.
+
+**Surface differences, stated rather than silent.** The interactive page and the standalone HTML
+carry every question in English AND Hindi. The markdown carries the English alone and says so in
+its own output: that surface runs through `_fold_ascii` for the whole document, and Devanagari
+has no ASCII fold — it would print as a row of question marks.
+
+**Never asked:** lifespan. No answer a person can give confirms or refutes a longevity band, the
+question does harm, and the engine's own guard refuses the decree voice on exactly this material
+(`EXCLUDED_SIGNIFICATIONS` = death, longevity, left_eye).
+
+**Two questions are traps, by design.** Both sit on channels the astrobank atlas proved run
+BACKWARDS (`inverted_warning`). They stay in the set as the honesty check — a reader who agrees
+there while disagreeing elsewhere is agreeing with whatever is put in front of them. Flagged in
+the key, never in the payload.
+
+**Storage:** `POST /report/feedback/instrument` rebuilds the instrument server-side and validates
+every qid and option value against what it would itself have asked; the stored question text
+comes from that rebuild, never from the request (the older `/report/feedback` takes it from the
+body). Whether Part A was answered before the reading was read is recorded as its own
+`inst.<v>.meta.context` row — the schema is created with `create_all` and has no migration path,
+so a new column would exist on a fresh database and be missing on every deployed one.
+
+### v36 addendum (2026-08-20) — instrument v2: closed answers, and a scorer
+
+Two changes, both user-requested, and the second is why the first mattered.
+
+**Every question is now answered by SELECTING.** v1's Part A was 31 free-text boxes. Prose
+cannot be scored, does not aggregate across readers, and is thirty-one paragraphs somebody has
+to read before anything is learned. v2 is 61 questions of which exactly one — "anything else
+you want to say" — is open; free text remains available on every other question as a
+supplement, never as the answer. `INSTRUMENT_VERSION` is `v2`, so v1 answers never pool with
+v2 ones in the same analysis.
+
+**Several vocabularies are the engine's own**, which is the point:
+
+| Question | Options are | Compared against |
+|---|---|---|
+| body regions | HPA-29's sign→anatomy values | `medical.regions_marked` |
+| trade families | HTJAH-II's vocation words | the three career frames |
+| work modes | the four H10 profession significations | `profession.mode_split` |
+| event kinds | one per house the engine reads that matter from | the dasha boundaries |
+
+A reader's selection can therefore be compared with the engine's output CODE AGAINST CODE, with
+no interpretation step in between. That is what makes the scoring a measurement rather than a
+reading of somebody's prose. Each question also carries `maps_to`, naming the engine fact it is
+scored against, so the scorer does not keep a parallel table that can drift.
+
+**Two structural changes.** Turning points are collected as structured `(year, month, kind)`
+rows, one stored row each (`qid#n`, valued `YYYY-MM:kind`), instead of a paragraph. And v1's C0
+— which showed the reader the period-change dates and asked how many of their turning points
+landed near one — is GONE: that was the reader doing the scorer's job, badly, with the answer
+in front of them. The count and its chance rate are computed in `feedback_scoring`.
+
+**The seed was narrowed to what `chart_key` round-trips.** It included the ascendant longitude
+to six decimal places; the key keeps latitude and longitude to four. A chart recast from a
+stored key would therefore have dealt the forced-choice options the other way round, and every
+stored answer would have silently inverted at scoring time. `_SEED_FIELDS` now matches
+`_chart_key` exactly, and a test proves the recast reproduces the shuffle.
+
+### `app/raman_saab/feedback_scoring.py` — processing the feedback
+
+Four measurements, reported side by side and never averaged:
+
+1. **Forced choice** — the only one with a clean null (0.5 by construction). Hits of n with an
+   exact two-sided binomial p, plus a rarity-weighted variant (`1 − band_share`).
+2. **Inverted channels** — scored SEPARATELY and read backwards. Agreement there is evidence the
+   reader is agreeing with whatever is shown; pooling would launder acquiescence into accuracy.
+3. **Life facts** — each Part A answer against the engine's verdict for the same matter.
+   Reported as hit/miss counts and explicitly NOT as a p-value: the population base rate of a
+   happy marriage is not known to this project.
+4. **The dated spine** — turning points against Mahadasha boundaries, ±3 months, with the chance
+   rate computed from the actual UNION of tolerance windows over the reported span. Summing the
+   windows instead would roughly double the denominator and make a coin flip look like a finding.
+
+Part D is counted, not scored: "which chapters got me wrong", aggregated across readers, is a
+work list. `aggregate()` also splits blind submissions from those answered after the reading,
+and refuses to be quoted without its caveats — `render_aggregate` prints them first.
+
+Run it: `python -m app.raman_saab.feedback_scoring [--chart-key ...] [--json]`. There is no
+endpoint on purpose: an API that told a submitter how they scored would turn the instrument
+into a quiz, and the answer would reach the next reader of the same chart.
+
+---
+
+## v37 amendment (2026-08-20, user-requested) — "In simple words"
+
+**One section INSERTED FIRST**, immediately after the title and before "Your Reading":
+`simple_summary` / `## In simple words` / `id="simple-summary"`. `_FROZEN` reordered in the
+same commit, per the amendment procedure.
+
+This is the **third conscious exception** to append-at-the-end, after v5 (Your Reading) and
+v32 (Judgment graph), and for the same reason both of those had: a section a reader meets
+*after* the technical chapters is not doing the job it exists for.
+
+**Why it exists.** Real feedback: *"the report is too technical."* Reading "Your Reading" back,
+that is fair — it names the planet that shapes the temperament, quotes rules, and reconciles
+verdicts against each other. **Plain English is not the same thing as plain sense.** This is a
+further step down: nine short blocks, no Sanskrit, no planet names, no house numbers, no
+citations, no percentages.
+
+**It creates nothing.** Every block re-reads material judged elsewhere (PREC-10) — house
+verdicts and population shares from `calibration`, the uncommon readings from `distinctive`,
+the honesty counts from `info`, the running period from the Nichod's own current-period line,
+the temperament from `psych`. The opening paragraph says so on its face: *"if this page and a
+chapter below disagree, the chapter is right."*
+
+**The two paragraphs that must never be cut in simplification:**
+- *what is unusual here* — nearly everything a chart says is said about nearly everybody, so
+  the few readings that are not are the only place a reader can usefully test it;
+- *how much of it is common* — the actual counts for this chart, in words ("56 judgements, 8
+  of them held by half the population or more").
+
+Readings on the **atlas-proven inverted channels are excluded from the "unusual" paragraph** —
+naming one there would promote a known error to the most-read sentence in the report.
+
+**Both languages are generated**, not translated at render time: the page toggles on the client
+and `t()` cannot translate a sentence composed at runtime, so a Hindi reader would otherwise
+meet an English summary inside a Hindi report. The markdown surface carries the English alone
+and says so, for the same `_fold_ascii` reason the feedback section does.
+
+**Guarded by** `tests/raman_saab/test_simple_summary.py`: a jargon blocklist over every emitted
+string (including house numbers and planet names), a sentence-length ceiling, the decree guard,
+and a check that each verdict group matches the calibration the chapters are built from — so
+the summary cannot drift into judging on its own.

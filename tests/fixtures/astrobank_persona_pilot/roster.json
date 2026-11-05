@@ -1,0 +1,236 @@
+{
+ "admitted": [
+  {
+   "slug": "Steve_Jobs",
+   "name": "Steve Jobs",
+   "year": 1955,
+   "month": 2,
+   "day": 24,
+   "hour": 19,
+   "minute": 15,
+   "tz_offset": -8.0,
+   "latitude": 37.7749,
+   "longitude": -122.4194,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1995,
+    2,
+    24
+   ]
+  },
+  {
+   "slug": "Michael_Jackson",
+   "name": "Michael Jackson",
+   "year": 1958,
+   "month": 8,
+   "day": 29,
+   "hour": 19,
+   "minute": 33,
+   "tz_offset": -5.0,
+   "latitude": 41.5933,
+   "longitude": -87.3461,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1998,
+    8,
+    29
+   ]
+  },
+  {
+   "slug": "John_Lennon",
+   "name": "John Lennon",
+   "year": 1940,
+   "month": 10,
+   "day": 9,
+   "hour": 18,
+   "minute": 30,
+   "tz_offset": 1.0,
+   "latitude": 53.4084,
+   "longitude": -2.9916,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1980,
+    10,
+    9
+   ]
+  },
+  {
+   "slug": "David_Bowie",
+   "name": "David Bowie",
+   "year": 1947,
+   "month": 1,
+   "day": 8,
+   "hour": 9,
+   "minute": 0,
+   "tz_offset": 0.0,
+   "latitude": 51.452,
+   "longitude": 0.007,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1987,
+    1,
+    8
+   ]
+  },
+  {
+   "slug": "Madonna",
+   "name": "Madonna",
+   "year": 1958,
+   "month": 8,
+   "day": 16,
+   "hour": 7,
+   "minute": 5,
+   "tz_offset": -5.0,
+   "latitude": 43.015,
+   "longitude": -83.6875,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1998,
+    8,
+    16
+   ]
+  },
+  {
+   "slug": "Muhammad_Ali",
+   "name": "Muhammad Ali",
+   "year": 1942,
+   "month": 1,
+   "day": 17,
+   "hour": 18,
+   "minute": 35,
+   "tz_offset": -6.0,
+   "latitude": 38.2527,
+   "longitude": -85.7585,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1982,
+    1,
+    17
+   ]
+  },
+  {
+   "slug": "Mother_Teresa",
+   "name": "Mother Teresa",
+   "year": 1910,
+   "month": 8,
+   "day": 26,
+   "hour": 14,
+   "minute": 25,
+   "tz_offset": 1.0,
+   "latitude": 42.0,
+   "longitude": 21.4333,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1950,
+    8,
+    26
+   ]
+  },
+  {
+   "slug": "Margaret_Thatcher",
+   "name": "Margaret Thatcher",
+   "year": 1925,
+   "month": 10,
+   "day": 13,
+   "hour": 9,
+   "minute": 0,
+   "tz_offset": 0.0,
+   "latitude": 52.9131,
+   "longitude": -0.6394,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1965,
+    10,
+    13
+   ]
+  },
+  {
+   "slug": "Bill_Clinton",
+   "name": "Bill Clinton",
+   "year": 1946,
+   "month": 8,
+   "day": 19,
+   "hour": 8,
+   "minute": 51,
+   "tz_offset": -5.0,
+   "latitude": 33.6609,
+   "longitude": -93.5933,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    1986,
+    8,
+    19
+   ]
+  },
+  {
+   "slug": "Justin_Trudeau",
+   "name": "Justin Trudeau",
+   "year": 1971,
+   "month": 12,
+   "day": 25,
+   "hour": 21,
+   "minute": 27,
+   "tz_offset": -5.0,
+   "latitude": 45.5017,
+   "longitude": -73.5673,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    2011,
+    12,
+    25
+   ]
+  },
+  {
+   "slug": "Jacinda_Ardern",
+   "name": "Jacinda Ardern",
+   "year": 1980,
+   "month": 7,
+   "day": 26,
+   "hour": 16,
+   "minute": 18,
+   "tz_offset": 12.0,
+   "latitude": -37.787,
+   "longitude": 175.2793,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    2020,
+    7,
+    26
+   ]
+  },
+  {
+   "slug": "Emmanuel_Macron",
+   "name": "Emmanuel Macron",
+   "year": 1977,
+   "month": 12,
+   "day": 21,
+   "hour": 10,
+   "minute": 40,
+   "tz_offset": 1.0,
+   "latitude": 49.8941,
+   "longitude": 2.2958,
+   "rodden": "AA",
+   "source_note": "data/astro_databank/raw_lapaas.csv",
+   "reference_date": [
+    2017,
+    12,
+    21
+   ]
+  }
+ ],
+ "dropped": [],
+ "counts": {
+  "1": 12
+ }
+}

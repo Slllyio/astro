@@ -6,7 +6,7 @@ import pytest
 
 from app.kp.chart import cast
 from app.kp.dasa import DAYS_PER_VEDIC_YEAR, mahadashas, periods_on, subdivide
-from tests.kp.test_chart import NATIVE_1922
+from .test_chart import NATIVE_1922
 
 
 @pytest.fixture(scope="module")

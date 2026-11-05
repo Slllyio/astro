@@ -1,0 +1,9267 @@
+{
+"pool": [
+{
+"key": "HTJAH-I.chart_10 H1/self",
+"chart": "HTJAH-I.chart_10",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H1.L.4",
+"H1.C.33",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.S.9",
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_12 H1/self",
+"chart": "HTJAH-I.chart_12",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H1.C.33"
+],
+"mal": [
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_15 H1/self",
+"chart": "HTJAH-I.chart_15",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.3",
+"H1.C.34"
+],
+"mal": [
+"H1.M.G3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_17 H1/self",
+"chart": "HTJAH-I.chart_17",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.9",
+"H1.C.33",
+"H1.C.34",
+"H1.C.30",
+"H1.C.31"
+],
+"mal": [
+"H1.P.Ketu",
+"H1.C.1c"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_18 H1/self",
+"chart": "HTJAH-I.chart_18",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H1.L.3",
+"H1.C.34"
+],
+"mal": [
+"H1.C.1c",
+"H1.C.26a"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.chart_20 H1/self",
+"chart": "HTJAH-I.chart_20",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H1.P.Mercury",
+"H1.C.33",
+"H1.C.34",
+"H1.C.29"
+],
+"mal": [
+"H1.M.G3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.chart_24 H1/self",
+"chart": "HTJAH-I.chart_24",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.1",
+"H1.P.Mercury",
+"H1.C.34",
+"H1.N.64",
+"H1.C.30"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_29 H1/self",
+"chart": "HTJAH-I.chart_29",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.11",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_31 H1/self",
+"chart": "HTJAH-I.chart_31",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H1.L.3",
+"H1.C.33"
+],
+"mal": [
+"H1.C.26a",
+"H1.C.26b"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_33 H1/self",
+"chart": "HTJAH-I.chart_33",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H1.L.3",
+"H1.C.34"
+],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.chart_35 H1/self",
+"chart": "HTJAH-I.chart_35",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.P.Jupiter",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.L.12",
+"H1.C.26a"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_33 H8/longevity",
+"chart": "HTJAH-II.chart_33",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_34 H8/longevity",
+"chart": "HTJAH-II.chart_34",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_35 H8/death",
+"chart": "HTJAH-II.chart_35",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H8.L.8"
+],
+"mal": [
+"H8.C.13",
+"H8.K.22",
+"H8.K.25",
+"H8.D.6"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_74 H8/death",
+"chart": "HTJAH-II.chart_74",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.C.3",
+"H8.D.3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_73 H8/death",
+"chart": "HTJAH-II.chart_73",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H8.C.21",
+"H8.D.4",
+"H8.D.5",
+"H8.C.33"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_75 H8/death",
+"chart": "HTJAH-II.chart_75",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H8.L.8",
+"H8.P.Mercury"
+],
+"mal": [
+"H8.P.Mars",
+"H8.C.1",
+"H8.C.3",
+"H8.C.21",
+"H8.D.3",
+"H8.D.5"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_78 H8/death",
+"chart": "HTJAH-II.chart_78",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.L.7",
+"H8.D.3",
+"H8.D.4"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_52 H3/siblings",
+"chart": "HTJAH-I.chart_52",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H3.C.8"
+],
+"mal": [
+"H3.L.12",
+"H3.C.34"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.chart_53 H3/siblings",
+"chart": "HTJAH-I.chart_53",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H3.C.6",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.P.Rahu",
+"H3.C.9",
+"H3.C.10",
+"H3.C.14",
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_54 H3/siblings",
+"chart": "HTJAH-I.chart_54",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H3.L.9",
+"H3.C.5",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.P.Ketu",
+"H3.C.9",
+"H3.C.10",
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.chart_55 H3/ear_throat",
+"chart": "HTJAH-I.chart_55",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H3.C.32"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_56 H3/ear_throat",
+"chart": "HTJAH-I.chart_56",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H3.C.32",
+"H3.C.33",
+"H3.C.40"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_57 H3/ear_throat",
+"chart": "HTJAH-I.chart_57",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_58 H3/siblings",
+"chart": "HTJAH-I.chart_58",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H3.L.9",
+"H3.C.5",
+"H3.C.6",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.P.Ketu",
+"H3.C.9",
+"H3.C.14",
+"H3.C.35",
+"H3.C.38"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_59 H3/siblings",
+"chart": "HTJAH-I.chart_59",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H3.L.11",
+"H3.C.1",
+"H3.C.5",
+"H3.C.7",
+"H3.C.8",
+"H3.C.30"
+],
+"mal": [
+"H3.C.10",
+"H3.C.35",
+"H3.C.39"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.chart_60 H3/siblings",
+"chart": "HTJAH-I.chart_60",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H3.L.11",
+"H3.C.1",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.C.14",
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_61 H3/siblings",
+"chart": "HTJAH-I.chart_61",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H3.L.10",
+"H3.C.6",
+"H3.C.8"
+],
+"mal": [
+"H3.C.9",
+"H3.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_62 H3/siblings",
+"chart": "HTJAH-I.chart_62",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H3.C.1",
+"H3.C.7"
+],
+"mal": [
+"H3.C.9",
+"H3.C.10",
+"H3.C.14",
+"H3.C.34",
+"H3.C.36"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_63 H3/siblings",
+"chart": "HTJAH-I.chart_63",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H3.L.11",
+"H3.C.1",
+"H3.C.8",
+"H3.C.30"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_38 H2/wealth",
+"chart": "HTJAH-I.chart_38",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Mercury",
+"H2.C.5",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.26",
+"H2.C.43",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_39 H2/vision",
+"chart": "HTJAH-I.chart_39",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H2.C.40",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Ketu",
+"H2.C.20",
+"H2.C.26",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_40 H2/wealth",
+"chart": "HTJAH-I.chart_40",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Moon",
+"H2.P.Mercury",
+"H2.C.47",
+"H2.C.65"
+],
+"mal": [
+"H2.C.1",
+"H2.C.26",
+"H2.C.28",
+"H2.C.62",
+"H2.C.69",
+"H2.C.70"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_41 H2/wealth",
+"chart": "HTJAH-I.chart_41",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Mercury",
+"H2.C.5",
+"H2.C.40"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.26",
+"H2.C.29",
+"H2.C.44",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_42 H2/wealth",
+"chart": "HTJAH-I.chart_42",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H2.L.4",
+"H2.C.40",
+"H2.C.65a"
+],
+"mal": [
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_43 H2/wealth",
+"chart": "HTJAH-I.chart_43",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.L.9",
+"H2.C.55",
+"H2.C.65"
+],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_44 H2/wealth",
+"chart": "HTJAH-I.chart_44",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H2.C.48"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.70"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_45 H2/wealth",
+"chart": "HTJAH-I.chart_45",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.40"
+],
+"mal": [
+"H2.C.62"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_46 H2/wealth",
+"chart": "HTJAH-I.chart_46",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.40",
+"H2.C.65"
+],
+"mal": [
+"H2.P.Saturn",
+"H2.C.69",
+"H2.C.70"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_48 H2/wealth",
+"chart": "HTJAH-I.chart_48",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H2.P.Venus",
+"H2.C.40"
+],
+"mal": [
+"H2.C.69",
+"H2.C.70"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_49 H2/wealth",
+"chart": "HTJAH-I.chart_49",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.6",
+"H2.C.34",
+"H2.C.40",
+"H2.C.65a",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_50 H2/wealth",
+"chart": "HTJAH-I.chart_50",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H2.L.9",
+"H2.C.40"
+],
+"mal": [
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_51 H2/wealth",
+"chart": "HTJAH-I.chart_51",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.6",
+"H2.C.65a"
+],
+"mal": [
+"H2.C.26",
+"H2.C.70"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_02 H7/marital_happiness",
+"chart": "HTJAH-II.chart_02",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_03 H7/marital_happiness",
+"chart": "HTJAH-II.chart_03",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H7.C.5"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_04 H7/marital_happiness",
+"chart": "HTJAH-II.chart_04",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.1"
+],
+"mal": [
+"H7.C.82"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_05 H7/marital_happiness",
+"chart": "HTJAH-II.chart_05",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.3",
+"H7.C.82"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_06 H7/marital_happiness",
+"chart": "HTJAH-II.chart_06",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.1"
+],
+"mal": [
+"H7.C.82",
+"H7.C.83"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_07 H7/marital_happiness",
+"chart": "HTJAH-II.chart_07",
+"gold": "mixed",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_08 H7/marital_happiness",
+"chart": "HTJAH-II.chart_08",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H7.C.1",
+"H7.C.87"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_09 H7/marital_happiness",
+"chart": "HTJAH-II.chart_09",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.1",
+"H7.C.6"
+],
+"mal": [
+"H7.K.3",
+"H7.C.83"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_10 H7/marital_happiness",
+"chart": "HTJAH-II.chart_10",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_11 H7/marital_happiness",
+"chart": "HTJAH-II.chart_11",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_12 H7/marital_happiness",
+"chart": "HTJAH-II.chart_12",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h4_01 H4/mother",
+"chart": "HTJAH-I.h4_01",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H4.P.Moon"
+],
+"mal": [
+"H4.P.Saturn",
+"H4.C.18a"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h4_02 H4/education",
+"chart": "HTJAH-I.h4_02",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.10",
+"H4.C.34",
+"H4.C.37",
+"H4.C.40"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h4_03 H4/education",
+"chart": "HTJAH-I.h4_03",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.C.50"
+],
+"mal": [
+"H4.C.49"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h4_04 H4/education",
+"chart": "HTJAH-I.h4_04",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.4",
+"H4.P.Jupiter",
+"H4.C.37"
+],
+"mal": [
+"H4.P.Saturn"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h4_05 H4/vehicles",
+"chart": "HTJAH-I.h4_05",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H4.P.Moon",
+"H4.C.45"
+],
+"mal": [
+"H4.P.Saturn"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_01 H5/children",
+"chart": "HTJAH-I.h5_01",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.P.Mercury",
+"H5.C.1",
+"H5.C.2",
+"H5.C.28"
+],
+"mal": [
+"H5.P.Sun",
+"H5.C.10",
+"H5.C.38"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.h5_02 H5/children",
+"chart": "HTJAH-I.h5_02",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H5.L.8",
+"H5.C.39"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.h5_04 H5/children",
+"chart": "HTJAH-I.h5_04",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.P.Venus",
+"H5.C.1",
+"H5.C.28"
+],
+"mal": [
+"H5.L.8",
+"H5.P.Sun",
+"H5.P.Saturn",
+"H5.P.Rahu",
+"H5.C.10"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_05 H5/children",
+"chart": "HTJAH-I.h5_05",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.C.1"
+],
+"mal": [
+"H5.C.9",
+"H5.C.40"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_06 H5/children",
+"chart": "HTJAH-I.h5_06",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H5.L.8",
+"H5.P.Mars"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_07 H5/children",
+"chart": "HTJAH-I.h5_07",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.9"
+],
+"mal": [
+"H5.P.Rahu",
+"H5.C.38"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_08 H5/children",
+"chart": "HTJAH-I.h5_08",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_09 H5/children",
+"chart": "HTJAH-I.h5_09",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.C.1"
+],
+"mal": [
+"H5.L.6",
+"H5.C.40",
+"H5.C.41"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_10 H5/children",
+"chart": "HTJAH-I.h5_10",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_11 H5/children",
+"chart": "HTJAH-I.h5_11",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H5.L.11",
+"H5.P.Jupiter",
+"H5.C.1"
+],
+"mal": [
+"H5.C.39"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_12 H5/children",
+"chart": "HTJAH-I.h5_12",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.11",
+"H5.C.1"
+],
+"mal": [
+"H5.P.Ketu",
+"H5.C.10"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_13 H5/children",
+"chart": "HTJAH-I.h5_13",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [
+"H5.C.1"
+],
+"mal": [
+"H5.L.6",
+"H5.P.Ketu",
+"H5.C.39"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_14 H5/children",
+"chart": "HTJAH-I.h5_14",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.P.Venus",
+"H5.C.1",
+"H5.C.2"
+],
+"mal": [
+"H5.L.6",
+"H5.C.39"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_15 H5/children",
+"chart": "HTJAH-I.h5_15",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H5.L.7"
+],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_16 H5/children",
+"chart": "HTJAH-I.h5_16",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H5.L.2",
+"H5.C.1"
+],
+"mal": [
+"H5.C.10"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h5_18 H5/children",
+"chart": "HTJAH-I.h5_18",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.11",
+"H5.P.Jupiter",
+"H5.C.1",
+"H5.C.2",
+"H5.C.34"
+],
+"mal": [
+"H5.C.39",
+"H5.C.40"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_01 H7/marital_happiness",
+"chart": "HTJAH-II.h7_01",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_02 H7/spouse",
+"chart": "HTJAH-II.h7_02",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h7_03 H7/marital_happiness",
+"chart": "HTJAH-II.h7_03",
+"gold": "mixed",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_04 H7/marital_happiness",
+"chart": "HTJAH-II.h7_04",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H7.C.7"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_05 H7/spouse",
+"chart": "HTJAH-II.h7_05",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.L.5",
+"H7.P.Jupiter",
+"H7.C.1",
+"H7.C.6"
+],
+"mal": [
+"H7.P.Moon",
+"H7.C.9",
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_07 H7/spouse",
+"chart": "HTJAH-II.h7_07",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [
+"H7.L.7",
+"H7.C.7"
+],
+"mal": [
+"H7.P.Mars",
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_09 H7/coverture",
+"chart": "HTJAH-II.h7_09",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.77"
+],
+"mal": [
+"H7.K.2",
+"H7.C.46",
+"H7.C.67",
+"H7.C.80",
+"H7.C.84"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_10 H7/coverture",
+"chart": "HTJAH-II.h7_10",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.77"
+],
+"mal": [
+"H7.K.2",
+"H7.C.67",
+"H7.C.85"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h7_11 H7/coverture",
+"chart": "HTJAH-II.h7_11",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H7.K.2",
+"H7.C.49"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_12 H7/coverture",
+"chart": "HTJAH-II.h7_12",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.2"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_13 H7/coverture",
+"chart": "HTJAH-II.h7_13",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.2"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_14 H7/spouse",
+"chart": "HTJAH-II.h7_14",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H7.L.10"
+],
+"mal": [
+"H7.P.Rahu",
+"H7.C.82"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_15 H7/spouse",
+"chart": "HTJAH-II.h7_15",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.P.Mercury",
+"H7.C.1"
+],
+"mal": [
+"H7.K.3",
+"H7.P.Moon",
+"H7.C.9",
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_16 H7/spouse",
+"chart": "HTJAH-II.h7_16",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H7.P.Mercury",
+"H7.C.1",
+"H7.C.7",
+"H7.C.87"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h7_17 H7/spouse",
+"chart": "HTJAH-II.h7_17",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.7"
+],
+"mal": [
+"H7.K.3",
+"H7.P.Ketu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h10_01 H10/profession_learned",
+"chart": "HTJAH-II.h10_01",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.63"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h10_02 H10/profession_learned",
+"chart": "HTJAH-II.h10_02",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.7",
+"H10.P.Jupiter"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h10_03 H10/profession_authority",
+"chart": "HTJAH-II.h10_03",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h10_04 H10/profession_authority",
+"chart": "HTJAH-II.h10_04",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H10.C.63"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h10_05 H10/status_honour",
+"chart": "HTJAH-II.h10_05",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H10.L.4",
+"H10.P.Mercury",
+"H10.C.33"
+],
+"mal": [
+"H10.C.33m",
+"H10.C.36"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h10_06 H10/status_honour",
+"chart": "HTJAH-II.h10_06",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H10.L.9"
+],
+"mal": [
+"H10.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_01 H11/elder_siblings",
+"chart": "HTJAH-II.h11_01",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H11.C.31",
+"H11.C.45"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_01 H7/marital_happiness",
+"chart": "HTJAH-II.h11_01",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_02 H11/elder_siblings",
+"chart": "HTJAH-II.h11_02",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [
+"H11.L.1",
+"H11.P.Jupiter",
+"H11.P.Saturn",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8",
+"H11.C.15",
+"H11.C.31",
+"H11.C.37"
+],
+"mal": [
+"H11.C.5",
+"H11.C.21",
+"H11.C.38"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h11_02 H7/spouse",
+"chart": "HTJAH-II.h11_02",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_03 H11/elder_siblings",
+"chart": "HTJAH-II.h11_03",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.11",
+"H11.P.Moon",
+"H11.P.Jupiter",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8",
+"H11.C.31",
+"H11.C.37",
+"H11.C.53"
+],
+"mal": [
+"H11.P.Venus",
+"H11.C.5",
+"H11.C.21",
+"H11.C.38"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_04 H11/elder_siblings",
+"chart": "HTJAH-II.h11_04",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H11.C.42"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_05 H11/elder_siblings",
+"chart": "HTJAH-II.h11_05",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.P.Saturn",
+"H11.C.4",
+"H11.C.6",
+"H11.C.8",
+"H11.C.43"
+],
+"mal": [
+"H11.C.38"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_06 H11/elder_siblings",
+"chart": "HTJAH-II.h11_06",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.11",
+"H11.P.Moon",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8",
+"H11.C.31",
+"H11.C.37",
+"H11.C.53"
+],
+"mal": [
+"H11.C.38"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_07 H11/elder_siblings",
+"chart": "HTJAH-II.h11_07",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H11.L.9",
+"H11.C.8"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h11_08 H11/gains",
+"chart": "HTJAH-II.h11_08",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H11.C.8",
+"H11.C.11"
+],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h11_09 H11/gains",
+"chart": "HTJAH-II.h11_09",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.C.8",
+"H11.C.43",
+"H11.C.49"
+],
+"mal": [
+"H11.C.21"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_10 H11/gains",
+"chart": "HTJAH-II.h11_10",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.9",
+"H11.P.Jupiter",
+"H11.P.Saturn",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8",
+"H11.C.42"
+],
+"mal": [
+"H11.P.Venus"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h11_12 H11/gains",
+"chart": "HTJAH-II.h11_12",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.C.8",
+"H11.C.19",
+"H11.C.43"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_13 H11/acquisitions",
+"chart": "HTJAH-II.h11_13",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.1",
+"H11.P.Moon",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8",
+"H11.C.15"
+],
+"mal": [
+"H11.C.5",
+"H11.C.21"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h11_14 H11/acquisitions",
+"chart": "HTJAH-II.h11_14",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.1",
+"H11.P.Saturn",
+"H11.C.4",
+"H11.C.8",
+"H11.C.15"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_15 H11/gains",
+"chart": "HTJAH-II.h11_15",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.4",
+"H11.C.8",
+"H11.C.42"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h11_16 H11/gains",
+"chart": "HTJAH-II.h11_16",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.P.Jupiter",
+"H11.C.1",
+"H11.C.4",
+"H11.C.19"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_17 H11/gains",
+"chart": "HTJAH-II.h11_17",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [
+"H11.C.43"
+],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h11_18 H11/gains",
+"chart": "HTJAH-II.h11_18",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H11.C.8",
+"H11.C.11",
+"H11.C.20",
+"H11.C.43",
+"H11.C.47"
+],
+"mal": [
+"H11.C.23"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_01 H12/moksha",
+"chart": "HTJAH-II.h12_01",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H12.L.8"
+],
+"mal": [
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_03 H12/expenditure",
+"chart": "HTJAH-II.h12_03",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H12.C.A3",
+"H12.C.A6"
+],
+"mal": [
+"H12.L.5",
+"H12.C.A2",
+"H12.C.A4",
+"H12.C.A17",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_04 H12/expenditure",
+"chart": "HTJAH-II.h12_04",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H12.C.A3",
+"H12.C.A7"
+],
+"mal": [
+"H12.L.11",
+"H12.P.Moon"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_05 H12/expenditure",
+"chart": "HTJAH-II.h12_05",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H12.C.A3",
+"H12.C.A6",
+"H12.C.A7"
+],
+"mal": [
+"H12.L.11",
+"H12.P.Sun",
+"H12.P.Moon",
+"H12.P.Mars",
+"H12.P.Mercury",
+"H12.C.A2",
+"H12.C.A9",
+"H12.C.A10",
+"H12.C.A16",
+"H12.C.A17",
+"H12.C.A19",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h12_06 H12/incarceration",
+"chart": "HTJAH-II.h12_06",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.P.Moon",
+"H12.P.Rahu",
+"H12.C.E3"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_08 H12/expenditure",
+"chart": "HTJAH-II.h12_08",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H12.C.A3",
+"H12.C.A7",
+"H12.C.A20"
+],
+"mal": [
+"H12.L.11",
+"H12.C.A2",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h12_09 H12/incarceration",
+"chart": "HTJAH-II.h12_09",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.1",
+"H12.P.Sun",
+"H12.C.C5",
+"H12.C.C9",
+"H12.C.D1",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_10 H12/incarceration",
+"chart": "HTJAH-II.h12_10",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.5",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_11 H12/incarceration",
+"chart": "HTJAH-II.h12_11",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H12.P.Rahu",
+"H12.C.D1"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h12_12 H12/incarceration",
+"chart": "HTJAH-II.h12_12",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.10",
+"H12.P.Sun",
+"H12.P.Mercury",
+"H12.P.Rahu",
+"H12.C.D1",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_13 H12/left_eye",
+"chart": "HTJAH-II.h12_13",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.7",
+"H12.C.C5",
+"H12.C.C9",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_14 H12/left_eye",
+"chart": "HTJAH-II.h12_14",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.3",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_15 H12/left_eye",
+"chart": "HTJAH-II.h12_15",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.5",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_16 H12/left_eye",
+"chart": "HTJAH-II.h12_16",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.10",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h12_17 H12/moksha",
+"chart": "HTJAH-II.h12_17",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H12.C.F4",
+"H12.C.I3"
+],
+"mal": [
+"H12.L.2",
+"H12.P.Sun",
+"H12.P.Moon",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h12_18 H12/moksha",
+"chart": "HTJAH-II.h12_18",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H12.C.F4"
+],
+"mal": [
+"H12.L.1",
+"H12.P.Saturn",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h12_18 H11/gains",
+"chart": "HTJAH-II.h12_18",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.1",
+"H11.P.Moon",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8",
+"H11.C.15"
+],
+"mal": [
+"H11.C.5",
+"H11.C.21"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.h4_06 H4/property",
+"chart": "HTJAH-I.h4_06",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.P.Moon",
+"H4.C.7",
+"H4.C.46"
+],
+"mal": [
+"H4.P.Saturn"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_01 H9/father",
+"chart": "HTJAH-II.h9_01",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.B.31"
+],
+"mal": [
+"H9.L.12"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_02 H9/father",
+"chart": "HTJAH-II.h9_02",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H9.L.10",
+"H9.P.Mercury",
+"H9.P.Jupiter",
+"H9.B.21",
+"H9.B.25",
+"H9.B.29"
+],
+"mal": [
+"H9.P.Sun",
+"H9.A.2",
+"H9.A.4",
+"H9.A.21",
+"H9.B.24"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_03 H9/father",
+"chart": "HTJAH-II.h9_03",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.L.10",
+"H9.B.31"
+],
+"mal": [
+"H9.A.13"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_04 H9/father",
+"chart": "HTJAH-II.h9_04",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.L.9",
+"H9.P.Mercury",
+"H9.P.Venus",
+"H9.B.21",
+"H9.B.30"
+],
+"mal": [
+"H9.P.Sun",
+"H9.P.Saturn",
+"H9.P.Ketu",
+"H9.A.7",
+"H9.A.13",
+"H9.A.17",
+"H9.A.20",
+"H9.B.23",
+"H9.B.24"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_05 H9/father",
+"chart": "HTJAH-II.h9_05",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H9.B.31"
+],
+"mal": [
+"H9.P.Saturn",
+"H9.A.13",
+"H9.A.20a",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_06 H9/father",
+"chart": "HTJAH-II.h9_06",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H9.L.10",
+"H9.P.Moon",
+"H9.B.21",
+"H9.B.25"
+],
+"mal": [
+"H9.P.Saturn",
+"H9.A.13",
+"H9.A.20",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h9_07 H9/father",
+"chart": "HTJAH-II.h9_07",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [
+"H9.L.10",
+"H9.B.31"
+],
+"mal": [
+"H9.A.5",
+"H9.A.20",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.h9_08 H9/father",
+"chart": "HTJAH-II.h9_08",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H9.A.20"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_09 H9/father",
+"chart": "HTJAH-II.h9_09",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H9.B.29",
+"H9.B.30"
+],
+"mal": [
+"H9.A.13"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_10 H9/father",
+"chart": "HTJAH-II.h9_10",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.L.10"
+],
+"mal": [
+"H9.P.Sun",
+"H9.A.2",
+"H9.A.13",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_11 H9/father",
+"chart": "HTJAH-II.h9_11",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.P.Jupiter",
+"H9.B.21"
+],
+"mal": [
+"H9.L.6",
+"H9.P.Ketu",
+"H9.A.2",
+"H9.A.13",
+"H9.B.22",
+"H9.B.23",
+"H9.B.24"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_12 H9/father",
+"chart": "HTJAH-II.h9_12",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H9.P.Moon",
+"H9.B.21"
+],
+"mal": [
+"H9.A.13",
+"H9.A.20",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_13 H9/father",
+"chart": "HTJAH-II.h9_13",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H9.B.31"
+],
+"mal": [
+"H9.L.12",
+"H9.A.20a"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_14 H9/fortune",
+"chart": "HTJAH-II.h9_14",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H9.P.Jupiter",
+"H9.B.21"
+],
+"mal": [
+"H9.L.6",
+"H9.P.Ketu",
+"H9.B.22",
+"H9.B.23",
+"H9.B.24"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_15 H9/long_journeys",
+"chart": "HTJAH-II.h9_15",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H9.L.6",
+"H9.B.22"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_17 H9/long_journeys",
+"chart": "HTJAH-II.h9_17",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H9.L.1",
+"H9.P.Moon",
+"H9.B.21",
+"H9.D.41"
+],
+"mal": [
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.h9_18 H9/dharma",
+"chart": "HTJAH-II.h9_18",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.B.29",
+"H9.B.30",
+"H9.D.43"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_01 H6/disease_chronic",
+"chart": "HTJAH-I.h6_01",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.9",
+"H6.P.Rahu",
+"H6.C.12"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_02 H6/disease_chronic",
+"chart": "HTJAH-I.h6_02",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.3",
+"H6.C.5"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_03 H6/enemies_disease",
+"chart": "HTJAH-I.h6_03",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.9"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_04 H6/disease_chronic",
+"chart": "HTJAH-I.h6_04",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H6.P.Jupiter"
+],
+"mal": [
+"H6.L.2"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.h6_05 H6/enemies_disease",
+"chart": "HTJAH-I.h6_05",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.h6_06 H6/disease_chronic",
+"chart": "HTJAH-I.h6_06",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.12"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_07 H6/enemies_disease",
+"chart": "HTJAH-I.h6_07",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.2"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_08 H6/enemies_disease",
+"chart": "HTJAH-I.h6_08",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.2",
+"H6.P.Ketu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_09 H6/disease_chronic",
+"chart": "HTJAH-I.h6_09",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.P.Mars"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_11 H6/debts",
+"chart": "HTJAH-I.h6_11",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.C.1",
+"H6.C.4"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_12 H6/enemies",
+"chart": "HTJAH-I.h6_12",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.12"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_12 H4/education",
+"chart": "HTJAH-I.h6_12",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H4.P.Moon",
+"H4.C.40",
+"H4.C.50"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.h6_13 H6/enemies",
+"chart": "HTJAH-I.h6_13",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H1.N.66",
+"H6.L.9"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_25 H2/speech",
+"chart": "NH.chart_25",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.P.Venus",
+"H2.C.72"
+],
+"mal": [
+"H2.C.69"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_25 H7/marital_happiness",
+"chart": "NH.chart_25",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_25 H10/career",
+"chart": "NH.chart_25",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.7"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_26 H1/health",
+"chart": "NH.chart_26",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H1.L.1",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Saturn",
+"H1.M.G2",
+"H1.S.8"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_26 H2/speech",
+"chart": "NH.chart_26",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.6",
+"H2.C.16",
+"H2.C.57",
+"H2.C.65a"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_26 H10/profession_learned",
+"chart": "NH.chart_26",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_28 H1/self",
+"chart": "NH.chart_28",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.9",
+"H1.P.Mercury",
+"H1.C.33",
+"H1.C.31"
+],
+"mal": [
+"H1.P.Moon",
+"H1.S.8"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_28 H2/wealth",
+"chart": "NH.chart_28",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Venus",
+"H2.C.6",
+"H2.C.30",
+"H2.C.40"
+],
+"mal": [
+"H2.C.43",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_28 H9/father",
+"chart": "NH.chart_28",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.B.25"
+],
+"mal": [
+"H9.P.Saturn",
+"H9.A.17",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_28 H7/virility",
+"chart": "NH.chart_28",
+"gold": "mixed",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H7.K.1",
+"H7.C.32"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_32 H2/wealth",
+"chart": "NH.chart_32",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.40",
+"H2.C.47",
+"H2.C.66"
+],
+"mal": [
+"H2.C.1",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_32 H10/career",
+"chart": "NH.chart_32",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.4"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_32 H4/happiness",
+"chart": "NH.chart_32",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H4.L.10",
+"H4.P.Moon"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_33 H10/career",
+"chart": "NH.chart_33",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H10.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_33 H6/enemies",
+"chart": "NH.chart_33",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.8",
+"H6.C.2"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_33 H2/speech",
+"chart": "NH.chart_33",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.16",
+"H2.C.32"
+],
+"mal": [
+"H2.L.8",
+"H2.C.64",
+"H2.C.69",
+"H2.C.70"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_34 H10/career",
+"chart": "NH.chart_34",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_34 H12/incarceration",
+"chart": "NH.chart_34",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.P.Sun",
+"H12.P.Moon",
+"H12.P.Mercury",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_34 H6/enemies_disease",
+"chart": "NH.chart_34",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.12",
+"H6.P.Saturn",
+"H6.C.9"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_35 H5/children",
+"chart": "NH.chart_35",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H5.P.Jupiter",
+"H5.C.1",
+"H5.C.2",
+"H5.C.32"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_35 H7/virility",
+"chart": "NH.chart_35",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_35 H4/education",
+"chart": "NH.chart_35",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H4.L.2",
+"H4.C.34",
+"H4.C.40"
+],
+"mal": [
+"H4.P.Mars",
+"H4.P.Ketu"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_35 H1/self",
+"chart": "NH.chart_35",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.C.33"
+],
+"mal": [
+"H1.C.26b"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_35 H10/career",
+"chart": "NH.chart_35",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.5"
+],
+"mal": [
+"H10.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_36 H6/enemies_disease",
+"chart": "NH.chart_36",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.2",
+"H6.P.Ketu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_36 H7/spouse",
+"chart": "NH.chart_36",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_36 H8/death",
+"chart": "NH.chart_36",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.C.21",
+"H8.D.3",
+"H8.D.5"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_36 H10/profession_learned",
+"chart": "NH.chart_36",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H10.P.Moon"
+],
+"mal": [
+"H10.P.Saturn"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_36 H9/father",
+"chart": "NH.chart_36",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H9.A.17"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "NH.chart_37 H10/status_honour",
+"chart": "NH.chart_37",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.C.56"
+],
+"mal": [
+"H10.P.Saturn",
+"H10.C.33m",
+"H10.C.36"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_37 H5/children",
+"chart": "NH.chart_37",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.C.1"
+],
+"mal": [
+"H5.L.6",
+"H5.C.39"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_37 H7/spouse",
+"chart": "NH.chart_37",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H7.C.7"
+],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_37 H2/wealth",
+"chart": "NH.chart_37",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.65"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_37 H11/gains",
+"chart": "NH.chart_37",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.L.4",
+"H11.P.Jupiter",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8",
+"H11.C.43"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_39 H5/children",
+"chart": "NH.chart_39",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H5.P.Saturn",
+"H5.C.9",
+"H5.C.40",
+"H5.C.41"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_39 H9/father",
+"chart": "NH.chart_39",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.L.5"
+],
+"mal": [
+"H9.A.13"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_39 H6/enemies_disease",
+"chart": "NH.chart_39",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H6.P.Jupiter"
+],
+"mal": [
+"H6.L.2",
+"H6.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_39 H8/death",
+"chart": "NH.chart_39",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H8.C.21",
+"H8.D.3",
+"H8.D.5"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_39 H2/wealth",
+"chart": "NH.chart_39",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Venus",
+"H2.C.65",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_42 H2/wealth",
+"chart": "NH.chart_42",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.6",
+"H2.C.40",
+"H2.C.66"
+],
+"mal": [
+"H2.L.8",
+"H2.P.Saturn",
+"H2.P.Ketu",
+"H2.C.27",
+"H2.C.64"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_42 H4/mother",
+"chart": "NH.chart_42",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.2"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_42 H1/self",
+"chart": "NH.chart_42",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.10",
+"H1.C.33",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.C.26a",
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_42 H10/career",
+"chart": "NH.chart_42",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H10.L.12"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_43 H1/self",
+"chart": "NH.chart_43",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.P.Jupiter",
+"H1.C.29"
+],
+"mal": [
+"H1.P.Mars",
+"H1.C.1b"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_43 H9/father",
+"chart": "NH.chart_43",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.L.1",
+"H9.B.30"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_43 H4/happiness",
+"chart": "NH.chart_43",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.2"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_45 H1/self",
+"chart": "NH.chart_45",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.10",
+"H1.C.33",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.C.1b",
+"H1.C.1c"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_45 H10/career",
+"chart": "NH.chart_45",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9",
+"H10.P.Sun",
+"H10.P.Mercury",
+"H10.P.Venus"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_45 H8/death",
+"chart": "NH.chart_45",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.P.Mars",
+"H8.C.1",
+"H8.K.26"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "NH.chart_45 H7/spouse",
+"chart": "NH.chart_45",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.L.9",
+"H7.C.7"
+],
+"mal": [
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_47 H1/self",
+"chart": "NH.chart_47",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H1.C.33",
+"H1.C.30"
+],
+"mal": [
+"H1.M.G3"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_47 H9/father",
+"chart": "NH.chart_47",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.P.Jupiter",
+"H9.B.21"
+],
+"mal": [
+"H9.P.Saturn",
+"H9.A.13",
+"H9.B.23",
+"H9.B.24"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_47 H11/gains",
+"chart": "NH.chart_47",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.P.Moon",
+"H11.C.1",
+"H11.C.4",
+"H11.C.6",
+"H11.C.8",
+"H11.C.43"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_47 H7/spouse",
+"chart": "NH.chart_47",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H7.L.9",
+"H7.P.Mercury",
+"H7.C.1"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_47 H10/career",
+"chart": "NH.chart_47",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H10.P.Ketu"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_51 H10/career",
+"chart": "NH.chart_51",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9",
+"H10.P.Venus",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_51 H9/father",
+"chart": "NH.chart_51",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.L.10",
+"H9.P.Mercury",
+"H9.B.21",
+"H9.B.25"
+],
+"mal": [
+"H9.P.Saturn",
+"H9.A.2",
+"H9.A.7",
+"H9.A.13",
+"H9.B.24"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_51 H2/wealth",
+"chart": "NH.chart_51",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Moon",
+"H2.C.40",
+"H2.C.65a",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_53 H10/profession_learned",
+"chart": "NH.chart_53",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.1"
+],
+"mal": [
+"H10.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_53 H1/self",
+"chart": "NH.chart_53",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.9",
+"H1.P.Mercury",
+"H1.C.33",
+"H1.N.64",
+"H1.C.31"
+],
+"mal": [
+"H1.P.Mars",
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_53 H7/marital_happiness",
+"chart": "NH.chart_53",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H7.C.7"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_53 H2/wealth",
+"chart": "NH.chart_53",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H2.C.40",
+"H2.C.66"
+],
+"mal": [
+"H2.C.43",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_53 H4/mother",
+"chart": "NH.chart_53",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.9"
+],
+"mal": [
+"H4.P.Ketu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_54 H2/wealth",
+"chart": "NH.chart_54",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H2.P.Moon",
+"H2.C.39",
+"H2.C.48"
+],
+"mal": [
+"H2.C.62"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "NH.chart_54 H9/fortune",
+"chart": "NH.chart_54",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.B.29"
+],
+"mal": [
+"H9.P.Ketu",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_54 H10/career",
+"chart": "NH.chart_54",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H10.L.1"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_54 H7/marital_happiness",
+"chart": "NH.chart_54",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.C.83"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_54 H4/mother",
+"chart": "NH.chart_54",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.5"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_55 H1/self",
+"chart": "NH.chart_55",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_55 H2/wealth",
+"chart": "NH.chart_55",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H2.C.64",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_55 H10/career",
+"chart": "NH.chart_55",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.7"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_55 H7/spouse",
+"chart": "NH.chart_55",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.P.Mercury",
+"H7.C.1"
+],
+"mal": [
+"H7.K.3",
+"H7.P.Moon",
+"H7.C.9",
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_55 H6/enemies_disease",
+"chart": "NH.chart_55",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.12",
+"H6.P.Sun"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_57 H1/body",
+"chart": "NH.chart_57",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.10",
+"H1.C.33",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Mars",
+"H1.P.Saturn",
+"H1.P.Rahu",
+"H1.C.28",
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_57 H7/spouse",
+"chart": "NH.chart_57",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.L.1",
+"H7.C.5"
+],
+"mal": [
+"H7.P.Ketu",
+"H7.C.82",
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_57 H5/children",
+"chart": "NH.chart_57",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_57 H4/mother",
+"chart": "NH.chart_57",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.P.Jupiter"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_57 H9/fortune",
+"chart": "NH.chart_57",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_57 H10/career",
+"chart": "NH.chart_57",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.1",
+"H10.P.Moon"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_61 H10/career",
+"chart": "NH.chart_61",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.61"
+],
+"mal": [
+"H10.L.8"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_62 H2/wealth",
+"chart": "NH.chart_62",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.40"
+],
+"mal": [
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_62 H11/gains",
+"chart": "NH.chart_62",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.P.Jupiter",
+"H11.C.1",
+"H11.C.4",
+"H11.C.8"
+],
+"mal": [
+"H11.L.12"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_62 H10/career",
+"chart": "NH.chart_62",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.11",
+"H10.P.Sun",
+"H10.P.Mercury",
+"H10.P.Venus"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_62 H7/marital_happiness",
+"chart": "NH.chart_62",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H7.C.1",
+"H7.C.7"
+],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_63 H10/career",
+"chart": "NH.chart_63",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Moon"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_63 H7/marital_happiness",
+"chart": "NH.chart_63",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.87"
+],
+"mal": [
+"H7.C.82"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_65 H10/career",
+"chart": "NH.chart_65",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.1",
+"H10.P.Moon",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_65 H5/intellect",
+"chart": "NH.chart_65",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_65 H7/spouse",
+"chart": "NH.chart_65",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.L.1"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "NH.chart_65 H2/wealth",
+"chart": "NH.chart_65",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.65a",
+"H2.C.66"
+],
+"mal": [
+"H2.C.26",
+"H2.C.43"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_67 H1/self",
+"chart": "NH.chart_67",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.P.Venus",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Mars",
+"H1.C.1b",
+"H1.N.54",
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_67 H4/happiness",
+"chart": "NH.chart_67",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.C.20"
+],
+"mal": [
+"H4.L.8"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_67 H5/children",
+"chart": "NH.chart_67",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [
+"H5.C.40"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_67 H7/partnership",
+"chart": "NH.chart_67",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.C.86"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_67 H2/wealth",
+"chart": "NH.chart_67",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.5",
+"H2.C.32",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.43",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_67 H11/gains",
+"chart": "NH.chart_67",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H11.L.1",
+"H11.P.Saturn",
+"H11.C.4",
+"H11.C.8",
+"H11.C.15"
+],
+"mal": [
+"H11.C.21"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_67 H9/father",
+"chart": "NH.chart_67",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.B.31"
+],
+"mal": [
+"H9.P.Ketu",
+"H9.A.13",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_69 H1/self",
+"chart": "NH.chart_69",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.2",
+"H1.C.33",
+"H1.C.34",
+"H1.C.29",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Mars",
+"H1.P.Ketu",
+"H1.C.1a",
+"H1.C.28",
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_69 H9/fortune",
+"chart": "NH.chart_69",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_69 H10/career",
+"chart": "NH.chart_69",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.1",
+"H10.P.Venus",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_69 H7/spouse",
+"chart": "NH.chart_69",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H7.L.5"
+],
+"mal": [
+"H7.P.Rahu",
+"H7.C.82"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_71 H1/self",
+"chart": "NH.chart_71",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.2",
+"H1.C.26c",
+"H1.C.34",
+"H1.N.64",
+"H1.C.29"
+],
+"mal": [
+"H1.P.Ketu",
+"H1.C.1a",
+"H1.C.1b",
+"H1.C.26b",
+"H1.S.6",
+"H1.S.7"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_71 H3/ear_throat",
+"chart": "NH.chart_71",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H3.C.29"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_71 H7/spouse",
+"chart": "NH.chart_71",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.87"
+],
+"mal": [
+"H7.L.12",
+"H7.P.Rahu",
+"H7.C.82",
+"H7.C.83"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "NH.chart_71 H9/fortune",
+"chart": "NH.chart_71",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.B.30"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_71 H5/intellect",
+"chart": "NH.chart_71",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H5.C.35"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_75 H1/self",
+"chart": "NH.chart_75",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H1.L.3",
+"H1.C.33",
+"H1.C.34"
+],
+"mal": [
+"H1.P.Mars",
+"H1.P.Rahu",
+"H1.C.28"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_75 H10/career",
+"chart": "NH.chart_75",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [
+"H10.P.Jupiter",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_75 H7/spouse",
+"chart": "NH.chart_75",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.L.1"
+],
+"mal": [
+"H7.P.Ketu",
+"H7.C.82",
+"H7.C.86"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_18 H2/wealth",
+"chart": "NH.chart_18",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.P.Moon",
+"H2.C.65a"
+],
+"mal": [
+"H2.L.8",
+"H2.C.26"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_18 H4/education",
+"chart": "NH.chart_18",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H4.C.50"
+],
+"mal": [
+"H4.C.49"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_18 H5/children",
+"chart": "NH.chart_18",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.7"
+],
+"mal": [
+"H5.P.Ketu",
+"H5.C.10"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_18 H10/career",
+"chart": "NH.chart_18",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_20 H1/self",
+"chart": "NH.chart_20",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.C.34"
+],
+"mal": [
+"H1.L.12",
+"H1.P.Saturn",
+"H1.C.26b"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_20 H5/children",
+"chart": "NH.chart_20",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.P.Moon",
+"H5.C.1"
+],
+"mal": [
+"H5.C.39",
+"H5.C.41"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_21 H8/death",
+"chart": "NH.chart_21",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.C.3",
+"H8.D.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_21 H10/career",
+"chart": "NH.chart_21",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H10.L.12"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_23 H4/mother",
+"chart": "NH.chart_23",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H4.C.48"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_23 H9/dharma",
+"chart": "NH.chart_23",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.C.36"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_23 H10/career",
+"chart": "NH.chart_23",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.P.Sun",
+"H10.P.Mercury"
+],
+"mal": [
+"H10.L.12"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_24 H10/career",
+"chart": "NH.chart_24",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_24 H8/death",
+"chart": "NH.chart_24",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.D.4",
+"H8.C.33"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_27 H5/children",
+"chart": "NH.chart_27",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H5.C.1"
+],
+"mal": [
+"H5.P.Ketu",
+"H5.C.9",
+"H5.C.39"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_27 H7/coverture",
+"chart": "NH.chart_27",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.2"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_27 H10/career",
+"chart": "NH.chart_27",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.11"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_29 H1/self",
+"chart": "NH.chart_29",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.C.33",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.C.26a"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_29 H2/wealth",
+"chart": "NH.chart_29",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H2.C.65"
+],
+"mal": [
+"H2.P.Saturn",
+"H2.C.70"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_29 H7/marital_happiness",
+"chart": "NH.chart_29",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_29 H10/career",
+"chart": "NH.chart_29",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Sun",
+"H10.P.Mercury",
+"H10.P.Jupiter"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_30 H1/self",
+"chart": "NH.chart_30",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.9",
+"H1.P.Venus",
+"H1.C.34",
+"H1.N.56",
+"H1.C.30",
+"H1.C.31"
+],
+"mal": [
+"H1.C.1a"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_30 H9/fortune",
+"chart": "NH.chart_30",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H9.L.9",
+"H9.P.Moon",
+"H9.P.Jupiter",
+"H9.B.21"
+],
+"mal": [
+"H9.P.Rahu",
+"H9.B.23",
+"H9.B.24"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_30 H10/career",
+"chart": "NH.chart_30",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H10.L.4"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_30 H12/incarceration",
+"chart": "NH.chart_30",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.P.Mercury",
+"H12.P.Saturn",
+"H12.C.C5",
+"H12.C.D4",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_31 H4/mother",
+"chart": "NH.chart_31",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.C.51"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_31 H5/children",
+"chart": "NH.chart_31",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.2",
+"H5.C.1"
+],
+"mal": [
+"H5.P.Ketu",
+"H5.C.10",
+"H5.C.39",
+"H5.C.40",
+"H5.C.41"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_31 H8/longevity",
+"chart": "NH.chart_31",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_31 H10/career",
+"chart": "NH.chart_31",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.64"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_38 H2/wealth",
+"chart": "NH.chart_38",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.6",
+"H2.C.40"
+],
+"mal": [
+"H2.C.43",
+"H2.C.62"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_38 H8/longevity",
+"chart": "NH.chart_38",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_38 H9/father",
+"chart": "NH.chart_38",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.P.Mercury",
+"H9.B.21",
+"H9.B.31"
+],
+"mal": [
+"H9.P.Sun",
+"H9.A.2",
+"H9.A.13",
+"H9.B.23",
+"H9.B.24"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_38 H10/career",
+"chart": "NH.chart_38",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_40 H5/children",
+"chart": "NH.chart_40",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.10",
+"H5.C.1"
+],
+"mal": [
+"H5.C.41"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_40 H7/marital_happiness",
+"chart": "NH.chart_40",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H7.C.7"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_40 H10/career",
+"chart": "NH.chart_40",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Venus"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_41 H8/death",
+"chart": "NH.chart_41",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.P.Jupiter",
+"H8.D.3",
+"H8.D.4",
+"H8.D.6"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_44 H10/career",
+"chart": "NH.chart_44",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.4"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_44 H9/dharma",
+"chart": "NH.chart_44",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.B.31",
+"H9.D.49"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_46 H9/father",
+"chart": "NH.chart_46",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.P.Moon",
+"H9.B.21"
+],
+"mal": [
+"H9.P.Ketu",
+"H9.A.7",
+"H9.A.13",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_46 H8/longevity",
+"chart": "NH.chart_46",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_46 H12/moksha",
+"chart": "NH.chart_46",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.2",
+"H12.C.C5",
+"H12.C.F1"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_46 H4/education",
+"chart": "NH.chart_46",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H4.C.40"
+],
+"mal": [
+"H4.L.6"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_49 H3/courage",
+"chart": "NH.chart_49",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H3.C.1",
+"H3.C.7",
+"H3.C.8",
+"H3.C.30"
+],
+"mal": [
+"H3.C.9",
+"H3.C.10",
+"H3.C.19",
+"H3.C.34",
+"H3.C.35",
+"H3.C.39"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_49 H12/incarceration",
+"chart": "NH.chart_49",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.5",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_49 H10/career",
+"chart": "NH.chart_49",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H10.L.7"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_52 H5/children",
+"chart": "NH.chart_52",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.2",
+"H5.C.1"
+],
+"mal": [
+"H5.C.39"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_52 H7/marital_happiness",
+"chart": "NH.chart_52",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.C.88"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_52 H10/career",
+"chart": "NH.chart_52",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_56 H2/wealth",
+"chart": "NH.chart_56",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.6",
+"H2.C.65a"
+],
+"mal": [
+"H2.C.26",
+"H2.C.70"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_56 H4/property",
+"chart": "NH.chart_56",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.9"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_56 H8/longevity",
+"chart": "NH.chart_56",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H8.P.Mars"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_56 H10/career",
+"chart": "NH.chart_56",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_59 H3/siblings",
+"chart": "NH.chart_59",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H3.C.6",
+"H3.C.8"
+],
+"mal": [
+"H3.P.Mars",
+"H3.C.9"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_59 H5/children",
+"chart": "NH.chart_59",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H5.P.Sun",
+"H5.C.40",
+"H5.C.41"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_59 H10/career",
+"chart": "NH.chart_59",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.63"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_59 H12/incarceration",
+"chart": "NH.chart_59",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H12.P.Rahu",
+"H12.C.D1"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_60 H10/career",
+"chart": "NH.chart_60",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.11"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "NH.chart_64 H10/career",
+"chart": "NH.chart_64",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H10.L.5"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_64 H9/fortune",
+"chart": "NH.chart_64",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.B.25"
+],
+"mal": [
+"H9.P.Saturn",
+"H9.P.Ketu",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_64 H2/wealth",
+"chart": "NH.chart_64",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.L.9",
+"H2.P.Moon",
+"H2.C.40",
+"H2.C.66"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_66 H10/career",
+"chart": "NH.chart_66",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Jupiter"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_66 H3/ear_throat",
+"chart": "NH.chart_66",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H3.C.32"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_70 H10/career",
+"chart": "NH.chart_70",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.11"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_70 H4/education",
+"chart": "NH.chart_70",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.4",
+"H4.P.Jupiter",
+"H4.C.37"
+],
+"mal": [
+"H4.P.Saturn"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_70 H7/coverture",
+"chart": "NH.chart_70",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.2",
+"H7.C.48"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_72 H8/death",
+"chart": "NH.chart_72",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.D.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_72 H12/incarceration",
+"chart": "NH.chart_72",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.10",
+"H12.P.Sun",
+"H12.P.Mercury",
+"H12.P.Rahu",
+"H12.C.D1",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_74 H5/children",
+"chart": "NH.chart_74",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H5.L.9",
+"H5.P.Moon",
+"H5.C.1"
+],
+"mal": [
+"H5.P.Ketu",
+"H5.C.9"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_74 H7/marital_happiness",
+"chart": "NH.chart_74",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_74 H10/career",
+"chart": "NH.chart_74",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9",
+"H10.P.Sun",
+"H10.P.Mercury"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_74 H4/education",
+"chart": "NH.chart_74",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H4.C.34"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_58 H8/death",
+"chart": "NH.chart_58",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.L.7",
+"H8.D.3",
+"H8.D.4"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_58 H10/career",
+"chart": "NH.chart_58",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H10.C.62"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_58 H12/incarceration",
+"chart": "NH.chart_58",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.7",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_58 H3/courage",
+"chart": "NH.chart_58",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H3.P.Jupiter",
+"H3.C.1",
+"H3.C.6",
+"H3.C.7",
+"H3.C.8",
+"H3.C.20"
+],
+"mal": [
+"H3.P.Moon",
+"H3.P.Ketu",
+"H3.C.9",
+"H3.C.10",
+"H3.C.26",
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_68 H10/career",
+"chart": "NH.chart_68",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H10.P.Sun",
+"H10.P.Mercury"
+],
+"mal": [
+"H10.L.8",
+"H10.P.Rahu"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_68 H8/death",
+"chart": "NH.chart_68",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H8.P.Saturn"
+],
+"mal": [
+"H8.C.1",
+"H8.K.3",
+"H8.D.4"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_68 H5/children",
+"chart": "NH.chart_68",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.10",
+"H5.P.Jupiter",
+"H5.C.1"
+],
+"mal": [
+"H5.C.10",
+"H5.C.39",
+"H5.C.40"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_73 H2/wealth",
+"chart": "NH.chart_73",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H2.L.4",
+"H2.C.40"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_73 H4/mother",
+"chart": "NH.chart_73",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H4.L.10"
+],
+"mal": [
+"H4.P.Saturn",
+"H4.P.Rahu"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_73 H3/siblings",
+"chart": "NH.chart_73",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H3.L.10",
+"H3.C.6",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.C.10"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_16 H2/wealth",
+"chart": "NH.chart_16",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.P.Mercury",
+"H2.C.5",
+"H2.C.6"
+],
+"mal": [
+"H2.L.6",
+"H2.P.Sun",
+"H2.C.69"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_16 H5/children",
+"chart": "NH.chart_16",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H5.C.2"
+],
+"mal": [
+"H5.L.6",
+"H5.P.Mars"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_16 H7/spouse",
+"chart": "NH.chart_16",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.C.1",
+"H7.C.5"
+],
+"mal": [
+"H7.K.3",
+"H7.C.86"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_16 H12/left_eye",
+"chart": "NH.chart_16",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.3",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_17 H10/career",
+"chart": "NH.chart_17",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.7"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_17 H6/enemies",
+"chart": "NH.chart_17",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H1.N.66",
+"H6.L.4",
+"H6.P.Ketu",
+"H6.C.20"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_17 H9/father",
+"chart": "NH.chart_17",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.P.Mercury",
+"H9.B.21"
+],
+"mal": [
+"H9.P.Sun",
+"H9.A.2",
+"H9.B.23",
+"H9.B.24"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_19 H2/wealth",
+"chart": "NH.chart_19",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.P.Moon",
+"H2.P.Mercury",
+"H2.P.Jupiter",
+"H2.C.5",
+"H2.C.40",
+"H2.C.47",
+"H2.C.65",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Sun",
+"H2.P.Saturn",
+"H2.C.1",
+"H2.C.26",
+"H2.C.28",
+"H2.C.62",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_19 H5/children",
+"chart": "NH.chart_19",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.2"
+],
+"mal": [
+"H5.C.10",
+"H5.C.40"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_19 H9/father",
+"chart": "NH.chart_19",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.B.29",
+"H9.B.30"
+],
+"mal": [
+"H9.P.Rahu",
+"H9.A.7",
+"H9.A.13",
+"H9.A.22",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_19 H10/career",
+"chart": "NH.chart_19",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_22 H8/death",
+"chart": "NH.chart_22",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H8.L.8",
+"H8.P.Saturn"
+],
+"mal": [
+"H8.C.1",
+"H8.D.4"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_22 H7/marital_happiness",
+"chart": "NH.chart_22",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H7.C.7"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_22 H5/children",
+"chart": "NH.chart_22",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.5",
+"H5.P.Moon",
+"H5.P.Venus",
+"H5.C.1"
+],
+"mal": [
+"H5.P.Sun",
+"H5.C.10",
+"H5.C.19",
+"H5.C.40"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_48 H12/left_eye",
+"chart": "NH.chart_48",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.3",
+"H12.P.Mars",
+"H12.P.Mercury",
+"H12.C.C5"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_48 H9/dharma",
+"chart": "NH.chart_48",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H9.B.31"
+],
+"mal": [
+"H9.L.12"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_48 H5/children",
+"chart": "NH.chart_48",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H5.L.7",
+"H5.C.1"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.x224 H11/gains",
+"chart": "HTJAH-II.x224",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.C.42"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.x231 H11/gains",
+"chart": "HTJAH-II.x231",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H11.L.9",
+"H11.C.8",
+"H11.C.42",
+"H11.C.43"
+],
+"mal": [
+"H11.C.22"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x13 H1/self",
+"chart": "HTJAH-I.x13",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H1.C.26c",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.L.12",
+"H1.P.Sun",
+"H1.N.63"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x65 H4/mother",
+"chart": "HTJAH-I.x65",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x67 H4/mother",
+"chart": "HTJAH-I.x67",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H4.L.6",
+"H4.C.1",
+"H4.C.48"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x68 H4/mother",
+"chart": "HTJAH-I.x68",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H4.L.1"
+],
+"mal": [
+"H4.C.48"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x69 H4/mother",
+"chart": "HTJAH-I.x69",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H4.L.6",
+"H4.C.1"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x71 H4/mother",
+"chart": "HTJAH-I.x71",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H4.L.4",
+"H4.P.Venus"
+],
+"mal": [
+"H4.C.48"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x72 H4/mother",
+"chart": "HTJAH-I.x72",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H4.P.Venus"
+],
+"mal": [
+"H4.L.6",
+"H4.C.1"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.x73 H4/mother",
+"chart": "HTJAH-I.x73",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x75 H4/mother",
+"chart": "HTJAH-I.x75",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H4.L.10"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "HTJAH-I.x79 H4/education",
+"chart": "HTJAH-I.x79",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.1",
+"H4.C.34"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x80 H4/education",
+"chart": "HTJAH-I.x80",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H4.C.50"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.x93 H5/children",
+"chart": "HTJAH-I.x93",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.10"
+],
+"mal": [
+"H5.C.10",
+"H5.C.38"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.x226 H11/gains",
+"chart": "HTJAH-II.x226",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H11.C.8",
+"H11.C.42"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_5 H1/self",
+"chart": "NH.chart_5",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.C.33",
+"H1.C.30"
+],
+"mal": [
+"H1.L.12",
+"H1.M.G3"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_10 H1/self",
+"chart": "NH.chart_10",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.2",
+"H1.P.Mercury",
+"H1.C.34",
+"H1.C.29"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_13 H1/self",
+"chart": "NH.chart_13",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.4",
+"H1.C.33",
+"H1.N.44",
+"H1.C.30"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_14 H1/body",
+"chart": "NH.chart_14",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+}
+],
+"H1": [
+{
+"key": "3HC.chart_28 H10/profession_authority",
+"chart": "3HC.chart_28",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H10.L.9"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_28 H2/wealth",
+"chart": "3HC.chart_28",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.40",
+"H2.C.51",
+"H2.C.61",
+"H2.C.66"
+],
+"mal": [
+"H2.C.64",
+"H2.C.69"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_36+106+106 H10/career",
+"chart": "3HC.chart_36+106+106",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.61",
+"H10.C.64"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_36+106+106 H5/intellect",
+"chart": "3HC.chart_36+106+106",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "3HC.chart_36+106+106#2 H10/status_honour",
+"chart": "3HC.chart_36+106+106#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.61",
+"H10.C.64"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_58 H12/incarceration",
+"chart": "3HC.chart_58",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_58 H10/career",
+"chart": "3HC.chart_58",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.4"
+],
+"mal": [
+"H10.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_27 H2/wealth",
+"chart": "3HC.chart_27",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.40",
+"H2.C.66"
+],
+"mal": [
+"H2.C.26",
+"H2.C.41",
+"H2.C.70"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_27 H10/status_honour",
+"chart": "3HC.chart_27",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.1"
+],
+"mal": [
+"H10.C.33m"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_119 H10/status_honour",
+"chart": "3HC.chart_119",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H10.C.56"
+],
+"mal": [
+"H10.P.Rahu",
+"H10.C.33m",
+"H10.C.36",
+"H10.C.62"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "3HC.chart_139 H6/disease_chronic",
+"chart": "3HC.chart_139",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.8",
+"H6.C.1"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_2 H2/wealth",
+"chart": "3HC.chart_2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Moon",
+"H2.C.6",
+"H2.C.40",
+"H2.C.66"
+],
+"mal": [
+"H2.L.8",
+"H2.C.64"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_143 H10/status_honour",
+"chart": "3HC.chart_143",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H10.L.9",
+"H10.P.Sun",
+"H10.P.Moon",
+"H10.P.Mercury",
+"H10.C.33"
+],
+"mal": [
+"H10.C.33m"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_133 H1/body",
+"chart": "3HC.chart_133",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.9",
+"H1.C.34",
+"H1.N.64",
+"H1.C.31"
+],
+"mal": [
+"H1.C.1c",
+"H1.C.26a",
+"H1.C.27"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_133 H6/disease_chronic",
+"chart": "3HC.chart_133",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H6.P.Mercury",
+"H6.P.Venus"
+],
+"mal": [
+"H6.C.2"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_133 H8/death",
+"chart": "3HC.chart_133",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.C.1",
+"H8.C.3",
+"H8.C.17",
+"H8.C.21",
+"H8.D.4",
+"H8.D.5"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_65 H2/wealth",
+"chart": "3HC.chart_65",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H2.C.43"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_131 H6/disease_chronic",
+"chart": "3HC.chart_131",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.10"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "3HC.chart_86 H4/property",
+"chart": "3HC.chart_86",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.2"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_42 H10/status_honour",
+"chart": "3HC.chart_42",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_6 H12/moksha",
+"chart": "3HC.chart_6",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H12.L.11",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "3HC.chart_121 H10/career",
+"chart": "3HC.chart_121",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H10.L.12"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_121 H2/wealth",
+"chart": "3HC.chart_121",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.C.40",
+"H2.C.65"
+],
+"mal": [
+"H2.C.43",
+"H2.C.69",
+"H2.C.70"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_90 H4/mother",
+"chart": "3HC.chart_90",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H4.L.12",
+"H4.C.1"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": true
+},
+{
+"key": "3HC.chart_59 H10/career",
+"chart": "3HC.chart_59",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Mercury",
+"H10.P.Venus",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_17 H10/career",
+"chart": "3HC.chart_17",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Mercury",
+"H10.P.Venus",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_17 H1/self",
+"chart": "3HC.chart_17",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.C.33",
+"H1.C.30"
+],
+"mal": [
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_29 H10/career",
+"chart": "3HC.chart_29",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Sun",
+"H10.P.Jupiter"
+],
+"mal": [
+"H10.L.12"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_142 H6/disease_chronic",
+"chart": "3HC.chart_142",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.10"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_91 H4/mother",
+"chart": "3HC.chart_91",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H4.L.1",
+"H4.P.Moon"
+],
+"mal": [
+"H4.P.Saturn",
+"H4.C.18a"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_127 H10/status_honour",
+"chart": "3HC.chart_127",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H10.C.33",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_132 H6/enemies_disease",
+"chart": "3HC.chart_132",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.C.4"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "3HC.chart_115 H10/career",
+"chart": "3HC.chart_115",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Jupiter",
+"H10.C.61"
+],
+"mal": [
+"H10.L.12"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_83 H3/courage",
+"chart": "3HC.chart_83",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H3.C.4",
+"H3.C.6",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.L.12",
+"H3.C.34"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_96 H5/children",
+"chart": "3HC.chart_96",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.11",
+"H5.C.1"
+],
+"mal": [
+"H5.P.Saturn",
+"H5.P.Ketu",
+"H5.C.10",
+"H5.C.14",
+"H5.C.15"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "3HC.chart_112 H7/marital_happiness",
+"chart": "3HC.chart_112",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.C.83"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+}
+],
+"H2": [
+{
+"key": "HTJAH-II.chart_57 H8/longevity",
+"chart": "HTJAH-II.chart_57",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [
+"H8.P.Mars"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.chart_172 H10/career",
+"chart": "HTJAH-II.chart_172",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.5"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_148 H10/career",
+"chart": "HTJAH-II.chart_148",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_136 H2/wealth",
+"chart": "HTJAH-II.chart_136",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Jupiter",
+"H2.C.32",
+"H2.C.40",
+"H2.C.47",
+"H2.C.65"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.1",
+"H2.C.64"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_241 H10/career",
+"chart": "HTJAH-II.chart_241",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_241 H12/expenditure",
+"chart": "HTJAH-II.chart_241",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H12.C.A3"
+],
+"mal": [
+"H12.L.10",
+"H12.P.Rahu",
+"H12.C.A4",
+"H12.C.C5"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_222 H2/wealth",
+"chart": "HTJAH-II.chart_222",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H2.P.Moon",
+"H2.C.51",
+"H2.C.65a",
+"H2.C.66"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_222 H11/gains",
+"chart": "HTJAH-II.chart_222",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H11.C.21"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_107 H5/children",
+"chart": "HTJAH-I.chart_107",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H5.P.Ketu"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_157 H10/career",
+"chart": "HTJAH-II.chart_157",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_157 H2/wealth",
+"chart": "HTJAH-II.chart_157",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.P.Moon",
+"H2.P.Venus",
+"H2.C.5",
+"H2.C.40"
+],
+"mal": [
+"H2.P.Sun"
+],
+"lord_strong": false,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_124 H10/career",
+"chart": "HTJAH-II.chart_124",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H10.P.Jupiter"
+],
+"mal": [
+"H10.P.Saturn",
+"H10.P.Rahu",
+"H10.C.62"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_125 H10/career",
+"chart": "HTJAH-II.chart_125",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.4",
+"H10.P.Jupiter",
+"H10.C.61"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_255 H12/moksha",
+"chart": "HTJAH-II.chart_255",
+"gold": "favourable",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H12.L.5",
+"H12.C.C5"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.chart_255 H4/education",
+"chart": "HTJAH-II.chart_255",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.P.Jupiter",
+"H4.P.Venus",
+"H4.C.31",
+"H4.C.34",
+"H4.C.37"
+],
+"mal": [
+"H4.P.Ketu",
+"H4.C.49"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_117 H6/disease_chronic",
+"chart": "HTJAH-I.chart_117",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.2"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_63 H10/status_honour",
+"chart": "HTJAH-I.chart_63",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_63 H1/health",
+"chart": "HTJAH-I.chart_63",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.P.Venus",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Mars",
+"H1.C.1b",
+"H1.N.54"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_63 H2/wealth",
+"chart": "HTJAH-I.chart_63",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.5",
+"H2.C.32",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.43",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_63 H3/siblings",
+"chart": "HTJAH-I.chart_63",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H3.L.11",
+"H3.P.Mercury",
+"H3.C.1",
+"H3.C.7",
+"H3.C.8",
+"H3.C.30"
+],
+"mal": [
+"H3.P.Rahu",
+"H3.C.9",
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_63#2 H2/vision",
+"chart": "HTJAH-I.chart_63#2",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H2.C.5",
+"H2.C.21",
+"H2.C.32",
+"H2.C.66"
+],
+"mal": [
+"H2.P.Sun",
+"H2.C.43",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-I.chart_63#2 H3/courage",
+"chart": "HTJAH-I.chart_63#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H3.L.11",
+"H3.P.Mercury",
+"H3.C.1",
+"H3.C.7",
+"H3.C.8",
+"H3.C.30"
+],
+"mal": [
+"H3.P.Rahu",
+"H3.C.9",
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_A H7/marital_happiness",
+"chart": "HTJAH-II.chart_A",
+"gold": "mixed",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_A H5/children",
+"chart": "HTJAH-II.chart_A",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H5.L.9",
+"H5.P.Moon",
+"H5.P.Mercury",
+"H5.C.1"
+],
+"mal": [
+"H5.P.Rahu",
+"H5.C.39",
+"H5.C.40"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_A H9/long_journeys",
+"chart": "HTJAH-II.chart_A",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.L.5",
+"H9.P.Jupiter",
+"H9.B.21",
+"H9.B.31",
+"H9.D.41",
+"H9.D.51"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_A#2 H7/coverture",
+"chart": "HTJAH-II.chart_A#2",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.2"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_A#2 H9/father",
+"chart": "HTJAH-II.chart_A#2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H9.L.5",
+"H9.P.Jupiter",
+"H9.B.21",
+"H9.B.31"
+],
+"mal": [
+"H9.A.7",
+"H9.A.13"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_B H7/spouse",
+"chart": "HTJAH-II.chart_B",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H7.L.9",
+"H7.P.Venus",
+"H7.C.1",
+"H7.C.5"
+],
+"mal": [
+"H7.C.16"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_B H8/death",
+"chart": "HTJAH-II.chart_B",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.chart_B H9/long_journeys",
+"chart": "HTJAH-II.chart_B",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H9.L.5",
+"H9.P.Moon",
+"H9.B.21",
+"H9.B.25",
+"H9.B.30",
+"H9.D.41"
+],
+"mal": [
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_B H10/career",
+"chart": "HTJAH-II.chart_B",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.5",
+"H10.C.61",
+"H10.C.64"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_B H11/elder_siblings",
+"chart": "HTJAH-II.chart_B",
+"gold": "mixed",
+"E": "mixed",
+"ben": [
+"H11.C.8",
+"H11.C.11",
+"H11.C.31",
+"H11.C.37"
+],
+"mal": [
+"H11.C.38"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "HTJAH-II.chart_B H12/expenditure",
+"chart": "HTJAH-II.chart_B",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H12.C.A3",
+"H12.C.A6"
+],
+"mal": [
+"H12.C.A4",
+"H12.C.A16",
+"H12.C.C5"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_B#2 H7/coverture",
+"chart": "HTJAH-II.chart_B#2",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.2",
+"H7.C.46"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_B#2 H9/father",
+"chart": "HTJAH-II.chart_B#2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H9.L.5",
+"H9.P.Moon",
+"H9.B.21",
+"H9.B.25",
+"H9.B.30"
+],
+"mal": [
+"H9.A.5",
+"H9.A.13",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HTJAH-II.chart_B#3 H7/marital_happiness",
+"chart": "HTJAH-II.chart_B#3",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H7.C.1",
+"H7.C.5"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1 H1/body",
+"chart": "NH.chart_1",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.3",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Moon",
+"H1.C.1c"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1 H3/courage",
+"chart": "NH.chart_1",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H3.C.5",
+"H3.C.6",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.P.Mars",
+"H3.P.Rahu",
+"H3.C.9",
+"H3.C.10",
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1 H5/intellect",
+"chart": "NH.chart_1",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_1 H2/speech",
+"chart": "NH.chart_1",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.C.15",
+"H2.C.39",
+"H2.C.40",
+"H2.C.51",
+"H2.C.66"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_1 H9/dharma",
+"chart": "NH.chart_1",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H9.D.43"
+],
+"mal": [
+"H9.P.Ketu",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1 H12/incarceration",
+"chart": "NH.chart_1",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.3",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1 H11/elder_siblings",
+"chart": "NH.chart_1",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H11.L.4",
+"H11.C.8",
+"H11.C.11",
+"H11.C.31",
+"H11.C.37",
+"H11.C.46"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_1 H4/mother",
+"chart": "NH.chart_1",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H4.L.4",
+"H4.P.Jupiter"
+],
+"mal": [
+"H4.P.Sun"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1 H6/enemies",
+"chart": "NH.chart_1",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1 H8/death",
+"chart": "NH.chart_1",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.D.3",
+"H8.D.4"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_1#2 H1/self",
+"chart": "NH.chart_1#2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.3",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Moon",
+"H1.C.1c"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1#2 H5/children",
+"chart": "NH.chart_1#2",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H5.L.5",
+"H5.P.Mercury",
+"H5.C.1"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_1#2 H9/father",
+"chart": "NH.chart_1#2",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H9.P.Ketu",
+"H9.A.13",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1#2 H4/education",
+"chart": "NH.chart_1#2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H4.L.4",
+"H4.P.Jupiter",
+"H4.C.37"
+],
+"mal": [
+"H4.P.Sun"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_1#2 H8/longevity",
+"chart": "NH.chart_1#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_1#3 H4/happiness",
+"chart": "NH.chart_1#3",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H4.L.4",
+"H4.P.Jupiter",
+"H4.C.20"
+],
+"mal": [
+"H4.P.Sun",
+"H4.C.19"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_11 H1/self",
+"chart": "NH.chart_11",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H1.L.4",
+"H1.C.33",
+"H1.C.30"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_11 H9/father",
+"chart": "NH.chart_11",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.B.29",
+"H9.B.30"
+],
+"mal": [
+"H9.A.7",
+"H9.A.13",
+"H9.A.17",
+"H9.A.20"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_11 H10/career",
+"chart": "NH.chart_11",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.C.64"
+],
+"mal": [
+"H10.P.Rahu"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_11 H6/enemies",
+"chart": "NH.chart_11",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.L.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_12 H1/body",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.1",
+"H1.P.Jupiter",
+"H1.C.30"
+],
+"mal": [
+"H1.M.G3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H5/intellect",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H3/courage",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H3.C.6",
+"H3.C.30"
+],
+"mal": [
+"H3.P.Mars",
+"H3.C.9"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H2/wealth",
+"chart": "NH.chart_12",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H2.C.69"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H12/moksha",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.3",
+"H12.P.Ketu",
+"H12.C.C5"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H4/education",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H4.L.1",
+"H4.P.Mercury",
+"H4.P.Venus",
+"H4.C.31",
+"H4.C.32"
+],
+"mal": [
+"H4.C.49"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H10/status_honour",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.L.4",
+"H10.C.56"
+],
+"mal": [
+"H10.C.33m"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H8/longevity",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H8.L.8"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12 H9/dharma",
+"chart": "NH.chart_12",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.L.5",
+"H9.B.31",
+"H9.D.49"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_12#2 H10/career",
+"chart": "NH.chart_12#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.4"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15 H1/body",
+"chart": "NH.chart_15",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.1",
+"H1.P.Jupiter",
+"H1.P.Venus",
+"H1.C.34",
+"H1.C.29",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Saturn",
+"H1.C.1a"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15 H9/father",
+"chart": "NH.chart_15",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.P.Moon",
+"H9.B.21"
+],
+"mal": [
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15 H3/courage",
+"chart": "NH.chart_15",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H3.P.Mercury",
+"H3.C.5",
+"H3.C.6",
+"H3.C.7",
+"H3.C.8",
+"H3.C.30"
+],
+"mal": [
+"H3.C.10",
+"H3.C.25",
+"H3.C.35",
+"H3.C.37"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15 H6/enemies",
+"chart": "NH.chart_15",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H1.N.66",
+"H6.C.1",
+"H6.C.4",
+"H6.C.20",
+"H6.C.23"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15 H2/wealth",
+"chart": "NH.chart_15",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H2.L.4",
+"H2.C.5"
+],
+"mal": [
+"H2.P.Sun"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15 H10/career",
+"chart": "NH.chart_15",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15 H5/children",
+"chart": "NH.chart_15",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [
+"H5.C.1"
+],
+"mal": [
+"H5.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_15#2 H1/self",
+"chart": "NH.chart_15#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.1",
+"H1.P.Jupiter",
+"H1.P.Venus",
+"H1.C.34",
+"H1.C.29",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Saturn",
+"H1.C.1a"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_2 H1/body",
+"chart": "NH.chart_2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.4",
+"H1.C.33",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_2 H7/marital_happiness",
+"chart": "NH.chart_2",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.C.88"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_2 H5/intellect",
+"chart": "NH.chart_2",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_2 H12/moksha",
+"chart": "NH.chart_2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H12.C.G3"
+],
+"mal": [
+"H12.L.11",
+"H12.P.Rahu",
+"H12.C.F1",
+"H12.C.F2"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_2 H10/career",
+"chart": "NH.chart_2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Sun",
+"H10.P.Jupiter",
+"H10.P.Venus"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "NH.chart_2 H8/longevity",
+"chart": "NH.chart_2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_2#2 H1/self",
+"chart": "NH.chart_2#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.L.4",
+"H1.C.33",
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_2#2 H8/death",
+"chart": "NH.chart_2#2",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.C.3",
+"H8.D.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_3 H3/courage",
+"chart": "NH.chart_3",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H3.C.6",
+"H3.C.7",
+"H3.C.8"
+],
+"mal": [
+"H3.P.Mars",
+"H3.C.9"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_3 H10/status_honour",
+"chart": "NH.chart_3",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.C.33"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_3 H4/education",
+"chart": "NH.chart_3",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H4.P.Mercury",
+"H4.C.32"
+],
+"mal": [
+"H4.C.49"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_3 H5/children",
+"chart": "NH.chart_3",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.L.5",
+"H5.P.Venus",
+"H5.C.1"
+],
+"mal": [
+"H5.P.Sun",
+"H5.P.Ketu",
+"H5.C.10",
+"H5.C.39"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_3 H9/father",
+"chart": "NH.chart_3",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H9.A.4",
+"H9.A.7",
+"H9.A.13",
+"H9.A.20"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_3 H8/longevity",
+"chart": "NH.chart_3",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_3#2 H10/career",
+"chart": "NH.chart_3#2",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H1/body",
+"chart": "NH.chart_4",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.2",
+"H1.C.26c",
+"H1.C.33",
+"H1.C.34",
+"H1.C.29",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Sun"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H3/ear_throat",
+"chart": "NH.chart_4",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H4/education",
+"chart": "NH.chart_4",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H4.C.37",
+"H4.C.40"
+],
+"mal": [
+"H4.L.8"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H7/spouse",
+"chart": "NH.chart_4",
+"gold": "mixed",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.3",
+"H7.C.86"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H5/children",
+"chart": "NH.chart_4",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.P.Moon",
+"H5.C.1",
+"H5.C.34"
+],
+"mal": [
+"H5.L.8",
+"H5.C.10",
+"H5.C.41"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H9/father",
+"chart": "NH.chart_4",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H9.L.12",
+"H9.A.13",
+"H9.A.20"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_4 H10/status_honour",
+"chart": "NH.chart_4",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.L.5",
+"H10.P.Jupiter",
+"H10.C.33",
+"H10.C.56"
+],
+"mal": [
+"H10.C.33m",
+"H10.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H6/enemies",
+"chart": "NH.chart_4",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H1.N.66",
+"H6.L.10",
+"H6.C.1",
+"H6.C.18"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4 H12/expenditure",
+"chart": "NH.chart_4",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H12.C.A3",
+"H12.C.A6",
+"H12.C.A7"
+],
+"mal": [
+"H12.P.Mercury",
+"H12.C.A10",
+"H12.C.C5",
+"H12.C.C9"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_4 H8/longevity",
+"chart": "NH.chart_4",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H8.P.Saturn"
+],
+"mal": [
+"H8.P.Mars"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4#2 H1/self",
+"chart": "NH.chart_4#2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.2",
+"H1.C.26c",
+"H1.C.33",
+"H1.C.34",
+"H1.C.29",
+"H1.C.30"
+],
+"mal": [
+"H1.P.Sun"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_4#2 H10/career",
+"chart": "NH.chart_4#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.5",
+"H10.P.Jupiter"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_6 H9/dharma",
+"chart": "NH.chart_6",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H9.B.31"
+],
+"mal": [
+"H9.P.Ketu",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_6 H1/self",
+"chart": "NH.chart_6",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.4",
+"H1.C.30"
+],
+"mal": [
+"H1.C.1c"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_6 H2/wealth",
+"chart": "NH.chart_6",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H2.C.40",
+"H2.C.66"
+],
+"mal": [
+"H2.C.69"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_6 H8/death",
+"chart": "NH.chart_6",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.D.4"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_6 H5/intellect",
+"chart": "NH.chart_6",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_6 H10/status_honour",
+"chart": "NH.chart_6",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.L.4",
+"H10.C.33"
+],
+"mal": [
+"H10.C.33m"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_7 H1/self",
+"chart": "NH.chart_7",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H1.P.Mercury",
+"H1.C.26c",
+"H1.C.29"
+],
+"mal": [
+"H1.L.12",
+"H1.C.26b"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7 H2/speech",
+"chart": "NH.chart_7",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.P.Venus",
+"H2.C.9",
+"H2.C.40",
+"H2.C.60",
+"H2.C.66",
+"H2.C.72"
+],
+"mal": [
+"H2.P.Rahu",
+"H2.C.26",
+"H2.C.29",
+"H2.C.69"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7 H8/longevity",
+"chart": "NH.chart_7",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7 H7/marital_happiness",
+"chart": "NH.chart_7",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7 H4/mother",
+"chart": "NH.chart_7",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H4.L.12",
+"H4.C.1"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7 H9/father",
+"chart": "NH.chart_7",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.L.1",
+"H9.P.Moon",
+"H9.B.21"
+],
+"mal": [
+"H9.A.13",
+"H9.C.35"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7 H10/career",
+"chart": "NH.chart_7",
+"gold": "mixed",
+"E": "favourable",
+"ben": [
+"H10.L.1"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7#2 H1/body",
+"chart": "NH.chart_7#2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.P.Mercury",
+"H1.C.26c",
+"H1.C.29"
+],
+"mal": [
+"H1.L.12",
+"H1.C.26b"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_7#2 H8/death",
+"chart": "NH.chart_7#2",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.C.1"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8 H2/speech",
+"chart": "NH.chart_8",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H2.L.9",
+"H2.C.6",
+"H2.C.16",
+"H2.C.40"
+],
+"mal": [
+"H2.C.69"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8 H4/education",
+"chart": "NH.chart_8",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H4.L.4",
+"H4.P.Venus",
+"H4.C.31",
+"H4.C.34",
+"H4.C.40",
+"H4.C.41"
+],
+"mal": [
+"H4.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8 H9/father",
+"chart": "NH.chart_8",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H9.P.Jupiter",
+"H9.B.21",
+"H9.B.26"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8 H5/children",
+"chart": "NH.chart_8",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H5.C.1"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8 H1/self",
+"chart": "NH.chart_8",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H1.L.10",
+"H1.C.33",
+"H1.C.30"
+],
+"mal": [
+"H1.M.G3"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8 H12/moksha",
+"chart": "NH.chart_8",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H12.L.10",
+"H12.C.C5",
+"H12.C.E3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8#2 H4/mother",
+"chart": "NH.chart_8#2",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H4.L.4",
+"H4.P.Venus"
+],
+"mal": [
+"H4.P.Rahu"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_8#2 H9/dharma",
+"chart": "NH.chart_8#2",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H9.P.Jupiter",
+"H9.B.21",
+"H9.B.26",
+"H9.D.43"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H1/body",
+"chart": "NH.chart_9",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [
+"H1.C.33",
+"H1.C.30"
+],
+"mal": [
+"H1.L.12",
+"H1.C.1a",
+"H1.M.G3"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H5/intellect",
+"chart": "NH.chart_9",
+"gold": "favourable",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H4/education",
+"chart": "NH.chart_9",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H4.L.10",
+"H4.C.34",
+"H4.C.37"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_9 H7/marital_happiness",
+"chart": "NH.chart_9",
+"gold": "afflicted",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H9/father",
+"chart": "NH.chart_9",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H9.L.12",
+"H9.A.20"
+],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H8/longevity",
+"chart": "NH.chart_9",
+"gold": "favourable",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H6/enemies",
+"chart": "NH.chart_9",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H1.N.66",
+"H6.L.12",
+"H6.P.Saturn",
+"H6.C.27"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H10/career",
+"chart": "NH.chart_9",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.P.Sun",
+"H10.P.Mercury",
+"H10.P.Venus"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "NH.chart_9 H12/moksha",
+"chart": "NH.chart_9",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H12.C.F4",
+"H12.C.I3"
+],
+"mal": [
+"H12.L.10",
+"H12.P.Moon",
+"H12.C.C9",
+"H12.C.E3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "NH.chart_9#2 H9/dharma",
+"chart": "NH.chart_9#2",
+"gold": "favourable",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H9.L.12"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+}
+],
+"H3": [
+{
+"key": "HPA.chart_35.8 H9/fortune",
+"chart": "HPA.chart_35.8",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.P.Moon",
+"H9.B.21"
+],
+"mal": [
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.8 H1/body",
+"chart": "HPA.chart_35.8",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.P.Jupiter",
+"H1.C.33",
+"H1.C.34",
+"H1.N.46",
+"H1.C.30"
+],
+"mal": [
+"H1.N.47",
+"H1.C.37"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.8 H7/marital_happiness",
+"chart": "HPA.chart_35.8",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H7.C.5"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.8 H8/death",
+"chart": "HPA.chart_35.8",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H8.C.21",
+"H8.D.5"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.2 H9/father",
+"chart": "HPA.chart_35.2",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H9.L.1",
+"H9.B.29"
+],
+"mal": [
+"H9.A.7",
+"H9.A.13"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.2 H7/marital_happiness",
+"chart": "HPA.chart_35.2",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.2 H3/siblings",
+"chart": "HPA.chart_35.2",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H3.C.5",
+"H3.C.6"
+],
+"mal": [
+"H3.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.18 H5/children",
+"chart": "HPA.chart_35.18",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H5.L.5",
+"H5.P.Moon",
+"H5.C.1"
+],
+"mal": [
+"H5.C.41"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.18 H10/status_honour",
+"chart": "HPA.chart_35.18",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.L.7"
+],
+"mal": [
+"H10.C.33m",
+"H10.C.54a"
+],
+"lord_strong": false,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.18 H1/self",
+"chart": "HPA.chart_35.18",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.C.34",
+"H1.C.30"
+],
+"mal": [
+"H1.C.26b"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.18 H7/spouse",
+"chart": "HPA.chart_35.18",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H7.P.Jupiter",
+"H7.C.1",
+"H7.C.6",
+"H7.C.7"
+],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": true,
+"karaka_strong": false,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.5 H7/spouse",
+"chart": "HPA.chart_35.5",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [
+"H7.L.10"
+],
+"mal": [
+"H7.P.Ketu",
+"H7.C.82"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": true
+},
+{
+"key": "HPA.chart_14.2 H8/longevity",
+"chart": "HPA.chart_14.2",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.16 H9/father",
+"chart": "HPA.chart_35.16",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H9.A.9"
+],
+"mal": [
+"H9.L.8",
+"H9.P.Rahu",
+"H9.A.7",
+"H9.A.13",
+"H9.A.22",
+"H9.B.23",
+"H9.B.24",
+"H9.C.35"
+],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.20 H8/longevity",
+"chart": "HPA.chart_35.20",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.10 H10/career",
+"chart": "HPA.chart_35.10",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.4",
+"H10.P.Mercury"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.11 H7/marital_happiness",
+"chart": "HPA.chart_35.11",
+"gold": "afflicted",
+"E": "insufficient-evidence",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.15 H7/spouse",
+"chart": "HPA.chart_35.15",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H7.L.4"
+],
+"mal": [
+"H7.P.Mars",
+"H7.P.Rahu",
+"H7.C.82"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.17 H9/father",
+"chart": "HPA.chart_35.17",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.B.29"
+],
+"mal": [
+"H9.L.12",
+"H9.A.7",
+"H9.A.17"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": true
+},
+{
+"key": "HPA.chart_35.19 H9/father",
+"chart": "HPA.chart_35.19",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H9.B.31"
+],
+"mal": [
+"H9.L.8",
+"H9.A.2",
+"H9.A.7",
+"H9.A.13",
+"H9.A.17"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.19 H4/mother",
+"chart": "HPA.chart_35.19",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [
+"H4.L.10"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": true,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.19 H7/spouse",
+"chart": "HPA.chart_35.19",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [
+"H7.L.10"
+],
+"mal": [
+"H7.K.3"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.19 H6/enemies",
+"chart": "HPA.chart_35.19",
+"gold": "afflicted",
+"E": "afflicted",
+"ben": [],
+"mal": [
+"H6.P.Rahu"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.3 H10/career",
+"chart": "HPA.chart_35.3",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H10.L.9"
+],
+"mal": [],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.3 H1/self",
+"chart": "HPA.chart_35.3",
+"gold": "favourable",
+"E": "favourable",
+"ben": [
+"H1.C.34"
+],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.3#2 H10/status_honour",
+"chart": "HPA.chart_35.3#2",
+"gold": "favourable",
+"E": "mixed",
+"ben": [
+"H10.L.9",
+"H10.C.56"
+],
+"mal": [
+"H10.C.33m"
+],
+"lord_strong": true,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.4 H8/longevity",
+"chart": "HPA.chart_35.4",
+"gold": "afflicted",
+"E": "favourable",
+"ben": [],
+"mal": [
+"H8.P.Mars"
+],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": false
+},
+{
+"key": "HPA.chart_35.6 H8/longevity",
+"chart": "HPA.chart_35.6",
+"gold": "afflicted",
+"E": "mixed",
+"ben": [],
+"mal": [],
+"lord_strong": null,
+"karaka_strong": null,
+"lord_hard": true
+}
+]
+}

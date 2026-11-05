@@ -54,6 +54,36 @@ class TestTensionNarrator:
         assert narrate_tensions(report) == narrate_tensions(report)
 
 
+class TestMatterHouseCoverage:
+    """REPORT_CRITIQUE_2026-08-17 — 7 of the 12 dashboard matters printed '-' in the
+    support column because `_MATTER_HOUSE` mapped only the legacy per-house keys."""
+
+    def test_every_dashboard_matter_resolves_to_a_house(self, report):
+        """Every dashboard matter key maps to the house its dedicated deep reader judges
+        (spiritual is DHARMA -> 9, per `matter_varga_reading._SPECS`, not moksha/12)."""
+        from app.raman_saab.judges.matter_varga_dashboard import _DISPATCH
+        from app.raman_saab.tension_narrator import _MATTER_HOUSE
+        for en in report.dashboard.entries:
+            assert en.matter in _MATTER_HOUSE, f"dead support cell: {en.matter}"
+            assert _MATTER_HOUSE[en.matter] in range(1, 13)
+        assert {m for m, *_ in _DISPATCH} <= set(_MATTER_HOUSE)
+        assert _MATTER_HOUSE["spiritual"] == 9
+        # the mapping mirrors detailed_report's own documented anchors, key for key
+        from app.raman_saab.detailed_report import _MATTER_HOUSE as _dr_map
+        assert all(_MATTER_HOUSE[m] == h for m, h in _dr_map.items())
+
+    def test_dashboard_support_cells_are_live_in_markdown(self, report):
+        """The twelve-matters-at-a-glance table renders a real support readout (High/
+        Medium/Low + testimony counts) for every matter — no '-' cells."""
+        md = to_markdown(report)
+        block = md.split("## The twelve matters at a glance")[1].split("\n## ")[0]
+        rows = [ln for ln in block.splitlines()
+                if ln.startswith("| ") and "**" in ln]
+        assert len(rows) == 12
+        for row in rows:
+            assert not row.rstrip().endswith("| - |"), f"dead support cell: {row}"
+
+
 class TestPipelineConsumption:
     """The diagram's arrows, enforced by consumption: prose naming census values can only
     exist because the census ran upstream of the narrative engine."""
@@ -103,3 +133,30 @@ class TestTurningPoints:
         assert "Turning points" in md
         joined = "; ".join(f"{w}: {x}" for w, x in n.turning_points)
         assert _FORBIDDEN_RE.search(joined) is None
+
+
+class TestMatterHouseMapsCannotDrift:
+    """Two `_MATTER_HOUSE` maps exist on purpose and must never disagree.
+
+    `detailed_report._MATTER_HOUSE` is the DASHBOARD-matter map: it is *iterated*
+    (theme houses, per-house matter lists), so it must contain dashboard matters only.
+    `tension_narrator._MATTER_HOUSE` is a *lookup* superset that also carries the legacy
+    per-house keys (courage, happiness, fortune...). The adversarial review of the audit
+    waves (2026-08-18) flagged the pair as a drift hazard: `house_dashboard_conflicts`
+    lives in detailed_report but imports tension_narrator's map. These tests pin the
+    invariant instead of merging maps with different jobs."""
+
+    def test_shared_keys_agree_on_the_house(self):
+        """A matter judged by house N in one map is judged by house N in the other."""
+        from app.raman_saab.detailed_report import _MATTER_HOUSE as dashboard_map
+        from app.raman_saab.tension_narrator import _MATTER_HOUSE as lookup_map
+        for matter in set(dashboard_map) & set(lookup_map):
+            assert dashboard_map[matter] == lookup_map[matter], (
+                f"{matter}: detailed_report says {dashboard_map[matter]}, "
+                f"tension_narrator says {lookup_map[matter]}")
+
+    def test_lookup_map_covers_every_dashboard_matter(self):
+        """The lookup map is a superset — no dashboard matter can miss its support cell."""
+        from app.raman_saab.detailed_report import _MATTER_HOUSE as dashboard_map
+        from app.raman_saab.tension_narrator import _MATTER_HOUSE as lookup_map
+        assert not set(dashboard_map) - set(lookup_map)

@@ -1,0 +1,1637 @@
+[
+ {
+  "chart_no": 45,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 5198,
+  "last_line": 5241,
+  "raw_birth": "Chart No. 45.—Born 26-5-1950 at 6-30 a.m. (I.S.T.) at 82 E 13, 16N52.",
+  "birth": {
+   "date": "1950-05-26",
+   "time": "06:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 16,
+   "lat_min": 52,
+   "lat_dir": "N",
+   "lon_deg": 82,
+   "lon_min": 13,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "coords printed lon-first '82 E 13, 16N52'"
+  ],
+  "dasa_balance": "Balance of Venus Dasa at birth: 2 years 1 month and 15 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; 8th = Sagittarius and Lagna lord Venus imply Taurus.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "afflicted",
+    "quote": "This would make the 8th lord stronger than Lagna lord causing Alpayu. The native died in Venus Bhukti of Moon Dasa.",
+    "line": 5235,
+    "why": "Raman concludes short life (Alpayu) and records the death."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 57,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 5780,
+  "last_line": 5841,
+  "raw_birth": "Chart No. 57. -Born 12-2-1880 at 0-40 a.m. (L.M.T.) at 41 N 2, 93 W 25.",
+  "birth": {
+   "date": "1880-02-12",
+   "time": "00:40",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 41,
+   "lat_min": 2,
+   "lat_dir": "N",
+   "lon_deg": 93,
+   "lon_min": 25,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Jupiter Dasa at birth : 9 years, 10 months and 17 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; Venus is Lagna and 8th lord with 8th = Taurus, implying Libra.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "longevity",
+    "verdict": "favourable",
+    "quote": "has conferred the full span of life. The native died in June 1969 in Rahu Bhukti, Mars Dasa in his ninetieth year.",
+    "line": 5825,
+    "why": "Raman concludes Purnayu (full span), died aged ~89."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 65,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 6264,
+  "last_line": 6313,
+  "raw_birth": "Chart No. 65.— Born 15-7-1942 at 2-30 p.m. (I.S.T.) at 77 E 29,8 N 11.",
+  "birth": {
+   "date": "1942-07-15",
+   "time": "14:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 8,
+   "lat_min": 11,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 29,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "coords printed lon-first '77 E 29,8 N 11'"
+  ],
+  "dasa_balance": "Balance of Saturn Dasa at birth: 2 years, 2 months and 0 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; 8th = Sagittarius, Lagna lord Venus, implying Taurus.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The native's clothes caught fire on 16-12-1964 and death occurred on 19-12-1964.",
+    "line": 6306,
+    "why": "Violent death by burns at age 22 (Raman: 'hence, death by burns')."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 70,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 6550,
+  "last_line": 6612,
+  "raw_birth": "Chart No. 70.—Born 15-10-1891 at 10-30 p.m. (G.M.T.) at 53 N 12, 0 W 30.",
+  "birth": {
+   "date": "1891-10-15",
+   "time": "22:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 53,
+   "lat_min": 12,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 30,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   "time basis printed G.M.T."
+  ],
+  "dasa_balance": "Balance of Jupiter Dasa at birth: 12 years, 2 months and 16 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; 8th = Aquarius, Lagna lord Moon, implying Cancer.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The native was accidentally shot and died on 2-1-1930.",
+    "line": 6597,
+    "why": "Violent accidental death by fire-arm."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 76,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 6871,
+  "last_line": 6913,
+  "raw_birth": "Chart No. 76.—Born 20-11-1925 at 1-00 p.m. (E.S.T.) at 71 W 8.42 N 05.",
+  "birth": {
+   "date": "1925-11-20",
+   "time": "13:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 42,
+   "lat_min": 5,
+   "lat_dir": "N",
+   "lon_deg": 71,
+   "lon_min": 8,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   "coords printed '71 W 8.42 N 05' read as 71W08, 42N05",
+   "time basis printed E.S.T."
+  ],
+  "dasa_balance": "Balance of Sun Dasa at birth: 4years, 9 months and 7 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; 8th = Aries implies Virgo.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The native was also shot to death on 4-6-1968 for political reasons.",
+    "line": 6906,
+    "why": "Violent death (assassination)."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 79,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 6995,
+  "last_line": 7040,
+  "raw_birth": "Chart No. 79.—Born 25-9-1916 at 1-58 p.m. (L.M.T.) at 27 N 28, 77 E 41.",
+  "birth": {
+   "date": "1916-09-25",
+   "time": "13:58",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 27,
+   "lat_min": 28,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 41,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "dasa balance days printed '2?' (illegible second digit)"
+  ],
+  "dasa_balance": "Balance of Venus Dasa at birth: 17 years, 3 months and 2? days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; 8th = Cancer implies Sagittarius.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The native, the leader of a national political party, was killed and the body thrown on the rails",
+    "line": 7031,
+    "why": "Violent death (killed)."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "The native, the leader of a national political party,",
+    "line": 7031,
+    "why": "Native rose to lead a national political party."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 81,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 7097,
+  "last_line": 7144,
+  "raw_birth": "Chart No. 81.-Born 21-10-1953 at 2 a.m. (I.S.T.) at 18 N 31, 73 E 55.",
+  "birth": {
+   "date": "1953-10-21",
+   "time": "02:00",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 31,
+   "lat_dir": "N",
+   "lon_deg": 73,
+   "lon_min": 55,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Saturn Dasa at birth: 1 year, 2 months and 16 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; 8th = Pisces implies Libra.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H8",
+    "signification": "death",
+    "verdict": "afflicted",
+    "quote": "The native died on 4-4-1972 after consuming poison.",
+    "line": 7130,
+    "why": "Self-inflicted death by poison at about 18."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 106,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 9035,
+  "last_line": 9065,
+  "raw_birth": "Chart No. 106. Born 17-9-1941 at 10 a.m. (I.S.T.) at 22 N 34, 88 E 24.",
+  "birth": {
+   "date": "1941-09-17",
+   "time": "10:00",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 34,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 24,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "dasa balance printed '3 years, 0O month and 27 S.' (0 months, 27 days)"
+  ],
+  "dasa_balance": "Balance of Saturn Dasa at birth: 3 years, 0O month and 27 S.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna not named; movable sign holding own lord Venus, Mercury 9th & 12th lord, Mars 7th lord => Libra.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "The native went abroad in Mercury Dasa.",
+    "line": 9057,
+    "why": "Foreign travel/residence fulfilled (Raman adds the native was forced to stay abroad despite wishing to return)."
+   }
+  ],
+  "notes": "Foreign-residence matter: verdict favourable only in the sense the signification (going/living abroad) was fulfilled; Raman frames the inability to return as unwanted. Reviewer may prefer to drop."
+ },
+ {
+  "chart_no": 107,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 9066,
+  "last_line": 9098,
+  "raw_birth": "Chart No. 107.-Born 12-1-1932 at 2-30 p.m. (I.S.T.) at 32 N 10. 74 E 14.",
+  "birth": {
+   "date": "1932-01-12",
+   "time": "14:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 32,
+   "lat_min": 10,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 14,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Jupiter Dasa at birth : 10 years, 5 months and 23 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna lord Venus, 9th lord Saturn in own movable sign (Capricorn) => Taurus.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "The native went abroad in Saturn Dasa. His efforts at coming back have been in vain and he has been forced to reside there.",
+    "line": 9076,
+    "why": "Foreign residence fulfilled (return frustrated)."
+   }
+  ],
+  "notes": "Same caveat as Chart 106 on the foreign-residence verdict."
+ },
+ {
+  "chart_no": 109,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 9150,
+  "last_line": 9202,
+  "raw_birth": "Chart No. 109.- Born 28-4-1945 at 11-39p.m. (I.S.T.) at 11 N15. 75E 49.",
+  "birth": {
+   "date": "1945-04-28",
+   "time": "23:39",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 11,
+   "lat_min": 15,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 49,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Saturn Dasa at birth : 17 years, 6 months and 10 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna lord in 9th; 9th lord Sun exalted in 5th (Aries) => Sagittarius.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "long_journeys",
+    "verdict": "favourable",
+    "quote": "justifying the native's status as an immigrant-resident abroad",
+    "line": 9176,
+    "why": "Native went abroad and became an immigrant-resident."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 119,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 10413,
+  "last_line": 10441,
+  "raw_birth": "Chart No. 119.— Born 13-1-1944 at 1-49 p.m. (L.M.T.) at 22 N 35, 88 E 23.",
+  "birth": {
+   "date": "1944-01-13",
+   "time": "13:49",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 35,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 23,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Ketu Dasa at birth. 5 years, 11 months.",
+  "lagna_sign_stated": "Taurus",
+  "lagna_sign_printed": "Taurus",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Only the nature of profession is stated ('an accounts officer in a firm'); no favourable/afflicted conclusion."
+ },
+ {
+  "chart_no": 121,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 10508,
+  "last_line": 10535,
+  "raw_birth": "Chart No. 121.—Born 28 5-1944 at 9-50 a.m. (I.S.T.) at 13",
+  "birth": {
+   "date": "1944-05-28",
+   "time": "09:50",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "coords split: 'at 13' on header line, 'N, 77 E35.' printed after the dasa line"
+  ],
+  "dasa_balance": "Balance of Mercury Dasa at birth: 6 years, 1 month and 28 days.",
+  "lagna_sign_stated": "Cancer",
+  "lagna_sign_printed": "Cancer",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Only nature of profession stated (alcohol technologist)."
+ },
+ {
+  "chart_no": 124,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 10633,
+  "last_line": 10660,
+  "raw_birth": "Chart No. 124.—Bom 9-5-1922 at 9-32 p.m. (I.S.T.) at 18 N 7, 83 E 27.",
+  "birth": {
+   "date": "1922-05-09",
+   "time": "21:32",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 7,
+   "lat_dir": "N",
+   "lon_deg": 83,
+   "lon_min": 27,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Mars Dasa at birth: 0 year, 6 months and 6 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "10th = Virgo implies Sagittarius.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "afflicted",
+    "quote": "Saturn there indicates a job as a stenographer. Rahu in the 10th afflicts Virgo coming in the way of advancement.",
+    "line": 10657,
+    "why": "Raman concludes career advancement is obstructed."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 125,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 10676,
+  "last_line": 10707,
+  "raw_birth": "Chart No. 125.-Born 20-10-1931 at 7-20a.m. (I.S.T.) at 13 N 20, 74 E 45.",
+  "birth": {
+   "date": "1931-10-20",
+   "time": "07:20",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 20,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 45,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "dasa balance split by page: 'Mars Dasa 6 years, 10 months and' (10689) ... '3 days.' (10706)"
+  ],
+  "dasa_balance": "Balance of Mars Dasa at birth : 6 years, 10 months and 3 days. (lines 10689 + 10706)",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna lord Venus in Libra with 9th/12th lord Mercury and 11th lord Sun => Libra.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native is a top executive in a management firm and a nutritional consultant.",
+    "line": 10678,
+    "why": "High executive position."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 128,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 10793,
+  "last_line": 10825,
+  "raw_birth": "Chart No. 128.—Born 19-12-1952 at 11-16 p m. (I.ST.) at 11 NO5, 77 E 20.",
+  "birth": {
+   "date": "1952-12-19",
+   "time": "23:16",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 11,
+   "lat_min": 5,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 20,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lat printed '11 NO5'"
+  ],
+  "dasa_balance": "Balance of the Moon Dasa at birth: 9 years, 2 months and 3 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Capricorn is 6th, 10th lord Venus, yogakaraka Mars => Leo.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Only nature of profession (timber businessman)."
+ },
+ {
+  "chart_no": 136,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11249,
+  "last_line": 11274,
+  "raw_birth": "Chart No. 136.- Born 12/13-9-1897 at 2-51 a.m. (L.M.T.) at 26 N 17, 72 E 58.",
+  "birth": {
+   "date": "1897-09-13",
+   "time": "02:51",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 26,
+   "lat_min": 17,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 58,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '12/13-9-1897' (civil 13th, pre-dawn)"
+  ],
+  "dasa_balance": "Balance of Mercury's Dasa at birth: 11 years and9 months.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "10th = Aries, 2nd lord Sun => Cancer.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "The native is a rich and prosperous banker",
+    "line": 11256,
+    "why": "Raman states the native is rich and prosperous."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 140,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11373,
+  "last_line": 11405,
+  "raw_birth": "Chart No. 140.— Born 24-2-1911 at 7-44 a.m. (L.M.T.) at 20 N 28. 85 E 54.",
+  "birth": {
+   "date": "1911-02-24",
+   "time": "07:44",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 20,
+   "lat_min": 28,
+   "lat_dir": "N",
+   "lon_deg": 85,
+   "lon_min": 54,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "3aiance of Venus Dasa at birth: 17 years, 4 months and 16 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna occupied by exalted Venus => Pisces.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Nature of profession only (dealer in woodwork craft); 'give financial success' is a factor statement."
+ },
+ {
+  "chart_no": 142,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11425,
+  "last_line": 11456,
+  "raw_birth": "Chart No. 142.—Born 31-5-1918 at 12-22 p.m. (I.S.T.) at 13° N, 77 E 35.",
+  "birth": {
+   "date": "1918-05-31",
+   "time": "12:22",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of the Moon's Dasa at birth: O year, 1 month and 28 days.",
+  "lagna_sign_stated": "Leo",
+  "lagna_sign_printed": "Leo",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "profession_authority",
+    "verdict": "favourable",
+    "quote": "The native is a Captain in the Army.",
+    "line": 11454,
+    "why": "Army officer; Raman frames the career in terms of authority and power (Lagna lord Sun in 10th)."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 147,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11572,
+  "last_line": 11605,
+  "raw_birth": "Chart No. 147.—Born 11-8-1921 at 8-18 p.m. (IST.) at 13 N, 77 E 35.",
+  "birth": {
+   "date": "1921-08-11",
+   "time": "20:18",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Rahu's Dasa at birth: 1 year, 2 months and 17 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "10th lord Mars, 7th lord Sun => Aquarius.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Nature of profession only (dancer)."
+ },
+ {
+  "chart_no": 148,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11606,
+  "last_line": 11706,
+  "raw_birth": "Chart No. 148.-Born 7/8-8-1894 at 5-30 a.m. (L.M.T) at 13 N 6,78 E 7.",
+  "birth": {
+   "date": "1894-08-08",
+   "time": "05:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 6,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 7,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '7/8-8-1894' (civil 8th, pre-dawn)"
+  ],
+  "dasa_balance": "Balance of Rahu's Dasa at birth : Oyear,5 months and 4 days.",
+  "lagna_sign_stated": "Cancer",
+  "lagna_sign_printed": "Cancer",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native was a high ranking police officer.",
+    "line": 11635,
+    "why": "High rank; though Raman notes he rose slowly from constable to Superintendent."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 149,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11638,
+  "last_line": 11708,
+  "raw_birth": "Chart No. 149.—Born 5/6-10-1942 at 1-00 a.m. (W.T.) at 12 N 58, 77 E 34.",
+  "birth": {
+   "date": "1942-10-06",
+   "time": "01:00",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 58,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '5/6-10-1942' (civil 6th)",
+   "time basis printed W.T. (War Time)"
+  ],
+  "dasa_balance": "Balance of Mercury's Dasa at birth: 3 years, 8 months and 3 days.",
+  "lagna_sign_stated": "Gemini",
+  "lagna_sign_printed": "Gemini",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native occupies an enviable position in the hierarchy of the police force much in advance of many seniors in age.",
+    "line": 11675,
+    "why": "Rapid rise in career."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "has already reached the rank of Superintendent having thorough sheer merit",
+    "line": 11693,
+    "why": "Early high rank on merit."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 150,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11709,
+  "last_line": 11766,
+  "raw_birth": "Chart No. 150.—Born 7-12-1888 at about 5-30 p.m. (L.M T.) at14.N 14, 76 E 26.",
+  "birth": {
+   "date": "1888-12-07",
+   "time": "17:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 14,
+   "lat_min": 14,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 26,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time 'about 5-30 p.m.'"
+  ],
+  "dasa_balance": "Balance of Moon's Dasa at birth: 5 years, O month and 5 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "10th = Aquarius, Lagna lord Venus in Capricorn => Taurus.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "profession_authority",
+    "verdict": "favourable",
+    "quote": "his aspect gives a position of authority. The native was the director of the State geological department.",
+    "line": 11711,
+    "why": "Head of a state department."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 156,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11916,
+  "last_line": 11953,
+  "raw_birth": "Chart No. 156.- Born 8/9-7-1953 at Oh. 03m. a.m. (l.S. T.) at 22 N 34, 88 E 24.",
+  "birth": {
+   "date": "1953-07-09",
+   "time": "00:03",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 34,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 24,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '8/9-7-1953' at 0h 03m (civil 9th)"
+  ],
+  "dasa_balance": "Balance of Mars Dasa at birth: 5 years, 2 months and 14 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "10th = Sagittarius, 6th lord Sun, 2nd/9th lord Mars => Pisces.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Nature of profession only (engineer)."
+ },
+ {
+  "chart_no": 157,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 11954,
+  "last_line": 11989,
+  "raw_birth": "Chart No. 157.—Born 10/11-2-1910 at 5-59 a.m. (I.S.T.) at 10 N 51, 78 E 47.",
+  "birth": {
+   "date": "1910-02-11",
+   "time": "05:59",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 51,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 47,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '10/11-2-1910' (civil 11th)",
+   "IST printed for 1910"
+  ],
+  "dasa_balance": "Balance of Rahu's Dasa at birth : 9 years, 1 month and 2 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "10th = Libra, 4th/11th lord Mars, Moon 7th lord, Sun 8th lord => Capricorn.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "belongs to a prosperous businessman.",
+    "line": 11972,
+    "why": "Successful business."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "The native owns a cinema studio which he rents out for very large sums",
+    "line": 11976,
+    "why": "Large earnings."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 160,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12018,
+  "last_line": 12101,
+  "raw_birth": "Chart No. 160.-Born 4/5-2-1928 at 4-30 a.m. (I.S.T.) at 24 N 13, 75 E 30.",
+  "birth": {
+   "date": "1928-02-05",
+   "time": "04:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 24,
+   "lat_min": 13,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 30,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '4/5-2-1928' (civil 5th)"
+  ],
+  "dasa_balance": "Balance of Saturn's Dasa at birth : 7 years, 2 months and 19 ",
+  "lagna_sign_stated": "Sagittarius",
+  "lagna_sign_printed": "Sagittarius",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "afflicted",
+    "quote": "the lord thereof being placed in the 12th, a dusthana explaining the native's relatively low cadre.",
+    "line": 12022,
+    "why": "Raman concludes a relatively low rank in the armed forces."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 161,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12093,
+  "last_line": 12126,
+  "raw_birth": "Chart No. 161. -Born 24-3-1906 at 6-53 a.m. (L.M.T.) at 13 N 30, 74 E 45.",
+  "birth": {
+   "date": "1906-03-24",
+   "time": "06:53",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 45,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of Jupiter Dasa's at birth : 2 years, 9 months and 11 days.",
+  "lagna_sign_stated": "Pisces",
+  "lagna_sign_printed": "Pisces",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Nature of profession only (restaurant owner)."
+ },
+ {
+  "chart_no": 167,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12262,
+  "last_line": 12318,
+  "raw_birth": "Chart No. 167. -Born 21-11-1915 at 7-30 a.m. (I.S.T.) at 18 N 50,75 E 40.",
+  "birth": {
+   "date": "1915-11-21",
+   "time": "07:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 40,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of the Sun's Dasa at birth : 4 years, 9 months and 29 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "10th = Leo, 10th lord Sun in Ascendant => Scorpio.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "indicating the native of Chart No. 167 to be a civil judge.",
+    "line": 12262,
+    "why": "Native is a judge, though Raman notes lower rank than Chart 166."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 170,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12391,
+  "last_line": 12415,
+  "raw_birth": "Chart No. 170-Born 30/31-8-1913 at 4-52 a.m. (L.M.T.) at 26 N 17, 72 E 56.",
+  "birth": {
+   "date": "1913-08-31",
+   "time": "04:52",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 26,
+   "lat_min": 17,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 56,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '30/31-8-1913' (civil 31st)"
+  ],
+  "dasa_balance": "Balance of Ketu's Dasa at birth: 5 years, 1 month and 3 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Nature of profession only (lawyer)."
+ },
+ {
+  "chart_no": 172,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12441,
+  "last_line": 12477,
+  "raw_birth": "Chart No. 172.—Born 10/11-7-1891 at 1-18 a.m. (L.M.T.) at 13 N, 77 E 35.",
+  "birth": {
+   "date": "1891-07-11",
+   "time": "01:18",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '10/11-7-1891' (civil 11th)"
+  ],
+  "dasa_balance": "Balance of Venus Dasa at birth : 9 years, 8 months and 3 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Fiery Lagna with 10th = Capricorn => Aries.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Chart No. 172 is of a well-known bar-at-law.",
+    "line": 12469,
+    "why": "Well-known, forceful lawyer."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 178,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12666,
+  "last_line": 12713,
+  "raw_birth": "Chart No. 178.- Born 2/3-7-1828 at 5-30 a.m. (I.S.T.) at 13 N5,80 E 15.",
+  "birth": {
+   "date": "1828-07-03",
+   "time": "05:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 5,
+   "lat_dir": "N",
+   "lon_deg": 80,
+   "lon_min": 15,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '2/3-7-1828' (civil 3rd); year 1828 with I.S.T. is anachronistic — likely 1928 (OCR/print), unverified"
+  ],
+  "dasa_balance": "Balance of Venus Dasa at birth: 12 years, 9 months and 27 days.",
+  "lagna_sign_stated": "Gemini",
+  "lagna_sign_printed": "Gemini",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "making her a singer of great popularity and charm. The Adhiyoga has reference to these planets in Lagna and has made the native an authority and outstanding figure in the world of music.",
+    "line": 12672,
+    "why": "Fame and eminence in music."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 185,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12908,
+  "last_line": 12931,
+  "raw_birth": "Chart No. 185—Bom 3-4-1905 at 2-34p.m. (I.S.T.) at 14 N 13, 75 E52.",
+  "birth": {
+   "date": "1905-04-03",
+   "time": "14:34",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 14,
+   "lat_min": 13,
+   "lat_dir": "N",
+   "lon_deg": 75,
+   "lon_min": 52,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "IST printed for 1905"
+  ],
+  "dasa_balance": "Balance of Saturn Dasa at birth: 12 years, 3 months and 2 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Text says Lagna is a martian sign occupied by Mars; sign not named (Aries/Scorpio).",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native emerged as a political fighter and was voted to power and was a minister for some years.",
+    "line": 12929,
+    "why": "Became a minister."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 187,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 12959,
+  "last_line": 12993,
+  "raw_birth": "Chart No. 187. -Bom 8-8-9133 at 4-30 p.m. (I.S.T.) at 13° N 17, E 35.",
+  "birth": {
+   "date": "1933-08-08",
+   "time": "16:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "year printed '9133' — read 1933 (alt 1913); coords printed '13° N 17, E 35' (lon degrees missing, read 77 E 35 as elsewhere for this place; alt 13N17)"
+  ],
+  "dasa_balance": "Balance of Jupiter Dasa at birth: 5 years, 7 months and 28 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna 'a fiery sign' (not named).",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Public prosecutor; only yoga statements ('Raja Yoga for success and fame'), no conclusion on outcome."
+ },
+ {
+  "chart_no": 191,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 13082,
+  "last_line": 13154,
+  "raw_birth": "Chart No. 191.—Born 6-7-7920 at 72-77 p.m. (I.S.T.) at  10, N 50. 78E42.",
+  "birth": {
+   "date": "1920-07-06",
+   "time": "12:11",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 42,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time printed '72-77 p.m.' read 12-11 p.m. (7->1)",
+   "year printed '7920' read 1920",
+   "dasa balance split: 'Rahu ... 2 days' (13141-2) and '3 years, 2 months and' (13151)"
+  ],
+  "dasa_balance": "Balance of Rahu Dasa at birth : 3 years, 2 months and 2 days. (split across lines 13141-13151)",
+  "lagna_sign_stated": "Virgo",
+  "lagna_sign_printed": "Virgo",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Nature of profession only (film scriptwriter)."
+ },
+ {
+  "chart_no": 193,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 13186,
+  "last_line": 13242,
+  "raw_birth": "Chart No. 193. -Bom 6/7-9-1936 at 4-30 a.m. (DST) at 35 N 0. 106 W 40.",
+  "birth": {
+   "date": "1936-09-07",
+   "time": "04:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 35,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 106,
+   "lon_min": 40,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '6/7-9-1936' (civil 7th)",
+   "time basis printed DST"
+  ],
+  "dasa_balance": "Balance of Moon's Dasa at birth : 6 years, 11 months and 16 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [],
+  "notes": "Nature of profession only (college professor/lecturer)."
+ },
+ {
+  "chart_no": 205,
+  "name": "Richard Nixon",
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 13967,
+  "last_line": 14035,
+  "raw_birth": "Chart No. 205.- Born 9-9-1913 at 9-30 p.m. (P.S.T.) at 33 N 53, 117 W 49.",
+  "birth": {
+   "date": "1913-09-09",
+   "time": "21:30",
+   "time_basis": "other",
+   "ghatikas": null,
+   "lat_deg": 33,
+   "lat_min": 53,
+   "lat_dir": "N",
+   "lon_deg": 117,
+   "lon_min": 49,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   "time basis printed P.S.T."
+  ],
+  "dasa_balance": "Balance of Mars Dasa at birth : 4 years, 1 month and 4 days.",
+  "lagna_sign_stated": "Leo",
+  "lagna_sign_printed": "Leo",
+  "lagna_note": null,
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "mixed",
+    "quote": "The native was elected President in Mercury Dasa, Mercury Bhukti.",
+    "line": 14013,
+    "why": "Rose to the presidency, then fell in scandal (both poles named)."
+   },
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "mixed",
+    "quote": "The fall came about following a shocking scandal involving corruption charges",
+    "line": 14024,
+    "why": "Humiliation/fall after high office (Raman: 'destruction of Rajayogas')."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 208,
+  "name": "Hyder Ali",
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 14172,
+  "last_line": 14206,
+  "raw_birth": "Chart No. 208.- Born 8-2-1722 (N S.) at 2-15 a.m. (LMT) at 13° N, 77 E 35.",
+  "birth": {
+   "date": "1722-02-08",
+   "time": "02:15",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '(N S.)' = New Style"
+  ],
+  "dasa_balance": "Balance of Mercury's Dasa at birth: 15 years, 8 months and 6 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna lord Venus stated; sign not named.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native rose from the lowest position of almost nothing to very great power.",
+    "line": 14173,
+    "why": "Rose from nothing to great power."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "collected a fortune which ranked second to none",
+    "line": 14204,
+    "why": "Immense wealth."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "afflicted",
+    "quote": "no claims to any education",
+    "line": 14201,
+    "why": "Raman notes the native had no education."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 222,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 15468,
+  "last_line": 15520,
+  "raw_birth": "Chart No. 222.—Born 26-11-1899 at 10-27p.m. (L.M.T.) at 10 N 50, 79 E 36",
+  "birth": {
+   "date": "1899-11-26",
+   "time": "22:27",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 50,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 36,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Balance of the Sun's Dasa at birth : 4 years, 2 months and 9 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "11th = Taurus with 2nd lord Sun, 5th lord Mars, 9th lord Jupiter => Cancer.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "The native grew very rich with many investments and businesses",
+    "line": 15510,
+    "why": "Grew very rich (though less than Charts 220/221)."
+   },
+   {
+    "house": "H11",
+    "signification": "gains",
+    "verdict": "favourable",
+    "quote": "the native amassed a fortune through soaps. Mars and Rahu Dasa saw the native build his soap-business into a national monopoly.",
+    "line": 15514,
+    "why": "Large gains."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 241,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 17117,
+  "last_line": 17142,
+  "raw_birth": "Chart No. 241.—Born 30/1-4/5-1898 at 1-23 a.m. (L.M.T) at 13 N 20. 74 E 49.",
+  "birth": {
+   "date": "1898-05-01",
+   "time": "01:23",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 20,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 49,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '30/1-4/5-1898' (night of 30 April / 1 May; civil 1 May)"
+  ],
+  "dasa_balance": "Balance of Ketu's Dasa at birth: 1 year, 11 months and 15 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna lord Saturn, 9th lord Venus => Aquarius.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "built a national banking concern starting from scratch",
+    "line": 17136,
+    "why": "Built a national bank from nothing."
+   },
+   {
+    "house": "H12",
+    "signification": "expenditure",
+    "verdict": "favourable",
+    "quote": "made him a selfless worker whose projects of philanthropy proved a boon to countless numbers",
+    "line": 17138,
+    "why": "12th-house expenditure turned to philanthropy (beneficial spending)."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 245,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 17243,
+  "last_line": 17272,
+  "raw_birth": "Chart No. 245.—Born 4-7-1738 at 7-46 a.m. (L.M.T.) at 51 N 30. OW 05.",
+  "birth": {
+   "date": "1738-07-04",
+   "time": "07:46",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 51,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 5,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   "month printed 7; unverified"
+  ],
+  "dasa_balance": "d Balance of Venus Dasa at birth: 6 years, 8 months and 12 ays.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna lord Moon => Cancer.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H12",
+    "signification": "expenditure",
+    "verdict": "mixed",
+    "quote": "The native wasted money in pleasures and lost heavily in racing. The affliction by malefics to the 12th house and its lord led the native to squander money in the pursuit of pleasures. But the 12th lord in the 12th with Venus also gave him the benefit of his pursuits.",
+    "line": 17245,
+    "why": "Raman names both squandering and benefit from the pursuits."
+   }
+  ],
+  "notes": null
+ },
+ {
+  "chart_no": 255,
+  "name": null,
+  "source_file": "chapter_001_full-text-unsplit.md",
+  "first_line": 17535,
+  "last_line": 17562,
+  "raw_birth": "Chart No. 255.—Born 23/24-7-1933 at 1-40 a.m. (I.S.T.) at21 N 9. 79 E 9.",
+  "birth": {
+   "date": "1933-07-24",
+   "time": "01:40",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 21,
+   "lat_min": 9,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 9,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '23/24-7-1933' (civil 24th)"
+  ],
+  "dasa_balance": "Balance of Mercury's Dasa at birth : 9 years, 11 months and 10 days.",
+  "lagna_sign_stated": null,
+  "lagna_sign_printed": null,
+  "lagna_note": "Lagna lord Venus, 12th lord Mars, 9th lord Saturn in 9th => Taurus.",
+  "same_as": null,
+  "stated_positions": null,
+  "stated_positions_note": "Rasi/Navamsa grids are OCR-flattened (cell layout lost); planetary signs not reliably recoverable from the grid, so stated_positions not recorded (birth data is printed).",
+  "conclusions": [
+   {
+    "house": "H12",
+    "signification": "moksha",
+    "verdict": "favourable",
+    "quote": "The native is a Spiritual aspirant, who, in spite of high academic qualifications, has taken to a line of austerity and sadhana.",
+    "line": 17540,
+    "why": "Spiritual life of austerity."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "in spite of high academic qualifications",
+    "line": 17541,
+    "why": "High academic qualifications."
+   }
+  ],
+  "notes": null
+ }
+]

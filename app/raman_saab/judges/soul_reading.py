@@ -42,6 +42,7 @@ from app.raman_saab.judges.house_template import judge_house
 from app.raman_saab.primitives import chara_dasha, jaimini_reading, special_points
 from app.raman_saab.primitives.chara_karakas import chara_karakas, role_name
 from app.raman_saab.primitives.nakshatra_signature import NakshatraSignature, signature_for
+from app.raman_saab.ordinals import ordinal
 
 SoulProvenance = Literal[
     "RAMAN_EXPLICIT",           # Raman states it verbatim (Parashari-natal, citable)
@@ -305,7 +306,7 @@ def _build_jaimini_overlay(chart: RamanChart) -> JaiminiOverlay:
         occ = _navamsa_occupants(chart, sign)
         occ_txt = f" [held by {', '.join(occ)}]" if occ else ""
         lines.append(SoulTagged(
-            f"{bhava}th from Karakāṁśa ({_sign(sign)}) — {_BHAVA_FROM_KARAKAMSA[bhava]}{occ_txt}",
+            f"{ordinal(bhava)} from Karakāṁśa ({_sign(sign)}) — {_BHAVA_FROM_KARAKAMSA[bhava]}{occ_txt}",
             "JAIMINI_EXPLICIT", "JAIMINI-49"))
     # Karakāṁśa occupant professions (Jaimini Sutras 1.2)
     for planet, indication in jaimini_reading.karakamsa_indications(chart):

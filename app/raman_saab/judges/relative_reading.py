@@ -30,6 +30,7 @@ from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.judges.saptamsa_reading import Tagged
 from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS
+from app.raman_saab.ordinals import ordinal
 
 _PLANET_ORDER: Final[tuple[str, ...]] = (
     "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
@@ -130,7 +131,7 @@ def build_relative_reading(chart: RamanChart, role: str) -> RelativeReading:
     base_house, karaka = _RELATIVES[role]
     matters = tuple(_derived_matter(chart, base_house, m, off) for m, off in _MATTERS)
     notes = [Tagged(
-        f"the {role} is read as a lagna from their kāraka-house (the {base_house}th) — the "
+        f"the {role} is read as a lagna from their kāraka-house (the {ordinal(base_house)}) — the "
         "derivative-house (Bhavat Bhavam) rotation", "RAMAN_GENERAL_PRINCIPLE")]
     if role in _RAMAN_ANCHOR:
         notes.append(Tagged(f"Raman applies this rotation directly: {_RAMAN_ANCHOR[role]}",

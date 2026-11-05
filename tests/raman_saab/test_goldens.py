@@ -50,7 +50,12 @@ SNAPSHOT_DIR = _FIXTURES / "golden_snapshots"
 
 _CASE_TYPES = {"worked_example", "rule_level", "doctrine_statement", "self_test"}
 _VERDICTS = {"favourable", "mixed", "afflicted", "insufficient-evidence", "DRAFT"}
-_REVIEWS = {"DRAFT", "CONFIRMED"}
+# DUPLICATE: same nativity+matter is CONFIRMED on another record (one person appears under
+# several chapter-presentation ids; the matter scores exactly once, on the owner named in the
+# row's review_note). CONTESTED: blind readings disagree — unscored until a 2-of-3 tiebreak
+# resolves it (NH.chart_38 precedent). Both are terminal-unscored, distinct from DRAFT (which
+# means "awaiting adjudication").
+_REVIEWS = {"DRAFT", "CONFIRMED", "DUPLICATE", "CONTESTED"}
 _TRACKS = {"A", "B", "3"}
 _POSITION_SOURCES = {"printed_degree", "sign_midpoint", "synthetic_minimal", "fresh_cast"}
 _SANDHI_ORB_DEG = 2.0
@@ -192,12 +197,16 @@ def test_golden_line_conforms_to_schema(rec: dict[str, Any]) -> None:
     assert lagna is None or (isinstance(lagna, int) and 1 <= lagna <= 12), \
         f"{_id(rec)}: lagna_sign must be 1..12 or null"
 
-    # birth: null or a {dt,tz,lat,lon} object (fields nullable).
+    # birth: null or a {dt,tz,lat,lon} object (fields nullable). An optional "sex" ("M"/"F"/null)
+    # is allowed where Raman's prose states it — the judgment input of HTJAH-I:486 factor 7 and
+    # the selector for the sex-matched Beeja/Kshetra sphutas (HTJAH-I:5517-5520). Never guessed:
+    # absent and null both mean unknown, and a sex-gated technique simply does not run.
     b = rec["birth"]
     assert b is None or isinstance(b, dict), f"{_id(rec)}: birth must be object|null"
     if isinstance(b, dict):
         for k in ("dt", "tz", "lat", "lon"):
             assert k in b, f"{_id(rec)}: birth missing {k!r}"
+        assert b.get("sex") in (None, "M", "F"), f"{_id(rec)}: birth.sex must be M|F|null"
 
     # stated_positions: each entry has exactly one of lon/sign, a bhava, a source.
     for name, entry in rec["stated_positions"].items():
@@ -425,6 +434,22 @@ def track_b_ordinal_scoreboard() -> tuple[int, int, list[str]]:
                 real.append(f"  {_id(rec)} H{house}/{sig_key}: engine={got!r} "
                             f"golden={entry['verdict']!r} (dist {d})")
     return within1, total, real
+
+
+@pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")
+def test_no_new_real_errors() -> None:
+    """Per-row guard beside the ratio ratchets (audit 2026-10-23). The ratio can stay level while
+    an old row inverts, if newly confirmed goldens add hits. Every distance-2 error must be one
+    already listed in golden_accuracy_baseline.json `real_errors`; fixing one is welcome (drop its
+    key in the same commit), a new one fails here by name."""
+    pinned = set(json.loads(_BASELINE_PATH.read_text(encoding="utf-8")).get("real_errors", ()))
+    if not pinned:
+        pytest.skip("no real_errors pin yet")
+    _, _, real = track_b_ordinal_scoreboard()
+    keys = {line.split(":")[0].strip() for line in real}
+    new = sorted(keys - pinned)
+    assert not new, "new real (distance-2) errors not in the pinned list:\n" + "\n".join(
+        line for line in real if line.split(":")[0].strip() in new)
 
 
 @pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")

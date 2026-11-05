@@ -1,0 +1,82 @@
+diff --git a/app/raman_saab/doctrine/rule_sets/__init__.py b/app/raman_saab/doctrine/rule_sets/__init__.py
+index 77dac6a..aa6c0e2 100644
+--- a/app/raman_saab/doctrine/rule_sets/__init__.py
++++ b/app/raman_saab/doctrine/rule_sets/__init__.py
+@@ -12,4 +12,6 @@ _MODULES = (
+     house_06_ari, house_07_kalatra, house_08_ayur, house_09_bhagya, house_10_karma,
+     house_11_labha, house_12_vyaya)
+ 
+-ALL_RULES = tuple(rule for mod in _MODULES for rule in mod.RULES)
++from app.raman_saab.doctrine.rule_sets import general_lord_affliction  # noqa: E402  (R5)
++
++ALL_RULES = tuple(rule for mod in _MODULES for rule in mod.RULES) + general_lord_affliction.RULES
+diff --git a/app/raman_saab/doctrine/rule_sets/general_lord_affliction.py b/app/raman_saab/doctrine/rule_sets/general_lord_affliction.py
+new file mode 100644
+index 0000000..46fd208
+--- /dev/null
++++ b/app/raman_saab/doctrine/rule_sets/general_lord_affliction.py
+@@ -0,0 +1,64 @@
++"""Raman's general lord-affliction factor, one rule per non-dusthana house (R5, 2026-10-24).
++
++"In analysing a Bhava, the following factors should be considered carefully:— 1. The strength,
++aspects, conjunctions and location of the lord of the house" (HTJAH-I:471-474), and "The good or
++bad nature of the aspects to which a lord or the house itself is subjected plays no mean part in
++the judgment of horoscope" (HTJAH-I:499-500). Raman works it on single charts in exactly these
++terms: "the lord and the Karaka are considerably afflicted. Hence the native lost his mother very
++early" (HTJAH-I:5228-5229); "The 5th house is equally afflicted as the lord Mars is with Rahu and
++Saturn" (NH chart 57).
++
++Specification fixed before measurement in docs/raman_saab/FIDELITY_FIXES_PREREG.md, Addendum 2.
++Fires when EITHER (a) the lord is joined or aspected by two or more natural malefics and by
++neither Jupiter nor Venus, OR (b) the lord and the matter's primary karaka (a different planet)
++are each joined or aspected by a natural malefic and neither by Jupiter or Venus. The dusthanas
++(6, 8, 12) are excluded because an afflicted dusthana lord is read the other way.
++"""
++from __future__ import annotations
++
++from typing import Final
++
++from app.raman_saab.doctrine import conditions as C
++from app.raman_saab.doctrine.rules import RuleRecord
++from app.raman_saab.doctrine.sources import Citation
++
++_FIRM_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus"})
++
++#: house -> (rule-tag the vote lands on, primary karaka of that matter)
++_HOUSES: Final[tuple[tuple[int, str, str], ...]] = (
++    (1, "self", "Sun"), (2, "wealth", "Jupiter"), (3, "siblings", "Mars"),
++    (4, "mother", "Moon"), (5, "children", "Jupiter"), (7, "spouse", "Venus"),
++    (9, "father", "Sun"), (10, "career", "Sun"), (11, "gains", "Jupiter"))
++
++
++class _LordIs(C.Condition):
++    """The lord of `house` is `planet` (used to switch off arm (b) when lord == karaka)."""
++    def __init__(self, house: int, planet: str) -> None:
++        self.house, self.planet = house, planet
++
++    def evaluate(self, ctx: C.EvalContext) -> bool:
++        from app.raman_saab.chart.constants import SIGN_LORDS
++        sign = ((ctx.chart.asc_sign - 1 + self.house - 1) % 12) + 1
++        return SIGN_LORDS[sign] == self.planet
++
++
++def _condition(house: int, karaka: str) -> C.Condition:
++    lord = f"LORD_OF:{house}"
++    lord_relief = C.AfflictedBy(lord, _FIRM_BENEFICS)
++    kar_relief = C.AfflictedBy(karaka, _FIRM_BENEFICS)
++    arm_a = C.And(C.AfflictedBy(lord, min_count=2), C.Not(lord_relief))
++    arm_b = C.And(C.Not(_LordIs(house, karaka)), C.AfflictedBy(lord), C.AfflictedBy(karaka),
++                  C.Not(lord_relief), C.Not(kar_relief))
++    return C.Or(arm_a, arm_b)
++
++
++RULES: Final[tuple[RuleRecord, ...]] = tuple(
++    RuleRecord(
++        id=f"H{h}.R5.LA", house=h, signification=tag, group="combination", kind="evaluable",
++        condition=_condition(h, karaka),
++        fortified=None,
++        afflicted=(f"the lord of house {h} afflicted by malefic conjunction or aspect with no "
++                   f"relief from Jupiter or Venus (or the lord and the karaka {karaka} both so "
++                   "afflicted) spoils the matters of the house"),
++        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 474))
++    for h, tag, karaka in _HOUSES)

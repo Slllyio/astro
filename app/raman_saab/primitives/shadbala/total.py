@@ -18,6 +18,17 @@ from app.raman_saab.chart.model import ShadbalaBreakdown
 # Bhava Drig (signed). A lord meeting ~5-6 Rupas (300-360 Shashtiamsas) plus a middling
 # Bhavadig already clears this; document any retune here.
 #
+# NO LONGER A VERDICT PILLAR (2026-10-23, USER DECISION after the engine audit): 97.5% of
+# houses cleared this bar, so its vote was close to a constant "strong". The judge now reads
+# ``house_template.BHAVA_BALA_PILLAR_VOTES = False``; this value survives for the report-layer
+# readers that still quote it (``doctrine/uk_tripod.py``) and for the tuner.
+#
+# Consequence for the pillar knobs below: with two voting pillars (lord, karaka) a contradicted
+# matter is lifted only when BOTH are strong, and ``CONTRA_PILLAR_AFFLICT = 3`` cannot be
+# reached. Before the change it needed the Bhava Bala to be weak as well, which happened in
+# ~2.5% of houses, so the afflicted arm was already near-dead; the dusthana clause, the
+# navamsa and clauses 4-8 carry the afflictions.
+#
 # NOTE: deliberately NOT typed ``Final`` — this is a documented golden-tuned knob.
 # ``tools/raman_saab/tune_thresholds.py`` rebinds it (under a save/restore context
 # manager) while scoring candidate thresholds against the golden corpus.
@@ -50,6 +61,31 @@ BHAVA_BALA_MIN_SH: float = 300.0
 # over-commitments on borderline charts. A pillar count of 1 is too aggressive (a single
 # weak factor amid contradicting evidence should not condemn a matter), so do NOT hand-set
 # AFFLICT below 2 without a golden that earns the change.
+#
+# DOCTRINAL AUTHORITY FOUND 2026-08-24 (bphs-doctrine-reviewer, engine-blind): FAVOUR=2 is no
+# longer justified by the sweep alone — it is Raman's own operative threshold for the
+# house/lord/karaka triad. The prescriptive statement is HTJAH-I:5729-5730 (Chart No. 96):
+# "Since the house and the lord are considerably afflicted, the Karaka's moderately benefic
+# disposition SHOULD BE IGNORED." Two pillars against one, both testimonies present, and Raman
+# orders the dissenting third discarded — unanimity cannot survive that sentence. Applied in
+# the favourable direction on worked charts: HTJAH-I:4856-4858 (Chart 80: karaka considerably
+# afflicted, house+lord strong -> "very high official position"), HTJAH-I:4619-4621 (Chart 71),
+# HTJAH-I:8493-8518 (Chart 1). Ten negative cases consistent, zero usable counterexamples.
+# NOTE: HTJAH-I:2113 ("at least two of the three factors") is NOT the citation for this knob —
+# its triad is the Lagna/Sun/Moon body-mind-soul trinity (HTJAH-I:1870-1873) and its consequent
+# is whole-life fortune, not a bhava verdict. Recorded because it was nearly cited in error.
+#
+# AFFLICT=3 vs HTJAH-I:5729 — INVESTIGATED AND RESOLVED 2026-08-25: the tension is in the
+# PREDICATE, not the threshold. 5729 condemns at TWO afflicted pillars, which looks like
+# AFFLICT should be 2 — but measured per-row, lowering it flips exactly 3 scored verdicts and
+# ALL THREE move AWAY from Raman (h11_08 becomes a new favourable->afflicted inversion).
+# Meanwhile the condemnations Raman actually makes at two afflicted pillars (e.g. HTJAH-I
+# Chart 73: "the lord and Karaka are moderately blemished" -> mother lost) sit on pillars this
+# apparatus reads as bala-STRONG — no threshold value can reach them. Raman's "considerably/
+# moderately afflicted" is CONTACT-BLEMISH severity; these booleans are BALA-weakness. Two
+# different predicates. The knob stays 3 because at 2 the bala-boolean misfires; the real fix
+# is the graded strength band (DOCTRINE_BACKLOG, three-valued-band design ticket), which would
+# let a bala-strong-but-blemished pillar count toward condemnation the way Raman counts it.
 CONTRA_PILLAR_AFFLICT: int = 3
 CONTRA_PILLAR_FAVOUR: int = 2
 
@@ -70,7 +106,28 @@ EFF_W_NODE: float = 0.0
 EFF_W_COMBUST: float = 0.0
 EFF_W_DIGNITY: float = 0.0
 
-# Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
+# Minimum-required TOTAL Shadbala in Rupas per planet (GBB-8:303-312, Raman's §122
+# "Powerful Planets").
+#
+# VERIFIED AGAINST THE PRINTED TEXT 2026-08-19 (corpus mounted). All seven match his
+# figures exactly: "Ravi is held to be powerful when his Shad Bala Pinda is 5 or more
+# Rupas. Chandra becomes strong when his Shad Bala Pinda is 6 or more Rupas. Kuja becomes
+# powerful when his Shad Bala Pinda does not fall short of 5 Rupas. Budha becomes potent by
+# having his Shad Bala Pinda as 7 Rupas. Guru, Sukra and Sani become thoroughly powerful if
+# their Shad Bala Pindas are 6.5, 5.5 and 5 Rupas or more respectively."
+#
+# THIS CLOSES AN OPEN USER DECISION. The backlog carried "Sun MIN_REQUIRED 5.0 (tuned) vs
+# GBB-8:303's printed 6.5 - retune or relabel". There is nothing to decide: 6.5 is GURU's
+# figure, not the Sun's. Raman's printed minimum for Ravi IS 5.0 and this table already has
+# it. The decision was resting on a misread line.
+#
+# NO PER-COMPONENT MINIMA EXIST. The backlog also asked for "GBB-8's component requirement
+# table" to turn the report's weakest-component pointer into a real per-component verdict.
+# Searching all nine imported GBB chapters (2026-08-19) finds no such table: §122 sets a bar
+# for the shadbala PINDA - the total - and Raman sets none for sthana/dig/kala/chesta/
+# naisargika/drik individually. The pointer therefore stays explicitly arithmetic-only,
+# which is how it already ships, and that is now a settled finding rather than a gap.
+#
 # Also a golden-tuned knob (see BHAVA_BALA_MIN_SH note); intentionally not ``Final``.
 MIN_REQUIRED: dict[str, float] = {
     "Sun": 5.0,

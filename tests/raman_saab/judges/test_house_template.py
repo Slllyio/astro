@@ -118,22 +118,27 @@ class TestDecide:
     def test_contradiction_navamsa_weakens_afflicted(self):
         """Stage-3 'V2' navamsa guard: the same 2-strong-pillar contradiction with a
         WEAKENING navamsa is held back from favourable, falls to mixed, and is then
-        dropped to afflicted by the navamsa modulation."""
+        dropped to afflicted by the navamsa modulation. Since the NAVAMSA ONE-STEP RULE
+        (2026-10-24, user decision) the Navamsa may move the Rasi-only verdict (favourable)
+        one step only, so it reads mixed."""
         v, _ = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
                                   fired_benefic=(_fired("benefic"),),
                                   fired_malefic=(_fired("malefic"),),
                                   navamsa_status="weakens"))
-        assert v == "afflicted"
+        assert v == "mixed"
 
     def test_affliction_matter_lone_malefic_afflicted(self):
         """Stage-3 'B' dusthana-affliction (clause 1.5): an AFFLICTION_MATTER ledger
         (6th/12th malefic signification) with a lone malefic and NO benefic reads
         'afflicted' even when ALL pillars are strong — a strong dusthana lord strengthens
-        the evil, never rescues it."""
+        the evil, never rescues it. Since the 2026-08-30 span/manner fix the builder emits
+        AFFLICTION_OWN_EVIDENCE alongside AFFLICTION_MATTER for exactly this evidence shape,
+        and clause 1.5 consumes the new flag; the synthetic ledger mirrors the builder."""
         v, shifted = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
                                         bhava_bala_strong=True,
                                         fired_malefic=(_fired("malefic"),),
-                                        flags=("AFFLICTION_MATTER",)))
+                                        flags=("AFFLICTION_MATTER",
+                                               "AFFLICTION_OWN_EVIDENCE")))
         assert v == "afflicted" and shifted is False
 
     def test_affliction_matter_not_lifted_by_navamsa_confirms(self):
@@ -142,7 +147,28 @@ class TestDecide:
         v, shifted = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
                                         bhava_bala_strong=True, navamsa_status="confirms",
                                         fired_malefic=(_fired("malefic"),),
-                                        flags=("AFFLICTION_MATTER",)))
+                                        flags=("AFFLICTION_MATTER",
+                                               "AFFLICTION_OWN_EVIDENCE")))
+        assert v == "afflicted" and shifted is False
+
+    def test_benefic_span_rule_does_not_veto_the_manner_confirmation(self):
+        """The span/manner separation (2026-08-30, the Marie Antoinette fix): a fired
+        BENEFIC of the `longevity` SPAN signification does not count as the benefic
+        contradiction that takes a death-manner affliction out of clause 1.5 — a purna
+        span must never un-afflict a guillotine reading (the Lincoln dual-reading,
+        H8-OPENED). The builder proves it by emitting AFFLICTION_OWN_EVIDENCE despite the
+        pooled span benefic; _decide then confirms afflicted."""
+        import dataclasses as _dc
+        from app.raman_saab.doctrine.significations import significations_of
+        death_sig = next(s for s in significations_of(8) if s.key == "death")
+        # Builder-level check: malefic death rule + benefic LONGEVITY rule -> flag emitted.
+        # (Direct clause check on a synthetic ledger mirroring that builder output.)
+        v, shifted = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+            fired_malefic=(_fired("malefic", signification="death"),),
+            fired_benefic=(_fired("benefic", signification="longevity"),),
+            flags=("AFFLICTION_MATTER", "AFFLICTION_OWN_EVIDENCE")))
+        assert death_sig.key == "death" and "longevity" in death_sig.rule_tags
         assert v == "afflicted" and shifted is False
 
     def test_affliction_matter_with_benefic_routes_to_preponderance(self):
@@ -491,3 +517,103 @@ def test_as_house_verdict_lord_strong_matches_lagna_lord():
         hv = pf.as_house_verdict()
         # the reported lord_strength is exactly the lagna lord's own strength
         assert hv.lord_strong == legacy_strong(hv.lord, chart)
+
+
+# ---------------------------------------------------------------------------
+# 9. Dasha event-timing DISPLAY: the maraka cap (REPORT_CRITIQUE_2026-08-17 P0).
+# ---------------------------------------------------------------------------
+
+class TestTimingMarakaDisplayCap:
+    """The `active_periods` activation line must never be ALL death-labels: at most
+    `_TIMING_MARAKA_DISPLAY_CAP` maraka-tagged windows are displayed, and the ordinary
+    fructification windows (lord/karaka/afflictor/timer) fill the remaining slots up to
+    `_TIMING_DISPLAY_CAP`. Display-selection only — the verdict path is untouched (the
+    golden ratchet is the gate for that)."""
+
+    def test_relative_death_matters_show_ordinary_windows(self):
+        """Canonical chart (Lahiri): the relative-death matters (H4 mother, H7
+        spouse/coverture, H9 father) carry maraka Mahadasha windows, yet each activation
+        line shows at least one ordinary (non-maraka) window and at most 2 '(maraka)'
+        entries — '(maraka)' is never the entire line."""
+        chart = cast_chart(BirthData("X", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59),
+                           ayanamsa="lahiri")
+        seen_maraka = False
+        for h, keys in ((4, {"mother"}), (7, {"spouse", "coverture"}), (9, {"father"})):
+            pf = ht.judge_house(chart, h)
+            for sv in pf.significations:
+                if sv.signification not in keys:
+                    continue
+                ap = dict(sv.metadata).get("active_periods")
+                assert ap, f"H{h} {sv.signification} lost its active_periods line"
+                wins = [w.strip() for w in ap.split(";")]
+                n_maraka = sum("(maraka)" in w for w in wins)
+                seen_maraka = seen_maraka or n_maraka > 0
+                assert len(wins) <= ht._TIMING_DISPLAY_CAP
+                assert n_maraka <= ht._TIMING_MARAKA_DISPLAY_CAP, ap
+                assert any("(maraka)" not in w for w in wins), (
+                    f"H{h} {sv.signification}: '(maraka)' is the entire line: {ap}")
+        assert seen_maraka, "precondition lost: no maraka windows on the tested matters"
+
+    def test_non_maraka_matters_are_unchanged_in_shape(self):
+        """A matter outside `_TIMING_MARAKA_KEYS` (H9 fortune) never carries a maraka role,
+        and its display stays within the same 5-slot cap."""
+        chart = cast_chart(BirthData("X", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59),
+                           ayanamsa="lahiri")
+        pf = ht.judge_house(chart, 9)
+        sv = next(s for s in pf.significations if s.signification == "fortune")
+        ap = dict(sv.metadata).get("active_periods")
+        assert ap and "(maraka)" not in ap
+        assert len(ap.split(";")) <= ht._TIMING_DISPLAY_CAP
+
+
+def test_track_b_reads_positional_dignity_when_shadbala_is_absent():
+    """The companion to `test_track_b_decides_on_polarity`: pillars are None on a sparse chart
+    only when no CATEGORICAL dignity is present. Raman judges his printed book charts without
+    Shadbala, and factor 5 of "Considerations in Judging a House" is stated categorically —
+    "the exaltations and debilitations of the house lords are equally important" (HTJAH-I:474).
+
+    Aries lagna, so Mars is the lagna lord; placed in Capricorn it is EXALTED, which Raman reads
+    as strength "full or complete" (HTJAH-I:497). Before this was encoded the engine discarded
+    that and fell through to the polarity fallback."""
+    chart = _track_b({"Mars": 280.0})               # Capricorn -> Mars exalted
+    assert ht._qualitative_strong("Mars", chart) is True
+
+
+def test_positional_dignity_only_the_extremes_speak():
+    """The boundary is load-bearing and was set by doctrine review. Raman overturns location and
+    the friend/enemy rungs with aspects on his own charts — a lagna lord in the 12th that "gets
+    strength" (HTJAH-I:2150), an enemy-sign Sun in a kendra that "becomes strong" (HTJAH-I:1948),
+    a friendly-sign planet rated only "moderate" for its conjunctions (HTJAH-I:2202) — so only
+    exaltation and uncancelled debilitation may speak categorically. Everything else abstains."""
+    friendly = _track_b({"Jupiter": 250.0})         # Sagittarius: own sign -> speaks
+    assert ht._qualitative_strong("Jupiter", friendly) is True
+    debilitated = _track_b({"Jupiter": 280.0})      # Capricorn: Jupiter debilitated -> speaks
+    assert ht._qualitative_strong("Jupiter", debilitated) is False
+    # A dusthana placement on its own must NOT be read as weakness (HTJAH-I:2150).
+    neutral_in_dusthana = _track_b({"Saturn": 220.0})
+    assert ht._qualitative_strong("Saturn", neutral_in_dusthana) is None
+
+
+class TestSparseContradictionNavNeutral:
+    """P2 (user-signed 2026-08-30): the D9 may not alone decide a sparse-chart contradiction."""
+
+    def test_d9_does_not_decide_a_sparse_contradiction(self):
+        """All pillars unknown + both polarities fired -> the mixed stands; nav-confirms
+        must not lift it (the Hyder Ali inversion) and nav-weakens must not drop it (the
+        Tennyson-class inversion)."""
+        for status in ("confirms", "weakens"):
+            v, shifted = ht._decide(_ledger(
+                lord_strong=None, karaka_strong=None, bhava_bala_strong=None,
+                navamsa_status=status,
+                fired_malefic=(_fired("malefic"),), fired_benefic=(_fired("benefic"),)))
+            assert v == "mixed" and shifted is False, (status, v)
+
+    def test_measured_contradictions_still_modulate(self):
+        """The exception is sparse-only: with measured pillars, a borderline mixed keeps
+        its D9 modulation (Raman's own practice, NH:7431-7433 — a favourable Navamsa
+        softening a measured evil-rasi Moon)."""
+        v, shifted = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=False, bhava_bala_strong=False,
+            navamsa_status="weakens",
+            fired_malefic=(_fired("malefic"),), fired_benefic=(_fired("benefic"),)))
+        assert v == "afflicted" and shifted is True

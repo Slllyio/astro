@@ -1,0 +1,286 @@
+{
+ "answers": {
+  "Bernard_Madoff": {
+   "sha256": "ac91befec3a069e2e544fe3f9cb32c802f3d3bdd61b46b6ccdf922c9a29bbf36",
+   "answers": 80,
+   "free_text": 0,
+   "off_vocabulary": {
+    "inst.v2.A18": [
+     "manual"
+    ]
+   }
+  },
+  "Christopher_Reeve": {
+   "sha256": "90edc4deeede8be756809db7459185b6d701e915ca8ff3c4af87c97f4b1c3680",
+   "answers": 84,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Clint_Eastwood": {
+   "sha256": "2edb94ffae29324821e7702b570e2403fe278c86e9aea075be96236db226c5d0",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Donald_Trump": {
+   "sha256": "31ecfd002217ac1f088d5a5eba0ceb249696c50195f7c583eba308e92bb01eab",
+   "answers": 90,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Elizabeth_II": {
+   "sha256": "1b4b5aae2fa61b79f9ae56d41ee7cb5730bc783d33c430e61943d877db18bb77",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Elizabeth_Taylor": {
+   "sha256": "b41a6784b34a9f73689b032277a98c305da5b109796adc7eb3a3151bed70556b",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Elvis_Presley": {
+   "sha256": "c5af15c41fac8a74963edaf43ada892f5fb8c20b949b83a9c05e301f1c0b71a3",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Greta_Garbo": {
+   "sha256": "79273be76cee3dc6cbb8eed72de73500e8cc7c34609c100bee4b3ee20f9bb287",
+   "answers": 81,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "James_Dean": {
+   "sha256": "79405dffa3133bbf43aaaff71779d2c24153e7795568befb579cf65923bbc35d",
+   "answers": 77,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Janis_Joplin": {
+   "sha256": "c492614a0cfe0e93a95ad09667fbf25b563563563ea6ce203b58fa37f8e986b2",
+   "answers": 75,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Jimmy_Carter": {
+   "sha256": "8d61b4454c30c6df988ace51c7ba53169b082e18f0a414281a33979ddad9e6f5",
+   "answers": 83,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "John_Fitzgerald_Kennedy": {
+   "sha256": "b7ce385dc09e6d3e6f6ba1a382b4223ac238bf120fd6c857a44ed2a64a3965d1",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Katharine_Hepburn": {
+   "sha256": "75cc7acdc18b816e3ff852a389140a3bb59a5e3b4b8eaa583a3ca1a68c0008f7",
+   "answers": 83,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Marilyn_Monroe": {
+   "sha256": "0c20dd518cd0f0ec9feb0a888e7600eaa50f49a0aae3a9ace0966d60d4bfaf42",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Marlene_Dietrich": {
+   "sha256": "2b6515487d5ee02ca77f7fe13378cad6bad666996dd32e6f9c0f476f81e27064",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Martha_Stewart": {
+   "sha256": "d3d8b5162ca8baeea6026e99312fe94c0ac89c4bfc846ab2b31a849c22f40f48",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Michael_J._Fox": {
+   "sha256": "ec1ad097074a33f89864a28794f5aed1a8c609baf06ef514ad4a44d8a111301b",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "O.J._Simpson": {
+   "sha256": "a0cace92ba06ee90ec14b096068ce62b5fa022d037ef8ec9fa493d5f32a27cbb",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Oprah_Winfrey": {
+   "sha256": "a881dc4e5c73a307debdfeb808381f4e83f3147d2a27c61fee429c98046a53a2",
+   "answers": 79,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Patty_Hearst": {
+   "sha256": "a1b2533c016c22631f2c75b3b457ebbfb86da0e8c42a747385197223e47e4ae6",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Stevie_Wonder": {
+   "sha256": "b6f730aa3cb0f3d6aaa1d83c94684de0c196e0a3943f181b003ea64928e121d3",
+   "answers": 82,
+   "free_text": 2,
+   "off_vocabulary": {}
+  },
+  "Walt_Disney": {
+   "sha256": "d62b9cbd29382183b957b663a6a4e57d8e9a8df319795f01d697f7e72918b40c",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Willie_Nelson": {
+   "sha256": "fd792998b249796d46e30df9a5b5c083b55a909b99226b6f12b2b09683ced4d0",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  }
+ },
+ "answers_contaminated": {
+  "Bernard_Madoff": {
+   "sha256": "781d41882bfde0783df8c8754ac400b515fe4756f8174b2aeb59e1c55321dd8a",
+   "answers": 90,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Christopher_Reeve": {
+   "sha256": "577043026156cb5490c0bf5b7ad9c91a02a8ab8331c25d3cd5adf70c1b651b4e",
+   "answers": 96,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Clint_Eastwood": {
+   "sha256": "ca99720a3bfc65a08e4884c424937b01f5f384420084085824a6c06bd9ab709e",
+   "answers": 105,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Donald_Trump": {
+   "sha256": "fc324cbef3d95234663ca105f1bb8e6a9c5b9e266f5631c56e9c197a717d7249",
+   "answers": 115,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Elizabeth_II": {
+   "sha256": "c4704a67fb1ef5a01279e948c07f7f07641ffe5cc9f8e9eaadf444f13d8acee7",
+   "answers": 90,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Elizabeth_Taylor": {
+   "sha256": "3b429a11aa36e6fea62cd69b8c7a1dfa675cfa94d80ed52bbc01fd1048de336f",
+   "answers": 124,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Elvis_Presley": {
+   "sha256": "af41c29392b8e5ac1d6f5f30d3be5691b7144d5cf5cb508761007375edf8877f",
+   "answers": 103,
+   "free_text": 2,
+   "off_vocabulary": {}
+  },
+  "Greta_Garbo": {
+   "sha256": "d044050186163750c63f99f2d552a5cc6451c9d371a72dc1090476d97e11a00e",
+   "answers": 87,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "James_Dean": {
+   "sha256": "77a84b21d8d7f2628b126063310e28754126ae5535bcd33f17b11ac2243f40d5",
+   "answers": 84,
+   "free_text": 2,
+   "off_vocabulary": {}
+  },
+  "Janis_Joplin": {
+   "sha256": "c17b107bf1c89953136a3937e05ed590616db49cb2354fb6fc7050cad9ac6f48",
+   "answers": 89,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Jimmy_Carter": {
+   "sha256": "62f9cf8a994ae9c9ad27320d7051dd16de6af6c3d0fac30ed8a9c6a620199451",
+   "answers": 106,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "John_Fitzgerald_Kennedy": {
+   "sha256": "c5c267202ca84fb0e7423de671c273568fe1bd5417d5dd21aaf9259910303cf5",
+   "answers": 105,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Katharine_Hepburn": {
+   "sha256": "f95df2b56f9db6b5bca2b9146d5ed6a9de1bb11fb86f9e32aa8de886564aabaa",
+   "answers": 89,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Marilyn_Monroe": {
+   "sha256": "d19b537d21143984091e2ee39b8e06d55ecc176a496dbcadfbf996a13008ad08",
+   "answers": 88,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Marlene_Dietrich": {
+   "sha256": "44af7635c5e1d0577a08b920173d44f6080eed9ebb7ddb2e15fd4f312cd37018",
+   "answers": 100,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Martha_Stewart": {
+   "sha256": "c3c6eb2555a4570bcc2f594df25af1066e7cc7e76282f4671a7515bffea5078a",
+   "answers": 103,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Michael_J._Fox": {
+   "sha256": "38f093c44d8b81b67ccaa6a59aa5d50a8739387fbe2e2560b1f6c368b26aa541",
+   "answers": 104,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "O.J._Simpson": {
+   "sha256": "18c8d6e2db1d51c0f79e9491cbec20e67db359f31fab5a3dd06cb9571fdfc199",
+   "answers": 115,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Oprah_Winfrey": {
+   "sha256": "82ccdfd7122841c6ef89fe700fa5c964996303d2ba752395a890bc322a4db855",
+   "answers": 110,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Patty_Hearst": {
+   "sha256": "e0c14d8c8ec8e995e8b775b57ca88bb113aebe6ec0bc53e4d5966e4412261a7b",
+   "answers": 98,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Stevie_Wonder": {
+   "sha256": "8c2600e688ec63fc2f690e4d5fb44896e572ac711a5209dd88c27ce950c0dcc4",
+   "answers": 99,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Walt_Disney": {
+   "sha256": "fa72844dbc9cdb0783ee841054f2d7062bf9f405bb1195f6f96d5032a997b498",
+   "answers": 104,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Willie_Nelson": {
+   "sha256": "8735c9ba1a751f2a971588adc12f858d6b244c224fe7cc1e754562ab7a7f9013",
+   "answers": 121,
+   "free_text": 1,
+   "off_vocabulary": {}
+  }
+ }
+}

@@ -83,7 +83,7 @@ def _asc_nav_sign(ch) -> int:
     return (sign * 9 + pada) % 12 + 1
 
 
-def build_rect_confidence(r: "DetailedReport", *, ayanamsa: str = "lahiri"
+def build_rect_confidence(r: "DetailedReport", *, ayanamsa: str = "raman"
                           ) -> Optional[RectConfidence]:
     """`ayanamsa` MUST match whatever cast `r.chart` (default lahiri, the project-wide
     default — see `build_detailed_report`). A mismatch here is not cosmetic: two ayanamsas

@@ -90,3 +90,11 @@ graphify-out/
 
 # local dev server log (this repo runs uvicorn by hand during sessions)
 uvicorn.log
+
+# Persona study: the ANSWERS are committed (collected data, unreproducible — see
+# tools/raman_saab/persona_study.py), but these four are derived from the roster plus the
+# engine at the commit recorded in results.json, and run to hundreds of KB.
+tests/fixtures/persona_study/payloads/
+tests/fixtures/persona_study/verdicts/
+tests/fixtures/persona_study/questions/
+tests/fixtures/persona_study/readings/

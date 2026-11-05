@@ -203,10 +203,12 @@ def test_pillar_favourable_guarded_by_navamsa_weakens(monkeypatch):
     the D9 weakens. The favour branch is skipped, the matter falls to 'mixed', and
     _navamsa_modulate then drops that borderline to 'afflicted' — a weakening
     confirmation-varga is never painted over by Rasi pillar strength. This guard is
-    what protected the H9 father-death charts + the H2 afflictions from inversion."""
+    what protected the H9 father-death charts + the H2 afflictions from inversion.
+    NAVAMSA ONE-STEP RULE (2026-10-24, user decision): the Navamsa may move the Rasi-only
+    verdict (favourable here) by one step, so the guard now stops at 'mixed'."""
     monkeypatch.setattr(shadbala_total, "CONTRA_PILLAR_FAVOUR", 2)
     b, m = _both_fired()
     L = _ledger(lord_strong=True, karaka_strong=True, bhava_bala_strong=False,
                 navamsa_status="weakens", fired_benefic=b, fired_malefic=m)
     v, shifted = ht._decide(L)
-    assert v == "afflicted" and shifted is True
+    assert v == "mixed" and shifted is True

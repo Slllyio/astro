@@ -1,0 +1,31 @@
+<!-- Trimmed from a real astrotheme person page (Albert Einstein), keeping only the blocks
+     the parser reads plus the two it must IGNORE. Full pages are ~390 KB of chart SVG. -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /></head>
+<body>
+<!-- TRAP 1: the live transits widget. Present on every person page, identical text, and it
+     is the first clock-like string in the document. A naive time regex finds this. -->
+<div class="transits" style="margin: 2px 0 8px">
+  Fri. 28 Aug., 04:19 AM UT
+</div>
+<div class="ficheInfos">
+  <img src="https://cdn.astrotheme.com/images/chart/pis.gif" alt="" title="Pisces">
+  <b>Born:</b> Friday, March 14 , 1879, 11:30 AM
+  <b>In:</b> Ulm (Germany)
+  <b>Sun:</b> 23&deg;30' Pisces
+  <b>Moon:</b> 14&deg;22' Sagittarius
+</div>
+<div class="ficheReliability">
+  <span class="ratingBadge">AA</span> Reliability
+  <table>
+    <tr>
+      <td style="width: 101px; text-align: right">Source :</td>
+      <td style="width: 312px; text-align: left">birth certificate or birth record</td>
+    </tr>
+    <tr>
+      <!-- TRAP 2: "Rodden" here is the CONTRIBUTOR'S NAME, not a rating code. -->
+      <td style="text-align: right">Contributor :</td>
+      <td style="text-align: left">Lois Rodden</td>
+    </tr>
+  </table>
+</div>
+</body></html>

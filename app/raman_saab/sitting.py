@@ -93,7 +93,7 @@ def _epithet(r: "DetailedReport", planet: str) -> CastMember:
     ak = getattr(getattr(r, "synthesis", None), "atmakaraka", None)
     if ak == planet:
         # NH's own word with a different referent: Raman's NH prose uses "Atmakaraka" for the
-        # NATURAL karaka (the Sun, NH:2556); this reads the engine's locked CHARA AK
+        # NATURAL karaka (the Sun, NH:1505); this reads the engine's locked CHARA AK
         # (strict 7-karaka Jaimini). Named per the doctrine review so nobody takes it as NH
         # usage (PASS-WITH-NOTES finding 4).
         clauses.append("the Atmakaraka, significator of the soul")

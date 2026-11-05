@@ -1,0 +1,10751 @@
+{
+"c001_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H1.S.9"
+}
+],
+"c002_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c003_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.L.3"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H1.M.G3"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c004_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H1.P.Ketu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H1.L.9"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c005_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "H1.C.34"
+}
+],
+"c006_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H1.P.Mercury"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c007_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.P.Mercury"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c008_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H1.L.11"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c009_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.C.26a"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H1.L.3"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.C.26b"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c010_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c011_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.C.26a"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.P.Jupiter"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+}
+],
+"c012_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c013_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c014_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H8.K.22"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H8.D.6"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H8.C.13"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 12,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c015_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H8.C.3"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c016_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H8.D.5"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H8.C.33"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c017_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H8.P.Mars"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c018_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+}
+],
+"c019_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.34"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H3.C.8"
+},
+{
+"n": 7,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c020_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H3.P.Rahu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.35"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.6"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H3.C.6"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H3.C.8"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c021_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H3.P.Ketu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.35"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.10"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c022_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.32"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c023_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H3.C.32"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.33"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.40"
+}
+],
+"c024_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c025_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H3.P.Ketu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.7"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.L.9"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H3.C.38"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H3.C.38"
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "H3.C.38"
+}
+],
+"c026_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.35"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H3.C.39"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+}
+],
+"c027_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.35"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.1"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H3.C.8"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c028_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H3.C.9"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.37"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "H3.L.10"
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H3.C.6"
+},
+{
+"n": 8,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+}
+],
+"c029_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.7"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.34"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H3.C.10"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H3.C.8"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H3.C.36"
+}
+],
+"c030_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.C.1"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H3.C.30"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H3.C.30"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c031_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.P.Mercury"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c032_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.P.Ketu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H2.C.20"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c033_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.P.Moon"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H2.C.47"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H2.P.Moon"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H2.C.47"
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "H2.C.1"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c034_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.P.Mercury"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H2.C.44"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c035_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H2.C.69"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c036_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H2.L.9"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c037_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H2.P.Sun"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H2.C.70"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H2.C.48"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c038_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H2.C.62"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c039_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.P.Saturn"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H2.C.70"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H2.C.65"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+}
+],
+"c040_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H2.C.70"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H2.C.70"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+}
+],
+"c041_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c042_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c043_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c044_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "karaka_strong"
+}
+],
+"c045_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c046_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c047_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "H7.K.3"
+}
+],
+"c048_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.1"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H7.C.83"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c049_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "opposed",
+"engine_ref": "H7.K.3"
+}
+],
+"c050_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.1"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H7.C.87"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c051_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H7.C.6"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.83"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H7.C.83"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c052_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c053_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c054_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c055_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.C.18a"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H4.C.18a"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c056_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.C.37"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H4.L.10"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H4.C.34"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c057_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H4.C.50"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c058_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.P.Jupiter"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H4.L.4"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c060_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Sun"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H5.C.38"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c061_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H5.C.39"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c062_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Saturn"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.1"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H5.L.8"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c063_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H5.C.1"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H5.C.9"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c064_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Mars"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c065_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Rahu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.38"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H5.C.38"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c066_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c067_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.1"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H5.L.6"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c068_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c069_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H5.P.Jupiter"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H5.C.39"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c070_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Ketu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c071_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Ketu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H5.C.39"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c072_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.1"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H5.C.39"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c073_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c074_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.1"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c075_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.39"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c076_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c077_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H7.C.86"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c078_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c079_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H7.C.7"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+}
+],
+"c080_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.9"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H7.L.5"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H7.C.86"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c081_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.L.7"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.86"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H7.C.7"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c082_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.46"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.80"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H7.C.80"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H7.C.84"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H7.C.84"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H7.C.67"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H7.K.2"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c083_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.85"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H7.C.67"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "H7.C.77"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c084_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.49"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H7.K.2"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c085_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c086_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c087_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.P.Rahu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H7.L.10"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c088_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.1"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.86"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c089_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.P.Mercury"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H7.C.7"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c090_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.P.Ketu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H7.C.7"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c091_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c092_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.P.Jupiter"
+}
+],
+"c093_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "covered",
+"engine_ref": "H10.C.61"
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c094_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.C.63"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c095_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H10.C.36"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "H10.P.Mercury"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "covered",
+"engine_ref": "H10.C.36"
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c096_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H10.C.35"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c097_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H11.C.45"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H11.C.45"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c098_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.C.5"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H11.C.31"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.L.1"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H11.C.38"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H11.C.38"
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c099_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.C.37"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H11.C.31"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.C.53"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c100_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c101_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.C.38"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H11.C.38"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c102_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.P.Moon"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.C.38"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H11.L.11"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c103_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H11.L.9"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c104_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.C.8"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c105_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.C.43"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H11.C.49"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c106_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.C.4"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.C.42"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.P.Jupiter"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c107_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.C.43"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H11.C.19"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c108_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.C.4"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.L.1"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H11.C.15"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c109_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.P.Saturn"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.L.1"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.C.15"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c110_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.C.42"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c111_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.P.Jupiter"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H11.C.19"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c112_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c113_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.C.8"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H11.C.20"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c114_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H12.C.E3"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H12.L.8"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c115_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H12.L.5"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H12.C.A2"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H12.C.A3"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c116_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.P.Moon"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H12.L.11"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c117_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.C.A9"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H12.C.A2"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H12.P.Mercury"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c118_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H12.P.Rahu"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c119_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.L.11"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H12.C.A2"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H12.C.A20"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c120_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H12.P.Sun"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H12.L.1"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H12.C.D1"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c121_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c122_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.C.D1"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H12.P.Rahu"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c123_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.P.Mercury"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H12.C.D1"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H12.C.D1"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c124_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "AFFLICTION_MATTER"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c125_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c126_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c127_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+}
+],
+"c128_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.C.I3"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c129_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H12.P.Saturn"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H12.L.1"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H12.C.F4"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c130_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.C.46"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H4.C.7"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c131_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c132_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.B.21"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.A.21"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H9.L.10"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "H9.A.21"
+},
+{
+"n": 9,
+"match": "covered",
+"engine_ref": "H9.A.21"
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 12,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 13,
+"match": "opposed",
+"engine_ref": "maraka_active"
+},
+{
+"n": 14,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 15,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+}
+],
+"c133_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H9.L.10"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H9.A.13"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+}
+],
+"c134_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.B.23"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.L.9"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H9.B.24"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H9.A.7"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H9.P.Ketu"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "covered",
+"engine_ref": "H9.A.7"
+}
+],
+"c135_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.P.Saturn"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H9.B.31"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H9.A.20a"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H9.A.20a"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "covered",
+"engine_ref": "navamsa_status"
+}
+],
+"c136_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.B.21"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H9.L.10"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c137_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.B.24"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.L.10"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H9.B.31"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H9.A.5"
+},
+{
+"n": 8,
+"match": "opposed",
+"engine_ref": "H9.A.5"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c138_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c139_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H9.B.29"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H9.A.13"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c140_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.B.24"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H9.L.10"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H9.P.Sun"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c141_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.B.21"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.P.Ketu"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H9.L.6"
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "H9.B.22"
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c142_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.P.Moon"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c143_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.L.12"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H9.B.31"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H9.A.20a"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H9.A.20a"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c144_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c145_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H9.B.22"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c146_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.D.41"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H9.P.Moon"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H9.L.1"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c147_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.D.43"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c148_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H6.C.12"
+}
+],
+"c149_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H6.C.5"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c150_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H6.L.9"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c151_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H6.L.2"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c152_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "LORD_KARAKA_IDENTITY"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c153_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H6.L.12"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c154_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H6.L.2"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c155_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H6.P.Ketu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H6.L.2"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c156_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H6.P.Mars"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c157_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H6.C.1"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H6.C.4"
+}
+],
+"c158_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H6.L.12"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c159_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H1.N.66"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c160_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.C.72"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H2.C.72"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c160_m2": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c160_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H10.L.7"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c161_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.L.1"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.M.G2"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c161_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.C.57"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c161_m3": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c162_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H1.L.9"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H1.P.Mercury"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "navamsa_status"
+}
+],
+"c162_m4": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+}
+],
+"c163_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.C.47"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c163_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.L.4"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c163_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.L.10"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c164_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H10.P.Rahu"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c164_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c164_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c165_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.C.61"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.C.61"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c165_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.P.Sun"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c165_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H6.L.12"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c166_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c166_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c166_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.P.Mars"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H4.L.2"
+}
+],
+"c166_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c166_m5": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H10.P.Rahu"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c167_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H6.P.Ketu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "navamsa_status"
+}
+],
+"c167_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_intact"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c167_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "AFFLICTION_MATTER"
+}
+],
+"c167_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c167_m5": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c168_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.C.56"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H10.P.Saturn"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H10.C.36"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c168_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.L.6"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c168_m3": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c168_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c168_m5": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.P.Jupiter"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.C.43"
+}
+],
+"c169_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Saturn"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+}
+],
+"c169_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c169_m3": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H6.P.Rahu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H6.P.Jupiter"
+}
+],
+"c169_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c170_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.C.6"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c170_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.L.10"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c170_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c171_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.P.Jupiter"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H1.P.Mars"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H1.C.1b"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c171_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c171_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c172_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "H1.L.10"
+}
+],
+"c172_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Sun"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.P.Mercury"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c172_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c172_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c173_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c173_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.P.Saturn"
+}
+],
+"c173_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.P.Moon"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.C.4"
+}
+],
+"c173_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+}
+],
+"c173_m5": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "opposed",
+"engine_ref": "H10.P.Ketu"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c174_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.C.61"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "H10.C.61"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H10.L.9"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "H10.P.Venus"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 12,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 13,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 14,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 15,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 16,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c174_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.C.66"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c175_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.L.1"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 12,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 13,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 14,
+"match": "covered",
+"engine_ref": "H10.L.1"
+}
+],
+"c175_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H1.P.Mars"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "opposed",
+"engine_ref": "H1.P.Mercury"
+}
+],
+"c175_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.7"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+}
+],
+"c175_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H2.C.66"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c176_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c176_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c176_m3": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c176_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.83"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c177_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c177_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "H2.C.64"
+}
+],
+"c177_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.L.7"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+}
+],
+"c177_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H7.P.Moon"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H7.K.3"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H7.C.86"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H7.K.3"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c177_m5": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H6.L.12"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c178_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.L.10"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H1.P.Mars"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.C.28"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H1.P.Rahu"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c178_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+}
+],
+"c178_m3": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+}
+],
+"c178_m5": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c178_m6": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.L.1"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "H10.L.1"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "covered",
+"engine_ref": "H10.P.Moon"
+}
+],
+"c179_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.C.61"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 11,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 12,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 13,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 14,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c180_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c180_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.P.Jupiter"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c180_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Mercury"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.P.Venus"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H10.P.Sun"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H10.L.11"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 7,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c180_m4": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H7.C.1"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H7.K.3"
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "H7.C.7"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c181_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Moon"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c181_m2": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H7.C.87"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+}
+],
+"c182_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H10.L.1"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c182_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c182_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c182_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.C.26"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H2.C.66"
+}
+],
+"c183_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H1.P.Mars"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c183_m2": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H4.L.8"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c183_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c183_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H7.C.86"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c183_m5": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H2.C.5"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H2.C.66"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 10,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c183_m6": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H11.P.Saturn"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H11.C.15"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c183_m7": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.A.13"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c184_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H1.P.Mars"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "H1.C.34"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "opposed",
+"engine_ref": "H1.P.Mars"
+}
+],
+"c184_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c184_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.C.61"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.P.Venus"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c184_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+}
+],
+"c185_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H1.S.6"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H1.C.26c"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "maraka_active"
+}
+],
+"c185_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H7.L.12"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c185_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c185_m5": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.35"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c186_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H1.L.3"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.C.28"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c186_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Jupiter"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c186_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.82"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c187_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H2.L.8"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c187_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c188_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.P.Saturn"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c188_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.39"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c189_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.L.12"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c190_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.C.48"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c190_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.C.36"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.C.36"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c190_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Mercury"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.P.Sun"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c191_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c191_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c192_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.1"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c192_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H7.K.2"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c192_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H10.L.11"
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c193_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.C.34"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "opposed",
+"engine_ref": "maraka_active"
+}
+],
+"c193_m2": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H2.P.Saturn"
+}
+],
+"c193_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c193_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Sun"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c194_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.L.9"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H1.P.Venus"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c194_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.P.Moon"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H9.P.Rahu"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c194_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.L.4"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c194_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H12.C.D4"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H12.C.D4"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c195_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.C.51"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H4.C.51"
+}
+],
+"c195_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Ketu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c195_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "maraka_active"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c195_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.C.64"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "covered",
+"engine_ref": "H10.C.64"
+}
+],
+"c196_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H2.C.6"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c196_m2": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c196_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.A.13"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c196_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.L.9"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c197_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.41"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c197_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H7.C.7"
+}
+],
+"c197_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c198_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H8.D.6"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c199_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.L.4"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c199_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.D.49"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c200_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.A.13"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c200_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c200_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c200_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.L.6"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c201_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c201_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c201_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.L.7"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c202_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H5.C.39"
+}
+],
+"c202_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c202_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c203_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c203_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.L.9"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c203_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c203_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c204_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H3.P.Mars"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c204_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.P.Sun"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c205_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H10.L.11"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c206_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c206_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H9.P.Saturn"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c206_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H2.L.9"
+}
+],
+"c207_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Jupiter"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c207_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c208_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H10.L.11"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c208_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.L.4"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H4.P.Jupiter"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c208_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H7.C.48"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c209_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "maraka_active"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H8.D.3"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c209_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H12.C.E3"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H12.C.D1"
+}
+],
+"c210_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.P.Ketu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c210_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c210_m4": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "lord_strong"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c211_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.C.62"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c211_m4": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.20"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c212_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.P.Rahu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H10.P.Rahu"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c213_m1": [
+{
+"n": 1,
+"match": "opposed",
+"engine_ref": "H2.L.4"
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H2.L.4"
+},
+{
+"n": 8,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c213_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H4.P.Rahu"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c213_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H3.C.10"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c214_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.C.6"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H2.P.Mercury"
+}
+],
+"c214_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.L.6"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c215_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H10.L.7"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c215_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H6.P.Ketu"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H1.N.66"
+}
+],
+"c216_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H2.P.Moon"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c216_m2": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c216_m4": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c217_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "lord_hard_afflicted"
+},
+{
+"n": 3,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+}
+],
+"c217_m3": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.40"
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "H5.P.Moon"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c218_m2": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c218_m3": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H5.L.7"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c219_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c220_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "H11.L.9"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H11.C.43"
+},
+{
+"n": 4,
+"match": "opposed",
+"engine_ref": "karaka_strong"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 7,
+"match": "covered",
+"engine_ref": "H11.C.22"
+},
+{
+"n": 8,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 9,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c232_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "covered",
+"engine_ref": "H5.C.10"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 4,
+"match": "covered",
+"engine_ref": "H5.C.38"
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 6,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c234_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.L.12"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 5,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c235_m1": [
+{
+"n": 1,
+"match": "covered",
+"engine_ref": "H1.P.Mercury"
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.L.2"
+}
+],
+"c236_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "opposed",
+"engine_ref": "navamsa_status"
+},
+{
+"n": 3,
+"match": "covered",
+"engine_ref": "H1.L.4"
+},
+{
+"n": 4,
+"match": "absent",
+"engine_ref": null
+}
+],
+"c237_m1": [
+{
+"n": 1,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 2,
+"match": "absent",
+"engine_ref": null
+},
+{
+"n": 3,
+"match": "absent",
+"engine_ref": null
+}
+]
+}

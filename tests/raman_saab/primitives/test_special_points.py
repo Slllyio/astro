@@ -23,7 +23,18 @@ def test_karakamsa_is_ak_navamsa_sign():
     assert km.sign == c.planets[ak].navamsa_sign
 
 
-def test_arudha_lagna_exception_to_tenth():
-    # Aries lagna, lagna-lord Mars in the 1st -> raw Arudha = 1st -> exception -> 10th (Capricorn=10).
+def test_arudha_lagna_raman_plain_count_no_exception():
+    """Raman's formula is the plain double-count with NO Jaimini 1st/7th redirect
+    (HTJAH-I:2519-2522): lagna-lord in the Lagna → Arudha stays in the Lagna."""
+    # Aries lagna, lagna-lord Mars in the 1st -> Arudha = Aries (1), NOT redirected to the 10th.
     c = _c({"Mars": 5.0}, asc_lon=0.0)
-    assert sp.arudha_lagna(c).sign == 10
+    assert sp.arudha_lagna(c).sign == 1
+
+
+def test_arudha_lagna_ramans_worked_example_lands_in_seventh():
+    """Raman's own worked example (HTJAH-I:2521-2522): Aquarius Lagna, Saturn in Taurus →
+    'the 4th from Taurus, viz., Leo becomes Arudha Lagna' — Leo is the 7th from Aquarius,
+    and Raman keeps it (no exception)."""
+    c = RamanChart.from_stated_positions(
+        {"Saturn": {"lon": 45.0, "bhava": 4}}, asc_lon=315.0, ayanamsa="raman")
+    assert sp.arudha_lagna(c).sign == 5

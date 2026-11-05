@@ -83,18 +83,35 @@ def test_event_house_active_during_its_period_rate():
     assert rate >= 0.80, f"event-house-active rate {active_hits}/{len(_DATED_EVENTS)}"
 
 
+#: Timing gap check fix 1/3 (USER DECISION 2026-10-24): the grade is now Raman's tier on the
+#: house's OWN printed list. chart_40's Ketu and Mercury both influence H2/H11 but are not
+#: associated, so the honest grade is "ordinary" (HTJAH-I:1635-1640), still the both-lords band
+#: this test claims. HTJAH-II.chart_73 (Lincoln, H8) left this list: the 8th-house section
+#: prints no factor list (HTJAH-I:10316), Saturn reached H8 only as the engine's default
+#: karaka, and Raman times that death by the maraka set, which test_vimshottari still pins.
+_BOTH_LORDS_BAND = ("par_excellence", "ordinary", "same_lord")
+
+
 @pytest.mark.parametrize("cid,houses,md,antar", [
     ("HTJAH-I.chart_40", (2, 11), "Ketu", "Mercury"),    # both lords relate to wealth
-    ("HTJAH-II.chart_73", (8,), "Saturn", "Mercury"),    # clean-birth death
     ("HTJAH-II.chart_78", (8,), "Rahu", "Moon"),         # clean-birth death
 ])
 def test_event_house_par_excellence_on_clean_charts(cid, houses, md, antar):
-    """SECONDARY (sharper): where both period-lords converge on the event house it is graded
-    par_excellence — asserted on the worked-example empire chart and the clean-birth deaths."""
+    """SECONDARY (sharper): where both period-lords converge on the event house it grades in
+    the both-lords band (par excellence / ordinary, HTJAH-I:1592-1594)."""
     chart = _chart(cid)
     jd = _period_mid_jd(chart, md, antar)
-    pe = {a.house for a in vd.active_houses(chart, jd) if a.grade == "par_excellence"}
-    assert any(h in pe for h in houses), f"{cid}: {houses} not par_excellence (pe={sorted(pe)})"
+    both = {a.house for a in vd.active_houses(chart, jd) if a.grade in _BOTH_LORDS_BAND}
+    assert any(h in both for h in houses), f"{cid}: {houses} not both-lords (got {sorted(both)})"
+
+
+def test_hitler_death_house_grades_par_excellence():
+    """Rahu MD / Moon AD: both lords influence the 8th and are associated, so the 8th grades
+    par excellence (HTJAH-I:1635-1637)."""
+    chart = _chart("HTJAH-II.chart_78")
+    jd = _period_mid_jd(chart, "Rahu", "Moon")
+    assert any(a.house == 8 and a.grade == "par_excellence"
+               for a in vd.active_houses(chart, jd))
 
 
 def test_snapshot_is_additive_promise_unchanged():
@@ -105,11 +122,11 @@ def test_snapshot_is_additive_promise_unchanged():
 
 
 def test_active_houses_par_excellence_first():
-    """Active houses are sorted par_excellence-first (the focus leads the reading)."""
+    """Active houses are sorted strongest tier first (the focus leads the reading)."""
     chart = _chart("HTJAH-II.chart_73")
     rows = vd.active_houses(chart, vd.date_to_jd(1865, 4, 14))
-    grades = [r.grade for r in rows]
-    assert grades == sorted(grades, key=lambda g: 0 if g == "par_excellence" else 1)
+    grades = [r.tier for r in rows]
+    assert grades == sorted(grades, key=vd.TIER_ORDER.index)
 
 
 def test_active_houses_track_b_noop():

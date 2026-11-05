@@ -56,6 +56,16 @@ ALLOWED_VIEWS: Final[frozenset[str]] = frozenset({
     "v_persons_canonical", "v_chart_with_person", "v_event_survival",
     "v_chart_edge_summary", "v_natal_md_ads", "v_event_with_tree",
     "v_bridged_persons", "v_event_transits_powerful",
+    # Silver — app/empirical subsystem (tournament corpus). Separate tables from
+    # the Vedic corpus above: different provenance, different birth-time tiers,
+    # and a Western feature bank the Vedic pipeline never sees.
+    "empirical_persons", "empirical_events", "empirical_western_features",
+    "empirical_provenance",
+    # Gold — app/empirical. v_empirical_day_precision_events is the view the
+    # transit-level timing tests must draw from: day-tier dates only, because a
+    # year-precision event cannot evidence a transit that is exact for hours.
+    "v_empirical_cohort", "v_empirical_day_precision_events",
+    "v_empirical_chartless_baseline",
 })
 
 # Cohort filter must look like SQL boolean expression over column names,

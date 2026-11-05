@@ -1,0 +1,37 @@
+{
+ "theta_pool": [
+  0.063798875727023,
+  -0.4206653313934696,
+  -0.9127118988192067
+ ],
+ "dev": {
+  "T1": {
+   "n": 198,
+   "exact": 118,
+   "within1": 125,
+   "real": 73,
+   "macro_recall": 0.367,
+   "logloss": 0.8192,
+   "freq_logloss": 0.8377
+  },
+  "B3": {
+   "n": 198,
+   "exact": 131,
+   "within1": 138,
+   "real": 60,
+   "macro_recall": 0.433
+  },
+  "E": {
+   "n": 198,
+   "exact": 87,
+   "within1": 150,
+   "real": 48,
+   "macro_recall": 0.347
+  },
+  "T1_says": {
+   "afflicted": 53,
+   "mixed": 0,
+   "favourable": 145
+  }
+ }
+}

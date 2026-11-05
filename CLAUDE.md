@@ -37,13 +37,60 @@ engine *more faithful to B. V. Raman*.
 The directive was carried out in full, and then honored to its last clause ("measure honestly;
 report both"). The results are settled and MUST NOT be re-litigated by re-running what is closed:
 
-- **Textbook fidelity: ACHIEVED and at its proven ceiling — 259/293 = 88.4% exact and
-  283/293 = 96.6% within one ordinal step** against Raman's own printed verdicts, externally
-  verified casting (96.7% ascendant agreement with AstroDatabank's published placements). Five
-  independent methods proved the ceiling cannot be faithfully exceeded (placement harvest
-  exhausted, karaka frames over-fire, tuner null on 5x data, no clean cited-fix patterns, ML on
-  the same features loses to the hand-tuned judge). **Do not chase accuracy further; it is not
-  there without overfitting.**
+- **Textbook fidelity — the "88.4% ceiling" was a CEILING ON A SELECTED POOL. Corrected
+  2026-08-23, user-signed; read this before quoting any fidelity figure.** The 259/293 = 88.4%
+  below was measured honestly *within its pool*, and the five ceiling proofs still stand *for
+  that pool* — but the pool itself could only ever admit verdicts the engine already agreed
+  with, because old playbook rule 7 confirmed engine-MATCHES from the DRAFT queue and left
+  mismatches parked. The gate was removed and the ENTIRE adjudicable DRAFT queue (94 rows) was
+  then reviewed by four parallel engine-blind `bphs-doctrine-reviewer` agents against Raman's
+  printed text — 59 CONFIRM, 17 REVISE, 18 REJECT.
+- **★ CURRENT FIGURE (2026-10-31, after the FULL-POOL LABEL RE-REVIEW — quote this one): 238/365 = 65.2% exact, 332/365 = 91.0% within one step, 33 real errors. User decision 2026-10-31 ("Apply, and check every row"): every scored label was read by two engine-blind reviewers against Raman's printed text (third reader on splits; FIDELITY_FIXES_PREREG Addenda 34-37, `docs/raman_saab/label_review_2026-10-31/`). 24 rows demoted to DRAFT (Raman draws no conclusion on that matter), 22 relabelled; no engine change. Same day: RS1 moved the Jupiter-in-11th elder-brother rule from H3 to H11 (HTJAH-I:3444-3445), 12 wrong-chart citations repaired, variant BS1 measured and held. Before that (2026-10-30, after MERCURY AS SPEECH KARAKA): 263/389 = 67.6%
+  exact, 354/389 = 91.0% within one step, 35 real errors. User decision 2026-10-30 ("Ship Mercury for speech"): the H2 speech karaka is Mercury (HPA-6:167-169), not Jupiter (cited to HTJAH-I:2316, which names no karaka); NH.chart_33 H2/speech left the real errors. Side effect on unscored charts: the H2 headline rollup moved worse on 75 of 346 goldens (favourable 166 -> 114). Same day: H9.A.18 repaired to the printed "Mars and Saturn" (no score change). Prereg Addenda 24-27. Before that: 263/389 = 67.6%
+  exact, 353/389 = 90.7% within one step, 36 real errors (2026-10-30, after the PRINTED SPHUTA TEST). User decision 2026-10-30 ("Ship G2, drop G1"): the Beeja/Kshetra fertility gate reads each sphuta by Raman's full printed test (HTJAH-I:5521-5527), which reproduces his worked Charts 88-90; the old parity-only test read 88 and 89 weak where Raman judges them fertile (`sphutas.G2_PRINTED_SPHUTA_TEST`, FIDELITY_FIXES_PREREG Addenda 18-20; engine-blind review SOUND WITH CAVEATS; no hold-out, hold-out 3 was spent on G1). Before that: 260/389 = 66.8%
+  exact, 349/389 = 89.7% within one step, 40 real errors (2026-10-28, after the RULE-DEFECT REPAIRS). User decision 2026-10-28 ("Ship the repairs"): 25 rules that said something their cited Raman passage does not were corrected after two engine-blind reviews (18 made descriptive, 2 benefic, 1 rerouted, citation lines fixed; FIDELITY_FIXES_PREREG Addenda 10-15). Two variants were measured and held the same day: M1 (maraka guard on non-death matters) and Y1 (blemish tier); hold-out 3 (HPA, 28 rows) is SEALED and unread. Before that: 262/389 = 67.4%
+  exact, 349/389 = 89.7% within one step, 40 real errors (2026-10-26, after the CAST-FIDELITY FIX). User decision 2026-10-26: twelve scored charts whose birth data contradicted Raman's own printed positions or dasa balance were re-cast as he cast them (Marx 5 May 1818, Vivekananda 06:33, Milton Old Style, etc.; `CAST_FIDELITY_SWEEP_2026-10-25.md`). No judge code changed; the engine had been matching Raman on charts he never cast. Part 2 (page images and printed dasa balances): Tennyson, Dalmia, HTJAH-I chart 29, Sukarno; HTJAH-I chart 18 held (the text prints its date plainly). Before that: 269/389 = 69.2%
+  exact, 354/389 = 91.0% within one step, 35 real errors (2026-10-24, after the NAVAMSA ONE-STEP RULE). User decisions the same day: R2 re-scoped ten rules to their citations (277/350/39, prereg Addendum 8), then the Navamsa was limited to moving a Rasi verdict one step, as Raman does (`house_template.NAVAMSA_ONE_STEP`, `NAVAMSA_STEP_FINDINGS_2026-10-24.md`; the old clause-2 flip had no citation). FIRST OUT-OF-SAMPLE FIGURE: a sealed
+  hold-out of 36 unseen Raman conclusions (3HC charts) scores 23/36 = 63.9% exact, 28/36 = 77.8%
+  within one, 8 inversions (22%). SECOND HOLD-OUT (2026-10-24, 134 unseen conclusions from NH Nos. 1-15 and HTJAH I/II): 55/134 = 41.0% exact, 98/134 = 73.1% within one, 36 real errors (27%); the engine over-calls affliction (`HOLDOUT2_RESULTS_2026-10-24.md`). Quote the in-pool and hold-out figures together.** Two engine-blind reviewers corrected 23 labels
+  (15 "mixed" rows were one-sided, 7 had no conclusion and left the pool). Five pre-registered
+  engine fixes (R1-R5) were measured; none passed in-pool; R2 and R5 passed hold-out 2 and the user shipped R2 only (R4 dropped, R5 held). Record:
+  `docs/raman_saab/FIDELITY_FIXES_PREREG.md` (addenda 1-4) and `WHY_273_OF_396.md`.
+- Previous figure (2026-10-24, after the chart-fidelity fix): 273/396 = 68.9%
+  exact, 363/396 = 91.7% within one ordinal step, 33 real errors (distance ≥ 2). It fell from
+  276/366/30 because 8 HTJAH-I charts had been cast with a Lagna Raman never judged; re-timed to his
+  Lagna, three former matches became inversions (REAL_ERRORS_2026-10-23.md addendum). No judge code changed. Lineage and the
+  per-step measurements: `golden_accuracy_baseline.json` `_comment`; the 30 rows, pinned by key:
+  its `real_errors` + `docs/raman_saab/REAL_ERRORS_2026-10-23.md`. Two of the 2026-10-23 steps were user
+  decisions: the Bhava Bala pillar no longer votes (`house_template.BHAVA_BALA_PILLAR_VOTES`) and
+  the Raman engine defaults to Raman's ayanamsa. The figures below are the history.
+- **★ THE HONEST FIGURE (2026-08-23 adjudication): 269/381 = 70.6% exact, 329/381 = 86.4%
+  within one ordinal step, 52 real errors (distance ≥ 2).** Nothing regressed in the engine
+  between 88.8% and 70.6% — not one line of judge or doctrine code changed. The old number
+  measured a pool that could only admit verdicts the engine already agreed with; this measures
+  every conclusion Raman actually reached, hit or miss. Full record: DOCTRINE_BACKLOG
+  "AUDIT + CONFIRMATION-RULE AMENDMENT" and "FULL ADJUDICATION".
+  - Rejected rows (18) stay DRAFT and unscored: they are observations about a single factor, or
+    prose corrupted by a footnote/section-heading splice — they were never Raman verdicts.
+  - One row is HELD unscored (NH.chart_38 H9) because two independent reviewers graded it
+    differently. **A contested label never enters the scored pool**; reviewer disagreement is
+    evidence the label is genuinely contestable, not something to average away.
+  - Historic (selected-pool) figure, retained because the ceiling analysis references it:
+    259/293 = 88.4% exact, 283/293 = 96.6% within-1, externally verified casting (96.7%
+    ascendant agreement with AstroDatabank). Five independent methods proved that pool's ceiling
+    could not be faithfully exceeded (placement harvest exhausted, karaka frames over-fire,
+    tuner null on 5x data, no clean cited-fix patterns, ML on the same features loses to the
+    hand-tuned judge). **Those findings are about the JUDGE and remain binding: do not chase
+    accuracy by tuning; it is not there without overfitting.** What changed is the DENOMINATOR,
+    not the judge.
+  - **STALE, do not act on it: "the 10 remaining dist-2 errors are ONE mechanism at a proven
+    local optimum".** That described the selected pool. The real error surface is **52 rows**:
+    26 favourable-where-Raman-says-afflicted, 16 the reverse, 9 engine ABSTENTIONS
+    (insufficient-evidence, scored distance 2 by the deliberate `_ordinal_distance` convention),
+    1 mixed. Concentrated in H5 (9), H4 (7), H1/H2/H10 (6 each). The one-mechanism diagnosis has
+    NOT been re-derived against these 52 and must not be assumed to generalise — the nine
+    abstentions in particular are a different failure from a wrong grade, and were invisible
+    before. Re-derive before designing any fix.
   - **Read the two fidelity axes side by side, never just the strict one.** The strict figure
     moved DOWN 261→259 on 2026-08-03 — deliberately, user-signed-off — when the B1 dominant-factor
     guard was enabled (`house_template.B1_DOMINANT_FACTOR_GUARD`). It bought within-1 281→283 and
@@ -72,6 +119,68 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
   case). Guards: the golden ratchet (fidelity) + `test_astrobank_ratchet.py` (generalization
   floors). The two axes are reported side by side, never averaged.
 
+### ★★★ NORTH STAR PLAYBOOK (2026-08-23) — how fidelity actually moves; binding on all future sessions
+
+Distilled from the all-houses dead-rule sweep (12 house passes, 19 rules shipped, 6 held by
+proof, the first strict-ratchet gain since the measured ceiling: 259→260 via H2.C.40). Every
+rule below was EARNED by a caught mistake, with the receipts in `DOCTRINE_BACKLOG.md`:
+
+1. **"Best in the world" = most faithful to Raman + most honest about what a reading can
+   claim.** Those are the only two axes. Real-outcome "accuracy" is measured NULL and is not
+   a target — chasing it is overfitting, forbidden by `astrobank/METHODOLOGY.md`.
+2. **Citation first, always.** Real-people data may only PRIORITIZE where to look or satisfy
+   a pre-registered gate — never justify a change. And a pre-registered fix can still be
+   refuted by its own citation's conditions (the Tier-3 bhava-rescue was: gate met, fix
+   refuted twice — that outcome is a SUCCESS of the process, record it and stop).
+3. **Measure BEFORE doctrine review, review BEFORE ship.** Per rule: (a) firing rate over the
+   Track-B goldens; (b) whether any firing chart carries a scored expectation for that house;
+   (c) co-fire against live rules sharing a conjunct; (d) SATISFIABILITY BY ENUMERATION for
+   any predicate built from lagna-fixed lordship + fixed pair-tables (H11.C.6/7) or a derived
+   point's reachable set (H2.C.46's parity proof — Arudha offsets are always even).
+4. **A green ratchet proves NO REGRESSION, never correctness.** Three documented blindness
+   modes: corroboration-only firing, evidence-redundancy on AFFLICTION_MATTER keys,
+   coverage gaps (no scored chart fires the rule). A ratchet GAIN is banked only after
+   adversarial review of the responsible rule (H2.C.40's 52% rate got an enumeration before
+   the baseline bump).
+5. **An honest hold beats a forced ship.** Every hold gets a backlog entry with its re-open
+   path. A faithful predicate can still be wrong to FIRE given the verdict machinery around
+   it (H1.N.38 reproduced the exact chart_33 contradiction its sibling's deferral note
+   predicted). Deferral notes are design decisions — read WHY a rule is descriptive before
+   assuming the TODO is stale.
+6. **Stale-TODO audits are the cheapest fidelity lever.** Primitives ship after rules are
+   deferred and nobody revisits (maraka/arudha/dispositor/effective_strength all unlocked
+   rules years-of-sessions later). When sweeping: reuse the B1/B2 measures ONLY in the
+   statistical context they were tuned for (H12.C.D6 died on exactly this).
+7. **The accuracy lever now is the GOLDEN CORPUS, not the judge.** Extract remaining worked
+   charts and let the denominator grow. The judge's remaining dist-2 errors are ONE mechanism
+   (the pillar-preponderance clause) at a PROVEN local optimum — a new mechanism is design
+   work, not tuning (sweep table in DOCTRINE_BACKLOG).
+   - **★ CONFIRMATION RULE — AMENDED 2026-08-23, user-signed. The old wording said "confirm
+     engine-matches from DRAFTs (never confirm mismatches to pad)". The parenthesis was right;
+     the main clause was a ONE-WAY GATE and it was quietly corrupting the measurement.** Under
+     it a DRAFT could enter the scored pool only by agreeing with the engine, so the ratchet
+     could climb and never fall, and genuine Raman conclusions the engine gets WRONG stayed
+     parked in DRAFT forever, invisible to the number. Audit evidence: an engine-blind reviewer
+     read 16 sampled drafts against Raman's printed text and found 14 salvageable, among them
+     six REAL engine misses (Roosevelt's career, the Gaekwar's children, Bose's speech) — all
+     of which the old rule would have excluded by construction.
+   - **The rule is now: confirm whatever Raman actually CONCLUDED, regardless of whether the
+     engine agrees.** A confirmed miss is worth exactly as much as a confirmed hit; both are
+     measurement. Never confirm to pad, and never withhold to protect the number.
+   - **The confirmable unit is Raman's CONCLUSION about a matter, never an OBSERVATION about
+     one contributing factor.** "The native lost his mother very early" is a conclusion;
+     "the Lagna is weak, being occupied by debilitated Mars" is a factor Raman is still
+     weighing, and confirming it as a house verdict blames the engine for disagreeing with
+     something that was never a verdict. This distinction is the whole of the review job.
+   - Expect the honest figure to FALL when the DRAFT queue is adjudicated (projection at
+     amendment time: ~70-75% exact vs the then-current 88.8%). That is the measurement becoming
+     truthful, not the engine regressing — the same standard already applied when real-outcome
+     generalization was reported NULL. Re-base the baseline deliberately, with lineage.
+8. **Grow the private real-outcome set** (`data/private/real_outcomes.json`, guarded by
+   `.githooks/pre-commit`): owner-confirmed facts only, floors measured-then-locked, misses
+   recorded honestly (never fudged). It is the only ground-truth instrument the project
+   fully controls.
+
 ## Project shape
 
 - Python **3.12** primary interpreter (`py -3.12` on Windows, `.venv/Scripts/python.exe` for the local venv).
@@ -86,17 +195,17 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
 
 | Rule | Why |
 |---|---|
-| **Lahiri sidereal ayanamsa** for all Vedic calculations | Not tropical, not Raman, not KP. |
+| **Lahiri sidereal ayanamsa** for Vedic calculations — EXCEPT the Raman engine (`app/raman_saab`), whose reports, CLI and API default to **Raman's ayanamsa** (Lahiri still selectable) | Not tropical, not KP. Raman-engine exception = USER DECISION 2026-10-23 (engine audit): fidelity is measured with Raman's ayanamsa (the golden harness pins it), and Raman vs Lahiri changed ~24% of sub-matter verdicts, so a Lahiri default meant users got readings whose fidelity was never measured. Canonical-chart tests pinned to Lahiri-based external sources pass `ayanamsa="lahiri"` explicitly. |
 | `DAYS_PER_VEDIC_YEAR = 365.2425` for Vimshottari math | Gregorian mean year; 365.25 (Julian) drifts ~5 days over a 19-yr Saturn MD. |
 | **Whole-sign Vedic aspects (drishti)** | Conjunction/opposition fire by sign membership; orb only sets `is_exact=True`. |
 | **Circular orb distance**: `min(diff, 360 - diff)` where `diff = abs(lon1 - lon2) % 360` | Naive `abs()` silently fails at the 359°/2° Pisces/Aries cusp. |
 | **Floor division for nakshatra cusps**: `int(moon_lon // nak_span)` | Differs from `/` cast-to-int at exact boundaries (e.g. `40.0`). |
 | **JD arithmetic for calendar dates** — never `datetime.timedelta` | Use `birth_jd ± years * 365.2425` then `swe.revjul(jd, swe.GREG_CAL)`. |
-| **Rahu/Ketu drishti = Jupiter-style 5/9** (modern Sukra Nadi) | Not BV Raman (no nodal drishti), not KP. |
+| **Rahu/Ketu drishti: Raman engine (`app/raman_saab`) = 7th ONLY**; legacy `app/core` = Jupiter-style 5/9 (modern Sukra Nadi) | User decision 2026-10-13: "follow Raman only, even for Rahu/Ketu aspects." Raman's aspect chapter (HPA-8) is silent on the nodes, but his own judgments count their 7th aspect (HTJAH-I:2062 "Lagna is occupied by Ketu and aspected by Rahu") and never a 5th/9th. The old wording "Raman = no nodal drishti" was wrong. |
 | **Avastha benefics**: Jupiter, Venus, Mercury, Moon. **Malefics**: Sun, Mars, Saturn, Rahu, Ketu. | |
 | **Astrocartography in EQUATORIAL** (`FLG_EQUATORIAL`) | Ayanamsa doesn't enter line geometry. |
 | **Chara Karakas: strict 7-karaka Jaimini, NO Rahu/Ketu** | Rahu/Ketu are chayagrahas and cannot signify the soul or any karaka role. AK can NEVER be Rahu or Ketu. Use only the 7 visible planets (Sun..Saturn) ranked by degree-within-sign descending. The 8-karaka extension (Rahu degree-inverted as PK2_PutraKaraka2) is a Narasimha-Rao modern-minority interpretation that the project doctrinally rejects per BV Raman / Sanjay Rath / Jaimini Sutras strict reading. **Locked 2026-06-01 after a real reading error.** |
-| **Dasha/bhukti house-activation = Raman's "When Do Indications Fructify?" method (HTJAH-I ch.1)** | A planet INFLUENCES a house if it owns, occupies, or aspects **the house OR its lord** — i.e. the five/six factors: house-lord, occupants, aspecters, planets aspecting the lord, planets conjoining the lord, and the lord-from-the-Moon (HTJAH-I:1586-1589). This is exactly the broad `timer_set` — do NOT narrow it to own/occupy/aspect only. **Grading is a four-tier scheme, UNIFORM for all 12 houses** (Raman states this repeatedly: HTJAH-I:1588-1589, 2617, 3522, 4333, 8294, 16435 — "the general principles… hold equally good"): both MD & AD lord influence the house **and AD lord is _associated_ (conjunct / mutual aspect) with the MD lord → par excellence**; both influence but AD **not** associated → **ordinary**; **only the bhukti (AD) lord influences → limited**; **only the MD lord influences → feeble** (HTJAH-I:1592-1596, 1635-1640; 2588-2599 incl. "feeble"; recurs 16404 / 17746). The method is house-agnostic; only the *inputs* (each house's own lord/karaka/occupants) differ. NOT a Shadbala "supersession" (that was a wrong guess, reverted). Encoded in `vimshottari.bhukti_tier` + `lords_associated`; surfaced in `detailed_report`. **Locked 2026-07-25 after re-deriving it from the source (this had been done before and lost).** |
+| **Dasha/bhukti house-activation = Raman's "When Do Indications Fructify?" method (HTJAH-I ch.1)** | **USER DECISION 2026-10-24 (timing gap check, all 16 fixes) — the timer set follows Raman's PRINTED per-house lists.** A planet INFLUENCES a house if it owns, occupies, or aspects **the house OR its lord**: house-lord, occupants, aspecters, planets aspecting the lord, planets conjoining the lord (HTJAH-I:1586-1589), plus **the lord counted from the Moon from the 2nd house on only** (H1's list prints none; H3 by Raman's "general principles", HTJAH-I:3521-3522), plus **a karaka ONLY where he prints one** (`vimshottari.TIMER_KARAKA`): H3 Mars + its associates/aspecters (HTJAH-I:3526), H4 Moon, H5 Jupiter, H6 Mars, H7 Venus, **H9 the Sun, not Jupiter** (HTJAH-I:12737-12738), H12 Saturn; **none for H1, H2, H10, H11** (and H8 prints no list, HTJAH-I:10316). **Nodes join through all four channels**: dispositor, a conjoined planet, nakshatra lord, and Sanivad Rahu / Kujavad Ketu (HTJAH-I:8566-8567, 4513-4520, 11194-11203). Do NOT narrow it to own/occupy/aspect only, and do not re-add an unprinted karaka. **Grading is a four-tier scheme, UNIFORM for all 12 houses** (HTJAH-I:1588-1589, 2617, 3522, 4333, 8294, 16435 — "the general principles… hold equally good"): both MD & AD lord influence the house **and AD lord is _associated_ (conjunct / mutual aspect) with the MD lord → par excellence**; both influence but AD **not** associated → **ordinary**; **only the bhukti (AD) lord influences → limited**; **only the MD lord influences → feeble** (HTJAH-I:1592-1596, 1635-1640; 2588-2599; recurs 16404 / 17746). **Graded on the house's OWN set** (fix 3): the 2/11 and 9/12 allied houses are a separately labelled `allied_via` note, never part of the grade; the MD lord's own bhukti is **"same lord"** (Raman's association test is for "the sub-period of another", HTJAH-I:1635). NOT a Shadbala "supersession" (a wrong guess, reverted). Encoded in `vimshottari.timer_set`/`timer_roles`, `period_tier`, `bhukti_tier` + `lords_associated`; surfaced in `detailed_report`. Locked 2026-07-25 after re-deriving it from the source; revised 2026-10-24 by the user decision above (record: `DOCTRINE_BACKLOG.md` "TIMING GAP CHECK"). |
 
 ## Locked architecture decisions — do NOT change
 
@@ -276,24 +385,28 @@ before and after — **12 of 54 sections addressed the reader at the start, 50 o
   advertises `thinking`; without these it spends its whole budget in the thinking channel on a
   ~3.1k-token evidence prompt and returns an EMPTY response, which surfaces as `OllamaUnavailable`
   and silently degrades EVERY answer to deterministic prose while the app still looks healthy.
-- **The guard line (narrowed 2026-07-28, doctrine-reviewed PASS-WITH-NOTES + hardened):** undated
-  descriptive-indication idiom ("points to", "tends to", "indicates", "signifies") is ALLOWED —
-  it is Raman's own descriptive usage; asserting a future LIFE EVENT is refused (you-will/decree
-  verbs, third-person `he/she/they will|shall <verb>`, dated/age-attached indications like
-  "indicated in 2027"/"at age 30", `promises/brings/foretells/bound to/sure to`).
-  Do not re-widen OR re-narrow without a doctrine review.
-  **Corrected 2026-08-07 — this entry used to end "…, all death tokens", and that is wrong.**
-  Read `_FORBIDDEN_RE` itself: what it refuses is the subject attached to a CLOCK —
-  `end of life`, `death (around|at|by|near)`, `die (around|at|by|before|after)`,
-  `will/shall die`. Naming longevity, maraka or arishta is ALLOWED; timing them is not. The
-  mistaken summary cost real work: it read as "never mention it", which would have made the
-  `longevity`/`arishta`/`maraka` plain leads impossible to write and left three sections
-  permanently mute. **When this file summarises a regex, go read the regex.**
+- **The guard line (re-narrowed 2026-08-17, "unblock prediction part" — USER DECISION):** the
+  boundary is now **idiom, not timing**. TIMED INDICATIONS in the classical voice are ALLOWED on
+  every surface ("marriage is indicated during the Venus bhukti, 2027–2028", "the maraka periods
+  2031–2034 are classically sensitive", "the span reads at the purna band, around the 83rd year");
+  the DECREE voice stays refused (you-will/`he/she/they will|shall <verb>`, `is going to`,
+  `destined/certain/guaranteed/bound to/sure to`, `i predict`, and decree-dated death:
+  "death around/at/by <year>", "will die"). The 2026-07-28 dated-indication arms
+  ("indicated in 2027", "at age 30", promises/brings/foretells) were REMOVED by this decision.
+  History: narrowed 2026-07-28 (doctrine-reviewed); death/lifespan wall lifted 2026-08-17 over
+  the assistant's recorded recommendation to keep it — record in DOCTRINE_BACKLOG "prediction
+  unblock". Do not re-widen OR re-narrow without a doctrine review + user sign-off.
+  **Lesson carried from main (2026-08-07 correction):** a summary of this guard once said it
+  refused "all death tokens" -- wrong, and it nearly muted the longevity/arishta/maraka leads.
+  Naming longevity, maraka or arishta is ALLOWED; only the decree voice and decree-dated death
+  are refused. **When this file summarises a regex, go read the regex.**
 - **`/report/ai-interpret` is the ONE walled speculation surface** (user-approved exception):
   always labeled ("AI, not the engine, not validated" — `DISCLAIMER` on every response), gentle/bold
-  registers, and death/lifespan/serious-illness/self-harm excluded IN CODE (`excluded_topic` on
-  output + input scrub) — no register or request lifts that. It has NO deterministic fallback: the
-  engine must never author speculation.
+  registers, and serious-illness/self-harm excluded IN CODE (`excluded_topic` on output + input
+  scrub) — no register or request lifts that. Death/lifespan tokens were LIFTED from the exclusion
+  2026-08-17 (user decision, "unblock prediction part"): the panel may reflect on longevity in the
+  classical indication idiom; decree-dated death phrasing remains code-refused. It has NO
+  deterministic fallback: the engine must never author speculation.
 - **Chart feedback** (`/report/feedback*`): questions are a deterministic re-read of the digest
   (`feedback_questions.py`), answers land in `chart_feedback` keyed by the server-built chart_key;
   anonymous-first. Wording keeps the Measured-Truth frame (calibration, not validation).
@@ -312,20 +425,16 @@ before and after — **12 of 54 sections addressed the reader at the start, 50 o
 
 ## Known-broken — do NOT rediscover these the hard way
 
-- **Pre-1906 charts crash the report.** `build_detailed_report` raises
-  `AttributeError: 'NoneType' object has no attribute 'maha'` for any nativity whose 120-year
-  Vimshottari span ended before today — there is no "currently running" period, and
-  `synthesize()` dereferences it. Verified on Queen Victoria (1819). **This bites the Prime
-  Directive directly: most of Raman's own worked nativities are 19th century, so the engine
-  cannot produce a report for the charts it is validated against.** The measurement tools work
-  around it with `on=(birth.year + 35, …)`; the report has no such escape. Fixing it needs a
-  product decision first — what "now" means for a chart whose life ended in 1939 (cast at a date
-  inside the life / cycle the sequence / state that the reference date is outside the span).
-- **`app/raman_saab/plainspoken.py` has no test file** (910 lines, 41 lead functions, the layer
-  with the most reader contact). Twelve defects were found in it on 2026-08-06/07 — all by
-  printing output by hand, none by CI. Every class is mechanically checkable: guard-clean,
-  subject-verb agreement at n=1, no truncated list in a sentence claiming completeness, no lead
-  that addresses nobody, no lead contradicting its own section's label.
+- **Both earlier entries here are FIXED (re-checked 2026-10-23).** Pre-1906 charts now produce a
+  full report (b5d21a0: the running period reads `synthesis.BEYOND_SEQUENCE` instead of
+  dereferencing None; Queen Victoria 1819 renders). `plainspoken.py` has its test file
+  (`tests/raman_saab/test_plainspoken.py`, 3ffca1d, the twelve defect classes pinned).
+- **Book OCR corrections travel as data.** The corpus is git-ignored, so word-level OCR repairs
+  live in `tools/raman_saab/ocr_corrections.json` (line-preserving, digits never touched, valid
+  Sanskrit never "corrected"). On a machine with the corpus: `python -m
+  tools.raman_saab.apply_ocr_corrections --apply`, then re-lock with `UPDATE_SOURCE_LOCK=1`. Until
+  applied, the source lock still matches the uncorrected books. Fuzzy auto-correction was tried
+  and rejected: it rewrote maraka→karaka, chidra→chandra, lagnam→lagna.
 
 ## Style conventions
 

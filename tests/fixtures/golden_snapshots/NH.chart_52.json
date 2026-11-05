@@ -2,9 +2,11 @@
   "H10": {
     "citations": [
       "HTJAH-II:10181",
+      "HTJAH-II:11064",
       "HTJAH-II:9467"
     ],
     "fired_rule_ids": [
+      "H10.C.33",
       "H10.C.61",
       "H10.L.2"
     ],
@@ -46,19 +48,21 @@
     "citations": [
       "HTJAH-I:5119",
       "HTJAH-I:5183",
-      "HTJAH-I:5206"
+      "HTJAH-I:5206",
+      "HTJAH-I:5826"
     ],
     "fired_rule_ids": [
       "H5.C.1",
       "H5.C.21",
+      "H5.C.39",
       "H5.L.2"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "children": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "intellect": {
         "degree": "mild",
@@ -68,20 +72,24 @@
       "poorvapunya": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
   "H7": {
     "citations": [
       "HTJAH-II:323",
+      "HTJAH-II:326",
       "HTJAH-II:487",
-      "HTJAH-II:929"
+      "HTJAH-II:929",
+      "NH:11140"
     ],
     "fired_rule_ids": [
       "H7.C.40",
       "H7.C.67",
-      "H7.L.11"
+      "H7.C.88",
+      "H7.L.11",
+      "H7.L.11b"
     ],
     "rollup": "afflicted",
     "significations": {
@@ -93,7 +101,7 @@
       "marital_happiness": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "partnership": {
         "degree": "mild",
@@ -103,7 +111,7 @@
       "spouse": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "virility": {
         "degree": "mild",
@@ -132,7 +140,8 @@
       "HTJAH-II:8648",
       "HTJAH-II:9400",
       "HTJAH-II:9415",
-      "HTJAH-II:9416"
+      "HTJAH-II:9416",
+      "NH:6048"
     ],
     "fired_rule_ids": [
       "H9.A.1",
@@ -142,6 +151,7 @@
       "H9.B.23",
       "H9.B.24",
       "H9.C.35",
+      "H9.C.36",
       "H9.D.37",
       "H9.D.42",
       "H9.D.49",
@@ -153,9 +163,9 @@
     "rollup": "afflicted",
     "significations": {
       "dharma": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "father": {
         "degree": "mild",
@@ -163,19 +173,19 @@
         "verdict": "afflicted"
       },
       "fortune": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "higher_learning": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "long_journeys": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

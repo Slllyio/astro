@@ -206,7 +206,14 @@ class _LordAfflictedBy(C.Condition):
 
 class _SunMoonTrineToMarsSaturn(C.Condition):
     """The Sun AND the Moon each stand in a trine (5th/9th, i.e. trikona distance)
-    to Mars or to Saturn — Raman's "Sun and Moon in trine to Mars and Saturn"."""
+    to Mars AND to Saturn — Raman's "If the Sun and Moon be in trine to Mars and
+    Saturn, the child will be abandoned by both parents" (HTJAH-II:7452-7453).
+
+    Repaired 2026-10-30: the condition used to read Mars OR Saturn (``any``), which
+    the printed "and" does not say; it fired on 19 goldens against 2 for the
+    printed reading. "In trine" counts the 5th and 9th signs only, not the same sign. The
+    sentence is about abandonment (separation), not the father's death; the mirror on the
+    4th-house mother matter is not encoded (engine-blind review, prereg Addendum 26)."""
     _TRINE: Final[frozenset[int]] = frozenset({5, 9})
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
@@ -219,7 +226,7 @@ class _SunMoonTrineToMarsSaturn(C.Condition):
         targets = (mars.rasi_house, sat.rasi_house)
 
         def trines(lum_house: int) -> bool:
-            return any(((t - lum_house) % 12) + 1 in self._TRINE for t in targets)
+            return all(((t - lum_house) % 12) + 1 in self._TRINE for t in targets)
         return trines(sun.rasi_house) and trines(moon.rasi_house)
 
 
@@ -318,6 +325,21 @@ class _MaleficInHouseDignified(C.Condition):
                    for name, p in ctx.chart.planets.items())
 
 
+class _UndignifiedMaleficInHouse(C.Condition):
+    """Some natural malefic occupies `house` and is NOT exalted / own / moolatrikona / friendly.
+    R2 NARROW (2026-10-24, engine-blind citation review): HTJAH-II:7468-7470 qualifies its own
+    malefics-in-the-9th clause — "But if the malefic in the 9th be exalted, in own or a
+    friendly sign, the opposite results are produced." A dignified malefic is not an affliction
+    to fortune in Raman's sentence, so it must not vote as one."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return any(name in NATURAL_MALEFICS and p.rasi_house == self.house
+                   and dignity(name, ctx.chart) not in _MaleficInHouseDignified._GOOD
+                   for name, p in ctx.chart.planets.items())
+
+
 class _MaleficOrEclipsedOrDebilInHouse(C.Condition):
     """A malefic, an eclipsed (combust), or a debilitated planet occupies `house`."""
     def __init__(self, house: int) -> None:
@@ -327,8 +349,9 @@ class _MaleficOrEclipsedOrDebilInHouse(C.Condition):
         for name, p in ctx.chart.planets.items():
             if p.rasi_house != self.house:
                 continue
-            if name in NATURAL_MALEFICS:
-                return True
+            if name in NATURAL_MALEFICS and \
+                    dignity(name, ctx.chart) not in _MaleficInHouseDignified._GOOD:
+                return True                  # R2 NARROW: HTJAH-II:7468-7470 exception
             if p.combust_fraction > 0.0:
                 return True
             if dignity(name, ctx.chart) == "debil":
@@ -384,6 +407,46 @@ class _LordInHouseClassFromMoon(C.Condition):
         if moon is None or p is None:
             return False
         return (((p.rasi_house - moon.rasi_house) % 12) + 1) in self.from_houses
+
+
+class _JupiterOwnsNinthWithBeneficRays(C.Condition):
+    """H9.C.36's two legs (NH:6048-6050): Jupiter lords the 9th sign, and at least one full
+    benefic (Jupiter/Venus/Mercury) casts whole-sign drishti on the 9th or the 10th."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if _lord_of(9, chart) != "Jupiter":
+            return False
+        for name in ("Jupiter", "Venus", "Mercury"):
+            if name not in chart.planets:
+                continue
+            if (drishti.aspects_house(name, 9, chart)
+                    or drishti.aspects_house(name, 10, chart)):
+                return True
+        return False
+
+
+class _SunInNinthWithEighthLordHemmed(C.Condition):
+    """H9.A.21's three legs (Chart 86, HTJAH-II:7945-7975): the Pitrukaraka Sun occupies the
+    9th sign, the 8th lord shares that sign, and the 9th is hemmed by papakartari (a natural
+    malefic in each adjacent sign). All three load-bearing — see the rule's comment."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        sun = chart.planets.get("Sun")
+        if sun is None:
+            return False
+        s9 = _sign_of_house(9, chart)
+        if sun.sign != s9:
+            return False
+        lord8 = _lord_of(8, chart)
+        l8p = chart.planets.get(lord8)
+        if lord8 == "Sun" or l8p is None or l8p.sign != s9:
+            return False
+        prev_s = ((s9 - 2) % 12) + 1
+        next_s = (s9 % 12) + 1
+        malefics = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
+        hem_prev = any(chart.planets[m].sign == prev_s for m in malefics if m in chart.planets)
+        hem_next = any(chart.planets[m].sign == next_s for m in malefics if m in chart.planets)
+        return hem_prev and hem_next
 
 
 class _SunPitrukarakaAfflicted(C.Condition):
@@ -588,6 +651,71 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "father's longevity is curtailed; early death of the father",
         frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7916)),
 
+    # A.21 — the h9_02 mechanism, deferred since the Layer-C pass and now encoded: the
+    # Pitrukaraka Sun OCCUPYING the 9th, CONJUNCT THE 8TH LORD, with the 9th hemmed by
+    # papakartari -> the father's longevity is curtailed. Chart 86 verbatim
+    # (HTJAH-II:7945-7975): "The presence of karaka Sun in the 9th house with 8th lord
+    # Jupiter is not conducive to longevity of father" + "the papakartari to the 9th house
+    # (from Rahu and Mars)"; the chapter's general voice backs the karaka leg ("Afflictions
+    # to the Sun or his occupation of malefic houses results in early death of father",
+    # :7921-7922). ALL THREE legs are load-bearing by enumeration: dropping the hemming leg
+    # fires NH.chart_38 (a tiebreak-resolved MIXED row — Sun+Mercury-as-8th-lord in his 9th,
+    # unhemmed); dropping the 8th-lord leg fires the favourable twin h9_10 (Sun in the 9th,
+    # clean). Exaltation is NOT a relief (Chart 86's Sun is exalted; the A.20a lesson).
+    # NOTE the record it fires on: h9_02's basis was converted fresh-cast -> stated the same
+    # day (the modern sky puts Mars a full sign away from Raman's printed chart; the
+    # fidelity axis judges the chart HE judged — note in the golden).
+    RuleRecord(
+        id="H9.A.21", house=9, signification="father", group="combination", kind="evaluable",
+        condition=_SunInNinthWithEighthLordHemmed(),
+        fortified=None,
+        afflicted="the Pitrukaraka Sun in the 9th conjunct the 8th lord, with the 9th hemmed "
+                  "by papakartari → not conducive to the longevity of the father",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7965)),
+
+    # A.22 — Rahu occupying the 9th -> early death of the father. Hyder Ali verbatim
+    # (NH:5311-5312): "The position of Rahu in the 9th indicates early death to his father."
+    # (The golden record's own cite line-number, 3902, follows a different rendering's
+    # numbering; the anchor guard caught the blank line and this rule's citation was
+    # re-anchored to the unsplit source. Reviewer confirmed 5311-5312 verbatim.)
+    # RECORDED CONTRARY VOICE (reviewer, 2026-08-30): HTJAH-II:7843 reads the identical
+    # placement favourably for a DIFFERENT father sub-matter — "If Rahu joins the 9th house
+    # the native's father becomes very famous in foreign lands" (fame, not longevity; the
+    # two are compatible — Hyder Ali's own father was a famed naik killed in battle). No
+    # printed chart grades Rahu-in-9th with a long-lived father, so the bare form ships;
+    # RE-OPEN with HTJAH-II:7843 if a fortified-father golden with Rahu in the 9th appears.
+    # Enumeration over the confirmed H9 rows: fires on Hyder Ali (afflicted) and on
+    # chart_30's 9th (whose father matter is unscored); fires on ZERO favourable-father
+    # goldens. The bare form is Raman's own sentence — no invented guard.
+    RuleRecord(
+        id="H9.A.22", house=9, signification="father", group="combination", kind="evaluable",
+        condition=C.InRashiHouse("Rahu", 9),
+        fortified=None,
+        afflicted="Rahu occupying the 9th → early death of the father is indicated",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 5311)),
+
+    # C.36 — the 9th (Dharma) OWNED BY JUPITER, the Dharma-karaka, with benefic rays on the
+    # dharma-karma axis. Thyagaraja verbatim (NH:6048-6050): "The 9th indicating Dharma is
+    # owned by Jupiter and the 10th ruling Karma has been the centre of the beneficial rays
+    # of Mercury and Jupiter" — the saint-composer's religiousness read off Jupiter's
+    # ownership of the 9th plus benefic convergence. Both legs encoded: Jupiter lords the
+    # 9th (Aries/Cancer lagnas) AND at least one full benefic casts drishti on the 9th or
+    # the 10th. Fires on Thyagaraja alone across the confirmed dharma rows (his row was an
+    # engine abstention). Review notes, recorded: no printed irreligious Jupiter-owned-9th
+    # exists in NH (Marx and Mussolini are out of the lagna class); Chengiz Khan (Cancer
+    # lagna) would fire, and Raman prints his irreligious indication as "fully neutralised
+    # by ... the other formidable Rajayogas" (NH:3305-3308) — not a contradiction, row
+    # unscored. The benefic-rays leg is weakly constraining (Jupiter in houses 1-6 satisfies
+    # it alone); acceptable for NON-DECISIVE testimony, a problem only if ever promoted —
+    # do not promote without re-review.
+    RuleRecord(
+        id="H9.C.36", house=9, signification="dharma", group="combination", kind="evaluable",
+        condition=_JupiterOwnsNinthWithBeneficRays(),
+        fortified="the 9th owned by the Dharma-karaka Jupiter with benefic rays on the "
+                  "dharma-karma axis → religiousness and dharma fortified",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("NH", 6048)),
+
     # ===== B. Fortune / raja-yoga-ish (HTJAH-II:7460-7484) — sig fortune =====
     RuleRecord(
         id="H9.B.21", house=9, signification="fortune", group="combination", kind="evaluable",
@@ -604,14 +732,25 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7461)),
     RuleRecord(
         id="H9.B.23", house=9, signification="fortune", group="combination", kind="evaluable",
-        condition=C.Or(_LordDebilitated(9), C.CountInHouse(9, 1, "malefic")),
+        # NAVAMSA-DEBILITY LEG: BUILDABLE BUT HELD, MEASURED NET-NEGATIVE (2026-08-31).
+        # The stale-TODO audit correctly found the stated blocker gone — VargaDignity resolves
+        # "LORD_OF:n" through _resolve_planet, so `VargaDignity("LORD_OF:9","D9",{"debil"})`
+        # compiles today and is verbatim faithful to Raman's "debilitated (in sign or
+        # Navamsa)". It was implemented and MEASURED: the rule's fire rate goes 
+        # to 123/242 and NH.chart_57's fortune inverts favourable -> afflicted against Raman.
+        # Net -1 exact, +1 inversion, so it is HELD under the net-negative rule rather than
+        # shipped for textual tidiness. Diagnosis for whoever re-opens: his sentence is a
+        # THREE-part conjunction of severity ("debilitated ... / weak / in a malefic
+        # shashtyamsa"), and adding one part as a bare OR-disjunct to an already-broad rule
+        # encodes his vocabulary without his threshold. Re-open with the 'weak' gate
+        # (effective_strength) applied TOGETHER with the D9 leg, not beside it.
+        condition=C.Or(_LordDebilitated(9), _UndignifiedMaleficInHouse(9)),  # R2 NARROW: HTJAH-II:7468-7470
         fortified=None,
         afflicted="the 9th lord debilitated (in sign or Navamsa) / weak / in a malefic shashtyamsa, "
-                  "OR malefics occupying the 9th → unfortunate in life. Encoded on D1 9th-lord "
-                  "debility and malefics-in-9th; the malefic-shashtyamsa (D60), the 'weak' gate, "
-                  "and 9th-lord-Navamsa-debility (needs a lord-aware VargaDignity not yet in the "
-                  "algebra) are deferred. TODO(predicate: D60 shashtyamsa, planet-strength gate, "
-                  "9th-lord-Navamsa-debility)",
+                  "OR malefics occupying the 9th → unfortunate in life. Encoded on 9th-lord "
+                  "debility in BOTH D1 and D9, and malefics-in-9th; the malefic-shashtyamsa (D60 "
+                  "named classes are unencoded corpus-wide) and the 'weak' gate remain deferred. "
+                  "TODO(predicate: D60 shashtyamsa, planet-strength gate)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7463)),
     RuleRecord(
         id="H9.B.24", house=9, signification="fortune", group="combination", kind="evaluable",
@@ -700,7 +839,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 7498)),
     RuleRecord(
-        id="H9.C.35", house=9, signification="higher_learning", group="combination", kind="evaluable",
+        id="H9.C.35", house=9, signification="fortune", group="combination", kind="evaluable",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): reroute -> fortune.
         condition=_PlanetInHouseNotWith(9, ("Mercury", "Jupiter")),
         fortified=None,
         afflicted="planets in the 9th not associated with Mercury and Jupiter → diseased, forlorn, "
@@ -742,7 +882,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "malefic sign) → goes abroad but good fortune evades him",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7501)),
     RuleRecord(
-        id="H9.D.40", house=9, signification="long_journeys", group="combination", kind="evaluable",
+        id="H9.D.40", house=9, signification="long_journeys", group="combination", kind="descriptive",
+        # 2026-10-28 rule-defect review (docs/raman_saab/research/rule_defects_review2_2026-10-28.json): descriptive.
         condition=C.And(C.Conjunct("Sun", "Moon"), C.Conjunct("Moon", "Saturn")),
         fortified=None,
         afflicted="the Sun, the Moon and Saturn in the same sign → wicked and deceitful, tries to "

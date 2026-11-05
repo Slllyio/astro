@@ -11,6 +11,7 @@ import pytest
 
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.sources import verify
+from corpus_presence import needs_corpus
 from app.raman_saab.doctrine.yogas import (
     YOGAS, FiredYoga, YogaRecord, detect_yogas, has_yoga)
 
@@ -28,6 +29,7 @@ def _yoga(yid: str) -> YogaRecord:
 
 
 # ── registry guards (spec §5.4 pattern) ──────────────────────────────────────
+@needs_corpus
 @pytest.mark.parametrize("yoga", list(YOGAS), ids=lambda y: y.id)
 def test_every_yoga_cites_a_real_corpus_line(yoga):
     """Every YogaRecord citation must resolve to an on-disk corpus line."""
@@ -396,7 +398,7 @@ class TestAsatyavadi:
 class TestDetectYogas:
     def test_returns_fired_yogas_with_verifying_citations(self):
         """detect_yogas surfaces exactly the active yogas, each with a citation
-        that resolves on disk."""
+        that resolves on disk (citation resolution needs the vendored corpus)."""
         fired = detect_yogas(_chart({"Mercury": 155.0, "Jupiter": 160.0}))
         assert isinstance(fired, tuple)
         assert all(isinstance(f, FiredYoga) for f in fired)
@@ -404,7 +406,9 @@ class TestDetectYogas:
         # benefic-4th-sign arm) legitimately co-fire on this two-planet fixture, and an
         # exact-list pin would break on every future broad addition
         assert "Y.VIPAREETA" in [f.id for f in fired]
-        assert all(verify(f.source) for f in fired)
+        from corpus_presence import HAS_CORPUS
+        if HAS_CORPUS:
+            assert all(verify(f.source) for f in fired)
 
     def test_empty_chart_fires_nothing(self):
         """A chart with no planets activates no yoga."""
@@ -1067,11 +1071,13 @@ class TestMatrunasaYoga:
         assert _yoga("Y.MATRUNASA").fires(c)
 
     def test_fires_on_the_199_navamsa_chain(self):
-        """Moon (l4) at 103.3 -> Libra navamsa -> Venus; Venus at 130 -> a navamsa owned by
-        Mercury; Mercury stands in H6 — the chain's terminal in a dusthana, with the Moon
-        itself UNAFFLICTED so only the 199 arm carries it. Engine-scanned, not head-math."""
+        """Moon (l4) at 103.3 -> Libra navamsa -> Venus; Venus at 129 (Leo 9d) -> Gemini
+        navamsa, owned by Mercury; Mercury stands in H6 — the chain's terminal in a dusthana,
+        with the Moon itself UNAFFLICTED so only the 199 arm carries it. Engine-scanned, not
+        head-math. Venus was at 130.0 (Leo 10d00', the 3rd/4th navamsa cusp) and only reached
+        Gemini through the off-by-one `deg // (30/9)` bug fixed in `varga.navamsa_sign`."""
         c = _chart({"Moon": 103.3, "Mars": 40.0, "Sun": 340.0, "Mercury": 160.0,
-                    "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0})
+                    "Jupiter": 250.0, "Venus": 129.0, "Saturn": 310.0})
         assert _yoga("Y.MATRUNASA").fires(c)
 
     def test_silent_when_moon_is_clean_and_the_chain_lands_well(self):
@@ -1532,6 +1538,32 @@ class TestBhagyaYoga:
                     "Mercury": 160.0, "Venus": 220.0, "Saturn": 310.0})
         assert not _yoga("Y.BHAGYA").fires(c)
 
+    @staticmethod
+    def _patch_strong(monkeypatch):
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Strong:
+            band = "strong"
+            decisively_weak = False
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Strong())
+
+    def test_cancer_lagna_jupiter_forms_it(self, monkeypatch):
+        """Raman's powerful case (3HCC:8005-8008): Cancer Lagna, Jupiter there exalted, lord
+        of the 9th aspecting the 9th — no Kendradhipatya dosha (Jupiter owns 6 and 9)."""
+        self._patch_strong(monkeypatch)
+        c = _chart({"Jupiter": 95.0, "Sun": 40.0, "Moon": 160.0, "Mars": 190.0,
+                    "Mercury": 220.0, "Venus": 250.0, "Saturn": 310.0}, asc_lon=90.0)
+        assert _yoga("Y.BHAGYA").fires(c)
+
+    def test_mithuna_lagna_jupiter_does_not(self, monkeypatch):
+        """Raman (3HCC:8008-8010): from Mithuna the yoga "becomes almost ineffective because
+        of Kendradhipatya dosha for Jupiter" (lord of the 7th and 10th), even when strong."""
+        self._patch_strong(monkeypatch)
+        c = _chart({"Jupiter": 70.0, "Sun": 40.0, "Moon": 160.0, "Mars": 190.0,
+                    "Mercury": 220.0, "Venus": 250.0, "Saturn": 310.0}, asc_lon=60.0)
+        assert not _yoga("Y.BHAGYA").fires(c)
+
 
 class TestJananatpurvamPitruMaranaYoga:
     def test_fires_when_the_entire_yoga_is_present(self):
@@ -1811,9 +1843,10 @@ class TestRaja262:
 
 class TestRaja263:
     def test_fires_on_uncombust_jupiter_in_ninth_with_a_friend(self):
-        # Jupiter in H9 joined by the Sun — a naisargika friend — and free of combustion
-        # on a stated chart.
-        c = _chart({"Jupiter": 250.0, "Sun": 255.0, "Moon": 40.0, "Mars": 100.0,
+        # Jupiter in H9 joined by the Sun — a naisargika friend — and free of combustion:
+        # the Sun sits 15d away, outside Jupiter's 11d orb. (At 255 it was 5d away; that only
+        # read un-combust before stated charts got their combustion pass, c5706858.)
+        c = _chart({"Jupiter": 250.0, "Sun": 265.0, "Moon": 40.0, "Mars": 100.0,
                     "Mercury": 130.0, "Venus": 190.0, "Saturn": 310.0})
         assert _yoga("Y.RAJA_263").fires(c)
 

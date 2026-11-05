@@ -4,6 +4,10 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import pytest
+
+from corpus_presence import needs_file
+
+_needs_features_smoke = needs_file("app/medini/data/dasha_stage_d_features_smoke.parquet")
 import torch
 
 from app.medini.ml.stage_d_dataset import (
@@ -25,6 +29,7 @@ class TestTimeBins:
         assert assign_time_bin(100 * 365.25) == K_BINS - 1
 
 
+@_needs_features_smoke
 class TestStageDDataset:
     def test_dataset_length_matches_dataframe(self) -> None:
         smoke = pd.read_parquet("app/medini/data/dasha_stage_d_features_smoke.parquet")

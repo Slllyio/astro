@@ -7,6 +7,7 @@ import pytest
 
 from app.raman_saab.chart.varga import SUPPORTED_VARGAS
 from app.raman_saab.doctrine.sources import verify
+from corpus_presence import needs_corpus
 from app.raman_saab.doctrine.varga_domains import DOMAINS, domain_for
 
 _SEVEN = {"Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
@@ -18,6 +19,7 @@ class TestTableShape:
         assert len(DOMAINS) == 16
         assert [d.n for d in DOMAINS] == sorted(d.n for d in DOMAINS)
 
+    @needs_corpus
     def test_every_citation_resolves_on_disk(self) -> None:
         """Each row's source passes the citation-resolution firewall."""
         for d in DOMAINS:

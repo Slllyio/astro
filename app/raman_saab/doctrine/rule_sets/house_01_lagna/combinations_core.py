@@ -234,11 +234,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         # the GENERAL #28 line per batch protocol.
         id="H1.C.28b", house=1, signification="self", group="combination",
         kind="evaluable",
-        condition=C.Or(*(C.And(C.InRashiHouse(p, 1),
-                               C.FunctionalNature(p, {"malefic"}))
-                         for p in _VISIBLE)),
+        # R2 NARROW (2026-10-24, engine-blind citation review): HTJAH-I:1131 says "MANY evil
+        # planets in Lagna"; Chart 20 (HTJAH-I:2003-2010) has two. One is never judged there.
+        condition=C.AtLeastN(2, [C.And(C.InRashiHouse(p, 1),
+                                        C.FunctionalNature(p, {"malefic"}))
+                                  for p in _VISIBLE]),
         fortified=None,
-        afflicted="a functional malefic (per-Lagna nature) situated in the Lagna "
+        afflicted="two or more functional malefics (per-Lagna nature) situated in the Lagna "
                   "is not desirable — spoils the first-house indications",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 1131)),

@@ -1,0 +1,150 @@
+{
+ "answers": {
+  "Bill_Clinton": {
+   "sha256": "009a13e8538f855c63abe851381bab798c1df91cbf43df0ea25b7d88568a0368",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "David_Bowie": {
+   "sha256": "c50dcbc7f84543e74bc935b1e121ef7379cd9817ed3c78d9e910062561bde2e8",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Emmanuel_Macron": {
+   "sha256": "40d97d34110694ed960b0be018717267ca4eb8b14f0391ee99504fa0a18ee122",
+   "answers": 78,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Jacinda_Ardern": {
+   "sha256": "44d0b61c0cba5b381f17a64c1d0c3f55e76bce47090392003d77047e8e5a9121",
+   "answers": 79,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "John_Lennon": {
+   "sha256": "55d885192a4788ad307917de3ebe2e3da466f577b4baf323929e1d83887f4488",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Justin_Trudeau": {
+   "sha256": "ed5a35ba67f06ead3745bd52c7038d84a4863718418acfdaa4e8e6dffdce977c",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Madonna": {
+   "sha256": "d84d7c228634e74f3ec5eb4f557207713abde199b2cf4462117381ea4eb5a554",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Margaret_Thatcher": {
+   "sha256": "985117271fe9114663715cc797f172a3c943aa0f3007b45bac9ca3936cef0438",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Michael_Jackson": {
+   "sha256": "1c448f52346620fbc8ee94d85d43a5336c1af0ed6fc27ae94c46f5c9a6f73820",
+   "answers": 80,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Mother_Teresa": {
+   "sha256": "05836f72e2048c848247c8349dc170244714897a62ff4a8eccc0192622ff9062",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Muhammad_Ali": {
+   "sha256": "7324a3765be5c4d80b8bcb86195d594733a1fcac855d8d97a9cace6bc8d27aff",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Steve_Jobs": {
+   "sha256": "fa0d84e109e9072963ab3d99c1da335d851d4ccdffe68cd6f7fd3ac0ead04d9c",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  }
+ },
+ "answers_contaminated": {
+  "Bill_Clinton": {
+   "sha256": "b69c717478e59f50a4ebafc4d858d160d42874dc8841ad9ddb15fbd307680c72",
+   "answers": 113,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "David_Bowie": {
+   "sha256": "3b8a4f43c9c83046c82abfe369e01fa417dcd49f72abc1f912182ea726ee1d55",
+   "answers": 100,
+   "free_text": 2,
+   "off_vocabulary": {}
+  },
+  "Emmanuel_Macron": {
+   "sha256": "76048413c9307829ee59a366e8e1ab0e47999972b379683740d7eff1ff60075b",
+   "answers": 92,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Jacinda_Ardern": {
+   "sha256": "52d86fa373f7583a1caa4940c5d60e962cd84d3485690467d6e411f3a2c78ddc",
+   "answers": 103,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "John_Lennon": {
+   "sha256": "4960b93a168b7e2f2b6c115211019b8bfec9118491981a9951403a1e0856b522",
+   "answers": 104,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Justin_Trudeau": {
+   "sha256": "6ab76cdb34f1ec74a30b9fbb87eb8c964046cc5f524aa6feb7e0588ac2aac398",
+   "answers": 103,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Madonna": {
+   "sha256": "8fd47485012f0aac66a124677211acdbcb1903c5049f3a46dc9426f84bbc37d3",
+   "answers": 108,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Margaret_Thatcher": {
+   "sha256": "0209e4968c579240e48de824a10058103bbba077d161be3e8aeb166f96595f33",
+   "answers": 104,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Michael_Jackson": {
+   "sha256": "04d3859e7f785a59b0a20bbcbf347f7d708feee270a7fcb248be8fa630b3c9b1",
+   "answers": 102,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Mother_Teresa": {
+   "sha256": "f49eefa974e3cedc707da05ab0ed29c62d84c2dedcef0d97bcada4149422203f",
+   "answers": 103,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Muhammad_Ali": {
+   "sha256": "525e924ef51e2d33298d1ad80a7664e6037631760022456b9a8eba8aeb464b51",
+   "answers": 110,
+   "free_text": 2,
+   "off_vocabulary": {}
+  },
+  "Steve_Jobs": {
+   "sha256": "0248a29121a0ddb796b56e33aa26e79e5b413784694639b63451e0c7cae19296",
+   "answers": 106,
+   "free_text": 1,
+   "off_vocabulary": {}
+  }
+ }
+}

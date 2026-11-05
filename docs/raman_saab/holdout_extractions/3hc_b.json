@@ -1,0 +1,1686 @@
+[
+ {
+  "chart_no": 54,
+  "first_line": 4257,
+  "last_line": 4283,
+  "raw_birth": "Chert No. S4.-Born on 25'7-1896 ut 10'52a.m' Lat lS' 55' N.; Long.72\" 54' E. Balance of Moon's Dasa at birth : yeats $4'24.",
+  "birth": {
+   "date": "1896-07-25",
+   "time": "10:52",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 55,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 54,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lat_min: 'lS' 55'' read 18 55 (raw 'lS' -> 18)",
+   "dasa years: '$4'24' first digit illegible"
+  ],
+  "dasa_balance": "Moon ?-4-24 (raw '$4'24')",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Time basis not printed. Example of Vapee Yoga only; no life conclusions."
+ },
+ {
+  "chart_no": 55,
+  "first_line": 4355,
+  "last_line": 4373,
+  "raw_birth": "Chart No. 55.- Born on t0'8-1937 at 4'57 a'm' ['at' 7\" N' , Inng.79' 45' E.",
+  "birth": {
+   "date": "1937-08-10",
+   "time": "04:57",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 7,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 45,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "day: 't0' read 10"
+  ],
+  "dasa_balance": "Moon 5-10-15",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Vallaki Yoga illustration; no life conclusions. Time basis not printed."
+ },
+ {
+  "chart_no": 56,
+  "first_line": 4396,
+  "last_line": 4418,
+  "raw_birth": "Chrrt No. 56.-Born on Il-ft-1916 at 5-55 a.m. I.at. I3o 35' N.; Long.77\" 35' E.",
+  "birth": {
+   "date": null,
+   "time": "05:55",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 35,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date: raw 'Il-ft-1916' -> day 11, month illegible ('ft'; possibly 11), year 1916"
+  ],
+  "dasa_balance": "Mercury 9-6-7",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Raman compares 56 and 57: '56 is marred by the weakness of Lagnadhipati ... In point of fame and wealth, Chart No. 57 is decidedly more powerful' - comparative strength, not a life conclusion; not recorded."
+ },
+ {
+  "chart_no": 57,
+  "first_line": 4399,
+  "last_line": 4425,
+  "raw_birth": "Chart No i7.-Born on 29'12-1893 at 7 p.m. Int. Il' N.; Long.78'40' E.",
+  "birth": {
+   "date": "1893-12-29",
+   "time": "19:00",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 11,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 78,
+   "lon_min": 40,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lat: raw 'Il'' read 11"
+  ],
+  "dasa_balance": "Moon 8-1-15",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Only comparative potential ('decidedly more powerful' in fame and wealth than 56); no stated life outcome, not recorded."
+ },
+ {
+  "chart_no": 58,
+  "first_line": 4449,
+  "last_line": 4488,
+  "raw_birth": "Chart No. SE.-Born on 4.3-lgg6 at II-30 p.m. Lar. t6\" 40.",
+  "birth": {
+   "date": "1886-03-04",
+   "time": "23:30",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 16,
+   "lat_min": 40,
+   "lat_dir": "N",
+   "lon_deg": 81,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "year: raw 'lgg6' -> 1886 (alt 1896)",
+   "lon: raw 'lll\"' on line 4474 read 81 (uncertain)",
+   "time basis not printed"
+  ],
+  "dasa_balance": "Rahu 12-5-1 (raw 'l2-5-1')",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H12",
+    "signification": "incarceration",
+    "verdict": "afflicted",
+    "quote": "Clrart No. 58 belongs to an ex-speaker of provjncial Legislative Assembly who has suffered incarceration a number of times",
+    "line": 4465,
+    "why": "Raman states the native was imprisoned repeatedly."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Clrart No. 58 belongs to an ex-speaker of provjncial Legislative Assembly",
+    "line": 4465,
+    "why": "The native rose to be Speaker of a provincial Legislative Assembly."
+   }
+  ],
+  "note": "Longitude text 'N.; Long. lll\" E.' is displaced to line 4474."
+ },
+ {
+  "chart_no": 59,
+  "first_line": 4472,
+  "last_line": 4493,
+  "raw_birth": "Chart No. S9.-Born'on 7'9-t904 at l'50 pn' (I'S'T') I4t. 18\" 52' N. ; Long. 72' 35' E.",
+  "birth": {
+   "date": "1904-09-07",
+   "time": "13:50",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 52,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time raw 'l'50 pn' read 1:50 pm"
+  ],
+  "dasa_balance": "Mercury 15-0-24",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "The native of the horoscope was a Joint-secretary in the Govern- ment.of India and had been getting on very well.",
+    "line": 4481,
+    "why": "High government office and steady success in it."
+   }
+  ]
+ },
+ {
+  "chart_no": 60,
+  "first_line": 4544,
+  "last_line": 4555,
+  "raw_birth": "Chsrt No. ffi.-Born on g-12-1921 at l2-IS a.n. I-ong.0\" 5. llr.: I-at.5i' 30' N.",
+  "birth": {
+   "date": "1921-12-09",
+   "time": "00:15",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 51,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 0,
+   "lon_min": 5,
+   "lon_dir": "W",
+   "place": null
+  },
+  "uncertain": [
+   "day raw 'g' read 9 (alt 8)",
+   "time raw 'l2-IS a.n.' read 12:15 a.m. (minutes 'IS' -> 15)",
+   "lat raw '5i' 30'' read 51 30 (London)",
+   "lon raw '0\" 5. llr.' read 0 5 W",
+   "dasa raw '5-l-lg' read 5-1-19"
+  ],
+  "dasa_balance": "Jupiter 5-1-19 (raw '5-l-lg')",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "lt pertains to a Commander in the British Royal Air Force.",
+    "line": 4545,
+    "why": "Native held a commander's rank in the RAF."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "But he is neither poor nor cruel.",
+    "line": 4548,
+    "why": "Raman explicitly denies the poverty Sula Yoga promises for this native."
+   }
+  ]
+ },
+ {
+  "chart_no": 61,
+  "first_line": 4556,
+  "last_line": 4573,
+  "raw_birth": "Cbart No. 61.-Born on 9-10-1923 at 6-38 p.m. (I.S.T.) Lat, 10\" J8' N. ,' Long. 79' 25' E. Balance of Moon's Dasa at birth : years 7-0-0.",
+  "birth": {
+   "date": "1923-10-09",
+   "time": "18:38",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 38,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 25,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lat_min raw 'J8' read 38 (alt 58)"
+  ],
+  "dasa_balance": "Moon 7-0-0",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "'effects of yuga Yoga have been considerably restricted' - statement about the yoga, not a life matter; not recorded."
+ },
+ {
+  "chart_no": 62,
+  "first_line": 4591,
+  "last_line": 4605,
+  "raw_birth": "Chart No. 62.-Born Iong. 77' 35' E. Threc Hundred lmportant Combinations on I-11-1910 at I p.m. ktt. 13\" N. ;",
+  "birth": {
+   "date": "1910-11-01",
+   "time": "13:00",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Rahu 15-6-17",
+  "lagna_sign_stated": null,
+  "same_as": "Birth data identical to Chart No. 50 (line 4133: 'l-lI-1910 at 1p.m. Lat. 13' N') - outside this range, likely same native",
+  "conclusions": [],
+  "note": "Rajju Yoga illustration only."
+ },
+ {
+  "chart_no": 63,
+  "first_line": 4886,
+  "last_line": 4894,
+  "raw_birth": "Chrrt No. 63-Born on 8-8-1912 at 7-23 p.m. (L.M.T.) Lat. 13' N. ; Iong. 77' 34 E.",
+  "birth": {
+   "date": "1912-08-08",
+   "time": "19:23",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Mars 6-0-10",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Charts 72, 87, 89 (7-35 pm IST), 93",
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "afflicted",
+    "quote": "The result is obvious, viz., the native has a lean and emaciated physical appearance.",
+    "line": 4893,
+    "why": "Krisanga Yoga outcome: emaciated body."
+   }
+  ]
+ },
+ {
+  "chart_no": 64,
+  "first_line": 4919,
+  "last_line": 4941,
+  "raw_birth": "Chart No. 64.-Born on 29'7-1909 at Gh. I-15 after surrise ; IAt. 13' ll; Long. Tf 34' E.",
+  "birth": {
+   "date": "1909-07-29",
+   "time": null,
+   "time_basis": "ghatikas_after_sunrise",
+   "ghatikas": "1-15",
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "ghatikas raw 'I-15' read 1-15",
+   "lat raw '13' ll' read 13 N",
+   "lon raw 'Tf 34'' read 77 34"
+  ],
+  "dasa_balance": "Mercury 6-5-23",
+  "lagna_sign_stated": "Cancer",
+  "same_as": null,
+  "conclusions": [],
+  "note": "Raman: 'The subject has a stout body' (Dehasthoulya, corpulence) - Raman does not frame corpulence as good or bad, so not recorded."
+ },
+ {
+  "chart_no": 65,
+  "first_line": 5027,
+  "last_line": 5039,
+  "raw_birth": "Chart No. 65.-Born on 30-6-1897 at 7-20 p.n. (L.M.T.) IAt. 8\" N. ; Long. 79\" 45' E.",
+  "birth": {
+   "date": "1897-06-30",
+   "time": "19:20",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 8,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 45,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Jupiter 12-1-13",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "Saturn's Dasa proved highly beneficial from the point of view of of finance, prosperity having set in, as soon as Venus' sub-period commenced.",
+    "line": 5037,
+    "why": "Raman reports actual financial prosperity in Saturn Dasa."
+   }
+  ]
+ },
+ {
+  "chart_no": 66,
+  "first_line": 5040,
+  "last_line": 5051,
+  "raw_birth": "Chart No.66.-Born on 5-9-1906 at 9-16 a.m. (L.M.T,) Lat.25\" N.; LonS.84' E.",
+  "birth": {
+   "date": "1906-09-05",
+   "time": "09:16",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 25,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 84,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Saturn 0-0-9",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "father",
+    "verdict": "favourable",
+    "quote": "during Mercury's Dasa the native's father became extremely wealthy",
+    "line": 5047,
+    "why": "Father prospered greatly during the native's Mercury Dasa."
+   }
+  ],
+  "note": "Lagna implied Libra (Mars lord of 2nd, Mercury lord of 9th) but not named."
+ },
+ {
+  "chart_no": 67,
+  "first_line": 5052,
+  "last_line": 5082,
+  "raw_birth": "Chert No. 67.-Born on 20-8-1891 at l0 p.m. Lat. 19\" N.; Long.72' 35' E.",
+  "birth": {
+   "date": "1891-08-20",
+   "time": "22:00",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 19,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Rahu 2-6-15",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Only yoga observations (Gajakesari, fortified 11th); no life conclusion."
+ },
+ {
+  "chart_no": 68,
+  "first_line": 5083,
+  "last_line": 5102,
+  "raw_birth": "Chrt No, 5t.-Born on 3O-8-1927 at l2-30 p.m. (L.M.T.) Lat. l2o N.; Long.72' 50' E.",
+  "birth": {
+   "date": "1927-08-30",
+   "time": "12:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 50,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lat raw 'l2o' read 12; Chart 100 prints the same data with '2lo' (21) - 21 N more likely (Surat 21 N 72 50 E)",
+   "chart no raw '5t'"
+  ],
+  "dasa_balance": "Moon 3-8-21",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Chart No. 100 (30-?-1927 12-30 pm LMT, Long 72 50 E, Moon 3-?-21)",
+  "conclusions": []
+ },
+ {
+  "chart_no": 69,
+  "first_line": 5178,
+  "last_line": 5196,
+  "raw_birth": "Cbrrt No. 69.-Born on 13' N.; Long.77' 35' E, Threc Hundrcd Importsnt Combinctioos I5-5-1909 at 6 a.m. ( L.M.T.) L^at.",
+  "birth": {
+   "date": "1909-05-15",
+   "time": "06:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Jupiter 3-1-16",
+  "lagna_sign_stated": "Taurus",
+  "same_as": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 70,
+  "first_line": 5197,
+  "last_line": 5214,
+  "raw_birth": "Chrrt No. 7V-Born on 29-1.t940 at 7-06 a. n, (LS.T.) Lat.30\" 12' N.; Lons.67\" 02' E.",
+  "birth": {
+   "date": "1940-01-29",
+   "time": "07:06",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 30,
+   "lat_min": 12,
+   "lat_dir": "N",
+   "lon_deg": 67,
+   "lon_min": 2,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date raw '29-1.t940'"
+  ],
+  "dasa_balance": "Rahu 1-7-05",
+  "lagna_sign_stated": "Leo",
+  "same_as": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 71,
+  "first_line": 5228,
+  "last_line": 5240,
+  "raw_birth": "Chrrt No. 71.-brn on 2-6-1892 at i0-16 a.m. Lat. 13\" N. : Long.77\" 35' E.",
+  "birth": {
+   "date": "1892-06-02",
+   "time": "10:16",
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time raw 'i0-16 a.m.' read 10:16 (alt 5:16? 'i' sometimes = 5)"
+  ],
+  "dasa_balance": "Venus 11-6-9",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Only 'very powerful Dhana Yoga' - a yoga statement."
+ },
+ {
+  "chart_no": 72,
+  "first_line": 5282,
+  "last_line": 5299,
+  "raw_birth": "ChertNo. 12.-Born on 8-j-1912 at 7-23 p.m. (L.L(.T.) Lat. 13\" N.: Long.77\" 34' E.",
+  "birth": {
+   "date": "1912-08-08",
+   "time": "19:23",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "month raw 'j' read 8 (matches Chart 63)"
+  ],
+  "dasa_balance": "Mars 6-0-10",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Charts 63, 87, 89, 93",
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "The native started life with no linancial facilities but earned decently by his own exenions.",
+    "line": 5298,
+    "why": "Self-earned wealth: earned decently by his own exertions."
+   }
+  ]
+ },
+ {
+  "chart_no": 73,
+  "first_line": 5352,
+  "last_line": 5357,
+  "raw_birth": "Chort No. 13.-Born on 25'4-1945 at 4-7 p.m' I.S.T. Iat. lE 52' N.: Long.72' j5' E.",
+  "birth": {
+   "date": "1945-04-25",
+   "time": "16:07",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 52,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lat raw 'lE 52'' read 18 52",
+   "lon raw 'j5' read 35 (alt 55)"
+  ],
+  "dasa_balance": "Moon 1-5-16",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 74,
+  "first_line": 5406,
+  "last_line": 5422,
+  "raw_birth": "Chart No. 14.-Born on I-6-1g95 at Gh. 45-12 after Sunrise at 13\" N,; 77\" 34' E.",
+  "birth": {
+   "date": "1895-06-01",
+   "time": null,
+   "time_basis": "ghatikas_after_sunrise",
+   "ghatikas": "45-12",
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "year raw 'I-6-1g95' read 1895 (alt 1885)",
+   "dasa years raw 't' read 1 (Sun dasa max 6)"
+  ],
+  "dasa_balance": "Sun 1-6-13 (raw 't-6-13')",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "mixed",
+    "quote": "Till the age of 50, the native had never seen the bright side of life but beginning from the 5lst year, father and son jointly floated a small business which steadily developed into a substantial concern.",
+    "line": 5409,
+    "why": "Poverty until 50, then substantial wealth - both poles operative."
+   },
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "favourable",
+    "quote": "beginning from the 5lst year, father and son jointly floated a small business which steadily developed into a substantial concern.",
+    "line": 5410,
+    "why": "Putramooladdhana: the son was the channel of the native's fortune."
+   }
+  ]
+ },
+ {
+  "chart_no": 75,
+  "first_line": 5690,
+  "last_line": 5717,
+  "raw_birth": "Chart No. 7i.-Born on 3-3-IBg4 ot Lat. 12' 52' N.; Long.74' 54' E. t59 3-16 p.m. (L.M.T)",
+  "birth": {
+   "date": "1894-03-03",
+   "time": "15:16",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 52,
+   "lat_dir": "N",
+   "lon_deg": 74,
+   "lon_min": 54,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "chart no raw '7i'",
+   "year raw 'IBg4' read 1894"
+  ],
+  "dasa_balance": "Sun 2-5-18",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Bhaskara Yoga illustration; discussion ('The above horoscope') at 5690 precedes the birth line."
+ },
+ {
+  "chart_no": 76,
+  "first_line": 5737,
+  "last_line": 5749,
+  "raw_birth": "ChrrtNo.75.-Born on 29-2-1932 at 5-30 am. (L.M.T.) Iit. l3o N.: Long.77\" 35\" E.",
+  "birth": {
+   "date": "1932-02-29",
+   "time": "05:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "chart no printed '75' but sequence (75 at 5702, 77 at 5769) implies 76",
+   "dasa raw 'I l'+5' read 11-?-5"
+  ],
+  "dasa_balance": "Mercury 11-?-5 (raw 'I l'+5')",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Marud Yoga illustration only."
+ },
+ {
+  "chart_no": 77,
+  "first_line": 5769,
+  "last_line": 5775,
+  "raw_birth": "Chart No. 11-Born on 7-5-1861 at 4-2 a.m. (L.M.T.) Lat. 22\" 40' N.; Long.88\" 30' E.",
+  "birth": {
+   "date": "1861-05-07",
+   "time": "04:02",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 22,
+   "lat_min": 40,
+   "lat_dir": "N",
+   "lon_deg": 88,
+   "lon_min": 30,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Mercury 9-5-22",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "The native enjoyed all the blessings of Saraswathi Yoga.",
+    "line": 5774,
+    "why": "Raman confirms the yoga's results (poet, famous, learned, rich, praised) fructified in this native's life as a whole."
+   }
+  ]
+ },
+ {
+  "chart_no": 78,
+  "first_line": 5825,
+  "last_line": 5829,
+  "raw_birth": "Chart No. 7t.-Born on 224-1915 at dr30 a.m. (I.S.T,) at12'58' N.;77\" 34' E.",
+  "birth": {
+   "date": "1915-04-22",
+   "time": null,
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 58,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date raw '224-1915' read 22-4-1915",
+   "time raw 'dr30 a.m.' hour illegible (?:30 a.m.)"
+  ],
+  "dasa_balance": "Moon 4-10-2",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "vision",
+    "verdict": "afflicted",
+    "quote": "The native lost his sighi inhis lOth year during Chandra Dasa Sani Bhukthi.",
+    "line": 5829,
+    "why": "Native became blind at age ~10."
+   }
+  ]
+ },
+ {
+  "chart_no": 79,
+  "first_line": 5920,
+  "last_line": 5948,
+  "raw_birth": "Chart No. 79,-Born on Lat. 18' N,; I.ong.84\" E. r57 I2-2-1856 nt I2-2t p.n. (L.M.T.)",
+  "birth": {
+   "date": "1856-02-12",
+   "time": "12:21",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 84,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Venus 6-11-3",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Charts 88 and 105 (Chart 105 = Prof. B. Suryanarain Rao; 105 prints balance Venus 6-8-12)",
+  "conclusions": [
+   {
+    "house": "H9",
+    "signification": "dharma",
+    "verdict": "favourable",
+    "quote": "The subject of the horoscope was famous for his generous instincts and for the huge charities by way of food he used to give to the Brahmins, the poor and the needy.",
+    "line": 5922,
+    "why": "Annadana: famous for large food charities."
+   }
+  ],
+  "note": "The Annadana remark says 'The above chart' (5920) and Chart 79's birth line follows on the next page (5930); attribution to Chart 79 is by layout."
+ },
+ {
+  "chart_no": 80,
+  "first_line": 6037,
+  "last_line": 6063,
+  "raw_birth": "Chut No. t0.-turn on 16-10-19lg at 2-20 p.m. (L.tW,, )Lat. 13\" N.; Long. 72\" 34' E.",
+  "birth": {
+   "date": null,
+   "time": "14:20",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date raw '16-10-19lg' -> 1918 or 1919",
+   "lon raw '72\" 34'' printed; 77 34 more likely for 13 N (Bangalore)",
+   "time basis raw '(L.tW,, )' read LMT"
+  ],
+  "dasa_balance": "Rahu 12-10-21",
+  "lagna_sign_stated": "Aquarius (derived: 'the 3rd house falls in Aries')",
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H3",
+    "signification": "siblings",
+    "verdict": "mixed",
+    "quote": "The native has five brothers and sisters alive. Unfortunately, the 3rd house has acquried the lordship of Mars in all the six vargas. Consequently, the relationship is not very cordial for no fault of the native.",
+    "line": 6059,
+    "why": "Many surviving siblings (favourable) but uncordial relations (afflicted) - both named."
+   }
+  ]
+ },
+ {
+  "chart_no": 81,
+  "first_line": 6070,
+  "last_line": 6098,
+  "raw_birth": "Chrrt No. El.-Born on 22-7-1916 at 8-31 p.m. (LS.T.) Iat. 9\" 30' N. ; Long. 76\" 13' E.",
+  "birth": {
+   "date": "1916-07-22",
+   "time": "20:31",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 9,
+   "lat_min": 30,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 13,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Venus 16-4-6",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Sodaranasa illustration: only placements described, no outcome stated."
+ },
+ {
+  "chart_no": 82,
+  "first_line": 6156,
+  "last_line": 6163,
+  "raw_birth": "Chart No. B2.-Botn on S-II-1937 at 4-24 p.m. (I.S.T.) Lat. l3o N.: Long.77\" 35' E.",
+  "birth": {
+   "date": "1937-11-05",
+   "time": "16:24",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "day raw 'S' read 5"
+  ],
+  "dasa_balance": "Saturn 1-0-25",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Dwadasa Sahodara illustration; no outcome stated."
+ },
+ {
+  "chart_no": 83,
+  "first_line": 6211,
+  "last_line": 6220,
+  "raw_birth": "Chart No. 83-Born on t4-7-1926 at 3-21 p.m. (I.S.T.) Lat. 13\" N. ; Long. 77\" 35' E.",
+  "birth": {
+   "date": "1926-07-14",
+   "time": "15:21",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "day raw 't4' read 14"
+  ],
+  "dasa_balance": "Venus 11-9-0",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "The native even from a very young age was a dare-devil.",
+    "line": 6219,
+    "why": "Parakrama Yoga fructified: great courage."
+   }
+  ]
+ },
+ {
+  "chart_no": 84,
+  "first_line": 6246,
+  "last_line": 6261,
+  "raw_birth": "Chart No. U.-Born on I9-12-1630 at 6-26 p.m. (L.M.f )Iat. 18\" 32' N.; Long. 73\" 53' E.",
+  "birth": {
+   "date": "1630-12-19",
+   "time": "18:26",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 32,
+   "lat_dir": "N",
+   "lon_deg": 73,
+   "lon_min": 53,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "chart no raw 'U'"
+  ],
+  "dasa_balance": "Mars 4-1-17",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "The native was an expert in strategy and with his limited resources defied the Mughal Emperor, and brought him down to his knees.",
+    "line": 6258,
+    "why": "Yuddha Praveena Yoga fructified: expert strategist and victorious."
+   }
+  ]
+ },
+ {
+  "chart_no": 85,
+  "first_line": 6337,
+  "last_line": 6356,
+  "raw_birth": "Chart No. t3.-Born on 24-9-I8n ot Gh. 37-10 after Sunrise. Iat. 13' N. ; Long 77' 35' E.",
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": "ghatikas_after_sunrise",
+   "ghatikas": "37-10",
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "chart no raw 't3'",
+   "date raw '24-9-I8n' -> 24-9-18?? year's last two digits illegible"
+  ],
+  "dasa_balance": "Mercury 7-3-24",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "property",
+    "verdict": "favourable",
+    "quote": "The subject owns a very good house.",
+    "line": 6340,
+    "why": "Uttama Griha Yoga fructified."
+   }
+  ]
+ },
+ {
+  "chart_no": 86,
+  "first_line": 6381,
+  "last_line": 6399,
+  "raw_birth": "Chart No.86.-Born on 15-12-1899 at 5-42 a.m. (L.M.T.) Lat. 10\" 45'N.; Long. 5h. 16m.48s. E.",
+  "birth": {
+   "date": "1899-12-15",
+   "time": "05:42",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 45,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 12,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lon printed in time units '5h. 16m.48s. E.' = 79 12 E"
+  ],
+  "dasa_balance": "Sun 1-2-12",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "property",
+    "verdict": "favourable",
+    "quote": "The native possesses quite a good number of palatial buildings though the place of his own residence is as unpretentious as could be imagined.",
+    "line": 6388,
+    "why": "Owns many mansions (Vichitra Saudha Prakara)."
+   }
+  ]
+ },
+ {
+  "chart_no": 87,
+  "first_line": 6420,
+  "last_line": 6454,
+  "raw_birth": "Chgrt No. t7.-Born on 8-8-1912 at 7-2-1 p.m. (L.M.T.) I-at. 13\" N.; Long.77' 35' E.",
+  "birth": {
+   "date": "1912-08-08",
+   "time": "19:21",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time raw '7-2-1' read 7:21 (alt 7:23 as in Charts 63/72/93)"
+  ],
+  "dasa_balance": "Mars 6-0-10",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Charts 63, 72, 89, 93",
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "property",
+    "verdict": "favourable",
+    "quote": "Some effort was necessary on the part of the native to own a decent residence.",
+    "line": 6422,
+    "why": "He did come to own a decent house, though with some effort."
+   }
+  ],
+  "note": "Raman judges this from Chandra Lagna."
+ },
+ {
+  "chart_no": 88,
+  "first_line": 6480,
+  "last_line": 6506,
+  "raw_birth": "Chart No. 88.-Bont on Lat. 18' N.: Long.84' E. Three Hundred Important Combilations l2-2-1856 at I2-21 p.m. (L.M.T.)",
+  "birth": {
+   "date": "1856-02-12",
+   "time": "12:21",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 84,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Venus 6-11-3",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Charts 79 and 105 (Prof. B. Suryanarain Rao)",
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "happiness",
+    "verdict": "favourable",
+    "quote": "The subject of the horos- cope was loved and respected by all his relatives and friends for his character and generous instincts.",
+    "line": 6482,
+    "why": "Bandhu Pujya Yoga (4th house = relatives) fructified; no 'relatives' key in H4 vocabulary, mapped to happiness."
+   }
+  ],
+  "note": "Gandhi is cited at 6507 without birth data - not a chart, not extracted."
+ },
+ {
+  "chart_no": 89,
+  "first_line": 6579,
+  "last_line": 6601,
+  "raw_birth": "Chart No. t9,-Born on Lat. 13\" N.; Long. 77\" 35 tE9 8-8-1912 at 7-35 p.m. (LS.T.| E.",
+  "birth": {
+   "date": "1912-08-08",
+   "time": "19:35",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "chart no raw 't9'"
+  ],
+  "dasa_balance": "Mars 6-0-10",
+  "lagna_sign_stated": null,
+  "same_as": "Probably same native as Charts 63/72/87/93 (same date, same balance Mars 6-0-10; time given here as 7-35 pm IST vs 7-23 pm LMT elsewhere)",
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "afflicted",
+    "quote": "The mother died in the 2nd year of the native.",
+    "line": 6581,
+    "why": "Early death of mother."
+   }
+  ]
+ },
+ {
+  "chart_no": 90,
+  "first_line": 6607,
+  "last_line": 6639,
+  "raw_birth": "Chart No, 90.-Born on Lat. 13\" N.; Long. 76' 9' E. Three Hundred Important Combinations l9-6-1904 at 7-30 a.m. (L M.7-.)",
+  "birth": {
+   "date": "1904-06-19",
+   "time": "07:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 9,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Venus 15-11-3",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "afflicted",
+    "quote": "The native lost his mother early.",
+    "line": 6613,
+    "why": "Early loss of mother."
+   }
+  ]
+ },
+ {
+  "chart_no": 91,
+  "first_line": 6614,
+  "last_line": 6661,
+  "raw_birth": "Cbart No. 9l.-Born on l9-l-1913 at 8-J0 tt.rti. (t.S.T.) I-at. 13\" N.; Long.77' 35' E.",
+  "birth": {
+   "date": "1913-01-19",
+   "time": "08:30",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time raw '8-J0' read 8:30"
+  ],
+  "dasa_balance": "Moon 3-2-3",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "afflicted",
+    "quote": "The native lost his mother when he was about9 years during the Bhukthi of Venus (4th lord) and the Dasa of Mars.",
+    "line": 6643,
+    "why": "Loss of mother at about 9."
+   }
+  ]
+ },
+ {
+  "chart_no": 92,
+  "first_line": 6745,
+  "last_line": 6781,
+  "raw_birth": "Chart No. 9i2.-Born on 4'4-1919 at 12 noon (L.M.T.) Lat. 38' 53' N:; Iing. 77\" 3' E.",
+  "birth": {
+   "date": "1919-04-04",
+   "time": "12:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 38,
+   "lat_min": 53,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 3,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lon_dir printed E; 38 53 N 77 3 is Washington D.C., which is W"
+  ],
+  "dasa_balance": "Mars 3-0-26",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "NOT A NATIVE: Raman says it is 'the horoscope of an impor- tant InternationalPact and not that ofan individual'. Exclude from natal scoring."
+ },
+ {
+  "chart_no": 93,
+  "first_line": 6836,
+  "last_line": 6870,
+  "raw_birth": "Chert No. 93.-Born on 8-8-1912 at 7-23 p.m. (L.M'f.) Ldt. 13\" N., long.77' 35' E.",
+  "birth": {
+   "date": "1912-08-08",
+   "time": "19:23",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "dasa raw '6-&10' read 6-0-10"
+  ],
+  "dasa_balance": "Mars 6-0-10",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Charts 63, 72, 87, 89",
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "vehicles",
+    "verdict": "favourable",
+    "quote": "The native acquired an auto- mobile as soon as Sukra Bhukthi in Guru Dasa commenced.",
+    "line": 6868,
+    "why": "Vahana Yoga fructified: acquired a car."
+   }
+  ]
+ },
+ {
+  "chart_no": 94,
+  "first_line": 6955,
+  "last_line": 6963,
+  "raw_birth": "Cbrrt No. 94.-Born on 1I-3-1858 at 9 p.m. (L.M.T.) Lat. l3o N.: Long.77\" 36' E.",
+  "birth": {
+   "date": "1858-03-11",
+   "time": "21:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 36,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "day raw '1I' read 11"
+  ],
+  "dasa_balance": "Moon 7-2-8",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Sarpasapa illustration; no outcome stated."
+ },
+ {
+  "chart_no": 95,
+  "first_line": 6964,
+  "last_line": 6994,
+  "raw_birth": "Chgrt No. 99.-Born on 2-12-1948 IAt. 18\" 4' N.; Long. 83\" 26' E. 201 at 2-28 p.m. (I.S.T.)",
+  "birth": {
+   "date": "1948-12-02",
+   "time": "14:28",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": 4,
+   "lat_dir": "N",
+   "lon_deg": 83,
+   "lon_min": 26,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "chart no printed '99' but sequence (94, then 96 at 7007) implies 95"
+  ],
+  "dasa_balance": "Ketu 2-8-20",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Sarpasapa present but neutralised by strong Jupiter - no stated outcome for children; not recorded."
+ },
+ {
+  "chart_no": 96,
+  "first_line": 6995,
+  "last_line": 7011,
+  "raw_birth": "Chart No. 96.-Born on 9l t0-8-t928 at 4-46 a m. ( I.S.T.) Lat.25\" 22' N.: Lang. 68' 20' E.",
+  "birth": {
+   "date": "1928-08-10",
+   "time": "04:46",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 25,
+   "lat_min": 22,
+   "lat_dir": "N",
+   "lon_deg": 68,
+   "lon_min": 20,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date raw '9l t0-8-t928' read night of 9/10-8-1928"
+  ],
+  "dasa_balance": "Moon 8-5-8",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "afflicted",
+    "quote": "The yoga is pre- sent rz toto. And the native will lose quite a number of children but the Putrakaraka Jupiter being disposed in the l0th, unaffiicted, can take away much of the sting.",
+    "line": 6998,
+    "why": "Raman forecasts loss of many children (mitigated, not reversed)."
+   }
+  ],
+  "note": "A further unnumbered 'certain young man' (6937) has no birth data - not extracted."
+ },
+ {
+  "chart_no": 97,
+  "first_line": 7106,
+  "last_line": 7132,
+  "raw_birth": "Chart No. 97.-Born on 22-2-1863 at Gh' 3*10' Lat' 13\" N.; Inng. 77 34' E.",
+  "birth": {
+   "date": "1863-02-22",
+   "time": null,
+   "time_basis": "ghatikas_after_sunrise",
+   "ghatikas": "3-10",
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 34,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "ghatikas raw '3*10'' read 3-10; 'after sunrise' not printed"
+  ],
+  "dasa_balance": "Ketu 1-9-13",
+  "lagna_sign_stated": "Libra",
+  "same_as": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 98,
+  "first_line": 7178,
+  "last_line": 7198,
+  "raw_birth": "Chart No. 9&.-Born on I8'Il'1900 at Lat. 13\" N.; Long.77' 35\" E' 2M 4-17 p.m. (L.M.r')",
+  "birth": {
+   "date": "1900-11-18",
+   "time": "16:17",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Moon 0-9-13",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Matrusapa illustration; no outcome stated."
+ },
+ {
+  "chart_no": 99,
+  "first_line": 7264,
+  "last_line": 7301,
+  "raw_birth": "Chart No. 99.-Born on Lat. |i\" N. ; Long.77' 35' E. Thrcc Hundred Important Combinations 28-6-1914 at g-57 p.m. (I.S.T.)",
+  "birth": {
+   "date": "1914-06-28",
+   "time": "21:57",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time raw 'g-57 p.m.' read 9:57 pm (alt 8:57)",
+   "lat raw '|i\"' illegible (13?)"
+  ],
+  "dasa_balance": "Venus 16-2-3",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "afflicted",
+    "quote": "The yoga is powerful, and there are absolutely no relieving features. We can anticipate death of almost all issues that may be born to the subject.",
+    "line": 7267,
+    "why": "Raman forecasts death of nearly all children."
+   }
+  ]
+ },
+ {
+  "chart_no": 100,
+  "first_line": 7319,
+  "last_line": 7339,
+  "raw_birth": "Chart No. l00.-Born on 30-g-t927 ttt t2_30 p. in. (l-.M.7.) Lat. 2lo N ; Lottg.72. S0' E.",
+  "birth": {
+   "date": "1927-08-30",
+   "time": "12:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 21,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 50,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "month raw 'g' read 8 (matches Chart 68; alt 9)",
+   "dasa raw '3_g_21' read 3-8-21"
+  ],
+  "dasa_balance": "Moon 3-8-21",
+  "lagna_sign_stated": null,
+  "same_as": "Same birth data as Chart No. 68",
+  "conclusions": []
+ },
+ {
+  "chart_no": 101,
+  "first_line": 7377,
+  "last_line": 7386,
+  "raw_birth": "Cbrrt No. l0l.-Born on 22-I-1914 at 640 a.m. (I.S.T.) IAt 13\" N.; Long.80\" 14' E.",
+  "birth": {
+   "date": "1914-01-22",
+   "time": "06:40",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 80,
+   "lon_min": 14,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "time raw '640' read 6:40"
+  ],
+  "dasa_balance": "Mercury 14-4-19",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": []
+ },
+ {
+  "chart_no": 102,
+  "first_line": 7403,
+  "last_line": 7421,
+  "raw_birth": "Chart No. L02..-Born on 3I-7-1910 at Gh. 32-15 after tuttrise. Lat 8\" 44' N ; Long.77\" 44\" E.",
+  "birth": {
+   "date": "1910-07-31",
+   "time": null,
+   "time_basis": "ghatikas_after_sunrise",
+   "ghatikas": "32-15",
+   "lat_deg": 8,
+   "lat_min": 44,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 44,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Moon 7-3-18",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "'typically illustrative of Aputra Yoga' with caution against literal application; no outcome stated."
+ },
+ {
+  "chart_no": 103,
+  "first_line": 7532,
+  "last_line": 7542,
+  "raw_birth": "Chart No. l03.-Born on Lat. 12\" N.; Long.76\" 38' E. Three Hundred Important C.orhbinationr 23-10-1883 at I0 a.m. (L.M.f.)",
+  "birth": {
+   "date": "1883-10-23",
+   "time": "10:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Saturn 7-5-6",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [],
+  "note": "Putranasa illustration; no outcome stated."
+ },
+ {
+  "chart_no": 104,
+  "first_line": 7569,
+  "last_line": 7595,
+  "raw_birth": "Chart No. l04.-Bornon 5-5-1871 at II-14 p.m. (L.M.f.) Lat. 13\" N., Long 76\" 9 E.",
+  "birth": {
+   "date": "1871-05-05",
+   "time": "23:14",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 9,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Saturn 17-10-10",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "Chart No. 104 is the horoscope of a retired Judge.",
+    "line": 7569,
+    "why": "Native's career: a judge."
+   },
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "The native is a man of great intelligence and integrity. Even at this advanced tge, his powers of memory and comprehension are extraordinarily good.",
+    "line": 7572,
+    "why": "Buddhimaturya fructified."
+   }
+  ]
+ },
+ {
+  "chart_no": 105,
+  "first_line": 7600,
+  "last_line": 7620,
+  "raw_birth": "Chart No. l0i.-Born on I2-2-1856 at I2-21 p.n. (L.M.T.) Lat. 18\" N., Long.84\" E.",
+  "birth": {
+   "date": "1856-02-12",
+   "time": "12:21",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 18,
+   "lat_min": null,
+   "lat_dir": "N",
+   "lon_deg": 84,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Venus 6-8-12",
+  "lagna_sign_stated": "Taurus (derived: 'The 5th house is Virgo')",
+  "same_as": "Same birth data as Charts 79 and 88 (79/88 print balance Venus 6-11-3)",
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "the Professor was an extra- ordinarily intelligent man and had retained his great intellectual faculties until the day of his death.",
+    "line": 7611,
+    "why": "Great intellect lifelong."
+   },
+   {
+    "house": "H9",
+    "signification": "dharma",
+    "verdict": "favourable",
+    "quote": "Noble-hearted and incorruptible, he was a great philanthropist and delighted himself in helping the poor and the needy.",
+    "line": 7614,
+    "why": "Philanthropy / righteousness."
+   }
+  ],
+  "note": "Native named: late Prof. B. Suryanarain Rao."
+ },
+ {
+  "chart_no": 106,
+  "first_line": 7642,
+  "last_line": 7690,
+  "raw_birth": "Chcrt No. 106.-Born on 20121-2-1d79 at 4-50 a.m. (L.M.f) Lat. 10\" 43' N..; Long. 76\" 48' E.",
+  "birth": {
+   "date": "1879-02-21",
+   "time": "04:50",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 10,
+   "lat_min": 43,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 48,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date raw '20121-2-1d79' read night of 20/21-2-1879 (year 'd' read 8)"
+  ],
+  "dasa_balance": "Rahu 14-6-29",
+  "lagna_sign_stated": null,
+  "same_as": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "intellect",
+    "verdict": "favourable",
+    "quote": "The native is a man of very great intelligence",
+    "line": 7647,
+    "why": "Theevrabuddhi fructified."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "favourable",
+    "quote": "an astute politician, an able lawyer and a brilliant writer.",
+    "line": 7648,
+    "why": "Successful career as politician, lawyer, writer."
+   }
+  ],
+  "note": "Discussion ('In the following horoscope') precedes the birth line."
+ }
+]

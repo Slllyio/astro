@@ -153,3 +153,23 @@ def balarishta(chart: RamanChart) -> BalarishtaState:
         cancelled=bool(cancel_reasons),
         reasons=tuple(reasons + cancel_reasons),
     )
+
+
+# ── append-only disclosure (2026-08-18, REPORT_CRITIQUE Wave-2 item 5a) ────────
+# The clear case ("does not apply") previously disclosed NOTHING about what was
+# screened, so a reader could not see the method worked. These are the exact
+# yogas `balarishta()` checks above, as (label, cite) pairs for report surfaces
+# to render as "screened: ... — none present". Keep in lockstep with the checks.
+SCREENED_CONDITIONS: Final[tuple[tuple[str, str], ...]] = (
+    ("the Moon in a kendra with malefics", "HPA-14:93"),
+    ("the Moon in the 7th/8th/12th with malefics, unrelieved by a benefic "
+     "with or aspecting it", "HPA-14:96-98"),
+    ("the Moon in the lagna with Mars in the 8th, the Sun in the 9th and "
+     "Saturn in the 12th", "HPA-14:111-112"),
+)
+
+
+def screened_conditions() -> tuple[tuple[str, str], ...]:
+    """The balarishta yogas this screen checks (label, cite) — read-only, for the
+    clear-case disclosure line on report surfaces."""
+    return SCREENED_CONDITIONS

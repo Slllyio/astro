@@ -1,0 +1,465 @@
+{
+ "n": 2000,
+ "seed": 20261105,
+ "ayanamsa": "raman",
+ "sampling": "date 1920-2010 uniform, time uniform, latitude -40..60, longitude -125..150",
+ "mean_both_share": 0.4077,
+ "matters": {
+  "1:body": {
+   "charts": 2000,
+   "both_share": 0.8175,
+   "only_for_share": 0.143,
+   "only_against_share": 0.038,
+   "median_for": 3.0,
+   "median_against": 2.0
+  },
+  "1:health": {
+   "charts": 2000,
+   "both_share": 0.8175,
+   "only_for_share": 0.143,
+   "only_against_share": 0.038,
+   "median_for": 3.0,
+   "median_against": 2.0
+  },
+  "1:self": {
+   "charts": 2000,
+   "both_share": 0.8175,
+   "only_for_share": 0.143,
+   "only_against_share": 0.038,
+   "median_for": 3.0,
+   "median_against": 2.0
+  },
+  "2:family": {
+   "charts": 2000,
+   "both_share": 0.837,
+   "only_for_share": 0.1,
+   "only_against_share": 0.0555,
+   "median_for": 2.0,
+   "median_against": 2.0
+  },
+  "2:speech": {
+   "charts": 2000,
+   "both_share": 0.8625,
+   "only_for_share": 0.094,
+   "only_against_share": 0.038,
+   "median_for": 3.0,
+   "median_against": 2.0
+  },
+  "2:vision": {
+   "charts": 2000,
+   "both_share": 0.8495,
+   "only_for_share": 0.075,
+   "only_against_share": 0.069,
+   "median_for": 2.0,
+   "median_against": 2.0
+  },
+  "2:wealth": {
+   "charts": 2000,
+   "both_share": 0.816,
+   "only_for_share": 0.1,
+   "only_against_share": 0.0745,
+   "median_for": 2.0,
+   "median_against": 2.0
+  },
+  "3:courage": {
+   "charts": 2000,
+   "both_share": 0.954,
+   "only_for_share": 0.0445,
+   "only_against_share": 0.0015,
+   "median_for": 4.0,
+   "median_against": 3.0
+  },
+  "3:ear_throat": {
+   "charts": 2000,
+   "both_share": 0.0,
+   "only_for_share": 0.0,
+   "only_against_share": 0.637,
+   "median_for": 0.0,
+   "median_against": 1.0
+  },
+  "3:short_journeys": {
+   "charts": 2000,
+   "both_share": 0.94,
+   "only_for_share": 0.0585,
+   "only_against_share": 0.0015,
+   "median_for": 4.0,
+   "median_against": 3.0
+  },
+  "3:siblings": {
+   "charts": 2000,
+   "both_share": 0.94,
+   "only_for_share": 0.0585,
+   "only_against_share": 0.0015,
+   "median_for": 4.0,
+   "median_against": 3.0
+  },
+  "4:education": {
+   "charts": 2000,
+   "both_share": 0.5355,
+   "only_for_share": 0.4065,
+   "only_against_share": 0.04,
+   "median_for": 2.0,
+   "median_against": 1.0
+  },
+  "4:happiness": {
+   "charts": 2000,
+   "both_share": 0.3885,
+   "only_for_share": 0.3415,
+   "only_against_share": 0.187,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "4:home_comforts": {
+   "charts": 2000,
+   "both_share": 0.26,
+   "only_for_share": 0.361,
+   "only_against_share": 0.2475,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "4:mother": {
+   "charts": 2000,
+   "both_share": 0.391,
+   "only_for_share": 0.244,
+   "only_against_share": 0.2765,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "4:property": {
+   "charts": 2000,
+   "both_share": 0.3265,
+   "only_for_share": 0.4055,
+   "only_against_share": 0.1845,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "4:vehicles": {
+   "charts": 2000,
+   "both_share": 0.3085,
+   "only_for_share": 0.3995,
+   "only_against_share": 0.199,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "5:children": {
+   "charts": 2000,
+   "both_share": 0.691,
+   "only_for_share": 0.113,
+   "only_against_share": 0.177,
+   "median_for": 2.0,
+   "median_against": 2.0
+  },
+  "5:intellect": {
+   "charts": 2000,
+   "both_share": 0.003,
+   "only_for_share": 0.0845,
+   "only_against_share": 0.004,
+   "median_for": 0.0,
+   "median_against": 0.0
+  },
+  "5:poorvapunya": {
+   "charts": 2000,
+   "both_share": 0.691,
+   "only_for_share": 0.113,
+   "only_against_share": 0.177,
+   "median_for": 2.0,
+   "median_against": 2.0
+  },
+  "6:accidents": {
+   "charts": 2000,
+   "both_share": 0.189,
+   "only_for_share": 0.0205,
+   "only_against_share": 0.718,
+   "median_for": 0.0,
+   "median_against": 1.0
+  },
+  "6:debts": {
+   "charts": 2000,
+   "both_share": 0.189,
+   "only_for_share": 0.0205,
+   "only_against_share": 0.718,
+   "median_for": 0.0,
+   "median_against": 1.0
+  },
+  "6:disease_chronic": {
+   "charts": 2000,
+   "both_share": 0.19,
+   "only_for_share": 0.0195,
+   "only_against_share": 0.729,
+   "median_for": 0.0,
+   "median_against": 1.0
+  },
+  "6:enemies": {
+   "charts": 2000,
+   "both_share": 0.2885,
+   "only_for_share": 0.0215,
+   "only_against_share": 0.6515,
+   "median_for": 0.0,
+   "median_against": 2.0
+  },
+  "6:enemies_disease": {
+   "charts": 2000,
+   "both_share": 0.189,
+   "only_for_share": 0.0205,
+   "only_against_share": 0.718,
+   "median_for": 0.0,
+   "median_against": 1.0
+  },
+  "7:coverture": {
+   "charts": 2000,
+   "both_share": 0.169,
+   "only_for_share": 0.0085,
+   "only_against_share": 0.746,
+   "median_for": 0.0,
+   "median_against": 1.0
+  },
+  "7:marital_happiness": {
+   "charts": 2000,
+   "both_share": 0.2055,
+   "only_for_share": 0.317,
+   "only_against_share": 0.207,
+   "median_for": 1.0,
+   "median_against": 0.0
+  },
+  "7:partnership": {
+   "charts": 2000,
+   "both_share": 0.363,
+   "only_for_share": 0.2225,
+   "only_against_share": 0.2625,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "7:spouse": {
+   "charts": 2000,
+   "both_share": 0.554,
+   "only_for_share": 0.198,
+   "only_against_share": 0.1745,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "7:virility": {
+   "charts": 2000,
+   "both_share": 0.0,
+   "only_for_share": 0.0,
+   "only_against_share": 0.444,
+   "median_for": 0.0,
+   "median_against": 0.0
+  },
+  "7:wealth_through_marriage": {
+   "charts": 2000,
+   "both_share": 0.0,
+   "only_for_share": 0.0,
+   "only_against_share": 0.003,
+   "median_for": 0.0,
+   "median_against": 0.0
+  },
+  "8:death": {
+   "charts": 2000,
+   "both_share": 0.287,
+   "only_for_share": 0.0225,
+   "only_against_share": 0.574,
+   "median_for": 0.0,
+   "median_against": 2.0
+  },
+  "8:legacies": {
+   "charts": 2000,
+   "both_share": 0.0,
+   "only_for_share": 0.2315,
+   "only_against_share": 0.0,
+   "median_for": 0.0,
+   "median_against": 0.0
+  },
+  "8:longevity": {
+   "charts": 2000,
+   "both_share": 0.0575,
+   "only_for_share": 0.2015,
+   "only_against_share": 0.088,
+   "median_for": 0.0,
+   "median_against": 0.0
+  },
+  "8:sudden_gains": {
+   "charts": 2000,
+   "both_share": 0.0,
+   "only_for_share": 0.103,
+   "only_against_share": 0.0,
+   "median_for": 0.0,
+   "median_against": 0.0
+  },
+  "9:dharma": {
+   "charts": 2000,
+   "both_share": 0.531,
+   "only_for_share": 0.354,
+   "only_against_share": 0.066,
+   "median_for": 2.0,
+   "median_against": 1.0
+  },
+  "9:father": {
+   "charts": 2000,
+   "both_share": 0.7265,
+   "only_for_share": 0.038,
+   "only_against_share": 0.217,
+   "median_for": 1.0,
+   "median_against": 3.0
+  },
+  "9:fortune": {
+   "charts": 2000,
+   "both_share": 0.458,
+   "only_for_share": 0.2845,
+   "only_against_share": 0.139,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "9:higher_learning": {
+   "charts": 2000,
+   "both_share": 0.458,
+   "only_for_share": 0.2845,
+   "only_against_share": 0.139,
+   "median_for": 1.0,
+   "median_against": 1.0
+  },
+  "9:long_journeys": {
+   "charts": 2000,
+   "both_share": 0.6555,
+   "only_for_share": 0.2915,
+   "only_against_share": 0.0355,
+   "median_for": 3.0,
+   "median_against": 1.0
+  },
+  "10:career": {
+   "charts": 2000,
+   "both_share": 0.216,
+   "only_for_share": 0.509,
+   "only_against_share": 0.1435,
+   "median_for": 1.0,
+   "median_against": 0.0
+  },
+  "10:profession_authority": {
+   "charts": 2000,
+   "both_share": 0.216,
+   "only_for_share": 0.509,
+   "only_against_share": 0.1435,
+   "median_for": 1.0,
+   "median_against": 0.0
+  },
+  "10:profession_labour": {
+   "charts": 2000,
+   "both_share": 0.216,
+   "only_for_share": 0.509,
+   "only_against_share": 0.1435,
+   "median_for": 1.0,
+   "median_against": 0.0
+  },
+  "10:profession_learned": {
+   "charts": 2000,
+   "both_share": 0.216,
+   "only_for_share": 0.509,
+   "only_against_share": 0.1435,
+   "median_for": 1.0,
+   "median_against": 0.0
+  },
+  "10:profession_trade": {
+   "charts": 2000,
+   "both_share": 0.216,
+   "only_for_share": 0.509,
+   "only_against_share": 0.1435,
+   "median_for": 1.0,
+   "median_against": 0.0
+  },
+  "10:status_honour": {
+   "charts": 2000,
+   "both_share": 0.6275,
+   "only_for_share": 0.2475,
+   "only_against_share": 0.0845,
+   "median_for": 2.0,
+   "median_against": 1.0
+  },
+  "11:acquisitions": {
+   "charts": 2000,
+   "both_share": 0.477,
+   "only_for_share": 0.433,
+   "only_against_share": 0.0505,
+   "median_for": 3.0,
+   "median_against": 1.0
+  },
+  "11:elder_siblings": {
+   "charts": 2000,
+   "both_share": 0.7025,
+   "only_for_share": 0.257,
+   "only_against_share": 0.027,
+   "median_for": 4.0,
+   "median_against": 1.0
+  },
+  "11:friends": {
+   "charts": 2000,
+   "both_share": 0.477,
+   "only_for_share": 0.433,
+   "only_against_share": 0.0505,
+   "median_for": 3.0,
+   "median_against": 1.0
+  },
+  "11:gains": {
+   "charts": 2000,
+   "both_share": 0.477,
+   "only_for_share": 0.433,
+   "only_against_share": 0.0505,
+   "median_for": 3.0,
+   "median_against": 1.0
+  },
+  "11:means_of_gain": {
+   "charts": 2000,
+   "both_share": 0.0,
+   "only_for_share": 0.0,
+   "only_against_share": 0.227,
+   "median_for": 0.0,
+   "median_against": 0.0
+  },
+  "12:expenditure": {
+   "charts": 2000,
+   "both_share": 0.802,
+   "only_for_share": 0.0,
+   "only_against_share": 0.198,
+   "median_for": 1.0,
+   "median_against": 5.0
+  },
+  "12:foreign_residence": {
+   "charts": 2000,
+   "both_share": 0.164,
+   "only_for_share": 0.0025,
+   "only_against_share": 0.833,
+   "median_for": 0.0,
+   "median_against": 3.0
+  },
+  "12:incarceration": {
+   "charts": 2000,
+   "both_share": 0.0845,
+   "only_for_share": 0.0025,
+   "only_against_share": 0.9075,
+   "median_for": 0.0,
+   "median_against": 3.0
+  },
+  "12:left_eye": {
+   "charts": 2000,
+   "both_share": 0.0855,
+   "only_for_share": 0.0015,
+   "only_against_share": 0.9095,
+   "median_for": 0.0,
+   "median_against": 3.0
+  },
+  "12:loss_moksha": {
+   "charts": 2000,
+   "both_share": 0.0835,
+   "only_for_share": 0.0035,
+   "only_against_share": 0.9075,
+   "median_for": 0.0,
+   "median_against": 3.0
+  },
+  "12:moksha": {
+   "charts": 2000,
+   "both_share": 0.424,
+   "only_for_share": 0.004,
+   "only_against_share": 0.567,
+   "median_for": 0.0,
+   "median_against": 3.0
+  }
+ }
+}

@@ -31,6 +31,8 @@ Usage:
 """
 from __future__ import annotations
 
+from app.raman_saab.ordinals import ordinal
+
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Final, Mapping
@@ -68,7 +70,7 @@ def _ii(*lines: int) -> tuple[Citation, ...]:
 
 
 def _ordinal(house: int) -> str:
-    return {1: "1st", 2: "2nd", 3: "3rd"}.get(house, f"{house}th")
+    return ordinal(house)
 
 
 def _fortunate(*houses: int) -> str:

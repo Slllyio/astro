@@ -1,7 +1,6 @@
 {
   "H1": {
     "citations": [
-      "HTJAH-I:1057",
       "HTJAH-I:1109",
       "HTJAH-I:1127",
       "HTJAH-I:1133",
@@ -15,7 +14,6 @@
       "H1.C.30",
       "H1.C.33",
       "H1.C.34",
-      "H1.L.8",
       "H1.M.S01"
     ],
     "rollup": "mixed",
@@ -41,6 +39,7 @@
     "citations": [
       "HTJAH-II:11064",
       "HTJAH-II:9467",
+      "HTJAH-II:9470",
       "HTJAH-II:9685",
       "HTJAH-II:9815",
       "HTJAH-II:9850",
@@ -49,12 +48,14 @@
     "fired_rule_ids": [
       "H10.C.1",
       "H10.C.33",
+      "H10.C.33m",
       "H10.L.2",
+      "H10.L.2a",
       "H10.P.Jupiter",
       "H10.P.Mercury",
       "H10.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -84,7 +85,7 @@
       "status_honour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
@@ -92,12 +93,14 @@
     "citations": [
       "HTJAH-I:2402",
       "HTJAH-I:2437",
+      "HTJAH-I:2452",
       "HTJAH-I:2466",
       "HTJAH-I:2567",
       "HTJAH-I:2879",
       "HTJAH-I:2937"
     ],
     "fired_rule_ids": [
+      "H2.C.13",
       "H2.C.2",
       "H2.C.23",
       "H2.C.65",
@@ -132,14 +135,12 @@
   "H7": {
     "citations": [
       "HTJAH-II:1773",
-      "HTJAH-II:2579",
       "HTJAH-II:281",
       "HTJAH-II:376"
     ],
     "fired_rule_ids": [
       "H7.C.86",
       "H7.K.3",
-      "H7.KD.1",
       "H7.L.6"
     ],
     "rollup": "afflicted",

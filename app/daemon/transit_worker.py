@@ -19,6 +19,7 @@ from __future__ import annotations
 import asyncio
 import datetime as dt
 import logging
+import uuid
 from typing import Any
 
 from sqlalchemy import select
@@ -135,6 +136,7 @@ class NadiTransitDaemon:
         db: AsyncSession,
         user_id: int,
         current_aspects: list[AspectResult],
+        log: logging.Logger | logging.LoggerAdapter = logger,
     ) -> None:
         """Insert new aspects, deactivate stale ones; idempotent on repeat runs."""
         existing_stmt = select(TransitAlert).where(
@@ -178,11 +180,15 @@ class NadiTransitDaemon:
             deactivated += 1
 
         if added or deactivated:
-            logger.info(
+            log.info(
                 "user_id=%s: %d new alerts, %d deactivated", user_id, added, deactivated
             )
 
-    async def process_natal_charts(self, db: AsyncSession) -> None:
+    async def process_natal_charts(
+        self,
+        db: AsyncSession,
+        log: logging.Logger | logging.LoggerAdapter = logger,
+    ) -> None:
         """Stream chart IDs, then reconcile each chart in its own transaction.
 
         Per-chart atomicity (review fix #8): a failure in one user's reconcile
@@ -206,19 +212,23 @@ class NadiTransitDaemon:
                     # Deleted between pass 1 and pass 2 - benign race, skip.
                     continue
                 aspects = self._detect_aspects_for_chart(chart)
-                await self._reconcile_alerts(db, chart.user_id, aspects)
+                await self._reconcile_alerts(db, chart.user_id, aspects, log)
                 await db.commit()
             except Exception:
                 await db.rollback()
-                logger.exception(
+                log.exception(
                     "chart_id=%s reconcile failed; skipping this user", chart_id
                 )
 
-    async def run_once(self) -> None:
+    async def run_once(self, cycle_id: str | None = None) -> None:
         """One full cycle: fetch transits, then reconcile every chart. Public for tests."""
+        _cycle_id = cycle_id or uuid.uuid4().hex[:12]
+        log = logging.LoggerAdapter(logger, extra={"cycle_id": _cycle_id})
+        log.info("Cycle: fetching real-time transits...")
         await self.fetch_realtime_transits()
         async with AsyncSessionLocal() as db:
-            await self.process_natal_charts(db)
+            await self.process_natal_charts(db, log)
+        log.info("Cycle complete")
 
     async def start(self) -> None:
         self.is_running = True
@@ -227,19 +237,20 @@ class NadiTransitDaemon:
 
         consecutive_errors = 0
         while self.is_running:
+            cycle_id = uuid.uuid4().hex[:12]
+            log = logging.LoggerAdapter(logger, extra={"cycle_id": cycle_id})
             try:
-                logger.info("Cycle: fetching real-time transits...")
-                await self.run_once()
+                await self.run_once(cycle_id=cycle_id)
                 consecutive_errors = 0
-                logger.info("Cycle complete; sleeping %ds", self.check_interval_seconds)
+                log.info("Sleeping %ds until next cycle", self.check_interval_seconds)
             except asyncio.CancelledError:
                 raise
             except Exception:
                 consecutive_errors += 1
                 # Exponential backoff capped at the configured interval.
                 backoff = min(2 ** consecutive_errors, self.check_interval_seconds)
-                logger.exception("Daemon cycle failed (attempt %d); backing off %ds",
-                                 consecutive_errors, backoff)
+                log.exception("Daemon cycle failed (attempt %d); backing off %ds",
+                              consecutive_errors, backoff)
                 await self._sleep(backoff)
                 continue
 

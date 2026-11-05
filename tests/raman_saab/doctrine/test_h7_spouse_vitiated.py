@@ -63,5 +63,11 @@ def test_h7_19_debilitated_lord_excluded():
 
 
 def test_h7_06_clean_lord_spared():
-    """h7_06 (Chart 18, mixed): a clean 7th lord -> the rule does not fire (stays mixed)."""
-    assert _spouse("HTJAH-II.h7_06") == "mixed"
+    """h7_06 (Chart 18, mixed): a clean 7th lord -> the rule does not fire, so it is NOT
+    pushed to afflicted. (It read "mixed" until R2, 2026-10-24, made the single-chart
+    Kuja-dosha H7.KD.1 descriptive per HTJAH-II:2579-2627; without that vote it reads
+    favourable, one step from Raman's mixed.)"""
+    from app.raman_saab.doctrine.rule_sets import ALL_RULES
+    c86 = next(r for r in ALL_RULES if r.id == "H7.C.86")
+    assert c86.fires(_chart("HTJAH-II.h7_06")) is False
+    assert _spouse("HTJAH-II.h7_06") != "afflicted"

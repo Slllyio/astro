@@ -1,0 +1,2294 @@
+{
+ "c009_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "hemming",
+    "detail": "Lagna hemmed between Saturn and Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "Lagna lord Jupiter in 3rd",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "hemming",
+    "detail": "Lagna lord Jupiter hemmed between Ketu and Saturn, losing strength",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Venus (lord of 6, 11) aspects Jupiter, not good",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Mars aspects Jupiter from own sign, passable",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Jupiter with Rahu in Navamsa aspected by Saturn, Ketu, Sun; Jupiter weak",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Sun debilitated in 11th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Sun's debility cancelled and aspected by Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "all planets disposed 2nd/12th from each other: strides in career, lack of happiness",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c011_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "hemming",
+    "detail": "Lagna hemmed between Ketu and Saturn: unsteady career",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Lagna free from any other malefic influences",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "occupants",
+    "detail": "Jupiter in Lagna, antidote to malefic influences",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "lord_dignity",
+    "detail": "Lagna lord Saturn in own sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Saturn in friendly sign with Jupiter in Navamsa",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Sun middling in strength",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c019_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "3rd (Cancer) unoccupied and unaspected, hence fairly strong",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "3rd lord Moon in 12th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Moon with Rahu, aspected by Mars and Ketu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Moon in benefic Navamsa",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Mars in 6th with Ketu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter aspects Mars",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Mars not well disposed in Navamsa",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "3rd lord Moon has gained six Navamsas (number of siblings)",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c021_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "Ketu occupies the 3rd (Capricorn)",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "3rd aspected by Sun, Mercury, Rahu, Saturn, Mars, all malefic",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "3rd lord Saturn aspects the 3rd",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Saturn conjoined with Sun, Mercury and Rahu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Mars in 8th (9th Bhava) aspected by Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "3rd lord more powerful than the 3rd house or Mars: native will have brothers",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "navamsa",
+    "detail": "3rd lord Saturn in 2nd Navamsa: only two brothers",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c028_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "3rd (Aries, malefic sign) occupied by debilitated Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "3rd in Amsa occupied by debilitated Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "occupants",
+    "detail": "3rd joined by Mercury",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "3rd aspected by Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "3rd lord Mars in a Kendra",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_dignity",
+    "detail": "Mars in own sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "Mars in 8th from the 3rd",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "dusthana_lords",
+    "detail": "Mars with 6th lord Moon",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Jupiter aspects Mars but only in name, Jupiter being 12th from Bhava",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Mars as karaka subject to same afflictions; strength of karaka not much",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "hemming",
+    "detail": "3rd subject to Papakartari Yoga in Amsa",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c041_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other_frame",
+    "detail": "Special Dhana Lagna (from 9th lords' root numbers counted from Moon) is Taurus",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "Two malefics in special Dhana Lagna, aspected by Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Moon exalted",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Will earn well in Jupiter Dasha as Jupiter aspects special Dhana Lagna",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Saturn, pure malefic in Dhana Lagna, gives better finances in his Dasha; Moon Bhukti favourable",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "Jupiter lord of 8th and 11th from special Dhana Lagna: power to do good restricted",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c047_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "Ketu occupies the 7th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Mars (5th lord in 12th) aspects 7th by 8th-house aspect: violent clashes",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "lord_house",
+    "detail": "7th lord Mercury in 11th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_dignity",
+    "detail": "Mercury in friendly sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "hemming",
+    "detail": "Mercury between malefics Sun and Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus in 8th in inimical sign aspected by Saturn, no benefic influence",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 7th Cancer aspected by Jupiter, prevented complete break-up",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 7th lord Moon hemmed between Saturn and Rahu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "7th from Venus occupied by malefic Saturn, depriving happiness",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c054_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "7th is Sagittarius, a benefic sign, unoccupied",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "7th aspected by benefics Jupiter (7th lord) and Venus (karaka): preponderance of benefic influence",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "house_aspects",
+    "detail": "7th aspected by Mars, ruler of malefic Bhavas",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Mars' maleficence checked by aspect of 9th lord neechabhanga Saturn",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "7th lord Jupiter in 11th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Jupiter with debilitated 9th lord Saturn who gets neechabhanga",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus in friendly sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus with malefic Mars (6th/11th lord), aspected by Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 7th occupied by Mercury (8th/11th lord) and Sun; 7th lord Venus in 8th with Mars; fairly balanced",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c057_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "4th (Leo) unoccupied, aspected by Saturn",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "4th aspected by Jupiter in Navamsa",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "4th lord Sun with Lagna lord Venus, aspected by Vidya-karaka Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Sun joins Venus and Mars in 7th in Navamsa",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter in 11th in own house aspected by Yogakaraka Saturn: ideal position",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Mercury, planet of intelligence, in the 2nd",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c059_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "4th (Virgo) occupied by 3rd lord Sun",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "4th aspected by 8th lord Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "4th lord Mercury equally afflicted, associated with Mars and Rahu: speculative tendencies and losses",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c062_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "5th (Cancer) occupied by three first-rate malefics Sun, Saturn, Rahu",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Jupiter aspects 5th (does not counterbalance)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "occupants",
+    "detail": "Venus in 5th (does not counterbalance)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "5th lord Moon in 8th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "5th lord Moon conjoined with Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter fairly well disposed, in trikona from 5th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "5th lord from Chandra Lagna afflicted",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "5th from Navamsa Lagna afflicted",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c064_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "5th (Aquarius, fixed) occupied by first-rate malefic Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "5th aspected by Saturn, augmenting evil",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_dignity",
+    "detail": "5th lord Saturn in benefic sign, aspecting the 5th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Saturn aspected by Mars; mutual Saturn-Mars aspects involving 5th destroy its indications",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter in own house with Moon, unafflicted (to be ignored)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "5th lord from Chandra Lagna afflicted",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c070_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "5th (Gemini) occupied by Ketu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "5th aspected by malefic Sun, Mars and Mercury",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "5th lord Mercury with malefic Sun and Rahu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Mercury with Saturn and in Papakartari in Navamsa",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter in own house",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "Karaka Jupiter (also 5th lord from Moon) in 5th from Chandra Lagna, harmful",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c079_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "7th (Leo) aspected by 7th lord Sun and 2nd/11th lord Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "7th lord Sun Vargottama",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "7th lord Sun strongly placed in a quadrant, unaspected",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus exalted and Vargottama in 2nd",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus with 3rd/10th lord Mars and 5th/8th lord Mercury; Mars associating with Venus gives bickerings",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: Rahu occupies the 7th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 7th lord Saturn exalted, aspected by Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 7th lord Saturn aspected adversely by Mars",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c085_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "7th (Sagittarius) aspected by 6th/11th lord Mars, Vargottama",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "7th lord Jupiter with Rahu in 4th, aspected by Mars: disgusting husband",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus in own sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus with Moon and Sun (very close to Sun), aspected by 8th/9th lord Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 7th lord Mars in 9th Vargottama; 7th aspected by Venus, Moon, Sun",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dusthana_lords",
+    "detail": "8th lord Saturn in 8th afflicted by Mars and eclipsed Jupiter",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "9th lord Saturn in 12th from 9th: widowhood",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Widowhood in Saturn Dasa Saturn Bhukti",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Saturn 2nd lord and occupant from 7th becomes maraka to husband",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c093_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "navamsa",
+    "detail": "Vargottama Moon, Rahu and Venus",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Hamsa Yoga: exalted Jupiter in Lagna (also 10th from Chandra Lagna)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Moon in Libra in parivartana with 4th lord Venus, yoga par excellence",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Sun-Saturn conjunction in 11th made him a constitutional monarch",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Rajayoga: Lagna lord in kendra and vargottama, 9th lord exalted",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Rajayoga: Full Moon in kendra other than Lagna (royal scion), vargottama",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Yogakaraka Mars in 2nd; Saturn and Mars in mutual kendras without destructive aspects: political career assured",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "nodes",
+    "detail": "Rahu confined to an upachaya",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Rajayogas: Moon aspected by exalted Jupiter; Jupiter exalted 9th from Moon; Mercury aspected by Jupiter",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c094_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "Cancer (passive) Lagna with lord in Lagna, no link to Mars: lunar, indecisive nature",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Insignificant position of Mars: weak impression as administrator",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Five planets (Jupiter, Sun, Mercury, Venus, Mars) aspect the 10th: idol of India",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Rajalakshana Yoga: Venus, Mercury, Moon in kendras",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Sankha Yoga: 5th and 6th lords in mutual kendras",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Malavya Yoga: Venus in kendra in own sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Moon, Venus, Jupiter in own houses",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c096_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "Lagna lord Mars in 7th, malefic Saturn aspecting Lagna",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Mars debilitated in Navamsa but obtains cancellation",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Asura Yoga: Jupiter and Venus in the 8th (tyrant)",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon Jupiter and Venus cause a powerful Dhana Yoga; Saturn yogakaraka from Moon and aspects 10th from Moon",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Saturn Dasa from about 1928 took him to highest position as dictator; good first half, very unfavourable second half",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Saturn powerfully aspects 10th lord Sun: responsible for the native's fall",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "lord_house",
+    "detail": "10th lord Sun in the 9th: rise from humble life",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Saturn-Mars association with Moon in 7th unrelieved by benefic aspects",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Mars aspects the 10th: becoming a dictator and violent end",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Four planets (Moon, Saturn, Venus, Jupiter) in 12th from Navamsa Lagna; Saturn lord of 7, 8 in 12th: loss",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Entered World War II in Saturn Dasa Moon Bhukti, both in 7th with Mars",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c097_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_dignity",
+    "detail": "11th lord Moon debilitated",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Moon in 3rd with 3rd/8th lord Mars and Rahu, badly afflicted",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Moon in 12th from Navamsa Lagna aspected by Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Mars in own house associated with 11th lord Moon: gave one elder brother",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 11th lord Mercury in 12th with 12th lord Sun; Saturn aspects 11th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: Jupiter aspects 11th lord, did not totally deny elder brother",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Elder brother died in Venus Dasa (12th from 11th) Saturn Bhukti",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Saturn as 7th lord from 11th is natural maraka; Venus 7th/12th lord from 11th lord",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Average of planets in 11th and 12th from Lagna (2) and Moon (0) gives one elder co-born",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c097_m2": {
+  "found": false,
+  "factors": []
+ },
+ "c100_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "11th neither occupied nor aspected",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "11th lord Saturn in 3rd",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Saturn aspected by 3rd lord Mercury and 5th lord Sun, with Ketu, blemished",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Mars in quadrant in own sign, unaspected",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Mars debilitated in Navamsa but with sign-lord Moon: cannot deny elder co-borns",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 11th (Pisces) aspected by Saturn; 11th lord Jupiter debilitated in 9th",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c107_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_house",
+    "detail": "11th lord Venus in 5th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Venus with 2nd lord Saturn and Ketu, aspected by exalted 5th lord Mars",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "2nd and 5th lords exchange signs, involving 11th lord Venus, fortifying him",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter (Lagna lord) in own sign in a quadrant (4th), lord of Rasi and Navamsa Lagnas",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon (in Lagna) the same picture emerges",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Lagna vargottama; Jupiter in own vargas 4 times out of 5",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Powerful Dhana Yoga from interrelation of 2nd lord Saturn, 5th lord Mars, 11th lord Venus",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "nodes",
+    "detail": "Rahu in the 11th made the native own a chain of industries",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c109_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_association",
+    "detail": "11th lord aspected by 7th lord Moon; house and lord powerfully disposed",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter in the 2nd house",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 11th (Taurus) aspected by 7th lord Saturn; 11th lord Venus exalted in 9th with Mercury (3rd/12th lord)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Exchange of signs between Lagna and 11th lords",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "lord_dignity",
+    "detail": "11th lord in exaltation",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Mars in own constellation forms Sasi-Mangala yoga in mutual aspect with 7th lord Moon",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Acquired titular monarchical rulership in Venus Dasa Rahu Bhukti; Venus yogakaraka in Raja Yoga with 9th lord Mercury; Rahu in kendra from Venus",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Raja Yoga of Venus and 9th lord Mercury in 3rd; Neechabhanga Raja Yoga of Mercury with Venus",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c117_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "12th badly afflicted: occupied by Mars, Mercury, New Moon and Sun",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "lord_association",
+    "detail": "12th lord Saturn afflicted by Rahu, Venus also joining",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Affliction to Venus and to 7th lord Mercury in 12th: extra-marital life and drink",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c122_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "hemming",
+    "detail": "Cancer Lagna and Lagna lord Moon hemmed between Rahu and Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "hemming",
+    "detail": "Mercury and Venus hemmed between Mars and Sun",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "dusthana_lords",
+    "detail": "Mercury and Venus aspected by 6th lord Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Bandhana Yoga: Sun in Keeta (insect) sign in quadrant from 6th lord Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Bandhana Yoga: malefics in 2nd (Saturn), 5th (Sun), aspect on 9th (Mars), 12th (Rahu) cause captivity",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "occupants",
+    "detail": "Rahu occupies the 12th",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c126_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_association",
+    "detail": "12th lord Saturn in Cancer in close conjunction with bitter enemy and 6th lord Sun",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Venus, karaka for eyes, with Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "2nd lord Mars afflicted by Rahu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "12th lord and karakas Sun and Venus in watery Cancer aspected by watery Moon: watering eyes",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c132_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "9th occupied by exalted Sun (Lagna lord), Vargottama Jupiter and Mercury: exalted (royal) father",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "9th lord Mars in 10th (kendra) with 10th lord Venus",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Sun exalted in 9th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Karaka Sun in the 9th itself with 8th lord Jupiter: not conducive to father's longevity",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "hemming",
+    "detail": "Papakartari to 9th (Rahu, Mars), 9th lord (Saturn, Sun) and karaka (Rahu, Mars): deprived of father early",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 9th Leo aspected by Jupiter, Saturn, Mars; 9th lord Sun exalted but between Rahu and Mars; considerably afflicted",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Father died Feb 1861 in Ketu Dasa Jupiter Bhukti; Jupiter 12th lord from 9th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Ketu acts like Mars; Mars in 2nd from 9th with 2nd/7th lord therefrom Venus: powerful maraka",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Moon in Moola gandantha, capable of causing father's death",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c138_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "9th aspected by own lord Mercury",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "9th aspected by 2nd/7th lord Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "9th lord Mercury in 3rd, well placed",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Mercury aspected by 4th/5th lord Saturn (slight affliction)",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Sun in 4th (quadrant) with Moon, Venus, Jupiter, unaspected",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Moon: 9th aspected by Mars and Saturn and by neechabhanga Jupiter; 9th lord Mercury in 12th; karaka Sun in kendra",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "9th lord in constellation of Lagna lord and aspecting 9th: conducive to father's long life",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Father died in native's 41st year in Jupiter Dasa Mercury Bhukti; Mercury 7th from 9th and 12th from Sun",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Jupiter 7th lord from 9th, in 8th therefrom, gaining maraka strength",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c145_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "dasa_timing",
+    "detail": "Sailed for England 1905 in Ketu Dasa Rahu Bhukti; Ketu with 9th lord Jupiter aspected by Yogakaraka Mars",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "nodes",
+    "detail": "Rahu in 12th in a mercurial sign, which rules foreign journeys",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "9th house Pisces a watery sign; 9th lord in a common sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Rahu Dasa: abroad several times; Rahu in 12th aspected by powerful 9th lord Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "9th lord Jupiter influences Ketu and Rahu, the Dasa lords that gave foreign travel",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "lord_association",
+    "detail": "Jupiter in constellation of 4th lord Venus (education abroad) and aspected by 10th lord Mars (political travel)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "12th lord Mercury in Libra with Venus in moolatrikona",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c147_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "Jupiter in the 10th aspected by 10th lord Mars",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "In Jupiter Dasa Jupiter Bhukti dips in Ganges and sacred rivers, visited holy places",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c151_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_house",
+    "detail": "6th lord Mars in the 2nd (vision)",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "dusthana_lords",
+    "detail": "2nd lord Moon (ruler of eyes) in 12th with 8th lord Saturn",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c158_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_house",
+    "detail": "Lord of Lagna and 6th, Venus, in 12th with Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Chandra Lagna, lords of Chandra Lagna and the 6th conjoined in the 8th",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Convicted several times for political offences in Sun and Moon Dasas",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c158_m2": {
+  "found": false,
+  "factors": []
+ },
+ "c162_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_house",
+    "detail": "Lagna lord Saturn in the 9th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_dignity",
+    "detail": "Lagna lord Saturn exalted",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Saturn powerfully aspected by Jupiter, free of malefic aspect or conjunction",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Lagna aspected by Jupiter",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "occupants",
+    "detail": "Sun, Moon, Mercury in Aquarius Lagna aspected by Jupiter: yogic experiences, realisation of God",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "karaka",
+    "detail": "Atmakaraka Sun aspected by Jupiter: grand development of the soul",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Three planets in exaltation",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Ascetic combination: Saturn, lord of Lagna and Chandra Lagna, aspecting lord of Moon sign",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Moon in Amsa of Mars aspected by Saturn (renunciation); Mercury vargottama",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c162_m2": {
+  "found": false,
+  "factors": []
+ },
+ "c162_m3": {
+  "found": false,
+  "factors": []
+ },
+ "c162_m4": {
+  "found": true,
+  "factors": [
+   {
+    "type": "karaka",
+    "detail": "Venus exalted in 2nd, free from malefic association in Rasi and Navamsa: complete absence of passions and sensual feelings",
+    "direction": "-",
+    "decisive": true
+   },
+   {
+    "type": "navamsa",
+    "detail": "Venus debilitated in Navamsa",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "7th lord Sun in Lagna, unaspected by malefics, powerfully aspected by Jupiter",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c172_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "Intellectual sign Gemini rising: sympathetic, sensitive, intuitional",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Lagna aspected by Gnanakaraka Jupiter from Aquarius",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Lagna lord Mercury ideally placed, free from Rahu/Mars affliction; with 9th lord Saturn, Sun and 5th lord Venus",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Slight affliction to Lagna lord in Navamsa",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_dignity",
+    "detail": "Mercury debilitated but gets neechabhanga: excellent position",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Buddhi Chaturya Yoga",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Rahu occupies Navamsa Lagna: man of eccentricities",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "hemming",
+    "detail": "Jupiter in 9th subject to Papakartari Yoga",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Moon debilitated in 6th and 6th lord in 8th with Rahu: exposed on two flanks",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Lagna lord neechabhanga in 10th by Venus who causes Malavya Yoga: one of the greatest",
+    "direction": "+",
+    "decisive": true
+   }
+  ]
+ },
+ "c172_m2": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "Four planets (Mercury, Saturn, Sun, Venus) in the 10th, lords of Lagna, 4th, 5th, 9th: incorruptible search for truth",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Parivraja Yoga of sorts from four planets in 10th: Gnana yogi",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "occupants",
+    "detail": "Sun in the 10th (also 10th lord from Moon in 5th): independence of thought, humanitarian",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Lagna lord neechabhanga in 10th by Venus, who causes Malavya Yoga",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Venus Dasa (Venus in 10th) Rahu Bhukti: Patent Office; Saturn and Mercury Bhuktis: recognition, professorship",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Sun Dasa from 1914: Director of Kaiser Wilhelm Institute; Moon Dasa Mars Bhukti: Nobel Prize (Moon in Mercury's constellation)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dusthana_lords",
+    "detail": "Mars, 6th/11th lord, exalted in 8th with Rahu: Mars Dasa from 1930 brought exile and persecution",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "nodes",
+    "detail": "Rahu aspected in Navamsa by Mercury and Jupiter: Rahu Dasa gave success in unified theory",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c172_m3": {
+  "found": true,
+  "factors": [
+   {
+    "type": "dasa_timing",
+    "detail": "Death as soon as Jupiter Dasa commenced",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Jupiter is maraka as 7th lord and in constellation of Rahu",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c172_m4": {
+  "found": true,
+  "factors": [
+   {
+    "type": "dasa_timing",
+    "detail": "Married 1901 in Venus Dasa Rahu Bhukti; Venus is Kalatrakaraka",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "nodes",
+    "detail": "Rahu in 8th (marriage thread) from Lagna and 11th from Kalatrakaraka",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Rahu aspects the 7th in Navamsa",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c188_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "Lagna strong as yogakaraka Saturn is exalted in it",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "lord_association",
+    "detail": "Lagna lord Venus powerfully aspected by Jupiter (2nd/5th lord): striking appearance, generosity",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "occupants",
+    "detail": "Saturn's presence in Lagna accounts for difficult labour of mother",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Chandra Lagna very powerful: Jupiter in 2nd, Rajayoga of Sun-Mercury in 7th, lord exalted in 9th, Mars and Rahu in 11th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Sun in Vargottamamsa: singular individuality",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Moon completely free from malefic affliction",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Jupiter in own sign and Venus neechabhanga in benefic signs: maturity of genius",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Vasumathi, Sunapha, Shankha and Samrajya Yogas: equal to a king",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c188_m2": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other_frame",
+    "detail": "5th from Chandra Lagna completely spoiled: Mars, Rahu and Ketu converging their effects",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c195_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "karaka",
+    "detail": "Moon in Lagna (exalted, Vargottama): mother a powerful factor in his life",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Benefic disposition of Matrukaraka gave good longevity to mother",
+    "direction": "+",
+    "decisive": true
+   }
+  ]
+ },
+ "c195_m2": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "Ketu in the 5th house",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "5th lord conjoined with Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Putrakaraka Jupiter associated with Rahu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Affliction in the 5th house in Navamsa",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c195_m3": {
+  "found": true,
+  "factors": [
+   {
+    "type": "maraka_longevity",
+    "detail": "Unique longevity combinations: 2nd lord in 2nd, 3rd lord in Lagna, luminaries free from affliction",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "other",
+    "detail": "Sun (vitality) completely free from malefic association or aspect: very good health",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Sun, Moon and Lagna (tripod of life) very well disposed",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Died 1950 in Venus Dasa Venus Bhukti",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c195_m4": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "Mercury in own sign in 2nd, Vargottama, with 9th/10th lord yogakaraka Saturn: gains and public favour through writing",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Venus with 4th lord: successful music and art critic",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Rajayoga: Lagna and Moon Vargottama aspected by three planets in Navamsa: early difficulties then slow ascent",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Kahala Yoga and Dama Yoga: noble, respected, benefactor",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Financial prosperity from Jupiter Dasa Venus Bhukti (Jupiter Dhanakaraka in 11th, Venus in upachaya)",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Nobel Prize in Mercury Dasa Ketu Bhukti, both Vargottama and well placed; reputation climaxed in Mercury Dasa",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c196_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "named_yoga",
+    "detail": "Marutha Yoga (Jupiter trine Venus, Moon 5th from Jupiter, Sun in kendra from Moon): immense wealth",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Mercury in Cancer and Saturn in the 11th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "2nd lord in the 11th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Jupiter forms a powerful Dhana Yoga, also Atmakaraka",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From special Dhana Lagna (Sagittarius) three planets in the 10th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Jupiter, lord of wealth/Dhanakaraka, in 11th with Vahanakaraka Venus: afflux of wealth",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "4th lord Saturn in 11th with yogakaraka Venus in neechabhanga: position and wealth in Saturn Dasa",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Jupiter Dasa (1892) starting point of prosperity; Saturn's period steady increase in business",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c196_m2": {
+  "found": true,
+  "factors": [
+   {
+    "type": "named_yoga",
+    "detail": "Sankha Yoga indicates long life",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Favourable dispositions of 3rd and 8th lords indicate good longevity",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "occupants",
+    "detail": "6th, 8th and 12th houses free from benefic and malefic occupation",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c196_m3": {
+  "found": true,
+  "factors": [
+   {
+    "type": "karaka",
+    "detail": "Pitrukaraka Sun in the 9th not conducive to happy relations with father",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c196_m4": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "Mars (engineering) and Saturn (labour) aspecting Lagna: great engineer and industrialist",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_house",
+    "detail": "10th lord Sun in 9th (with Mercury), 9th aspected by Moon: fortune through trade and Government favour",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "occupants",
+    "detail": "Lagna lord Mars in 10th: factories, engineering, steel",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "All important planets in 9th, 10th and 11th houses",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Marutha Yoga contributed to professional eminence and founding of Ford Motor Company",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Rahu Dasa (Rahu in house of Mars) apprenticeship; Jupiter Dasa first motor car; Mars Bhukti company founded; Saturn Dasa steady increase",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c198_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "dasa_timing",
+    "detail": "Shot dead in Jupiter Dasa Sun Bhukti",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Jupiter in the 8th aspected powerfully by Mars, a maraka",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "Sun in 12th from Lagna and 2nd (maraka) from Chandra Lagna",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Strong martian and saturnine influences on the 8th / 22nd Drekkana: violent death",
+    "direction": "-",
+    "decisive": true
+   }
+  ]
+ },
+ "c200_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "karaka",
+    "detail": "Pitrukaraka Sun afflicted by association with Rahu",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "9th lord aspected by Mars: fatherless at early age",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "dasa_timing",
+    "detail": "Father died 1892 in Saturn Dasa Venus Bhukti",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "maraka_longevity",
+    "detail": "Saturn in maraka house from the 9th and empowered to kill father by 4th lordship; Venus with 9th lord aspected by Mars",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "Venus-9th lord combination in the 12th from Pitrukaraka",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c200_m2": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "Lagna lord aspecting the 8th",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "karaka",
+    "detail": "Ayushkaraka Saturn in a benefic sign: good longevity",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c200_m3": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "Sun and Moon in benefic signs, fairly powerful, associated with spiritual planets: high development of Atmavidya",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Yogakaraka Saturn in the 6th: pitfalls and struggles before attaining the plane of bliss",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "nodes",
+    "detail": "Rahu with the Sun, and Mars in 7th: intense mental and spiritual struggle before perceiving reality",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c200_m4": {
+  "found": true,
+  "factors": [
+   {
+    "type": "other",
+    "detail": "4th lord being Saturn: inconspicuous in school, meagre education",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "4th house from the Moon aspected by Saturn",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c215_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "lord_house",
+    "detail": "10th lord Mars (war, aggression) in the 7th: aggression, insatiable ambition",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "10th lord Mars strongly placed in own sign in Navamsa",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Jupiter rising in Lagna but in constellation of Rahu: hardly any loyal workers",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Political planet Sun (7th lord) debilitated with neechabhanga, aspected by Mars in Navamsa: mistakes of political conduct",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Daitya Yoga: malefics in all kendras but Lagna, Lagna aspected by malefics",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Chatussagara Yoga, Dhana Yogas from kendra lords' mutual aspects, Gajakesari Yoga",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other_frame",
+    "detail": "From Chandra Lagna very powerful Rajayoga centered on 10th involving Jupiter, Mars, Saturn",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c215_m2": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "Ketu in the 6th aspected by Lagna lord Saturn",
+    "direction": "-",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "6th lord fairly strong and associated with Saturn: formidable number of enemies",
+    "direction": "-",
+    "decisive": false
+   }
+  ]
+ },
+ "c215_m3": {
+  "found": false,
+  "factors": []
+ },
+ "c223_m1": {
+  "found": false,
+  "factors": []
+ },
+ "c224_m1": {
+  "found": false,
+  "factors": []
+ },
+ "c225_m1": {
+  "found": false,
+  "factors": []
+ },
+ "c227_m1": {
+  "found": false,
+  "factors": []
+ },
+ "c230_m1": {
+  "found": false,
+  "factors": []
+ },
+ "c233_m1": {
+  "found": false,
+  "factors": []
+ },
+ "c235_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "occupants",
+    "detail": "Lagna occupied by Sun (vitality) and Mercury (intelligence), aspected by Jupiter: healthy physique, memory, intelligence",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Parivartana between Lagna lord Venus and 2nd lord Mercury: proficiency in branches of knowledge",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Lagna lord Venus with the Moon: virile, energetic mind",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Venus in common sign in Rasi and with Mars in common sign in Navamsa: rationalist, versatile interests",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "house_aspects",
+    "detail": "Lagna, Sun and Mercury aspected by Jupiter from the 9th: philosophical knowledge, scholarship",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ },
+ "c236_m1": {
+  "found": true,
+  "factors": [
+   {
+    "type": "house_aspects",
+    "detail": "Leo Lagna unaspected by and unassociated with any malefics or benefics",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "navamsa",
+    "detail": "Lagna Vargottama and unafflicted in Navamsa: exalted nature, strong will, fortified horoscope",
+    "direction": "+",
+    "decisive": true
+   },
+   {
+    "type": "lord_house",
+    "detail": "Lagna lord Sun in the 4th (kendra) in sign of yogakaraka Mars: frank and noble spirit, diverse capabilities",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "lord_association",
+    "detail": "Sun with Mercury and Mars, aspected by Moon and Saturn",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "other",
+    "detail": "Moon-Saturn association: mental conflicts, spirit of inquiry, mystic disposition",
+    "direction": "+",
+    "decisive": false
+   },
+   {
+    "type": "named_yoga",
+    "detail": "Budha-Aditya Yoga of 2nd lord Mercury with Lagna lord in 4th; Jupiter in 2nd: learning and eloquence",
+    "direction": "+",
+    "decisive": false
+   }
+  ]
+ }
+}

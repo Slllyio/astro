@@ -18,11 +18,30 @@ def _tag(t: Tagged) -> str:
     return f"[{t.provenance}]{c} {t.text}"
 
 
+def finding(r: PitruDoshaReading) -> str:
+    """The screen's own result in one line — what a reader opens this section to learn.
+    Wave-3 (2026-08-18): the finding used to sit below five caveat bullets, so the
+    section led with provenance and buried its answer. Pure re-read of `curse_yogas`;
+    the full labelled list below is unchanged and every caveat is retained."""
+    n = len(r.curse_yogas)
+    if not n:
+        return ("FINDING: no classical ancestral-curse yoga fires in this chart "
+                "(Raman's own children verdict, below, reads "
+                f"{r.raman_children_verdict.upper()}).")
+    return (f"FINDING: {n} classical ancestral-curse yoga{'s' if n != 1 else ''} "
+            f"fire{'' if n != 1 else 's'} - each is listed in full, with its provenance "
+            f"tag and citation, below (Raman's own children verdict, also below, reads "
+            f"{r.raman_children_verdict.upper()}).")
+
+
 def to_text(r: PitruDoshaReading) -> str:
     L: list[str] = []
     L.append("=" * 76)
     L.append("PITṚ-DOṢA / ANCESTRAL-KARMA READING  —  classical lens, NOT a decree")
     L.append("=" * 76)
+    # The finding leads; the five caveat bullets follow it unchanged (move only).
+    L.append(finding(r))
+    L.append("")
     for n in r.notes:
         L.append(f"* {_tag(n)}")
     L.append("")

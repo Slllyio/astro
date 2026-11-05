@@ -1,10 +1,11 @@
 """End-to-end daemon tick tests with synthetic transits."""
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.daemon.transit_worker import NadiTransitDaemon
 from app.models.domain import Account, NatalChart, TransitAlert, UserProfile
@@ -345,3 +346,44 @@ async def test_sade_sati_does_not_fire_in_neutral_position(db_session: AsyncSess
         )
     )).scalars().all()
     assert sade == [], "expected no Sade Sati alerts when Saturn is not in 12/1/2 from Moon"
+
+
+# ---------- cycle_id structured logging ----------
+
+async def test_run_once_logs_tagged_with_cycle_id(
+    monkeypatch, db_engine, caplog
+) -> None:
+    """Every log line emitted within a run_once() cycle must carry a cycle_id
+    attribute so operators can correlate multi-user reconcile output to a single
+    daemon tick. All log lines within one cycle must share the same cycle_id."""
+    test_sm = async_sessionmaker(db_engine, expire_on_commit=False)
+    monkeypatch.setattr("app.daemon.transit_worker.AsyncSessionLocal", test_sm)
+
+    async with test_sm() as s:
+        await _seed_user_with_natal(s)
+
+    daemon = NadiTransitDaemon()
+
+    async def fake_fetch() -> dict:
+        chart = _synthetic_transit_chart()
+        daemon._last_transits = chart
+        return chart
+
+    monkeypatch.setattr(daemon, "fetch_realtime_transits", fake_fetch)
+
+    with caplog.at_level(logging.INFO, logger="app.daemon.transit_worker"):
+        await daemon.run_once()
+
+    daemon_records = [r for r in caplog.records if r.name == "app.daemon.transit_worker"]
+    assert daemon_records, "expected at least one log record from the daemon"
+
+    # Every record from this logger must carry cycle_id.
+    missing = [r for r in daemon_records if not getattr(r, "cycle_id", None)]
+    assert not missing, (
+        f"log records missing cycle_id: {[r.getMessage() for r in missing]}"
+    )
+
+    # All records within one run_once() call share a single cycle_id value.
+    cycle_ids = {r.cycle_id for r in daemon_records}
+    assert len(cycle_ids) == 1, f"expected one unique cycle_id per cycle, got {cycle_ids}"
+    assert len(next(iter(cycle_ids))) == 12, "cycle_id should be 12 hex chars"

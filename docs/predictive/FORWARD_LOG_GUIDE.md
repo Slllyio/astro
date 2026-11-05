@@ -46,6 +46,15 @@ derived from a hash of the wording and moment, the place is New Delhi, the matte
 the "asker" prior is Claude's. It is scored on its own, never pooled with personal questions
 (`questions.jsonl`).
 
+## Swapped-chart control (addendum 5, from 2026-11-05)
+
+Every question also locks KP's answer from 20 swapped charts: 20 other horary numbers at the same
+moment, and (with `--birth`) 20 birth charts on the same date at random clock times. If the real
+chart knows something, it should be right more often than its own swaps. This measures the chance
+level instead of assuming 50%. Rules: `PREDICTIVE_PREREG_2026-11-05_FORWARD_CONTROL.md`. The 10
+public questions locked on 2026-11-03 got theirs as `decoys` records (`add-decoys --id N`) before
+any was resolved.
+
 ## Settling a question
 
 When the event happens: `resolve --id N --outcome yes --date YYYY-MM-DD --evidence "..."`.
@@ -54,8 +63,9 @@ A "no" can only be recorded after the window closes (the tool refuses earlier). 
 
 ## When it is judged
 
-At 85 or more decided questions. KP passes if it is right at least 65% of the time AND beats the
-asker's own guesses on the same questions (McNemar test). Results are reported whichever way they
+At 85 or more decided questions, once per arm. KP passes if it is right at least 65% of the time AND
+beats the asker's own guesses on the same questions (McNemar test). The swapped-chart comparison is
+judged at the same point: p < 0.025 and the real chart at least 10 points above its swaps. Results are reported whichever way they
 come out.
 
 ## Privacy

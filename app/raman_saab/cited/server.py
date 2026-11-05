@@ -41,7 +41,7 @@ def search_page(q: str, kind: str = "", scope: str = "") -> str:
             f"placeholder='e.g. seventh lord in the eighth' value='{e(q)}'>"
             + sel("kind", [("", "everything")] + [(k, _LABEL[k]) for k in library.KINDS], kind)
             + sel("scope", [("", "all books"), ("Raman, natal", "Raman, natal"), ("horary", "horary"),
-                            ("KP", "KP Readers"), ("classical", "BPHS / Phaladeepika")], scope)
+                            ("KP", "KP Readers"), ("classical", "Classical, not Raman")], scope)
             + "<button>Search</button></form>")
     body = ["<h1>The classical library</h1>", form,
             "<p class=mute><small>Plain word search over the books' own text, the engine's rules "

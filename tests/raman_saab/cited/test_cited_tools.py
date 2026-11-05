@@ -238,3 +238,90 @@ def test_reading_states_the_spread(fdr: reading.CitedReading) -> None:
     assert any(c.spread.kind == sp.BOTH for h in fdr.houses for c in h.counts)
     assert "Both outcomes are indicated" in html
     assert "1 rules" not in html
+
+
+# -- classical shelf --------------------------------------------------------------------------
+
+_SARAV = """---
+id: saravali-ch012
+---
+
+# Chapter 12
+
+1. The Sun in the seventh house makes the native suffer humiliation from women and
+keeps him wandering, says the sage, without a settled home.
+
+2-3. If the seventh lord joins a malefic the spouse will be of a harsh temper and the
+union will know quarrels, unless a benefic aspects the house.
+
+Page 214
+
+4. Jupiter in the seventh gives a devoted and learned spouse and an honoured name in
+the assembly of the wise.
+"""
+
+_JP = """Some front matter of the scan, with no chapter yet and nothing numbered here.
+
+ADHYAYA VII
+
+1. Raja yogas are now described by the author in their order and in full detail.
+
+2. When three or more planets are exalted the native becomes a king, or equal to one.
+"""
+
+
+@pytest.fixture()
+def shelf_sources(tmp_path: Path) -> Path:
+    src = tmp_path / "sources"
+    (src / "saravali").mkdir(parents=True)
+    (src / "saravali" / "chapter_012_seventh-house.md").write_text(_SARAV, encoding="utf-8")
+    (src / "jataka_parijata").mkdir()
+    (src / "jataka_parijata" / "chapter_003_ocr-junk-name.md").write_text(_JP, encoding="utf-8")
+    (src / "bphs").mkdir()                     # the registry's copy, which the shelf replaces
+    (src / "bphs" / "chapter_024_effects.md").write_text(_SARAV, encoding="utf-8")
+    return src
+
+
+class TestClassicalShelf:
+    def test_shelf_books_are_labelled_not_raman(self, shelf_sources: Path) -> None:
+        """Every shelf file is scoped 'classical, not Raman' and none is natal-citable."""
+        from app.raman_saab.cited import classics
+        from app.raman_saab.doctrine import book_registry
+        fs = classics.shelf_files(shelf_sources)
+        assert {f.prefix for f in fs} == {"SARAV-12", "JP-3"}
+        assert all(f.scope == "classical, not Raman" for f in fs)
+        assert not any(book_registry.is_natal_citable(f.prefix) for f in fs)
+        assert {c.tag for c in classics.SHELF}.isdisjoint({b.tag for b in book_registry.BOOKS})
+
+    def test_chapter_and_verse_labels(self, shelf_sources: Path) -> None:
+        """Chapter comes from the file (Saravali) or a heading (JP); verses as printed."""
+        from app.raman_saab.cited import classics
+        fs = {f.prefix: f for f in classics.shelf_files(shelf_sources)}
+        rows = list(classics.passages(list(fs.values()), corpus.lines_of, library.chunk_lines))
+        labels = {(r[0].prefix, r[4]) for r in rows}
+        assert any(p == "SARAV-12" and lab.startswith("ch. 12, vv. 1-3") for p, lab in labels)
+        assert ("SARAV-12", "ch. 12, v. 4") in labels
+        assert any(p == "JP-3" and lab.startswith("adhyaya 7, vv. 1-2") for p, lab in labels)
+        for f, lo, hi, text, _ in rows:                         # tokens read back verbatim
+            assert text == "\n".join(corpus.lines_of(f.path)[lo - 1:hi]).strip()
+
+    def test_library_indexes_one_bphs_and_says_where(self, shelf_sources: Path, tmp_path: Path) -> None:
+        """The registry BPHS copy is left out (the shelf's copy replaces it); hits carry location."""
+        idx = tmp_path / "lib.sqlite"
+        library.build(idx, sources=shelf_sources)
+        m = library.meta(idx)
+        assert "passages_BPHS" not in m and int(m["passages_SARAV"]) >= 2
+        res = library.search("seventh lord malefic spouse", kinds=("passage",), path=idx)
+        assert res.hits and res.hits[0].cite.startswith("SARAV-12:")
+        assert res.hits[0].scope == "classical, not Raman"
+        assert "ch. 12" in res.hits[0].title and "tr. R. Santhanam" in res.hits[0].title
+        assert not library.search("seventh lord malefic", kinds=("passage",), scope="Raman, natal",
+                                  path=idx).hits
+
+    def test_heading_parser_ignores_prose(self) -> None:
+        """'CHAPTER XII' is a heading; a sentence mentioning a chapter is not."""
+        from app.raman_saab.cited import classics
+        assert classics.chapter_heading("CHAPTER XII") == 12
+        assert classics.chapter_heading("Adhyaya 3") == 3
+        assert classics.chapter_heading("chapter of the book is long") is None
+        assert classics.verse_at("1995") is None and classics.verse_at("12-14. Saturn in") == (12, 14)

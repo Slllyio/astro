@@ -15,7 +15,9 @@ KP passage as Raman's natal doctrine:
 * ``Raman, natal``           the books the natal engine cites
 * ``Raman, Jaimini system``  Studies in Jaimini (a separate system, not used for natal verdicts)
 * ``horary`` / ``electional`` / ``annual``  Raman's non-natal books and Prasna Marga
-* ``classical, not Raman``   BPHS and Phaladeepika (corroboration only)
+* ``classical, not Raman``   the Parashari classics on the library's own shelf
+                             (``cited/classics.py``: BPHS, Saravali, Jataka Parijata, Uttara
+                             Kalamrita, Phaladeepika ...), and the registry's corroboration books
 * ``Rao lineage, not citable``  B. Suryanarain Rao's books
 * ``KP, a separate system``  Krishnamurti's Readers
 """
@@ -109,9 +111,26 @@ def book_files(sources: Path = SOURCES) -> list[BookFile]:
     return out
 
 
+def shelf_book_files(sources: Path = SOURCES) -> list[BookFile]:
+    """The classical shelf (``classics.SHELF``) as BookFiles, all scoped ``classical, not Raman``."""
+    from app.raman_saab.cited import classics
+    return [BookFile(f.prefix, f.book, f.title, f.scope, f.path) for f in classics.shelf_files(sources)]
+
+
+def library_files(sources: Path = SOURCES) -> list[BookFile]:
+    """What the library indexes: the registry books, less the corroboration copies the classical
+    shelf replaces (one copy per work), then the shelf."""
+    from app.raman_saab.cited import classics
+    keep = [f for f in book_files(sources) if f.book not in classics.REPLACES]
+    return keep + shelf_book_files(sources)
+
+
 @lru_cache(maxsize=1)
 def _file_index() -> dict[str, BookFile]:
-    return {f.prefix: f for f in book_files()}
+    idx = {f.prefix: f for f in book_files()}
+    for f in shelf_book_files():
+        idx.setdefault(f.prefix, f)
+    return idx
 
 
 @lru_cache(maxsize=64)

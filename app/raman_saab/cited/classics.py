@@ -371,6 +371,8 @@ def label(f: ShelfFile, locs: list[Loc], lo: int, hi: int, lines: tuple[str, ...
             vtxt = f"from before {vtxt}"
     else:
         vtxt = ""
+    if ch is None and f.classic.chapter_from == "footers":
+        vtxt = ""                         # back matter after the last colophon: lists, not verses
     ctxt = f"{f.classic.unit} {ch}" if ch is not None else ""
     spanned = list(dict.fromkeys(c for c, _, _ in locs[lo - 1:hi] if c is not None))
     if len(spanned) > 1:                  # the passage crosses a chapter boundary

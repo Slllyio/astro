@@ -422,6 +422,27 @@ class TestClassicalShelf:
         f19 = [f for f in classics.shelf_files(src) if f.prefix == "HRAT-19"][0]
         chs = [c for c, _, _ in classics.line_locations(f19, corpus.lines_of(f19.path), 5)]
         assert chs[0] == 5 and chs[3] is None and chs[5] is None    # back matter left blank
+        src2 = tmp_path / "sources2"
+        (src2 / "hora_ratnam_santhanam").mkdir(parents=True)
+        (src2 / "hora_ratnam_santhanam" / "chapter_016_pages-751-800.md").write_text(
+            "67. The native will be involved in crimes if Rahu joins another malefic planet.\n\n"
+            "Hora Ratnam / Chapter 5\n", encoding="utf-8")
+        f20 = src2 / "hora_ratnam_santhanam" / "chapter_020_pages-951-990.md"
+        f20.write_text(
+            "12. The last verse of the fifth chapter is printed here for the reader, at length\n"
+            "so that it makes a passage of its own in the index of the library here.\n"
+            "Thus ends the 5th Chapter of the work.\n\n"
+            "Some more words of the colophon page follow here.\n"
+            "And more of them, on the same page of the scan.\n"
+            "And still more of them, on that page of the scan.\n"
+            "And yet more of them, closing the colophon page.\n\n"
+            "1. Garga, the ancient author whose works Bala Bhadra consulted for this book.\n"
+            "2. Yavanacharya, another ancient author consulted by Bala Bhadra for it.\n",
+            encoding="utf-8")
+        hr = [f for f in classics.shelf_files(src2) if f.book == "HRAT"]     # 16 then 20
+        labs = [(r[0].prefix, r[4]) for r in classics.passages(hr, corpus.lines_of, library.chunk_lines)]
+        h20 = [lab for p, lab in labs if p == "HRAT-20"]
+        assert h20[0].startswith("ch. 5") and h20[-1] == ""        # the list after it is not verses
         bj = [f for f in classics.shelf_files(src) if f.book == "BJ"][0]
         lines = corpus.lines_of(bj.path)
         chs = [c for c, _, _ in classics.line_locations(bj, lines)]

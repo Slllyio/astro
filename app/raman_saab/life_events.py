@@ -1,27 +1,29 @@
-"""Typed life events + natal facts for birth-time rectification — the evidence model.
+"""Typed life events — the event-to-house taxonomy used to CHECK the engine against real lives.
 
-Raman's own doctrine makes dated life events the PRIMARY rectification instrument:
-"birth times can be rectified only by men of experience by a consideration of pronounced
-life incidents" (HPA ch.12, On Birth Verification and Rectification), demonstrated on
-his own rectified nativities ("by a careful consideration of his life incidents ... we
-have been able to fix up the time", H.G. Wells, NH:6683; Goethe NH:4051-4080). Each
-event type below maps to the house whose Time-of-Fructification significators must rule
-the running Dasha/Bhukti/Pratyantar at the event date (HTJAH-I:1583-1596: "In timing
-events pertaining to the first Bhava, note ... (a) Lord ... (b) planets aspecting ...
-(c) planets posited ... The same consideration holds good with reference to the other
-houses"), plus the explicit event karakas Raman names (e.g. marriage: "Marriage may
-occur during the Dasa (period) of the planet (1) posited in the 7th house; (2) Venus and
-the Moon; (3) planet aspecting the 7th house; or (4) owning the 7th house", AFB-9:98).
+Each event type maps to the house whose Time-of-Fructification significators should rule
+the running Dasha/Bhukti at the event date (HTJAH-I:1583-1596: "In timing events
+pertaining to the first Bhava, note ... (a) Lord ... (b) planets aspecting ... (c) planets
+posited ... The same consideration holds good with reference to the other houses"), plus
+the explicit event karakas Raman names (e.g. marriage: "Marriage may occur during the Dasa
+(period) of the planet (1) posited in the 7th house; (2) Venus and the Moon; (3) planet
+aspecting the 7th house; or (4) owning the 7th house", AFB-9:98).
 
 Every ``EventSpec`` row carries a verbatim ``Citation`` resolvable on disk (enforced by
-``tests/raman_saab/rectification/test_events.py``); every ``signification_key`` must
-exist in ``significations_of(house)`` (validated at import — no silent drift).
+``tests/raman_saab/test_life_events.py``); every ``signification_key`` must exist in
+``significations_of(house)`` (validated at import — no silent drift).
+
+What this module is NOT for: fitting a birth time to the events. The engine used to do
+that (``app.raman_saab.rectification``, removed 2026-11-05). Choosing the birth time that
+makes a person's known events line up with the dasha periods, and then reading the same
+dasha periods back to them, is circular: the "fit" is guaranteed by construction and
+says nothing about whether the method works. See
+``docs/raman_saab/BIRTH_TIME_POLICY.md``. Events here are used only for honest
+validation at a birth time fixed independently of them (a recorded time).
 
 Usage:
-    from app.raman_saab.rectification.events import LifeEvent, NatalFact, resolve_fact
-    ev = LifeEvent(event_type="marriage", year=2017, month=12, day=4)
+    from app.raman_saab.life_events import EVENT_TAXONOMY, LifeEvent
+    ev = LifeEvent(event_type="marriage", year=2001, month=6, day=15)
     ev.precision            # "day"
-    fact = resolve_fact("mother", "afflicted")
 """
 from __future__ import annotations
 
@@ -30,12 +32,11 @@ from dataclasses import dataclass
 from typing import Final, Literal, Optional
 
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKAS
-from app.raman_saab.doctrine.significations import SIGNIFICATIONS, significations_of
+from app.raman_saab.doctrine.significations import significations_of
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.primitives.vimshottari import date_to_jd
 
 DatePrecision = Literal["year", "month", "day"]
-Observed = Literal["favourable", "mixed", "afflicted"]
 
 _DAYS_IN_MONTH: Final[tuple[int, ...]] = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
@@ -280,41 +281,3 @@ class LifeEvent:
                 return start, date_to_jd(self.year + 1, 1, 1, 0.0)
             return start, date_to_jd(self.year, self.month + 1, 1, 0.0)
         return date_to_jd(self.year, 1, 1, 0.0), date_to_jd(self.year + 1, 1, 1, 0.0)
-
-
-@dataclass(frozen=True)
-class NatalFact:
-    """A non-dated natal observation ('the mother has been chronically unwell') scored
-    against the engine's judge_house verdict for its signification — the second
-    evidence channel (it discriminated the ayanamsa in the worked rect_case_01)."""
-    subject: str
-    house: int
-    observed: Observed
-    description: str = ""
-    weight: float = 1.0
-
-    def __post_init__(self) -> None:
-        keys = {s.key for s in significations_of(self.house)}
-        if self.subject not in keys:
-            raise ValueError(
-                f"NatalFact subject {self.subject!r} not among H{self.house} "
-                f"signification keys {sorted(keys)}")
-        if self.weight <= 0:
-            raise ValueError("weight must be positive")
-
-
-def resolve_fact(subject: str, observed: Observed, *, description: str = "",
-                 weight: float = 1.0) -> NatalFact:
-    """Build a NatalFact from a signification key alone, locating its house by scanning
-    the doctrine table. Unknown keys fail loudly with the valid-key list and a
-    nearest-match hint — no silent guessing."""
-    for sigs in SIGNIFICATIONS.values():
-        for sig in sigs:
-            if sig.key == subject:
-                return NatalFact(subject=subject, house=sig.house, observed=observed,
-                                 description=description, weight=weight)
-    all_keys = sorted({s.key for sigs in SIGNIFICATIONS.values() for s in sigs})
-    hint = difflib.get_close_matches(subject, all_keys, n=3)
-    raise ValueError(
-        f"unknown natal-fact subject {subject!r}; valid keys: {all_keys}"
-        + (f"; did you mean {hint}?" if hint else ""))

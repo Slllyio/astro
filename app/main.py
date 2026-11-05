@@ -127,7 +127,7 @@ app.include_router(forecast_router)  # Phase 2: multi-day Mundane Forecast (/med
 app.include_router(almanac_router)   # Phase 2: backward-looking Mundane Almanac (/medini/almanac/*)
 app.include_router(reading_router)   # Round 10: per-chart RAG-grounded reader (/medini/reading/*)
 app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
-app.include_router(rectification_router)  # Birth-time rectification / discovery (/rectify/*)
+app.include_router(rectification_router)  # /rectify retired 2026-11-05: 410 + birth-time policy
 app.include_router(varga_router)  # Shodasavarga 16-divisional-chart reading (/vargas/*)
 app.include_router(report_router)  # Full detailed reading (/report/*)
 app.include_router(empirical_router)  # Empirical tournament: validated claims or a measured null (/empirical/*)

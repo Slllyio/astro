@@ -12,8 +12,12 @@ This module builds the instrument that can actually be scored. Four parts, in a 
 
   A. BLIND — plain life questions with no astrology in them. Answered first, ideally before the
      reading is read at all. This is the only unbiased evidence the reader can give.
-  B. RECTIFICATION — how far the ascendant sits from its own cusp, and the questions that settle
-     which side of it the birth really falls on. Chart-specific and computed.
+  B. BIRTH-TIME CHECK — how far the ascendant sits from its own cusp, plus closed PHYSICAL
+     questions (build, apparent age, the two-sign portrait). Chart-specific and computed.
+     Recorded and shown, never used to move the birth time. The old B6 grid of dated
+     anchor events ("the events a birth time is corrected against") was removed on
+     2026-11-05: fitting a time to the reader's own events is circular
+     (docs/raman_saab/BIRTH_TIME_POLICY.md).
   C. FORCED CHOICE — each of the chart's own distinctive readings paired with its exact inverse,
      both unlabelled, so a coin scores 50% and agreement above that is information. Ordered by
      RARITY (`1 - band_share`), never by digest position: a reading half the population shares
@@ -636,20 +640,6 @@ _PART_B_FIXED: tuple[Q, ...] = (
     Q("B5", "rectification", "choice", "You were born:", "आपका जन्म हुआ:",
       (("hospital", "in a hospital", "अस्पताल में"), ("home", "at home", "घर पर"),
        ("unknown", "I don't know", "पता नहीं")), maps_to="rect.birth_place"),
-    Q("B6", "rectification", "events",
-      "The events a birth time is actually corrected against. Give the year and, where you "
-      "can, the month.",
-      "जिन घटनाओं से जन्म-समय शोधित होता है। वर्ष और यदि संभव हो तो महीना बताएँ।",
-      (("father_death", "father's death or major illness",
-        "पिता की मृत्यु या गंभीर बीमारी"),
-       ("mother_death", "mother's death or major illness",
-        "माता की मृत्यु या गंभीर बीमारी"),
-       ("marriage", "marriage", "विवाह"),
-       ("first_job", "first job", "पहली नौकरी"),
-       ("own_surgery", "a surgery of my own", "अपना ऑपरेशन"),
-       ("child_born", "the birth of a first child", "पहली संतान का जन्म")),
-      "Exact months matter more here than anywhere else on the form.",
-      "यहाँ सटीक महीने बाक़ी फ़ॉर्म से ज़्यादा मायने रखते हैं।", maps_to="rect.anchors"),
 )
 
 # ── Part D: after the reading, all closed ───────────────────────────────────────────────────

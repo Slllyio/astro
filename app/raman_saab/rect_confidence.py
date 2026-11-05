@@ -11,9 +11,11 @@ fixed pass/fail at one offset. The combined range where EVERY pillar holds simul
 reported too; that is the honest answer to "how much birth-time error can this reading
 tolerate." Confidence stays a measured count/range, never an invented percentage.
 
-Event-based rectification proper (matching dated life events against the timeline) is a
-separate instrument the app already carries (`app/raman_saab/rectification/`, the
-/rectification routes) — this chapter states input sensitivity only, and says so.
+The engine does NOT rectify. Event-based rectification (choosing the time whose dasha
+periods best match the native's dated life events) was removed on 2026-11-05 because the
+reading would then read back the very periods the events were fitted to — circular by
+construction (docs/raman_saab/BIRTH_TIME_POLICY.md). This chapter states input sensitivity
+only: it never moves the birth time.
 
 Usage:
     from app.raman_saab.rect_confidence import build_rect_confidence
@@ -66,9 +68,10 @@ _FRAME: Final[str] = (
     f"out to +-{SCAN_WINDOW} minutes from the stated birth time, and the load-bearing pillars "
     f"compared at every step. Each pillar's stable range is the widest window, in each "
     f"direction, where its value still matches the stated time — a measured boundary, never "
-    f"an invented confidence percentage. Event-based rectification (matching dated life "
-    f"events) is a separate instrument at /rectification; this chapter states input "
-    f"sensitivity only.")
+    f"an invented confidence percentage. The birth time itself is used as recorded: "
+    f"the engine never moves it to fit dated life events (that would be circular — the "
+    f"reading would then read back the periods the events were fitted to); this chapter "
+    f"states input sensitivity only.")
 
 _SIGN: Final[tuple[str, ...]] = (
     "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",

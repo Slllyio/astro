@@ -21,7 +21,7 @@ optional layers when their required inputs aren't provided).
   Gap K   — prashna                          (separate flow; NOT in master reading —
                                              call prashna_chart functions directly)
   Gap L   — remedies prescription            (always; per weak/afflicted planet)
-  Gap M   — birth time rectification        (separate utility; NOT in master reading)
+  Gap M   — birth time rectification        (REMOVED 2026-11-05: circular, see docs/raman_saab/BIRTH_TIME_POLICY.md)
 
 Gaps K and M are intentionally separate — Prashna is a different chart
 paradigm, BTR is a search/optimisation procedure.

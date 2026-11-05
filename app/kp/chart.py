@@ -50,8 +50,9 @@ class Birth:
 
     ``uncertainty_minutes`` is the ± window the recorded time is trusted to.
     It does not change the cast; :mod:`app.kp.judgment` uses it to report
-    whether a verdict survives the whole window. A rectified time from the
-    rectification work plugs in here with its own (smaller) window.
+    whether a verdict survives the whole window. The window comes from how the
+    time was recorded; it is never narrowed by fitting the time to life events
+    (docs/raman_saab/BIRTH_TIME_POLICY.md).
     """
 
     year: int

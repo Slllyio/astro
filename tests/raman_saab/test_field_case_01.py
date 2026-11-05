@@ -19,7 +19,7 @@ from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.judges import house_template as ht
 from app.raman_saab.primitives import vimshottari as vim
-from app.raman_saab.rectification.events import EVENT_TAXONOMY, LifeEvent
+from app.raman_saab.life_events import EVENT_TAXONOMY, LifeEvent
 
 _FIXTURE = Path(__file__).resolve().parents[1] / "fixtures" / "field_case_01.json"
 _POS = {"afflicted": 0, "mixed": 1, "favourable": 2}

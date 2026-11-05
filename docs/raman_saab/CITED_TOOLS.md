@@ -20,7 +20,7 @@ One chart, all twelve houses, each read the way a verdict is defended:
 - Raman's conclusions on comparable charts of his, each with the line where he wrote it;
 - the house re-judged at -20, -10, -5, +5, +10 and +20 minutes.
 
-The page opens with a fixed honesty notice carrying the measured figures: 263 of 389 in-sample,
+The page opens with a fixed honesty notice carrying the measured figures: 240 of 365 in-sample (after the 2026-10-31 label re-review and the 2026-11-05 F2/F5 fixes),
 23/36, 55/134 and 29/64 on the sealed hold-outs, 131/198 for the plain count, and the null on
 real lives.
 
@@ -44,7 +44,7 @@ One SQLite full-text file, `data/library/library.sqlite` (gitignored, about 20 M
 |---|---|---|
 | passage | every book file the citation resolver knows, cut at paragraphs, each with the exact line span as a citation token | 21,603 |
 | rule | every rule in the engine's rule store, with its reading and citation | 1,023 |
-| example | every confirmed conclusion Raman reached on a worked chart, located to his line where it is a verbatim quote | 389 |
+| example | every confirmed conclusion Raman reached on a worked chart, located to his line where it is a verbatim quote | 389 (365 after the 2026-10-31 label re-review) |
 
 The cloud build covered the Raman books, Prasna Marga and KP Readers 1-6. On the PC the build
 also picks up BPHS and Phaladeepika (corroboration) and the Rao lineage books, so the passage
@@ -72,7 +72,7 @@ numbers come from the files.
 
 ## 3. The study view (`cited/study.py`)
 
-Each of Raman's 237 worked charts that carry a confirmed conclusion, with:
+Each of Raman's 235 worked charts that carry a confirmed conclusion, with:
 
 - the chart, cast as the scored harness casts it;
 - Raman's own write-up, verbatim;
@@ -82,12 +82,13 @@ Each of Raman's 237 worked charts that carry a confirmed conclusion, with:
 - whether the two agree, are one step apart, or are opposite.
 
 The index page totals are the scored in-sample figure, and a test pins them to the golden
-harness: 263 agree, 91 one step apart, 35 opposite, on 389 conclusions (2026-11-03). The page
+harness: 240 agree, 94 one step apart, 31 opposite, on 365 conclusions (2026-11-05, after
+the 2026-10-31 label re-review and the F2/F5 fixes; it was 263/91/35 on 389 when the tool was built). The page
 says plainly that these are the charts the engine was built against.
 
-219 of the 389 conclusions are verbatim quotes that the tool finds at their exact lines (within
+209 of the 365 conclusions are verbatim quotes that the tool finds at their exact lines (within
 400 lines of the chart's own citations; a match elsewhere in the book is never used). The
-other 170 labels are a reviewer's summary or a heavily elided quote; for those the page points
+other 156 labels are a reviewer's summary or a heavily elided quote; for those the page points
 to Raman's full write-up of the chart instead.
 
 ```

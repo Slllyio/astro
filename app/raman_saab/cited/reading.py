@@ -42,8 +42,8 @@ NAKSHATRAS = ("Aswini", "Bharani", "Krittika", "Rohini", "Mrigasira", "Aridra", 
 HONESTY = (
     "This reading sets out what B. V. Raman's books say about this chart and why: every rule "
     "that applies, the line of the book it comes from, how the rules were weighed, and what "
-    "Raman himself concluded on similar charts. It is not a forecast. On Raman's own 389 worked "
-    "conclusions, which the engine was built against, it agrees with him 263 times (68%). On "
+    "Raman himself concluded on similar charts. It is not a forecast. On Raman's own 365 worked "
+    "conclusions, which the engine was built against, it agrees with him 240 times (66%). On "
     "his conclusions it was not built on, it agrees far less often: 23 of 36, 55 of 134 and 29 "
     "of 64 in three sealed hold-outs. A plain count of the rules for and against agreed with "
     "him 131 of 198 times. On real lives (22,177 charts with 47,000 dated events, and 47,036 "

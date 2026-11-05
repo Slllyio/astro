@@ -611,6 +611,15 @@ C1_WEAKNESS_NOT_AFFLICTION: bool = False
 #: C4 (Addendum 33, held): the karaka veto is relieved one step to mixed when Jupiter or Venus
 #: joins or aspects the broken karaka (3HCC:11228-11230, NH:6230-6231).
 C4_KARAKA_VETO_RELIEF: bool = False
+#: F5 (opposite-verdict study 2026-11-05, held for the user's decision): the clause-6
+#: BHAVA-RESCUE (HTJAH-I:503-505, "if the lord is badly placed, and the house itself has good
+#: conjunctions and aspects then evil results should not be predicted") required
+#: ``bhava_bala_strong is True``. Since the Bhava Bala vote was withdrawn (USER DECISION
+#: 2026-10-23, BHAVA_BALA_PILLAR_VOTES=False) that field is always None, so the rescue can
+#: never fire. The dhana floor met the same trap and reads ``is not False`` (see
+#: ``_dhana_floor``). With this flag the rescue reads the same way: the house's own good
+#: conjunctions and aspects (fired benefic rules) rescue unless the Bhava Bala is known weak.
+F5_BHAVA_RESCUE_UNVOTED: bool = True
 
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 
@@ -748,7 +757,9 @@ def _decide_clauses(L: FrameLedger) -> tuple[Verdict, bool]:
         # (fired_benefic) backed by a strong Bhava Bala — NOT the karaka. When the bhava
         # carries good aspects and there is no benefic-vs-malefic contradiction (that
         # contradiction was already routed to 'mixed' at clause 2), demote afflicted.
-        if (not L.lord_strong) and L.fired_benefic and bhava_strong:
+        rescue_bhava = bhava_strong or (F5_BHAVA_RESCUE_UNVOTED
+                                        and L.bhava_bala_strong is None)
+        if (not L.lord_strong) and L.fired_benefic and rescue_bhava:
             base = "mixed"
         # KARAKA-SALVAGE (three-pillar doctrine — methodology §2 / HTJAH-II:221;
         # the lord's dual ownership+karaka role HTJAH-I:985): a decisively strong karaka

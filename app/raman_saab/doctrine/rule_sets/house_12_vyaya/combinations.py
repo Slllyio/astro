@@ -38,6 +38,25 @@ from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
+from app.raman_saab.primitives.special_points import karakamsa as _karakamsa
+
+#: F2 (opposite-verdict study 2026-11-05, held for the user's decision): make H12.C.G2
+#: evaluable. Raman applies it in NH No. 46 (NH:10039-10041, "Jaimini's dictum that Ketu in the
+#: 12th from Karakamsa gives one Kaivalya ... is literally applicable"), where the Moon is the
+#: Atmakaraka in Gemini Navamsa and Ketu is in Taurus Navamsa. Positions are read in the
+#: Navamsa, as ``jaimini_reading.karakamsa_indications`` reads occupation of the Karakamsa.
+F2_KETU_FROM_KARAKAMSA: bool = True
+
+
+class _KetuTwelfthFromKarakamsa(C.Condition):
+    """Ketu's Navamsa sign is the 12th from the Karakamsa (the Atmakaraka's Navamsa sign)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        ketu = ctx.chart.planets.get("Ketu")
+        if ketu is None:
+            return False
+        ks = _karakamsa(ctx.chart).sign
+        return ketu.navamsa_sign == ((ks + 10) % 12) + 1
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.primitives.bhangas import neecha_bhanga
 from app.raman_saab.primitives.dignity import dignity
@@ -815,9 +834,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D9", polarity="benefic", source=Citation("HTJAH-II", 16524)),
     RuleRecord(
         id="H12.C.G2", house=12, signification="moksha", group="combination",
-        kind="descriptive", condition=None,
-        fortified="Ketu in the 12th FROM karakamsa → gives Kaivalya / Final Emancipation. "
-                  "TODO(predicate: karakamsa origin / Atmakaraka-Navamsa frame)",
+        kind="evaluable" if F2_KETU_FROM_KARAKAMSA else "descriptive",
+        condition=_KetuTwelfthFromKarakamsa() if F2_KETU_FROM_KARAKAMSA else None,
+        fortified=("Ketu in the 12th FROM karakamsa → gives Kaivalya / Final Emancipation"
+                   if F2_KETU_FROM_KARAKAMSA else
+                   "Ketu in the 12th FROM karakamsa → gives Kaivalya / Final Emancipation. "
+                   "TODO(predicate: karakamsa origin / Atmakaraka-Navamsa frame)"),
         afflicted=None,
         frame="KARAKA", varga="D9", polarity="benefic", source=Citation("HTJAH-II", 16527)),
     RuleRecord(

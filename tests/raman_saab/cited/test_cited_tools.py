@@ -130,7 +130,14 @@ def test_distance_matches_the_harness_convention() -> None:
 
 def test_study_totals_equal_the_scored_harness() -> None:
     """The study page must report exactly the figure the golden ratchet scores."""
-    from tests.raman_saab.test_goldens import track_b_ordinal_scoreboard, track_b_scoreboard
+    # loaded by path: a stray site-packages "tests" package can shadow the repo's tests/ folder
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "_golden_harness", Path(__file__).resolve().parents[1] / "test_goldens.py")
+    harness = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(harness)
+    track_b_scoreboard, track_b_ordinal_scoreboard = (harness.track_b_scoreboard,
+                                                      harness.track_b_ordinal_scoreboard)
     exact, total, _ = track_b_scoreboard()
     within1, _, real = track_b_ordinal_scoreboard()
     tally = Counter()
@@ -183,3 +190,51 @@ def test_reading_of_a_new_chart_has_no_raman_conclusion() -> None:
     r = reading.from_birth("Test", "1950-01-01", "12:00", 5.5, 13.0, 77.6, stability=False)
     assert all(h.raman is None for h in r.houses)
     assert "Raman's own conclusion on this chart" not in reading.to_html(r)
+
+
+# -- the spread of indications (2026-11-05) ----------------------------------------------------
+
+from app.raman_saab.cited import spread as sp  # noqa: E402
+
+
+def test_spread_kinds() -> None:
+    assert sp.kind_of(2, 1) == sp.BOTH
+    assert sp.kind_of(2, 0) == sp.ONLY_FOR
+    assert sp.kind_of(0, 3) == sp.ONLY_AGAINST
+    assert sp.kind_of(0, 0) == sp.SILENT
+
+
+def test_spread_counts_match_the_ledgers_and_change_no_verdict(fdr: reading.CitedReading) -> None:
+    for hr in fdr.houses:
+        pf = ht.judge_house(fdr.chart, hr.audit.house)
+        for c, sv in zip(hr.counts, pf.significations):
+            assert c.spread is not None and c.spread.verdict == str(sv.verdict)
+            assert c.n_for == len({f.rule.id for f in sv.ledger.fired_benefic})
+            assert c.n_against == len({f.rule.id for f in sv.ledger.fired_malefic})
+            assert c.spread.n_descriptive == len({f.rule.id for f in sv.ledger.fired_neutral})
+
+
+def test_baseline_covers_every_matter_and_is_shares(fdr: reading.CitedReading) -> None:
+    b = sp.baseline()
+    assert b is not None and b["n"] >= 1000
+    for hr in fdr.houses:
+        for c in hr.counts:
+            m = sp.base_for(c.spread.house, c.spread.matter)
+            assert m is not None, (c.spread.house, c.spread.matter)
+            total = m["both_share"] + m["only_for_share"] + m["only_against_share"]
+            assert 0.0 <= total <= 1.0 + 1e-9
+
+
+def test_baseline_is_reproducible_on_a_small_sample() -> None:
+    a, b = sp.build_baseline(n=5, seed=11), sp.build_baseline(n=5, seed=11)
+    assert a == b and a["n"] == 5
+
+
+def test_reading_states_the_spread(fdr: reading.CitedReading) -> None:
+    html, md = reading.to_html(fdr), reading.to_markdown(fdr, quotes=False)
+    for text in (html, md):
+        assert "How sure the books are" in text
+        assert "random charts" in text
+    assert any(c.spread.kind == sp.BOTH for h in fdr.houses for c in h.counts)
+    assert "Both outcomes are indicated" in html
+    assert "1 rules" not in html

@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from app.raman_saab import house_audit as ha
-from app.raman_saab.cited import corpus
+from app.raman_saab.cited import corpus, spread as sp
 from app.raman_saab.cited.html import e, page, src_block, v
 from app.raman_saab.cited.reading import chart_rows
 from app.raman_saab.judges import house_template as ht
@@ -69,6 +69,12 @@ class HouseCompare:
     rules_for: tuple[Rule, ...]
     rules_against: tuple[Rule, ...]
     rules_neutral: tuple[Rule, ...]
+    sig: str = ""                       # the signification key, e.g. "marital_happiness"
+
+    @property
+    def spread(self) -> sp.Spread:
+        return sp.Spread(self.house, self.sig, len(self.rules_for), len(self.rules_against),
+                         len(self.rules_neutral), self.engine_verdict or "")
 
     @property
     def agreement(self) -> str:
@@ -112,7 +118,7 @@ def study(rec: dict[str, Any]) -> ChartStudy:
             corpus.locate(ent.get("verdict_prose", ""), rec),
             str(sv.verdict) if sv is not None else None, str(pf.rollup),
             _rules(L.fired_benefic) if L else (), _rules(L.fired_malefic) if L else (),
-            _rules(L.fired_neutral) if L else ()))
+            _rules(L.fired_neutral) if L else (), ent["signification"]))
     b = rec.get("birth") or {}
     cast = (f"cast from the birth data {b['dt'].replace('T', ' ')} (UTC{float(b['tz']):+g})"
             if b.get("dt") else "cast from the positions Raman printed")
@@ -173,7 +179,7 @@ def chart_html(s: ChartStudy, *, reading_href: str = "", index_href: str = "inde
                     "write-up above.</small></p>") + "</div>",
                  f"<div class=card><h3>The engine</h3><p>{v(h.engine_verdict or 'no verdict')} "
                  f"<small>(house as a whole: {e(h.engine_rollup)})</small></p>"
-                 f"<p><small>{len(h.rules_for)} rules for, {len(h.rules_against)} against.</small></p>"
+                 f"<p><small>{e(sp.sentence(h.spread))}</small></p>"
                  + _rule_list(h.rules_for, "For") + _rule_list(h.rules_against, "Against")
                  + _rule_list(h.rules_neutral, "Descriptive") + "</div>", "</div>"]
     return page(f"Study: {s.name}", "\n".join(body), nav=f"<a href='{e(index_href)}'>All worked charts</a>")

@@ -48,6 +48,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     st.add_argument("--only", default="", help="comma-separated record ids")
     st.add_argument("--readings", action="store_true", help="also write a cited reading per chart (slow)")
 
+    sb = sub.add_parser("spread-baseline", help="regenerate the random-chart spread baseline")
+    sb.add_argument("--n", type=int, default=2000)
+    sb.add_argument("--seed", type=int, default=20261105)
+
     sv = sub.add_parser("serve", help="all three tools in the browser, on this machine only")
     sv.add_argument("--port", type=int, default=8765)
 
@@ -97,6 +101,15 @@ def main(argv: Optional[list[str]] = None) -> int:
         only = tuple(x.strip() for x in a.only.split(",") if x.strip())
         res = S.write_site(Path(a.out), only=only, readings=a.readings)
         print(f"wrote {a.out}/index.html: {res}")
+        return 0
+
+    if a.cmd == "spread-baseline":
+        import json
+        from app.raman_saab.cited import spread as SP
+        b = SP.build_baseline(a.n, a.seed)
+        SP.BASELINE_PATH.write_text(json.dumps(b, indent=1) + "\n", encoding="utf-8")
+        print(f"wrote {SP.BASELINE_PATH}: {len(b['matters'])} matters, mean both-ways share "
+              f"{b['mean_both_share']}")
         return 0
 
     if a.cmd == "serve":

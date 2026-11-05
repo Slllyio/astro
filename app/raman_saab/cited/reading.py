@@ -25,7 +25,7 @@ from typing import Any, Optional
 
 from app.raman_saab import house_audit as ha
 from app.raman_saab.chart.model import RamanChart
-from app.raman_saab.cited import corpus
+from app.raman_saab.cited import corpus, spread as sp
 from app.raman_saab.cited.html import e, page, src_block, v
 from app.raman_saab.for_against import Reason, lean_of
 from app.raman_saab.judges import house_template as ht
@@ -62,6 +62,11 @@ class MatterCount:
     n_for: int
     n_against: int
     lean: str
+    spread: Optional[sp.Spread] = None         # the same counts, with descriptive rules
+
+    @property
+    def spread_line(self) -> str:
+        return sp.sentence(self.spread) if self.spread is not None else ""
 
 
 @dataclass(frozen=True)
@@ -83,14 +88,14 @@ class CitedReading:
 
 def _counts(chart: RamanChart, house: int) -> tuple[MatterCount, ...]:
     pf = ht.judge_house(chart, house)
-    out = []
-    for sv in pf.significations:
-        L = sv.ledger
-        nf = len({fr.rule.id for fr in L.fired_benefic})
-        na = len({fr.rule.id for fr in L.fired_malefic})
-        out.append(MatterCount(sv.signification.replace("_", " "), str(sv.verdict), nf, na,
-                               lean_of(nf, na)))
-    return tuple(out)
+    return tuple(MatterCount(s.matter.replace("_", " "), s.verdict, s.n_for, s.n_against,
+                             lean_of(s.n_for, s.n_against), s)
+                 for s in sp.spreads_for_house(pf))
+
+
+def spread_summary(r: "CitedReading") -> str:
+    """The chart-level uncertainty line (``spread.summary``) for this reading."""
+    return sp.summary(tuple(c.spread for h in r.houses for c in h.counts if c.spread is not None))
 
 
 def build(chart: RamanChart, *, title: str, birth_line: str = "", stability: bool = True,
@@ -186,10 +191,12 @@ def _house_html(hr: HouseReading) -> str:
                    + "</div>")
     out.append("<ul>" + "".join(f"<li>{e(f)}</li>" for f in a.facts) + "</ul>")
     out.append("<h3>For and against, matter by matter</h3><div class=wrap><table><tr><th>Matter</th>"
-               "<th>Rules for</th><th>Rules against</th><th>The count</th><th>Engine verdict</th></tr>")
+               "<th>Rules for</th><th>Rules against</th><th>Descriptive</th><th>The count</th>"
+               "<th>Engine verdict</th><th>How sure the books are</th></tr>")
     for c in hr.counts:
-        out.append(f"<tr><td>{e(c.matter)}</td><td>{c.n_for}</td><td>{c.n_against}</td>"
-                   f"<td>{e(c.lean)}</td><td>{v(c.verdict)}</td></tr>")
+        nd = c.spread.n_descriptive if c.spread is not None else ""
+        out.append(f"<tr><td>{e(c.matter)}</td><td>{c.n_for}</td><td>{c.n_against}</td><td>{nd}</td>"
+                   f"<td>{e(c.lean)}</td><td>{v(c.verdict)}</td><td><small>{e(c.spread_line)}</small></td></tr>")
     out.append("</table></div>")
     order = {"benefic": 0, "malefic": 1}
     rules = sorted(a.rules, key=lambda r: (order.get(r.polarity, 2), r.id))
@@ -251,6 +258,8 @@ def to_html(r: CitedReading) -> str:
             "<th>Sign from Lagna</th><th>Bhava</th><th>Nakshatra</th><th>Navamsa</th></tr>"
             f"{rows}</table></div>",
             f"<p><small>Houses: {toc}</small></p>",
+            f"<div class=notice><b>How sure the books are.</b> {e(spread_summary(r))} Each house "
+            f"below says, matter by matter, whether the rules point one way or both.</div>",
             _writeup(r),
             "<p class=mute><small>" + e(ha.ROBUSTNESS_NOTE) + " Each rule opens to the lines of the "
             "book it cites, when the books are on this machine.</small></p>"]
@@ -266,6 +275,7 @@ def to_markdown(r: CitedReading, *, quotes: bool = True) -> str:
            "", "| Body | Longitude | Sign from Lagna | Bhava | Nakshatra | Navamsa |",
            "|---|---|---|---|---|---|"]
     out += ["| " + " | ".join(row) + " |" for row in chart_rows(r.chart)]
+    out += ["", f"**How sure the books are.** {spread_summary(r)}"]
     for hr in r.houses:
         a = hr.audit
         out += ["", f"## The {ordinal(a.house)} house (lord {a.lord})", "",
@@ -275,8 +285,11 @@ def to_markdown(r: CitedReading, *, quotes: bool = True) -> str:
             rv, words, where = hr.raman
             out += ["", f"**Raman's own conclusion:** {rv}. \"{words}\" ({where or 'not located verbatim'})"]
         out += [""] + [f"- {f}" for f in a.facts]
-        out += ["", "| Matter | For | Against | Count | Engine |", "|---|---|---|---|---|"]
-        out += [f"| {c.matter} | {c.n_for} | {c.n_against} | {c.lean} | {c.verdict} |" for c in hr.counts]
+        out += ["", "| Matter | For | Against | Descriptive | Count | Engine | How sure the books are |",
+                "|---|---|---|---|---|---|---|"]
+        out += [f"| {c.matter} | {c.n_for} | {c.n_against} | "
+                f"{c.spread.n_descriptive if c.spread else ''} | {c.lean} | {c.verdict} | {c.spread_line} |"
+                for c in hr.counts]
         out += ["", "**Rules**", ""]
         for x in sorted(a.rules, key=lambda x: ({"benefic": 0, "malefic": 1}.get(x.polarity, 2), x.id)):
             cond = "holds" if not x.doubts else "doubtful: " + "; ".join(x.doubts)

@@ -12,9 +12,11 @@ used a number the native gave and rejected two RPs as "weaker"); the engine
 lists them all and never picks. In his second case the rule leaves one
 candidate, Virgo 23°10' (KPR6-RECT-CASE2), which the tests pin.
 
-This is a separate method from the event-based rectifier
-(``app.kp.rectify`` on the rectification branch). Its output is a candidate
-list for the user, not a validated birth time.
+It uses the moment of judgment, never the native's life events. The
+event-based KP rectifier (unmerged PR #30) was not carried forward: fitting a
+birth time to dated events and then reading those periods back is circular
+(docs/raman_saab/BIRTH_TIME_POLICY.md). Its output is a candidate list for the
+user, not a validated birth time, and nothing in the engine adopts it.
 
 Usage:
     from app.kp.chart import Birth

@@ -39,7 +39,7 @@ class Classic:
     slug: str           # folder under data/knowledge_library/sources/
     title: str
     translator: str
-    chapter_from: str   # "file" | "file-title" | "heads" | "ends" | "none" (see _CHAPTER_MODES)
+    chapter_from: str   # "file" | "file-title" | "heads" | "ends" | "footers" | "none"
     verse: str = "numbered"   # "numbered" (bare "12." lines) | "sloka" ("Sloka 12.") | "none"
     unit: str = "ch."   # what the book calls a chapter, for the label
     max_ch: int = 120   # a heading above this is an OCR misread
@@ -80,9 +80,10 @@ SHELF: tuple[Classic, ...] = (
                  "OCR copies; prefaces and indexes left out. The engine's PHALA tag cites only "
                  "its ch.3 from this same folder."),
     Classic("BJ", "brihat_jataka", "Brihat Jataka (Varahamihira)", "Swami Vijnanananda",
-            "heads", heads="generic", near_file=2, carry=True, max_ch=28,
-            note="OCR; the files roughly follow the chapters, so a chapter heading is trusted only "
-                 "near its file's number (OCR turns IX into XX)."),
+            "ends", max_ch=28,
+            note="OCR; the files do not follow the chapters (BJ-2 holds chs. 3-5), so the chapter "
+                 "comes only from the 'Thus ends the Nth Chapter' colophons; text after a file's "
+                 "last colophon (e.g. the appendix after ch. 28) is left unlabelled."),
     Classic("LP", "laghu_parashari_verma_v2", "Laghu Parashari", "O. P. Verma", "none",
             verse="none",
             note="Unsplit OCR, the v2 scan (less noise than v1). Bare numbers here are page and "
@@ -93,9 +94,10 @@ SHELF: tuple[Classic, ...] = (
                  "from the 'Thus ends the Nth Chapter' colophons; verse numbers sit in the Sanskrit "
                  "and are not labelled."),
     Classic("HRAT", "hora_ratnam_santhanam", "Hora Ratnam (Bala Bhadra), Part One",
-            "R. Santhanam", "heads", heads="hora-ratnam", carry=True, max_ch=60,
+            "R. Santhanam", "footers", carry=True, max_ch=10,
             note="PDF text layer; files are page ranges. The chapter comes only from the "
-                 "'Hora Ratnam / Chapter N' page footers (prose cross-references are ignored)."),
+                 "'Hora Ratnam / Chapter N' page footers (a footer closes its page); the "
+                 "scraper's '# ... Chapter N (pages ...)' file headers are file numbers and ignored."),
 )
 
 #: Corroboration books in the engine registry that the shelf replaces in the library, so each
@@ -158,6 +160,8 @@ _WORDNUM = {w: i for i, w in enumerate(
     "first second third fourth fifth sixth seventh eighth ninth tenth eleventh twelfth "
     "thirteenth fourteenth fifteenth sixteenth seventeenth eighteenth nineteenth twentieth".split(),
     start=1)}
+for _i, _w in enumerate("first second third fourth fifth sixth seventh eighth ninth".split(), start=1):
+    _WORDNUM[f"twenty-{_w}"] = _WORDNUM[f"twenty {_w}"] = 20 + _i
 
 _PROSE = frozenset("of in and the is as see supra above below vol verse verses sloka slokas aloka "
                    "stanza also well where which".split())
@@ -165,9 +169,11 @@ _PROSE = frozenset("of in and the is as see supra above below vol verse verses s
 
 def _number(raw: str) -> Optional[int]:
     """A chapter number as printed: digits (OCR 'l'/'I' for 1 allowed), roman, or a word."""
-    r = raw.strip(" .:,").lower()
+    r = re.sub(r"(?<=[0-9l])(?:st|nd|rd|th)$", "", raw.strip(" .:,").lower())
     if not r:
         return None
+    if r in _WORDNUM:
+        return _WORDNUM[r]
     digits = r.replace("l", "1") if re.fullmatch(r"[0-9l]+", r) else r
     if digits.isdigit():
         return int(digits)
@@ -185,7 +191,8 @@ _ADHYAYA = (
 _ADH_END = re.compile(r"\b(?:end of the|thus ends the)\s+(?P<n>[0-9lI]{1,2})(?:st|nd|rd|th)\s+adhy", re.I)
 _HRAT = (re.compile(r"hora\s*ratnam\W{0,6}chapter\s+(?P<n>\d{1,2})\b(?P<rest>)", re.I),)
 _HEADS = {"generic": _GENERIC, "adhyaya": _ADHYAYA, "hora-ratnam": _HRAT}
-_ENDS = re.compile(r"thus ends\s+(?:the\s+)?(?P<n>\d{1,2}|[a-z]+?)(?:st|nd|rd|th)?\s+chapter", re.I)
+_ENDS = re.compile(r"thus ends\s+(?:the\s+)?(?P<n>\d{1,2}(?:st|nd|rd|th)?|twenty[\s-][a-z]+|[a-z]+)\s+chapter",
+                   re.I)
 
 
 def chapter_heading(line: str, kind: str = "generic") -> Optional[int]:
@@ -211,7 +218,7 @@ def chapter_heading(line: str, kind: str = "generic") -> Optional[int]:
 
 _VERSE = re.compile(r"^\s*(?P<sl>sloka|s[il1!]okas?|sl\.|verse|st\.|stanza)?\s*(\d{1,3})"
                     r"(?:\s*[-–&,]\s*(\d{1,3}))?\s*[.)]\s*(?:[-—:]\s*)?(?=[A-Za-z\"'(])", re.I)
-_SLOKA = re.compile(r"^[\s|*'\"]*(?:s[il1!]ok[ao]s?|sl\.)\s*(\d{1,3})(?:\s*[-–&,]\s*(\d{1,3}))?"
+_SLOKA = re.compile(r"(?:^|[\s|*'\"])(?:s[il1!]ok\S{0,2}|sl\.)\s*(\d{1,3})(?:\s*[-–&,]\s*(\d{1,3}))?"
                     r"\s*[.:)]", re.I)
 
 
@@ -220,8 +227,8 @@ def verse_at(line: str, mode: str = "numbered") -> Optional[tuple[int, int, bool
     ``explicit`` is True when the line says "Sloka", so a lower number is a real restart."""
     if mode == "none":
         return None
-    m = _SLOKA.match(line)
-    if m:
+    m = _SLOKA.match(line) if mode == "numbered" else _SLOKA.search(line)
+    if m and (mode == "sloka" or m.start() == 0):
         a, b, explicit = int(m.group(1)), int(m.group(2) or m.group(1)), True
     elif mode == "numbered" and (m := _VERSE.match(line)):
         a, b, explicit = int(m.group(2)), int(m.group(3) or m.group(2)), bool(m.group("sl"))
@@ -239,6 +246,26 @@ def _file_chapter(f: ShelfFile) -> Optional[int]:
         m = _FILE_TITLE.match(f.path.name)
         return int(m.group(1)) if m else None
     return None
+
+
+def _footer_chapters(lines: tuple[str, ...], max_ch: int, start: Optional[int]) -> list[Optional[int]]:
+    """Chapter per line from page footers ('Hora Ratnam / Chapter N'): a footer closes its page,
+    so the lines before it are chapter N. The scraper's own '# ...' header lines are ignored,
+    footers may only stay or rise by one, and lines after the file's last footer keep it."""
+    out: list[Optional[int]] = [None] * len(lines)
+    prev, cur = 0, start
+    for i, line in enumerate(lines):
+        if line.lstrip().startswith("#"):
+            continue
+        n = chapter_heading(line, "hora-ratnam")
+        if n is None or n > max_ch or (cur is not None and not cur <= n <= cur + 1):
+            continue
+        for j in range(prev, i + 1):
+            out[j] = n
+        prev, cur = i + 1, n
+    for j in range(prev, len(lines)):
+        out[j] = cur
+    return out
 
 
 def _ends_chapters(lines: tuple[str, ...], max_ch: int) -> list[Optional[int]]:
@@ -267,15 +294,20 @@ def line_locations(f: ShelfFile, lines: tuple[str, ...], start_ch: Optional[int]
     Chapter: from the file name, the colophons, or a trusted heading. A heading moves the
     chapter only forward, by at most 3 (running heads repeat; OCR invents numbers), never above
     the book's chapter count, and for ``near_file`` books only near the file's own number.
-    Verse: the last accepted verse number; a bare number must run forward by at most 40 from
-    the last (or be 1), an explicit "Sloka N" is always accepted. Both reset with the chapter."""
+    Verse: the last accepted verse number. A bare number must run forward by at most 40 from
+    the last (so list items in the Notes, which restart at 1, do not reset it); after a run of
+    rejections, two close rising numbers re-anchor it. An explicit "Sloka N" is always
+    accepted. Both reset with the chapter."""
     c = f.classic
     if c.chapter_from == "ends":
         chs = _ends_chapters(lines, c.max_ch)
+    elif c.chapter_from == "footers":
+        chs = _footer_chapters(lines, c.max_ch, start_ch)
     else:
         chs = None
     ch: Optional[int] = _file_chapter(f) if c.chapter_from in ("file", "file-title") else start_ch
     last_v: Optional[int] = None
+    pending: Optional[int] = None
     out: list[Loc] = []
     for i, line in enumerate(lines):
         if chs is not None:
@@ -294,15 +326,19 @@ def line_locations(f: ShelfFile, lines: tuple[str, ...], start_ch: Optional[int]
         v = verse_at(line, c.verse)
         if v is not None:
             a, b, explicit = v
-            if explicit or a == 1 or last_v is None or last_v < a <= last_v + 40:
-                last_v = b
+            if explicit or last_v is None or last_v < a <= last_v + 40:
+                last_v, pending = b, None
+            elif a > last_v + 40 and pending is not None and pending < a <= pending + 5:
+                last_v, pending = b, None          # a stuck counter re-anchors on a rising pair
+            elif a > last_v:
+                pending = b
         out.append((ch, last_v))
     return out
 
 
 def label(f: ShelfFile, locs: list[Loc], lo: int, hi: int, lines: tuple[str, ...]) -> str:
-    """The human location of lines ``lo..hi`` (1-based): "ch. 12, vv. 4-9", "ch. 12, end of
-    v. 3, v. 4", "ch. 12, v. 4 (cont.)", "ch. 12" or ""."""
+    """The human location of lines ``lo..hi`` (1-based): "ch. 12, vv. 4-9", "ch. 12, from
+    before v. 4", "ch. 12", "ch. 12-13" (crosses a boundary) or ""."""
     mode = f.classic.verse
     opened_at = [i for i in range(lo - 1, hi) if (v := verse_at(lines[i], mode)) is not None
                  and locs[i][1] == v[1]]
@@ -310,15 +346,15 @@ def label(f: ShelfFile, locs: list[Loc], lo: int, hi: int, lines: tuple[str, ...
     # the chapter of the first verse the passage opens (a passage can start just before a
     # chapter heading), else the chapter in force at its first line
     ch = locs[opened_at[0]][0] if opened_at else locs[lo - 1][0]
-    prev_v = locs[lo - 2][1] if lo >= 2 else None
+    # Only verse numbers PRINTED in the passage are named. A carried "v. N (cont.)" was tried
+    # and failed the by-eye check (a counter carried across OCR noise drifts), so a passage
+    # that opens no verse names none; one that starts mid-verse says "from before v. N".
     if opened:
         a, b = opened[0][0], opened[-1][1]
         vtxt = f"v. {a}" if a == b else f"vv. {a}-{b}"
         lead = sum(ch_.isalpha() for i in range(lo - 1, opened_at[0]) for ch_ in lines[i]) >= 25
-        if lead and prev_v is not None and locs[opened_at[0] - 1][0] == ch and prev_v < a:
-            vtxt = f"end of v. {prev_v}, " + vtxt
-    elif locs[lo - 1][1] is not None:
-        vtxt = f"v. {locs[lo - 1][1]} (cont.)"
+        if lead:
+            vtxt = f"from before {vtxt}"
     else:
         vtxt = ""
     ctxt = f"{f.classic.unit} {ch}" if ch is not None else ""

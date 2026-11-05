@@ -373,3 +373,55 @@ class TestClassicalShelf:
         assert library.expand("seventh lord in the eighth house") == [
             ("seventh", "7th"), ("lord",), ("eighth", "8th")]
         assert library.expand("house") == [("house",)]
+
+    def test_notes_list_does_not_reset_the_verse_counter(self, tmp_path: Path) -> None:
+        """BPHS ch. 24: a Notes list '1. 2. 3.' must not hide verse 80 that follows."""
+        from app.raman_saab.cited import classics
+        d = tmp_path / "sources" / "bphs_santhanam_full"
+        d.mkdir(parents=True)
+        (d / "chapter_024_x.md").write_text(
+            "79. If the 7th lord is in the 7th itself, the native will be of good conduct and charm.\n\n"
+            "Notes : the following points may be kept in view by the reader of this verse.\n"
+            "1. The lord's strength matters here in the reading of the verse above.\n"
+            "2. The aspects of benefics on the house matter equally in the reading.\n\n"
+            "Some more lines of the translator's notes run on here for a while more.\n"
+            "And still more lines of notes that follow in the scan of the book.\n\n"
+            "80. If the 7th lord is in the 8th, the native will be deprived of his wife.\n",
+            encoding="utf-8")
+        rows = list(classics.passages(classics.shelf_files(tmp_path / "sources"), corpus.lines_of,
+                                      library.chunk_lines))
+        last = [r for r in rows if "80. If the 7th lord" in r[3]][0]
+        assert "v. 80" in last[4] and "(cont.)" not in last[4]
+
+    def test_footers_and_colophons_name_the_chapter(self, tmp_path: Path) -> None:
+        """Hora Ratnam: the scraper header is ignored, the page footer names the chapter.
+        Brihat Jataka: a file holding two chapters is split by its colophons."""
+        from app.raman_saab.cited import classics
+        src = tmp_path / "sources"
+        (src / "hora_ratnam_santhanam").mkdir(parents=True)
+        (src / "hora_ratnam_santhanam" / "chapter_016_pages-751-800.md").write_text(
+            "# Bala Bhadra's Hora Ratnam — Chapter 16 (pages 751-800)\n\n"
+            "67. The native will be involved in crimes if Rahu joins another malefic planet.\n\n"
+            "Hora Ratnam / Chapter 5\n", encoding="utf-8")
+        (src / "brihat_jataka").mkdir()
+        (src / "brihat_jataka" / "chapter_002_x.md").write_text(
+            "The animals born are to be ascertained from the colour of the planets in the Lagna.\n"
+            "Thus ends the third Chapter on the subject of births of animals.\n\n"
+            "1. Now the Moon's yogas are described by the author for the reader in full.\n"
+            "Thus ends the Fifth Chapter on the subject in this book.\n\n"
+            "An appendix by the translator follows with notes on various matters here.\n",
+            encoding="utf-8")
+        rows = list(classics.passages(classics.shelf_files(src), corpus.lines_of, library.chunk_lines))
+        hr = [r[4] for r in rows if r[0].book == "HRAT"]
+        assert hr and all(x.startswith("ch. 5") for x in hr)
+        bj = [f for f in classics.shelf_files(src) if f.book == "BJ"][0]
+        lines = corpus.lines_of(bj.path)
+        chs = [c for c, _ in classics.line_locations(bj, lines)]
+        assert chs[0] == 3 and chs[3] == 5 and chs[-1] is None       # appendix left unlabelled
+
+    def test_inline_sloka_counts_in_sloka_books(self) -> None:
+        """Phaladeepika prints '|| Sloka 15.' mid-line; Jataka Parijata OCR spells 'Slokfi 23'."""
+        from app.raman_saab.cited import classics
+        assert classics.verse_at("asameva ... || Sloka 15.", "sloka")[:2] == (15, 15)
+        assert classics.verse_at("Slokfi 23. When the", "sloka")[:2] == (23, 23)
+        assert classics.verse_at("text then Sloka 15. here", "numbered") is None

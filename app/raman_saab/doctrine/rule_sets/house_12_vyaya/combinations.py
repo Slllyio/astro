@@ -45,7 +45,7 @@ from app.raman_saab.primitives.special_points import karakamsa as _karakamsa
 #: 12th from Karakamsa gives one Kaivalya ... is literally applicable"), where the Moon is the
 #: Atmakaraka in Gemini Navamsa and Ketu is in Taurus Navamsa. Positions are read in the
 #: Navamsa, as ``jaimini_reading.karakamsa_indications`` reads occupation of the Karakamsa.
-F2_KETU_FROM_KARAKAMSA: bool = False
+F2_KETU_FROM_KARAKAMSA: bool = True
 
 
 class _KetuTwelfthFromKarakamsa(C.Condition):

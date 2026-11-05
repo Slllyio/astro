@@ -345,14 +345,18 @@ class TestYogaModulation:
 
         2026-10-23: with the Bhava Bala pillar withdrawn from verdicts, the ledger no longer
         reads 'mixed' before the yoga step — it is already afflicted, so Sakata is recorded as
-        ':noted' (decisive verdicts never re-shift). The verdict Raman gives is unchanged."""
+        ':noted' (decisive verdicts never re-shift). The verdict Raman gives is unchanged.
+
+        2026-11-05 (F5, user decision "Ship both"): the Bhava rescue (HTJAH-I:503-505) fires
+        again, so the ledger reads 'mixed' before the yoga step once more and Sakata is the
+        ':drop' that makes it afflicted, as originally pinned. Verdict still afflicted."""
         chart = cast_chart(_CHART_33, ayanamsa="raman")
         fired_ids = {y.id for y in detect_yogas(chart)}
         assert "Y.SAKATA" in fired_ids and "Y.KEMADRUMA" not in fired_ids
         pf = ht.judge_house(chart, 1)
         sv = next(s for s in pf.significations if s.signification == "self")
         assert sv.verdict == "afflicted"
-        assert ("yoga", "Y.SAKATA:noted") in sv.metadata
+        assert ("yoga", "Y.SAKATA:drop") in sv.metadata
         assert all(not v.startswith("Y.KEMADRUMA")
                    for k, v in sv.metadata if k == "yoga")
 

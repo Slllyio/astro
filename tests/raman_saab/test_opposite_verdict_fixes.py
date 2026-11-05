@@ -1,4 +1,4 @@
-"""Held fixes F2 and F5 from the opposite-verdict study (2026-11-05). Both ship OFF."""
+"""Fixes F2 and F5 from the opposite-verdict study (2026-11-05), shipped by user decision."""
 from __future__ import annotations
 
 import pytest
@@ -15,11 +15,11 @@ def _chart(gid: str):
     return ha._golden_chart(rec)
 
 
-class TestHeldFlags:
-    def test_flags_default_off(self) -> None:
-        """Both fixes are held for the user's decision, so the shipped engine is unchanged."""
-        assert h12.F2_KETU_FROM_KARAKAMSA is False
-        assert ht.F5_BHAVA_RESCUE_UNVOTED is False
+class TestShippedFlags:
+    def test_flags_on(self) -> None:
+        """User decision 2026-11-05 ("Ship both"): both repairs are live."""
+        assert h12.F2_KETU_FROM_KARAKAMSA is True
+        assert ht.F5_BHAVA_RESCUE_UNVOTED is True
 
 
 class TestKetuTwelfthFromKarakamsa:
@@ -44,6 +44,7 @@ class TestBhavaRescueUnvoted:
             pf = ht.judge_house(ch, 11)
             return str(next(s for s in pf.significations if s.signification == "gains").verdict)
 
+        monkeypatch.setattr(ht, "F5_BHAVA_RESCUE_UNVOTED", False)
         assert gains() == "afflicted"
         monkeypatch.setattr(ht, "F5_BHAVA_RESCUE_UNVOTED", True)
         assert gains() != "afflicted"

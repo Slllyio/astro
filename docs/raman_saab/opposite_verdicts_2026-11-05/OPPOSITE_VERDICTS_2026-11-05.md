@@ -51,13 +51,12 @@ reads these charts more as Raman wrote them.
 | F3 read all 108 planet-in-house rules by Bhava | The project's locked "Bhava, not Rasi, for results" (HTJAH-I:973-974), but Raman also reckons by sign in many charts (HTJAH-I:6664-6668, HTJAH-II:8532-8536) | 236/93/36: one fixed, three broken | Do not ship |
 | F4 read the 131 lord-in-house rules by Bhava | same | 233/97/35 | Do not ship |
 
-F2 and F5 are in the code with their flags OFF, so the shipped engine and the ratchet are
-unchanged until the owner decides.
+**Shipped 2026-11-05 (user decision "Ship both"):** both flags are on and the ratchet is
+re-based to 240/334/31.
 
 ## Decisions only the owner can make
 
-1. **Ship F2 and F5?** Recommended. Both mend a rule to say what its own citation says; neither
-   was tuned to the score.
+1. ~~Ship F2 and F5?~~ Decided 2026-11-05: shipped.
 2. **The fertility gate.** Raman's text gives Beeja for the man and Kshetra for the woman, and
    reads "both weak" only across the couple's two charts (HTJAH-I:5499-5501, 5507-5509,
    5517-5520). The gate tests both sphutas in one native's chart and treats both weak as denial.

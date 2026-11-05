@@ -619,7 +619,7 @@ C4_KARAKA_VETO_RELIEF: bool = False
 #: never fire. The dhana floor met the same trap and reads ``is not False`` (see
 #: ``_dhana_floor``). With this flag the rescue reads the same way: the house's own good
 #: conjunctions and aspects (fired benefic rules) rescue unless the Bhava Bala is known weak.
-F5_BHAVA_RESCUE_UNVOTED: bool = False
+F5_BHAVA_RESCUE_UNVOTED: bool = True
 
 _POLE_ORDER: Final[dict[str, int]] = {"favourable": 0, "mixed": 1, "afflicted": 2}
 

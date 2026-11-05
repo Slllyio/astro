@@ -1,9 +1,13 @@
 {
   "H2": {
     "citations": [
-      "HTJAH-I:2355"
+      "HTJAH-I:2355",
+      "HTJAH-I:2452",
+      "HTJAH-I:2498"
     ],
     "fired_rule_ids": [
+      "H2.C.13",
+      "H2.C.40",
       "H2.L.4"
     ],
     "rollup": "favourable",
@@ -61,7 +65,7 @@
       "courage": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "ear_throat": {
         "degree": "mild",
@@ -71,18 +75,19 @@
       "short_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "siblings": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
   "H4": {
     "citations": [
       "HTJAH-I:4180",
+      "HTJAH-I:4181",
       "HTJAH-I:4224",
       "HTJAH-I:4226",
       "HTJAH-I:4227",
@@ -104,6 +109,7 @@
       "H4.C.41",
       "H4.C.46",
       "H4.L.10",
+      "H4.L.10a",
       "H4.P.Rahu",
       "H4.P.Saturn"
     ],

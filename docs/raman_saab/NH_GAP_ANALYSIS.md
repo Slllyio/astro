@@ -174,9 +174,18 @@ ceiling stands at 209/241.
 ## The faithful ceiling — confirmed on the EXPANDED corpus (2026-07-24): every systematic lever exhausted
 > **Later note (2026-08-03).** The 261/293 below is the figure as it stood when this sweep ran, and
 > the sweep's conclusion is unchanged: every systematic lever is still exhausted. The live ratchet
-> is now **259/293 = 88.4% exact / 283/293 = 96.6% within-1** — re-based DOWN deliberately when the
-> B1 dominant-factor guard was enabled, buying real errors 12 -> 10. That was a TRADE, not a lever;
-> it did not beat the ceiling this section proves. See `DOCTRINE_BACKLOG` B1.
+> was then **259/293 = 88.4% exact / 283/293 = 96.6% within-1** — re-based DOWN deliberately when
+> the B1 dominant-factor guard was enabled, buying real errors 12 -> 10. That was a TRADE, not a
+> lever; it did not beat the ceiling this section proves. See `DOCTRINE_BACKLOG` B1.
+>
+> **Later note (2026-08-24).** Both figures above describe a pool that was SELECTED ON ENGINE
+> AGREEMENT — DRAFT verdicts entered the scored set only by matching the engine. After an
+> engine-blind re-adjudication of the whole queue the live ratchet is **269/381 = 70.6% exact /
+> 329/381 = 86.4% within-1**, with no change to judge or doctrine code. **This section's
+> conclusion still stands and is arguably strengthened**: every systematic lever it tested is
+> still exhausted, and the accuracy it could not reach by tuning turned out not to have been
+> there in the first place. Do not read the ceiling proofs as describing the corpus; they
+> describe the judge. See `DOCTRINE_BACKLOG` "FULL ADJUDICATION".
 
 After the NH corpus expansion (192 -> 225 charts, fidelity 209/241 -> 261/293 = 89.1% exact) a full sweep
 of every systematic accuracy lever was run, and ALL are exhausted:

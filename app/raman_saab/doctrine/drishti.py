@@ -9,6 +9,11 @@ Saturn 3rd & 10th.
 aspect — NO special 5/9. This intentionally differs from `app/core/drishti_argala.py`
 (which gives the nodes a Jupiter-style 5/9 per Bhasin/Nadi). Guard test enforces it.
 
+Why 7th, not none (user decision 2026-10-13: "follow Raman only"): Raman's aspect chapter
+(HPA-8) is silent on the nodes, but his own judgments count their 7th aspect -- HTJAH-I:2062
+"Lagna is occupied by Ketu and aspected by Rahu. Lagna is therefore weak"; likewise
+HTJAH-I:2221, 2720, 6092. No worked chart of his uses a nodal 5th or 9th.
+
 Usage:
     from app.raman_saab.doctrine import drishti
     drishti.aspects_planet("Saturn", "Sun", chart)   # bool

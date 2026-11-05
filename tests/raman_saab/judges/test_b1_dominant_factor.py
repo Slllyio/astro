@@ -104,9 +104,37 @@ class TestLordHardAfflicted:
                            ayanamsa="raman")
         assert ht._lord_hard_afflicted("Sun", chart) is False
 
-    def test_track_b_chart_returns_none(self):
-        """No Shadbala -> no judgement, rather than a default that would deny the matter."""
+    def test_a_book_chart_can_now_report_combustion(self):
+        """Changed 2026-08-24. This used to assert None on any chart without Shadbala, on the
+        reasoning "no Shadbala -> no judgement, rather than a default that would deny the matter".
+        The premise was wrong twice over.
+
+        First, the fixture below is not a case of missing data: Mercury sits 2 degrees from the
+        Sun and is genuinely combust. Returning None there was not withholding judgement, it was
+        discarding a fact the chart states — `combust_fraction` needs only two longitudes, and
+        `debilitated_uncancelled` only a sign.
+
+        Second, and decisively, the citation this whole guard rests on IS a printed book chart.
+        HTJAH-I:3780, Chart No. 59, of the third lord: "in the Rashi he is with an inimical planet
+        Sun and has become combust. This makes him weak in the chart." A rule read off a book
+        chart could not be applied to book charts."""
         chart = RamanChart.from_stated_positions(
             {"Sun": {"lon": 10.0, "bhava": 1}, "Mercury": {"lon": 12.0, "bhava": 1}},
             asc_lon=0.0, ayanamsa="raman")
+        assert chart.planets["Mercury"].combust_fraction > 0.0, "the fixture must be combust"
+        assert ht._lord_hard_afflicted("Mercury", chart) is True
+
+    def test_an_uncombust_book_chart_lord_is_not_flagged(self):
+        """The other half of the contract: reporting on book charts must not mean flagging them.
+        Same construction, Mercury moved well clear of the Sun."""
+        chart = RamanChart.from_stated_positions(
+            {"Sun": {"lon": 10.0, "bhava": 1}, "Mercury": {"lon": 150.0, "bhava": 5}},
+            asc_lon=0.0, ayanamsa="raman")
+        assert ht._lord_hard_afflicted("Mercury", chart) is False
+
+    def test_a_graha_absent_from_the_chart_still_returns_none(self):
+        """None is still the answer where the datum genuinely does not exist — that was the sound
+        half of the old contract and it is preserved."""
+        chart = RamanChart.from_stated_positions(
+            {"Sun": {"lon": 10.0, "bhava": 1}}, asc_lon=0.0, ayanamsa="raman")
         assert ht._lord_hard_afflicted("Mercury", chart) is None

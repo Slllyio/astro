@@ -1,0 +1,88 @@
+charts scored: 12  (answered blind: 12)
+
+  ! only 12 chart(s): far too few to conclude anything; the forced-choice pool needs hundreds of items before its p-value means much.
+
+FORCED CHOICE   78/138 = 0.565   chance 0.5   p=0.1476
+  rarity-weighted 67.359/118.82 = 0.567
+  blind submissions only: 78/138 = 0.565   p=0.1476
+  INVERTED channels (agreement is evidence AGAINST): 4/6 = 0.667
+  answered SURE   43/76 = 0.566   p=0.3019
+  answered UNSURE 4/15 = 0.267
+
+EVENT vs PERIOD  35/64 dated events fell in a top-graded period for their own matter
+  (no pooled p-value: each chart's null is its own per-house base rates, so the tails cannot be added — see the per-chart cards)
+
+DATED SPINE     0/204 turning points within 3 months of a period change   p=0.0178
+  chance rate 0.024 — event-weighted from each chart's own event span and boundaries, never assumed
+
+BY READING (forced choice) — the improvement list, worst first:
+  coverture                0/1
+  higher_learning          0/1
+  loss_moksha              0/2
+  marital_happiness        0/1
+  siblings                 0/1
+  vehicles                 0/2
+  vision                   0/4
+  father                   1/6
+  acquisitions             1/5
+  sudden_gains             1/4
+  debts                    1/3
+  expenditure              1/3
+  gains                    1/3
+  mother                   1/3
+  enemies                  2/5
+  disease_chronic          3/7
+  children                 1/2
+  ear_throat               3/6
+  elder_siblings           1/2
+  intellect                1/2
+  poorvapunya              1/2
+  virility                 1/2
+  legacies                 3/5
+  property                 3/5
+  career                   2/3
+  friends                  2/3
+  long_journeys            2/3
+  profession_trade         2/3
+  status_honour            2/3
+  wealth_through_marriage  2/3
+  partnership              3/4
+  spouse                   3/4
+  foreign_residence        4/5
+  body                     1/1
+  dharma                   1/1
+  enemies_disease          1/1
+  family                   3/3
+  fortune                  1/1
+  happiness                1/1
+  health                   1/1
+  home_comforts            3/3
+  moksha                   4/4
+  profession_authority     2/2
+  profession_labour        1/1
+  profession_learned       4/4
+  short_journeys           1/1
+  speech                   4/4
+  wealth                   2/2
+
+BY LIFE FACT (no null — a count, not a p-value):
+  h12.incarceration            1/4
+  h8.legacies                  3/11
+  rect.portrait                4/12
+  h5.children                  7/20
+  h12.moksha                   4/11
+  h12.foreign_residence        8/21
+  h6.debts                     4/10
+  marriage.delay               5/11
+  h9.father                    8/17
+  h10.authority_vs_trade       2/4
+  h7.marital_happiness         4/8
+  h9.higher_learning           5/10
+  h4.mother                    5/9
+  h3.siblings                  7/12
+  h5.poorvapunya               5/7
+  h10.status_honour            3/4
+  h4.education                 6/8
+  medical.regions              8/10
+  arishta.balarishta           11/12
+  career.trades                12/12

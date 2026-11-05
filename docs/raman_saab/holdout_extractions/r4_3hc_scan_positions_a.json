@@ -1,0 +1,801 @@
+[
+ {
+  "chart_no": 13,
+  "scans": [
+   "0037",
+   "0038"
+  ],
+  "birth_line": "Chart No 13.—Born on 19-7-1816 at Gh. 15? after Sunrise. Lat. 17° N.; Long. 5h 10m. 20s. E.",
+  "dasa_balance": null,
+  "rasi": {
+   "Aries": [
+    "Moon"
+   ],
+   "Taurus": [
+    "Rahu"
+   ],
+   "Gemini": [
+    "Merc."
+   ],
+   "Cancer": [
+    "Sun",
+    "Venus"
+   ],
+   "Leo": [
+    "Mars"
+   ],
+   "Virgo": [],
+   "Libra": [
+    "Lagna",
+    "Jupiter"
+   ],
+   "Scorpio": [
+    "Kethu"
+   ],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Saturn"
+   ],
+   "Aquarius": [],
+   "Pisces": []
+  },
+  "illegible": "Ghatis printed as '15' followed by a small fraction that I cannot read with confidence (looks like 3/4 but not certain) -> '15?'. No dasa balance printed. Centre of Rasi box carries the label 'B.G.R.' (not a planet)."
+ },
+ {
+  "chart_no": 19,
+  "scans": [
+   "0054"
+  ],
+  "birth_line": "Chart No 19.—Born on 12-5-1916 at Gh. 39-15 after Sunrise. Lat. 13° N.; Long. 77° 35' E.",
+  "dasa_balance": "Balance of Sun's Dasa at birth: years 5-11-3.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [
+    "Sun",
+    "Mercury"
+   ],
+   "Gemini": [
+    "Venus",
+    "Sat."
+   ],
+   "Cancer": [
+    "Kethu"
+   ],
+   "Leo": [
+    "Mars",
+    "Moon"
+   ],
+   "Virgo": [],
+   "Libra": [],
+   "Scorpio": [],
+   "Sagittarius": [
+    "Lagna"
+   ],
+   "Capricorn": [
+    "Rahu"
+   ],
+   "Aquarius": [],
+   "Pisces": [
+    "Jupiter"
+   ]
+  },
+  "illegible": ""
+ },
+ {
+  "chart_no": 24,
+  "scans": [
+   "0062",
+   "0063"
+  ],
+  "birth_line": "Chart No. 24.—Born on 23-10-1883 at Gh. 10-45 after Sunrise. Lat. 12° N.; Long. 77° 34' E.",
+  "dasa_balance": "Balance of Mercury's Dasa at birth: years 7-3-23.",
+  "rasi": {
+   "Aries": [
+    "Kethu"
+   ],
+   "Taurus": [
+    "Saturn"
+   ],
+   "Gemini": [],
+   "Cancer": [
+    "Moon",
+    "Mars",
+    "Jupit."
+   ],
+   "Leo": [],
+   "Virgo": [
+    "Merc."
+   ],
+   "Libra": [
+    "Rahu",
+    "Venus",
+    "Sun"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [
+    "Lagna"
+   ],
+   "Capricorn": [],
+   "Aquarius": [],
+   "Pisces": []
+  },
+  "illegible": ""
+ },
+ {
+  "chart_no": 32,
+  "scans": [
+   "0077"
+  ],
+  "birth_line": "Chart No. 32.—Born on 23-2-1896 at Gh. 38-30 at 13° N.; 77° 35' E.",
+  "dasa_balance": "Balance of Mars' Dasa at birth: years 2-1-28.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [
+    "Moon"
+   ],
+   "Cancer": [
+    "Jupit."
+   ],
+   "Leo": [
+    "Kethu"
+   ],
+   "Virgo": [],
+   "Libra": [
+    "Lagna",
+    "Saturn"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Mars",
+    "Venus",
+    "Mercury"
+   ],
+   "Aquarius": [
+    "Sun",
+    "Rahu"
+   ],
+   "Pisces": []
+  },
+  "illegible": "Birth line does not say 'after sunrise' and has no 'Lat.'/'Long.' labels; transcribed as printed."
+ },
+ {
+  "chart_no": 44,
+  "scans": [
+   "0103"
+  ],
+  "birth_line": "Chart No. 44.—Born on 7-5-1886 at 2-30 p.m. Lat. 40° 24' N.; Long. 3h. 41m. W.",
+  "dasa_balance": "Balance of Rahu Dasa at birth: years 10-4-22.",
+  "rasi": {
+   "Aries": [
+    "Sun"
+   ],
+   "Taurus": [],
+   "Gemini": [
+    "Moon",
+    "Sat."
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Mars",
+    "Rahu"
+   ],
+   "Virgo": [
+    "Lagna",
+    "Jupit."
+   ],
+   "Libra": [],
+   "Scorpio": [],
+   "Sagittarius": [],
+   "Capricorn": [],
+   "Aquarius": [
+    "Kethu"
+   ],
+   "Pisces": [
+    "Venus",
+    "Mercury"
+   ]
+  },
+  "illegible": "A stray dot sits under the '-' in the date '7-5-1886'; digits read clearly. Centre of Rasi box carries 'R. 4P. 47' (reference label, not a planet)."
+ },
+ {
+  "chart_no": 46,
+  "scans": [
+   "0107"
+  ],
+  "birth_line": "Chart No. 46.—Born on 15-9-1861 at about 2-20 p.m.",
+  "dasa_balance": "Balance of Moon's Dasa at birth; years 3-1-24.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [
+    "Kethu"
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Saturn",
+    "Jupit.",
+    "Mars"
+   ],
+   "Virgo": [
+    "Sun",
+    "Merc."
+   ],
+   "Libra": [
+    "Venus"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [
+    "Rahu"
+   ],
+   "Capricorn": [
+    "Lagna",
+    "Moon"
+   ],
+   "Aquarius": [],
+   "Pisces": []
+  },
+  "illegible": "No latitude/longitude printed in the birth line. Centre of Rasi box carries 'A.7' (label)."
+ },
+ {
+  "chart_no": 60,
+  "scans": [
+   "0131"
+  ],
+  "birth_line": "Chart No. 60.—Born on 8-12-1921 at 12-15 a.m. Long. 0° 5' W.; Lat. 51° 30' N.",
+  "dasa_balance": "Balance of Jupiter's Dasa at birth: years 5-1-18.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [],
+   "Cancer": [],
+   "Leo": [],
+   "Virgo": [
+    "Rahu",
+    "Lagna",
+    "Mars",
+    "Jupiter",
+    "Saturn"
+   ],
+   "Libra": [],
+   "Scorpio": [
+    "Sun",
+    "Mercury",
+    "Venus"
+   ],
+   "Sagittarius": [],
+   "Capricorn": [],
+   "Aquarius": [
+    "Moon"
+   ],
+   "Pisces": [
+    "Kethu"
+   ]
+  },
+  "illegible": "Virgo box is in very small, slightly broken type but reads Rahu, Lagna, Mars, Jupiter, Saturn. Centre of Rasi box carries 'U. 264' (label)."
+ },
+ {
+  "chart_no": 66,
+  "scans": [
+   "0147"
+  ],
+  "birth_line": "Chart No. 66.—Born on 5-9-1906 at 9-16 a.m. (L.M.T.) Lat. 25° N.; Long. 84° E.",
+  "dasa_balance": "Balance of Saturn's Dasa at birth: year 0-0-9.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [
+    "Jupit."
+   ],
+   "Cancer": [
+    "Rahu"
+   ],
+   "Leo": [
+    "Sun",
+    "Mars",
+    "Merc."
+   ],
+   "Virgo": [],
+   "Libra": [
+    "Lagna",
+    "Venus"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Kethu"
+   ],
+   "Aquarius": [
+    "Saturn"
+   ],
+   "Pisces": [
+    "Moon"
+   ]
+  },
+  "illegible": ""
+ },
+ {
+  "chart_no": 78,
+  "scans": [
+   "0172"
+  ],
+  "birth_line": "Chart No. 78.—Born on 22-8-1915 at 6-30 a.m. (I.S.T.) at 12° 58' N.; 77° 34' E.",
+  "dasa_balance": "Balance of Moon's Dasa at birth: years 4-10-2.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [
+    "Mars",
+    "Sat."
+   ],
+   "Cancer": [
+    "Kethu"
+   ],
+   "Leo": [
+    "Sun",
+    "Lagna",
+    "Merc.",
+    "Venus"
+   ],
+   "Virgo": [],
+   "Libra": [],
+   "Scorpio": [],
+   "Sagittarius": [
+    "Moon"
+   ],
+   "Capricorn": [
+    "Rahu"
+   ],
+   "Aquarius": [],
+   "Pisces": [
+    "Jupiter"
+   ]
+  },
+  "illegible": "Centre of Rasi box carries '6.49' (label)."
+ },
+ {
+  "chart_no": 80,
+  "scans": [
+   "0179",
+   "0180"
+  ],
+  "birth_line": "Chart No. 80.—Born on 16-10-1918 at 2-20 p.m. (L.M.; ) Lat. 13° N.; Long. 77° 34' E.",
+  "dasa_balance": "Balance of Rahu's Dasa at birth: years 12-10-21.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [
+    "Kethu"
+   ],
+   "Gemini": [
+    "Jupit."
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Saturn"
+   ],
+   "Virgo": [
+    "Venus"
+   ],
+   "Libra": [
+    "Sun",
+    "Mercury"
+   ],
+   "Scorpio": [
+    "Mars",
+    "Rahu"
+   ],
+   "Sagittarius": [],
+   "Capricorn": [],
+   "Aquarius": [
+    "Moon",
+    "Lagna"
+   ],
+   "Pisces": []
+  },
+  "illegible": "Time-standard bracket is damaged: reads '(L.M.' followed by a broken character and ')' -- presumably L.M.T. but the 'T.' is not legible. Scan 0180 carries only Raman's commentary on chart 80 (3rd house in Aries) and the separate chart 81."
+ },
+ {
+  "chart_no": 84,
+  "scans": [
+   "0186",
+   "0187"
+  ],
+  "birth_line": "Chart No. 84.—Born on 19-12-1630 at 6-26 p.m. (L.M.T ) Lat. 18° 32' N.; Long. 73° 53' E.",
+  "dasa_balance": "Balance of Mars Dasa at birth: years 4-1-17.",
+  "rasi": {
+   "Aries": [
+    "Venus"
+   ],
+   "Taurus": [],
+   "Gemini": [
+    "Rahu",
+    "Mars"
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Lagna"
+   ],
+   "Virgo": [
+    "Moon"
+   ],
+   "Libra": [
+    "Saturn"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [
+    "Kethu"
+   ],
+   "Capricorn": [],
+   "Aquarius": [
+    "Sun",
+    "Jupiter"
+   ],
+   "Pisces": [
+    "Mercury"
+   ]
+  },
+  "illegible": "Nothing illegible. The diagram is on scan 0186 (book p.177); 0187 is commentary. The time standard is printed '(L.M.T )' with no final period. The centre of the Rasi square carries 'P. N. 35' (a label). The balance line prints 'Mars Dasa' without an apostrophe."
+ },
+ {
+  "chart_no": 85,
+  "scans": [
+   "0189",
+   "0190"
+  ],
+  "birth_line": "Chart No. 85.—Born on 24-9-1890 at Gh. 37-10 after Sunrise. Lat. 13° N.; Long 77° 35' E.",
+  "dasa_balance": "Balance of Mercury's Dasa at birth: years 7-3-24.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [
+    "Rahu"
+   ],
+   "Gemini": [],
+   "Cancer": [],
+   "Leo": [
+    "Sun",
+    "Sat."
+   ],
+   "Virgo": [
+    "Merc.",
+    "Venus"
+   ],
+   "Libra": [],
+   "Scorpio": [
+    "Moon",
+    "Mars",
+    "Kethu"
+   ],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Jupiter"
+   ],
+   "Aquarius": [],
+   "Pisces": [
+    "Lagna"
+   ]
+  },
+  "illegible": "Chart is on 0190 (book p.181); 0189 carries only the commentary. Centre of Rasi box carries '10' (label)."
+ },
+ {
+  "chart_no": 99,
+  "scans": [
+   "0218",
+   "0219"
+  ],
+  "birth_line": "Chart No. 99.—Born on 28-6-1914 at 9-57 p.m. (I.S.T.) Lat. 13° N.; Long. 77° 35' E.",
+  "dasa_balance": "Balance of Venus Dasa at birth: years 16-2-3.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [
+    "Sun",
+    "Saturn"
+   ],
+   "Cancer": [
+    "Venus",
+    "Merc."
+   ],
+   "Leo": [
+    "Mars",
+    "Moon",
+    "Kethu"
+   ],
+   "Virgo": [],
+   "Libra": [],
+   "Scorpio": [],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Jupiter"
+   ],
+   "Aquarius": [
+    "Lagna",
+    "Rahu"
+   ],
+   "Pisces": []
+  },
+  "illegible": "Nothing illegible. The diagram is on scan 0219 (book p.210); 0218 is commentary. There is no centre label in the Rasi square."
+ },
+ {
+  "chart_no": 104,
+  "scans": [
+   "0228"
+  ],
+  "birth_line": "Chart No. 104.—Born on 5-5-1871 at 11-14 p.m. (L.M.T.) Lat. 13° N., Long 76° 9 E.",
+  "dasa_balance": "Balance of Saturn's Dasa at birth: years 17-10-10.",
+  "rasi": {
+   "Aries": [
+    "Sun"
+   ],
+   "Taurus": [
+    "Mercury",
+    "Venus"
+   ],
+   "Gemini": [
+    "Jupit.",
+    "Rahu"
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Mars"
+   ],
+   "Virgo": [],
+   "Libra": [],
+   "Scorpio": [
+    "Moon"
+   ],
+   "Sagittarius": [
+    "Saturn",
+    "Kethu"
+   ],
+   "Capricorn": [
+    "Lagna"
+   ],
+   "Aquarius": [
+    "Mandi"
+   ],
+   "Pisces": []
+  },
+  "illegible": "Longitude printed '76° 9 E.' with no minute mark after 9. Mandi is printed in Aquarius in addition to the nine grahas. Centre of Rasi box carries '5.47' (label)."
+ },
+ {
+  "chart_no": 107,
+  "scans": [
+   "0232"
+  ],
+  "birth_line": "Chart No. 107.—Born on 26-6-1920 at 2-6 p.m. (L.M.T.) Lat. 24° 54' N.; Long. 4th. 28m. E.",
+  "dasa_balance": "Balance of Jupiter's Dasa at birth: years 11-10-17.",
+  "rasi": {
+   "Aries": [
+    "Kethu"
+   ],
+   "Taurus": [],
+   "Gemini": [
+    "Sun",
+    "Venue"
+   ],
+   "Cancer": [
+    "Merc.",
+    "Jupit."
+   ],
+   "Leo": [
+    "Saturn"
+   ],
+   "Virgo": [],
+   "Libra": [
+    "Moon",
+    "Mars",
+    "Rahu"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [],
+   "Capricorn": [],
+   "Aquarius": [],
+   "Pisces": [
+    "Lagna"
+   ]
+  },
+  "illegible": "Gemini box prints 'Venue' (misprint for Venus). Longitude printed '4th. 28m.' (presumably 4h. 28m.). Centre of Rasi box carries '3.46' (label)."
+ },
+ {
+  "chart_no": 124,
+  "scans": [
+   "0259",
+   "0260"
+  ],
+  "birth_line": "Chart No. 124—Born on 15-5-1895 at 9-17 p.m. (L.M.T.) Lat. 22° 25' N.; Long. 87° 21' E.",
+  "dasa_balance": "Balance of Moon's Dasa at birth: years 5-9-0.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [
+    "Sun",
+    "Mercury"
+   ],
+   "Gemini": [
+    "Venus",
+    "Jupit.",
+    "Mars",
+    "Lagna"
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Kethu"
+   ],
+   "Virgo": [],
+   "Libra": [
+    "Saturn"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Moon"
+   ],
+   "Aquarius": [
+    "Rahu"
+   ],
+   "Pisces": []
+  },
+  "illegible": "Chart is on 0260; 0259 is commentary. Centre of Rasi box carries '5.107' (label)."
+ },
+ {
+  "chart_no": 128,
+  "scans": [
+   "0265"
+  ],
+  "birth_line": "Chart No. 128.—Born on 21-9-1866 at 3-33 p.m. Lat. 51° 24' N.; Long. 0° 15' E.",
+  "dasa_balance": "Balance of Mars' Dasa at birth: years 5-1-3.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [
+    "Mars"
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Merc."
+   ],
+   "Virgo": [
+    "Sun",
+    "Rahu"
+   ],
+   "Libra": [
+    "Venus",
+    "Saturn",
+    "Mandi"
+   ],
+   "Scorpio": [],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Lagna",
+    "Jupiter",
+    "Moon"
+   ],
+   "Aquarius": [],
+   "Pisces": [
+    "Kethu"
+   ]
+  },
+  "illegible": "Mandi printed in Libra in addition to the nine grahas. Centre of Rasi box carries 'P.N. 10' (label)."
+ },
+ {
+  "chart_no": 134,
+  "scans": [
+   "0281"
+  ],
+  "birth_line": "Chart No. 134.—Born on 18-12-1898 at about 2-20 a.m. (L.M.T.) Lat. 13° N.; Long 77° 35' E.",
+  "dasa_balance": "Balance of Rahu's Dasa at birth: year 0-0-8.",
+  "rasi": {
+   "Aries": [],
+   "Taurus": [],
+   "Gemini": [
+    "Kethu"
+   ],
+   "Cancer": [
+    "Mars"
+   ],
+   "Leo": [],
+   "Virgo": [],
+   "Libra": [
+    "Jupiter",
+    "Lagna"
+   ],
+   "Scorpio": [
+    "Saturn",
+    "Venus"
+   ],
+   "Sagittarius": [
+    "Sun",
+    "Mercury",
+    "Rahu"
+   ],
+   "Capricorn": [],
+   "Aquarius": [
+    "Moon"
+   ],
+   "Pisces": []
+  },
+  "illegible": "Only a Rasi diagram is printed (no Navamsa)."
+ },
+ {
+  "chart_no": 135,
+  "scans": [
+   "0285"
+  ],
+  "birth_line": "Chart No. 135.—Born on 30-4-1894 at 11-5 p.m. (L.M.T.) Lat. 51° 31' N., Long. 6° 37' E.",
+  "dasa_balance": "Balance of Jupiter's Dasa at birth: years 13-11-23.",
+  "rasi": {
+   "Aries": [
+    "Sun"
+   ],
+   "Taurus": [
+    "Jupiter"
+   ],
+   "Gemini": [],
+   "Cancer": [],
+   "Leo": [],
+   "Virgo": [
+    "Kethu",
+    "Saturn",
+    "Mandi"
+   ],
+   "Libra": [],
+   "Scorpio": [],
+   "Sagittarius": [
+    "Lagna"
+   ],
+   "Capricorn": [],
+   "Aquarius": [
+    "Moon",
+    "Mars"
+   ],
+   "Pisces": [
+    "Rahu",
+    "Mercury",
+    "Venus"
+   ]
+  },
+  "illegible": "Mandi printed in Virgo in addition to the nine grahas. Centre of Rasi box carries 'P. N. 24' (label)."
+ },
+ {
+  "chart_no": 141,
+  "scans": [
+   "0300",
+   "0301"
+  ],
+  "birth_line": "Chart No. 141—Born on 13-6-1873 at 11-55 p.m. (L.M.T.) Lat. 42° N.; Long. 75° E.",
+  "dasa_balance": "Balance of the Sun's Dasa at birth: year 0-0-3.",
+  "rasi": {
+   "Aries": [
+    "Venus"
+   ],
+   "Taurus": [
+    "Rahu"
+   ],
+   "Gemini": [
+    "Sun",
+    "Merc."
+   ],
+   "Cancer": [],
+   "Leo": [
+    "Jupit."
+   ],
+   "Virgo": [],
+   "Libra": [
+    "Mars"
+   ],
+   "Scorpio": [
+    "Kethu"
+   ],
+   "Sagittarius": [],
+   "Capricorn": [
+    "Moon",
+    "Saturn"
+   ],
+   "Aquarius": [
+    "Lagna"
+   ],
+   "Pisces": []
+  },
+  "illegible": "Chart is on 0301; 0300 is commentary."
+ }
+]

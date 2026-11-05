@@ -66,7 +66,7 @@ class PrasnaRequest(BaseModel):
     latitude: float = Field(..., ge=-90.0, le=90.0)
     longitude: float = Field(..., ge=-180.0, le=180.0)
     tz_offset: float = Field(..., ge=-12.0, le=14.0)
-    ayanamsa: Literal["raman", "lahiri"] = "lahiri"
+    ayanamsa: Literal["raman", "lahiri"] = "raman"
 
 
 def _resolve_house(req: PrasnaRequest) -> int:

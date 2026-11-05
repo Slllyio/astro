@@ -31,6 +31,7 @@ from typing import Any, Callable, Sequence
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart.varga import navamsa_sign as _navamsa_sign
+from app.raman_saab.chart.varga import varga_sign_by_name as _varga_sign_by_name
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.primitives import bhangas, nakshatra
 from app.raman_saab.primitives import relationships as _rel
@@ -39,6 +40,7 @@ from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS, Nature,
     compute_functional_nature, functional_nature, is_yogakaraka)
 from app.raman_saab.primitives.bhangas import neecha_bhanga
+from app.raman_saab.primitives.effective_strength import effective_strength
 
 # House classes (whole-sign, from the Lagna).
 _HOUSE_CLASS: dict[str, frozenset[int]] = {
@@ -101,26 +103,31 @@ def _origin_house(origin: object, chart: RamanChart) -> int | None:
     return p.rasi_house if p else None
 
 
-def _origin_varga_sign(origin: object, chart: RamanChart) -> int | None:
-    """The D9 mirror of `_origin_house`: resolve a frame origin to its NAVAMSA sign
-    (1..12). "LAGNA" -> navamsa of the ascendant degree; "MOON"/planet name -> that
-    planet's `navamsa_sign`; int n -> the nth sign from the navamsa Lagna;
-    "LORD_OF:n" -> the navamsa sign held by the D1 lord of house n (Raman's "in the
-    Navamsha from the sign held by the 2nd lord", HTJAH-I:1717-1718). Returns None
-    if a referenced planet is absent (sparse Track-B charts)."""
+def _origin_varga_sign(origin: object, chart: RamanChart, varga: str = "D9") -> int | None:
+    """The varga mirror of `_origin_house`: resolve a frame origin to its sign (1..12)
+    IN `varga`. "LAGNA" -> the varga of the ascendant degree; "MOON"/planet name -> that
+    planet's varga sign; int n -> the nth sign from the varga Lagna; "LORD_OF:n" -> the
+    varga sign held by the **D1** lord of house n (Raman's "in the Navamsha from the sign
+    held by the 2nd lord", HTJAH-I:1717-1718 — the lord is identified in the rasi, then
+    located in the varga). Returns None if a referenced planet is absent (sparse Track-B
+    charts).
+
+    `varga` defaults to "D9" so the 50 existing navamsa rules read unchanged at the call
+    site; it is not a claim that D9 is privileged.
+    """
     if origin == "LAGNA":
-        return _navamsa_sign(chart.asc_lon)
+        return _varga_sign_by_name(chart.asc_lon, varga)
     if origin == "MOON":
         m = chart.planets.get("Moon")
-        return m.navamsa_sign if m else None
+        return _planet_varga_sign(m, varga) if m else None
     if isinstance(origin, int):
-        nav_lagna = _navamsa_sign(chart.asc_lon)
-        return ((nav_lagna - 1) + (origin - 1)) % 12 + 1
+        varga_lagna = _varga_sign_by_name(chart.asc_lon, varga)
+        return ((varga_lagna - 1) + (origin - 1)) % 12 + 1
     if isinstance(origin, str) and origin.startswith(_LORD_OF_PREFIX):
         p = chart.planets.get(_lord_of(_parse_lord_of(origin), chart))
-        return p.navamsa_sign if p else None
+        return _planet_varga_sign(p, varga) if p else None
     p = chart.planets.get(origin)          # a planet name
-    return p.navamsa_sign if p else None
+    return _planet_varga_sign(p, varga) if p else None
 
 
 def _house_from(rasi_house: int, origin_house: int) -> int:
@@ -235,7 +242,7 @@ class InRashiHouse(Condition):
         self.planet, self.house = planet, house
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.rasi_house == self.house
 
 
@@ -245,7 +252,7 @@ class InHouse(Condition):
         self.planet, self.house = planet, house
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.bhava == self.house
 
 
@@ -254,7 +261,7 @@ class InSign(Condition):
         self.planet, self.sign = planet, sign
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.sign == self.sign
 
 
@@ -274,17 +281,26 @@ class Conjunct(Condition):
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        pa, pb = ctx.chart.planets.get(self.a), ctx.chart.planets.get(self.b)
+        pa = ctx.chart.planets.get(_resolve_planet(self.a, ctx.chart))
+        pb = ctx.chart.planets.get(_resolve_planet(self.b, ctx.chart))
         return pa is not None and pb is not None and pa.rasi_house == pb.rasi_house
 
 
 class Aspects(Condition):
-    """Planet `a` casts a (whole-sign) aspect on planet `b` (drishti; nodes 7th-only)."""
+    """Planet `a` casts a (whole-sign) aspect on planet `b` (drishti; nodes 7th-only).
+
+    Both ends accept "LORD_OF:n" as well as a static name (2026-09-02). `drishti.aspects_planet`
+    rejects any name absent from `chart.planets`, so an unresolved "LORD_OF:n" made this
+    SILENTLY ALWAYS FALSE — the same defect found in `InHouseClass` the same day, and the
+    reason Raman's "If aspected by the Sun" clauses could not be encoded against a house lord.
+    Static names pass through unchanged.
+    """
     def __init__(self, a: str, b: str) -> None:
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return drishti.aspects_planet(self.a, self.b, ctx.chart)
+        return drishti.aspects_planet(_resolve_planet(self.a, ctx.chart),
+                                      _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 class HasDignity(Condition):
@@ -293,7 +309,8 @@ class HasDignity(Condition):
         self.planet, self.states = planet, states
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return self.planet in ctx.chart.planets and dignity(self.planet, ctx.chart) in self.states
+        subj = _resolve_planet(self.planet, ctx.chart)
+        return subj in ctx.chart.planets and dignity(subj, ctx.chart) in self.states
 
 
 class LordHasDignity(Condition):
@@ -319,7 +336,7 @@ class Retrograde(Condition):
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.retrograde
 
 
@@ -331,7 +348,7 @@ class Combust(Condition):
         # Substantially combust: combust_fraction >= 0.5 (within half the orb). One threshold for the
         # whole engine, matching the judge's affliction bar (_COMBUST_HARD_FRACTION / B7 doctrine) --
         # a planet barely inside its orb (e.g. ~13 deg from the Sun) is not treated as afflicted.
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.combust_fraction >= 0.5
 
 
@@ -340,7 +357,7 @@ class IsYogaKaraka(Condition):
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return is_yogakaraka(self.planet, ctx.chart.asc_sign)
+        return is_yogakaraka(_resolve_planet(self.planet, ctx.chart), ctx.chart.asc_sign)
 
 
 class NeechaBhanga(Condition):
@@ -372,18 +389,25 @@ class InHouseFrom(Condition):
         self.planet, self.origin, self.n = planet, origin, n
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         oh = _origin_house(self.origin, ctx.chart)
         return p is not None and oh is not None and _house_from(p.rasi_house, oh) == self.n
 
 
 class InHouseClass(Condition):
-    """Planet sits in a house of class `klass` ∈ {kendra,trikona,dusthana,upachaya,maraka} (H6)."""
+    """Planet sits in a house of class `klass` ∈ {kendra,trikona,dusthana,upachaya,maraka} (H6).
+
+    `planet` accepts a "LORD_OF:n" reference as well as a static name (2026-09-02). It read
+    `chart.planets` directly before, so a "LORD_OF:n" subject resolved to None and the
+    condition was SILENTLY ALWAYS FALSE — a dead rule that looks alive. Every sibling
+    condition already routed through `_resolve_planet`; this one was simply inconsistent.
+    Static names pass through unchanged, so no shipped rule changes behaviour.
+    """
     def __init__(self, planet: str, klass: str) -> None:
         self.planet, self.klass = planet, klass
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.rasi_house in _HOUSE_CLASS[self.klass]
 
 
@@ -402,18 +426,60 @@ class ClassInHouseFrom(Condition):
                    for name, p in ctx.chart.planets.items())
 
 
-# ── varga overlays (C2, D9 only for now) ─────────────────────────────────────
-_SUPPORTED_VARGAS = frozenset({"D9"})
+# ── varga overlays (C2) ──────────────────────────────────────────────────────
+#: Vargas a rule CONDITION may test. This is the doctrine-language gate, and it is
+#: deliberately narrower than the chart layer's `SUPPORTED_VARGAS` (all 16 Shodashavarga,
+#: every one of which the engine already casts). Widening it does not add astronomy — it
+#: widens what a Raman rule is able to SAY.
+#:
+#: **"D1" is the Rasi/radix, not a derived varga** (see `chart.varga.VARGA_NUMBERS`). It is
+#: admitted so a condition can address the natal chart through the same predicate, but a rule
+#: carrying varga="D1" is an ordinary natal rule.
+#:
+#: **D60 is deliberately ABSENT.** The shashtyamsa's named classes (Ghora, Rakshasa,
+#: Kulaghna, Devaloka …) appear in no citable Raman source — checked across HTJAH I & II,
+#: HPA and GBB, whose "Shashtiamsa" occurrences are the UNIT of Shadbala (1/60 rupa), an
+#: unrelated meaning. Admitting D60 here would invite encoding that table from a non-Raman
+#: classic, which the source firewall forbids. Seven rules stay parked on this; that is the
+#: correct state, not a gap to close. See DOCTRINE_BACKLOG "D60 named-class doctrine".
+_SUPPORTED_VARGAS = frozenset({"D1", "D3", "D7", "D9", "D10", "D12", "D16", "D30"})
 
 # Varga dignity vocabulary. NOTE: 'moolatrikona' is deliberately absent — it is a
 # D1 degree-range concept (sign + degree span, primitives.relationships.MOOLATRIKONA);
-# a navamsa position carries no degree-within-sign, so it cannot be tested in a varga.
+# a varga position carries no degree-within-sign, so it cannot be tested in a varga.
 _VARGA_DIGNITY_STATES = frozenset({"exalt", "debil", "own", "friend", "neutral", "enemy"})
 
 
 def _check_varga(varga: str) -> None:
     if varga not in _SUPPORTED_VARGAS:
         raise ValueError(f"unsupported varga {varga!r}; supported: {sorted(_SUPPORTED_VARGAS)}")
+
+
+def _planet_varga_sign(p: object, varga: str) -> int | None:
+    """A planet's sign in `varga`, or None if it carries no longitude.
+
+    D9 is NOT special-cased. `PlanetPos.navamsa_sign` is set to `varga.navamsa_sign(lon)` by
+    both constructors (`chart/adapter.py:46`, `chart/model.py:107`) and `_VARGA_FN[9]` is that
+    same function, so reading it through the named API returns an identical value — pinned for
+    every planet of every golden by `test_varga_conditions.TestPrimitiveEquality`. One path for
+    all vargas beats a bridge that could quietly diverge.
+    """
+    lon = getattr(p, "lon", None)
+    return None if lon is None else _varga_sign_by_name(float(lon), varga)
+
+
+class InFeminineSign(Condition):
+    """`planet` occupies a FEMININE sign in `varga` -- an even sign: "All odd signs are cruel and
+    masculine and all even signs are mild and feminine" (HPA-5:37-38). Raman keeps the sign's
+    gender apart from its lord's (HTJAH-I:5942-5943), so this tests the sign alone."""
+    def __init__(self, planet: str, varga: str = "D1") -> None:
+        _check_varga(varga)
+        self.planet, self.varga = planet, varga
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
+        vs = _planet_varga_sign(p, self.varga) if p is not None else None
+        return vs is not None and vs % 2 == 0
 
 
 class InVargaHouseFrom(Condition):
@@ -425,8 +491,8 @@ class InVargaHouseFrom(Condition):
     "LAGNA" = the navamsa Lagna (navamsa of the ascendant degree); "MOON"/planet
     name = that planet's navamsa sign; int n = the nth sign from the navamsa Lagna;
     "LORD_OF:n" = the D1 lord of house n located by its navamsa sign. `houses` is a
-    single int or an iterable of ints. Only varga="D9" is implemented (constructor
-    raises for anything else)."""
+    single int or an iterable of ints. `varga` may be any member of `_SUPPORTED_VARGAS`;
+    BOTH endpoints are resolved in that same varga, never mixed across charts."""
     def __init__(self, planet: str, origin: object, houses: int | Sequence[int] | set[int],
                  varga: str = "D9") -> None:
         _check_varga(varga)
@@ -436,33 +502,36 @@ class InVargaHouseFrom(Condition):
 
     def evaluate(self, ctx: EvalContext) -> bool:
         p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
-        ov = _origin_varga_sign(self.origin, ctx.chart)
-        return (p is not None and ov is not None
-                and _house_from(p.navamsa_sign, ov) in self.houses)
+        ov = _origin_varga_sign(self.origin, ctx.chart, self.varga)
+        pv = _planet_varga_sign(p, self.varga) if p is not None else None
+        return pv is not None and ov is not None and _house_from(pv, ov) in self.houses
 
 
-def _varga_dignity(planet: str, nav_sign: int) -> str:
-    """Dignity from the D9 sign alone ∈ {exalt, debil, own, friend, neutral, enemy}.
-    friend/neutral/enemy use the NAISARGIKA (natural) relation to the D9 sign's lord
-    only — temporal friendship is a D1 rasi-house-distance concept and would smuggle
-    D1 state into a varga predicate. Nodes are 'neutral' (Raman judges them by sign/
-    conjunction, not dignity — mirrors primitives.dignity)."""
+def _varga_dignity(planet: str, varga_sign: int) -> str:
+    """Dignity from a VARGA sign alone ∈ {exalt, debil, own, friend, neutral, enemy}.
+
+    Varga-agnostic by construction: it reads a sign, not a chart, so the same function
+    serves D9, D10, D30 or any other division. friend/neutral/enemy use the NAISARGIKA
+    (natural) relation to that sign's lord only — temporal friendship is a D1
+    rasi-house-distance concept and would smuggle D1 state into a varga predicate. Nodes
+    are 'neutral' (Raman judges them by sign/conjunction, not dignity — mirrors
+    primitives.dignity)."""
     if planet in ("Rahu", "Ketu"):
         return "neutral"
-    if nav_sign == _rel.EXALTATION[planet][0]:
+    if varga_sign == _rel.EXALTATION[planet][0]:
         return "exalt"
-    if nav_sign == _rel.DEBILITATION[planet][0]:
+    if varga_sign == _rel.DEBILITATION[planet][0]:
         return "debil"
-    lord = SIGN_LORDS[nav_sign]
+    lord = SIGN_LORDS[varga_sign]
     if lord == planet:
         return "own"
     return _rel.naisargika(planet, lord)
 
 
 class VargaDignity(Condition):
-    """Planet's D9-sign dignity is one of `states` ⊆ {exalt, debil, own, friend,
+    """Planet's dignity IN `varga` is one of `states` ⊆ {exalt, debil, own, friend,
     neutral, enemy} (C2). 'moolatrikona' is rejected at construction — see
-    `_varga_dignity`. Only varga="D9" is implemented."""
+    `_varga_dignity`. `varga` may be any member of `_SUPPORTED_VARGAS`."""
     def __init__(self, planet: str, varga: str, states: set[str]) -> None:
         _check_varga(varga)
         unknown = set(states) - _VARGA_DIGNITY_STATES
@@ -474,7 +543,233 @@ class VargaDignity(Condition):
     def evaluate(self, ctx: EvalContext) -> bool:
         subj = _resolve_planet(self.planet, ctx.chart)
         p = ctx.chart.planets.get(subj)
-        return p is not None and _varga_dignity(subj, p.navamsa_sign) in self.states
+        vs = _planet_varga_sign(p, self.varga) if p is not None else None
+        return vs is not None and _varga_dignity(subj, vs) in self.states
+
+
+#: The "first-rate" malefics used for SEVERITY counts. The Sun is deliberately excluded —
+#: this mirrors the established convention already used by `_PutraKarakaDoublyAfflicted`
+#: (house_05_putra/combinations.py:167) and its siblings, so a "heavy affliction" means the
+#: same thing everywhere in the corpus rather than one thing per house.
+FIRST_RATE_MALEFICS: frozenset[str] = frozenset({"Mars", "Saturn", "Rahu", "Ketu"})
+
+#: Benefics for "beneficially disposed / benefic influence" clauses. Jupiter and Venus only: Raman
+#: treats the Moon and Mercury as benefic only conditionally (waxing; unafflicted), so including
+#: them would fire these clauses on contacts he may not count. Under-fires, never wrongly. (The
+#: locked Avastha benefic list is for Avastha, not for this.)
+FIRM_BENEFICS: frozenset[str] = frozenset({"Jupiter", "Venus"})
+
+
+class AfflictedBy(Condition):
+    """`planet` is CONJUNCT WITH or ASPECTED BY an afflicter — Raman's influence axis.
+
+    This is the shared form of a predicate the rule sets had re-invented ten times, once per
+    house (`_MaleficAfflictsLagnaLord`, `_AfflictsPlanet`, `_AfflictedBy`, `_LordAfflictedBy`
+    and their siblings). Every variant agreed on the substance — same rasi house, or a true
+    whole-sign drishti — so the duplication bought nothing and left each house free to drift.
+
+    **Affliction is NOT weakness.** Raman keeps the two axes apart and says so directly: at
+    HTJAH-II:3001-3009 he runs "in strength / weak / afflicted" as three tiers over one entry
+    with three non-nested outcomes, and at HTJAH-II:273-276 he writes of "both afflictions AND
+    benefic influences" on the same lord. Shadbala answers *how strong*; this answers *who is
+    standing on it*. Conflating them is what put affliction-gated sentences into the
+    `afflicted` TEXT SLOT — which `_branch` selects on weak Shadbala, an unrelated test.
+
+    `planet` accepts "LORD_OF:n" as well as a static name, so a dynamic house lord resolves
+    per chart. `afflictors` defaults to the natural malefics (Sun, Mars, Saturn, Rahu, Ketu);
+    pass an explicit set for Raman's narrower clauses. The subject can never afflict itself.
+    None-safe: an absent planet on a sparse Track-B chart yields False, never a raise.
+
+    `min_count` carries DEGREE, because Raman distinguishes plain affliction from "severely
+    afflicted" and "if the affliction is heavy". Encoding those as a bare boolean would fire
+    them on a single mild contact and assert a severity he did not. The corpus already had a
+    convention for this — `_PutraKarakaDoublyAfflicted`, `_MatruKarakaDoublyAfflicted` and
+    `_KarakaMultiplyAfflicted` all read ">= 2 of the FIRST-RATE malefics" — so severity reuses
+    it via `FIRST_RATE_MALEFICS` rather than inventing a second scale.
+    """
+    def __init__(self, planet: str, afflictors: Sequence[str] | set[str] | None = None,
+                 min_count: int = 1) -> None:
+        if min_count < 1:
+            raise ValueError("min_count must be >= 1; a rule that fires on zero afflicters "
+                             "is not an affliction predicate")
+        self.planet, self.min_count = planet, min_count
+        self.afflictors: frozenset[str] = (
+            frozenset(NATURAL_MALEFICS) if afflictors is None else frozenset(afflictors))
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        subject = _resolve_planet(self.planet, ctx.chart)
+        p = ctx.chart.planets.get(subject)
+        if p is None:
+            return False
+        hits = 0
+        for name in self.afflictors - {subject}:
+            q = ctx.chart.planets.get(name)
+            if q is None:
+                continue
+            if q.rasi_house == p.rasi_house or drishti.aspects_planet(name, subject, ctx.chart):
+                hits += 1
+                if hits >= self.min_count:
+                    return True
+        return False
+
+
+def _node_joined(planet: str, chart: RamanChart) -> bool:
+    """`planet` shares a sign with Rahu or Ketu -- the same set as "afflicted by a node", since
+    joined by one node is aspected by the other (nodes aspect the 7th only)."""
+    p = chart.planets.get(planet)
+    return p is not None and any((n := chart.planets.get(node)) is not None
+                                 and n.rasi_house == p.rasi_house for node in ("Rahu", "Ketu"))
+
+
+class HouseAfflictedBy(Condition):
+    """Whole-sign `house` (from the Lagna) is OCCUPIED or ASPECTED by an afflicter -- the HOUSE
+    form of `AfflictedBy`, for Raman's "if the 10th house is afflicted" / "if malefics afflict
+    the 10th house" (HTJAH-II:9470), where the house itself, not its lord, is the subject.
+
+    Same recipe the house rule sets had each re-derived privately (`q.rasi_house == h or
+    drishti.aspects_house(q, h)`), same defaults as `AfflictedBy` (natural malefics; nodes 7th
+    only), same `min_count` for degree.
+
+    The house's OWN lord does not afflict it: "This blemish is cancelled because Mars is in his
+    own house" (HTJAH-I:2740-2741); "A planet, aspecting its own house ... will naturally
+    increase the signification of that house" (HPA-8:64-67). One exception, also Raman's: an
+    own lord that is DEBILITATED and JOINED BY A NODE loses that shield -- "The 7th house is
+    afflicted because although the 7th lord aspects it, the aspect is of a planet rendered
+    malefic by debility and association with a node" (HTJAH-II:2159-2161).
+
+    The LAGNA lord does not afflict either: "ruler of Lagna is always the most benefic planet
+    ... Saturn becomes the best planet ... though usually the worst malefic" (NH:15662-15665);
+    "Saturn does not afflict in the strict sense of the term being the Lagna lord"
+    (HTJAH-I:13193-13194); in practice it reads as relief (HTJAH-I:11598, 13225, 16725, 17133,
+    17153). It afflicts again once joined by a node: "Although Saturn as Lagna lord is a
+    benefice, his association with Ketu ... renders him a malefic" (HTJAH-I:17253-17255; also
+    17231). Two independent engine-blind reviews agreed (2026-10-13, decision delegated by the
+    user); the mixed weighings (HTJAH-I:4405, 5925) never turn a house afflicted.
+
+    One malefic suffices and the Sun counts (HTJAH-I:12018-12019, 11598, 10392); benefic relief
+    is weighed separately by Raman and does not cancel the label (HTJAH-I:3769-3770).
+    """
+    def __init__(self, house: int, afflictors: Sequence[str] | set[str] | None = None,
+                 min_count: int = 1) -> None:
+        if min_count < 1:
+            raise ValueError("min_count must be >= 1")
+        self.house, self.min_count = house, min_count
+        self.afflictors: frozenset[str] = (
+            frozenset(NATURAL_MALEFICS) if afflictors is None else frozenset(afflictors))
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        chart = ctx.chart
+        own_lord, lagna_lord = _lord_of(self.house, chart), _lord_of(1, chart)
+        exempt = set()
+        # Raman's case: Saturn "does not obtain cancellation of debility but is afflicted by Ketu"
+        # (HTJAH-II:2139-2141).
+        if not (_node_joined(own_lord, chart) and dignity(own_lord, chart) == "debil"
+                and not neecha_bhanga(own_lord, chart)):
+            exempt.add(own_lord)
+        if not _node_joined(lagna_lord, chart):
+            exempt.add(lagna_lord)
+        hits = sum(1 for name in self.afflictors - exempt
+                   if (q := chart.planets.get(name)) is not None
+                   and (q.rasi_house == self.house
+                        or drishti.aspects_house(name, self.house, chart)))
+        return hits >= self.min_count
+
+
+class AsceticYogaPresent(Condition):
+    """At least one of Raman's own stated ascetic yogas holds (doctrine/ascetic_yogas.py,
+    HTJAH-II:11025-11053)."""
+    def evaluate(self, ctx: EvalContext) -> bool:
+        from app.raman_saab.doctrine.ascetic_yogas import ascetic_yogas
+        return bool(ascetic_yogas(ctx.chart))
+
+
+class IllDisposed(Condition):
+    """`planet` is ILL-DISPOSED: its disposition reads clearly bad -- afflicting testimony and no
+    fortifying testimony (doctrine/disposition.py). "Ill disposed" is one of Raman's INFLUENCE
+    words, apart from strength (two concurring reviews, 2026-10-13)."""
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        from app.raman_saab.doctrine.disposition import disposition
+        d = disposition(_resolve_planet(self.planet, ctx.chart), ctx.chart)
+        return d is not None and d.reading == "bad"
+
+
+class IsStrong(Condition):
+    """`planet` is STRONG in Raman's sense: its Shadbala meets his minimum bar (GBB-8:303-312)
+    AND no hard fact overrides that number -- it is neither combust nor debilitated without
+    cancellation.
+
+    Built on `primitives.effective_strength` (the B1 measure), NOT on raw `is_powerful`. Two
+    reasons, both recorded in that module: Raman reads a combust lord "powerless" even when it is
+    otherwise well disposed (HTJAH-I:3788), so the number alone contradicts him on his own worked
+    chart; and gating on raw `is_powerful` was tried before and over-fired badly (four HPA-20
+    yogas had to be deferred).
+
+    This is the BINARY reading the engine already uses -- no new strength vocabulary. Raman's
+    middle tiers ("moderately strong", "middling") and his upper band ("very powerful") are NOT
+    expressed by it and stay parked. The B2 "marginal" band (within 0.2 rupa of the bar) is
+    deliberately neither strong nor weak: it is a tuning band, not Raman's middle tier.
+
+    Unknown strength is never strong: a chart without Shadbala (Track-B), or Rahu/Ketu (no
+    Shadbala at all, GBB-3), returns False. Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        es = effective_strength(_resolve_planet(self.planet, ctx.chart), ctx.chart)
+        return es.band == "strong" and not es.decisively_weak
+
+
+class IsWeak(Condition):
+    """`planet` is WEAK in Raman's sense: below his minimum bar, OR combust, OR debilitated
+    without cancellation -- `effective_strength(...).decisively_weak`, i.e. "Raman would not let
+    this factor carry the matter".
+
+    Weakness and AFFLICTION are different conditions to Raman (HTJAH-II:3001-3009 runs "in
+    strength / weak / afflicted" as three tiers; HTJAH-I:5121 writes "weak AND afflicted"), so
+    "weak and afflicted" is `And(IsWeak(p), AfflictedBy(p))`, never either alone.
+
+    With no Shadbala on the chart, only the hard facts (combust, uncancelled debility) can make a
+    planet weak; a missing number is not read as a low one. Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        return effective_strength(_resolve_planet(self.planet, ctx.chart), ctx.chart).decisively_weak
+
+
+class JoinedBy(Condition):
+    """`planet` shares its rasi house with one of `joiners` -- CONJUNCTION only, no aspect.
+
+    For Raman's "benefics there", "if malefics join": occupancy, not influence. The subject never
+    joins itself, so a house lord that is itself a benefic is not counted as "a benefic joining"
+    (`ClassInHouseFrom` would count it). Accepts "LORD_OF:n".
+    """
+    def __init__(self, planet: str, joiners: Sequence[str] | set[str]) -> None:
+        self.planet, self.joiners = planet, frozenset(joiners)
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        subject = _resolve_planet(self.planet, ctx.chart)
+        p = ctx.chart.planets.get(subject)
+        return p is not None and any(
+            q.rasi_house == p.rasi_house
+            for name, q in ctx.chart.planets.items()
+            if name in self.joiners and name != subject)
+
+
+def InfluencedBy(planet: str, influencers: Sequence[str] | set[str] = FIRM_BENEFICS,
+                 min_count: int = 1) -> AfflictedBy:
+    """`planet` is conjunct with or aspected by one of `influencers` — for BENEFIC clauses.
+
+    The same contact test as `AfflictedBy`, under a name that reads true: Raman's "beneficially
+    disposed", "associates with a benefic" and "benefic influences" are contacts, but writing
+    `AfflictedBy(lord, {"Jupiter", "Venus"})` would read as "afflicted by Jupiter".
+    """
+    return AfflictedBy(planet, influencers, min_count)
 
 
 # ── relations (C6, H1, mutual) ───────────────────────────────────────────────
@@ -483,7 +778,8 @@ class MutualAspect(Condition):
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return drishti.mutual_aspect(self.a, self.b, ctx.chart)
+        return drishti.mutual_aspect(_resolve_planet(self.a, ctx.chart),
+                                     _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 class Parivartana(Condition):
@@ -501,7 +797,8 @@ class Exchange(Condition):
         self.a, self.b = a, b
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return bhangas.exchange(self.a, self.b, ctx.chart)
+        return bhangas.exchange(_resolve_planet(self.a, ctx.chart),
+                                _resolve_planet(self.b, ctx.chart), ctx.chart)
 
 
 def _in_2_12(h1: int, h2: int) -> bool:
@@ -583,7 +880,7 @@ class HemmedBy(Condition):
 
     def evaluate(self, ctx: EvalContext) -> bool:
         from app.raman_saab.doctrine import hemming
-        return hemming.hemmed_planet(ctx.chart, self.target, self.klass)
+        return hemming.hemmed_planet(ctx.chart, _resolve_planet(self.target, ctx.chart), self.klass)
 
 
 # ── functional nature (C4) & nakshatra (C3) ──────────────────────────────────
@@ -593,8 +890,9 @@ class FunctionalNature(Condition):
         self.planet, self.natures = planet, natures
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return (self.planet in ctx.chart.planets
-                and functional_nature(self.planet, ctx.chart) in self.natures)
+        subj = _resolve_planet(self.planet, ctx.chart)
+        return (subj in ctx.chart.planets
+                and functional_nature(subj, ctx.chart) in self.natures)
 
 
 class InStarOf(Condition):
@@ -603,7 +901,7 @@ class InStarOf(Condition):
         self.planet, self.lord = planet, lord
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and nakshatra.nakshatra_lord(p.nakshatra) == self.lord
 
 

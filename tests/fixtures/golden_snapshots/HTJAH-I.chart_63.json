@@ -14,7 +14,7 @@
     "rollup": "favourable",
     "significations": {
       "courage": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -24,12 +24,12 @@
         "verdict": "insufficient-evidence"
       },
       "short_journeys": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "siblings": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

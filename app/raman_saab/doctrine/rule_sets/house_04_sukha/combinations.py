@@ -96,6 +96,125 @@ class _PlanetInOrAspectsHouse(C.Condition):
         return p.rasi_house == self.house or drishti.aspects_house(self.planet, self.house, ctx.chart)
 
 
+class _FourthLordConjunctMoon(C.Condition):
+    """The 4th lord shares a whole-sign house with the Moon (identity → False: when the Moon
+    itself lords the 4th, 'conjunct the Moon' is not a configuration)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(4, ctx.chart)
+        if lord == "Moon":
+            return False
+        p, moon = ctx.chart.planets.get(lord), ctx.chart.planets.get("Moon")
+        return p is not None and moon is not None and p.rasi_house == moon.rasi_house
+
+
+class _LagnaAndFourthLordsFriendly(C.Condition):
+    """Lagna-lord and 4th-lord are mutual friends AND both are beneficially disposed —
+    Raman's "He wins the affection of mother if lord of Lagna and the fourth are friendly,
+    and are otherwise beneficially disposed" (HTJAH-I:4228-4229).
+
+    "Friendly" reads `dignity.compound_relation` in BOTH directions (his word is mutual).
+    "Otherwise beneficially disposed" is read as the conservative pair the corpus uses
+    elsewhere: neither lord carries a natural-malefic contact (conjunction or drishti).
+    Identity (one planet lording both) returns False: a planet is not "friendly with"
+    itself, and Raman's sentence is about two significators agreeing."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.dignity import compound_relation
+        chart = ctx.chart
+        l1, l4 = _lord_of(1, chart), _lord_of(4, chart)
+        if l1 == l4 or l1 not in chart.planets or l4 not in chart.planets:
+            return False
+        if compound_relation(l1, l4, chart) != "friend":
+            return False
+        if compound_relation(l4, l1, chart) != "friend":
+            return False
+        for lord in (l1, l4):
+            for m in NATURAL_MALEFICS:
+                if m == lord or m not in chart.planets:
+                    continue
+                if (chart.planets[m].rasi_house == chart.planets[lord].rasi_house
+                        or drishti.aspects_planet(m, lord, chart)):
+                    return False
+        return True
+
+
+class _FourthLordNeechaWithSun(C.Condition):
+    """The 4th lord is debilitated AND shares a house with the Sun — Raman's "The person
+    loses lands by royal or Government orders if the lord of the fourth is neecha with Sun"
+    (HTJAH-I:4219-4220). Both legs are his; the Sun's presence is what makes the loss
+    ROYAL/governmental, which is why this is scoped to `property` and not to happiness."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.dignity import dignity as _dig
+        chart = ctx.chart
+        l4 = _lord_of(4, chart)
+        p = chart.planets.get(l4)
+        sun = chart.planets.get("Sun")
+        if p is None or sun is None or l4 == "Sun":
+            return False
+        return _dig(l4, chart) == "debil" and p.rasi_house == sun.rasi_house
+
+
+class _FourthHouseHemmedByMalefics(C.Condition):
+    """H4.C.49: a natural malefic in each sign adjacent to the 4th sign (papakartari on the
+    bhava). Sign-level hemming, same form as H9.A.21's leg."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        s4 = ((chart.asc_sign - 1 + 3) % 12) + 1
+        prev_s = ((s4 - 2) % 12) + 1
+        next_s = (s4 % 12) + 1
+        malefics = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
+        hem_prev = any(chart.planets[m].sign == prev_s for m in malefics if m in chart.planets)
+        hem_next = any(chart.planets[m].sign == next_s for m in malefics if m in chart.planets)
+        return hem_prev and hem_next
+
+
+class _JupiterAspectsFourthLord(C.Condition):
+    """H4.C.50: the Gnanakaraka Jupiter casts whole-sign drishti on the 4th lord (identity
+    excluded — when Jupiter lords the 4th, 'aspects the lord' is not a configuration)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(4, ctx.chart)
+        if lord == "Jupiter":
+            return False
+        return drishti.aspects_planet("Jupiter", lord, ctx.chart)
+
+
+class _MoonInLagnaVargottama(C.Condition):
+    """H4.C.51: the Matru-Karaka Moon occupies the Lagna AND is Vargottama. Needs a degree
+    (vargottama is a navamsa fact); sign-midpoint materializations evaluate honestly off
+    their derived navamsa, and Shaw's chart is fresh-cast."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        moon = ctx.chart.planets.get("Moon")
+        return moon is not None and moon.rasi_house == 1 and moon.vargottama
+
+
+class _MatruKarakaDoublyAfflicted(C.Condition):
+    """>= 2 of the first-rate malefics {Mars, Saturn, Rahu, Ketu} contact the Matru-Karaka
+    Moon — conjunction (same sign) or whole-sign drishti (nodes 7th-only via the drishti
+    module). H4.C.48's predicate, the exact H4 twin of H5.C.40's _PutraKarakaDoublyAfflicted;
+    the Sun's exclusion is the same empirical documented limit (see the rule's comment)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return False
+        count = 0
+        for name in ("Mars", "Saturn", "Rahu", "Ketu"):
+            p = chart.planets.get(name)
+            if p is None:
+                continue
+            if p.sign == moon.sign or drishti.aspects_planet(name, "Moon", chart):
+                count += 1
+        return count >= 2
+
+
+class _LagnaInSignsLocal(C.Condition):
+    """The ascendant sign is one of `signs` (1..12)."""
+    def __init__(self, signs: frozenset[int]) -> None:
+        self.signs = signs
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return ctx.chart.asc_sign in self.signs
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -228,13 +347,53 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         id="H4.C.24", house=4, signification="happiness", group="combination", kind="descriptive",
         condition=None,
         fortified="strong 4th & 9th lords aspected by Jupiter in a kendra/kona → favours from "
-                  "royalty; lord-of-Lagna & 4th-lord friendly & beneficial → wins mother's "
-                  "affection; 4th lord with Mars favourably → army commission. "
-                  "TODO(predicate: strength gate, lord-friendship)",
-        afflicted="4th lord neecha with the Sun → loses lands by Government order; many evil "
-                  "planets in the 4th + 4th lord in an enemy's house → a great sinner; weak "
-                  "Lagna-lord in a watery 4th → drowning. TODO(predicate: weak/debil + lord gates)",
-        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4219)),
+                  "royalty; 4th lord with Mars favourably → army commission. "
+                  "TODO(predicate: strength gate)",
+        afflicted="many evil planets in the 4th + 4th lord in an enemy's house → a great "
+                  "sinner; weak Lagna-lord in a watery 4th → drowning. "
+                  "TODO(predicate: weak/debil + lord gates)",
+        # PARTIALLY SPLIT OUT 2026-08-31 (stale-TODO audit). This record bundled SIX distinct
+        # sentences of Raman's — royal favours, mother's affection, an army commission, loss
+        # of lands, sinfulness, drowning — under one neutral polarity, which is why it could
+        # never be made evaluable as a unit: the outcomes carry different significations AND
+        # opposite poles. The two whose signification maps cleanly and whose predicate is
+        # narrow are now C.52 (mother) and C.53 (property) below. What remains here is
+        # genuinely still blocked or genuinely unscoped: the royalty and army sentences want
+        # a strength gate and have no `status`/`career` key on H4, and the sinner/drowning
+        # pair are life-event readings with no signification to route to.
+        # Citation corrected 2026-09-01: it pointed at HTJAH-I:4219, "The person loses lands
+        # by royal or Government orders if the lord of the fourth is neecha with Sun" — a
+        # sentence that was SPLIT OUT of this bundle into H4.C.53 on 2026-08-31, which now
+        # cites 4219 itself. This record therefore cited a line whose content it no longer
+        # contained. Its four surviving sentences begin at 4220 (great sinner, drowning) with
+        # the fortified pair at 4230-4232.
+        frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-I", 4220)),
+
+    # #52 — the mother-affection sentence, split out of C.24's bundle. Raman verbatim
+    # (HTJAH-I:4228-4229): "He wins the affection of mother if lord of Lagna and the fourth
+    # are friendly, and are otherwise beneficially disposed." Both legs are his; the
+    # friendship reads the shipped `dignity.compound_relation` in BOTH directions, which is
+    # what "are friendly" means for a pair. Scoped to `mother`, where it belongs — the
+    # bundle had it under `happiness`.
+    RuleRecord(
+        id="H4.C.52", house=4, signification="mother", group="combination", kind="evaluable",
+        condition=_LagnaAndFourthLordsFriendly(),
+        fortified="the lords of the Lagna and the 4th mutually friendly and otherwise "
+                  "beneficially disposed → the native wins the affection of the mother",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4228)),
+
+    # #53 — the loss-of-lands sentence, split out of C.24's bundle. Raman verbatim
+    # (HTJAH-I:4219-4220): "The person loses lands by royal or Government orders if the lord
+    # of the fourth is neecha with Sun." Two legs, both his. Scoped to `property` — the
+    # matter the sentence is actually about — rather than the bundle's `happiness`.
+    RuleRecord(
+        id="H4.C.53", house=4, signification="property", group="combination", kind="evaluable",
+        condition=_FourthLordNeechaWithSun(),
+        fortified=None,
+        afflicted="the 4th lord debilitated and with the Sun → loss of lands by royal or "
+                  "Government order",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4219)),
 
     # ===== B. Mother — longevity & death timing (HTJAH-I:4394-4402) — sig mother =====
     RuleRecord(
@@ -325,12 +484,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "fitting vahana",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4937)),
+    # C.42 — the "lords-associated-in-house, lord-conjunct" TODOs were stale: LordsConjunct,
+    #        LordIn and _LagnaInSigns-style checks all exist. Encoded 2026-08-23 as the
+    #        three-disjunct transcription. Review in DOCTRINE_BACKLOG "H8-H3 sweep finale".
     RuleRecord(
-        id="H4.C.42", house=4, signification="vehicles", group="combination", kind="descriptive",
-        condition=None,
+        id="H4.C.42", house=4, signification="vehicles", group="combination", kind="evaluable",
+        condition=C.Or(
+            # lords of the 4th & 9th associated (conjunct) IN the Lagna or the 7th
+            C.And(C.LordsConjunct(4, 9), C.Or(C.LordIn(4, 1), C.LordIn(4, 7))),
+            # the 4th lord conjunct the Moon
+            _FourthLordConjunctMoon(),
+            # Venus-as-4th-lord (Aquarius/Cancer Lagna) in the 11th/10th/9th
+            C.And(_LagnaInSignsLocal(frozenset({11, 4})),
+                  C.Or(C.LordIn(4, 11), C.LordIn(4, 10), C.LordIn(4, 9))),
+        ),
         fortified="lords of the 4th & 9th associated in the Lagna or 7th, OR the 4th lord "
                   "conjunct the Moon, OR Venus-as-4th-lord (Aquarius/Cancer Lagna) in 11/10/9 → "
-                  "possession of a vehicle. TODO(predicate: lords-associated-in-house, lord-conjunct)",
+                  "possession of a vehicle",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4929)),
 
@@ -351,4 +521,94 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "TODO(predicate: strength gate, shashtiamsa/thrimsamsa varga, lords-in-kendra)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4950)),
+
+    # #48 — the Matru-Karaka Moon under the COMBINED contact of two first-rate malefics ->
+    # the mother's significator is considerably afflicted. The exact H4 twin of H5.C.40 —
+    # SAME idiom, SAME >= 2 gradient, stated on Chart 68 (HTJAH-I:4551-4560): "This benefice
+    # disposition is more than counterbalanced by the combined aspect of two first-rate
+    # malefic, viz., Saturn and Mars ... Consequently Matru-Karaka is considerably afflicted"
+    # -> Conclusion "the fourth house is considerably afflicted"; the mother died in the
+    # native's 16th year (:4572). The Conclusion also teaches the general lesson: Saturn's
+    # aspect "could have been construed as beneficial [he is the 4th lord there] but for the
+    # fact Saturn happens to be a natural malefic" (:4558-4559) — own-lordship does not
+    # sanitize a natural malefic's contact. Same-series corroborations (reviewer-verified):
+    # x67 :4529-4539 ("Mars and Saturn, two first-rate malefic"), x70 :4595-4601 ("aspected
+    # powerfully by Saturn and Mars ... considerably afflicted", mother died 18th year), x71
+    # :4616-4617 (Rahu conjunct + Saturn aspect -> "considerably afflicted"). Thyagaraja
+    # (chart_23) is Raman-supported TOO: "Matrukaraja or indicator of mother is with Ketu
+    # while ... Lord of the 4th is in the 11th with Saturn ... These combinations explain the
+    # fact of his parents having died early" (NH:6060-6063) + "Saturn aspects Cancer"
+    # (NH:6071-6072) — two of the engine's three contacts are in his printed text; only the
+    # Rahu 7th-aspect is engine-derived via the locked node convention.
+    # PRINTED COUNTERBALANCE CASE (record, not a reversal): Chart 74/x74 :4673-4678 — exalted
+    # Moon with Ketu AND Mars (two contacts, the rule fires) "counterbalanced by Jupiter's
+    # aspect" + benefic Navamsha -> "all the three elements are feebly blemished", mother died
+    # when the native was 46. Raman registers the double contact AS an affliction and then
+    # outweighs it — exactly what a NON-decisive testimony models. If x74 is ever confirmed
+    # mixed/favourable, the fire there is expected, not a surprise.
+    # CONTACT SET {Mars, Saturn, Rahu, Ketu}: same empirical-documented-limit reading as
+    # H5.C.40 (reviewer-corrected 2026-08-30 — "first-rate" in Raman's own idiom INCLUDES the
+    # Sun, HTJAH-I:5673, but no printed MK/PK condemnation names the Sun as the contact).
+    # NON-decisive testimony per the C.39/C.40 pattern. The >= 2 bar spares every favourable
+    # H4 twin (chart_42/54/57 and x75 each carry exactly ONE contact); no printed chart
+    # condemns the mother on a single MK contact alone — h4_01's single Saturn is CONJUNCT
+    # Moon-in-the-4th, which is the separate decisive H4.C.18a. Fires (engine drishti,
+    # nodes 7th-only) on x67, x68, chart_23 (afflicted) + x71 (mixed) across the 16 confirmed
+    # H4 mother goldens; zero favourable fires.
+    RuleRecord(
+        id="H4.C.48", house=4, signification="mother", group="combination", kind="evaluable",
+        condition=_MatruKarakaDoublyAfflicted(),
+        fortified=None,
+        afflicted="the Matru-Karaka Moon carries the combined contact of two or more "
+                  "first-rate malefics → the mother's significator is considerably afflicted",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4551)),
+
+    # C.49 — the 4th house hemmed by papakartari -> book-learning impaired. Shivaji verbatim
+    # (NH:4963-4964): "the 4th house is subjected to Papakarthari Yoga. Evidently Shivaji
+    # was unlettered." NON-decisive testimony: Raman's own next sentence supplies the
+    # compensation (C.50 below), and his conclusion for Shivaji is two-sided — under the
+    # sparse-contradiction rule the pair correctly lands MIXED there. Independent
+    # corroboration (review sweep): Prophet Mahamud, "The 4th house is highly afflicted
+    # indicating that he was illiterate" (NH:2818-2819). Counter-balance recorded: h4_03's
+    # education is favourable with a hemmed 4th (measured pillars outweigh, the x74 shape).
+    RuleRecord(
+        id="H4.C.49", house=4, signification="education", group="combination", kind="evaluable",
+        condition=_FourthHouseHemmedByMalefics(),
+        fortified=None,
+        afflicted="the 4th house subjected to Papakartari Yoga → book-learning is impaired",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("NH", 4963)),
+
+    # C.50 — the Gnanakaraka Jupiter aspecting the 4th LORD -> learning fortified. Shivaji
+    # verbatim (NH:4963-4966): "since Gnanakaraka Jupiter is strongly placed aspecting as he
+    # does the lord of the 4th, want of book-learning was more than compensated by his
+    # mastery of the great Hindu epics"; reinforced two sentences later ("the 4th lord in
+    # the intellectual sign of Gemini receiving the aspect of Jupiter did not leave his mind
+    # dull and sterile"). Benefic testimony; fires on the education rows h4_03/x80/h6_12
+    # without changing any (their verdicts already sit favourable-side).
+    RuleRecord(
+        id="H4.C.50", house=4, signification="education", group="combination", kind="evaluable",
+        condition=_JupiterAspectsFourthLord(),
+        fortified="the Gnanakaraka Jupiter aspecting the lord of the 4th → learning is "
+                  "fortified; the mind is not left dull",
+        afflicted=None,
+        frame="KARAKA", varga="D1", polarity="benefic", source=Citation("NH", 4963)),
+
+    # C.51 — the Matru-Karaka Moon in the LAGNA, Vargottama -> the mother is a powerful,
+    # favourable presence. Shaw verbatim (NH:7305-7307): "Shaw's mother was a powerful
+    # factor in his life and the Moon's presence in Lagna accounts for this. The benefic
+    # disposition of Matrukaraka gave good longevity to his mother". PROVENANCE, stated
+    # honestly (reviewer amendment): the "benefic disposition" is left UNNAMED in the
+    # mother sentence; the Vargottama leg is INFERRED from the adjacent sentence ("Lagna
+    # and the Moon being in Vargottama", NH:7307-7309), which Raman prints for a
+    # Rajayoga/career effect, not explicitly for the mother. The inference is reasonable —
+    # it is the only printed strength of Shaw's Moon, and something must outweigh the
+    # printed Mars aspect ("The Moon (mind) aspected by Mars") — and the leg strictly
+    # NARROWS firing, erring safe. Fires on Shaw alone across the confirmed H4 mother rows.
+    RuleRecord(
+        id="H4.C.51", house=4, signification="mother", group="combination", kind="evaluable",
+        condition=_MoonInLagnaVargottama(),
+        fortified="the Matru-Karaka Moon in the Lagna, Vargottama → the mother a powerful "
+                  "benefic presence; good longevity to the mother",
+        afflicted=None,
+        frame="KARAKA", varga="D1", polarity="benefic", source=Citation("NH", 7305)),
 )

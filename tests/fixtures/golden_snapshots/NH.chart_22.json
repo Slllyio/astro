@@ -1,14 +1,20 @@
 {
   "H10": {
     "citations": [
+      "HTJAH-II:11064",
+      "HTJAH-II:14214",
       "HTJAH-II:9484",
+      "HTJAH-II:9495",
       "HTJAH-II:9900"
     ],
     "fired_rule_ids": [
+      "H10.C.33m",
+      "H10.C.56",
       "H10.L.4",
+      "H10.L.4a",
       "H10.P.Ketu"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "mild",
@@ -28,7 +34,7 @@
       "profession_learned": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "profession_trade": {
         "degree": "mild",
@@ -50,12 +56,14 @@
       "HTJAH-I:5206",
       "HTJAH-I:5232",
       "HTJAH-I:5236",
-      "HTJAH-I:5252"
+      "HTJAH-I:5252",
+      "HTJAH-I:5791"
     ],
     "fired_rule_ids": [
       "H5.C.1",
       "H5.C.10",
       "H5.C.19",
+      "H5.C.40",
       "H5.L.5",
       "H5.P.Moon",
       "H5.P.Sun",
@@ -84,6 +92,8 @@
     "citations": [
       "HTJAH-II:1773",
       "HTJAH-II:259",
+      "HTJAH-II:262",
+      "HTJAH-II:264",
       "HTJAH-II:368",
       "HTJAH-II:374"
     ],
@@ -91,7 +101,9 @@
       "H7.C.7",
       "H7.C.86",
       "H7.K.2",
-      "H7.L.4"
+      "H7.L.4",
+      "H7.L.4a",
+      "H7.L.4b"
     ],
     "rollup": "afflicted",
     "significations": {
@@ -132,35 +144,37 @@
       "HTJAH-II:3001",
       "HTJAH-II:3084",
       "HTJAH-II:3550",
-      "HTJAH-II:3900"
+      "HTJAH-II:3900",
+      "NH:5944"
     ],
     "fired_rule_ids": [
       "H8.C.1",
       "H8.C.24",
+      "H8.D.4",
       "H8.L.8",
       "H8.P.Saturn"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "legacies": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "longevity": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "sudden_gains": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       }
     }
   }

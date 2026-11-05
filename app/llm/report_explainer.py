@@ -178,6 +178,17 @@ class GroundedAnswer:
 # ─── evidence assembly (from the structured report dict) ────────────────────────
 
 def _f(facts: list, text: str, cite: Optional[str] = None) -> None:
+    """Append a numbered fact, unless there is nothing to say.
+
+    Several callers pass an optional field straight through (`mt["subordination"]`,
+    `_cf["convergence_note"]`, `_cf["caution"]`, `med["provenance"]`). When one is absent an
+    unguarded append produced a numbered `[Fact N]` carrying no text — which the model can
+    cite, and which shifts every later fact number by one, so a citation that looks right
+    points at the wrong evidence. Dropping the blank here keeps the numbering contiguous for
+    every caller at once, rather than relying on each site to remember its own guard.
+    """
+    if not (text or "").strip():
+        return
     facts.append(Fact(n=len(facts) + 1, text=text, cite=cite))
 
 
@@ -239,9 +250,17 @@ def _current_focus_houses(R: dict) -> tuple[Optional[dict], list[int]]:
                and row["start_jd"] <= ref_jd < row["end_jd"]), None)
     if cur is None:
         return None, []
-    tier = "par excellence" if cur.get("associated") else "ordinary"
+    tier = _running_tier(cur)
     focus = sorted(a["house"] for a in cur.get("activated", []) if a.get("tier") == tier)
     return cur, focus
+
+
+def _running_tier(cur: dict) -> str:
+    """The best tier the running bhukti gives (HTJAH-I:1635-1640); "same lord" for the MD
+    lord's own bhukti, where the association test does not apply (timing gap check fix 3)."""
+    if not cur.get("antar") or cur.get("antar") == cur.get("maha"):
+        return "same lord"
+    return "par excellence" if cur.get("associated") else "ordinary"
 
 
 def _summary_facts(R: dict) -> list[Fact]:
@@ -308,7 +327,7 @@ def _summary_facts(R: dict) -> list[Fact]:
 
     cur, focus_houses = _current_focus_houses(R)
     if cur is not None:
-        tier = "par excellence" if cur.get("associated") else "ordinary"
+        tier = _running_tier(cur)
         houses_bit = f" — lighting H{', H'.join(map(str, focus_houses))}" if focus_houses else ""
         _f(facts, f"Right now, the running period is {cur.get('maha')} MD / "
                   f"{cur.get('antar') or cur.get('maha')} AD, {tier}{houses_bit}.")
@@ -437,6 +456,242 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             cite = f"{y['source']['work']}:{y['source']['line']}" if y.get("source") else None
             _f(facts, f"{y['name']} ({y['kind']}): {y.get('effect', '')}", cite)
         _append_linked_insights(R, key, facts)
+        return facts
+    if key == "marriage":
+        # v36 — the marriage chapter's COMPUTED timing layer. The generic fallback carried
+        # none of it, so a model asked when marriage is classically indicated had only the
+        # verbatim paragraph and no statement of what this chart actually carries.
+        mg = R.get("marriage") or {}
+        mt = mg.get("timing") if mg else None
+        if not mt:
+            return facts
+        _f(facts, "The marriage-timing layer is a TIMING LENS in the classical voice, not a "
+                  "forecast. " + str(mt.get("caveat", "")), cite="HTJAH-II:852")
+        for g in mt.get("givers") or []:
+            _f(facts, f"{g['planet']} is nominated as able to give marriage in its period by: "
+                      f"{'; '.join(g.get('clauses') or [])}. It carries "
+                      f"{g.get('strength_rupas')} rupas"
+                      + ("" if g.get("ranked") else
+                         f", and is kept OUT of the strongest-of ranking: {g.get('condition','')}")
+                      + ".",
+               cite=(g.get("citations") or ["HTJAH-II:852"])[0])
+        _f(facts, f"\"{mt.get('strongest_rule', '')}\" On this chart the strongest is "
+                  f"{mt.get('strongest') or 'not resolvable'}.", cite="HTJAH-II:856")
+        for d in mt.get("delays") or []:
+            _f(facts, f"Delay screen — {d['name']}: {'FIRES' if d.get('fired') else 'silent'}. "
+                      f"Raman's rule: \"{d.get('rule','')}\""
+                      + ("" if not d.get("because") else
+                         " Found here: " + "; ".join(d["because"]) + ".")
+                      + f" {d.get('condition','')}",
+               cite=d.get("citation") or "HTJAH-II:875")
+        _f(facts, f"The overall lean: {mt.get('lean','')}", cite="HTJAH-II:875")
+        for sp in mt.get("jupiter_sphutas") or []:
+            _f(facts, f"Jupiter-transit resultant ({sp[0]}): {sp[1]}, trines {sp[2]}. Jupiter "
+                      f"transiting that rasi or its trines is classically favourable for "
+                      f"marriage.", cite="HTJAH-II:869")
+        _f(facts, str(mt.get("subordination", "")), cite="HTJAH-II:881")
+        return facts
+    if key == "profession":
+        # v36 — the profession chapter, decomposed one-claim-per-fact. The generic
+        # `section:<key>` fallback surfaced a single field here, so a model explaining the
+        # work chapter had almost nothing grounded to cite; the three-centre reckoning in
+        # particular was invisible to it.
+        pf = R.get("profession") or {}
+        if not pf:
+            return facts
+        for _s in pf.get("sources") or []:
+            _f(facts, f"Vocation derivation — {_s.get('source')} resolves to "
+                      f"{_s.get('key')}: {_s.get('trades')}"
+                      + (f" ({_s['note']})" if _s.get("note") else ""),
+               cite=_s.get("cite") or None)
+        if pf.get("convergent"):
+            _f(facts, "Trade words named by two or more derivations: "
+                      + ", ".join(f"{w} ({n})" for w, n in pf["convergent"])
+                      + ". Convergence across independent derivations is the signal; a "
+                        "single derivation naming a trade is not.")
+        if pf.get("convergence_note"):
+            _f(facts, f"One planet wearing several hats: {pf['convergence_note']} — these "
+                      f"are not independent confirmations.")
+        _d10 = pf.get("dasamsa_row") or []
+        if len(_d10) >= 4:
+            _f(facts, f"{_d10[0]} resolves to {_d10[1]}; {_d10[2]}", cite=_d10[3])
+        for _w in pf.get("h10_windows") or []:
+            _f(facts, f"H10 activation in the window (a timing lens, never a promise): {_w}")
+        _cf = pf.get("career_frames")
+        if _cf:
+            _f(facts, f"Raman reckons the 10th from THREE centres, not one: \"{_cf['rule']}\"",
+               cite=_cf.get("citation") or "HTJAH-I:13960")
+            for _fr in _cf.get("frames") or []:
+                _f(facts, f"From the {_fr['centre']} ({_fr['centre_sign_name']}): the 10th is "
+                          f"{_fr['tenth_sign_name']}, its lord {_fr['tenth_lord']}, whose "
+                          f"navamsa dispositor is {_fr['navamsa_dispositor'] or 'not resolvable'}"
+                          + (f" — {_fr['trade']}" if _fr.get("trade") else "")
+                          + (f". {_fr['note']}" if _fr.get("note") else "")
+                          + f" This centre carries {_fr['strength_rupas']} rupas "
+                            f"({_fr['strength_basis']}).",
+                   cite="HTJAH-I:13960")
+            _f(facts, f"The strongest of the three centres is the {_cf['strongest']}. "
+                      f"{_cf['strongest_why']} Reckoning from it: {_cf['leading_indication']}.",
+               cite="HTJAH-I:13961")
+            if _cf.get("blended"):
+                _f(facts, f"Blending case: {_cf['blended_note']}", cite="HTJAH-I:13957")
+            _f(facts, str(_cf.get("convergence_note", "")), cite="HTJAH-I:13974")
+            _f(facts, str(_cf.get("caution", "")), cite="HTJAH-I:13959")
+        return facts
+    if key == "medical":
+        # v35 — the HPA-29 medical read. One fact per clause of Raman's own procedure, so
+        # the model cites the testimony it is narrating; the caveat is a fact of its own so
+        # it cannot be dropped as decoration.
+        med = R.get("medical") or {}
+        if not med:
+            return facts
+        _f(facts, "This section is a CLASSICAL CORRESPONDENCE TABLE indexed by the chart's "
+                  "6th house. It is not a diagnosis, not a prediction of illness, and not a "
+                  "verdict. " + str(med.get("caveat", "")), cite="HPA-29:433")
+        _f(facts, f"Raman's own procedure: \"{med.get('application', '')}\" The sign supplies "
+                  f"the body part; the planet supplies the complaint.", cite="HPA-29:433")
+        _f(facts, f"The 6th from lagna is {med.get('sixth_sign_name')}, its lord is "
+                  f"{med.get('sixth_lord')}"
+                  + (f" standing in house {med['sixth_lord_house']}"
+                     if med.get("sixth_lord_house") else "") + ".")
+        for _t in med.get("testimonies") or []:
+            _f(facts, f"Testimony — {_t['clause']}, speaking through {_t['actor']}: "
+                      f"regions {', '.join(_t.get('regions') or []) or 'none'}; "
+                      f"complaints {', '.join(_t.get('complaints') or []) or 'none'}. "
+                      f"Why it applies here: {_t.get('why', '')}",
+               cite=_t.get("citation") or "HPA-29:394")
+        if med.get("unlisted_bodies"):
+            _f(facts, f"{', '.join(med['unlisted_bodies'])} take part in this chart's 6th-house "
+                      f"testimony but Raman's tables cover only the seven visible grahas, so "
+                      f"they contribute nothing. Reported rather than skipped.")
+        _f(facts, f"Body regions marked overall: "
+                  f"{', '.join(med.get('regions_marked') or []) or 'none tabled'}.")
+        _f(facts, f"Complaints the tables associate overall: "
+                  f"{', '.join(med.get('complaints_indicated') or []) or 'none tabled'}.")
+        _f(facts, str(med.get("provenance", "")), cite="HPA-29:353")
+        return facts
+    if key == "themes":
+        # The integrated reading, decomposed ONE-CLAIM-PER-FACT (never a bundled blob — the
+        # same discipline nichod/summary use, so the model cites the right theme while
+        # narrating the right numbers). Direction is always the engine's own house verdict.
+        ts = R.get("themes") or {}
+        _f(facts, "The integrated reading synthesizes the report's own section verdicts into "
+                  "coherent life-themes; it is a re-read, never a new judgment, and each "
+                  "theme's direction is the engine's own house verdict, carried through "
+                  "unchanged.")
+        _por = ts.get("portrait") or {}
+        if _por.get("identity"):
+            _f(facts, f"The chart's identity: {_por['identity']}")
+        if _por.get("principal_tension"):
+            _f(facts, f"The chart's principal tension: {_por['principal_tension']}")
+        if _por.get("concordance_note"):
+            _f(facts, f"How far the independent techniques agree: {_por['concordance_note']}")
+        if _por.get("reading_stability"):
+            _f(facts, f"How firm the cast moment is: {_por['reading_stability']}")
+        if _por.get("chara_now"):
+            _f(facts, f"Jaimini chara dasha (a walled layer, not a second timing authority): "
+                      f"{_por['chara_now']}")
+        _lf = ts.get("longevity")
+        if _lf:
+            # PREC-8: the band frames the whole reading, so it is stated before anything read
+            # inside it. Timed-indication idiom only; the Measured-Truth line rides with it.
+            _f(facts, f"The span this reading sits inside: {_lf['frame']}",
+               cite="HTJAH-II:4465-4472")
+            _f(facts, _lf["honesty"])
+            for _bh, _sp, _sc, _st in _lf.get("maraka_windows", []):
+                _f(facts, f"A maraka-tier bhukti ahead carrying the classical Saturn signal: "
+                          f"{_bh} ({_sp}), tier-score {_sc}, {_st} — classically sensitive, a "
+                          f"disclosure of the method and never a forecast.",
+                   cite="HTJAH-II:4846-4849")
+        for _bv in ts.get("background_vargas", []):
+            _kind = _bv.get("status_kind") or ""
+            _f(facts, f"Deep-background division D-{_bv['varga']} {_bv['name']} "
+                      f"({_bv['domain']}) — the engine reads it {_bv['status']}"
+                      + (f" ({_kind}: "
+                         + ("both poles of testimony fired and cancelled"
+                            if _kind == "contested" else
+                            "neither pole of testimony fired at all") + ")"
+                         if _kind else "") + ". "
+                      f"{_bv['reading']} A background modifier only: it takes no direction and "
+                      f"can never move a bhava verdict. {_bv['provenance']}.",
+               cite=_bv.get("citation") or None)
+        _cal = ts.get("calendar")
+        if _cal:
+            # subordinate by citation (PREC-6 / PREC-7) — the frame carries that on its face
+            _f(facts, f"The timing weather over these years: {_cal['frame']}",
+               cite="HTJAH-II:4679")
+            _f(facts, _cal["honesty"])
+            for _w in _cal.get("windows", []):
+                _f(facts, f"{_w['kind']} — {_w['label']} ({_w['span']})"
+                          + (" running now" if _w.get("current") else "")
+                          + f": {_w['detail']} Subordinate under {_w['governing']}.",
+                   cite=_w.get("citation") or None)
+        for g in ts.get("graha_concordance", []):
+            _f(facts, f"{g['planet']} — {g['reading']}")
+        for c in ts.get("contested_bhavas", []):
+            _f(facts, f"House {c['house']} is contested: {c['reading']}")
+        for th in ts.get("themes", []):
+            cv = th.get("convergence_label") or (
+                str(th.get("convergence", "")).replace("_", " ").lower() + " convergence")
+            dom = ", ".join(th.get("dominant_planets", [])) or "the chart"
+            _f(facts, f"{th['name']} reads {th['headline_verdict']} ({cv}), driven "
+                      f"by {dom}; the navamsa (D9) {th.get('varga_relation', 'is neutral')}.")
+            for _ax in th.get("convergence_axes", []):
+                _dirw = ("agrees with" if _ax["direction"] > 0
+                         else "opposes" if _ax["direction"] < 0 else "carries no direction on")
+                _f(facts, f"Convergence axis for {th['name']}: {_ax['label']} ({_ax['lean']}) "
+                          f"{_dirw} the headline; it {_ax['remove']} — {_ax['why_remove']}.")
+            for m, v in th.get("sub_matters", []):
+                _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
+            if th.get("activation_span"):
+                _f(facts, f"Timing for {th['name']}: {th['activation_span']}")
+            if th.get("activation_in_span"):
+                _f(facts, f"That window read inside the longevity band, for {th['name']}: "
+                          f"{th['activation_in_span']}", cite="HTJAH-II:4465-4472")
+            if th.get("weather_on_window"):
+                _f(facts, f"Timing weather across {th['name']}'s window: "
+                          f"{th['weather_on_window']}", cite="HTJAH-II:4679")
+            if th.get("pitru_screen"):
+                _f(facts, th["pitru_screen"])
+            _d = th.get("dissent")
+            if _d:
+                _f(facts, f"How settled {th['name']} is: {_d['reading']}")
+                for _ck in _d.get("checks", []):
+                    _ind = ("independent" if _ck.get("independent")
+                            else "not independent of the verdict")
+                    _f(facts, f"Cross-check on {th['name']} — {_ck['system']} sits at the "
+                              f"{_ck['tier']} tier and {_ck['relation']}; {_ind} "
+                              f"({_ck['governing']}). {_ck['note']}")
+                if _d.get("walled_note"):
+                    _f(facts, _d["walled_note"])
+                if _d.get("method_note"):
+                    _f(facts, f"Why no confidence grade is given: {_d['method_note']}")
+            _c = th.get("concordance")
+            if _c and _c.get("reading"):
+                _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")
+            for d in th.get("divisional_checks", []):
+                _f(facts, f"For {th['name']}, {d['varga']} ({d['relation']}): {d['verdict']}")
+            for a in th.get("av_support", []):
+                _f(facts, f"Ashtakavarga on {th['name']}: {a['planet']} holds {a['bindus']} "
+                          f"bindus in the sign this bhava occupies — {a['verdict']}.")
+            for tr in th.get("transits", []):
+                _f(facts, f"Transit bearing on {th['name']}: {tr['note']}")
+            for y in th.get("yogas", []):
+                _f(facts, f"{y['name']} ({y['kind']}) bears on {th['name']}: {y['effect']}"
+                          + (f" It operates in {'; '.join(y['windows'])}." if y.get("windows") else ""))
+            _k = th.get("karmic_lens")
+            if _k:
+                _f(facts, f"Karmic lens on {th['name']} ({_k['aspect']}, a walled layer that "
+                          f"never feeds the natal verdict): {_k['note']}")
+            for x in th.get("distinctive", [])[:3]:
+                _f(facts, f"On {th['name']}, {x['signification']} is {x['rarity']} — "
+                          f"{x['population_note']}")
+            for c in th.get("contradictions", []):
+                _f(facts, f"On {th['name']}, a tension ({c['kind']}) is resolved by "
+                          f"{c['governing']}: {c['resolution']}")
+        for cn in ts.get("connections", []):
+            if cn.get("note"):
+                _f(facts, cn["note"])
         return facts
     if isinstance(val, dict):          # a slotted prose section (nichod / plain_reading)
         for k, v in val.items():
@@ -583,30 +838,26 @@ _WORKLINE_RE = re.compile(r"\b\d?[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*:\d+(?:-\
 #: deterministic fallback) on any hit, and also on low grounding / bad anchors / self-authored
 #: citations, so a paraphrase that slips the regex is still contained by the other guards.
 _FORBIDDEN_RE = re.compile(
-    # DECREE/FORECAST language only. Descriptive-indication verbs ("points to", "tends to",
-    # "indicates") are deliberately NOT here — they describe the chart's tendency in classic
-    # astrological idiom and were narrowed out 2026-07-28 ("descriptive interpretation i
-    # want"); the line the guard holds is asserting a future LIFE EVENT as fact/probability.
-    # Hardened same day per the bphs-doctrine-reviewer PASS-WITH-NOTES: generic third-person
-    # futures, age/date-attached indications (incl. the newly-allowed verbs + a date), and
-    # active decree verbs — a grounded prediction is caught by NO other hard guard, so this
-    # denylist must carry that failure mode alone.
+    # DECREE language only (re-scoped 2026-08-17, user decision — "unblock prediction part"):
+    # TIMED INDICATIONS in classical idiom are now ALLOWED on every surface — "marriage is
+    # indicated during the Venus bhukti, 2027-2028", "wealth points to gains around 2031",
+    # "at age 30" — the dated-indication arms of the 2026-07-28 guard were removed. What the
+    # guard still holds is the DECREE voice: second/third-person future assertions ("you will
+    # marry"), certainty claims (promised/destined/certain/guaranteed), and first-person
+    # prophecy. Death/lifespan was ALSO lifted to timed-indication status by the same user
+    # decision (over the assistant's recorded recommendation to keep it walled — see
+    # DOCTRINE_BACKLOG "prediction unblock"): maraka periods and the span band may be stated
+    # as classically-timed indications; blunt death-timing assertions ("death around 2031",
+    # "will die") remain refused as decree, not indication. The Measured-Truth disclosure
+    # layer is unchanged and still attaches to every reading surface.
     r"\b(you'?ll|you will|s?he'?ll|they'?ll|"
     r"(?:he|she|they|it|one|the native|the person) (?:will|shall) \w+|"
     r"will (?:not |never )?(?:marry|die|divorce|earn|"
     r"lose|suffer|gain|inherit|become|happen|occur|come|bring)|is going to|are going to|"
     r"(?:is|are|will be) (?:promised|foretold|destined|certain|guaranteed)|"
-    # a DATED indication is a forecast, not a description: "marriage is indicated in 2027",
-    # "the chart points to marriage around 2028", "wealth is indicated at age 30"
-    r"(?:is|are) (?:likely|indicated|expected|promised|foretold) (?:in|by|around|before|"
-    r"after|near) (?:19|20)\d\d|"
-    r"(?:points? to|tends to|indicates?|signifies)[^.!?\n]{0,40}(?:in|by|around|near|"
-    r"before|after) (?:19|20)\d\d|"
-    r"at age \d{1,3}|in (?:his|her|their) \d{1,3}(?:st|nd|rd|th) year|"
-    r"promises \w+|brings \w+|foretells?|portends?|bound to \w+|sure to \w+|"
-    r"likely to|destined to|guaranteed to|"
+    r"bound to \w+|sure to \w+|destined to|guaranteed to|"
     r"i (?:predict|foresee|foretell)|it is certain|will definitely|shall (?:marry|die|inherit)|"
-    r"end of life|death (?:around|at|by|near)|die (?:around|at|by|before|after))\b",
+    r"death (?:around|at|by|near)|die (?:around|at|by|before|after))\b",
     re.IGNORECASE)
 
 

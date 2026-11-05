@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.judges.varga_judge import build_shodasavarga_report
@@ -31,6 +33,7 @@ class TestReportShape:
         assert [r.n for r in report.readings] == [1, 2, 3, 4, 7, 9, 10, 12, 16, 20,
                                                   24, 27, 30, 40, 45, 60]
 
+    @needs_corpus
     def test_every_reading_has_a_resolvable_citation(self, report) -> None:
         from app.raman_saab.doctrine.sources import verify
         for r in report.readings:

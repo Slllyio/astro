@@ -16,27 +16,27 @@
       "H2.L.3",
       "H2.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "speech": {
         "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "wealth": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

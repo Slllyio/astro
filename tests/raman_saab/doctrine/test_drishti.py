@@ -46,6 +46,14 @@ def test_nodes_cast_only_the_seventh_NOT_5_9():
     assert drishti.ASPECT_HOUSES["Ketu"] == frozenset({7})
 
 
+def test_ramans_ketu_lagna_aspected_by_rahu():
+    # HTJAH-I:2062 "Lagna is occupied by Ketu and aspected by Rahu. Lagna is therefore weak."
+    # Raman counts the nodes' 7th aspect, so "no nodal drishti" would contradict his own text.
+    c = _c({"Ketu": 5.0, "Rahu": 185.0})
+    assert drishti.aspects_house("Rahu", 1, c) is True
+    assert drishti.aspects_planet("Rahu", "Ketu", c) is True
+
+
 def test_aspecting_planets_and_house():
     c = _c({"Sun": 5.0, "Saturn": 185.0})  # Saturn in 7th aspects the 1st (Sun)
     assert "Saturn" in drishti.aspecting_planets("Sun", c)

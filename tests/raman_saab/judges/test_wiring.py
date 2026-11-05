@@ -60,10 +60,17 @@ def _dhana_chart() -> RamanChart:
 
     Venus in Leo (H4, a kendra from Lagna) grants NeechaBhanga to Mercury in
     Pisces (Venus is the planet exalted in Pisces → condition 2 of cancellation
-    of debilitation), preventing H2.C.24 (debilitated 2nd lord) from firing."""
+    of debilitation), preventing H2.C.24 (debilitated 2nd lord) from firing.
+
+    The ascendant is 39.5 (Taurus 9.5), not the round 40.0 it used to be: Taurus 10 is an
+    exact navamsa cusp, and the engine used to place that arc one navamsa short (a `30/9`
+    float that rounds UP). Correcting the cusp moved this chart's D9 lagna and with it the
+    navamsa modulation, so the H2 verdict was no longer the borderline `mixed` the lift is
+    meant to act on. 39.5 keeps every rasi placement and every documented premise above
+    intact and simply steps off the cusp."""
     chart = _track_b({"Mercury": 330.5, "Jupiter": 63.83, "Moon": 310.0,
                       "Venus": 130.0},
-                     asc_lon=40.0)
+                     asc_lon=39.5)
     return _with_shadbala(chart, {"Mercury": 480.0, "Jupiter": 200.0, "Moon": 250.0})
 
 
@@ -84,7 +91,13 @@ def _h5_chart(*, weak: bool) -> RamanChart:
       weak   -> beeja_strong=False AND kshetra_strong=False (gate engages);
       strong -> beeja_strong=True  AND kshetra_strong=True  (metadata only)."""
     if weak:
-        lons = {"Sun": 245.0, "Venus": 200.0, "Mars": 280.0, "Moon": 305.0,
+        # the Moon is 304.5, not the round 305.0 it used to be: 305 puts the kshetra
+        # sphuta (Moon + Mars + Jupiter) at exactly Pisces 20, an exact navamsa cusp that
+        # the engine used to place one navamsa short (a `30/9` float that rounds UP).
+        # Corrected, that sphuta reads odd-navamsa and kshetra_strong flips to True, which
+        # destroys the both-weak premise the gate tests are built on. 304.5 keeps the Moon
+        # in Aquarius and every rasi placement unchanged and simply steps off the cusp.
+        lons = {"Sun": 245.0, "Venus": 200.0, "Mars": 280.0, "Moon": 304.5,
                 "Jupiter": 125.0}
     else:
         lons = {"Sun": 240.0, "Venus": 183.0, "Mars": 270.0, "Moon": 303.0,
@@ -191,7 +204,16 @@ class TestMetadata:
 
 class TestFertilityGate:
     """Mandatory H5 fertility pre-pass: a single weak sphuta is weighed, but BOTH
-    barren (Stage-3 'O1') is decisive progeny DENIAL -> afflicted."""
+    barren (Stage-3 'O1') is decisive progeny DENIAL -> afflicted.
+
+    The gate's mechanics are pinned on the parity reading of the sphutas, which the
+    synthetic charts below were built for; Raman's printed test (G2, the default) is
+    pinned on his worked Charts 88-90 in primitives/test_sphutas.py."""
+
+    @pytest.fixture(autouse=True)
+    def _parity_only(self, monkeypatch):
+        from app.raman_saab.primitives import sphutas
+        monkeypatch.setattr(sphutas, "G2_PRINTED_SPHUTA_TEST", False)
 
     def test_sphuta_pins_hold(self):
         """The two _h5_chart longitude sets really produce both-weak / both-strong
@@ -319,14 +341,18 @@ class TestYogaModulation:
         Jupiter Libra (3HC:2984, no cancellation cited) — while Kemadruma does NOT
         form (the Moon has planets in the 2nd from it). The H1 'self' flip to
         afflicted is therefore driven by ('yoga','Y.SAKATA:drop'), benefic-only
-        strength-split ledger, untouched by the contradiction guard."""
+        strength-split ledger, untouched by the contradiction guard.
+
+        2026-10-23: with the Bhava Bala pillar withdrawn from verdicts, the ledger no longer
+        reads 'mixed' before the yoga step — it is already afflicted, so Sakata is recorded as
+        ':noted' (decisive verdicts never re-shift). The verdict Raman gives is unchanged."""
         chart = cast_chart(_CHART_33, ayanamsa="raman")
         fired_ids = {y.id for y in detect_yogas(chart)}
         assert "Y.SAKATA" in fired_ids and "Y.KEMADRUMA" not in fired_ids
         pf = ht.judge_house(chart, 1)
         sv = next(s for s in pf.significations if s.signification == "self")
         assert sv.verdict == "afflicted"
-        assert ("yoga", "Y.SAKATA:drop") in sv.metadata
+        assert ("yoga", "Y.SAKATA:noted") in sv.metadata
         assert all(not v.startswith("Y.KEMADRUMA")
                    for k, v in sv.metadata if k == "yoga")
 
@@ -346,12 +372,22 @@ class TestYogaModulation:
         assert ("yoga", "Y.DHANA.EXCH:lift") not in md
 
     def test_raja_lifts_borderline_h10_mixed(self):
-        """A fired raja yoga lifts a borderline H10 career 'mixed' to favourable."""
+        """A VITAL raja yoga (causing pair within 12°, HTJAH-I:643-644) lifts a borderline H10
+        career 'mixed' to favourable."""
         fired = (_fired_yoga("Y.RAJA.KT", "raja"),)
         v, shifted, md = ht._yoga_modulate(
-            "mixed", _clean_mixed_ledger(), _sig(10, "career"), fired)
+            "mixed", _clean_mixed_ledger(), _sig(10, "career"), fired,
+            frozenset({"Y.RAJA.KT"}))
         assert v == "favourable" and shifted is True
         assert ("yoga", "Y.RAJA.KT:lift") in md
+
+    def test_raja_without_vitality_is_noted_only(self):
+        """A raja yoga that fails the vitality test is surfaced but moves nothing."""
+        fired = (_fired_yoga("Y.RAJA.910X", "raja"),)
+        v, shifted, md = ht._yoga_modulate(
+            "mixed", _clean_mixed_ledger(), _sig(10, "career"), fired)
+        assert v == "mixed" and shifted is False
+        assert ("yoga", "Y.RAJA.910X:noted") in md
 
     def test_raja_surfaces_metadata_on_h9_h10(self):
         """Bangalore fires raja yogas (Y.RAJA.KT / Y.RAJA.910X); H9 fortune and H10

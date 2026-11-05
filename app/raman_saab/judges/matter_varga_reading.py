@@ -32,6 +32,7 @@ from app.raman_saab.judges.house_template import judge_house
 from app.raman_saab.judges.saptamsa_reading import Tagged
 from app.raman_saab.judges.varga_judge import Dignity, _varga_dignity
 from app.raman_saab.primitives.dignity import dignity
+from app.raman_saab.ordinals import ordinal
 
 _PLANET_ORDER: Final[tuple[str, ...]] = (
     "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
@@ -141,7 +142,7 @@ def build_matter_varga_reading(chart: RamanChart, matter: str) -> MatterVargaRea
         house_occupants_in_varga=_v_occupants(vc, spec.house))
 
     notes = (
-        Tagged(f"{spec.matter} is judged from the {spec.house}th house by Raman's real method — the "
+        Tagged(f"{spec.matter} is judged from the {ordinal(spec.house)} house by Raman's real method — the "
                f"verdict here is his.", "RAMAN_EXPLICIT", spec.citation),
         Tagged(f"the D-{spec.varga} ({spec.varga_name}) is the classical varga for this matter via "
                "Raman's Parashara pointer; the overlay is report-only corroboration.",

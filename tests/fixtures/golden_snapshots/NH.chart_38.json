@@ -1,14 +1,18 @@
 {
   "H10": {
     "citations": [
+      "HTJAH-II:11064",
+      "HTJAH-II:14214",
       "HTJAH-II:9537",
       "HTJAH-II:9841"
     ],
     "fired_rule_ids": [
+      "H10.C.33m",
+      "H10.C.56",
       "H10.L.9",
       "H10.P.Mars"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "strong",
@@ -38,7 +42,7 @@
       "status_honour": {
         "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
@@ -49,55 +53,59 @@
       "HTJAH-I:2458",
       "HTJAH-I:2461",
       "HTJAH-I:2465",
+      "HTJAH-I:2498",
+      "HTJAH-I:2528",
       "HTJAH-I:2710"
     ],
     "fired_rule_ids": [
       "H2.C.16",
       "H2.C.17",
       "H2.C.22",
+      "H2.C.40",
+      "H2.C.43",
       "H2.C.6",
       "H2.C.62",
       "H2.L.11"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "family": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "speech": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "vision": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "wealth": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
   "H8": {
     "citations": [
-      "HTJAH-II:3011",
+      "HTJAH-II:3584",
       "HTJAH-II:3906"
     ],
     "fired_rule_ids": [
       "H8.C.26",
-      "H8.L.9"
+      "H8.D.2"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "legacies": {
         "degree": "mild",
@@ -119,6 +127,7 @@
   "H9": {
     "citations": [
       "HTJAH-II:7316",
+      "HTJAH-II:7320",
       "HTJAH-II:7414",
       "HTJAH-II:7443",
       "HTJAH-II:7460",
@@ -142,6 +151,7 @@
       "H9.D.42",
       "H9.D.51",
       "H9.L.3",
+      "H9.L.3a",
       "H9.P.Mercury",
       "H9.P.Sun"
     ],

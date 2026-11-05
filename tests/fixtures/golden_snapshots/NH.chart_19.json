@@ -2,9 +2,11 @@
   "H10": {
     "citations": [
       "HTJAH-II:10181",
+      "HTJAH-II:14214",
       "HTJAH-II:9467"
     ],
     "fired_rule_ids": [
+      "H10.C.56",
       "H10.C.61",
       "H10.L.2"
     ],
@@ -45,6 +47,8 @@
   "H2": {
     "citations": [
       "HTJAH-I:2332",
+      "HTJAH-I:2335",
+      "HTJAH-I:2343",
       "HTJAH-I:2436",
       "HTJAH-I:2440",
       "HTJAH-I:2456",
@@ -55,6 +59,7 @@
       "HTJAH-I:2469",
       "HTJAH-I:2472",
       "HTJAH-I:2474",
+      "HTJAH-I:2498",
       "HTJAH-I:2540",
       "HTJAH-I:2544",
       "HTJAH-I:2549",
@@ -64,9 +69,10 @@
       "HTJAH-I:2637",
       "HTJAH-I:2652",
       "HTJAH-I:2710",
-      "HTJAH-I:2800",
+      "HTJAH-I:2802",
       "HTJAH-I:2879",
-      "HTJAH-I:2948"
+      "HTJAH-I:2948",
+      "NH:7628"
     ],
     "fired_rule_ids": [
       "H2.C.1",
@@ -78,6 +84,7 @@
       "H2.C.25",
       "H2.C.26",
       "H2.C.28",
+      "H2.C.40",
       "H2.C.47",
       "H2.C.5",
       "H2.C.50",
@@ -85,7 +92,10 @@
       "H2.C.65",
       "H2.C.66",
       "H2.C.69",
+      "H2.C.72",
       "H2.L.2",
+      "H2.L.2b",
+      "H2.L.2e",
       "H2.P.Jupiter",
       "H2.P.Mars",
       "H2.P.Mercury",
@@ -121,11 +131,13 @@
     "citations": [
       "HTJAH-I:5119",
       "HTJAH-I:5193",
-      "HTJAH-I:5206"
+      "HTJAH-I:5206",
+      "HTJAH-I:5791"
     ],
     "fired_rule_ids": [
       "H5.C.10",
       "H5.C.21",
+      "H5.C.40",
       "H5.L.2"
     ],
     "rollup": "afflicted",
@@ -141,15 +153,16 @@
         "verdict": "insufficient-evidence"
       },
       "poorvapunya": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
   "H9": {
     "citations": [
       "HTJAH-II:7310",
+      "HTJAH-II:7312",
       "HTJAH-II:7429",
       "HTJAH-II:7431",
       "HTJAH-II:7443",
@@ -157,17 +170,18 @@
       "HTJAH-II:7467",
       "HTJAH-II:7477",
       "HTJAH-II:7479",
-      "HTJAH-II:7503",
       "HTJAH-II:7505",
       "HTJAH-II:7507",
       "HTJAH-II:7588",
       "HTJAH-II:8648",
       "HTJAH-II:9388",
       "HTJAH-II:9398",
-      "HTJAH-II:9416"
+      "HTJAH-II:9416",
+      "NH:5311"
     ],
     "fired_rule_ids": [
       "H9.A.13",
+      "H9.A.22",
       "H9.A.7",
       "H9.A.8",
       "H9.B.23",
@@ -175,41 +189,41 @@
       "H9.B.29",
       "H9.B.30",
       "H9.C.35",
-      "H9.D.40",
       "H9.D.41",
       "H9.D.42",
       "H9.D.43",
       "H9.D.48",
       "H9.D.51",
-      "H9.L.2",
+      "H9.L.2a",
+      "H9.L.2b",
       "H9.P.Rahu"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "dharma": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "father": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "fortune": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "higher_learning": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "long_journeys": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

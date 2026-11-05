@@ -22,7 +22,7 @@ Parashara gives four, and the astrologer picks the one being worked
 the Dasavarga per-division figure (the scan reads "and for the other 8 divisions, each" with the
 number missing) and the Shodasavarga Trimsamsa figure (scanned as "V"). Each scheme must total 20;
 solving gives 1½ and 1 respectively, and both are cross-checked by the chapter's own tabulation
-(BPHS-7:300+, where the Dasa column reads 1.5 for Hora/Drekkana/Navamsa/Dwadasamsa). The totals
+(BPHS-7:301+, where the Dasa column reads 1.5 for Hora/Drekkana/Navamsa/Dwadasamsa). The totals
 are re-asserted in the tests, so a future re-OCR that shifts these cannot pass silently.
 
 ## Varga Viswa — the 6-tier dignity scale (BPHS-7:265-272)

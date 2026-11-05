@@ -1,10 +1,14 @@
 {
   "H10": {
     "citations": [
-      "HTJAH-II:9556"
+      "HTJAH-II:14214",
+      "HTJAH-II:9556",
+      "HTJAH-II:9560"
     ],
     "fired_rule_ids": [
-      "H10.L.11"
+      "H10.C.56",
+      "H10.L.11",
+      "H10.L.11a"
     ],
     "rollup": "favourable",
     "significations": {
@@ -19,7 +23,7 @@
         "verdict": "favourable"
       },
       "profession_labour": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },

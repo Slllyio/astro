@@ -27,9 +27,13 @@ def test_source_lock_matches_disk():
     stored = source_lock.load_lock()
     assert stored, "SOURCE_LOCK.json missing or empty — run UPDATE_SOURCE_LOCK=1 to create it"
     current = source_lock.compute_lock()
-    assert current == stored, (
-        "a cited corpus file changed since it was locked — citations into it may have shifted. "
-        "Re-validate the affected citations against the new text, then UPDATE_SOURCE_LOCK=1.")
+    on_disk = set(source_lock.cited_files())
+    changed = sorted(k for k in on_disk & set(stored) if current.get(k) != stored[k])
+    assert not changed, (
+        f"{len(changed)} cited corpus file(s) changed since they were locked — citations into "
+        f"them may have shifted, and `verify` cannot see it because a stale line number is "
+        f"still a line number. Re-validate every citation into them against the new text, fix "
+        f"what moved, and only then re-lock with UPDATE_SOURCE_LOCK=1: {changed}")
 
 
 @_needs_corpus
@@ -44,6 +48,18 @@ def test_every_cited_file_is_locked():
 
 @_needs_corpus
 def test_lock_covers_only_cited_files():
-    """The lock is scoped to cited files only (it must not silently freeze the whole corpus)."""
+    """The lock is scoped to cited files only (it must not silently freeze the whole corpus).
+
+    Locked-but-absent entries are allowed and are not "extra": a machine missing one book
+    still holds that book's record, which is what lets the next machine — the one that HAS it
+    — check it. What is forbidden is the other direction, a locked file nothing cites, since
+    that is the lock quietly freezing corpus it has no business freezing.
+    """
     cited = set(source_lock.cited_files())
-    assert set(source_lock.load_lock()) == cited
+    locked = set(source_lock.load_lock())
+    from app.raman_saab.doctrine.sources import _CORPUS
+    unexplained = {k for k in locked - cited if (_CORPUS / k).is_file()}
+    assert not unexplained, (
+        f"locked file(s) nothing cites: {sorted(unexplained)} — the lock must not freeze "
+        f"corpus beyond what the engine actually cites")
+    assert cited <= locked, f"cited but unlocked: {sorted(cited - locked)}"

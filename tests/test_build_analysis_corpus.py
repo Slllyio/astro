@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import json
 
+from corpus_presence import needs_file
+
 from app.medini.ml.build_analysis_corpus import (
     GOLDEN_FIXTURES,
     MAX_WORDS,
@@ -340,6 +342,7 @@ class TestMainCliGuard:
         with _pytest.raises(SystemExit, match="smoke-test only"):
             main(["--backend", "stub", "--out", str(tmp_path / "sft.jsonl"), "--limit", "0"])
 
+    @needs_file("app/medini/data/person_dossier.parquet")
     def test_non_anthropic_backend_proceeds_with_the_explicit_flag(self, tmp_path):
         from app.medini.ml.build_analysis_corpus import main
         # limit=0 -> no charts sampled, so this exercises only the guard-pass path, not a real

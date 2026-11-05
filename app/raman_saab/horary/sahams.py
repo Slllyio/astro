@@ -24,7 +24,7 @@ and this reading is recorded here, not silently corrected.
 printed table and are therefore NOT encoded — Neelakantha knows 50 sahams, Raman prints
 these ten (VARSHA-7:84-87), and the print governs.
 
-Lords (VARSHA-7:190-192): "The lords of the rasis in which the longitudes of the various
+Lords (VARSHA-7:174-176): "The lords of the rasis in which the longitudes of the various
 sahams fall will be respectively the lords of such sahams."
 
 Usage:

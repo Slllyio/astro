@@ -387,7 +387,9 @@
    ],
    "abstain": 0.0,
    "atlas_failure_classes": [
-    "mother_died_early:UNDER-POWERED"
+    "mother_died_early:UNDER-POWERED",
+    "mother_childhood_adverse:PURE-NOISE",
+    "mother_childhood_good:PURE-NOISE"
    ]
   },
   "H4_property": {
@@ -961,7 +963,9 @@
    ],
    "abstain": 0.0,
    "atlas_failure_classes": [
-    "father_died_early:UNDER-POWERED"
+    "father_died_early:UNDER-POWERED",
+    "father_childhood_adverse:PURE-NOISE",
+    "father_childhood_good:PURE-NOISE"
    ]
   },
   "H9_fortune": {

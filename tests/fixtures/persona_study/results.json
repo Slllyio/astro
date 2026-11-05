@@ -1,0 +1,1214 @@
+{
+ "charts": 23,
+ "sham_gate_passed": true,
+ "engine_git_sha": "baed6149dfd2a4026623ecd0caca04c10fff197c",
+ "instrument_version": "v2",
+ "coinflip": {
+  "hits": 132,
+  "n": 267,
+  "rate": 0.494,
+  "p": 0.9026137740803217
+ },
+ "primary": {
+  "hits": 134,
+  "n": 267,
+  "rate": 0.502,
+  "p": 1.0,
+  "weighted_rate": 0.508
+ },
+ "inverted": {
+  "hits": 4,
+  "n": 9
+ },
+ "confident": {
+  "hits": 65,
+  "n": 135
+ },
+ "unsure": {
+  "hits": 23,
+  "n": 37
+ },
+ "spine": {
+  "near": 10,
+  "events": 394,
+  "chance": 0.023446700507614212,
+  "p": 0.738108650862192
+ },
+ "event_houses": {
+  "top": 59,
+  "n": 114
+ },
+ "cross_chart": {
+  "matched": [
+   138,
+   276
+  ],
+  "mismatched": [
+   2916,
+   6032
+  ],
+  "matched_rate": 0.5,
+  "mismatched_rate": 0.48342175066313,
+  "contrast": 0.01657824933687002,
+  "per_persona": {
+   "Bernard_Madoff": {
+    "matched": [
+     8,
+     12
+    ],
+    "mismatched": [
+     96,
+     260
+    ]
+   },
+   "Christopher_Reeve": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     137,
+     263
+    ]
+   },
+   "Clint_Eastwood": {
+    "matched": [
+     6,
+     12
+    ],
+    "mismatched": [
+     132,
+     262
+    ]
+   },
+   "Donald_Trump": {
+    "matched": [
+     4,
+     12
+    ],
+    "mismatched": [
+     147,
+     264
+    ]
+   },
+   "Elizabeth_II": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     180,
+     261
+    ]
+   },
+   "Elizabeth_Taylor": {
+    "matched": [
+     5,
+     12
+    ],
+    "mismatched": [
+     169,
+     264
+    ]
+   },
+   "Elvis_Presley": {
+    "matched": [
+     8,
+     12
+    ],
+    "mismatched": [
+     118,
+     264
+    ]
+   },
+   "Greta_Garbo": {
+    "matched": [
+     5,
+     12
+    ],
+    "mismatched": [
+     142,
+     262
+    ]
+   },
+   "James_Dean": {
+    "matched": [
+     10,
+     12
+    ],
+    "mismatched": [
+     108,
+     263
+    ]
+   },
+   "Janis_Joplin": {
+    "matched": [
+     6,
+     12
+    ],
+    "mismatched": [
+     124,
+     264
+    ]
+   },
+   "Jimmy_Carter": {
+    "matched": [
+     3,
+     12
+    ],
+    "mismatched": [
+     143,
+     260
+    ]
+   },
+   "John_Fitzgerald_Kennedy": {
+    "matched": [
+     4,
+     12
+    ],
+    "mismatched": [
+     120,
+     259
+    ]
+   },
+   "Katharine_Hepburn": {
+    "matched": [
+     8,
+     12
+    ],
+    "mismatched": [
+     71,
+     263
+    ]
+   },
+   "Marilyn_Monroe": {
+    "matched": [
+     5,
+     12
+    ],
+    "mismatched": [
+     107,
+     261
+    ]
+   },
+   "Marlene_Dietrich": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     107,
+     262
+    ]
+   },
+   "Martha_Stewart": {
+    "matched": [
+     4,
+     12
+    ],
+    "mismatched": [
+     133,
+     264
+    ]
+   },
+   "Michael_J._Fox": {
+    "matched": [
+     6,
+     12
+    ],
+    "mismatched": [
+     135,
+     261
+    ]
+   },
+   "O.J._Simpson": {
+    "matched": [
+     6,
+     12
+    ],
+    "mismatched": [
+     120,
+     264
+    ]
+   },
+   "Oprah_Winfrey": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     128,
+     263
+    ]
+   },
+   "Patty_Hearst": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     135,
+     263
+    ]
+   },
+   "Stevie_Wonder": {
+    "matched": [
+     5,
+     12
+    ],
+    "mismatched": [
+     128,
+     262
+    ]
+   },
+   "Walt_Disney": {
+    "matched": [
+     4,
+     12
+    ],
+    "mismatched": [
+     135,
+     263
+    ]
+   },
+   "Willie_Nelson": {
+    "matched": [
+     6,
+     12
+    ],
+    "mismatched": [
+     101,
+     260
+    ]
+   }
+  }
+ },
+ "permutation_p": 0.2953409318136373,
+ "contrast_sham": {
+  "cross_chart": {
+   "matched": [
+    136,
+    276
+   ],
+   "mismatched": [
+    2768,
+    6032
+   ],
+   "matched_rate": 0.4927536231884058,
+   "mismatched_rate": 0.4588859416445623,
+   "contrast": 0.03386768154384351,
+   "per_persona": {
+    "Bernard_Madoff": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      138,
+      260
+     ]
+    },
+    "Christopher_Reeve": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      125,
+      263
+     ]
+    },
+    "Clint_Eastwood": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      122,
+      262
+     ]
+    },
+    "Donald_Trump": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      106,
+      264
+     ]
+    },
+    "Elizabeth_II": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      87,
+      261
+     ]
+    },
+    "Elizabeth_Taylor": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      145,
+      264
+     ]
+    },
+    "Elvis_Presley": {
+     "matched": [
+      10,
+      12
+     ],
+     "mismatched": [
+      112,
+      264
+     ]
+    },
+    "Greta_Garbo": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      115,
+      262
+     ]
+    },
+    "James_Dean": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      114,
+      263
+     ]
+    },
+    "Janis_Joplin": {
+     "matched": [
+      3,
+      12
+     ],
+     "mismatched": [
+      145,
+      264
+     ]
+    },
+    "Jimmy_Carter": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      96,
+      260
+     ]
+    },
+    "John_Fitzgerald_Kennedy": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      96,
+      259
+     ]
+    },
+    "Katharine_Hepburn": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      103,
+      263
+     ]
+    },
+    "Marilyn_Monroe": {
+     "matched": [
+      3,
+      12
+     ],
+     "mismatched": [
+      144,
+      261
+     ]
+    },
+    "Marlene_Dietrich": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      105,
+      262
+     ]
+    },
+    "Martha_Stewart": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      119,
+      264
+     ]
+    },
+    "Michael_J._Fox": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      111,
+      261
+     ]
+    },
+    "O.J._Simpson": {
+     "matched": [
+      3,
+      12
+     ],
+     "mismatched": [
+      106,
+      264
+     ]
+    },
+    "Oprah_Winfrey": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      120,
+      263
+     ]
+    },
+    "Patty_Hearst": {
+     "matched": [
+      9,
+      12
+     ],
+     "mismatched": [
+      136,
+      263
+     ]
+    },
+    "Stevie_Wonder": {
+     "matched": [
+      3,
+      12
+     ],
+     "mismatched": [
+      140,
+      262
+     ]
+    },
+    "Walt_Disney": {
+     "matched": [
+      4,
+      12
+     ],
+     "mismatched": [
+      149,
+      263
+     ]
+    },
+    "Willie_Nelson": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      134,
+      260
+     ]
+    }
+   }
+  },
+  "permutation_p": 0.11357728454309138,
+  "passed": false
+ },
+ "per_signification": {
+  "accidents": [
+   0,
+   3
+  ],
+  "acquisitions": [
+   3,
+   9
+  ],
+  "body": [
+   2,
+   6
+  ],
+  "career": [
+   1,
+   6
+  ],
+  "children": [
+   3,
+   5
+  ],
+  "coverture": [
+   2,
+   4
+  ],
+  "debts": [
+   5,
+   5
+  ],
+  "dharma": [
+   5,
+   7
+  ],
+  "disease_chronic": [
+   1,
+   7
+  ],
+  "ear_throat": [
+   4,
+   9
+  ],
+  "education": [
+   3,
+   6
+  ],
+  "elder_siblings": [
+   2,
+   6
+  ],
+  "enemies": [
+   6,
+   7
+  ],
+  "enemies_disease": [
+   4,
+   4
+  ],
+  "expenditure": [
+   2,
+   3
+  ],
+  "family": [
+   1,
+   3
+  ],
+  "father": [
+   1,
+   6
+  ],
+  "foreign_residence": [
+   2,
+   4
+  ],
+  "fortune": [
+   0,
+   2
+  ],
+  "friends": [
+   5,
+   6
+  ],
+  "gains": [
+   0,
+   7
+  ],
+  "happiness": [
+   4,
+   7
+  ],
+  "health": [
+   3,
+   6
+  ],
+  "higher_learning": [
+   3,
+   5
+  ],
+  "home_comforts": [
+   4,
+   6
+  ],
+  "intellect": [
+   2,
+   8
+  ],
+  "legacies": [
+   7,
+   12
+  ],
+  "long_journeys": [
+   2,
+   4
+  ],
+  "loss_moksha": [
+   3,
+   4
+  ],
+  "marital_happiness": [
+   3,
+   6
+  ],
+  "moksha": [
+   7,
+   10
+  ],
+  "mother": [
+   2,
+   2
+  ],
+  "partnership": [
+   3,
+   8
+  ],
+  "poorvapunya": [
+   2,
+   5
+  ],
+  "profession_authority": [
+   2,
+   3
+  ],
+  "profession_labour": [
+   2,
+   3
+  ],
+  "profession_learned": [
+   1,
+   3
+  ],
+  "profession_trade": [
+   7,
+   9
+  ],
+  "property": [
+   3,
+   6
+  ],
+  "short_journeys": [
+   1,
+   2
+  ],
+  "siblings": [
+   1,
+   2
+  ],
+  "speech": [
+   2,
+   4
+  ],
+  "spouse": [
+   4,
+   6
+  ],
+  "status_honour": [
+   3,
+   5
+  ],
+  "sudden_gains": [
+   2,
+   8
+  ],
+  "vehicles": [
+   2,
+   4
+  ],
+  "virility": [
+   1,
+   6
+  ],
+  "vision": [
+   1,
+   2
+  ],
+  "wealth": [
+   2,
+   2
+  ],
+  "wealth_through_marriage": [
+   3,
+   4
+  ]
+ },
+ "contaminated": {
+  "charts": 23,
+  "forced": {
+   "hits": 142,
+   "n": 267,
+   "rate": 0.532,
+   "p": 0.3274959920566324,
+   "weighted_rate": 0.537
+  },
+  "inverted": {
+   "hits": 6,
+   "n": 9
+  },
+  "confident": {
+   "hits": 78,
+   "n": 148
+  },
+  "unsure": {
+   "hits": 14,
+   "n": 33
+  },
+  "cross_chart": {
+   "matched": [
+    148,
+    276
+   ],
+   "mismatched": [
+    2810,
+    6032
+   ],
+   "matched_rate": 0.5362318840579711,
+   "mismatched_rate": 0.46584880636604775,
+   "contrast": 0.07038307769192331,
+   "per_persona": {
+    "Bernard_Madoff": {
+     "matched": [
+      9,
+      12
+     ],
+     "mismatched": [
+      95,
+      260
+     ]
+    },
+    "Christopher_Reeve": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      133,
+      263
+     ]
+    },
+    "Clint_Eastwood": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      132,
+      262
+     ]
+    },
+    "Donald_Trump": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      148,
+      264
+     ]
+    },
+    "Elizabeth_II": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      164,
+      261
+     ]
+    },
+    "Elizabeth_Taylor": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      151,
+      264
+     ]
+    },
+    "Elvis_Presley": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      118,
+      264
+     ]
+    },
+    "Greta_Garbo": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      88,
+      262
+     ]
+    },
+    "James_Dean": {
+     "matched": [
+      11,
+      12
+     ],
+     "mismatched": [
+      90,
+      263
+     ]
+    },
+    "Janis_Joplin": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      124,
+      264
+     ]
+    },
+    "Jimmy_Carter": {
+     "matched": [
+      4,
+      12
+     ],
+     "mismatched": [
+      136,
+      260
+     ]
+    },
+    "John_Fitzgerald_Kennedy": {
+     "matched": [
+      4,
+      12
+     ],
+     "mismatched": [
+      120,
+      259
+     ]
+    },
+    "Katharine_Hepburn": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      100,
+      263
+     ]
+    },
+    "Marilyn_Monroe": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      133,
+      261
+     ]
+    },
+    "Marlene_Dietrich": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      85,
+      262
+     ]
+    },
+    "Martha_Stewart": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      124,
+      264
+     ]
+    },
+    "Michael_J._Fox": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      135,
+      261
+     ]
+    },
+    "O.J._Simpson": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      115,
+      264
+     ]
+    },
+    "Oprah_Winfrey": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      118,
+      263
+     ]
+    },
+    "Patty_Hearst": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      151,
+      263
+     ]
+    },
+    "Stevie_Wonder": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      113,
+      262
+     ]
+    },
+    "Walt_Disney": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      128,
+      263
+     ]
+    },
+    "Willie_Nelson": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      109,
+      260
+     ]
+    }
+   }
+  },
+  "permutation_p": 0.009998000399920015,
+  "paired_vs_blind": {
+   "blind_only": 8,
+   "contaminated_only": 18,
+   "discordant": 26,
+   "mcnemar_p": 0.07551869750022888
+  },
+  "per_signification": {
+   "accidents": [
+    0,
+    3
+   ],
+   "acquisitions": [
+    3,
+    9
+   ],
+   "body": [
+    3,
+    6
+   ],
+   "career": [
+    1,
+    6
+   ],
+   "children": [
+    3,
+    5
+   ],
+   "coverture": [
+    2,
+    4
+   ],
+   "debts": [
+    5,
+    5
+   ],
+   "dharma": [
+    5,
+    7
+   ],
+   "disease_chronic": [
+    2,
+    7
+   ],
+   "ear_throat": [
+    5,
+    9
+   ],
+   "education": [
+    3,
+    6
+   ],
+   "elder_siblings": [
+    2,
+    6
+   ],
+   "enemies": [
+    6,
+    7
+   ],
+   "enemies_disease": [
+    4,
+    4
+   ],
+   "expenditure": [
+    1,
+    3
+   ],
+   "family": [
+    1,
+    3
+   ],
+   "father": [
+    2,
+    6
+   ],
+   "foreign_residence": [
+    2,
+    4
+   ],
+   "fortune": [
+    0,
+    2
+   ],
+   "friends": [
+    5,
+    6
+   ],
+   "gains": [
+    0,
+    7
+   ],
+   "happiness": [
+    4,
+    7
+   ],
+   "health": [
+    2,
+    6
+   ],
+   "higher_learning": [
+    3,
+    5
+   ],
+   "home_comforts": [
+    4,
+    6
+   ],
+   "intellect": [
+    2,
+    8
+   ],
+   "legacies": [
+    7,
+    12
+   ],
+   "long_journeys": [
+    3,
+    4
+   ],
+   "loss_moksha": [
+    3,
+    4
+   ],
+   "marital_happiness": [
+    4,
+    6
+   ],
+   "moksha": [
+    9,
+    10
+   ],
+   "mother": [
+    2,
+    2
+   ],
+   "partnership": [
+    3,
+    8
+   ],
+   "poorvapunya": [
+    3,
+    5
+   ],
+   "profession_authority": [
+    3,
+    3
+   ],
+   "profession_labour": [
+    1,
+    3
+   ],
+   "profession_learned": [
+    1,
+    3
+   ],
+   "profession_trade": [
+    8,
+    9
+   ],
+   "property": [
+    3,
+    6
+   ],
+   "short_journeys": [
+    0,
+    2
+   ],
+   "siblings": [
+    1,
+    2
+   ],
+   "speech": [
+    2,
+    4
+   ],
+   "spouse": [
+    4,
+    6
+   ],
+   "status_honour": [
+    3,
+    5
+   ],
+   "sudden_gains": [
+    3,
+    8
+   ],
+   "vehicles": [
+    2,
+    4
+   ],
+   "virility": [
+    3,
+    6
+   ],
+   "vision": [
+    0,
+    2
+   ],
+   "wealth": [
+    1,
+    2
+   ],
+   "wealth_through_marriage": [
+    3,
+    4
+   ]
+  }
+ }
+}

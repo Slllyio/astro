@@ -1,0 +1,1186 @@
+[
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": "Sagittarius",
+  "notes": "Example in the Maraka chapter: 'Because the ascendant is Dhanus...' (line 822). Only outcome printed is the timing of death ('The native died in Saturn's Dasha Saturn's Bhukti', line 823); Raman does not characterise the span as short/long and gives no manner of death, so no conclusion recorded. Rasi/Navamsa diagram is OCR-flattened into an unordered list of planet names (lines 827-867) and cannot be read reliably.",
+  "chart_no": 3,
+  "first_line": 822,
+  "last_line": 870,
+  "raw_birth": "Chart No. 3. —Born on 28-7-1897 at 6-47 p.m. (L.T.) Lat. 12° 20' N., Long. 76° 38' E.",
+  "birth": {
+   "date": "1897-07-28",
+   "time": "18:47",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 12,
+   "lat_min": 20,
+   "lat_dir": "N",
+   "lon_deg": 76,
+   "lon_min": 38,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": "Mars 4-7-27",
+  "lagna_sign_stated": "Sagittarius",
+  "conclusions": []
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": "Cancer",
+  "notes": "Second example under the 'Kataka or Cancer' heading (line 2001). Description (lines 2016-2023) opens 'Compare this horoscope with the Chart No. 21' — the OCR/print should read No. 20 (the preceding Cancer chart); the described features (Sun in Pisces, Moon with Mars in the 10th) fit this birth data.",
+  "chart_no": 21,
+  "first_line": 2012,
+  "last_line": 2023,
+  "raw_birth": "Chart No. 21. —Born on 13-3-1891 at 2-30 p.m. (L.T.) Lat. 13° N., Long. 5h. 10m. 20s. E.",
+  "birth": {
+   "date": "1891-03-13",
+   "time": "14:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lon printed as 'Long. 5h. 10m. 20s. E.' (time units) = 77deg35'E"
+  ],
+  "dasa_balance": "Ketu 2-7-10",
+  "lagna_sign_stated": "Cancer",
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "The native is stout, middle- sized, complexion fairly good, scars all over the body (Mars aspecting Lagna), good behaviour, polite manners, and agreeable disposition.",
+    "line": 2020,
+    "why": "Raman's judgment of the person: good behaviour, polite manners, agreeable disposition, explicitly 'better than' the preceding afflicted chart."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": "Leo",
+  "notes": null,
+  "chart_no": 25,
+  "first_line": 2096,
+  "last_line": 2109,
+  "raw_birth": "Chart No. 25. —Born on 14/13-10-1879 at 4 a.m. (L.T.) Lot. 21° 45' N., Long. 4h. 52m. E.",
+  "birth": {
+   "date": "1879-10-14",
+   "time": "04:00",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 21,
+   "lat_min": 45,
+   "lat_dir": "N",
+   "lon_deg": 73,
+   "lon_min": 0,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '14/13-10-1879' (civil 14th, Hindu day 13th)",
+   "lon printed as 'Long. 4h. 52m. E.' (time units) = 73deg00'E",
+   "'Lot.' = Lat."
+  ],
+  "dasa_balance": "Sun 2-1-18",
+  "lagna_sign_stated": "Leo",
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "favourable",
+    "quote": "The native has an attractive personality, reddish eyes, large cheeks, hroad face, is firm-minded, generous, candid and honourable.",
+    "line": 2099,
+    "why": "Raman states the native's personality/appearance is attractive."
+   },
+   {
+    "house": "H1",
+    "signification": "health",
+    "verdict": "favourable",
+    "quote": "aspect has given a fair ruddiness to the person, healthy constitution, sturdy figure",
+    "line": 2106,
+    "why": "Raman states Mars' aspect gave a healthy constitution."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "mixed",
+    "quote": "was subject to varied fortunes once in the lap of wealth but now in ordinary circumstances.",
+    "line": 2108,
+    "why": "Both poles named: once in the lap of wealth, now in ordinary circumstances."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "mixed",
+    "quote": "The native had a chequered career, was subject to varied fortunes once in the lap of wealth but now in ordinary circumstances.",
+    "line": 2107,
+    "why": "Raman calls the career chequered, with varied fortunes — both poles named."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": "Virgo",
+  "notes": "Second example under 'Kanya or Virgo' (line 2115); Lagna taken from that section heading.",
+  "chart_no": 27,
+  "first_line": 2134,
+  "last_line": 2146,
+  "raw_birth": "Chart No. 27. —Born on 7-6-1898 at 1-35 p.m. (L. T.) Lat. 11°N., Long. 5h. 8m. 9s. E.",
+  "birth": {
+   "date": "1898-06-07",
+   "time": "13:35",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 11,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 2,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lon printed as 'Long. 5h. 8m. 9s. E.' (time units) = 77deg02'E"
+  ],
+  "dasa_balance": "Sun 4-2-16",
+  "lagna_sign_stated": "Virgo",
+  "conclusions": [
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "He is a businessman and money- lender and is financially very sound.",
+    "line": 2145,
+    "why": "Raman states the native is financially very sound."
+   },
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "favourable",
+    "quote": "Since the foundation of the horoscope is strong, the general disposition is sound.",
+    "line": 2144,
+    "why": "Raman concludes the general disposition is sound."
+   },
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "afflicted",
+    "quote": "The appearance is not attractive, probably due to Saturn aspecting Lagnadhipati.",
+    "line": 2145,
+    "why": "Raman states the appearance is unattractive and ascribes it to an affliction."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": "Aquarius",
+  "notes": "Description (lines 2266-2270) precedes the heading under 'Kumbha or Aquarius'. No dasa balance printed.",
+  "chart_no": 34,
+  "first_line": 2264,
+  "last_line": 2276,
+  "raw_birth": "Chart No. 34. —Born on 28/29-3-1890 at 4-30 a.m. (E.T.) Eat. 13° N., Eong. 5h. 10m. 20s.",
+  "birth": {
+   "date": "1890-03-29",
+   "time": "04:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '28/29-3-1890' (civil 29th, pre-dawn)",
+   "time basis printed '(E.T.)' read as (L.T.) (OCR L->E, as in 'Eat.'/'Eong.')",
+   "lon printed '5h. 10m. 20s.' = 77deg35'E"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Aquarius",
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "body",
+    "verdict": "afflicted",
+    "quote": "The subject has an uncouth and repelling appearance.",
+    "line": 2266,
+    "why": "Raman states the native's appearance is uncouth and repelling."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": "Pisces",
+  "notes": "Under 'Meena or Pisces' (line 2291). No dasa balance printed.",
+  "chart_no": 36,
+  "first_line": 2293,
+  "last_line": 2303,
+  "raw_birth": "Chart No. 36 —Bom on 26-6-1920 at 2-6 a.m. (I.S. T.) Lat. 24° 47' N., Long. 4h. 28m. E.",
+  "birth": {
+   "date": "1920-06-26",
+   "time": "02:06",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 24,
+   "lat_min": 47,
+   "lat_dir": "N",
+   "lon_deg": 67,
+   "lon_min": 0,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lon printed as 'Long. 4h. 28m. E.' (time units) = 67deg00'E"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Pisces",
+  "conclusions": [
+   {
+    "house": "H1",
+    "signification": "self",
+    "verdict": "afflicted",
+    "quote": "with the result the native is not mentally normal.",
+    "line": 2300,
+    "why": "Raman concludes the native is not mentally normal owing to the Moon's afflictions."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Capricorn",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Sagittarius",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aquarius",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Leo",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Sagittarius",
+  "notes": "'A Practical Experience' — birth details withheld; positions reconstructed from prose: Lagna Sagittarius occupied by Mars and Venus (3882); Sun in Capricorn 2nd (3922); Moon in own house with exalted Jupiter (3943, 4015, 4072); Saturn exalted in the 11th (3990); 3rd house Aquarius occupied by Mercury and Rahu (4081); Ketu in 2nd from Moon (3961). Navamsa Lagna Virgo. Jupiter shadbala 9.59 rupas, Sun 4.58. All judgments are in the predictive future tense.",
+  "chart_no": 63,
+  "first_line": 3870,
+  "last_line": 4113,
+  "raw_birth": "Chart No. 63.—Birth details withheld for obvious reasons.",
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "Saturn sign inferred from 'exalted in the 11th' (Libra) and nakshatra Visakha (so Libra 20-30deg)",
+   "Jupiter in Pushyami (Cancer 3deg20'-16deg40')",
+   "Mercury/Rahu: Rashi sign Aquarius (3rd house), though Raman says Mercury falls in the 2nd Bhava"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Sagittarius",
+  "conclusions": [
+   {
+    "house": "H10",
+    "signification": "status_honour",
+    "verdict": "favourable",
+    "quote": "The disposition of Lagna lifts him high by his own merits to a position of considerable honour and celebrity.",
+    "line": 3898,
+    "why": "Raman concludes the native rises by his own merit to considerable honour and celebrity."
+   },
+   {
+    "house": "H1",
+    "signification": "health",
+    "verdict": "favourable",
+    "quote": "As the Lagnadhipati is powerful his health will be generally good and sound.",
+    "line": 3903,
+    "why": "Raman concludes health generally good and sound (he adds a later tendency to piles/blood pressure)."
+   },
+   {
+    "house": "H2",
+    "signification": "wealth",
+    "verdict": "favourable",
+    "quote": "assures financial prosperity throughout life and he will never feel want.",
+    "line": 4031,
+    "why": "Raman concludes lifelong financial prosperity; elsewhere 'the native's high financial status' (4039)."
+   },
+   {
+    "house": "H2",
+    "signification": "vision",
+    "verdict": "afflicted",
+    "quote": "it is likely that the eye- sight might suffer as age advances.",
+    "line": 4075,
+    "why": "Raman concludes the eyesight is likely to suffer with age."
+   },
+   {
+    "house": "H3",
+    "signification": "siblings",
+    "verdict": "favourable",
+    "quote": "In short, there will be cordiality with brothers, generally speaking, and from a business point, gain is indicated through association with brothers.",
+    "line": 4111,
+    "why": "Raman concludes cordial relations and gain through brothers; brothers 'will generally be well placed in life' (4106)."
+   },
+   {
+    "house": "H3",
+    "signification": "courage",
+    "verdict": "favourable",
+    "quote": "This gives the native courage and boldness to meet awkward situations and overcome opposition.",
+    "line": 4103,
+    "why": "Raman concludes the native has courage and boldness (also 'mentally and morally brave', 3905)."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": null,
+  "notes": "4th house is Cancer, so Lagna is Aries (implied, not named).",
+  "chart_no": 70,
+  "first_line": 4588,
+  "last_line": 4602,
+  "raw_birth": "Chart No. 70.— Born on 25-9-1898 at 7-30 a.m. (L.M.T.) (Lat. 23° 2' N., Long. 7T 79' E.)",
+  "birth": {
+   "date": "1898-09-25",
+   "time": "07:30",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 23,
+   "lat_min": 2,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": null,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lon printed '7T 79'' — degrees read 72 (T->2), minutes '79' impossible (alternatives 29/39/35?)"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "afflicted",
+    "quote": "The mother died in the 18th year in Moon Dasha Sun Bhukti.",
+    "line": 4601,
+    "why": "Mother died when the native was 18; Raman frames the 4th lord/Matru-Karaka as considerably afflicted."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": null,
+  "notes": "4th house Gemini, so Lagna Pisces (implied).",
+  "chart_no": 74,
+  "first_line": 4660,
+  "last_line": 4678,
+  "raw_birth": "Chart No. 74.— Born on 21-7-1900 at 10-38 a.m. (L.M.T.) (Lat. 23° IV N., Long. 79° 53' E.)",
+  "birth": {
+   "date": "1900-07-21",
+   "time": "10:38",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 23,
+   "lat_min": 11,
+   "lat_dir": "N",
+   "lon_deg": 79,
+   "lon_min": 53,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lat minutes printed 'IV' read as 11"
+  ],
+  "dasa_balance": "Sun 0-4-2",
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "favourable",
+    "quote": "All the three elements are feebly blemished. The native's mother died in 1946 when he was aged 46.",
+    "line": 4677,
+    "why": "Mother lived until the native was 46; Raman frames the factors as only feebly blemished (contrast the early-loss cases)."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": null,
+    "deg": null
+   },
+   "Mars": {
+    "sign": null,
+    "deg": null
+   },
+   "Mercury": {
+    "sign": null,
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": null,
+    "deg": null
+   },
+   "Venus": {
+    "sign": null,
+    "deg": null
+   },
+   "Saturn": {
+    "sign": null,
+    "deg": null
+   },
+   "Rahu": {
+    "sign": null,
+    "deg": null
+   },
+   "Ketu": {
+    "sign": null,
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": null,
+  "notes": "No birth data and only partial positions in prose: 4th house Virgo (so Lagna Gemini) occupied by Sun (3rd lord), aspected by Saturn (8th lord); Mercury (4th lord) associated with Mars and Rahu (sign not given). Positions insufficient to cast; chart likely unusable.",
+  "chart_no": 86,
+  "first_line": 4980,
+  "last_line": 4993,
+  "raw_birth": null,
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "no birth data printed for Chart 86 (the heading printed within its text is Chart No. 85, 8-8-1912)"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "vehicles",
+    "verdict": "mixed",
+    "quote": "for some time the luxury of owning a car hut he had to dispense not only with his car hut a fine joh",
+    "line": 4982,
+    "why": "Both poles: owned a car for some time, then had to give it up."
+   },
+   {
+    "house": "H10",
+    "signification": "career",
+    "verdict": "afflicted",
+    "quote": "he had to dispense not only with his car hut a fine joh also as his spendthrift nature and speculative tendencies landed him in endless troubles",
+    "line": 4982,
+    "why": "Raman states the native lost a fine job."
+   },
+   {
+    "house": "H6",
+    "signification": "debts",
+    "verdict": "afflicted",
+    "quote": "in and day out hy his creditors. To escape the clutches of his creditors",
+    "line": 4989,
+    "why": "Raman states the native was pursued by creditors and had to roam about to escape them."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": null,
+  "notes": "4th house Capricorn, so Lagna Libra (implied). Native was a Police Jamedar on about Rs. 60 a month.",
+  "chart_no": 87,
+  "first_line": 4995,
+  "last_line": 5003,
+  "raw_birth": "Chart No. 87.— Born on 28-8-1909 at 9-52 a.m. (L.M.T.) (Lot. 13\" N., Long. 11° 35’ E.)",
+  "birth": {
+   "date": "1909-08-28",
+   "time": "09:52",
+   "time_basis": "LMT",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "lon printed '11° 35’ E.' — read as 77deg35' (Bangalore, with Lat 13N; 11 likely OCR of 77)",
+   "'Lot.' = Lat."
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "property",
+    "verdict": "afflicted",
+    "quote": "None of the indications of the forth house have been conferred on him consistent with the intensely malefic disposition of the house.",
+    "line": 5002,
+    "why": "Raman concludes none of the 4th-house significations (house, vehicles) were conferred."
+   },
+   {
+    "house": "H4",
+    "signification": "vehicles",
+    "verdict": "afflicted",
+    "quote": "None of the indications of the forth house have been conferred on him consistent with the intensely malefic disposition of the house.",
+    "line": 5002,
+    "why": "Same conclusion; Raman explicitly names Vahana-Karaka and Griha-Karaka as weak."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Taurus",
+    "deg": 23.0
+   },
+   "Moon": {
+    "sign": null,
+    "deg": null
+   },
+   "Mars": {
+    "sign": null,
+    "deg": null
+   },
+   "Mercury": {
+    "sign": null,
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Libra",
+    "deg": 12.0
+   },
+   "Venus": {
+    "sign": "Aries",
+    "deg": 26.0
+   },
+   "Saturn": {
+    "sign": null,
+    "deg": null
+   },
+   "Rahu": {
+    "sign": null,
+    "deg": null
+   },
+   "Ketu": {
+    "sign": null,
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": null,
+  "notes": "Birth details withheld. Printed: Sun 53deg, Jupiter 192deg, Venus 26deg (sum 271 = Capricorn 1deg, the Beeja). Amsa: Jupiter neecha (Capricorn navamsa) in Beeja-sthana; Beeja aspected by Saturn in Rashi. Other planets not given; chart likely unusable.",
+  "chart_no": 90,
+  "first_line": 5584,
+  "last_line": 5611,
+  "raw_birth": "Chart No. 90. —Details of Birth withheld for obvious reasons.",
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "only three longitudes printed (Beeja sphuta table)"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "afflicted",
+    "quote": "Doctors have said that the powers of procreation are perfectly normal, yet he has no children.",
+    "line": 5585,
+    "why": "Native has no children despite normal procreative powers; Raman reads sterility in the Beeja."
+   },
+   {
+    "house": "H1",
+    "signification": "health",
+    "verdict": "favourable",
+    "quote": "The native of the following horoscope is quite hale and healthy.",
+    "line": 5584,
+    "why": "Raman states the native is hale and healthy with no constitutional defects."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": null,
+  "notes": "5th from Lagna is an even sign ruled by Mars (Scorpio), implying Lagna Cancer (not named).",
+  "chart_no": 107,
+  "first_line": 5940,
+  "last_line": 5954,
+  "raw_birth": "Chart No. 107.— Born on 24/23-10-1907 at 2 a.m. (l.S.T.) (Lat. 23° 2' N., Long. 72° 19' E.)",
+  "birth": {
+   "date": "1907-10-24",
+   "time": "02:00",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 23,
+   "lat_min": 2,
+   "lat_dir": "N",
+   "lon_deg": 72,
+   "lon_min": 19,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [
+   "date printed '24/23-10-1907' (civil 24th, night of 23rd/24th)"
+  ],
+  "dasa_balance": "Sun 1-0-7",
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "favourable",
+    "quote": "renders the 5th house sound while the predominance of the feminine",
+    "line": 5952,
+    "why": "Raman judges the 5th house sound (children born), only daughters and no sons — framed as 'peculiar', not as denial."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Pisces",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Gemini",
+  "notes": "Data withheld. Positions from prose: Lagna Gemini, Saturn in Lagna (6781); Lagna lord Mercury in the 3rd (Leo, 'Mercury in Leo' 6801) with Sun and Jupiter (6777); Mars 6th lord in the 2nd, Cancer (6778-6779); Moon and Rahu in Virgo (6779); Venus in Libra, Vargottama (6782, 6787). Navamsa Lagna a watery sign; Mars in Leo Navamsa.",
+  "chart_no": 117,
+  "first_line": 6772,
+  "last_line": 6807,
+  "raw_birth": "Chart No. 117. —Data of birth withheld for obvious reasons.",
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "Ketu sign inferred as opposite Rahu (Pisces); text names Ketu only in Navamsa"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": "Gemini",
+  "conclusions": [
+   {
+    "house": "H6",
+    "signification": "disease_chronic",
+    "verdict": "afflicted",
+    "quote": "The above is a case of leprosy in its most dreadful form.",
+    "line": 6805,
+    "why": "The native suffered leprosy in its most dreadful form."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": null,
+  "notes": "Mars, 6th lord, in Lagna nearly on the ascendant point, aspected by debilitated Saturn (Lagna implied Gemini or Virgo; not named).",
+  "chart_no": 119,
+  "first_line": 6878,
+  "last_line": 6900,
+  "raw_birth": "Chart No. 119. —Born on 12-4-1912 at 12-5 p.m. (I.S.T.) (Lat. 13° N., Long. 77° 35' E.)",
+  "birth": {
+   "date": "1912-04-12",
+   "time": "12:05",
+   "time_basis": "IST",
+   "ghatikas": null,
+   "lat_deg": 13,
+   "lat_min": 0,
+   "lat_dir": "N",
+   "lon_deg": 77,
+   "lon_min": 35,
+   "lon_dir": "E",
+   "place": null
+  },
+  "uncertain": [],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H6",
+    "signification": "disease_chronic",
+    "verdict": "afflicted",
+    "quote": "When Gochara Saturn passed through Lagna point, facial paralysis set in.",
+    "line": 6892,
+    "why": "Native suffered facial paralysis, which Raman calls practically incurable."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": null,
+  "lagna_sign_printed": null,
+  "notes": "No birth data. Prose only: 6th lord Mars in the 5th with Lagna lord Mercury, Rahu and Venus; from Chandra Lagna the 6th holds Mars and Rahu and the 6th lord is Venus (aspected by Saturn and Jupiter). Lagna Gemini or Virgo — not determinable; chart unusable without positions.",
+  "chart_no": 123,
+  "first_line": 6957,
+  "last_line": 6962,
+  "raw_birth": null,
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "no birth data or position table; text truncated at a page break (6962)"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H6",
+    "signification": "debts",
+    "verdict": "afflicted",
+    "quote": "Chart No. 123 is the unique case of an ex-cashier of a bank eternally involved in debts.",
+    "line": 6957,
+    "why": "Native was eternally involved in debts."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Aquarius",
+    "deg": 13.633
+   },
+   "Moon": {
+    "sign": "Taurus",
+    "deg": 1.683
+   },
+   "Mars": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Capricorn",
+    "deg": 28.45
+   },
+   "Jupiter": {
+    "sign": "Gemini",
+    "deg": 19.2
+   },
+   "Venus": {
+    "sign": "Sagittarius",
+    "deg": 28.15
+   },
+   "Saturn": {
+    "sign": "Sagittarius",
+    "deg": 28.35
+   },
+   "Rahu": {
+    "sign": null,
+    "deg": null
+   },
+   "Ketu": {
+    "sign": null,
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Libra",
+  "notes": "'Practical Examples' — chart diagram lost in OCR. Printed: Sun 10-13-38, Moon 1-1-41 (sign-deg-min); Mercury 28deg27', Saturn 28deg21', Venus 28deg9', Jupiter 19deg12'. Dating clues: Rahu Dasha Mars Bhukti ends 21-11-1969; Raman writes of March 1969 transits as future. Predictions are future tense.",
+  "chart_no": 124,
+  "first_line": 6970,
+  "last_line": 7075,
+  "raw_birth": null,
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "no birth data; Lagna Libra inferred (Venus Lagna lord, Saturn 4th lord, 4th Capricorn)",
+   "Mars debilitated (Cancer) though said to be 'really in the 9th house' by Bhava",
+   "Jupiter in Gemini inferred from 'in the 2nd from the Moon' — 19deg12' printed",
+   "Rahu: 'in the sign of Jupiter' (Sagittarius or Pisces) — not determinable; Ketu not given"
+  ],
+  "dasa_balance": "Sun 3-8-27",
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H4",
+    "signification": "mother",
+    "verdict": "favourable",
+    "quote": "So the mother will have a fairly long life.",
+    "line": 6998,
+    "why": "Raman concludes the mother will be long-lived."
+   },
+   {
+    "house": "H4",
+    "signification": "education",
+    "verdict": "favourable",
+    "quote": "he will get high academicals qualifications to a certainty",
+    "line": 7030,
+    "why": "Raman concludes high academic qualifications (with occasional slight breaks)."
+   },
+   {
+    "house": "H4",
+    "signification": "vehicles",
+    "verdict": "favourable",
+    "quote": "It can even be said that as all the principal benefices are connected with the 4th house, the native should command a multitude of vehicles.",
+    "line": 7064,
+    "why": "Raman concludes the native should command a multitude of vehicles (7041)."
+   },
+   {
+    "house": "H4",
+    "signification": "property",
+    "verdict": "favourable",
+    "quote": "So the native can expect to inherit substantial paternal property as well.",
+    "line": 7075,
+    "why": "Raman concludes substantial paternal property."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Virgo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Cancer",
+    "deg": null
+   },
+   "Mars": {
+    "sign": "Gemini",
+    "deg": null
+   },
+   "Mercury": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Venus": {
+    "sign": "Libra",
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Scorpio",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": null,
+    "deg": null
+   },
+   "Ketu": {
+    "sign": null,
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Scorpio",
+  "notes": "5th cusp printed 350deg47'. All positions are inferences from prose, not printed. Prediction (future tense).",
+  "chart_no": 125,
+  "first_line": 7077,
+  "last_line": 7127,
+  "raw_birth": null,
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "no birth data; Lagna Scorpio inferred from 5th = Pisces",
+   "Moon Cancer inferred (Saturn lord of 7th and 8th from Moon)",
+   "Saturn Scorpio (5th from Moon), Mars Gemini (12th from Moon), Venus Libra (12th lord in 12th), Jupiter Aries (5th lord in 6th), Sun aspects 5th (so Virgo), Mercury aspects Jupiter (so Libra) — all inferred",
+   "nodes not determinable"
+  ],
+  "dasa_balance": null,
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H5",
+    "signification": "children",
+    "verdict": "mixed",
+    "quote": "the native will have a number of children, the family will not be large.",
+    "line": 7099,
+    "why": "Raman sees a balance of good and evil: about 6 issues, with 'loss of one or two issues is likely' (7114)."
+   }
+  ]
+ },
+ {
+  "source_file": "data/knowledge_library/sources/how_to_judge_a_horoscope_raman/chapter_001_full-text-unsplit.md",
+  "book_section": "HTJAH Vol I",
+  "name": null,
+  "same_as": null,
+  "stated_positions": {
+   "Sun": {
+    "sign": "Leo",
+    "deg": null
+   },
+   "Moon": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Mars": {
+    "sign": null,
+    "deg": null
+   },
+   "Mercury": {
+    "sign": null,
+    "deg": null
+   },
+   "Jupiter": {
+    "sign": null,
+    "deg": null
+   },
+   "Venus": {
+    "sign": null,
+    "deg": null
+   },
+   "Saturn": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Rahu": {
+    "sign": "Aries",
+    "deg": null
+   },
+   "Ketu": {
+    "sign": "Libra",
+    "deg": null
+   }
+  },
+  "lagna_sign_printed": "Virgo",
+  "notes": "Positions partially inferred: 6th lord debilitated and retrograde in the 8th with Moon and Rahu; Sun in own sign aspects 6th. Dating clue: Saturn Dasha 1963-1982. Prediction (future tense).",
+  "chart_no": 126,
+  "first_line": 7128,
+  "last_line": 7161,
+  "raw_birth": null,
+  "birth": {
+   "date": null,
+   "time": null,
+   "time_basis": null,
+   "ghatikas": null,
+   "lat_deg": null,
+   "lat_min": null,
+   "lat_dir": null,
+   "lon_deg": null,
+   "lon_min": null,
+   "lon_dir": null,
+   "place": null
+  },
+  "uncertain": [
+   "no birth data; dasa balance printed 'Year 1-9-^' (last field illegible)",
+   "Lagna Virgo inferred: 6th lord (Saturn) debilitated (Aries) in the 8th",
+   "Mars sign not given"
+  ],
+  "dasa_balance": "Sun 1-9-? (raw: 'Balance of Sun Das la at birth: Year 1-9-^')",
+  "lagna_sign_stated": null,
+  "conclusions": [
+   {
+    "house": "H6",
+    "signification": "enemies_disease",
+    "verdict": "favourable",
+    "quote": "So life will he fairly healthy up to very old age",
+    "line": 7155,
+    "why": "Raman concludes the 6th-house evil is replaced by benefic effects; healthy to old age."
+   },
+   {
+    "house": "H6",
+    "signification": "debts",
+    "verdict": "favourable",
+    "quote": "Enemies, debts, etc .—Troubles from these sources will be reduced to a minimum",
+    "line": 7158,
+    "why": "Raman concludes troubles from enemies and debts will be minimal."
+   }
+  ]
+ }
+]

@@ -38,6 +38,24 @@ Recorded so the error class stays visible:
 * Citation reach: BPHS vol2 ch071:40 attests the rekha-span LONGEVITY method only, not this
   transit rule; the timing rests on Patel ch014 alone.
 
+**Raman's own statement of the rule (timing gap check fix 14, 2026-10-24)** — cited FIRST, Patel
+beside it: "Multiply the Sodya Pinda of Sarvashtakavarga by the bindus ... in a particular
+bhava and divide the product by 27. When Saturn transits the asterism represented by the
+remainder, evil results pertaining [to] the bhava in question will materialise" (ASP-11:388-393),
+with the trines ("Saturn's transit of not only Aridra but its trinal stars; Swati and
+Satabhisha", ASP-11:398-401). Raman adds his own observation for Jupiter: "Studies conducted by
+me in respect of Jupiter's transit of asterisms as arrived at above have been found to be
+mainly favourable for the bhavas concerned. Such transits on the basis of Ashtakavarga if
+combined with directional influences appear to yield encouraging results" (ASP-11:402-409) —
+recorded here, not encoded as a separate marker. Raman's rekha rule (ASP-11:410-430) is the same
+omission as Patel's Sloka 39 below. Raman's text gives the NAKSHATRA clock only; the parallel
+rasi clock is Patel's.
+
+Transit frame (fix 14): transit Saturn is cast in the NATAL chart's own ayanamsa via
+`sidereal_mode`, so the natal grid and the transit star share one frame. It was cast in Lahiri
+while the natal chart defaults to Raman's ayanamsa (~1.5 degrees apart), which could flip the
+transit nakshatra near a boundary, and set the global sidereal mode without restoring it.
+
 AV band discipline: corroborative, never decisive (Raman's own rating of Ashtakavarga),
 report-layer only, no verdict feed (PREC-10).
 
@@ -46,10 +64,13 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Final, Optional
 
 from app.raman_saab.chart.model import RamanChart
+
+logger = logging.getLogger(__name__)
 
 #: The 27 nakshatras, Aswini first. Remainder r maps to index r-1; remainder 0 to the LAST
 #: (Revati) — pinned by Patel's own worked example ("divided by 27 leaves remainder 0.
@@ -129,16 +150,21 @@ def bhava_saturn_markers(chart: RamanChart, ref_jd: float) -> tuple[BhavaSaturnM
 
     pinda, grid = samudaya_shodhya_pinda(chart)
 
-    # transit Saturn at ref_jd, sidereal per the chart's own ayanamsa (Lahiri lock)
+    # transit Saturn at ref_jd, sidereal in the NATAL chart's own ayanamsa (fix 14,
+    # 2026-10-24) — `sidereal_mode` sets and restores the frame, so the transit star is read in
+    # the same frame as the natal grid (Raman's ayanamsa by default for this engine).
+    from app.raman_saab.chart.ayanamsa import sidereal_mode
+
     sat_nak: Optional[str] = None
     sat_rasi: Optional[str] = None
     try:
-        swe.set_sid_mode(swe.SIDM_LAHIRI, 0, 0)
-        lon = swe.calc_ut(ref_jd, swe.SATURN, swe.FLG_SWIEPH | swe.FLG_SIDEREAL)[0][0] % 360.0
+        with sidereal_mode(getattr(chart, "ayanamsa", None) or "raman"):
+            lon = swe.calc_ut(ref_jd, swe.SATURN,
+                              swe.FLG_SWIEPH | swe.FLG_SIDEREAL)[0][0] % 360.0
         sat_nak = _NAK[int(lon // (360.0 / 27))]
         sat_rasi = _SIGNS[int(lon // 30.0)]
     except Exception:                                              # noqa: BLE001
-        pass
+        logger.info("transit Saturn not cast for the pinda clock", exc_info=True)
 
     out: list[BhavaSaturnMarker] = []
     for house in range(1, 13):

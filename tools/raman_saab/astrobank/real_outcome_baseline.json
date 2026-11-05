@@ -1,9 +1,9 @@
 {
-  "mapping_version": 2,
-  "mapping_sha256": "8faf7b833a30857e",
+  "mapping_version": 3,
+  "mapping_sha256": "497a638b73774b4d",
   "person_master_sha256": "a6162ad235619a11",
-  "engine_git_sha": "48e292456f9d",
-  "created": "2026-07-24 14:40",
+  "engine_git_sha": "bf0419c09183",
+  "created": "2026-08-23 10:34",
   "metrics": {
     "H5_children": {
       "metric": "auc",

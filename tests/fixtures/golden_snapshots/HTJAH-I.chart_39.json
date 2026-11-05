@@ -2,18 +2,22 @@
   "H2": {
     "citations": [
       "HTJAH-I:2417",
+      "HTJAH-I:2420",
       "HTJAH-I:2464",
       "HTJAH-I:2472",
+      "HTJAH-I:2498",
       "HTJAH-I:2577",
-      "HTJAH-I:2800",
+      "HTJAH-I:2802",
       "HTJAH-I:2948"
     ],
     "fired_rule_ids": [
       "H2.C.20",
       "H2.C.26",
+      "H2.C.40",
       "H2.C.66",
       "H2.C.69",
       "H2.L.12",
+      "H2.L.12a",
       "H2.P.Ketu"
     ],
     "rollup": "afflicted",
@@ -21,7 +25,7 @@
       "family": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "speech": {
         "degree": "mild",
@@ -31,12 +35,12 @@
       "vision": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       },
       "wealth": {
         "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "afflicted"
+        "verdict": "mixed"
       }
     }
   }

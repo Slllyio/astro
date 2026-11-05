@@ -194,7 +194,9 @@ def _cell(cs: CandidateScore, i: int) -> str:
     es = cs.event_scores[i]
     lords = "/".join((lm.lord or "-") + ("*" if lm.matched and lm.scorable else "")
                      for lm in es.levels)
-    grade = {"par_excellence": "PAR", "limited": "lim", "absent": "abs",
+    # ordinary / same_lord / feeble: Raman's tiers since the timing gap check (fix 3, 2026-10-24)
+    grade = {"par_excellence": "PAR", "ordinary": "ord", "same_lord": "same",
+             "limited": "lim", "feeble": "fbl", "absent": "abs",
              None: "n/a"}[es.active_grade]
     return f"{lords} [{grade}]"
 

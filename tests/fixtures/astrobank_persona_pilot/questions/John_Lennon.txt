@@ -1,0 +1,142 @@
+
+## A. Your life, in your own words
+[inst.v2.A1] (choice) Where did your birth time come from?
+    hospital = a hospital record  |  certificate = a birth certificate  |  horoscope_then = a horoscope cast at the time  |  family_memory = someone's memory  |  unknown = I don't know
+[inst.v2.A2] (choice) How precise is that time?
+    exact = an exact clock reading  |  to_5 = right to within about 5 minutes  |  to_15 = right to within about 15 minutes  |  round_hour = a round number — the hour or the half hour  |  part_of_day = only a part of the day  |  unknown = I don't know
+[inst.v2.A3] (choice) Has an astrologer already changed or corrected this time?
+    yes = yes  |  no = no  |  unknown = I don't know
+[inst.v2.A4] (choice) How many times have you been admitted to hospital?
+    none = never  |  one = once  |  two_three = two or three times  |  four_plus = four or more
+[inst.v2.A5] (choice) How many surgeries have you had?
+    none = none  |  one = one  |  two_plus = two or more
+[inst.v2.A6] (multi) Which parts of your body give you recurring trouble?
+    head = head, brain  |  eyes = eyes, sight  |  ears = ears, hearing  |  throat_neck = throat, neck, thyroid, voice  |  teeth_jaw = teeth, jaw  |  chest_lungs = chest, lungs, breathing  |  heart = heart, blood pressure  |  stomach = stomach, digestion, bowels  |  liver = liver, bile  |  kidney_urinary = kidneys, urinary system  |  reproductive = reproductive system  |  skin = skin  |  joints = joints, arthritis  |  back_spine = back, spine  |  nerves = nerves, sleep, anxiety  |  blood_sugar = blood sugar, metabolism  |  legs_feet = legs, feet  |  none = nothing recurring
+[inst.v2.A7] (choice) How was your health as a small child?
+    sickly = sickly — often ill  |  average = about average  |  robust = robust — rarely ill  |  unknown = I don't know
+[inst.v2.A8] (choice) Was there danger to your life before the age of eight?
+    yes = yes  |  no = no  |  unknown = I don't know
+[inst.v2.A9] (choice) How long did your grandparents live, on average?
+    under60 = under 60  |  60_70 = 60 to 70  |  70_80 = 70 to 80  |  80_90 = 80 to 90  |  over90 = over 90  |  mixed = very mixed  |  unknown = I don't know
+[inst.v2.A10] (choice) Your relationship with your father:
+    close = close and supportive  |  distant = distant but not hostile  |  conflicted = conflicted  |  absent = absent for long stretches  |  died_early = he died while I was young  |  na = does not apply
+[inst.v2.A11] (choice) Your father's fortunes during your childhood:
+    prospered = prospered  |  steady = steady  |  reversal = suffered a reversal  |  unknown = I don't know
+[inst.v2.A12] (choice) Your relationship with your mother:
+    close = close and supportive  |  distant = distant but not hostile  |  conflicted = conflicted  |  absent = absent for long stretches  |  died_early = she died while I was young  |  na = does not apply
+[inst.v2.A13] (choice) Your brothers and sisters:
+    none = I have none  |  close = close to them  |  distant = distant from them  |  conflicted = in conflict with them  |  lost = I have lost one
+[inst.v2.A14] (choice) Your highest completed education:
+    none = no formal schooling  |  school = school  |  higher_secondary = higher secondary  |  graduate = graduate  |  postgraduate = postgraduate  |  doctorate = doctorate
+[inst.v2.A15] (choice) Was your education interrupted?
+    no = no  |  brief = briefly  |  serious = seriously
+[inst.v2.A16] (multi) How do you earn? Choose everything that applies.
+    salary_government = salaried, government or public body  |  salary_private = salaried, private employer  |  own_business = own business or firm  |  trade = trade, buying and selling  |  commission = commission or brokerage  |  professional_practice = professional practice of my own  |  farming = farming or land  |  manual = manual or service work  |  not_earning = not earning at present
+[inst.v2.A17] (choice) Which has gone better for you — working under an authority, or working for yourself?
+    under_authority = under an employer, government or senior  |  own = for myself  |  both_equal = about the same  |  untested = I have only tried one
+[inst.v2.A18] (multi) Which kinds of work have you actually done, or been strongly drawn to?
+    metals_machinery = metals, machinery, engineering  |  construction = construction, buildings, land  |  fire_heat = fire or heat trades, chemicals  |  military_police = military, police, security  |  medicine_surgery = medicine, surgery, pharmacy  |  transport = driving, transport, logistics  |  writing_media = writing, journalism, media  |  maths_accounts = mathematics, accounts, analysis  |  teaching = teaching, research  |  astrology_occult = astrology, the occult, priestcraft  |  design_art = design, art, music, performance  |  law = law, courts  |  counselling = counselling, advisory work  |  banking_finance = banking, finance, insurance  |  religious = religious or charitable work  |  agriculture = agriculture, horticulture  |  textiles_luxury = textiles, jewellery, luxury goods  |  trade_retail = trade, retail, buying and selling  |  none = none of these
+[inst.v2.A19] (choice) Recognition compared with the work you actually did:
+    above = more than it deserved  |  about_right = about right  |  short = less than it deserved  |  na = does not apply
+[inst.v2.A20] (choice) Money earned far from your birthplace, or abroad:
+    none = none  |  some = some of my income  |  most = most of my income
+[inst.v2.A21] (choice) Speculation, betting, lottery or shares — how has it gone overall?
+    never = I have never done it  |  net_loss = a net loss  |  about_even = about even  |  net_gain = a net gain
+[inst.v2.A22] (choice) Inheritance, insurance, or an unexpected windfall:
+    none = none  |  small = something small  |  significant = something significant
+[inst.v2.A23] (choice) Debt:
+    none = none  |  manageable = some, manageable  |  serious_past = serious trouble in the past  |  serious_now = serious trouble now
+[inst.v2.A24] (choice) Your marital status:
+    never_married = never married  |  engaged = engaged, not yet married  |  married = married  |  separated = separated  |  divorced = divorced  |  widowed = widowed
+[inst.v2.A25] (year) If you married, in which year?
+[inst.v2.A26] (choice) By your family's usual pattern, was the marriage early or late?
+    early = early  |  on_time = about usual  |  late = late  |  very_late = much later than usual  |  na = does not apply
+[inst.v2.A27] (choice) The marriage or your closest partnership has been:
+    happy = happy  |  mixed = mixed  |  strained = strained  |  ended = it ended  |  na = does not apply
+[inst.v2.A28] (choice) Children:
+    none = none  |  one = one  |  two = two  |  three_plus = three or more
+[inst.v2.A29] (choice) Difficulty conceiving, or the loss of a child:
+    no = no  |  yes = yes  |  na = does not apply
+[inst.v2.A30] (multi) Which of these describe you? Choose as many as fit.
+    outspoken = outspoken, says it plainly  |  reserved = reserved, keeps things back  |  quick_tempered = quick-tempered  |  patient = patient  |  cautious = cautious  |  bold = bold  |  solitary = happiest alone  |  sociable = happiest among people  |  practical = practical  |  philosophical = philosophical
+[inst.v2.A31] (choice) Have you had a period of depression, severe anxiety, or treatment for the mind?
+    no = no  |  brief = yes, briefly  |  extended = yes, for an extended period  |  prefer_not = I would rather not say
+[inst.v2.A32] (choice) Religion, philosophy, the occult, or solitary practice:
+    none = no interest  |  mild = mild interest  |  strong = strong interest  |  central = central to my life
+[inst.v2.A33] (choice) Time lived away from your birthplace:
+    never = never  |  under1 = under a year  |  1_5 = one to five years  |  over5 = more than five years  |  abroad = abroad
+[inst.v2.A34] (choice) Time in a hostel, institution, hospital, or any kind of confinement:
+    never = never  |  brief = briefly  |  extended = for an extended period
+[inst.v2.A35] (events) The turning points of your life so far. Add a row for each: the year, the month if you remember it, and what kind of event it was.
+    move_home = moved home or city  |  moved_abroad = moved abroad  |  job_start = started a job or business  |  job_loss = lost a job, or a business failed  |  promotion = promotion or public recognition  |  marriage = marriage or engagement  |  separation = separation or divorce  |  child_born = a child was born  |  bereavement = a death in the family  |  own_illness = serious illness or surgery of my own  |  family_illness = serious illness of someone close  |  money_gain = a significant financial gain  |  money_loss = a significant financial loss or debt  |  education = started or finished a course of study  |  legal = a court case or legal trouble  |  accident = an accident  |  spiritual = a turn toward religion or practice  |  other = something else
+[inst.v2.A36] (choice) Compared with the six years before it, the time since the middle of 2023 has been:
+    much_better = much better  |  better = better  |  same = about the same  |  worse = worse  |  much_worse = much worse
+
+## B. Checking the birth time
+[inst.v2.B1] (choice) Which of these two fits you better?
+    opt1 = quick to act, impatient, leads from the front, says it before thinking it  |  opt2 = impressionable, easily moved, drifts rather than pushes, gives way and returns
+[inst.v2.B2] (choice) Your build:
+    lean_tall = lean and tall-ish  |  lean_short = lean and short  |  medium = medium  |  solid_heavy = solid, puts on weight easily
+[inst.v2.B3] (choice) People usually guess your age as:
+    older = older than I am  |  right = about right  |  younger = younger than I am
+[inst.v2.B4] (choice) Your birth order:
+    only = only child  |  eldest = eldest  |  middle = middle  |  youngest = youngest
+[inst.v2.B5] (choice) You were born:
+    hospital = in a hospital  |  home = at home  |  unknown = I don't know
+[inst.v2.B6] (events) The events a birth time is actually corrected against. Give the year and, where you can, the month.
+    father_death = father's death or major illness  |  mother_death = mother's death or major illness  |  marriage = marriage  |  first_job = first job  |  own_surgery = a surgery of my own  |  child_born = the birth of a first child
+
+## C. Which one is closer?
+[inst.v2.C1] (choice) Money that came through marriage — which is closer to your life?
+    opt1 = Clearly one way — either solidly good, or solidly difficult.  |  opt2 = Genuinely both — real good and real difficulty together, not one or the other.
+    also answer inst.v2.C1.confidence = 1..5
+[inst.v2.C2] (choice) Your inner or spiritual life — which is closer to your life?
+    opt1 = This has been a real difficulty for you.  |  opt2 = This has gone well for you.
+    also answer inst.v2.C2.confidence = 1..5
+[inst.v2.C3] (choice) Living far from your birthplace — which is closer to your life?
+    opt1 = This has gone well for you.  |  opt2 = This has been a real difficulty for you.
+    also answer inst.v2.C3.confidence = 1..5
+[inst.v2.C4] (choice) The way you speak — which is closer to your life?
+    opt1 = Clearly one way — either solidly good, or solidly difficult.  |  opt2 = Genuinely both — real good and real difficulty together, not one or the other.
+    also answer inst.v2.C4.confidence = 1..5
+[inst.v2.C5] (choice) Your eyesight — which is closer to your life?
+    opt1 = Clearly one way — either solidly good, or solidly difficult.  |  opt2 = Genuinely both — real good and real difficulty together, not one or the other.
+    also answer inst.v2.C5.confidence = 1..5
+[inst.v2.C6] (choice) The things you have acquired — which is closer to your life?
+    opt1 = Clearly one way — either solidly good, or solidly difficult.  |  opt2 = Genuinely both — real good and real difficulty together, not one or the other.
+    also answer inst.v2.C6.confidence = 1..5
+[inst.v2.C7] (choice) Income and gains — which is closer to your life?
+    opt1 = Clearly one way — either solidly good, or solidly difficult.  |  opt2 = Genuinely both — real good and real difficulty together, not one or the other.
+    also answer inst.v2.C7.confidence = 1..5
+[inst.v2.C8] (choice) Your husband or wife — which is closer to your life?
+    opt1 = Genuinely both — real good and real difficulty together, not one or the other.  |  opt2 = Clearly one way — either solidly good, or solidly difficult.
+    also answer inst.v2.C8.confidence = 1..5
+[inst.v2.C9] (choice) Long-term illness — which is closer to your life?
+    opt1 = This has been a real difficulty for you.  |  opt2 = This has gone well for you.
+    also answer inst.v2.C9.confidence = 1..5
+[inst.v2.C10] (choice) Debt — which is closer to your life?
+    opt1 = This has gone well for you.  |  opt2 = This has been a real difficulty for you.
+    also answer inst.v2.C10.confidence = 1..5
+[inst.v2.C11] (choice) Inheritance — which is closer to your life?
+    opt1 = This has gone well for you.  |  opt2 = This has been a real difficulty for you.
+    also answer inst.v2.C11.confidence = 1..5
+[inst.v2.C12] (choice) Sudden unexpected money — which is closer to your life?
+    opt1 = This has been a real difficulty for you.  |  opt2 = This has gone well for you.
+    also answer inst.v2.C12.confidence = 1..5
+
+## D. After the reading
+[inst.v2.D1] (multi) Which chapters said something plainly WRONG about your life?
+    plain_reading = The plain-English reading  |  houses = The twelve matters, house by house  |  longevity = Longevity and the span  |  health_readout = Health and vulnerability  |  medical = The medical read — body areas  |  marriage = Marriage  |  children = Children  |  profession = Profession and career  |  wealth = Wealth and money  |  psych = Temperament and the inner portrait  |  aptitude = Aptitude and working style  |  timeline = The dasha timeline — when things happen  |  gochara = Transits  |  divisional = The divisional charts  |  karmic = Soul, karma and destiny  |  nichod = The Nichod — the distilled essence
+[inst.v2.D2] (multi) Which chapters said something right that could NOT have been guessed about anyone?
+    plain_reading = The plain-English reading  |  houses = The twelve matters, house by house  |  longevity = Longevity and the span  |  health_readout = Health and vulnerability  |  medical = The medical read — body areas  |  marriage = Marriage  |  children = Children  |  profession = Profession and career  |  wealth = Wealth and money  |  psych = Temperament and the inner portrait  |  aptitude = Aptitude and working style  |  timeline = The dasha timeline — when things happen  |  gochara = Transits  |  divisional = The divisional charts  |  karmic = Soul, karma and destiny  |  nichod = The Nichod — the distilled essence
+[inst.v2.D3] (multi) Which chapters felt true of you AND of most people you know?
+    plain_reading = The plain-English reading  |  houses = The twelve matters, house by house  |  longevity = Longevity and the span  |  health_readout = Health and vulnerability  |  medical = The medical read — body areas  |  marriage = Marriage  |  children = Children  |  profession = Profession and career  |  wealth = Wealth and money  |  psych = Temperament and the inner portrait  |  aptitude = Aptitude and working style  |  timeline = The dasha timeline — when things happen  |  gochara = Transits  |  divisional = The divisional charts  |  karmic = Soul, karma and destiny  |  nichod = The Nichod — the distilled essence
+[inst.v2.D4] (multi) Which chapters did you skip, or not understand?
+    plain_reading = The plain-English reading  |  houses = The twelve matters, house by house  |  longevity = Longevity and the span  |  health_readout = Health and vulnerability  |  medical = The medical read — body areas  |  marriage = Marriage  |  children = Children  |  profession = Profession and career  |  wealth = Wealth and money  |  psych = Temperament and the inner portrait  |  aptitude = Aptitude and working style  |  timeline = The dasha timeline — when things happen  |  gochara = Transits  |  divisional = The divisional charts  |  karmic = Soul, karma and destiny  |  nichod = The Nichod — the distilled essence
+[inst.v2.D5] (choice) Was anything upsetting or frightening?
+    no = no  |  mildly = mildly  |  yes = yes
+[inst.v2.D6] (scale) Overall, how well did this reading match your life?
+    agree = agree  |  partly = partly  |  disagree = disagree  |  not sure = not sure
+[inst.v2.D7] (choice) Would this have been worth paying for?
+    no = no  |  maybe = maybe  |  yes = yes
+[inst.v2.D8] (open) Anything else you want to say?

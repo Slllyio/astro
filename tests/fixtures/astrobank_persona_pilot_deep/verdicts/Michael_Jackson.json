@@ -1,0 +1,286 @@
+{
+ "slug": "Michael_Jackson",
+ "chart_key": "1958-08-29T19:33-5.00@41.5933,-87.3461",
+ "verdicts": {
+  "self": {
+   "house": 1,
+   "verdict": "favourable",
+   "band_share": 0.5007
+  },
+  "body": {
+   "house": 1,
+   "verdict": "favourable",
+   "band_share": 0.5007
+  },
+  "health": {
+   "house": 1,
+   "verdict": "favourable",
+   "band_share": 0.5007
+  },
+  "wealth": {
+   "house": 2,
+   "verdict": "favourable",
+   "band_share": 0.4243
+  },
+  "family": {
+   "house": 2,
+   "verdict": "favourable",
+   "band_share": 0.4241
+  },
+  "speech": {
+   "house": 2,
+   "verdict": "favourable",
+   "band_share": 0.4579
+  },
+  "vision": {
+   "house": 2,
+   "verdict": "favourable",
+   "band_share": 0.4315
+  },
+  "siblings": {
+   "house": 3,
+   "verdict": "afflicted",
+   "band_share": 0.4173
+  },
+  "courage": {
+   "house": 3,
+   "verdict": "favourable",
+   "band_share": 0.5125
+  },
+  "short_journeys": {
+   "house": 3,
+   "verdict": "favourable",
+   "band_share": 0.513
+  },
+  "ear_throat": {
+   "house": 3,
+   "verdict": "mixed",
+   "band_share": 0.1984
+  },
+  "mother": {
+   "house": 4,
+   "verdict": "afflicted",
+   "band_share": 0.2708
+  },
+  "happiness": {
+   "house": 4,
+   "verdict": "afflicted",
+   "band_share": 0.2314
+  },
+  "education": {
+   "house": 4,
+   "verdict": "afflicted",
+   "band_share": 0.2168
+  },
+  "vehicles": {
+   "house": 4,
+   "verdict": "afflicted",
+   "band_share": 0.1959
+  },
+  "property": {
+   "house": 4,
+   "verdict": "afflicted",
+   "band_share": 0.179
+  },
+  "home_comforts": {
+   "house": 4,
+   "verdict": "afflicted",
+   "band_share": 0.254
+  },
+  "children": {
+   "house": 5,
+   "verdict": "afflicted",
+   "band_share": 0.7157
+  },
+  "intellect": {
+   "house": 5,
+   "verdict": "favourable",
+   "band_share": 0.45
+  },
+  "poorvapunya": {
+   "house": 5,
+   "verdict": "favourable",
+   "band_share": 0.4274
+  },
+  "enemies_disease": {
+   "house": 6,
+   "verdict": "favourable",
+   "band_share": 0.1443
+  },
+  "accidents": {
+   "house": 6,
+   "verdict": "favourable",
+   "band_share": 0.1443
+  },
+  "debts": {
+   "house": 6,
+   "verdict": "favourable",
+   "band_share": 0.1357
+  },
+  "enemies": {
+   "house": 6,
+   "verdict": "favourable",
+   "band_share": 0.1314
+  },
+  "disease_chronic": {
+   "house": 6,
+   "verdict": "favourable",
+   "band_share": 0.1292
+  },
+  "spouse": {
+   "house": 7,
+   "verdict": "afflicted",
+   "band_share": 0.3855
+  },
+  "marital_happiness": {
+   "house": 7,
+   "verdict": "favourable",
+   "band_share": 0.2563
+  },
+  "virility": {
+   "house": 7,
+   "verdict": "favourable",
+   "band_share": 0.2943
+  },
+  "coverture": {
+   "house": 7,
+   "verdict": "afflicted",
+   "band_share": 0.2753
+  },
+  "wealth_through_marriage": {
+   "house": 7,
+   "verdict": "favourable",
+   "band_share": 0.512
+  },
+  "partnership": {
+   "house": 7,
+   "verdict": "afflicted",
+   "band_share": 0.202
+  },
+  "longevity": {
+   "house": 8,
+   "verdict": "favourable",
+   "band_share": 0.5784
+  },
+  "death": {
+   "house": 8,
+   "verdict": "afflicted",
+   "band_share": 0.5053
+  },
+  "legacies": {
+   "house": 8,
+   "verdict": "favourable",
+   "band_share": 0.4906
+  },
+  "sudden_gains": {
+   "house": 8,
+   "verdict": "favourable",
+   "band_share": 0.4906
+  },
+  "father": {
+   "house": 9,
+   "verdict": "afflicted",
+   "band_share": 0.2949
+  },
+  "fortune": {
+   "house": 9,
+   "verdict": "afflicted",
+   "band_share": 0.2393
+  },
+  "dharma": {
+   "house": 9,
+   "verdict": "afflicted",
+   "band_share": 0.2305
+  },
+  "higher_learning": {
+   "house": 9,
+   "verdict": "afflicted",
+   "band_share": 0.2443
+  },
+  "long_journeys": {
+   "house": 9,
+   "verdict": "afflicted",
+   "band_share": 0.2308
+  },
+  "career": {
+   "house": 10,
+   "verdict": "favourable",
+   "band_share": 0.4407
+  },
+  "profession_authority": {
+   "house": 10,
+   "verdict": "favourable",
+   "band_share": 0.4407
+  },
+  "profession_trade": {
+   "house": 10,
+   "verdict": "favourable",
+   "band_share": 0.2986
+  },
+  "profession_learned": {
+   "house": 10,
+   "verdict": "favourable",
+   "band_share": 0.3791
+  },
+  "profession_labour": {
+   "house": 10,
+   "verdict": "favourable",
+   "band_share": 0.3953
+  },
+  "status_honour": {
+   "house": 10,
+   "verdict": "mixed",
+   "band_share": 0.1
+  },
+  "gains": {
+   "house": 11,
+   "verdict": "favourable",
+   "band_share": 0.4514
+  },
+  "elder_siblings": {
+   "house": 11,
+   "verdict": "favourable",
+   "band_share": 0.4765
+  },
+  "friends": {
+   "house": 11,
+   "verdict": "favourable",
+   "band_share": 0.4514
+  },
+  "acquisitions": {
+   "house": 11,
+   "verdict": "favourable",
+   "band_share": 0.4514
+  },
+  "loss_moksha": {
+   "house": 12,
+   "verdict": "mixed",
+   "band_share": 0.3482
+  },
+  "expenditure": {
+   "house": 12,
+   "verdict": "favourable",
+   "band_share": 0.4098
+  },
+  "foreign_residence": {
+   "house": 12,
+   "verdict": "mixed",
+   "band_share": 0.3188
+  },
+  "moksha": {
+   "house": 12,
+   "verdict": "mixed",
+   "band_share": 0.2281
+  },
+  "incarceration": {
+   "house": 12,
+   "verdict": "mixed",
+   "band_share": 0.2841
+  },
+  "left_eye": {
+   "house": 12,
+   "verdict": "mixed",
+   "band_share": 0.2055
+  }
+ }
+}

@@ -4,6 +4,10 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
+from corpus_presence import needs_file
+
+_needs_features_smoke = needs_file("app/medini/data/dasha_stage_d_features_smoke.parquet")
+
 from app.medini.ml.stage_d_baseline import (
     fit_cause_specific_cox,
     split_train_test,
@@ -12,6 +16,7 @@ from app.medini.ml.stage_d_baseline import (
 
 
 class TestFitCauseSpecificCox:
+    @_needs_features_smoke
     def test_returns_c_index_in_range(self) -> None:
         """Single-class Cox PH on smoke returns C-index in [0.4, 0.7]."""
         smoke = pd.read_parquet("app/medini/data/dasha_stage_d_features_smoke.parquet")
@@ -26,6 +31,7 @@ class TestFitCauseSpecificCox:
 
 
 class TestFitAllClasses:
+    @_needs_features_smoke
     def test_parallel_matches_sequential_and_returns_30(self) -> None:
         """Parallel + sequential produce identical C-indices on all 30 classes.
 

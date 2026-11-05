@@ -27,7 +27,7 @@ CITED_ANCHORS: Final[tuple[Citation, ...]] = (
     Citation("VARSHA-7", 43),       # Iddasala orb rule: the deeptamsas must mutually mingle
     Citation("VARSHA-7", 84),       # Sahams: the general rule (+30 no-lagna-between)
     Citation("VARSHA-7", 100),      # Punya Saham day/night formula + worked 30-30 example
-    Citation("VARSHA-7", 190),      # Lords of sahams: the rasi lord where the saham falls
+    Citation("VARSHA-7", 174),      # Lords of sahams: the rasi lord where the saham falls
     Citation("PRASNA-49", 107),     # Karyasiddhi stanzas 3-4: the four full-success configs
     Citation("PRASNA-49", 119),     # Karyesa = lord of the query's house
     Citation("PRASNA-49", 137),     # stanzas 5-8: the 25/50/75/100 ladder

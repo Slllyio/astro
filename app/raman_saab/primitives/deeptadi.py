@@ -36,7 +36,22 @@ RESULTS: Final[dict[str, tuple[int, str]]] = {
 def state(planet: str, chart: RamanChart) -> str:
     """The planet's dominant Deeptadi avastha (priority-ordered: dignity, then position). 'Bhita'
     (acceleration / planetary-war defeat) needs speed data the engine does not carry and is omitted
-    from the live classification; the other nine are computed."""
+    from the live classification; the other nine are computed.
+
+    PRECEDENCE — SETTLED 2026-08-19 against the mounted corpus, so no future session
+    re-hunts. Raman states NO precedence among the avasthas. What he does state is the
+    opposite instruction: "Planets on account of their incessant movements get into certain
+    states of existence called Avasthas which are ten in number. Each Avastha produces its
+    own results. In the judgment of a horoscope ALL THESE DETAILS HAVE TO BE FULLY
+    CONSIDERED." (HPA-7:39-44). A planet can satisfy several avasthas at once and he wants
+    every one of them weighed.
+
+    So the dignity-first ordering here is the ENGINE'S OWN CONVENTION and nothing more —
+    it exists because this function has to return ONE string. It is not a claim about which
+    state Raman thinks dominates, and it must not be described as one. The report already
+    does the doctrinally right thing beside it: `states_all` discloses every state a planet
+    matches, which is what HPA-7:42-44 actually asks for. If the single-state return is ever
+    load-bearing for a verdict, that is the place to look first."""
     p = chart.planets.get(planet)
     if p is None:
         return "Santha"
@@ -58,6 +73,38 @@ def state(planet: str, chart: RamanChart) -> str:
     if (p.lon % 30.0) >= 22.5:                      # last quarter (4th pada) of the sign
         return "Peedya"
     return "Santha"
+
+
+def states_all(planet: str, chart: RamanChart) -> tuple[str, ...]:
+    """EVERY Deeptadi state the planet matches, in `state()`'s own priority order (dignity
+    first, then combustion, retrogression, position) — so the head of the tuple is always
+    exactly `state()`'s answer and the tail is the secondary states that answer hides.
+    Additive DISCLOSURE accessor (2026-08-18 report-critique): a retrograde planet in an
+    enemy sign is Deena AND Sakta; showing only Deena beside a positions table that shows
+    'retrograde' reads as a contradiction. Nothing judges from the tail; `state()` itself
+    is unchanged."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return ("Santha",)
+    d = dignity(planet, chart)
+    matches: list[str] = []
+    if d == "exalt":
+        matches.append("Deeptha")
+    if d in ("own", "moolatrikona"):
+        matches.append("Swastha")
+    if d == "debil":
+        matches.append("Khala")
+    if planet not in ("Sun", "Rahu", "Ketu") and getattr(p, "combust_fraction", 0.0) >= 0.5:
+        matches.append("Vikala")
+    if d == "enemy":
+        matches.append("Deena")
+    if getattr(p, "retrograde", False):
+        matches.append("Sakta")
+    if d == "friend":
+        matches.append("Muditha")
+    if (p.lon % 30.0) >= 22.5:                      # last quarter (4th pada) of the sign
+        matches.append("Peedya")
+    return tuple(matches) if matches else ("Santha",)
 
 
 def polarity(planet: str, chart: RamanChart) -> int:

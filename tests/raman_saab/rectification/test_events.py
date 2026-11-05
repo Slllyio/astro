@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.doctrine.significations import significations_of
 from app.raman_saab.doctrine.sources import verify
 from app.raman_saab.primitives.vimshottari import date_to_jd
@@ -13,6 +15,7 @@ from app.raman_saab.rectification.events import (
 
 
 class TestTaxonomyDoctrine:
+    @needs_corpus
     def test_every_citation_resolves_on_disk(self) -> None:
         """Each EventSpec.source points at a real line of a citable Raman book (the
         divergence firewall in doctrine/sources.py)."""

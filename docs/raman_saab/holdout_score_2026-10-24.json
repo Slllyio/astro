@@ -1,0 +1,224 @@
+{
+ "rows": [
+  [
+   "3HC.chart_28 H10/profession_authority",
+   "favourable",
+   "afflicted",
+   2
+  ],
+  [
+   "3HC.chart_28 H2/wealth",
+   "favourable",
+   "mixed",
+   1
+  ],
+  [
+   "3HC.chart_36+106+106 H10/career",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_36+106+106 H5/intellect",
+   "favourable",
+   "afflicted",
+   2
+  ],
+  [
+   "3HC.chart_36+106+106#2 H10/status_honour",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_58 H12/incarceration",
+   "afflicted",
+   "mixed",
+   1
+  ],
+  [
+   "3HC.chart_58 H10/career",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_27 H2/wealth",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_27 H10/status_honour",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_119 H10/status_honour",
+   "favourable",
+   "afflicted",
+   2
+  ],
+  [
+   "3HC.chart_139 H6/disease_chronic",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_2 H2/wealth",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_143 H10/status_honour",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_133 H1/body",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_133 H6/disease_chronic",
+   "afflicted",
+   "favourable",
+   2
+  ],
+  [
+   "3HC.chart_133 H8/death",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_65 H2/wealth",
+   "favourable",
+   "mixed",
+   1
+  ],
+  [
+   "3HC.chart_131 H6/disease_chronic",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_86 H4/property",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_42 H10/status_honour",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_6 H12/moksha",
+   "favourable",
+   "mixed",
+   1
+  ],
+  [
+   "3HC.chart_121 H10/career",
+   "favourable",
+   "mixed",
+   1
+  ],
+  [
+   "3HC.chart_121 H2/wealth",
+   "favourable",
+   "afflicted",
+   2
+  ],
+  [
+   "3HC.chart_90 H4/mother",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_59 H10/career",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_17 H10/career",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_17 H1/self",
+   "favourable",
+   "afflicted",
+   2
+  ],
+  [
+   "3HC.chart_29 H10/career",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_142 H6/disease_chronic",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_91 H4/mother",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_127 H10/status_honour",
+   "afflicted",
+   "favourable",
+   2
+  ],
+  [
+   "3HC.chart_132 H6/enemies_disease",
+   "afflicted",
+   "afflicted",
+   0
+  ],
+  [
+   "3HC.chart_115 H10/career",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_83 H3/courage",
+   "favourable",
+   "favourable",
+   0
+  ],
+  [
+   "3HC.chart_96 H5/children",
+   "afflicted",
+   "favourable",
+   2
+  ],
+  [
+   "3HC.chart_112 H7/marital_happiness",
+   "afflicted",
+   "afflicted",
+   0
+  ]
+ ],
+ "exact": 23,
+ "within1": 28,
+ "real": 8,
+ "n": 36
+}

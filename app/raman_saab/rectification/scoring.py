@@ -219,10 +219,18 @@ def score_event(chart: RamanChart, event: LifeEvent, index: int = 0) -> EventSco
         panel = tuple(f"H{a.house}:{a.grade}" for a in actives)
         by_house = {a.house: a.grade for a in actives}
         grades = [by_house.get(h) for h in (spec.house, *spec.aux_houses)]
-        if "par_excellence" in grades:
-            active_grade, houses_raw = "par_excellence", ACTIVE_PAR
-        elif "limited" in grades:
-            active_grade, houses_raw = "limited", ACTIVE_LIMITED
+        # Timing gap check fix 3 (2026-10-24): grades are now Raman's tiers on each house's
+        # OWN set. The both-lords band (par excellence / ordinary / same lord — "the
+        # sub-periods whose lords influencing the first house in the major periods of whose
+        # lords also influence the 1st house, produce results predominantly of the 1st
+        # house", HTJAH-I:1592-1594) keeps the old full credit; a one-lord grade (limited /
+        # feeble) keeps the old partial credit. The label is the true tier.
+        both = [g for g in ("par_excellence", "ordinary", "same_lord") if g in grades]
+        one = [g for g in ("limited", "feeble") if g in grades]
+        if both:
+            active_grade, houses_raw = both[0], ACTIVE_PAR
+        elif one:
+            active_grade, houses_raw = one[0], ACTIVE_LIMITED
         else:
             active_grade, houses_raw = "absent", ACTIVE_ABSENT_PENALTY * pf
             notes.append(f"H{spec.house} not among the period's active houses")

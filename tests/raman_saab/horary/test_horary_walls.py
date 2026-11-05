@@ -1,6 +1,10 @@
 """The firewall-lift scope rules for the horary package: walls + citation resolution."""
 from __future__ import annotations
 
+import pytest
+
+from corpus_presence import needs_corpus
+
 import inspect
 
 from app.raman_saab.doctrine.sources import verify
@@ -21,6 +25,7 @@ class TestWalledSubsystem:
             src = inspect.getsource(mod)
             assert "judges" not in src and "synthesis_rules" not in src, mod.__name__
 
+    @needs_corpus
     def test_every_cited_anchor_verifies(self):
         for cit in CITED_ANCHORS:
             assert verify(cit), f"{cit.work}:{cit.line} does not resolve"

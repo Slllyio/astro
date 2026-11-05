@@ -1,10 +1,16 @@
 {
   "H10": {
     "citations": [
-      "HTJAH-II:9564"
+      "HTJAH-II:9564",
+      "HTJAH-II:9569",
+      "HTJAH-II:9570",
+      "HTJAH-II:9573"
     ],
     "fired_rule_ids": [
-      "H10.L.12"
+      "H10.L.12",
+      "H10.L.12a",
+      "H10.L.12b",
+      "H10.L.12c"
     ],
     "rollup": "afflicted",
     "significations": {
@@ -42,14 +48,14 @@
   },
   "H8": {
     "citations": [
-      "HTJAH-II:2957",
       "HTJAH-II:3087",
-      "HTJAH-II:3900"
+      "HTJAH-II:3900",
+      "NH:14735"
     ],
     "fired_rule_ids": [
       "H8.C.24",
       "H8.C.3",
-      "H8.L.5"
+      "H8.D.3"
     ],
     "rollup": "afflicted",
     "significations": {

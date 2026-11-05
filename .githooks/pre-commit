@@ -1,0 +1,18 @@
+#!/bin/sh
+# Local pre-commit guard: the private real-outcome validation must PASS before any commit.
+#
+# FEEDBACK_UTILIZATION_PLAN Tier 4: CI can never run this check because the case file lives
+# under gitignored data/private/ — so the only place it can gate anything is here, locally.
+# The tool itself is CI-safe by construction (absent file -> "nothing to validate", exit 0),
+# so this hook is a no-op on machines without the private data.
+#
+# Enable once per clone:   git config core.hooksPath .githooks
+py -3.12 -m tools.raman_saab.real_outcome_validate || {
+    echo ""
+    echo "[pre-commit] real-outcome validation FAILED — an engine change regressed a"
+    echo "[pre-commit] confirmed family baseline (data/private/real_outcomes.json)."
+    echo "[pre-commit] Fix the regression, or consciously lower the case's floor in the"
+    echo "[pre-commit] same commit with a note explaining why. Bypass (emergencies only):"
+    echo "[pre-commit]   git commit --no-verify"
+    exit 1
+}

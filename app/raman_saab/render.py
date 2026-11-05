@@ -21,7 +21,22 @@ _FLAG = {True: "strong", False: "weak", None: "n/a"}
 # ASCII so the worksheet prints on any console (incl. Windows CP1252).
 _REPL = {"→": "->", "←": "<-", "—": "-", "–": "-", "‘": "'",
          "’": "'", "“": '"', "”": '"', "…": "...", "°": " deg",
-         "×": "x", "½": "1/2", "¾": "3/4", "¼": "1/4"}
+         "×": "x", "½": "1/2", "¾": "3/4", "¼": "1/4",
+         "·": "-", "±": "+-",
+         # Logic glyphs used in the maintainer notes of a few descriptive rules
+         # (H11.C.34's "∧", H12.L.1 / H12.C.A18's "↔"). Added 2026-09-01: they had no
+         # fold and printed as "?" mojibake the moment those rules first reached a
+         # reader surface. A missing fold is silent until the text is rendered.
+         "∧": " AND ", "∨": " OR ", "↔": "<->", "≠": "!=", "≤": "<=", "≥": ">="}
+
+# Decorative emoji (the plain-terms avastha analogies) fold to nothing rather than "?"
+# mojibake; the emoji+space form first so no stray double space is left behind, and the
+# bare VS-16 selector last so any emoji already stripped leaves no invisible residue.
+for _e in ("⚠️", "⚠", "❌", "🌤", "🌫", "💪", "🔥", "😌", "🙂"):
+    _REPL[_e + " "] = ""
+    _REPL[_e] = ""
+_REPL["️"] = ""
+del _e
 
 
 def _ascii(s: str) -> str:
@@ -39,6 +54,25 @@ _NOTE_LABELS = {
     "decanate_cause": "cause-of-end decanate", "marital_bond": "marital bond"}
 
 
+def branch_label(fr) -> str:
+    """The reader-facing label for a fired rule's branch.
+
+    `rule_firing._branch` picks a TEXT SLOT by the house-lord's Shadbala and can only return
+    "fortified" or "afflicted". Since 2026-09-01 a rule may also carry `general` — Raman's
+    UNCONDITIONED reading, which holds regardless of strength — and where he gives no
+    conditioned paragraph at all, `fortified` deliberately carries that same general text so
+    the fired prose is never empty. Printing "[fortified]" over it would tell the reader the
+    reading is strength-contingent when Raman says it is not, which is a milder version of
+    the very defect the `general` slot was added to fix.
+
+    Presentation only: this reads `FiredRule` after the fact and cannot change a branch, a
+    text, or a verdict."""
+    general = (getattr(fr.rule, "general", None) or "").strip()
+    if general and general == (fr.text or "").strip():
+        return "general"
+    return fr.branch
+
+
 def _house_block(p: HouseProforma) -> list[str]:
     hv = p.as_house_verdict()
     lines = [f"House {hv.house} - {_HOUSE_NAMES[hv.house]}: {hv.verdict.upper()}",
@@ -48,7 +82,7 @@ def _house_block(p: HouseProforma) -> list[str]:
     if not evidence:
         lines.append("  (no rule fired - insufficient evidence)")
     for fr in evidence:
-        lines.append(f"  - [{fr.branch}] {fr.text}  ({fr.rule.source.work}:{fr.rule.source.line})")
+        lines.append(f"  - [{branch_label(fr)}] {fr.text}  ({fr.rule.source.work}:{fr.rule.source.line})")
     for key, val in p.metadata:
         lines.append(f"  * {_NOTE_LABELS.get(key, key)}: {val}")
     return lines
@@ -84,7 +118,7 @@ def to_markdown(reading: RamanReading) -> str:
         out.append(f"*Lord {hv.lord} ({_FLAG[hv.lord_strong]}), "
                    f"Karaka {hv.karaka} ({_FLAG[hv.karaka_strong]})*")
         for fr in list(hv.benefic) + list(hv.malefic) + list(hv.neutral):
-            out.append(f"- **[{fr.branch}]** {fr.text} "
+            out.append(f"- **[{branch_label(fr)}]** {fr.text} "
                        f"(`{fr.rule.source.work}:{fr.rule.source.line}`)")
         for key, val in p.metadata:
             out.append(f"- _{_NOTE_LABELS.get(key, key)}:_ {val}")
@@ -169,7 +203,9 @@ def timeline_to_text(tl) -> str:
         out.append(f"=== {label}  ({_jd_to_date(tp.period.start_jd)} .. "
                    f"{_jd_to_date(tp.period.end_jd)}) ===")
         pe = [a for a in tp.activated if a.grade == "par_excellence"]
-        lim = [a for a in tp.activated if a.grade == "limited"]
+        # every non-par-excellence grade (ordinary / same lord / limited / feeble) is listed
+        # with its own label — timing gap check fix 3 (2026-10-24) retired the two-grade view
+        lim = [a for a in tp.activated if a.grade != "par_excellence"]
         if pe:
             for a in pe:
                 out.append(f"  [par-excellence] House {a.house} ({_HOUSE_NAMES[a.house]}): "
@@ -177,7 +213,7 @@ def timeline_to_text(tl) -> str:
         else:
             out.append("  (no par-excellence house this period)")
         if lim:
-            out.append(f"  limited: {', '.join(str(a.house) for a in lim)}")
+            out.append("  " + "; ".join(f"{a.grade.replace('_', ' ')}: {a.house}" for a in lim))
     return _ascii("\n".join(out))
 
 
@@ -190,8 +226,9 @@ def timeline_to_markdown(tl) -> str:
         for a in pe:
             out.append(f"- **House {a.house} ({_HOUSE_NAMES[a.house]}):** "
                        f"{a.natal_verdict} ({a.natal_degree})")
-        lim = [a.house for a in tp.activated if a.grade == "limited"]
+        lim = [a for a in tp.activated if a.grade != "par_excellence"]
         if lim:
-            out.append(f"- _limited:_ {', '.join(map(str, lim))}")
+            out.append("- " + "; ".join(f"_{a.grade.replace('_', ' ')}:_ {a.house}"
+                                        for a in lim))
         out.append("")
     return _ascii("\n".join(out))

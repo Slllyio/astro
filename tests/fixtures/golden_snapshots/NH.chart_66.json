@@ -3,16 +3,21 @@
     "citations": [
       "HTJAH-II:11064",
       "HTJAH-II:13261",
+      "HTJAH-II:14214",
       "HTJAH-II:9467",
+      "HTJAH-II:9470",
       "HTJAH-II:9860"
     ],
     "fired_rule_ids": [
       "H10.C.26",
       "H10.C.33",
+      "H10.C.33m",
+      "H10.C.56",
       "H10.L.2",
+      "H10.L.2a",
       "H10.P.Jupiter"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "career": {
         "degree": "moderate",
@@ -30,7 +35,7 @@
         "verdict": "favourable"
       },
       "profession_learned": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -42,7 +47,7 @@
       "status_honour": {
         "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   },
@@ -66,9 +71,9 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "ear_throat": {
         "degree": "moderate",
@@ -76,14 +81,14 @@
         "verdict": "afflicted"
       },
       "short_journeys": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "siblings": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

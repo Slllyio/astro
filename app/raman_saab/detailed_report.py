@@ -20,6 +20,7 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, replace as _dc_replace
 from typing import Final, Iterable, Optional
 
@@ -30,7 +31,15 @@ from app.raman_saab import (
 )
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.constants import SIGN_LORDS
+
+#: module logger. NB: this module had NO logger while a debug call referenced one — the
+#: call sits in the theme-synthesis except handler, which only runs when synthesis
+#: raises, so healthy charts never reached it and CI stayed green while a sparse chart
+#: would have died of NameError inside the very handler meant to keep it alive.
+logger = logging.getLogger(__name__)
 from app.raman_saab.chart.model import BirthData, RamanChart
+from app.raman_saab.primitives.vimshottari import maraka_running_phrase
+from app.raman_saab.chart.ayanamsa import ayanamsa_label
 from app.raman_saab.judges.calibrated_reading import (
     _VALIDITY,
     CalibratedHouseReading,
@@ -117,6 +126,50 @@ def _jd_ym(jd: float) -> str:
     return f"{int(y)}-{int(m):02d}"
 
 
+def _reverse_vedha_cell(g) -> str:
+    """The snapshot row's reverse-Vedha cell (fix 9): the relieving grahas and the good house
+    they hold, or why there is none."""
+    if g.gochara_good:
+        return "-"
+    if g.planet in ("Rahu", "Ketu"):
+        return f"- ({tr.NODE_VEDHA_NOTE})"
+    rv_house = getattr(g, "reverse_vedha_house", None)
+    if rv_house is None:
+        return "- (not on a Vedha point)"
+    rv_by = getattr(g, "reverse_vedha_by", ()) or ()
+    return (f"relieved by {', '.join(rv_by)} in the {_ordinal(rv_house)}" if rv_by
+            else f"none in the {_ordinal(rv_house)}")
+
+
+def _timing_tables_md(tables) -> list[str]:
+    """Markdown for `raman_timing.TimingTable`s — every column, every row (REPORT COMPLETENESS)."""
+    out: list[str] = []
+    for t in tables:
+        out.append(f"### {t.title}")
+        out.append("")
+        out.append(f"_{t.note}_")
+        out.append("")
+        out.append("| " + " | ".join(t.columns) + " |")
+        out.append("|" + "---|" * len(t.columns))
+        for row in t.rows:
+            out.append("| " + " | ".join(str(c).replace("|", "/") for c in row) + " |")
+        out.append("")
+    return out
+
+
+def relief_word(planet: str, house_from_moon: Optional[int], frac: float) -> str:
+    """Plain word for REVERSE Vedha on an adverse transit (fix 9, 2026-10-24): "conversely, if
+    the Sun is in the 5th, in the course of Gochara, no evil [is] produced provided the 11th is
+    being transitted at the same time by any other planet, excepting Saturn" (HPA-34:161-164).
+    Nodes have no row in Raman's Vedhanka table (HPA-34:185-226)."""
+    if planet in ("Rahu", "Ketu"):
+        return f"- ({tr.NODE_VEDHA_NOTE})"
+    pair = tr.reverse_vedha_pair(planet, house_from_moon) if house_from_moon else None
+    if pair is None:
+        return "- (not on a Vedha point)"
+    return f"{_vedha_word(frac).split(' ')[0]} (relief from the {_ordinal(pair)})"
+
+
 def _vedha_word(frac: float) -> str:
     """Plain word for a Gochara outlook window's sampled Vedha-obstruction share — the fraction
     is a coarse, week-resolution estimate (see `GocharaSegment`), so it is deliberately reported
@@ -185,6 +238,60 @@ def _lagna_ledger(sv: SignificationVerdict) -> FrameLedger:
 
 
 #: lay-reader life-area names (for the plain-language bhukti summary).
+#: The honesty rules that govern the Preponderance table, ONE per entry: (heading, body).
+#:
+#: These used to be two italic paragraphs, and rule (3) alone ran ~250 words in a single
+#: sentence carrying six subordinate clauses and eight citations — the densest disclosure in
+#: the report, and the one most likely to be skipped by exactly the reader it protects.
+#: Nothing is dropped or softened here: every clause, every caveat and every citation is the
+#: same text, cut at its own joints and given the heading it always implied. Shared by all
+#: three renderers so the disclosure cannot drift between surfaces (it was missing from the
+#: interactive page entirely until this was factored out).
+PREPONDERANCE_RULES: tuple[tuple[str, str], ...] = (
+    ("A verdict is not one of its own witnesses",
+     "The Verdict column is the authoritative House-by-house verdict, unchanged, and it is "
+     "deliberately NOT counted among its own witnesses \u2014 a headline cannot corroborate "
+     "itself."),
+    ("The counting is a presentation convention, not Raman's weighing",
+     "Raman states NO numeric rule for how many testimonies decide a matter: HTJAH-I:495 says "
+     "only that all must be properly weighed, and his own worked conclusion weighs witnesses "
+     "unequally (HTJAH-I:8870-8876). The Preponderance column is a simple equal-weight "
+     "majority of the leaning witnesses \u2014 his vocabulary, not his weighing. It never "
+     "alters a verdict, and a 'contested' row means the witnesses split, not that the verdict "
+     "is wrong."),
+    ("The witnesses are NOT independent votes",
+     "Lord, karaka and navamsa are the verdict's own inputs restated by name, and the "
+     "majority tenor derives from the same significations as the headline."),
+    ("How yogas are mapped to houses",
+     "Yogas bearing on a house are Raman's Primary Considerations (e.g. HTJAH-I:4135-4139) "
+     "and ARE tallied here. They are mapped on his worked-chart principle: the houses each "
+     "yoga's constituent planets own, occupy or aspect \u2014 \"the nature of ownership of "
+     "the planets causing the yoga\" (HTJAH-I:2879-2890). That is the principle, not an "
+     "exact derivation; his own example there names one house this mapping cannot produce."),
+    ("Two limits on the yoga mapping, disclosed",
+     "Whole-chart pattern yogas carry no constituent identity and are left unmapped. "
+     "Formation-strength modifiers are not graded: dusthana formation can nullify Gajakesari "
+     "(HTJAH-I:2948-2956) and can bring Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not "
+     "absolutely, 15531), so a dusthana-formed raja yoga may lean favourable here despite a "
+     "possible bhanga."),
+    ("Which way a yoga row leans",
+     "By its encoded kind \u2014 raja and dhana favourable, arishta adverse \u2014 and, for "
+     "the yogas whose classical printed effect is unambiguous, by that effect: the Pancha "
+     "Mahapurusha, Budha-Aditya, Vasumathi and Jaya favourable; Daridra and Asatyavadi "
+     "adverse, each with its own citation in the Yogas section. Lunar and the remaining "
+     "other-kind yogas stay neutral, since a conditionally-benefic lunar yoga can be "
+     "nullified in dusthana formation. Bhava-Bala rank is shown as a magnitude and carries "
+     "no direction."),
+    ("Core testimony is separated from overlay cross-checks",
+     "A witness-class tag separates core testimony \u2014 the house's own lord, karaka and "
+     "navamsa, the axes Raman's summing-up itself names (HTJAH-I:983-991) \u2014 from "
+     "overlay cross-checks (SAV band, Bhava-Bala rank, matter-vargas, majority tenor, yoga "
+     "bearings). The Core column restates the same rows as a second count pair; it is Raman's "
+     "unequal weighing made visible, not a new weighting, and it alters nothing. Yoga-bearing "
+     "rows additionally disclose their link: [direct - own/occupy], the factor his worked "
+     "charts demonstrate, vs [aspect-derived - admitted extension]."),
+)
+
 _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings",
                4: "home & mother", 5: "children & creativity", 6: "health & rivals",
                7: "marriage & partnership", 8: "longevity", 9: "fortune & father",
@@ -361,7 +468,7 @@ _SIGNIFICATION_PLAIN: dict[str, str] = {
     "profession_learned": "career in a learned profession",
     "profession_labour": "career built on hands-on work",
     "status_honour": "public standing and honour",
-    "gains": "gains and income", "elder_siblings": "elder siblings",
+    "gains": "gains and income", "means_of_gain": "the means of earning", "elder_siblings": "elder siblings",
     "friends": "friendships", "acquisitions": "acquiring possessions",
     "loss_moksha": "release and letting go", "expenditure": "spending",
     "foreign_residence": "living abroad", "moksha": "spiritual liberation",
@@ -378,6 +485,10 @@ _TIER_MEANING = {
     "ordinary": "normal results — both lords touch it, but do not reinforce",
     "limited": "slight results — only the current sub-period (bhukti) lord touches it",
     "feeble": "faint results — only the major-period (Mahadasha) lord touches it",
+    # USER DECISION 2026-10-24 (timing gap check fix 3): the Mahadasha lord's own bhukti.
+    # Raman's par-excellence test is for "the sub-period of another" (HTJAH-I:1635).
+    "same lord": "the major-period lord's own sub-period — it touches the house, and "
+                 "Raman's association test between two lords does not apply",
 }
 
 
@@ -447,6 +558,18 @@ def _reading_order() -> tuple[str, ...]:
 #: without ever putting the completeness guarantee at risk.
 _SECTION_SPECS: tuple[SectionSpec, ...] = (
     SectionSpec("title", "# Detailed reading", 'class="name"', "v1"),
+    # v40 (merged 2026-10-14; was v37 on the empirical-engine branch) -- reading position now
+    # set by the arc (right after the header block), not by this literal's order.
+    # v37 (2026-08-20, user-requested: "the report is too technical; we should have one
+    # section that gives a summary in very simple terms"). Inserted FIRST, before even the
+    # plain-English chapter — the third such conscious exception to append-at-the-end, after
+    # v5 and v32, and for the same reason each of those had: a reader has to meet this before
+    # anything else or it is not doing its job. "Your Reading" is plain ENGLISH; this is plain
+    # SENSE — no Sanskrit, no planet names, no house numbers, no citations, no percentages.
+    # It creates nothing (PREC-10): every line re-reads a verdict judged elsewhere, and it
+    # says on its own face that the chapter governs when the two disagree. _FROZEN in the
+    # contract test was reordered to match, in the same commit, per the procedure.
+    SectionSpec("simple_summary", "## In simple words", 'id="simple-summary"', "v40"),
     # v5 (2026-07-26, conscious amendment): "Your Reading" inserted right after the title — the
     # ONE deliberate exception to "append at the end". Every prior amendment (v2/v3/v4) only
     # ever grew the list downward; this one must come FIRST, because it exists specifically to
@@ -469,6 +592,17 @@ _SECTION_SPECS: tuple[SectionSpec, ...] = (
     # (app/raman_saab/interpretation_guide.py), also shipped machine-readable in the JSON.
     SectionSpec("interpretation_guide", "## How to read this report",
                 'id="interpretation-guide"', "v18"),
+    # v37 (merged 2026-10-14; was v34 on the empirical-engine branch) -- reading position now
+    # set by the arc (Movement II, before stands_out).
+    # v34 (2026-08-18, user-requested): the integrated interpretation layer — the theme
+    # synthesis reading ACROSS every section into one coherent whole (Executive Portrait,
+    # dominant themes, house networks, contradictions, dasha evolution, varga matrix). A
+    # conscious near-top amendment (the v5/v32 exception): the honesty gate and the
+    # how-to-read precedence come first, then the integrated interpretation opens the
+    # substantive reading, then the technical sections it explains. Re-read only; the
+    # golden ratchet is untouched (theme_synthesis imports nothing in the verdict path).
+    # _FROZEN grown in the same commit per the amendment procedure.
+    SectionSpec("themes", "## The integrated reading", 'id="integrated-reading"', "v37"),
     SectionSpec("stands_out", "## What stands out in this chart", 'id="stands-out"', "v1"),
     # v19 (2026-08-03, conscious amendment, same audit as v18): the engine's own ranked
     # digest — computed since the share-the-app arc and shipped in JSON + the interactive
@@ -617,19 +751,57 @@ _SECTION_SPECS: tuple[SectionSpec, ...] = (
     SectionSpec("dominance", "## What governs each house", 'id="dominance"', "v34"),
     SectionSpec("restraint", "## How firmly each house stands", 'id="restraint"', "v34"),
     SectionSpec("analogy", "## Charts of Raman's this one recalls", 'id="analogy"', "v34"),
+    # v36 (merged 2026-10-14; was v33 on the empirical-engine branch):
+    # (2026-08-14, user-requested): aptitude, intelligence & work style — the three
+    # trait axes the report never had as output fields, re-read from already-judged
+    # material (H5 intellect + Jupiter karaka, Mercury via graha_chapters, the fired
+    # H1.M.* Moon-mind rule, H3 courage, the HTJAH-II vocational tables, H10 modes).
+    # Appended at the END per the append-only default; _FROZEN grown in the same commit.
+    SectionSpec("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"', "v36"),
+    # v38 (merged 2026-10-14; was v35 on the empirical-engine branch):
+    # (2026-08-19): the medical read — HPA-29's sign->anatomy and planet->disease
+    # tables applied through Raman's own 6th-house procedure (HPA-29:433-440). Encoded
+    # once the doctrine corpus was mounted and the chapter's line anchors verified; it
+    # closes the audit's largest content gap, where the health section asked "which body
+    # areas does the chart mark" and answered with house numbers. Appended at the END per
+    # the append-only default; _FROZEN grown in the same commit.
+    SectionSpec("medical", "## Medical read (classical correspondence)", 'id="medical"',
+                "v38"),
+    # v39 (merged 2026-10-14; was v36 on the empirical-engine branch):
+    # (2026-08-20, user-requested): the feedback instrument — the questionnaire the reader
+    # answers about their own life, generated with the reading rather than bolted on after it.
+    # Appended at the very END on purpose: it is the one section that asks rather than tells,
+    # and it closes the document. Its Part A is meant to be answered BEFORE the reading is read
+    # (the section says so, and the interactive page offers a jump to it from the top), which is
+    # why the part carries no astrology at all. Appended per the append-only default; _FROZEN
+    # grown in the same commit.
+    SectionSpec("feedback", "## Your feedback", 'id="feedback"', "v39"),
+    # v41 (merged 2026-10-14; was v38 on the empirical-engine branch):
+    # (2026-09-01, user-requested: "why is it always good or bad -- can't we use whatever
+    # Raman has written?"). The collected non-graded lane: every indication in the chart that
+    # is a KIND, cause, channel, count or circumstance rather than a favourable/afflicted
+    # grade, grouped by category. A pure re-read (PREC-10) of the three house-block composers
+    # -- it computes nothing and adds no doctrine. Appended at the END, no exception claimed:
+    # it is a cross-reference chapter, and a reader meets the houses first. _FROZEN grown in
+    # the same commit, per the procedure.
+    SectionSpec("indications", "## What Raman's rules indicate", 'id="indications"', "v41"),
+    # (The six empirical-engine rows above were appended at the END of the SET per the
+    # append-only default; since the 2026-10-14 merge their reading position is set
+    # by the arc in `report_movements`, like every other section.)
 )
 
 # v33 amendment (2026-08-05, conscious, same-commit, user-requested — the third and largest
 # order amendment after v5's `plain_reading` and v32's `judgment_graph`). The reading SEQUENCE
 # now lives in `report_movements.MOVEMENTS`, which groups all 53 sections into seven movements
-# following a reading arc rather than the order in which they were built.
+# following a reading arc rather than the order in which they were built. (63 since the
+# 2026-10-14 merge: v34-v35 on main plus the six empirical-engine sections, v36-v41.)
 #
 # The two invariants the old single tuple conflated are now separate:
 #   * COMPLETENESS stays frozen and append-only — `_SECTION_SPECS` above is untouched, and the
 #     contract test asserts SET equality against its hand-copied `_FROZEN` triples. Nothing is
 #     ever removed or hidden (REPORT COMPLETENESS).
 #   * ORDER is a design decision, versioned separately and pinned by the test's hand-copied
-#     `_ORDER_V33`, so re-sequencing stays as deliberate an act as changing a marker.
+#     `_ORDER_V41` (was `_ORDER_V33`), so re-sequencing stays as deliberate an act as changing a marker.
 #
 # Both orders are DERIVED from the arc rather than restated, so the registry and the renderers
 # can never silently drift apart.
@@ -664,6 +836,17 @@ class InfoContent:
             f"disclosure about the method's output, not a statement about a life.")
 
 
+#: The canonical measured population framing (Wave-2, 2026-08-17): the mechanism constants
+#: recorded in CLAUDE.md / docs/raman_saab/CAPSTONE.md — calibration context for the
+#: near-universal count, NEVER a validation claim. Rendered beneath the info sentence on
+#: every surface.
+POPULATION_NOTE: Final[str] = (
+    "Population context (measured, for calibration - never validation): across 22,177 real "
+    "charts judged by this same method, the median chart carries 19 afflicted and 31 "
+    "favourable significations simultaneously, and 97.1% of charts offer both poles at "
+    "once - which is why a near-universal reading says almost nothing about any one life.")
+
+
 def _all_entries(calibration: dict[int, CalibratedHouseReading]):
     """(house, entry) for every calibrated signification, house order."""
     for house in sorted(calibration):
@@ -690,14 +873,48 @@ def information_content(calibration: dict[int, CalibratedHouseReading]) -> InfoC
     )
 
 
-def distinctive_entries(calibration: dict[int, CalibratedHouseReading], n: int = 7):
-    """The n readings that most distinguish this chart — furthest from the population midpoint,
-    rare readings first. Returns [(house, entry)] ranked. Pure information content, not prediction."""
+#: rarity-band precedence for "what stands out": rare strictly before notable before common
+#: (the old two-way common/non-common split let the sole RARE row sort last — 2026-08-17 fix).
+_RARITY_ORDER: Final[dict[str, int]] = {"rare": 0, "notable": 1, "common": 2}
+
+
+def distinctive_entries(calibration: dict[int, CalibratedHouseReading], n: int | None = None):
+    """The readings that most distinguish this chart — rarity band first (rare before
+    notable before common), then furthest from the population midpoint within each band.
+    Returns [(house, entry)] ranked. Pure information content, not prediction.
+
+    With ``n=None`` (the default since 2026-08-17, report-critique fix) EVERY entry the
+    info-content census counts as distinctive (``rarity != "common"``) is returned, so the
+    table's row-count always equals the census sentence's "N are genuinely distinctive" —
+    the old fixed cap of 7 showed 7 rows while the sentence said 17. Pass an explicit ``n``
+    to cap the ranked list (legacy behaviour, top-n regardless of band)."""
     scored = [(h, e) for h, e in _all_entries(calibration)
               if e.favourability_percentile is not None]
-    scored.sort(key=lambda he: (-(0 if he[1].rarity == "common" else 1),
+    scored.sort(key=lambda he: (_RARITY_ORDER.get(he[1].rarity, 3),
                                 -abs(he[1].favourability_percentile - 0.5)))
+    if n is None:
+        return tuple(he for he in scored if he[1].rarity != "common")
     return tuple(scored[:n])
+
+
+def distinctive_gloss(e) -> str:
+    """One plain sentence making a distinctive row intelligible: which side of the
+    population midpoint it sits on — with an explicit flag when that direction and the
+    verdict's own direction disagree (a favourable verdict at the 32nd percentile is a
+    real, non-obvious combination, not a typo). Descriptive idiom only, never a claim
+    about a life."""
+    pct = getattr(e, "favourability_percentile", None)
+    if pct is None:
+        return ""
+    if pct >= 0.5:
+        gloss = f"more favourable than {pct:.0%} of charts"
+        if e.verdict == "afflicted":
+            gloss += ", despite the afflicted verdict"
+    else:
+        gloss = f"less favourable than {1 - pct:.0%} of charts"
+        if e.verdict == "favourable":
+            gloss += ", despite the favourable verdict"
+    return gloss
 
 
 def driver_entry(reading: CalibratedHouseReading, rollup: str):
@@ -824,6 +1041,41 @@ def house_conclusion(r: "DetailedReport", house: int) -> str:
         if pillar:
             bits.append("; ".join(pillar))
 
+    # DISSENTING-PILLAR DISCLOSURE (2026-08-30, add-only — the FAVOUR=2 review's owed
+    # honesty item): a favourable carried by the 2-of-3 pillar preponderance owes the reader
+    # the third pillar's SPECIFIC denial, because that is exactly how Raman writes such
+    # charts — Chart 80 grants "a very high official position" AND "very ordinary school
+    # education" in one conclusion (HTJAH-I:4856-4858): the dissenting factor's denial is
+    # confined to its own signification, never averaged away and never allowed to dilute
+    # the headline. Composed only from ledger facts already computed; discloses, never
+    # re-weighs.
+    if led is not None and verdict == "favourable":
+        known = [("lord", led.lord_strong), ("karaka", led.karaka_strong),
+                 ("bhava", led.bhava_bala_strong)]
+        known = [(n, v) for n, v in known if v is not None]
+        weak = [n for n, v in known if v is False]
+        if len(known) >= 2 and len(weak) == 1:
+            dissent = {
+                "lord": "the house-lord is the dissenting pillar — the matters resting "
+                        "specifically on the lord's own condition are not carried by this "
+                        "favourable and should be read separately",
+                "karaka": "the karaka is the dissenting pillar — the karaka's own natural "
+                          "significations are not carried by this favourable and should be "
+                          "read separately",
+                "bhava": "the Bhava Bala is the dissenting pillar — the favourable stands "
+                         "on lord and karaka, with the house's own magnitude lagging",
+            }[weak[0]]
+            bits.append(dissent + " (Raman's Chart 80 device: high office and denied "
+                        "schooling in one conclusion — each confined to its own indicator)")
+
+    # Wave-2 D3 (2026-08-18, add-only): the moderating-factor clause — Raman's own
+    # partial-affliction device ("the affliction is considerably reduced by..."),
+    # composed ONLY from flags the judge's ledger already carries and disclosed
+    # descriptively; never a remedy, never a date, never a re-weighing.
+    mod = house_moderating_clause(r, house)
+    if mod:
+        bits.append(mod)
+
     hs = next((row for row in r.house_strength if row.house == house), None)
     if hs is not None and hs.bhava_bala_rank is not None:
         rank = hs.bhava_bala_rank
@@ -876,27 +1128,826 @@ def house_conclusion(r: "DetailedReport", house: int) -> str:
     return ". ".join(b[0].upper() + b[1:] for b in bits) + "."
 
 
+# ── Wave-2 house-block composers (2026-08-18, add-only; shared by BOTH renderers, the
+#    `house_conclusion` no-drift precedent). Each is a pure re-read of already-computed
+#    ledgers/metadata/timeline rows — no verdict, lean, count or gate is touched. ──────
+
+#: The one rule-record fortified-branch placeholder that is maintenance text, not Raman's
+#: effect prose — chief-combination rows carrying it are skipped (house-critique ADD-1).
+_CHIEF_PLACEHOLDER: Final[str] = "no specifically favourable variant given"
+
+
+def house_chief_combinations(r: "DetailedReport", house: int, per_sig: int = 3,
+                             ) -> tuple[tuple[str, str, str, str], ...]:
+    """The chief fired combinations of a house — (signification, rule id, Raman's effect
+    prose, work:line) — exactly how HTJAH's own chapters argue a bhava: the combination,
+    in his words, with its citation. Selection only, no judgment: per signification the
+    LEAD ledger's fired rules, the branch matching the signification's own verdict tenor
+    first (malefic rows on an afflicted verdict, benefic on favourable), capped at
+    `per_sig`, de-duplicated by rule id across the house. Fortified rows whose text is
+    the recorded no-variant placeholder are skipped (they are maintenance notes, not
+    effect prose).
+
+    Wave-3 (2026-08-18): the effect prose is routed through the marriage monograph's own
+    `monographs.split_maintainer_notes` — encoding-scope artifacts ("v1-OOS", "owned by
+    H7.C.60", "TODO(predicate: ...)") leave the client sentence and are re-emitted, in
+    full, by `house_maintainer_notes` as a trailing fine-print line. Routing, never
+    removal; one helper, not a second implementation."""
+    from app.raman_saab.monographs import split_maintainer_notes
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ()
+    out: list[tuple[str, str, str, str]] = []
+    seen: set[str] = set()
+    for sv in pf.significations:
+        led = sv.ledger
+        v = str(sv.verdict)
+        ordered = ((*led.fired_malefic, *led.fired_benefic, *led.fired_neutral)
+                   if v == "afflicted" else
+                   (*led.fired_benefic, *led.fired_malefic, *led.fired_neutral))
+        taken = 0
+        for fr in ordered:
+            if taken >= per_sig:
+                break
+            if fr.rule.id in seen:
+                continue
+            text = (fr.text or "").strip()
+            if not text or _CHIEF_PLACEHOLDER in text:
+                continue
+            seen.add(fr.rule.id)
+            client, _notes = split_maintainer_notes(text)
+            out.append((sv.signification, fr.rule.id, client or text,
+                        f"{fr.rule.source.work}:{fr.rule.source.line}"))
+            taken += 1
+    return tuple(out)
+
+
+#: Reader-facing labels for the metadata keys. Extends `render._NOTE_LABELS` (which covers
+#: the legacy text surface) with every key `_lookup_metadata`, `_matter_varga_overlay` and
+#: `_ashtakavarga_overlay` actually emit. A key with no label renders under its own name
+#: rather than being dropped — the completeness contract forbids silent omission.
+_INDICATION_LABELS: Final[dict[str, str]] = {
+    "decanate_cause": "cause-of-end decanate (22nd drekkana)",
+    "drekkana22_lord": "22nd-drekkana lord",
+    "source_of_gains": "source of gains",
+    "karaka_in_12": "karaka in the 12th (Bhavartha Ratnakara inversion)",
+    "confinement_mode": "mode of confinement",
+    "organ_of": "organ ruled",
+    "tridosha_of": "tridosha",
+    "beeja_kshetra": "fertility sphutas",
+    "ayurdaya": "longevity span",
+    "death_window": "death-prone Dasha",
+    "active_periods": "active Dasha",
+    "saptamsa": "Saptamsa (children varga)",
+    "sav_bindus": "Sarvashtakavarga bindus",
+    "yoga": "yoga modulation",
+    "marital_bond": "marital bond",
+    "catastrophic_gate": "catastrophic-severity gate",
+}
+
+
+def indication_label(key: str) -> str:
+    """Reader-facing label for a metadata key. Varga keys (`varga_D10`) are formatted
+    generically so a new varga needs no table edit; unknown keys fall back to the key."""
+    if key.startswith("varga_D"):
+        return f"D{key[7:]} (divisional) reading"
+    return _INDICATION_LABELS.get(key, key.replace("_", " "))
+
+
+def house_indications(r: "DetailedReport", house: int,
+                      ) -> tuple[tuple[str, str, str], ...]:
+    """(signification, label, value) for every metadata pair a house's significations carry.
+
+    THE POINT OF THIS FUNCTION. `SignificationVerdict.metadata` is the engine's existing
+    non-verdict channel — its own docstring says "Lookup rows never change the verdict" —
+    and it carries the classificatory doctrine Raman states that a favourable/afflicted
+    grade cannot express: the cause-of-end decanate, the source-of-gains channel, the organ
+    and tridosha of an afflicting graha, the mode of confinement, the Bhavartha inversion.
+    On the canonical chart the engine computes **165 such pairs and rendered exactly one**
+    (`catastrophic_gate`); `report_html` read none of them and `report_json._proforma_dict`
+    dropped them before the interactive page could see them. Worse, `house_longevity_pointer`
+    below TELLS the reader the decanate detail "is carried in the Longevity chapter", where
+    only the drekkana lord printed — a promise the product did not keep.
+
+    Selection and formatting only: this reads a field `judge_signification` already returns
+    and cannot alter a verdict. Deterministic order (significations in proforma order, pairs
+    in their recorded order)."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ()
+    out: list[tuple[str, str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for sv in pf.significations:
+        for key, val in sv.metadata:
+            out.append((sv.signification, indication_label(key), str(val)))
+            seen.add((key, str(val)))
+    #: House-level metadata too (`HouseProforma.metadata`), skipping any pair a
+    #: signification already carried — on H8 the death-window and decanate rows are
+    #: recorded at both levels, and printing them twice would be noise, not completeness.
+    for key, val in pf.metadata:
+        if (key, str(val)) not in seen:
+            out.append(("this house", indication_label(key), str(val)))
+    return tuple(out)
+
+
+def house_further_combinations(r: "DetailedReport", house: int,
+                               ) -> tuple[tuple[str, str, str, str], ...]:
+    """The fired rules of a house that `house_chief_combinations` did NOT show.
+
+    That composer caps at `per_sig=3` per signification and orders `fired_neutral` last, so
+    a matter carrying three polar rules shows none of its non-graded ones. The cap is right
+    for a "chief combinations" list — it keeps the lead argument readable — but under the
+    CLAUDE.md completeness lock the remainder may not simply vanish. This is the remainder,
+    same tuple shape, same maintainer-note routing, deterministic order.
+
+    Selection only. Reads the ledgers the judge already produced; changes nothing."""
+    from app.raman_saab.monographs import split_maintainer_notes
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ()
+    shown = {c[1] for c in house_chief_combinations(r, house)}
+    out: list[tuple[str, str, str, str]] = []
+    seen: set[str] = set()
+    for sv in pf.significations:
+        led = sv.ledger
+        for fr in (*led.fired_malefic, *led.fired_benefic, *led.fired_neutral):
+            if fr.rule.id in shown or fr.rule.id in seen:
+                continue
+            text = (fr.text or "").strip()
+            if not text or _CHIEF_PLACEHOLDER in text:
+                continue
+            seen.add(fr.rule.id)
+            client, _notes = split_maintainer_notes(text)
+            out.append((sv.signification, fr.rule.id, client or text,
+                        f"{fr.rule.source.work}:{fr.rule.source.line}"))
+    return tuple(out)
+
+
+def house_general_readings(r: "DetailedReport", house: int,
+                           ) -> tuple[tuple[str, str, str, str], ...]:
+    """Raman's UNCONDITIONED reading for each fired rule of a house that records one.
+
+    His "Results of Lord of the Nth House Occupying Different Houses" sections give a general
+    statement first and only then a fortified one; the general statement holds regardless of
+    strength, and he says so at HTJAH-I:1003-1007 ("the combination is of general
+    application... The same rules apply to all Bhava"). The corpus had nowhere to put it —
+    two slots, both strength-conditioned — so it was filed under `afflicted`, and a
+    weak-lord chart was shown Raman's base reading under an "afflicted" heading. See
+    `RuleRecord.general`.
+
+    Rows whose general text equals the branch text already shown are skipped: where Raman
+    gave no conditioned paragraph, `fortified` legitimately carries the same sentence, and
+    printing it twice would be noise rather than completeness."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ()
+    out: list[tuple[str, str, str, str]] = []
+    seen: set[str] = set()
+    for sv in pf.significations:
+        led = sv.ledger
+        for fr in (*led.fired_malefic, *led.fired_benefic, *led.fired_neutral):
+            gen = (getattr(fr.rule, "general", None) or "").strip()
+            if not gen or fr.rule.id in seen:
+                continue
+            if gen == (fr.text or "").strip():
+                continue
+            seen.add(fr.rule.id)
+            out.append((sv.signification, fr.rule.id, gen,
+                        f"{fr.rule.source.work}:{fr.rule.source.line}"))
+    return tuple(out)
+
+
+def _on_record_text(rule) -> str:
+    """Both result texts of a rule that never fires, joined without asserting a branch.
+
+    A descriptive rule has no `condition`, so no chart ever selects between its `fortified`
+    and `afflicted` slots — presenting either one under a strength heading would claim a
+    reading the engine did not make. They are joined plainly instead."""
+    parts = [s.strip() for s in (rule.fortified, rule.afflicted) if s and s.strip()]
+    parts = [s for s in parts if _CHIEF_PLACEHOLDER not in s]
+    return " / ".join(dict.fromkeys(parts))
+
+
+def descriptive_house_rules(house: int) -> tuple[tuple[str, str, str, str], ...]:
+    """Raman's doctrine on record for a house that the engine cannot yet evaluate.
+
+    97 `RuleRecord`s corpus-wide carry `kind="descriptive"` and `condition=None`. Both
+    `rules.fires()` and `rule_firing.fire_rules` skip them, and nothing else reads them —
+    so despite the class docstring promising they are "surfaced with its citation when a
+    placement holds", NO such path existed and their text reached no reader at all. This is
+    that path, mirroring the `descriptive_rules()` / "Further combination doctrine on
+    record" block the synthesis layer has used since 2026-08-18.
+
+    Framed as doctrine ON RECORD, never as a reading of this chart: these rules were not
+    evaluated, and saying otherwise would be a false claim about the engine's own work."""
+    from app.raman_saab.doctrine.rule_sets import ALL_RULES
+    from app.raman_saab.monographs import split_maintainer_notes
+    out: list[tuple[str, str, str, str]] = []
+    for rule in ALL_RULES:
+        if rule.house != house or rule.kind != "descriptive":
+            continue
+        text = _on_record_text(rule)
+        if not text:
+            continue
+        client, _notes = split_maintainer_notes(text)
+        out.append((rule.signification, rule.id, client or text,
+                    f"{rule.source.work}:{rule.source.line}"))
+    return tuple(out)
+
+
+#: Category -> the substrings that place an indication in it. Deliberately CONSERVATIVE:
+#: an indication that matches nothing lands in "other", never force-fit. Grouping is the only
+#: thing a mis-classification can damage — every row prints its full text, rule id and
+#: citation regardless of which bucket it falls in, so no doctrine is lost either way.
+#: Order matters: the first category whose cue matches wins, so the more specific ones
+#: (manner of death, disease) are listed before the broad ones (character).
+_INDICATION_CATEGORIES: Final[tuple[tuple[str, str, tuple[str, ...]], ...]] = (
+    ("timing", "When the matter is active (Dasha windows)",
+     ("active dasha:", "death-prone dasha:", "active periods")),
+    ("strength", "Measured strength and divisional readings",
+     ("sarvashtakavarga bindus:", "(divisional) reading:", "longevity span:",
+      "yoga modulation:", "saptamsa", "fertility sphutas:")),
+    ("manner", "How things end (manner, cause)",
+     ("drekkana", "decanate", "manner of", "cause of end", "hanging", "drowning",
+      "snake", "serpent", "weapon", "poison", "fire-", "burns", "suicide", "peaceful end",
+      "sudden end", "death by", "dies by")),
+    ("disease", "Body, health and named ailments",
+     ("disease", "ailment", "illness", "sick", "fever", "consumption", "leprosy",
+      "anaemia", "anemia", "tuberculo", "diabet", "piles", "asthma", "epilep", "deaf",
+      "blind", "eye", "ear-", "teeth", "tooth", "phlegm", "bilious", "windy", "organ",
+      "tridosha", "constitution", "body", "wound", "surgery", "operation")),
+    ("profession", "Work, calling and livelihood",
+     ("profession", "occupation", "livelihood", "career", "trade", "business",
+      "physician", "surgeon", "doctor", "lawyer", "judge", "judiciary", "army",
+      "commander", "priest", "teacher", "musician", "mathematician", "writer",
+      "engineer", "merchant", "agricultur", "servant", "jailor", "cemetery",
+      "government service", "diplomat")),
+    ("place", "Places and domains",
+     ("foreign", "abroad", "far-off", "pilgrimage", "holy place", "temple", "prison",
+      "hospital", "cemetery", "watery", "hill", "forest", "village", "town")),
+    ("count", "Counts and numbers",
+     ("two wives", "more than one", "only once", "three ", "first child", "first-born",
+      "number of", "many children", "no issue", "childless", "elder brother",
+      "younger brother", "many brothers")),
+    ("aptitude", "Mind, aptitude and learning",
+     ("intelligent", "learned", "scholar", "orator", "eloquent",
+      "buddhi", "intellect", "memory", "occultism", "astrolog", "mathematic",
+      "weak-minded", "aberration", "education", "knowledge")),
+    ("character", "Character and disposition",
+     ("character", "courageous", "timid", "generous", "miser", "honest", "sinful",
+      "wicked", "mean ", "sarcastic", "religious", "god-fearing", "virtuous",
+      "quarrel", "short-tempered", "ambitious", "independent spirit", "licentious",
+      "sensual", "immoral", "gambling", "philanthropic", "large-hearted")),
+    ("circumstance", "Circumstances of life",
+     ("rich", "wealth", "poverty", "penury", "debts", "gains", "losses", "property",
+      "land", "conveyance", "inherit", "fines", "expenditure", "prosperity",
+      "financial", "fortune", "fortunate", "misfortune")),
+)
+
+
+def indication_category(text: str) -> tuple[str, str]:
+    """(key, reader label) for an indication's text. "other" when nothing matches — the
+    conservative default, so an unmatched row is grouped honestly rather than force-fit."""
+    low = text.lower()
+    for key, label, cues in _INDICATION_CATEGORIES:
+        if any(cue in low for cue in cues):
+            return key, label
+    return "other", "Other indications on record"
+
+
+#: The bucket order the chapter prints in — the same order as `_INDICATION_CATEGORIES`,
+#: with "other" last so an unmatched row never leads the chapter.
+INDICATION_CATEGORY_ORDER: Final[tuple[str, ...]] = (
+    tuple(k for k, _l, _c in _INDICATION_CATEGORIES) + ("other",))
+
+
+def collected_indications(r: "DetailedReport",
+                          ) -> tuple[tuple[str, tuple[tuple[int, str, str, str, str], ...]], ...]:
+    """Every non-graded indication in the chart, grouped by category.
+
+    ((category label, ((house, source-kind, matter, text, citation), ...)), ...)
+
+    A PURE RE-READ (PREC-10) of what the house blocks already show: the three composers
+    above are called and their rows regrouped. It computes no verdict, reads no chart, and
+    adds no doctrine — if a row is here it is already in a house block, and vice versa.
+
+    `source-kind` is carried into the row and is NOT decoration: it says whether the line
+    was COMPUTED for this chart ("computed" — a `metadata` lookup), FIRED on it ("fired" /
+    "general" — a rule whose condition holds), or merely RECORDED and never evaluated
+    ("on record"). Collapsing those together would let an unevaluated rule read as a
+    finding, which is the one thing this chapter must not do."""
+    rows: list[tuple[int, str, str, str, str]] = []
+    for house in range(1, 13):
+        for sig, label, value in house_indications(r, house):
+            rows.append((house, "computed", sig, f"{label}: {value}", ""))
+        for sig, rid, text, cite in house_general_readings(r, house):
+            rows.append((house, "general", sig, text, f"{rid} - {cite}"))
+        for sig, rid, text, cite in house_chief_combinations(r, house):
+            rows.append((house, "fired", sig, text, f"{rid} - {cite}"))
+        for sig, rid, text, cite in house_further_combinations(r, house):
+            rows.append((house, "fired", sig, text, f"{rid} - {cite}"))
+        for sig, rid, text, cite in descriptive_house_rules(house):
+            rows.append((house, "on record", sig, text, f"{rid} - {cite}"))
+
+    by_key: dict[str, list[tuple[int, str, str, str, str]]] = {}
+    labels: dict[str, str] = {}
+    for row in rows:
+        key, label = indication_category(row[3])
+        labels[key] = label
+        by_key.setdefault(key, []).append(row)
+    return tuple((labels[k], tuple(by_key[k]))
+                 for k in INDICATION_CATEGORY_ORDER if by_key.get(k))
+
+
+def longevity_decanate_cause(r: "DetailedReport") -> str:
+    """The 22nd-drekkana CLASS row (`decanate_cause`) for the Longevity chapter.
+
+    `house_longevity_pointer` above tells the reader this detail "is carried in the
+    Longevity chapter below" — and until now that chapter printed only the drekkana LORD,
+    never the class Raman actually reads the manner from. This closes that gap, at the
+    place the pointer names. Returns "" when the judge computed no class (a sentinel
+    midpoint or an unclassified cell), so it can never invent one."""
+    for pf in r.proformas:
+        for key, val in pf.metadata:
+            if key == "decanate_cause":
+                return str(val)
+        for sv in pf.significations:
+            for key, val in sv.metadata:
+                if key == "decanate_cause":
+                    return str(val)
+    return ""
+
+
+def house_maintainer_notes(r: "DetailedReport", house: int, per_sig: int = 3) -> str:
+    """The encoding-scope fine print stripped out of this house's chief-combination
+    prose, re-emitted verbatim in ONE trailing line (the marriage monograph's own
+    device). Nothing is lost: `house_chief_combinations` carries the client sentence,
+    this carries the maintainer half, and the raw rule text in the data is untouched."""
+    from app.raman_saab.monographs import split_maintainer_notes
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ""
+    kept = {rid for _s, rid, _t, _c in house_chief_combinations(r, house, per_sig)}
+    notes: list[str] = []
+    for sv in pf.significations:
+        for _led in (sv.ledger,):
+            for fr in (*_led.fired_malefic, *_led.fired_benefic, *_led.fired_neutral):
+                if fr.rule.id not in kept:
+                    continue
+                _client, note = split_maintainer_notes((fr.text or "").strip())
+                row = f"{fr.rule.id}: {note}" if note else ""
+                if row and row not in notes:
+                    notes.append(row)
+    return " | ".join(notes)
+
+
+def house_frame_line(r: "DetailedReport", house: int) -> str:
+    """The frame-disclosure line — WHICH reference frame judged this house, with the
+    Lagna frame named beside it (Raman names his frame in nearly every worked chart;
+    the stronger frame-lord decides, HTJAH-I:645-646). Composed entirely from
+    `lead_frame` + the frames' own ledgers; it re-states, never re-decides — and it
+    reconciles the pillar line (always lagna-frame figures) with the reading line
+    (lead-frame figures) by naming both."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None or not pf.significations:
+        return ""
+    sv = pf.significations[0]
+    lagna_led = _lagna_ledger(sv)
+
+    def _facts(led) -> str:
+        s = led.lord
+        if led.lord_strong is not None:
+            s += f", {'strong' if led.lord_strong else 'weak'}"
+        s += f", navamsa {led.navamsa_status}"
+        return s
+
+    frame_word = {"lagna": "Lagna", "moon": "Moon (Chandra Lagna)",
+                  "karaka": "karaka"}.get(str(sv.lead_frame), str(sv.lead_frame))
+    if str(sv.lead_frame) == "lagna":
+        line = f"Judged from the Lagna frame (lord {_facts(lagna_led)})"
+        moon_led = next((L for L in (sv.ledger, *sv.alt_ledgers) if L.frame == "moon"),
+                        None)
+        if moon_led is not None:
+            line += (f"; from the Moon (Chandra Lagna) the frame-lord is "
+                     f"{_facts(moon_led)}")
+    else:
+        line = (f"Judged from the {frame_word} frame (lord {_facts(sv.ledger)}); "
+                f"from the Lagna the lord is {_facts(lagna_led)}")
+    return line + " - the stronger frame-lord's frame decides (HTJAH-I:645-646)."
+
+
+def house_current_tiers(r: "DetailedReport") -> dict[int, str]:
+    """{house: four-tier grade} for the RUNNING bhukti — computed once through the ONE
+    shared `graded_buckets` implementation (HTJAH-I:1592-1596, 1635-1640). Houses that
+    neither period-lord influences are simply absent from the mapping. Wave-3
+    (2026-08-18): hoisted out of `house_current_tier_line` so the verdict-first strip and
+    the per-house line read the SAME grading rather than each recomputing it."""
+    tp = next((tp for tp in r.timeline.periods
+               if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
+    if tp is None:
+        return {}
+    _assoc, buckets = graded_buckets(tp, r.chart)
+    out: dict[int, str] = {}
+    for tier, items in buckets.items():          # buckets are already best-tier-first
+        for a in items:
+            out.setdefault(a.house, tier)
+    return out
+
+
+def house_current_tier_line(r: "DetailedReport", house: int) -> str:
+    """The running period's fructification tier FOR THIS HOUSE — the same four-tier
+    vocabulary (par excellence / ordinary / limited / feeble, HTJAH-I:1592-1596,
+    1635-1640) the Life-narrative already computes via `vimshottari.bhukti_tier`,
+    re-read per house where the reader is actually asking about the house. Pure re-read
+    of the current timeline period through the ONE shared `graded_buckets`
+    implementation; never a prediction."""
+    tp = next((tp for tp in r.timeline.periods
+               if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
+    if tp is None:
+        return ""
+    maha, antar = tp.period.maha, tp.period.antar
+    label = f"{maha} MD" + (f" / {antar} AD" if antar else "")
+    tier = house_current_tiers(r).get(house)
+    if tier is None:
+        return (f"In the running {label} period neither period-lord influences this "
+                f"house - no fructification grade for the current bhukti "
+                f"(HTJAH-I:1592-1596).")
+    return (f"In the running {label} period this house grades {tier} "
+            f"(HTJAH-I:1592-1596).")
+
+
+def house_moderating_clause(r: "DetailedReport", house: int) -> str:
+    """The moderating-factor clause (house-critique ADD-3): when the ledger carries a
+    qualification the judge ALREADY credited — a parivartana-resilient lord/karaka, an
+    intact strong karaka under an afflicted headline, or a catastrophic-gate demotion —
+    say so in the Conclusion, descriptively. Composed only from `FrameLedger` flags and
+    `SignificationVerdict.metadata` the verdict path itself recorded; no remedy, no
+    date, no re-weighing, and the headline stands verbatim."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None or not pf.significations:
+        return ""
+    verdict = str(pf.rollup)
+    sv = pf.significations[0]
+    led = sv.ledger
+    mods: list[str] = []
+    if verdict in ("afflicted", "mixed") and led.parivartana_resilient:
+        # Provenance corrected 2026-08-19. This arm used to read as though an exchange were
+        # relief as such. Raman's own worked charts run BOTH ways: "Jupiter and Venus have
+        # exchanged signs (parivartana), mutually benefiting each other" (HTJAH-I:8837),
+        # but also "the 8th and 10th lords have exchanged signs so that Saturn who is the
+        # 7th lord also is afflicted by this parivartana" (HTJAH-I:9119) and "his exchange
+        # of signs with 5th lord Saturn is not desirable as it can deny marriage or
+        # progeny" (HTJAH-I:9143). An exchange transmits the partner's condition; it does
+        # not shield by itself. The clause therefore reports what the JUDGE credited and
+        # names that its own credit is direction-blind, rather than implying Raman grants
+        # relief unconditionally. The judge's behaviour is NOT changed here - that sits in
+        # the verdict path and is logged for doctrine review (DOCTRINE_BACKLOG "directional
+        # parivartana").
+        mods.append("the lord or karaka stands in a parivartana (exchange), and the judge "
+                    "credited that as resilience in its ledger - note that Raman's own "
+                    "exchanges run both ways (mutually benefiting at HTJAH-I:8837, but "
+                    "transmitting affliction at HTJAH-I:9119 and HTJAH-I:9143), and this "
+                    "engine's credit does not look at the partner's condition")
+    if (verdict == "afflicted" and led.karaka_strong is True and led.karaka_intact
+            and not led.lord_karaka_identical):
+        mods.append(f"the karaka {led.karaka} itself stands strong and intact - the "
+                    f"matter's core significator is not struck")
+    gates = [v for k, v in pf.metadata if k == "catastrophic_gate"]
+    for g in gates:
+        mods.append(f"a catastrophic reading was demoted by the multiply-afflicted bar "
+                    f"({g} - fewer fired malefic rules than Raman's own multiply-"
+                    f"afflicted configurations carry)")
+    if not mods:
+        return ""
+    # The clause carries no Raman citation of its own and that is deliberate, not an
+    # omission: it is not one of his rules. It is the JUDGE disclosing state it already
+    # recorded while deciding, and each arm points at the mechanism it re-reads. Searching
+    # the mounted corpus for a general "the affliction is considerably reduced by..."
+    # device (2026-08-19) returns only specific rules - the 8th lord in a navamsa dusthana
+    # (HTJAH-I:9658-9659), navamsa 6/8/12 placement (HTJAH-I:12825, :12866) - never a
+    # general one. Recorded here so no future session re-hunts for a passage that is not
+    # there.
+    return ("the affliction is qualified - " + "; ".join(mods)
+            + " [the judge's own disclosure of what it already credited, not a separate "
+              "rule of Raman's - no general moderating-factor clause exists in the corpus]")
+
+
+# ── Wave-3 (2026-08-18) traversal composers ─────────────────────────────────
+# The house chapter is the report's longest stretch; these compose the SCANNING layer
+# (a verdict-first strip, the in-block cross-references, the calibration rollup) out of
+# state the judgment path already computed. Every one of them is selection or
+# restatement — no verdict, count, band or gate is touched, and nothing below them is
+# removed: the deep blocks render exactly as before, in full.
+
+
+@dataclass(frozen=True)
+class HouseStripRow:
+    """One row of the verdict-first house strip — a pure re-read of the deep block that
+    follows it (same verdict, same driver, same split note, same running-period tier)."""
+    house: int
+    name: str
+    verdict: str
+    driver: str          # the signification that drove the rollup ("" when none decided)
+    split: str           # short split-status badge ("2-2 split" / "5/6 favourable"), "" if none
+    split_note: str      # the full split sentence (tooltip / title text), "" if none
+    tier: str            # running-bhukti four-tier grade, "" when neither period-lord acts
+    inverted: bool       # the driver sits on an atlas-proven INVERTED channel
+
+
+def house_strip_badge(split: "TenorSplit", note: str | None) -> str:
+    """The short split badge label the HTML house-head already composes, hoisted so the
+    markdown strip and the HTML strip cannot drift ("" when the tenor agrees with the
+    headline and no note is emitted)."""
+    if not note:
+        return ""
+    if split.favourable == split.afflicted and split.mixed == 0:
+        return f"{split.favourable}-{split.afflicted} split"
+    n = {"favourable": split.favourable, "afflicted": split.afflicted,
+         "mixed": split.mixed}[split.majority]
+    return f"{n}/{split.total} {split.majority}"
+
+
+def house_strip_rows(r: "DetailedReport") -> tuple[HouseStripRow, ...]:
+    """The twelve-row verdict-first strip that opens the house chapter — house, plain
+    name, verdict, driver, split badge, and whether the running period lights it. Every
+    cell restates a value the deep block below prints in full; the strip decides nothing
+    and hides nothing (REPORT COMPLETENESS: it is a scanning index ABOVE the blocks, not
+    a replacement for them)."""
+    tiers = house_current_tiers(r)
+    rows: list[HouseStripRow] = []
+    for mr in r.synthesis.matters:
+        cal = r.calibration[mr.house]
+        drv = driver_entry(cal, mr.verdict)
+        split = signification_tenor_split(cal)
+        note = tenor_note(split, mr.verdict)
+        rows.append(HouseStripRow(
+            house=mr.house, name=mr.name, verdict=mr.verdict,
+            driver=drv.signification if drv else "",
+            split=house_strip_badge(split, note), split_note=note or "",
+            tier=tiers.get(mr.house, ""),
+            inverted=bool(drv is not None and drv.inverted_warning)))
+    return tuple(rows)
+
+
+def calibration_rollup_line(reading: "CalibratedHouseReading") -> str:
+    """ONE summary line above a house's population-context rows when they repeat — the
+    critique's H1 (three verbatim-identical lines) and H6 (five near-universal rows)
+    case. Fires when >= 3 rows share a verdict+degree band, or >= 3 sit in a
+    near-universal band. ADD-ONLY: every individual row is still rendered beneath it;
+    this only tells the reader in advance that they repeat, so the rows that genuinely
+    differ stand out. Empirical overlay wording — not Raman."""
+    rows = [e for e in reading.entries if e.favourability_percentile is not None]
+    total = len(rows)
+    if total < 3:
+        return ""
+    bands: dict[tuple[str, str], int] = {}
+    for e in rows:
+        key = (str(e.verdict), str(e.degree))
+        bands[key] = bands.get(key, 0) + 1
+    (top_v, top_d), top_n = max(bands.items(), key=lambda kv: (kv[1], kv[0]))
+    near = sum(1 for e in rows if e.band_share is not None and e.band_share >= 0.5)
+    parts: list[str] = []
+    if top_n >= 3:
+        parts.append(f"{top_n} of {total} sub-readings return the same "
+                     f"{top_v} ({top_d}) band")
+    if near >= 3:
+        parts.append(f"{near} of {total} are near-universal - that band carries "
+                     f"little information")
+    if not parts:
+        return ""
+    return "Rollup: " + "; ".join(parts) + ". Every individual row is kept below."
+
+
+def house_dashboard_conflicts(r: "DetailedReport", house: int) -> tuple[str, ...]:
+    """PREC-1 cross-references, in the block where the reader actually stumbles: the
+    dashboard matters whose dedicated-reader verdict differs from THIS house's rollup.
+    Same detection as `tension_narrator.narrate_tensions` item 2 (one `_MATTER_HOUSE`
+    map, one comparison) — re-read per house so the pointer appears only where the
+    disagreement is real. Empty for every house whose matters agree."""
+    from app.raman_saab.tension_narrator import _MATTER_HOUSE
+    prof = next((p for p in r.proformas if p.house == house), None)
+    if prof is None:
+        return ()
+    rollup = str(prof.rollup)
+    out: list[str] = []
+    for en in r.dashboard.entries:
+        if _MATTER_HOUSE.get(en.matter) != house:
+            continue
+        if (en.verdict in ("favourable", "afflicted")
+                and rollup in ("favourable", "afflicted")
+                and en.verdict != rollup):
+            out.append(f"Cross-reference: the dashboard reads {en.matter} "
+                       f"{en.verdict} while this bhava reads {rollup} - the matter is "
+                       f"judged by its dedicated reader, the bhava by its weakest "
+                       f"decided matter. PREC-1 in \"How to read this report\" governs: "
+                       f"ask the dashboard for a matter, this block for the house.")
+    return tuple(out)
+
+
+#: Metadata keys whose detail is deliberately deferred to the Longevity chapter — the H8
+#: block judges the bhava, the Longevity chapter carries the span/maraka detail (PREC-8).
+_LONGEVITY_DEFERRED_KEYS: frozenset[str] = frozenset({"death_window", "decanate_cause"})
+
+
+def house_longevity_pointer(r: "DetailedReport", house: int) -> str:
+    """The deferral pointer for the house that computed longevity metadata it does NOT
+    print (the H8 death-window / 22nd-decanate rows, `house_template._event_timing`).
+    Conditional on the metadata actually being present, so it can never appear on a
+    house that computed nothing to defer."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ""
+    keys = {k for k, _v in pf.metadata}
+    for sv in pf.significations:
+        keys |= {k for k, _v in sv.metadata}
+    if not (keys & _LONGEVITY_DEFERRED_KEYS):
+        return ""
+    # Reworded 2026-09-01. The old text claimed this detail "is not repeated here - it is
+    # carried in the Longevity chapter below", which was wrong at BOTH ends: the house
+    # block showed nothing, and the chapter printed only the drekkana lord, never the
+    # decanate class. Both are fixed (see `house_indications` and
+    # `longevity_decanate_cause`), so the pointer now says what is actually true.
+    return ("Cross-reference: the maraka-bhukti and 22nd-decanate rows this house computes "
+            "are listed under \"What the doctrine indicates\" above; the Longevity chapter "
+            "below places them in Raman's order, establishing the band first and the "
+            "marakas second (PREC-8).")
+
+
+#: One pointer, reused wherever an atlas-proven inverted channel is flagged.
+INVERTED_POINTER = ("Cross-reference: \"Information content of this reading\" above "
+                    "lists every inverted channel in this chart and what the atlas "
+                    "measured; PREC-9 governs - the overlay outranks the verdict as "
+                    "skepticism, never as a re-judgment.")
+
+#: One pointer, reused wherever a split-status note is emitted.
+SPLIT_POINTER = ("Cross-reference: the precedence rules for this disagreement are in "
+                 "\"How to read this report\" above - PREC-1 (a bhava is a different "
+                 "grain from a matter) and PREC-3 (a split is disclosed, never "
+                 "re-voted).")
+
+
 def graded_buckets(tp, chart) -> tuple[bool, dict[str, list]]:
     """(AD-associated-with-MD, {tier: [ActivatedHouseReading]}) for one bhukti.
 
     Hoisted here so BOTH renderers consume one implementation — the doctrine grading must never
     be duplicated in presentation code where the two could silently drift apart.
+
+    Each row already carries its tier (``ActiveHouse.grade``, graded on the house's OWN timer
+    set by `vimshottari.period_tier`); this only buckets it. ``associated`` is False for the
+    Mahadasha lord's own bhukti, where Raman's association test does not apply ("the sub-period
+    of another", HTJAH-I:1635) and the rows bucket as "same lord" (USER DECISION 2026-10-24,
+    timing gap check fix 3).
     """
     from app.raman_saab.primitives import vimshottari as vd
     maha, antar = tp.period.maha, tp.period.antar
-    associated = antar is not None and vd.lords_associated(chart, maha, antar)
-    buckets: dict[str, list] = {"par excellence": [], "ordinary": [], "limited": [], "feeble": []}
+    associated = (antar is not None and antar != maha
+                  and vd.lords_associated(chart, maha, antar))
+    buckets: dict[str, list] = {t: [] for t in vd.TIER_ORDER}
     for a in tp.activated:
-        tier = vd.bhukti_tier(a.md_activates, a.antar_activates, associated)
-        if tier:
+        tier = str(a.grade).replace("_", " ")
+        if tier in buckets:
             buckets[tier].append(a)
     return associated, buckets
+
+
+def influence_basis_table(chart: RamanChart) -> dict[int, dict[str, tuple[str, ...]]]:
+    """{house: {planet: (role tags)}} via the role-preserving `timer_roles` — computed once
+    per report so every renderer (markdown / JSON / standalone HTML) derives the SAME
+    influence basis for the tier buckets (Wave-2, 2026-08-18: derive the tier, don't
+    assert it — HTJAH-I:1586-1596 names the factors individually)."""
+    from app.raman_saab.primitives.vimshottari import timer_roles
+    return {h: timer_roles(chart, h) for h in range(1, 13)}
+
+
+def influence_basis(table: dict[int, dict[str, tuple[str, ...]]],
+                    house: int, lord: Optional[str]) -> str:
+    """The factor(s) by which `lord` influences `house`, as a short tag string ("owns+karaka").
+    A lord that only reaches the house through its allied event house (the 2/11 and 9/12
+    unions `active_houses` applies) is tagged "via H<n> <tags>" — honest about the union
+    rather than implying a direct factor. "" when the lord is None or resolves nowhere
+    (never expected for an activation row; kept as a loud-empty rather than a guess)."""
+    from app.raman_saab.primitives.vimshottari import _EVENT_AUX_HOUSES
+    if lord is None:
+        return ""
+    tags = table.get(house, {}).get(lord)
+    if tags:
+        return "+".join(tags)
+    for aux in _EVENT_AUX_HOUSES.get(house, ()):
+        aux_tags = table.get(aux, {}).get(lord)
+        if aux_tags:
+            return f"via H{aux} " + "+".join(aux_tags)
+    return ""
+
+
+def gochara_synthesis_sentence(g) -> str:
+    """One deterministic synthesis sentence for a Gochara snapshot row — the join Raman's own
+    transit paragraphs perform ("Jupiter in the 5th from the Moon, favourable, well supported
+    at 7 bindus, yet Mars obstructs by vedha") composed strictly from the row's EXISTING
+    fields (station, gochara_good, bav_bindus, kakshya, vedha_by, net_good). No new judgment:
+    every clause restates a column the table above it already shows."""
+    parts = [f"{g.planet} in the {_ordinal(g.house_from_moon)} from the Moon - "
+             f"{'favourable' if g.gochara_good else 'adverse'} station"]
+    if g.bav_bindus is not None:
+        support = "well supported" if g.bav_bindus >= 4 else "weakly supported"
+        parts.append(f"{support} at {g.bav_bindus} bindus")
+    else:
+        parts.append("no Ashtakavarga measure (node)")
+    if g.kakshya_lord is not None:
+        parts.append(f"in the Kakshya of {g.kakshya_lord} "
+                     f"({'a bindu donated' if g.kakshya_favourable else 'no bindu donated'})")
+    head = ", ".join(parts)
+    if g.gochara_good and g.vedha_by:
+        return (f"{head}, but obstructed by vedha from {', '.join(g.vedha_by)}: "
+                f"the good is withheld.")
+    if g.gochara_good:
+        if g.planet in ("Rahu", "Ketu"):
+            # fix 9: Raman's Vedhanka table has no node row (HPA-34:185-226)
+            return f"{head}; a node's own Vedha point is {tr.NODE_VEDHA_NOTE}: the indication stands."
+        return f"{head}, no vedha: the indication stands."
+    # fix 9 (2026-10-24): reverse Vedha — an adverse station on a Vedha point is relieved by
+    # another planet in the paired good house (HPA-34:161-165).
+    rv_by = tuple(getattr(g, "reverse_vedha_by", ()) or ())
+    rv_house = getattr(g, "reverse_vedha_house", None)
+    if rv_by:
+        return (f"{head}; reverse vedha from {', '.join(rv_by)} in the {_ordinal(rv_house)}: "
+                f"the evil is relieved (HPA-34:161-164).")
+    if rv_house:
+        return (f"{head}; no planet holds the {_ordinal(rv_house)} to relieve it by reverse "
+                f"vedha, so the adverse reading stands as classical colour.")
+    return (f"{head}; the station is no Vedha point, so the adverse reading stands as "
+            f"classical colour.")
 
 
 def planet_rows(chart: RamanChart) -> tuple[tuple[str, PlanetPos], ...]:
     """Planets in canonical order for the positions table (a reading must be checkable)."""
     order = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
     return tuple((n, chart.planets[n]) for n in order if n in chart.planets)
+
+
+#: Two-letter sign abbreviations in Jagannatha Hora's own convention, so a printed longitude
+#: ("23 Vi 59'17\"") can be checked against JHora directly (the project's pinning policy).
+_SIGN_ABBR: Final[tuple[str, ...]] = ("Ar", "Ta", "Ge", "Cn", "Le", "Vi",
+                                      "Li", "Sc", "Sg", "Cp", "Aq", "Pi")
+
+#: Vimshottari nakshatra-lord cycle starting from Ashwini (nakshatra 1 -> Ketu) — derived from
+#: the ONE canonical DASHA_LORDS table (app.core.ephemeris_engine) the Vimshottari engine
+#: itself uses, so the column can never drift from the dasha math it makes auditable.
+from app.core.ephemeris_engine import DASHA_LORDS as _DASHA_LORDS_TABLE  # noqa: E402
+_NAK_LORD_SEQ: Final[tuple[str, ...]] = tuple(name for name, _ in _DASHA_LORDS_TABLE)
+
+
+def nakshatra_lord(nakshatra: int) -> str:
+    """Vimshottari lord of nakshatra 1-27 (Ashwini=Ketu ... Revati=Mercury). This is the very
+    lord that seeds the birth Mahadasha when the Moon occupies that nakshatra, which is what
+    makes the positions table's 'nak lord' column an audit trail for the Dasha section."""
+    return _NAK_LORD_SEQ[(nakshatra - 1) % 9]
+
+
+def format_longitude(lon: float) -> str:
+    """Sidereal longitude in checkable sign-degree form, ASCII-safe: 173.988146 ->
+    \"23 Vi 59'17\\\"\". Seconds rounded half-up; a 60s/60m carry rolls up (and across a sign
+    boundary at 29 X 59'60\") so no cell ever prints 60."""
+    lon %= 360.0
+    sign_idx = int(lon // 30)
+    d = lon % 30.0
+    deg = int(d)
+    minutes_f = (d - deg) * 60.0
+    minutes = int(minutes_f)
+    seconds = int(round((minutes_f - minutes) * 60.0))
+    if seconds == 60:
+        seconds = 0
+        minutes += 1
+    if minutes == 60:
+        minutes = 0
+        deg += 1
+    if deg == 30:
+        deg = 0
+        sign_idx = (sign_idx + 1) % 12
+    return f"{deg} {_SIGN_ABBR[sign_idx]} {minutes:02d}'{seconds:02d}\""
+
+
+def ascendant_position(chart: RamanChart) -> tuple[str, int, int, int, int]:
+    """The Ascendant's (sign, nakshatra, pada, navamsa_sign, rasi-house=1) derived from
+    `chart.asc_lon` with the SAME varga helpers every planet row uses — so the positions
+    table can carry an Ascendant row and the whole cast is checkable against Jagannatha
+    Hora. Returns (formatted longitude, nakshatra, pada, navamsa_sign, sign)."""
+    from app.raman_saab.chart import varga
+    nak, pada = varga.nakshatra_pada(chart.asc_lon)
+    return (format_longitude(chart.asc_lon), nak, pada,
+            varga.navamsa_sign(chart.asc_lon), chart.asc_sign)
+
+
+def format_maraka_reasons(reasons: tuple[str, ...]) -> str:
+    """Join a MarakaUnit's qualifying clauses for prose, merging plain lordship clauses:
+    ('lord of the 2nd', 'lord of the 7th') -> 'lord of the 2nd and the 7th'; other clauses
+    follow, '; '-separated. Empty reasons (pre-field units) -> ''."""
+    lords = [x.removeprefix("lord of the ") for x in reasons if x.startswith("lord of the ")]
+    others = [x for x in reasons if not x.startswith("lord of the ")]
+    parts: list[str] = []
+    if lords:
+        parts.append("lord of the " + " and the ".join(lords))
+    parts.extend(others)
+    return "; ".join(parts)
 
 
 def _human_list(items: list[str]) -> str:
@@ -910,12 +1961,16 @@ def plain_bhukti_summary(rows, associated: bool) -> str:
     """A lay-reader gloss of one bhukti: its overall intensity (from the association tier) and the
     life-areas under strain (the afflicted houses at that tier, named). A plain restatement of
     Raman's reading — never a prediction of real events."""
-    from app.raman_saab.primitives.vimshottari import bhukti_tier
-    top = "par excellence" if associated else "ordinary"
+    from app.raman_saab.primitives.vimshottari import running_top_tier
+    first = rows[0] if rows else None
+    top = (running_top_tier(first.md_lord, first.antar_lord, associated) if first is not None
+           else ("par excellence" if associated else "ordinary"))
     strained = sorted({(a.house, _PLAIN_AREA[a.house]) for a in rows
                        if a.natal_verdict == "afflicted"
-                       and bhukti_tier(a.md_activates, a.antar_activates, associated) == top})
-    intensity = ("a strong, well-supported stretch" if associated
+                       and str(a.grade).replace("_", " ") == top})
+    intensity = ("the major-period lord's own sub-period, its results unmixed with another "
+                 "lord's" if top == "same lord"
+                 else "a strong, well-supported stretch" if associated
                  else "a steady, ordinary stretch")
     s = f"In plain terms: {intensity}; most matters run supportively"
     if strained:
@@ -959,6 +2014,53 @@ def _clean_box(text: str) -> str:
                      if not (ln.strip() and set(ln.strip()) <= {"="}))
 
 
+#: The verdict rows the Trimsamsa (D-30) core block prints, in the order it prints them
+#: (`render_trimsamsa.to_text`). D-30 is the one deep-read that emits no ``>>> <<<`` banner,
+#: so its label is assembled from these plain rows instead.
+#:
+#: Framing fix 2026-08-19: the summary used to match ``Health (H1)`` ONLY, so the label of a
+#: section whose whole subject is health-and-disease silently dropped the disease verdict —
+#: a D-30 reading disease=afflicted with health=mixed scanned as merely "mixed". All three
+#: rows now carry, and the longevity row carries the body's own qualifier with it: the engine
+#: DEFERS lifespan (PREC-8 / HTJAH-II:4465-4472 — band, then marakas, never a number), so
+#: promoting its lean into a scannable heading unqualified would misrepresent it as a verdict.
+_D30_VERDICT_ROWS: tuple[tuple[str, str, str], ...] = (
+    (r"Health \(H1\)\s*:\s*([A-Za-z-]+)", "HEALTH (H1)", ""),
+    (r"Disease \(H6\)\s*:\s*([A-Za-z-]+)", "DISEASE (H6)", ""),
+    (r"Longevity\(H8\)\s*:\s*([A-Za-z-]+)", "LONGEVITY (H8)", " (lean, not a verdict)"),
+)
+
+
+#: Raman's own 6th-house procedure (HPA-29:433-440) — quoted, not paraphrased, at the
+#: head of the medical section so the reader sees the rule the rows below follow.
+from app.raman_saab.doctrine.medical_astrology import APPLICATION  # noqa: E402
+
+#: sign names for the medical read's navamsa line (v35). Local so the markdown renderer
+#: does not import the judge module just to spell a sign.
+_MED_SIGNS: Final[tuple[str, ...]] = (
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
+    "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+
+
+def _divisional_verdict_summary(body: str) -> str:
+    """The verdict fragment a matter-varga deep-read body itself prints (its ``>>> ... <<<``
+    banner line(s), or the D-30 verdict rows) — re-read for the section LABEL, so every
+    collapsed summary / heading / JSON label leads with the verdict instead of the citation
+    preamble (Wave-2, 2026-08-18: divisional verdict-first). Pure string re-read of verdicts
+    the body already renders in full below; "" for the general vargas (D-27/40/45/60), which
+    carry no matter verdict by design."""
+    import re as _re
+    frags = _re.findall(r">>>\s*(.*?)\s*<<<", body)
+    if frags:
+        return "; ".join(_re.sub(r"\s{2,}", ", ", f).strip() for f in frags)
+    rows = []
+    for pattern, label, qualifier in _D30_VERDICT_ROWS:
+        m = _re.search(pattern, body)
+        if m:
+            rows.append(f"{label}: {m.group(1)}{qualifier}")
+    return "; ".join(rows)
+
+
 def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
     """Full varga deep-reads; a varga that cannot be cast on this chart is skipped.
 
@@ -966,17 +2068,24 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
     card gains its own STRENGTH line — the planets standing in OWN VARGA in this division
     (from `vargavisesha`, GBB-3 Art.28, the same saptavarga count the Parijatadi ladder
     uses) and the vargottama planets — the varga-level facts previously shown only in
-    aggregate. Pure re-reads of already-computed values."""
+    aggregate. Pure re-reads of already-computed values.
+
+    Wave-2 (2026-08-18, verdict-first): the LABEL now appends the verdict banner the body
+    already prints ("D-10 Career (Dasamsa) - CAREER: FAVOURABLE, ...") so the markdown
+    heading, the standalone-HTML collapsed summary and the interactive page's label (all
+    fed from this one tuple) are scannable — nothing removed, the full body is unchanged."""
     out: list[tuple[str, str]] = []
     try:
         from app.raman_saab.primitives.vargavisesha import vargavisesha
         vv = vargavisesha(chart)
     except Exception:  # noqa: BLE001 — Track-B sparse
+        logger.info("report section skipped (Track-B sparse)", exc_info=True)
         vv = ()
     for label, build, render in _DIVISIONAL:
         try:
             body = _clean_box(render(build(chart)))
         except Exception:  # noqa: BLE001 — same silent-skip contract as synthesis
+            logger.info("report section skipped (same silent-skip contract as synthesis)", exc_info=True)
             continue
         dtag = label.split(" ", 1)[0]                 # e.g. "D-9"
         own = [v.planet for v in vv
@@ -984,7 +2093,8 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
         if own:
             body += (f"\n\nStrength in this varga (GBB-3 Art.28): "
                      f"{', '.join(own)} in own varga here.")
-        out.append((label, body))
+        verdict = _divisional_verdict_summary(body)
+        out.append((f"{label} - {verdict}" if verdict else label, body))
     return tuple(out)
 
 
@@ -1009,6 +2119,10 @@ class ConfluenceWindow:
     sign: int
     bav_bindus: int | None
     vedha_sample_fraction: float
+    # append-only 2026-10-24 (fix 9): on ADVERSE rows, the segment's sampled reverse-Vedha
+    # share (HPA-34:161-165) and the station from the Moon it was judged at.
+    reverse_vedha_sample_fraction: float = 0.0
+    house_from_moon: Optional[int] = None
 
 
 def _dasha_transit_confluences(
@@ -1040,6 +2154,59 @@ def _dasha_transit_confluences(
     return tuple(out)
 
 
+def _dasha_transit_adverse(
+    chart: RamanChart, timeline: DashaTimeline,
+    outlook: dict[str, tuple[tr.GocharaSegment, ...]],
+) -> tuple[ConfluenceWindow, ...]:
+    """The ADVERSE mirror of `_dasha_transit_confluences` (Wave-2, 2026-08-18): every stretch
+    where a bhukti's MD or AD lord is, at the same time, in one of its own classically-ADVERSE
+    Gochara segments. The favourable builder was one-sided by construction (`if not
+    seg.gochara_good: continue`); Raman's blending doctrine reads obstruction as well as
+    reinforcement ("... blended with those of Gochara and Ashtakavarga, together with Vedha
+    or obstructing forces", HPA-34:369-381), so both halves are stated. A NEW function — the
+    favourable builder and its rows are byte-identical to before. Same coverage limit: only
+    the four long-range movers (Jupiter/Saturn/Rahu/Ketu) contribute rows.
+
+    `bav_bindus` is filled the same way `adverse_transit_windows` fills it (gochara_timeline
+    leaves it None on adverse segments): the planet's own Bhinnashtakavarga bindus in the
+    transited sign, Raman's mitigation proportion (ASP-13:416); None for the nodes only."""
+    out: list[ConfluenceWindow] = []
+    bav_of: dict[tuple[str, int], Optional[int]] = {}
+
+    def _bav(planet: str, sign: int) -> Optional[int]:
+        key = (planet, sign)
+        if key not in bav_of:
+            bav: Optional[int] = None
+            if planet in ashtakavarga.PLANETS:
+                try:
+                    bav = ashtakavarga.bhinnashtakavarga(chart, planet)[sign]
+                except Exception:  # noqa: BLE001 — sparse chart
+                    logger.info("report section skipped (sparse chart)", exc_info=True)
+                    bav = None
+            bav_of[key] = bav
+        return bav_of[key]
+
+    for tp in timeline.periods:
+        p = tp.period
+        for role, lord in (("MD", p.maha), ("AD", p.antar)):
+            if lord is None or lord not in outlook:
+                continue
+            for seg in outlook[lord]:
+                if seg.gochara_good:
+                    continue
+                lo, hi = max(p.start_jd, seg.start_jd), min(p.end_jd, seg.end_jd)
+                if lo < hi:
+                    out.append(ConfluenceWindow(
+                        planet=lord, role=role, period_start_jd=p.start_jd,
+                        period_end_jd=p.end_jd, overlap_start_jd=lo, overlap_end_jd=hi,
+                        sign=seg.sign, bav_bindus=_bav(lord, seg.sign),
+                        vedha_sample_fraction=seg.vedha_sample_fraction,
+                        reverse_vedha_sample_fraction=seg.reverse_vedha_sample_fraction,
+                        house_from_moon=seg.house_from_moon))
+    out.sort(key=lambda c: c.overlap_start_jd)
+    return tuple(out)
+
+
 @dataclass(frozen=True)
 class YogaTiming:
     """A stretch where a fired yoga's own constituent lord runs as MD or AD — Raman's own rule
@@ -1057,6 +2224,12 @@ class YogaTiming:
     period_start_jd: float
     period_end_jd: float
     quality: "vd.LordQuality"
+    #: Wave-2 (2026-08-18, append-only): the Mahadasha lord an AD row runs UNDER —
+    #: Raman's bhukti doctrine is MD-lord-relative (the locked four-tier scheme), so an
+    #: AD window without its MD context under-states the read. None on MD rows (the row's
+    #: own `planet` IS the MD lord there). Always computed from the same timeline period
+    #: the row was built from (`p.maha`) — no new judgment.
+    maha: Optional[str] = None
 
 
 def _md_runs(timeline: DashaTimeline) -> tuple[tuple[str, float, float], ...]:
@@ -1097,9 +2270,67 @@ def _yoga_dasha_confluences(
             p = tp.period
             if p.antar is not None and p.antar in pls:
                 out.append(YogaTiming(y.id, y.name, y.kind, p.antar, "AD", p.start_jd, p.end_jd,
-                                      vd.lord_quality(chart, p.antar)))
+                                      vd.lord_quality(chart, p.antar), maha=p.maha))
     out.sort(key=lambda w: w.period_start_jd)
     return tuple(out)
+
+
+def yoga_next_ripening(r: "DetailedReport") -> tuple[tuple[str, str], ...]:
+    """Wave-2 C (2026-08-18, add-only): one (yoga name, ripening sentence) per fired yoga
+    that has timing rows — is a constituent-lord window running NOW, and if not, which is
+    the next one? A pure re-read of the SAME `yoga_timing` rows the full table renders
+    (the table is retained per REPORT COMPLETENESS); shared by both renderers so the two
+    surfaces cannot drift. Timed indications in the classical idiom, never a decree."""
+    from app.raman_saab.render import _jd_to_date
+    out: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for y in r.yogas:
+        if y.id in seen:
+            continue
+        seen.add(y.id)
+        rows = [t for t in r.yoga_timing if t.yoga_id == y.id]
+        if not rows:
+            continue
+        live = next((t for t in rows
+                     if t.period_start_jd <= r.ref_jd < t.period_end_jd), None)
+        if live is not None:
+            ctx = (f" under {live.maha} MD" if live.role == "AD" and live.maha else "")
+            out.append((y.name,
+                        f"ripe NOW - {live.planet} {live.role}{ctx} runs until "
+                        f"{_jd_to_date(live.period_end_jd)} (delivery: "
+                        f"{live.quality.tag})"))
+            continue
+        future = next((t for t in rows if t.period_start_jd >= r.ref_jd), None)
+        if future is not None:
+            ctx = (f" under {future.maha} MD" if future.role == "AD" and future.maha
+                   else "")
+            out.append((y.name,
+                        f"next ripens in {future.planet} {future.role}{ctx}, "
+                        f"{_jd_to_date(future.period_start_jd)} to "
+                        f"{_jd_to_date(future.period_end_jd)} (delivery: "
+                        f"{future.quality.tag})"))
+        else:
+            out.append((y.name,
+                        "no further constituent-lord window inside the shown timeline "
+                        "(its windows above lie in the past)"))
+    return tuple(out)
+
+
+def yoga_timing_grouped(r: "DetailedReport") -> tuple[tuple[str, tuple], ...]:
+    """Wave-3 (2026-08-18): the SAME `yoga_timing` rows, grouped by yoga instead of
+    interleaved by date — the repetition-suppression fix for a table where one Venus
+    Mahadasha printed three verbatim-identical rows under three different yogas.
+    Grouping only: every row appears exactly once, in the chronological order it already
+    had, and no column is dropped (the yoga name becomes each group's own label). Group
+    order follows each yoga's first appearance in the flat table."""
+    order: list[str] = []
+    groups: dict[str, list] = {}
+    for t in r.yoga_timing:
+        if t.yoga_name not in groups:
+            order.append(t.yoga_name)
+            groups[t.yoga_name] = []
+        groups[t.yoga_name].append(t)
+    return tuple((name, tuple(groups[name])) for name in order)
 
 
 @dataclass(frozen=True)
@@ -1292,6 +2523,19 @@ class MarakaSaturnConfluence:
     overlap_end_jd: float
     sign: int
     score: int                  # the DeathWindow's own maraka tier-score (MD-weight + AD-weight)
+    # append-only 2026-08-17 (report critique): the score's addends spelled out, e.g.
+    # "Saturn 3 + Venus 3" for score 6 — the same per-lord weights death_window summed
+    # (since 2026-10-24: primary 5/4/3 by HTJAH-I:783-784, secondary 2, tertiary 1, a node
+    # carrying a delegated maraka's weight). "" when the recomputed weights do not
+    # reproduce `score` (never expected; a guard, not a behaviour).
+    score_parts: str = ""
+    # append-only 2026-10-24 (timing gap check fix 7): the AMSA half of the signal — "Death
+    # occurs when Saturn in his transit passes through the Rashi and Amsa occupied by him at
+    # birth or its trines" (HTJAH-I:11226-11228). The sub-spans of the overlap in which
+    # transiting Saturn's Navamsa sign is also natal Saturn's Navamsa sign or a trine of it
+    # ("" when none), and the signature that holds: "Rasi and Amsa" or "Rasi only".
+    amsa_spans: str = ""
+    signature: str = "Rasi only"
 
 
 def _maraka_saturn_confluences(
@@ -1315,19 +2559,186 @@ def _maraka_saturn_confluences(
         chart, ref_jd, years_back, years_forward, ayanamsa=ayanamsa,
         planets=("Saturn",)).get("Saturn", ())
     trines = {sat.sign, (sat.sign - 1 + 4) % 12 + 1, (sat.sign - 1 + 8) % 12 + 1}
+    # The score's addends, from the SAME weights death_window itself summed — pure
+    # re-read (deterministic on the chart), shown so "6" is checkable as
+    # "Saturn 3 + Venus 3". Guarded to "" if the recomputation ever disagreed.
+    weight = vd.death_weight_fn(chart)
+    nav_trines = {(sat.navamsa_sign - 1 + k) % 12 + 1 for k in (0, 4, 8)}
+    from app.raman_saab.chart import varga as _varga
+
+    def _amsa_spans(lo: float, hi: float) -> str:
+        """Sub-spans of [lo, hi) where transiting Saturn's Navamsa sign is in natal Saturn's
+        Navamsa trines, sampled every 5 days (edges good to about 5 days)."""
+        spans: list[tuple[float, float]] = []
+        jd, start = lo, None
+        while jd < hi:
+            hit = _varga.navamsa_sign(tr.planet_longitude(jd, "Saturn", ayanamsa=ayanamsa)) \
+                in nav_trines
+            if hit and start is None:
+                start = jd
+            if not hit and start is not None:
+                spans.append((start, jd))
+                start = None
+            jd += 5.0
+        if start is not None:
+            spans.append((start, hi))
+        return ", ".join(_outlook_window_label(a, b) for a, b in spans)
+
     out: list[MarakaSaturnConfluence] = []
     for dw in dws:
+        w_md, w_ad = weight(dw.maha), weight(dw.antar)
+        parts = (f"{dw.maha} {w_md} + {dw.antar} {w_ad}"
+                 if w_md + w_ad == dw.score else "")
         for seg in sat_segments:
             if seg.sign not in trines:
                 continue
             lo, hi = max(dw.start_jd, seg.start_jd), min(dw.end_jd, seg.end_jd)
             if lo < hi:
+                amsa = _amsa_spans(lo, hi)
                 out.append(MarakaSaturnConfluence(
                     maha=dw.maha, antar=dw.antar, window_start_jd=dw.start_jd,
                     window_end_jd=dw.end_jd, overlap_start_jd=lo, overlap_end_jd=hi,
-                    sign=seg.sign, score=dw.score))
+                    sign=seg.sign, score=dw.score, score_parts=parts,
+                    amsa_spans=amsa, signature="Rasi and Amsa" if amsa else "Rasi only"))
     out.sort(key=lambda c: c.overlap_start_jd)
     return tuple(out)
+
+
+# ---------------------------------------------------------------------------
+# Wave-1 timing additions (2026-08-17, REPORT COMPLETENESS): the pratyantar
+# drill-down for the current bhukti, the dated Sade-Sati phase spans, and the
+# dated Chara dasha sequence. All three are pure re-reads / plain calendar
+# arithmetic over already-encoded primitives — no verdict is touched.
+# ---------------------------------------------------------------------------
+
+#: Saturn's three Sade-Sati stations from the natal Moon (the same three houses
+#: `transits.sade_sati` names for its point-in-time phase word).
+_SADE_SATI_PHASE: Final[dict[int, str]] = {
+    12: "rising (12th from Moon)", 1: "peak (over the Moon)", 2: "setting (2nd from Moon)"}
+
+
+@dataclass(frozen=True)
+class SadeSatiPhase:
+    """One dated span of transiting Saturn in the 12th/1st/2nd sign from the natal Moon.
+    DATES ONLY: this row carries plain gochara arithmetic — Saturn's transiting sign against
+    the natal Moon sign. Raman's result doctrine (the round since birth, the ruling period's
+    strength, the SAV of the three signs: AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616)
+    is read in `raman_timing`'s Sade-Sati rounds table (corrected 2026-10-24: an earlier note
+    here said no such doctrine was on record). Boundaries inherit `gochara_timeline`'s ~week sampling
+    resolution."""
+    phase: str            # rising / peak / setting (the 12th / 1st / 2nd from the Moon)
+    house_from_moon: int  # 12, 1 or 2
+    sign: int             # the transited sign (1..12)
+    start_jd: float
+    end_jd: float
+    current: bool         # the reference date falls inside this span
+
+
+def _sade_sati_phases(chart: RamanChart, ref_jd: float,
+                      ayanamsa: str) -> tuple[SadeSatiPhase, ...]:
+    """The dated Sade-Sati episode nearest the reference date: Saturn's consecutive transits
+    of the 12th/1st/2nd from the natal Moon, segmented by the SAME `tr.gochara_timeline`
+    machinery the Gochara outlook uses (sign ingresses to ~week resolution). The scan runs 16
+    years back / 31 years forward of `ref_jd` — wide enough to always hold either the episode
+    containing `ref_jd` or the next complete one (Saturn's cycle is ~29.5 years, an episode
+    ~7.5). Prefers the running episode; else the next upcoming; else the most recent past.
+    A retrograde dip out of the three-house band splits the episode honestly (each re-entry
+    is its own dated row). Empty on a Track-B chart (no jd_ut)."""
+    if chart.planets.get("Moon") is None or getattr(chart, "jd_ut", None) is None:
+        return ()
+    segs = tr.gochara_timeline(chart, ref_jd, 16.0, 31.0, ayanamsa=ayanamsa,
+                               planets=("Saturn",)).get("Saturn", ())
+    episodes: list[list[tr.GocharaSegment]] = []
+    run: list[tr.GocharaSegment] = []
+    for seg in segs:
+        if seg.house_from_moon in _SADE_SATI_PHASE:
+            run.append(seg)
+        elif run:
+            episodes.append(run)
+            run = []
+    if run:
+        episodes.append(run)
+    if not episodes:
+        return ()
+    chosen = next((ep for ep in episodes if ep[0].start_jd <= ref_jd < ep[-1].end_jd), None)
+    if chosen is None:
+        chosen = next((ep for ep in episodes if ep[0].start_jd >= ref_jd), episodes[-1])
+    return tuple(SadeSatiPhase(
+        phase=_SADE_SATI_PHASE[seg.house_from_moon], house_from_moon=seg.house_from_moon,
+        sign=seg.sign, start_jd=seg.start_jd, end_jd=seg.end_jd,
+        current=seg.start_jd <= ref_jd < seg.end_jd) for seg in chosen)
+
+
+@dataclass(frozen=True)
+class CharaDashaSpan:
+    """One dated Chara Dasha period — `chara_dasha_dated`'s plain JD arithmetic (period years
+    x 365.2425 days from birth, the KN Rao convention already encoded in
+    `primitives.chara_dasha`) wrapped with a current-period flag. No result judgment attaches:
+    matters are read from Vimshottari; this dates the parallel Jaimini script the Chart
+    signature chip and the Soul reading already name undated."""
+    sign: int
+    years: int
+    start_jd: float
+    end_jd: float
+    current: bool
+
+
+def _chara_sequence(chart: RamanChart, ref_jd: float) -> tuple[CharaDashaSpan, ...]:
+    """The dated Chara Dasha sequence from birth through the cycle containing `ref_jd` —
+    exactly one row carries `current=True` when the reference date falls inside the dated
+    range. Empty on a Track-B chart."""
+    from app.raman_saab.primitives import chara_dasha as cd
+    return tuple(CharaDashaSpan(sign=s, years=y, start_jd=lo, end_jd=hi,
+                                current=lo <= ref_jd < hi)
+                 for s, y, lo, hi in cd.chara_dasha_dated(chart, through_jd=ref_jd))
+
+
+def _pratyantar_rows(chart: RamanChart, ref_jd: float) -> tuple[vd.DashaPeriod, ...]:
+    """The 9 Pratyantardashas of the bhukti running on `ref_jd` — `vimshottari.pratyantars`
+    surfaced for the report. Raman names all three levels as carriers of a house's results
+    ("as lords of the Dasas (main-periods), as lords of Bhuktis (Sub-periods) or as lords of
+    the Antaras", HTJAH-II:668-702) — the drill-down is shown for the CURRENT bhukti only,
+    since nine rows under every bhukti of a 30-year window would flood the narrative. Empty
+    when no bhukti-level period resolves (Track-B / outside the unrolled timeline)."""
+    if getattr(chart, "jd_ut", None) is None:
+        return ()
+    try:
+        bh = vd.dasha_on(chart, ref_jd)
+    except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
+        return ()
+    if bh is None or bh.antar is None:
+        return ()
+    return tuple(vd.pratyantars(bh))
+
+
+def adverse_transit_windows(
+    r: "DetailedReport",
+) -> tuple[tuple[str, tr.GocharaSegment, Optional[int]], ...]:
+    """The classically-ADVERSE Gochara outlook windows — the exact mirror of the favourable
+    filter both renderers already apply (same >= 25-day noise floor, chronological), which
+    `gochara_timeline` computes but no renderer showed. The third element is the planet's own
+    Bhinnashtakavarga bindus in the transited sign, read by Raman's proportion law as the
+    extent to which the evil is neutralised ("neutralises the evil to the extent of 75%" at
+    6 of 8 bindus, ASP-13:416); None for the nodes (no classical Ashtakavarga — the 7-graha
+    lock). Vedha (obstruction) acts on favourable transits, so no interference fraction exists
+    for these rows; since 2026-10-24 (fix 9) the segment carries the REVERSE-Vedha share instead
+    (HPA-34:161-165), rendered by `relief_word`."""
+    rows: list[tuple[str, tr.GocharaSegment, Optional[int]]] = []
+    for segs in r.gochara_outlook.values():
+        for seg in segs:
+            if seg.gochara_good or (seg.end_jd - seg.start_jd) < 25:
+                continue
+            bav: Optional[int] = None
+            if seg.planet in ashtakavarga.PLANETS:
+                try:
+                    bav = ashtakavarga.bhinnashtakavarga(r.chart, seg.planet)[seg.sign]
+                except Exception:  # noqa: BLE001 — sparse chart
+                    logger.info("report section skipped (sparse chart)", exc_info=True)
+                    bav = None
+            rows.append((seg.planet, seg, bav))
+    rows.sort(key=lambda t: t[1].start_jd)
+    return tuple(rows)
 
 
 @dataclass(frozen=True)
@@ -1358,6 +2769,7 @@ def _av_dasha_seats(chart: RamanChart, timeline: DashaTimeline) -> tuple[AvDasha
         try:
             bav = ashtakavarga.bhinnashtakavarga(chart, maha)
         except Exception:  # noqa: BLE001 — nodes have no BAV
+            logger.info("report section skipped (nodes have no BAV)", exc_info=True)
             bav = None
         bindus = bav.get(pos.sign) if bav else None
         read = ("no data" if bindus is None else
@@ -1365,6 +2777,105 @@ def _av_dasha_seats(chart: RamanChart, timeline: DashaTimeline) -> tuple[AvDasha
                "adverse" if bindus <= 3 else "mixed")
         out.append(AvDashaSeat(
             maha=maha, start_jd=start_jd, end_jd=end_jd, sign=pos.sign, bindus=bindus, read=read))
+    return tuple(out)
+
+
+@dataclass(frozen=True)
+class BavMatrixRow:
+    """One planet's Bhinnashtakavarga row — bindus per sign, straight from
+    `ashtakavarga.bhinnashtakavarga` (the canonical Parashari/BPHS benefic-places tables,
+    checksum-guarded: each planet's BAV total is fixed and the seven rows always sum to SAV's
+    337). `seat_sign`/`seat_bindus` are the planet's OWN natal sign and its bindus there — the
+    exact cell the AV dasha-seat outlook and the gochara table's 'AV bindus' column read.
+    Pure re-read of the primitive; no new judgment (AV completeness, 2026-08-17)."""
+    planet: str
+    bindus: tuple[int, ...]        # index 0 = Aries .. 11 = Pisces
+    total: int
+    seat_sign: Optional[int]       # planet's natal sign (1..12); None on sparse charts
+    seat_bindus: Optional[int]
+
+
+@dataclass(frozen=True)
+class BavReducedRow:
+    """One planet's HPA-26 reduced Ashtakavarga: after Trikona Sodhana alone, then after both
+    reductions in Raman's stated order — "After the Thrikona reduction, the Ekadhipathya
+    reduction must be applied" (HPA-26:466-467). Pure re-read of `ashtakavarga_reduction`
+    (its regression fixture is Raman's own worked Sun table, HPA-26:432-462)."""
+    planet: str
+    trikona: tuple[int, ...]       # after Trikona Sodhana (HPA-26:403-421)
+    reduced: tuple[int, ...]       # after BOTH reductions (Ekadhipathya: HPA-26:464-497)
+
+
+@dataclass(frozen=True)
+class SodyaPindaRow:
+    """One planet's Rasi/Graha Gunakara figures and their sum — Raman's Sodya Pinda by his own
+    naming, "The sum of the Rasi figures (Rasi Pinda) and Planetary figures (Graha Pinda) will
+    be the Sodya Pinda for each planet" (ASP-14:196-198). Pure re-read of
+    `ashtakavarga_pinda` (HPA-26:1130-1404).
+
+    WHY THE LAST STEP IS NOT TAKEN — SETTLED 2026-08-19 against the mounted corpus, so no
+    future session re-opens it. HPA-26 §51 onward (HPA-26:1135-1404) carries the complete
+    Ashtakavarga Ayurdaya method: these very Gunakara multipliers, summed into the Sodya
+    Pinda, are then converted into a span of years. Every input is already computed here.
+    Only the conversion is missing, and it is missing ON PURPOSE, for three reasons that
+    now all have anchors:
+
+      1. RAMAN DOWNGRADES THE METHOD HIMSELF: "Ashtakavarga method is equally important.
+         But, IT DOES NOT SEEM TO BE QUITE RELIABLE. The Ashtakavarga method of longevity
+         determination has been explained in detail in our book Ashtakavarga System of
+         Prediction." (HTJAH-II:4453-4456).
+      2. PREC-4 already encodes exactly that line — Ashtakavarga never outranks the
+         Raman band.
+      3. PREC-8 is the engine's standing rule for lifespan: band, then marakas, never a
+         number. A Sodya-Pinda year count is precisely the number PREC-8 refuses.
+
+    So the figures render in full (the reader gets everything Raman computes) and stop
+    where he stops trusting them. This is a documented deliberate omission under the PRIME
+    DIRECTIVE's no-silent-approximation rule, not an unfinished feature."""
+    planet: str
+    rasi: int
+    graha: int
+    total: int
+
+
+def _bav_matrix_rows(chart: RamanChart) -> tuple[BavMatrixRow, ...]:
+    """The full 7x12 Bhinnashtakavarga matrix, one row per graha — surfacing the layer the
+    gochara 'AV bindus'/Kakshya columns and the AV dasha-seat outlook already read from."""
+    out: list[BavMatrixRow] = []
+    for planet in ashtakavarga.PLANETS:
+        bav = ashtakavarga.bhinnashtakavarga(chart, planet)
+        pos = chart.planets.get(planet)
+        seat = pos.sign if pos is not None else None
+        bindus = tuple(bav[s] for s in range(1, 13))
+        out.append(BavMatrixRow(
+            planet=planet, bindus=bindus, total=sum(bindus), seat_sign=seat,
+            seat_bindus=bav[seat] if seat is not None else None))
+    return tuple(out)
+
+
+def _bav_reduced_rows(chart: RamanChart) -> tuple[BavReducedRow, ...]:
+    """HPA-26's two ordered reductions per graha — a pure re-read of
+    `ashtakavarga_reduction.trikona_shodhana` / `ekadhipatya_shodhana`; no math re-derived."""
+    from app.raman_saab.primitives.ashtakavarga_reduction import (ekadhipatya_shodhana,
+                                                                  trikona_shodhana)
+    out: list[BavReducedRow] = []
+    for planet in ashtakavarga.PLANETS:
+        tri = trikona_shodhana(ashtakavarga.bhinnashtakavarga(chart, planet))
+        red = ekadhipatya_shodhana(tri, chart)
+        out.append(BavReducedRow(
+            planet=planet,
+            trikona=tuple(tri[s] for s in range(1, 13)),
+            reduced=tuple(red[s] for s in range(1, 13))))
+    return tuple(out)
+
+
+def _sodya_pinda_rows(chart: RamanChart) -> tuple[SodyaPindaRow, ...]:
+    """Sodya Pinda per graha — a pure re-read of `ashtakavarga_pinda.ashtakavarga_pinda`."""
+    from app.raman_saab.primitives.ashtakavarga_pinda import ashtakavarga_pinda
+    out: list[SodyaPindaRow] = []
+    for planet in ashtakavarga.PLANETS:
+        pb = ashtakavarga_pinda(chart, planet)
+        out.append(SodyaPindaRow(planet=planet, rasi=pb.rasi, graha=pb.graha, total=pb.total))
     return tuple(out)
 
 
@@ -1395,7 +2906,7 @@ class DetailedReport:
     gochara: tuple[tr.TransitRow, ...]               # transits at ref date, WITH Vedha/net
     gochara_outlook: dict[str, tuple[tr.GocharaSegment, ...]]  # Jupiter/Saturn/Rahu/Ketu, over time
     dasha_transit: tuple[ConfluenceWindow, ...]      # MD/AD lord x its own favourable transit
-    maraka_period_now: bool                          # is the running period maraka-tier?
+    maraka_period_now: bool | None                   # is the running period maraka-tier? None = undetermined
     insights: tuple[FiredInsight, ...]               # fired cross-feature synthesis rules
     longevity_years: float
     longevity_ymd: tuple[int, int, int]
@@ -1424,6 +2935,21 @@ class DetailedReport:
     life_synthesis: object = None                    # the biography-closing chapter (v29)
     karmic: object = None                            # Jaimini karmic evolution (v30)
     rect_confidence: object = None                   # birth-time sensitivity (v31)
+    aptitude: object = None                          # aptitude/intelligence/work-style (v36; was v33)
+    themes: object = None                            # integrated reading / themes (v37; was v34)
+    medical: object = None                           # HPA-29 6th-house medical read (v38; was v35)
+    # AV completeness (2026-08-17, REPORT_CRITIQUE yoga_strength appendix 4) — the whole
+    # Ashtakavarga layer the engine always computed, now shown. Append-only.
+    bav_matrix: tuple = ()                           # BavMatrixRow per graha (7x12 BAV + seats)
+    bav_reduced: tuple = ()                          # BavReducedRow per graha (HPA-26 Sodhana)
+    sodya_pinda: tuple = ()                          # SodyaPindaRow per graha (ASP-14 naming)
+    # Wave-1 timing additions (2026-08-17, REPORT_CRITIQUE timing appendix) — append-only.
+    pratyantar_now: tuple = ()                       # current bhukti's 9 pratyantardashas, dated
+    sade_sati_phases: tuple = ()                     # dated Saturn 12th/1st/2nd-from-Moon spans
+    chara_sequence: tuple = ()                       # dated Chara dasha spans, current flagged
+    # Wave-2 timing/divisional/soul additions (2026-08-18, REPORT_CRITIQUE timing appendix)
+    # — append-only.
+    dasha_transit_adverse: tuple[ConfluenceWindow, ...] = ()  # MD/AD lord x its own ADVERSE transit
     # v34 — the intuition layer. Each is a pure re-read of values already computed above:
     # which planet governs a contested house, how firmly each house stands, and which of
     # Raman's own worked charts this one recalls.
@@ -1431,6 +2957,10 @@ class DetailedReport:
     restraint: object = None                         # {house: Restraint} (v34)
     analogy: object = None                           # tuple[Resemblance, ...] (v34)
     sitting: object = None                           # Sitting (v35 — the continuous reading)
+    # append-only 2026-10-24 (timing gap check, all 16 fixes — USER DECISION): Raman's own
+    # period and transit checks as `raman_timing.TimingTable`s. Report-only (PREC-10).
+    raman_period_checks: tuple = ()                  # fixes 4, 5, 6, 7, 15, 16
+    raman_transit_checks: tuple = ()                 # fixes 7, 8, 10, 11, 12, 13
 
 
 @dataclass(frozen=True)
@@ -1478,6 +3008,11 @@ class Nichod:
     #: S5 (2026-08-03, append-only): MD boundaries where the Ishta/Kashta lean flips —
     #: (window label, what changes). Pure re-read of the timeline + ishta_kashta rows.
     turning_points: tuple[tuple[str, str], ...] = ()
+    #: Wave-2 (2026-08-17, append-only): the NEXT Mahadasha boundary after the reference
+    #: date, with the incoming lord's natal-fixed Ishta/Kashta lean (GBB-10:134) — the
+    #: forward half of the turning-points scan, indication idiom only. "" when the window
+    #: holds no future boundary.
+    forward_horizon: str = ""
 
 
 _EMPTY_NICHOD: Final[Nichod] = Nichod(
@@ -1507,7 +3042,7 @@ class HealthReadout:
     maraka_tiers: tuple[tuple[str, str], ...]    # (graha, tier), primary/secondary/tertiary
     drekkana22_lord: str
     navamsa64_lord: str
-    maraka_period_now: bool
+    maraka_period_now: bool | None
     longevity_band: str                          # e.g. "Madhyayu — a band, not a date"
     caveat: str
 
@@ -1528,6 +3063,23 @@ _HEALTH_CAVEAT: Final[str] = (
 )
 
 
+#: Harmonised longevity-band labels (2026-08-18 report-critique item 5b): the
+#: combination lines say "Purnayu (75-120y)" while the numeric cross-check said
+#: bare "purna" — one reading, two words. Every surface now shows the dominant
+#: Sanskrit form with the class word once: "Purnayu (purna band)".
+_LONGEVITY_BAND_LABEL: Final[dict[str, str]] = {
+    "alpa": "Alpayu (alpa band)",
+    "madhya": "Madhyayu (madhya band)",
+    "purna": "Purnayu (purna band)",
+}
+
+
+def longevity_band_label(longevity_class: str) -> str:
+    """The harmonised display label for an ayurdaya class ('purna' -> 'Purnayu
+    (purna band)'); unknown classes pass through unchanged."""
+    return _LONGEVITY_BAND_LABEL.get(longevity_class, longevity_class)
+
+
 def build_health_readout(r: DetailedReport) -> HealthReadout:
     """Second-pass synthesis (the `build_preponderance` species): selects and re-labels
     already-computed health-adjacent verdicts. Returns the empty sentinel on sparse/Track-B
@@ -1536,6 +3088,7 @@ def build_health_readout(r: DetailedReport) -> HealthReadout:
     try:
         core = build_trimsamsa_health_reading(r.chart).core
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         return _EMPTY_HEALTH_READOUT
 
     rows: list[HealthIndicatorRow] = [
@@ -1569,13 +3122,21 @@ def build_health_readout(r: DetailedReport) -> HealthReadout:
         verdict=str(core.moon_dignity),
         note=("afflicted by " + ", ".join(core.moon_afflictions)
               if core.moon_afflictions else "no natural-malefic affliction"),
-        provenance="D-30 health core (Raman's single-chart method)"))
+        # relabeled 2026-08-18 (report-critique item 6): these two karaka rows come
+        # from the SINGLE-CHART core (H1/H6/H8 + Moon/Mercury karakas), which the
+        # module itself insists is NOT the D-30 — the old "D-30 health core" label
+        # contradicted its own provenance doctrine.
+        provenance="single-chart health core (H1/H6/H8 + karakas)"))
     rows.append(HealthIndicatorRow(
         area="Mercury — nervous-system karaka",
         verdict=str(core.mercury_dignity),
         note=("afflicted by " + ", ".join(core.mercury_afflictions)
               if core.mercury_afflictions else "no natural-malefic affliction"),
-        provenance="D-30 health core (Raman's single-chart method)"))
+        # relabeled 2026-08-18 (report-critique item 6): these two karaka rows come
+        # from the SINGLE-CHART core (H1/H6/H8 + Moon/Mercury karakas), which the
+        # module itself insists is NOT the D-30 — the old "D-30 health core" label
+        # contradicted its own provenance doctrine.
+        provenance="single-chart health core (H1/H6/H8 + karakas)"))
     bal = ("applies" if core.balarishta_applies and not core.balarishta_cancelled
            else "cancelled" if core.balarishta_cancelled else "does not apply")
     rows.append(HealthIndicatorRow(
@@ -1592,7 +3153,7 @@ def build_health_readout(r: DetailedReport) -> HealthReadout:
         drekkana22_lord=mp.drekkana22_lord if mp is not None else "",
         navamsa64_lord=mp.navamsa64_lord if mp is not None else "",
         maraka_period_now=r.maraka_period_now,
-        longevity_band=f"{r.longevity_class} — a band, not a date",
+        longevity_band=f"{longevity_band_label(r.longevity_class)} — a band, not a date",
         caveat=_HEALTH_CAVEAT,
     )
 
@@ -1632,6 +3193,23 @@ class RulerOfNativity:
     gochara_good_windows: tuple[tuple[float, float], ...]
     slow_mover: bool                                  # tracked by the 4-planet Gochara outlook?
     signature: str                                    # the knitted first-impression paragraph
+    # ── the ruler's OWN condition block (append-only 2026-08-18, report-critique: the
+    # chapter is titled after the Lagna lord yet described only the strongest planet).
+    # All defaults so every existing construction — incl. _EMPTY_RULER — is unchanged. ──
+    takeaway: str = ""                                # one-line chapter lead (composed)
+    ll_dignity: Optional[str] = None                  # Lagna lord's dignity word
+    ll_avastha: Optional[str] = None                  # Lagna lord's Deeptadi state
+    ll_rupas: Optional[float] = None                  # Lagna lord's total Shadbala (rupas)
+    ll_required: Optional[float] = None               # its GBB-8:303 minimum
+    ll_powerful: Optional[bool] = None                # meets that minimum?
+    ll_only_failing: bool = False                     # the ONLY planet below its minimum?
+    ll_aspects_received: tuple[str, ...] = ()         # planets casting drishti on it
+    ll_dispositor: Optional[str] = None               # lord of the sign it occupies
+    ll_dispositor_house: Optional[int] = None         # ... and that dispositor's house
+    ll_functional_nature: Optional[str] = None        # of the LAGNA LORD, for this Lagna
+    foundation_line: str = ""                         # sound/unsound verdict (HTJAH-I:3880-3882)
+    chandra_lagna_lord: Optional[str] = None          # third classical candidate (Moon-frame)
+    chandra_ll_condition: Optional[str] = None        # its condition, one clause
 
 
 _EMPTY_RULER: Final[RulerOfNativity] = RulerOfNativity(
@@ -1701,6 +3279,115 @@ def build_ruler(r: DetailedReport) -> RulerOfNativity:
     coincide = strongest is not None and strongest == lagna_lord
     fn = dict(r.overview.functional_natures).get(strongest) if strongest else None
 
+    # ── the ruler's OWN condition block (append-only 2026-08-18, report-critique:
+    # the chapter is titled after the Lagna lord, so the Lagna lord gets the same
+    # full condition read as the strongest planet). Pure re-reads of the same
+    # primitives every other section consumes; nothing is judged here. ────────────
+    from app.raman_saab.doctrine import drishti as _drishti
+    from app.raman_saab.primitives.deeptadi import RESULTS as _DEEPTADI_RESULTS
+    from app.raman_saab.primitives.deeptadi import state as _deeptadi_state
+    from app.raman_saab.primitives.dignity import dignity as _dignity_of
+    from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED as _MIN_REQ
+    from app.raman_saab.primitives.shadbala.total import is_powerful as _is_powerful
+    ll_dignity: Optional[str] = None
+    ll_avastha: Optional[str] = None
+    ll_rupas: Optional[float] = None
+    ll_required: Optional[float] = None
+    ll_powerful: Optional[bool] = None
+    ll_only_failing = False
+    ll_aspects: tuple[str, ...] = ()
+    ll_dispositor: Optional[str] = None
+    ll_dispositor_house: Optional[int] = None
+    if ll_pos is not None:
+        try:
+            ll_dignity = _dignity_of(lagna_lord, chart)
+            ll_avastha = _deeptadi_state(lagna_lord, chart)
+        except Exception:  # noqa: BLE001 — Track-B sparse chart
+            logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
+            pass
+        ll_aspects = tuple(_drishti.aspecting_planets(lagna_lord, chart))
+        ll_dispositor = SIGN_LORDS[ll_pos.sign]
+        _dp = chart.planets.get(ll_dispositor)
+        ll_dispositor_house = _dp.rasi_house if _dp is not None else None
+        if ll_pos.shadbala_rupas is not None:
+            ll_rupas = ll_pos.shadbala_rupas.total / 60.0
+            ll_required = _MIN_REQ.get(lagna_lord)
+            ll_powerful = _is_powerful(lagna_lord, ll_rupas)
+            _failing = [n for n, v in sb if not _is_powerful(n, v)]
+            ll_only_failing = _failing == [lagna_lord]
+    ll_fn = dict(r.overview.functional_natures).get(lagna_lord)
+
+    # the sound/unsound-foundation verdict line — the SAME HTJAH-I:3880-3882 test the
+    # coincide branch already quotes, surfaced on BOTH branches (descriptive idiom only)
+    foundation = ""
+    if ll_powerful is True:
+        foundation = (f"{lagna_lord}, the Lagnadhipati, meets Raman's required minimum"
+                      + (" and is itself the strongest planet in the horoscope"
+                         if coincide else "")
+                      + " — the reading Raman marks with \"the foundation is quite "
+                        "sound\" (HTJAH-I:3880-3882)")
+    elif ll_powerful is False and ll_rupas is not None and ll_required is not None:
+        foundation = (f"{lagna_lord}, the Lagnadhipati, falls below its required minimum "
+                      f"({ll_rupas:.2f} of {ll_required:.1f} rupas"
+                      + (" — the only planet in this chart that does"
+                         if ll_only_failing else "")
+                      + "), so this chart reads short of the \"foundation is quite "
+                        "sound\" standard of that test (HTJAH-I:3880-3882)"
+                      + (f"; the first impression leans instead on {strongest}, the "
+                         f"strongest planet"
+                         if strongest is not None and strongest != lagna_lord else ""))
+
+    # the third classical candidate: when the signature reads the MOON as the stronger
+    # frame (HTJAH-I:645-646), disclose the Chandra-lagna lord and its condition
+    ch_lord: Optional[str] = None
+    ch_cond: Optional[str] = None
+    _moon_p = chart.planets.get("Moon")
+    if r.overview.stronger_frame == "moon" and _moon_p is not None:
+        ch_lord = SIGN_LORDS[_moon_p.sign]
+        _cp = chart.planets.get(ch_lord)
+        if _cp is not None:
+            _parts = [f"in house {_cp.rasi_house}"]
+            try:
+                _parts.append(f"{_dignity_of(ch_lord, chart)} sign")
+                _parts.append(f"{_deeptadi_state(ch_lord, chart)} avastha")
+            except Exception:  # noqa: BLE001 — Track-B sparse chart
+                logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
+                pass
+            if _cp.shadbala_rupas is not None:
+                _parts.append(f"{_cp.shadbala_rupas.total / 60.0:.2f} rupas")
+            _cfn = dict(r.overview.functional_natures).get(ch_lord)
+            if _cfn:
+                _parts.append(f"functional {_cfn} for this Lagna")
+            ch_cond = ", ".join(_parts)
+
+    # the one-line chapter lead — composed only from the conditions computed above
+    takeaway = ""
+    if ll_pos is not None:
+        _strain: list[str] = []
+        if ll_dignity == "enemy":
+            _strain.append("in an enemy sign")
+        elif ll_dignity == "debil":
+            _strain.append("in debilitation")
+        if ll_avastha is not None and _DEEPTADI_RESULTS.get(ll_avastha, (0, ""))[0] < 0:
+            _strain.append(f"{ll_avastha} avastha")
+        if ll_powerful is False:
+            _strain.append("under its Shadbala minimum")
+        _head = f"{lagna_lord} rules this nativity from house {ll_pos.rasi_house}"
+        if coincide and ll_powerful:
+            takeaway = (_head + " and is itself the strongest planet by Shadbala — "
+                        "the chart rests on its own ruler.")
+        elif _strain:
+            takeaway = _head + ", but runs " + _human_list(_strain)
+            if strongest is not None and strongest != lagna_lord:
+                takeaway += (f"; {strongest}, the strongest planet by Shadbala, "
+                             f"carries the chart")
+            takeaway += "."
+        else:
+            takeaway = _head + " in serviceable condition"
+            if strongest is not None and strongest != lagna_lord:
+                takeaway += f"; {strongest} is the strongest planet by Shadbala"
+            takeaway += "."
+
     bits: list[str] = []
     ll_bit = f"{lagna_lord}, lord of the {_SIGN_NAME[chart.asc_sign]} Lagna"
     if ll_pos is not None:
@@ -1749,7 +3436,161 @@ def build_ruler(r: DetailedReport) -> RulerOfNativity:
         retrograde=pos.retrograde if pos is not None else False,
         yogas_involving=tuple(yogas_involving), md_windows=md_windows,
         gochara_good_windows=good_windows, slow_mover=slow_mover, signature=signature,
+        takeaway=takeaway, ll_dignity=ll_dignity, ll_avastha=ll_avastha,
+        ll_rupas=ll_rupas, ll_required=ll_required, ll_powerful=ll_powerful,
+        ll_only_failing=ll_only_failing, ll_aspects_received=ll_aspects,
+        ll_dispositor=ll_dispositor, ll_dispositor_house=ll_dispositor_house,
+        ll_functional_nature=ll_fn, foundation_line=foundation,
+        chandra_lagna_lord=ch_lord, chandra_ll_condition=ch_cond,
     )
+
+
+#: Weekday -> its planetary lord (the vara lords) — used only to NOTE when the day lord is
+#: also the chart's strongest planet; the vara itself comes from the synthesis panchanga.
+_VARA_LORD: Final[dict[str, str]] = {
+    "Sunday": "Sun", "Monday": "Moon", "Tuesday": "Mars", "Wednesday": "Mercury",
+    "Thursday": "Jupiter", "Friday": "Venus", "Saturday": "Saturn",
+}
+
+
+def _ymd_from_days(days: float) -> tuple[int, int, int]:
+    """Days -> (years, months, days) using the locked DAYS_PER_VEDIC_YEAR (365.2425) and its
+    twelfth as the month — plain JD arithmetic, the same year-length every dasha computation
+    in this codebase uses (CLAUDE.md lock); never `datetime.timedelta`."""
+    y = int(days // _DAYS_PER_VEDIC_YEAR)
+    rem = days - y * _DAYS_PER_VEDIC_YEAR
+    month_len = _DAYS_PER_VEDIC_YEAR / 12.0
+    m = int(rem // month_len)
+    d = int(rem - m * month_len)
+    return y, m, d
+
+
+def signature_first_glance(r: DetailedReport) -> tuple[tuple[str, str], ...]:
+    """Raman's first-glance rows for the Chart signature (append-only 2026-08-18,
+    report-critique): balance of dasha at birth, the Lagna/Moon degrees, the Moon's paksha
+    read against its own Shadbala, the Sun/Moon strong-weak flags, the Lagna lord's
+    disposition in one clause, and the day-lord observation when the weekday lord is also
+    the strongest planet. Every row is a COMPUTED re-read of values the report already
+    holds (or plain JD arithmetic over the same Vimshottari timeline the Dasha section
+    renders); nothing is judged here and no verdict is touched."""
+    from app.raman_saab.primitives import vimshottari as _vd
+    from app.raman_saab.primitives.deeptadi import state as _deeptadi_state
+    from app.raman_saab.primitives.dignity import dignity as _dignity_of
+    from app.raman_saab.primitives.shadbala.total import is_powerful as _is_powerful
+    chart = r.chart
+    rows: list[tuple[str, str]] = []
+    # balance of dasha at birth — the birth MD's remainder from the SAME timeline math
+    try:
+        _first = _vd.mahadasha_timeline(chart)[0]
+        _y, _m, _d = _ymd_from_days(_first.end_jd - chart.jd_ut)
+        # Citation found 2026-08-19 (corpus mounted): the row shipped as disclosed JD
+        # arithmetic with NO citation because Raman's casting passage was unpinned. It is
+        # HPA-13:130-160 — he deducts the expired portion of the birth nakshatra from the
+        # lord's full dasa by simple proportion ("if 57/16 ghaties give 7 years what will
+        # 8 ghaties give"), and prints the worked remainder as "Balance of the dasa of
+        # Mars at birth". The engine reaches the same quantity from the timeline's own
+        # bounds rather than from ghaties, which is the identical proportion in different
+        # units.
+        # the citation rides the LABEL, never the value: the value is data other code and
+        # tests read, and a cite spliced into it would leak into every consumer.
+        rows.append(("Balance of dasha at birth (HPA-13:130-160)",
+                     f"{_first.maha} {_y}y {_m}m {_d}d"))
+    except Exception:  # noqa: BLE001 — Track-B sparse chart (no jd_ut)
+        logger.info("report section skipped (Track-B sparse chart (no jd_ut))", exc_info=True)
+        pass
+    # exact degrees — the same sign-degree form the Planetary positions table prints
+    if getattr(chart, "asc_lon", None) is not None:
+        rows.append(("Lagna degree", format_longitude(chart.asc_lon)))
+    moon = chart.planets.get("Moon")
+    sun = chart.planets.get("Sun")
+    if moon is not None:
+        rows.append(("Moon degree", format_longitude(moon.lon)))
+    # the Moon's paksha, read against its own Shadbala (waxing/waning is plain arithmetic
+    # on the Sun-Moon elongation; the strength flag is the report's own Shadbala)
+    if moon is not None and sun is not None:
+        waxing = (moon.lon - sun.lon) % 360.0 < 180.0
+        paksha = ("waxing (Sukla paksha)" if waxing else "waning (Krishna paksha)")
+        if moon.shadbala_rupas is not None:
+            mr = moon.shadbala_rupas.total / 60.0
+            strong = _is_powerful("Moon", mr)
+            joiner = ("and" if waxing == strong else "yet")
+            word = "Shadbala-strong" if strong else "Shadbala-weak"
+            rows.append(("Moon at a glance",
+                         f"{paksha} {joiner} {word} ({mr:.2f} rupas)"))
+        else:
+            rows.append(("Moon at a glance", paksha))
+    # Sun & Moon strength flags — by this report's OWN Shadbala thresholds (GBB-8:303)
+    _lum_bits: list[str] = []
+    for _lum in ("Sun", "Moon"):
+        _lp = chart.planets.get(_lum)
+        if _lp is not None and _lp.shadbala_rupas is not None:
+            _lr = _lp.shadbala_rupas.total / 60.0
+            _lum_bits.append(
+                f"{_lum} {'strong' if _is_powerful(_lum, _lr) else 'weak'} ({_lr:.2f} rupas)")
+    if _lum_bits:
+        rows.append(("Luminaries", "; ".join(_lum_bits)
+                     + " — by this report's own Shadbala (GBB-8:303)"))
+    # the Lagna lord's disposition, one clause
+    _ll = SIGN_LORDS[chart.asc_sign]
+    _llp = chart.planets.get(_ll)
+    if _llp is not None:
+        _bits = [f"in H{_llp.rasi_house}"]
+        try:
+            _bits.append(f"{_dignity_of(_ll, chart)} sign")
+            _bits.append(f"{_deeptadi_state(_ll, chart)} avastha")
+        except Exception:  # noqa: BLE001 — Track-B sparse chart
+            logger.info("report section skipped (Track-B sparse chart)", exc_info=True)
+            pass
+        rows.append(("Lagna lord at a glance", f"{_ll} " + ", ".join(_bits)))
+    # day-lord observation — only when the weekday lord IS the strongest planet
+    _pan = getattr(r.synthesis, "panchanga", None)
+    if _pan and r.ruler.strongest:
+        _vara = _pan.split("|", 1)[0].replace("Vara", "").strip()
+        if _VARA_LORD.get(_vara) == r.ruler.strongest:
+            rows.append(("Day lord", f"born on {_vara}, the {r.ruler.strongest}'s day — "
+                                     f"the {r.ruler.strongest} is also this chart's "
+                                     f"strongest planet by Shadbala"))
+    return tuple(rows)
+
+
+def deeptadi_table(r: DetailedReport) -> tuple[tuple[str, str, str, str], ...]:
+    """Per-planet Deeptadi rows for the avastha section (append-only 2026-08-18,
+    report-critique: from trivia to testimony): (graha, state — with every SECONDARY
+    state disclosed via `deeptadi.states_all`, dominant first —, Raman's stated result
+    for the dominant state (HPA Ch.7:46-83, already encoded in `deeptadi.RESULTS`),
+    and the houses the planet rules/occupies so the state reads as judgment-relevant
+    testimony (\"the Lagna lord dejected\") instead of a bare label. Pure re-read;
+    `deeptadi.state()` itself is untouched and no verdict is touched."""
+    from app.raman_saab.primitives.deeptadi import RESULTS as _RES
+    from app.raman_saab.primitives.deeptadi import states_all as _states_all
+    chart = r.chart
+    lagna_lord = SIGN_LORDS[chart.asc_sign]
+    out: list[tuple[str, str, str, str]] = []
+    for name, p in planet_rows(chart):
+        states = _states_all(name, chart)
+        dom, rest = states[0], states[1:]
+        if name in ("Rahu", "Ketu") and dom == "Sakta":
+            state_cell = "Sakta (definitional — the nodes are always retrograde)"
+        elif rest:
+            alsos = ", ".join(
+                f"{_RES[s][1].split(' ->')[0]} -> {s}" for s in rest)
+            state_cell = (f"{dom} (also {alsos}; the dignity-first order reads "
+                          f"{dom} as dominant)")
+        else:
+            state_cell = dom
+        ruled = [h for h in range(1, 13)
+                 if SIGN_LORDS[((chart.asc_sign - 1 + h - 1) % 12) + 1] == name]
+        if name in ("Rahu", "Ketu"):
+            role = f"rules nothing (chayagraha); occupies H{p.rasi_house}"
+        else:
+            role = ("rules " + ", ".join(f"H{h}" for h in ruled)
+                    if ruled else "rules nothing here") + f"; occupies H{p.rasi_house}"
+        if name == lagna_lord:
+            role += " — the Lagna lord" + (
+                " dejected" if dom == "Deena"
+                else " in an afflicted state" if _RES[dom][0] < 0 else "")
+        out.append((name, state_cell, _RES[dom][1], role))
+    return tuple(out)
 
 
 #: Which D1 house each matter-varga dashboard matter is anchored to — verified against each
@@ -1773,6 +3614,19 @@ class Testimony:
     name: str
     value: str
     lean: str        # "favourable-leaning" | "adverse-leaning" | "neutral" | "absent"
+    #: Wave-2 E (2026-08-18, append-only): the witness CLASS — "core" for the axes
+    #: HTJAH-I:983-991 itself names as judgment's summing-up (the house's lord, its
+    #: karaka, plus the navamsa the verdict path consults), "overlay" for the report's
+    #: own cross-checks (SAV band, Bhava-Bala rank, matter-vargas, majority tenor,
+    #: yoga bearings). A TAG on existing rows — Raman's unequal weighing made visible
+    #: without inventing weights; no lean or count used for status words changes.
+    klass: str = "overlay"
+
+
+#: The witness names tagged "core" (Wave-2 E): the axes HTJAH-I:983-991 itself names —
+#: the house's lord and karaka — plus the navamsa the verdict path consults directly.
+_CORE_WITNESS_NAMES: Final[frozenset[str]] = frozenset(
+    {"lord (lagna frame)", "karaka", "navamsa"})
 
 
 @dataclass(frozen=True)
@@ -1792,6 +3646,12 @@ class HouseTestimonies:
     absent: int
     preponderance: str   # "benefic" | "adverse" | "evenly balanced" | "insufficient"
     status: str          # "well-corroborated" | "contested" | "thinly attested" | "(mixed/undecided headline)"
+    #: Wave-2 E (2026-08-18, append-only): the same tally restricted to the CORE
+    #: witnesses (Testimony.klass == "core" — lord/karaka/navamsa, HTJAH-I:983-991).
+    #: A second count PAIR shown beside the flat counts; the flat counts and the
+    #: preponderance/status words derived from them are untouched.
+    core_favourable: int = 0
+    core_adverse: int = 0
 
 
 @dataclass(frozen=True)
@@ -1857,8 +3717,15 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
     dash_by_matter = {e.matter: e for e in r.dashboard.entries}
     # yoga -> houses it bears on (Raman's Primary Considerations link, resolved via each
     # yoga's constituent planets' own/occupy/aspect — see yoga_house_bearings' docstring).
-    from app.raman_saab.doctrine.synthesis_rules import yoga_house_bearings
+    # Wave-2 E (2026-08-18): the append-only detail companion also tags WHICH factor
+    # matched per house — "direct" (own/occupy, Raman-demonstrated) vs "aspect"
+    # (the admitted extension) — so a yoga row can disclose its link; the house SET
+    # and every lean stay exactly as before.
+    from app.raman_saab.doctrine.synthesis_rules import (yoga_house_bearings,
+                                                         yoga_house_bearings_detail)
     bearings = [(y, yoga_house_bearings(r.chart, y)) for y in r.yogas]
+    bearing_tags = {y.id: (yoga_house_bearings_detail(r.chart, y) or {})
+                    for y in r.yogas}
 
     houses: list[HouseTestimonies] = []
     for pf in r.proformas:
@@ -1978,12 +3845,28 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
                                                   "this house", "absent"))
         else:
             for y in here:
-                tst.append(Testimony(f"yoga: {y.name}", y.kind, _yoga_record_lean(y)))
+                # Wave-2 E: disclose WHICH bearing factor matched (direct vs
+                # aspect-derived) — value enrichment only; the lean is unchanged.
+                _btag = bearing_tags.get(y.id, {}).get(h)
+                _bval = y.kind + (" [direct - own/occupy]" if _btag == "direct"
+                                  else " [aspect-derived - admitted extension]"
+                                  if _btag == "aspect" else "")
+                tst.append(Testimony(f"yoga: {y.name}", _bval, _yoga_record_lean(y)))
+
+        # Wave-2 E: tag the CORE witnesses (HTJAH-I:983-991's own axes — the house's
+        # lord, karaka and the navamsa the verdict path consults); everything else is
+        # an overlay cross-check. A retag of rows already built — no lean changes.
+        tst = [(_dc_replace(t, klass="core") if t.name in _CORE_WITNESS_NAMES else t)
+               for t in tst]
 
         fav = sum(1 for t in tst if t.lean == "favourable-leaning")
         adv = sum(1 for t in tst if t.lean == "adverse-leaning")
         neu = sum(1 for t in tst if t.lean == "neutral")
         ab = sum(1 for t in tst if t.lean == "absent")
+        core_fav = sum(1 for t in tst
+                       if t.klass == "core" and t.lean == "favourable-leaning")
+        core_adv = sum(1 for t in tst
+                       if t.klass == "core" and t.lean == "adverse-leaning")
         if fav > adv:
             prep = "benefic"
         elif adv > fav:
@@ -2008,7 +3891,8 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
 
         houses.append(HouseTestimonies(
             house=h, verdict=verdict, testimonies=tuple(tst), favourable=fav, adverse=adv,
-            neutral=neu, absent=ab, preponderance=prep, status=status))
+            neutral=neu, absent=ab, preponderance=prep, status=status,
+            core_favourable=core_fav, core_adverse=core_adv))
 
     def _pick(cands: list[HouseTestimonies], key) -> Optional[int]:
         if not cands:
@@ -2030,7 +3914,7 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
 #: Tier order for the best-tier-per-house aggregation in Life-chapters — Raman's own four
 #: grades in descending strength (HTJAH-I:1592-1596, 1635-1640; the same vocabulary
 #: `graded_buckets` buckets by). Ordering only — no new grading is invented here.
-_TIER_ORDER: Final[tuple[str, ...]] = ("par excellence", "ordinary", "limited", "feeble")
+_TIER_ORDER: Final[tuple[str, ...]] = vd.TIER_ORDER   # incl. "same lord" (fix 3, 2026-10-24)
 
 
 @dataclass(frozen=True)
@@ -2087,6 +3971,28 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
     if fn is not None:
         lead += f"; {maha} is a {fn} for this Lagna"
     cond_words: list[str] = []
+    if maha in ("Rahu", "Ketu"):
+        # nodal MD: Shadbala/vargottama words never apply to a chayagraha, which used to
+        # leave cond_words empty and render a dangling "…for this Lagna: ." (2026-08-17 fix).
+        # The doctrine-licensed sentence instead: a node gives the results of its
+        # sign-dispositor / occupied house (HTJAH-I:2764/8566 — the same citation the
+        # vimshottari timer_set already encodes).
+        np_ = r.chart.planets.get(maha)
+        if np_ is not None:
+            disp = SIGN_LORDS[np_.sign]
+            disp_words: list[str] = []
+            dstrong = _strong(r.chart, disp)
+            if dstrong is not None:
+                disp_words.append("strong in Shadbala" if dstrong else "weak in Shadbala")
+            dp = r.chart.planets.get(disp)
+            if dp is not None and dp.vargottama:
+                disp_words.append("vargottama")
+            cond_words.append(
+                f"as a node, {maha} gives the results of its dispositor and of the house "
+                f"it occupies (HTJAH-I:2764/8566) — it occupies {_SIGN_NAME[np_.sign]} "
+                f"(H{np_.rasi_house}), and its dispositor {disp}"
+                + (f" is {', '.join(disp_words)}" if disp_words
+                   else "'s condition is read in its own chapter"))
     if cond is not None:
         if cond.strong is not None:
             cond_words.append("strong in Shadbala" if cond.strong else "weak in Shadbala")
@@ -2096,10 +4002,11 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
             cond_words.append("at the strength maximum — strong in both rasi and navamsa "
                               "(HPA-24:51-86; Raman's full maximum further requires freedom "
                               "from malefic aspect, not graded here)")
-    else:
+    elif not cond_words:
         cond_words.append("lord condition unavailable on this chart")
     if lean is not None:
         cond_words.append(f"a {lean} Ishta/Kashta lean")
+    # never a dangling colon: with no condition words at all, close the sentence cleanly.
     # Rahu and Ketu carry no Shadbala, are rarely vargottama and often have no Ishta/Kashta
     # lean, so `cond_words` can be empty — which used to render as "…for this Lagna:." with a
     # colon introducing nothing.
@@ -2109,11 +4016,20 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
         bits.append(f"Yogas ripening here: {names} — a yoga's lord delivers its results in "
                     f"his own Dasha or Bhukti (HTJAH-I:4324).")
     if houses_lit:
-        hl = ", ".join(f"H{h} ({tier}; natal {v})" for h, tier, v in houses_lit)
-        bits.append(f"Houses whose indications fructify across its bhuktis — peak tier "
-                    f"reached in at least one bhukti, see the Life-narrative rows above for "
-                    f"which sub-period: {hl} — each delivering per its unchanged natal "
-                    f"verdict.")
+        # Grouped by tier and by natal verdict, and named in words. The flat form —
+        # "H1 (par excellence; natal favourable), H2 (par excellence; natal favourable), …"
+        # for all twelve — was one 100-word clause of bare house numbers in the middle of
+        # a paragraph, and the reader had to hold the tier in mind across every item.
+        # Same rows, same order, nothing added but the matter each house carries.
+        grouped: dict[tuple[str, str], list[str]] = {}
+        for h, tier, v in houses_lit:
+            grouped.setdefault((tier, v), []).append(f"{_PLAIN_AREA[h]} (H{h})")
+        bits.append("Houses whose indications fructify across its bhuktis — peak tier "
+                    "reached in at least one bhukti, see the Life-narrative rows above "
+                    "for which sub-period, each delivering per its unchanged natal "
+                    "verdict.")
+        for (tier, v), names in grouped.items():
+            bits.append(f"At {tier}, reading {v}: {', '.join(names)}.")
     if seat is not None and seat.bindus is not None:
         bits.append(f"His own Ashtakavarga seat reads {seat.read} ({seat.bindus} bindus) — "
                     f"under Raman's own reliability caveat for the AV tier.")
@@ -2248,7 +4164,7 @@ def build_nichod(r: DetailedReport) -> Nichod:
                   if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
     if cur_tp is not None:
         associated, buckets = graded_buckets(cur_tp, chart)
-        tier = "par excellence" if associated else "ordinary"
+        tier = vd.running_top_tier(cur_tp.period.maha, cur_tp.period.antar, associated)
         focus_houses = sorted({a.house for a in buckets[tier]})
         current_period = (f"{cur_tp.period.maha} MD / {cur_tp.period.antar or cur_tp.period.maha} "
                           f"AD, {tier}"
@@ -2295,7 +4211,10 @@ def build_nichod(r: DetailedReport) -> Nichod:
         caution_bits.append(
             f"H{mc} is the most-contested house — its own witnesses lean against its headline "
             f"(see Preponderance of testimonies); read that house's section with extra care")
-    caution = "; ".join(caution_bits) if caution_bits else None
+    # chain the bits with "; " AFTER stripping each bit's own sentence-final period —
+    # tenor_note ends with "." and joining raw produced the ".;" seam seen in real output.
+    caution = ("; ".join(bit.rstrip().rstrip(".") for bit in caution_bits)
+               if caution_bits else None)
 
     # the first-impression line, from the Ruler of the nativity card (HTJAH-I:16001-16002)
     ruler_bit = f"The ruler of the nativity is {r.ruler.lagna_lord}"
@@ -2306,15 +4225,38 @@ def build_nichod(r: DetailedReport) -> Nichod:
         else:
             ruler_bit += f"; the strongest planet by Shadbala is {r.ruler.strongest}"
     ruler_bit += ". "
+    # Wave-2 (2026-08-17): the Nichod opens the way Raman opens — frame, then ruler
+    # (HTJAH-I:645-646, the stronger-frame re-read already shown in Chart signature).
+    ruler_bit += ("The reading is weighed from the Moon's sign, the stronger frame here "
+                  "(HTJAH-I:645-646). " if r.overview.stronger_frame == "moon" else
+                  "The reading is weighed from the Lagna, the stronger frame here "
+                  "(HTJAH-I:645-646). ")
+
+    # S5 forward half (Wave-2, 2026-08-17): the next MD boundary after the reference date,
+    # with the incoming lord's natal-fixed lean (GBB-10:134) — period indication, not event.
+    md_rows = [ik for ik in r.ishta_kashta if ik.antar is None] or [
+        ik for ik in r.ishta_kashta]
+    forward_horizon = ""
+    nxt = next((ik for ik in md_rows
+                if ik.start_jd > r.ref_jd and ik.maha != (cur_tp.period.maha
+                                                          if cur_tp is not None else None)),
+               None)
+    if nxt is not None and nxt.maha_lean:
+        forward_horizon = (f"the {nxt.maha} chapter that follows from "
+                           f"{_jd_month_year(nxt.start_jd)} carries a {nxt.maha_lean} "
+                           f"Ishta/Kashta lean - a period indication, not an event")
 
     essence = (
         f"{identity}. {ruler_bit}{longevity}. "
         + (f"Yogas present: {yogas}. " if r.yogas else "")
         + f"Across the twelve matters, {matters_tally}. "
         + f"What most distinguishes this chart: {stands_out}. "
+        + (f"The live cross-feature spotlight: {spotlight.rstrip('.')}. " if spotlight
+           else "")
         + f"Right now, the running period is {current_period}; "
         + f"live transits: {live_transits}."
         + (f" {caution}." if caution else "")
+        + (f" Looking forward, {forward_horizon}." if forward_horizon else "")
         + " This is a distillation of the method's own reading, assembled entirely from the "
           "sections above — not a prediction of events, and every distinctive claim here "
           "should be read against the population-context percentiles shown throughout this "
@@ -2323,8 +4265,7 @@ def build_nichod(r: DetailedReport) -> Nichod:
 
     # S5 — turning points: MD boundaries where the Ishta/Kashta MD lean flips (pure
     # re-read of the ishta_kashta rows; the lean is natal-fixed per lord, GBB-10:134).
-    md_rows = [ik for ik in r.ishta_kashta if ik.antar is None] or [
-        ik for ik in r.ishta_kashta]
+    # `md_rows` is the same MD-level filter built for the forward horizon above.
     turning: list[tuple[str, str]] = []
     prev_maha: Optional[str] = None
     prev_lean: Optional[str] = None
@@ -2341,12 +4282,19 @@ def build_nichod(r: DetailedReport) -> Nichod:
         identity=identity, strength_profile=strength_profile, longevity=longevity, yogas=yogas,
         stands_out=stands_out, matters_tally=matters_tally, current_period=current_period,
         live_transits=live_transits, spotlight=spotlight, caution=caution, essence=essence,
-        turning_points=tuple(turning),
+        turning_points=tuple(turning), forward_horizon=forward_horizon,
     )
 
 
 #: rough percentile -> plain-English intensity word, for the "what's distinctive" paragraph.
-def _plain_intensity(pct: float) -> str:
+#: Guarded jointly on verdict direction + percentile (2026-08-17): a favourable verdict must
+#: never carry a "challenging" intensity word (and an afflicted verdict never a "favourable"
+#: one) — when the two directions disagree, a neutral descriptive word is used instead.
+def _plain_intensity(pct: float, verdict: str | None = None) -> str:
+    if pct >= 0.65 and verdict == "afflicted":
+        return "an uncommon reading for this area"
+    if pct <= 0.35 and verdict == "favourable":
+        return "an uncommon reading for this area"
     if pct >= 0.80:
         return "unusually strong"
     if pct >= 0.65:
@@ -2356,6 +4304,86 @@ def _plain_intensity(pct: float) -> str:
     if pct <= 0.35:
         return "notably challenging"
     return "worth noting"
+
+
+def period_pairing(r: "DetailedReport", houses: tuple[int, ...],
+                   *, max_lords: int = 3) -> tuple[tuple[str, ...], str]:
+    """The Mahadasha lords whose chapters most light `houses` — a pure re-read of the
+    already-graded ``life_chapters.houses_lit`` rows (Raman's locked fructification doctrine,
+    HTJAH-I:1586-1596: indications ripen in the periods of the planets that influence the
+    house or its lord). Returns ``(lords, span)`` — lords ordered best-peak-tier first, then
+    chronologically, capped at ``max_lords``; ``span`` is the "YYYY-YYYY" year range those
+    lords' runs cover. ``((), "")`` when nothing lights them. Ordering only — no grading is
+    invented here; every tier was already computed by ``graded_buckets``."""
+    want = set(houses)
+    best: dict[str, tuple[int, float, float]] = {}
+    for ch in r.life_chapters.chapters:
+        ranks = [_TIER_ORDER.index(t) for h, t, _v in ch.houses_lit
+                 if h in want and t in _TIER_ORDER]
+        if not ranks:
+            continue
+        rank = min(ranks)
+        cur = best.get(ch.maha)
+        best[ch.maha] = ((rank, ch.start_jd, ch.end_jd) if cur is None else
+                         (min(cur[0], rank), min(cur[1], ch.start_jd),
+                          max(cur[2], ch.end_jd)))
+    if not best:
+        return (), ""
+    ranked = sorted(best.items(), key=lambda kv: (kv[1][0], kv[1][1]))[:max_lords]
+    import swisseph as swe
+    lo = min(v[1] for _m, v in ranked)
+    hi = max(v[2] for _m, v in ranked)
+    span = f"{int(swe.revjul(lo, swe.GREG_CAL)[0])}-{int(swe.revjul(hi, swe.GREG_CAL)[0])}"
+    return tuple(m for m, _v in ranked), span
+
+
+def _joined_names(names: tuple[str, ...]) -> str:
+    """'Venus' / 'Venus and Sun' / 'Venus, Sun and Moon' — plain list prose."""
+    if len(names) == 1:
+        return names[0]
+    return ", ".join(names[:-1]) + " and " + names[-1]
+
+
+def period_pairing_clause(r: "DetailedReport", houses: tuple[int, ...]) -> str:
+    """One PLAIN clause pairing a life-theme with the periods that most light its houses —
+    Raman's pair-indication-with-period discipline (HTJAH-I:1586-1596, the locked timer
+    doctrine), spoken in the timed-indication idiom the 2026-08-17 guard decision allows.
+    Empty string when no chapter in the display window lights the theme. Jargon-free by
+    construction (planet names + years only) for the Your-Reading surface; the citation
+    itself is carried by the technical sections this clause re-reads."""
+    lords, span = period_pairing(r, houses)
+    if not lords:
+        return ""
+    word = "chapter" if len(lords) == 1 else "chapters"
+    return (f"These matters ripen most fully in the {_joined_names(lords)} {word} of life "
+            f"({span}).")
+
+
+#: plain-word glosses for the reconciliation bullets' method jargon (Wave-2, 2026-08-17):
+#: Your Reading is the enforced jargon-free zone, so the S3 narrator's tokens are glossed
+#: here at composition — the PREC id stays as the parenthetical pointer for the curious.
+#: Pure rewording of already-composed sentences; both poles and the governing rule remain.
+_RECONCILIATION_GLOSS: Final[tuple[tuple[str, str], ...]] = (
+    ("the division is disclosed, never re-voted (PREC-3)",
+     "the division is shown openly rather than put to a fresh vote "
+     "(rule PREC-3 in 'How to read this report')"),
+    ("and neither is wrong (PREC-1)",
+     "and neither is wrong (rule PREC-1 in 'How to read this report')"),
+    ("judged by its dedicated reader",
+     "judged by the reader built specifically for that matter"),
+)
+
+
+def _plain_reconciliation(sentence: str) -> str:
+    for token, gloss in _RECONCILIATION_GLOSS:
+        sentence = sentence.replace(token, gloss)
+    return sentence
+
+
+#: guarded plain word for each Ayurdaya band — band word ONLY (the number stays in the
+#: Longevity section), per the classical order that establishes ayurdaya before judgment.
+_VITALITY_BAND_PLAIN: Final[dict[str, str]] = {
+    "purna": "full", "madhya": "middle", "alpa": "short"}
 
 
 def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] = (),
@@ -2383,6 +4411,20 @@ def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] =
                     f"most ({dominant.census_count} connections in the judgment graph); "
                     f"its classical themes of {dominant.themes_raman} "
                     f"(HTJAH-II:10249) run through this chart.")
+    # Wave-2 (2026-08-17): Raman states the judging frame before judging (HTJAH-I:645-646,
+    # cited in Chart signature) — when the Moon's frame is the stronger, say so up front in
+    # plain words. Pure re-read of chart_overview's already-computed stronger_frame.
+    if r.overview.stronger_frame == "moon":
+        opening += (" This chart is read chiefly from the Moon's position, which is "
+                    "stronger than the rising sign here - a choice Raman himself "
+                    "prescribes.")
+    # Wave-2 (2026-08-17): the classical order establishes vitality before judgment — one
+    # guarded line, band word only (the number stays in the Longevity section). A re-read
+    # of the already-computed longevity class; a foundation, never a forecast.
+    band_word = _VITALITY_BAND_PLAIN.get(r.longevity_class)
+    if band_word is not None:
+        opening += (f" By the classical count, the chart's vitality reads at the "
+                    f"{band_word} band - a foundation for the reading, not a forecast.")
 
     by_matter = {en.matter: en.verdict for en in r.dashboard.entries}
     life_paragraphs: list[tuple[str, str]] = []
@@ -2395,7 +4437,17 @@ def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] =
                 line = _pick_plain_variant(r.birth, m + (verdict or ""), line)
                 sentences.append(line[0].upper() + line[1:])
         if sentences:
-            life_paragraphs.append((theme, ". ".join(sentences) + "."))
+            para = ". ".join(sentences) + "."
+            # Wave-2 (2026-08-17): Raman never states an indication without its
+            # fructification window (HTJAH-I:1586-1596, the locked timer doctrine) — close
+            # each theme with the periods that most light its houses. Plain planet names
+            # and years only; a pure re-read of the graded life-chapters.
+            theme_houses = tuple(sorted({_MATTER_HOUSE[m] for m in matters
+                                         if m in _MATTER_HOUSE}))
+            pairing = period_pairing_clause(r, theme_houses) if theme_houses else ""
+            if pairing:
+                para += " " + pairing
+            life_paragraphs.append((theme, para))
 
     from app.raman_saab.synthesis import running_period
     _rp = running_period(r.synthesis)
@@ -2414,7 +4466,8 @@ def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] =
                f"time that brings out {md_theme}.")
 
     if r.distinctive:
-        bits = [f"{_plain_signification(e.signification)} ({_plain_intensity(e.favourability_percentile)})"
+        bits = [f"{_plain_signification(e.signification)} "
+                f"({_plain_intensity(e.favourability_percentile, e.verdict)})"
                 for _h, e in r.distinctive[:3]]
         notable = ("A few things stand out as distinctly this chart's own, not the generic "
                   "picture most charts show: " + "; ".join(bits) + ".")
@@ -2432,7 +4485,9 @@ def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] =
               "technical report below shows exactly how each conclusion was reached.")
 
     return PlainReading(opening=opening, life_paragraphs=tuple(life_paragraphs), now=now,
-                        notable=notable, closing=closing, reconciliations=reconciliations)
+                        notable=notable, closing=closing,
+                        reconciliations=tuple(_plain_reconciliation(s)
+                                              for s in reconciliations))
 
 
 _DAYS_PER_VEDIC_YEAR: float = 365.2425
@@ -2464,7 +4519,7 @@ def _windowed_timeline(
 
 
 def build_detailed_report(
-    birth: BirthData, *, on: Optional[tuple[int, int, int]] = None, ayanamsa: str = "lahiri",
+    birth: BirthData, *, on: Optional[tuple[int, int, int]] = None, ayanamsa: str = "raman",
     years_back: int = 10, years_forward: int = 20,
 ) -> DetailedReport:
     """Assemble the full reading + calibration for one chart (no verdict is re-judged).
@@ -2481,7 +4536,15 @@ def build_detailed_report(
     try:
         sav = ashtakavarga.sarvashtakavarga(chart)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         sav = {}
+    try:
+        bav_matrix = _bav_matrix_rows(chart)
+        bav_reduced = _bav_reduced_rows(chart)
+        sodya_pinda = _sodya_pinda_rows(chart)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
+        bav_matrix, bav_reduced, sodya_pinda = (), (), ()
     import swisseph as swe
 
     from app.raman_saab.primitives.vimshottari import is_maraka_period
@@ -2489,17 +4552,24 @@ def build_detailed_report(
     try:
         gochara_rows = tr.gochara(chart, int(ry), int(rm), int(rd), ayanamsa=ayanamsa)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         gochara_rows = ()
     try:
         gochara_outlook = tr.gochara_timeline(
             chart, ref_jd, years_back, years_forward, ayanamsa=ayanamsa)
     except Exception:  # noqa: BLE001 — sparse chart
+        logger.info("report section skipped (sparse chart)", exc_info=True)
         gochara_outlook = {}
     try:
-        maraka_now = is_maraka_period(chart, ref_jd)
+        maraka_now: bool | None = is_maraka_period(chart, ref_jd)
     except Exception:  # noqa: BLE001
-        maraka_now = False
+        # Unknown is reported as unknown — never as "no maraka-tier lord".
+        logger.warning("maraka check failed; reporting it as undetermined", exc_info=True)
+        maraka_now = None
     dasha_transit = _dasha_transit_confluences(timeline, gochara_outlook)
+    # Wave-2 (2026-08-18): the adverse mirror — a separate builder so the favourable rows
+    # stay byte-identical (see _dasha_transit_adverse's docstring).
+    dasha_transit_adverse = _dasha_transit_adverse(chart, timeline, gochara_outlook)
     fired_yogas = detect_yogas(chart)
     yoga_timing = _yoga_dasha_confluences(chart, timeline, fired_yogas)
     bhava_balas = {pf.house: pf.significations[0].ledger.bhava_bala
@@ -2515,6 +4585,7 @@ def build_detailed_report(
     try:
         maraka_saturn = _maraka_saturn_confluences(chart, ref_jd, ayanamsa)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         maraka_saturn = ()
     av_dasha_seats = _av_dasha_seats(chart, timeline)
     provisional = DetailedReport(
@@ -2524,13 +4595,15 @@ def build_detailed_report(
         ishta_kashta=ishta_kashta, md_condition=md_condition, dasa_kakshya=dasa_kakshya,
         maraka_saturn=maraka_saturn, av_dasha_seats=av_dasha_seats,
         sav=sav, insights=insights,
+        bav_matrix=bav_matrix, bav_reduced=bav_reduced, sodya_pinda=sodya_pinda,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
         dashboard=build_matter_varga_dashboard(chart),
         soul=build_soul_reading(chart),
         pitru=build_pitru_dosha_reading(chart),
         gochara=tuple(gochara_rows), gochara_outlook=gochara_outlook,
-        dasha_transit=dasha_transit, maraka_period_now=maraka_now,
+        dasha_transit=dasha_transit, dasha_transit_adverse=dasha_transit_adverse,
+        maraka_period_now=maraka_now,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
@@ -2562,10 +4635,12 @@ def build_detailed_report(
     try:
         _graph = build_judgment_graph(enriched)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         _graph = None
     try:
         _recs = narrate_tensions(enriched)
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         _recs = ()
     _bios: tuple = ()
     _deep: tuple = ()
@@ -2573,11 +4648,13 @@ def build_detailed_report(
         try:
             _bios = build_planet_biographies(enriched, _graph)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _bios = ()
         try:
             from app.raman_saab.yoga_deep_read import build_yoga_deep_reads
             _deep = build_yoga_deep_reads(enriched, _graph)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _deep = ()
     enriched = _dc_replace(enriched, planet_bios=_bios, yoga_deep=_deep,
                            life_chapters=build_life_chapters(
@@ -2587,7 +4664,8 @@ def build_detailed_report(
     from app.raman_saab.arishta_wealth_profession import (build_arishta_chapter,
                                                           build_profession_synthesis,
                                                           build_wealth_chapter)
-    from app.raman_saab.monographs import (build_children_chapter,
+    from app.raman_saab.monographs import (build_aptitude_profile,
+                                           build_children_chapter,
                                            build_marriage_monograph,
                                            build_psych_profile)
     # one try per builder — a failure in one chapter must never silence the others
@@ -2596,26 +4674,39 @@ def build_detailed_report(
                              ("wealth", build_wealth_chapter),
                              ("marriage", build_marriage_monograph),
                              ("children", build_children_chapter),
-                             ("psych", build_psych_profile)):
+                             ("psych", build_psych_profile),
+                             ("aptitude", build_aptitude_profile)):
         try:
             enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
         except Exception:  # noqa: BLE001 — sparse/Track-B chart
+            logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
             pass
+    # v35: the HPA-29 medical read. Its own try, like every chapter above — and it is
+    # report-only: `medical_reading` is imported by nothing in the verdict path.
+    try:
+        from app.raman_saab.judges.medical_reading import build_medical_reading
+        enriched = _dc_replace(enriched, medical=build_medical_reading(enriched.chart))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
+        pass
     from app.raman_saab.life_arc import build_decade_timeline
     try:
         enriched = _dc_replace(enriched, decades=build_decade_timeline(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     from app.raman_saab.karmic_evolution import build_karmic_evolution
     try:
         enriched = _dc_replace(enriched, karmic=build_karmic_evolution(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     from app.raman_saab.rect_confidence import build_rect_confidence
     try:
         enriched = _dc_replace(
             enriched, rect_confidence=build_rect_confidence(enriched, ayanamsa=ayanamsa))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     # v34 intuition layer — dominance must precede restraint (restraint reads which houses
     # dominance settled), and all three are best-effort: a failure here must never cost the
@@ -2624,16 +4715,19 @@ def build_detailed_report(
         from app.raman_saab.dominance import house_dominance
         enriched = _dc_replace(enriched, dominance=house_dominance(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     try:
         from app.raman_saab.restraint import house_restraint
         enriched = _dc_replace(enriched, restraint=house_restraint(enriched))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     try:
         from app.raman_saab.analogy import resembles
         enriched = _dc_replace(enriched, analogy=resembles(enriched.chart))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
 
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
@@ -2646,7 +4740,46 @@ def build_detailed_report(
     try:
         final = _dc_replace(final, life_synthesis=build_life_synthesis(final))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
+    # Wave-1 timing additions (2026-08-17): the pratyantar drill-down for the current
+    # bhukti, the dated Sade-Sati phase spans, and the dated Chara dasha sequence —
+    # pure re-reads / plain JD arithmetic over already-encoded primitives.
+    try:
+        final = _dc_replace(
+            final,
+            pratyantar_now=_pratyantar_rows(chart, ref_jd),
+            sade_sati_phases=_sade_sati_phases(chart, ref_jd, ayanamsa),
+            chara_sequence=_chara_sequence(chart, ref_jd))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
+        pass
+    # 2026-10-24 (timing gap check, all 16 fixes): Raman's period and transit checks — one
+    # try each, report-only, never a verdict input.
+    try:
+        from app.raman_saab import raman_timing as _rt
+        final = _dc_replace(final, raman_period_checks=_rt.period_checks(
+            chart, ref_jd, final.yogas,
+            tuple((t.yoga_name, t.planet) for t in final.yoga_timing)))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("Raman period checks skipped", exc_info=True)
+    try:
+        from app.raman_saab import raman_timing as _rt
+        final = _dc_replace(final, raman_transit_checks=_rt.transit_checks(
+            chart, ref_jd, years_back=years_back, years_forward=years_forward,
+            outlook=final.gochara_outlook))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        logger.info("Raman transit checks skipped", exc_info=True)
+    # v34 — the integrated interpretation layer reads the FULLY-built report (every section
+    # above) and judges nothing anew; it re-reads finished verdicts into one coherent theme
+    # synthesis (docs/raman_saab/SYNTHESIS_LAYER_ARCHITECTURE.md).
+    try:
+        from app.raman_saab.theme_synthesis import build_theme_synthesis
+        final = _dc_replace(final, themes=build_theme_synthesis(final))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart; must never block the report
+        # log the cause: without this a synthesis regression silently degrades every chart to
+        # the "not available" fallback with no trace of why
+        logger.debug("integrated reading (theme synthesis) skipped", exc_info=True)
     # v35 — the Sitting composes from the fully-built report (cast needs the bios, the
     # closing needs the nichod's turning points). A composition failure costs the section,
     # never the report.
@@ -2654,6 +4787,7 @@ def build_detailed_report(
     try:
         final = _dc_replace(final, sitting=build_sitting(final))
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         pass
     return final
 
@@ -2708,6 +4842,400 @@ def passage_quote(cite: str, *, max_chars: int = 260) -> str:
         dot = cut.rfind(". ")
         text = (cut[:dot + 1] if dot > 60 else cut + "...")
     return text
+
+
+def _quote_or_absent(text: str | None, cite: str) -> str:
+    """Render a verbatim doctrine quote with its citation — or, when the corpus is not
+    mounted on this machine (passage()/_pull() legitimately return empty), an honest
+    pointer to the passage instead. NEVER renders an empty string as a quotation
+    (`— "" (CITE)` was a real 2026-08-17 defect)."""
+    if text and text.strip():
+        return f"\"{text}\" ({cite})"
+    return f"passage {cite} - corpus not mounted on this machine"
+
+
+_AXIS_LABEL = {"verdict": "verdict", "magnitude": "strength", "state": "state",
+               "dasha": "timing", "varga": "divisional", "transit": "transit",
+               "yoga": "yoga", "citation": "cross-feature"}
+
+
+def _md_cell(s: object) -> str:
+    """A markdown table cell. A literal `|` inside an interpolated value would split the row and
+    shift every later cell, and these cells carry free prose (a fired insight's detail, a yoga
+    name), so escape it."""
+    return str(s).replace("|", "\\|")
+
+
+def _theme_conv_label(t: object) -> str:
+    """The reader-facing convergence phrase — the layer's own ``convergence_label`` when present
+    (e.g. 'aligned, but lightly evidenced'), else the plain tier + 'convergence'."""
+    lbl = getattr(t, "convergence_label", "") or ""
+    if lbl:
+        return lbl
+    return getattr(t, "convergence", "").replace("_", " ").lower() + " convergence"
+
+
+def _integrated_reading_lines(r: DetailedReport) -> list[str]:
+    """The v34 integrated-interpretation section, in markdown. A re-read ACROSS the sections:
+    an Executive Portrait, the dominant-theme spine, and per-theme evidence chains with their
+    convergence and contradictions. Every claim traces to an authoritative verdict the report
+    already made; this section judges nothing anew (theme_synthesis is read-only)."""
+    L: list[str] = ["## The integrated reading", ""]
+    ts = getattr(r, "themes", None)
+    if ts is None or not getattr(ts, "themes", None):
+        L.append("_The integrated reading is not available for this chart in the current "
+                 "engine (a sparse or stated-position chart carries too few decided sections "
+                 "to synthesize)._")
+        L.append("")
+        return L
+    L.append("_One reading across every section above — not a new judgment. Each theme below "
+             "gathers the independent findings the report already made (house verdict, "
+             "strength, planetary state, divisional confirmation, yoga, timing) into one "
+             "mechanism, states how strongly they converge, and names any tension with the "
+             "precedence rule that resolves it. The direction of every theme is the engine's "
+             "own house verdict, carried through unchanged._")
+    L.append("")
+
+    # PREC-8 order: the span is established BEFORE anything is read inside it. So the band
+    # opens the integrated reading rather than sitting in a chapter beside it.
+    lf = getattr(ts, "longevity", None)
+    if lf is not None:
+        L.append("### The span this reading sits inside")
+        L.append("")
+        L.append(f"_{lf.frame}_")
+        L.append("")
+        # whole years only — a two-decimal lifespan is false precision the report bans
+        # (test_longevity_is_band_first_and_not_false_precision); the ymd carries the detail
+        L.append(f"- **Band** — {_md_cell(lf.band)}; Ayurdaya cross-check about "
+                 f"{round(lf.years)} years ({lf.ymd[0]}y {lf.ymd[1]}m {lf.ymd[2]}d)"
+                 + (f"; Balarishta {lf.balarishta}" if lf.balarishta else "") + ".")
+        if lf.span_year:
+            L.append(f"- **Reach** — the band runs to about {lf.span_year}; the furthest window "
+                     f"this reading names is {lf.reading_reaches or 'none'} — "
+                     + ("inside the span." if lf.within_span else "OUTSIDE the span, disclosed "
+                        "where it appears."))
+        L.append("- **Running period** — " + maraka_running_phrase(lf.maraka_now) + ".")
+        if lf.maraka_windows:
+            L.append("- **Maraka-tier bhuktis ahead carrying the classical Saturn signal** "
+                     "(Raman's step two, after the band):")
+            L.append("")
+            L.append("| Bhukti | Window | Tier-score | Against the band |")
+            L.append("|---|---|---|---|")
+            for bh, sp, sc, st in lf.maraka_windows:
+                L.append(f"| {_md_cell(bh)} | {_md_cell(sp)} | {sc} | {_md_cell(st or '-')} |")
+            L.append("")
+        L.append(f"- _{lf.honesty}_")
+        L.append(f"- _Citation: {lf.citation}_")
+        L.append("")
+
+    p = ts.portrait
+    L.append("### Executive portrait")
+    L.append("")
+    if getattr(p, "identity", ""):
+        L.append(f"- **Who the chart is** — {p.identity}")
+    if p.frame:
+        L.append(f"- **Reading frame** — judged chiefly from the {p.frame} "
+                 f"(the stronger of the two lagnas here).")
+    if p.temperament and p.temperament != f"read chiefly from the {p.frame}":
+        L.append(f"- **Temperament** — {p.temperament}.")
+    if p.dominant_actors:
+        actors = "; ".join(f"**{name}** ({why})" for name, why in p.dominant_actors)
+        L.append(f"- **Dominant actors** — {actors}.")
+    if p.strongest_domains:
+        L.append(f"- **Strongest domains** — {', '.join(p.strongest_domains)}.")
+    if p.weakest_domains:
+        L.append(f"- **Areas under strain** — {', '.join(p.weakest_domains)}.")
+    if p.protective_factors:
+        L.append(f"- **Protective factors** — {'; '.join(p.protective_factors)}.")
+    if p.principal_tension:
+        L.append(f"- **Principal tension** — {p.principal_tension}")
+    if getattr(p, "concordance_note", ""):
+        L.append(f"- **How far the techniques agree** — {p.concordance_note}")
+    if getattr(p, "reading_stability", ""):
+        L.append(f"- **How firm is the cast moment?** — {p.reading_stability}")
+    if getattr(p, "chara_now", ""):
+        L.append(f"- **Jaimini chara dasha (walled)** — {p.chara_now}")
+    if p.current_chapter:
+        nxt = f"; {p.next_chapter}" if p.next_chapter else ""
+        L.append(f"- **Current chapter** — {p.current_chapter}{nxt}.")
+    if p.honesty_note:
+        L.append(f"- _{p.honesty_note}_")
+    L.append("")
+
+    # the spine
+    by_id = {t.theme_id: t for t in ts.themes}
+    spine = [by_id[i] for i in ts.spine if i in by_id]
+    if spine:
+        L.append("### The interpretive spine")
+        L.append("")
+        L.append("_The few themes that explain a disproportionate amount of this chart, "
+                 "strongest evidence first:_")
+        L.append("")
+        for t in spine:
+            L.append(f"- **{t.name}** — {t.headline_verdict} "
+                     f"({_theme_conv_label(t)})")
+        L.append("")
+
+    # every theme, ranked
+    L.append("### Major life-themes")
+    L.append("")
+    # the method note governing every "How settled is this?" line below. It is one constant
+    # string on every theme's DissentSummary, so it is stated once here rather than repeated
+    # twelve times — the field is rendered, not hidden.
+    _mn = next((t.dissent.method_note for t in ts.themes
+                if getattr(t, "dissent", None) is not None and t.dissent.method_note), "")
+    if _mn:
+        L.append(f"_On the cross-checks below: {_mn}_")
+        L.append("")
+    for t in ts.themes:
+        houses = ", ".join(f"H{h}" for h in t.houses)
+        L.append(f"#### {t.name} — **{t.headline_verdict}** ({_theme_conv_label(t)})")
+        L.append("")
+        dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
+        L.append(f"_{t.final_interpretation}_")
+        L.append("")
+        L.append(f"- **Network** — {houses}"
+                 + (f"; karakas {', '.join(t.karakas)}" if t.karakas else "")
+                 + f"; driven by {dom}.")
+        # the house's facets — each matter that lives here, with its own dedicated verdict
+        if getattr(t, "sub_matters", None):
+            facets = "; ".join(f"{m} reads {v}" for m, v in t.sub_matters)
+            L.append(f"- **Within this house** — {facets}.")
+        L.append(f"- **Convergence** — {_theme_conv_label(t)}: {t.convergence_why}")
+        # every counted axis at its REMOVE from the headline — the disclosure that stops the
+        # count claiming an independence it does not have
+        for ax in getattr(t, "convergence_axes", ()) or ():
+            arrow = ("agrees" if ax.direction > 0 else "opposes" if ax.direction < 0
+                     else "no direction")
+            L.append(f"    - {_md_cell(ax.label)} ({_md_cell(ax.lean)}) — {arrow}; "
+                     f"{_md_cell(ax.remove)} — {_md_cell(ax.why_remove)}")
+        if getattr(t, "activation_in_span", ""):
+            L.append(f"- **That window inside the span** — {t.activation_in_span}")
+        if getattr(t, "weather_on_window", ""):
+            L.append(f"- **Weather across that window** — {t.weather_on_window}")
+        if getattr(t, "pitru_screen", ""):
+            L.append(f"- **Ancestral screen (separate layer)** — {t.pitru_screen}")
+        # the engine's OWN testimony ledger for this bhava (Raman's three-fold: lord/karaka/navamsa
+        # as core, everything else as overlay) — the authoritative agreement check
+        ds = getattr(t, "dissent", None)
+        if ds is not None:
+            L.append(f"- **How settled is this?** — {ds.reading}")
+            for ck in ds.checks:
+                cite = f", {ck.citation}" if ck.citation else ""
+                indep = "independent" if ck.independent else "not independent of the verdict"
+                L.append(f"    - {_md_cell(ck.system)} — {_md_cell(ck.tier)}; "
+                         f"{_md_cell(ck.relation)}; {indep} ({ck.governing}{cite}). "
+                         f"{_md_cell(ck.note)}")
+            if ds.walled_note:
+                L.append(f"    - {ds.walled_note}")
+        c = getattr(t, "concordance", None)
+        if c is not None:
+            L.append(f"- **Do the techniques agree?** — {c.reading}")
+            if c.core_for or c.core_against:
+                L.append(f"    - core testimony (lord / karaka / navamsa): "
+                         f"{', '.join(c.core_for) or 'none'} for; "
+                         f"{', '.join(c.core_against) or 'none'} against")
+            if c.overlay_for or c.overlay_against:
+                L.append(f"    - overlay: {', '.join(c.overlay_for) or 'none'} for; "
+                         f"{', '.join(c.overlay_against) or 'none'} against")
+        for g in getattr(t, "driver_concordance", ()) or ():
+            L.append(f"- **{g.planet} (force vs intent)** — {g.reading}")
+        for d in getattr(t, "divisional_checks", ()) or ():
+            L.append(f"- **{d.varga}** ({d.relation}) — {d.verdict}. {d.note}")
+        av = getattr(t, "av_support", ()) or ()
+        if av:
+            L.append("- **Ashtakavarga backing (in this bhava's own sign)** — "
+                     + "; ".join(f"{a.planet}: {a.bindus} bindus (reduced {a.reduced}, "
+                                 f"Sodya Pinda {a.sodya_pinda}) — {a.verdict}" for a in av))
+        # NB: not `tr` — that shadows the module-level `transits as tr` import (line 77)
+        for tnote in getattr(t, "transits", ()) or ():
+            L.append(f"- **Transit: {tnote.planet}** — {tnote.note}")
+        for y in getattr(t, "yogas", ()) or ():
+            rank = f"#{y.rank} " if y.rank is not None else ""
+            L.append(f"- **Yoga {rank}{y.name}** ({y.kind}) — {y.effect}")
+            if y.participants:
+                L.append(f"    - participants: {', '.join(y.participants)}")
+            if y.strength_note:
+                L.append(f"    - strength: {y.strength_note}")
+            if y.windows:
+                L.append(f"    - operates in: {'; '.join(y.windows)}"
+                         + ("" if y.ahead else " — all of them behind the reference moment"))
+            if y.cancellation:
+                L.append(f"    - cancellation: {y.cancellation}")
+        k = getattr(t, "karmic_lens", None)
+        if k is not None:
+            L.append(f"- **Karmic lens ({k.aspect}, walled)** — {k.note}")
+        dist = getattr(t, "distinctive", ()) or ()
+        if dist:
+            L.append("- **How unusual is this?** — "
+                     + "; ".join(f"{x.signification} ({x.rarity}): {x.population_note}"
+                                 for x in dist[:4]))
+        L.append(f"- **Divisional (D9)** — {t.varga_relation}.")
+        if t.activation_span:
+            L.append(f"- **Timing** — {t.activation_span}")
+        # the evidence chain (traceable), grouped by axis
+        L.append("")
+        L.append("| axis | finding | source |")
+        L.append("|---|---|---|")
+        for lk in t.links:
+            L.append(f"| {_AXIS_LABEL.get(lk.axis, lk.axis)} | "
+                     f"{_md_cell(lk.label)}: {_md_cell(lk.value)} | "
+                     f"`{_md_cell(lk.accessor.split('@')[-1].strip())}` |")
+        L.append("")
+        if t.contradictions:
+            for c in t.contradictions:
+                L.append(f"- **Tension ({c.kind})** — {c.poles[0]} vs {c.poles[1]}. "
+                         f"Resolved by **{c.governing}**: {c.resolution}")
+            L.append("")
+
+    # do the independent techniques agree? — the cross-technique concordance, chart-wide
+    if getattr(ts, "graha_concordance", None):
+        L.append("### Do the techniques agree? — force against intent")
+        L.append("")
+        L.append("_Shadbala asks how much force a graha commands; Ishta and Kashta ask to what "
+                 "end. They are different axes, and a graha can be strong AND harmful — strength "
+                 "is magnitude, never direction (PREC-2, GBB-9). Each row sets the engine's own "
+                 "independent measures of one graha side by side and says whether they concur:_")
+        L.append("")
+        L.append("| graha | Shadbala | Ishta | Kashta | state | measures | reading |")
+        L.append("|---|---|---|---|---|---|---|")
+        for g in ts.graha_concordance:
+            ru = f"{g.rupas:.2f}" if g.rupas is not None else "-"
+            ish = f"{g.ishta:.0f}" if g.ishta is not None else "-"
+            kas = f"{g.kashta:.0f}" if g.kashta is not None else "-"
+            # the graha cell is EMPHASISED so the row does not begin "| Moon |" — the positions
+            # table further down uses exactly that prefix, and a test that takes the first such
+            # line would otherwise pick up this table instead (the same shadowing trap the theme
+            # headings hit with "## Longevity").
+            L.append(f"| **{_md_cell(g.planet)}** | {ru} | {ish} | {kas} | "
+                     f"{_md_cell(g.avastha)} | {_md_cell(g.agreement)} | {_md_cell(g.pattern)} |")
+        L.append("")
+    if getattr(ts, "contested_themes", None):
+        L.append("_**Themes with a cross-check reading against the verdict** — an inventory, not "
+                 "a grade. The verdicts stand (none of these may overturn a bhava judgment); each "
+                 "dissent is named at its own tier so the reader can weigh it as Raman asks — "
+                 "\"all these must be properly weighed\" (HTJAH-I:495) — rather than count it:_")
+        L.append("")
+        for nm, d in ts.contested_themes:
+            L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.reading)}")
+        L.append("")
+    if getattr(ts, "divisional_divergences", None):
+        L.append("_**Divisions that read against the rasi** — a varga is the classical "
+                 "confirmation device, so its dissent is worth naming. It modulates confidence in "
+                 "the natal indication; the D1 core decides and the division corroborates (PREC-11):_")
+        L.append("")
+        for nm, d in ts.divisional_divergences:
+            L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.varga)} reads "
+                     f"{_md_cell(d.verdict)}, against the rasi verdict.")
+        L.append("")
+    bgv = getattr(ts, "background_vargas", None)
+    if bgv:
+        L.append("### The deep-background divisions")
+        L.append("")
+        L.append("_D-27, D-40, D-45 and D-60 resolve no house and carry no matter verdict, so "
+                 "nothing in the reading consulted them — yet the engine judged all four on "
+                 "every chart. They are read here as BACKGROUND MODIFIERS: they take no "
+                 "direction, enter no convergence count, and can never move a bhava verdict. "
+                 "Provenance is thin and stated: Raman NAMES the shodasavarga scheme and defers "
+                 "the rest to Parashara (HPA-11:195-201), so the strength read is a general "
+                 "principle applied to a division he names; the domain labels (maternal line, "
+                 "paternal line, accumulated karma) are Rath's, not Raman's._")
+        L.append("")
+        L.append("| Division | Domain (non-Raman label) | Engine's own reading | What it rests on |")
+        L.append("|---|---|---|---|")
+        for b in bgv:
+            # a neutral is reported WITH its kind: "contested" (both poles fired and
+            # cancelled) and "silent" (neither fired) are opposite findings that the bare
+            # word `neutral` printed identically.
+            _k = getattr(b, "status_kind", "")
+            L.append(f"| D-{b.varga} {_md_cell(b.name)} | {_md_cell(b.domain)} | "
+                     f"**{_md_cell(b.status)}**"
+                     + (f" ({_md_cell(_k)})" if _k else "")
+                     + f" | {_md_cell(b.reading)} |")
+        L.append("")
+        L.append(f"- _Provenance: {_md_cell(bgv[0].provenance)}; citation "
+                 f"{_md_cell(bgv[0].citation)}._")
+        L.append("")
+
+    cal = getattr(ts, "calendar", None)
+    if cal is not None and cal.windows:
+        L.append("### The weather over these years")
+        L.append("")
+        L.append(f"_{cal.frame}_")
+        L.append("")
+        L.append("| From | To | Scheme | Stretch | What it measures | Governing |")
+        L.append("|---|---|---|---|---|---|")
+        for w in cal.windows:
+            now = " (running now)" if w.current else ""
+            L.append(f"| {w.start_year} | {w.end_year} | {_md_cell(w.kind)} | "
+                     f"{_md_cell(w.label)}{now} | {_md_cell(w.detail)} | "
+                     f"{w.governing} ({_md_cell(w.citation)}) |")
+        L.append("")
+        L.append(f"- _{cal.honesty}_")
+        L.append("")
+
+    if getattr(ts, "contested_bhavas", None):
+        L.append("_**Contested bhavas** — houses whose verdict runs against the weight of their "
+                 "own testimony. The verdict stands (a bhava is graded by its weakest decided "
+                 "matter, not by a majority vote); the spread is disclosed so the reader knows "
+                 "how settled the reading is:_")
+        L.append("")
+        for c in ts.contested_bhavas:
+            L.append(f"- **H{c.house}** — {c.reading}")
+        L.append("")
+
+    # how the themes connect (the cross-theme fabric — one mechanism behind several areas)
+    if getattr(ts, "connections", None):
+        L.append("### How the themes connect")
+        L.append("")
+        L.append("_Where one computed factor drives more than one life-area, so the chart "
+                 "reads as a single fabric rather than separate modules:_")
+        L.append("")
+        for c in ts.connections:
+            L.append(f"- {c.note}")
+        L.append("")
+
+    # dasha evolution — the horoscope through time (which themes each chapter emphasizes)
+    if getattr(ts, "dasha_evolution", None):
+        L.append("### Dasha evolution — the horoscope through time")
+        L.append("")
+        L.append("_Each Mahadasha chapter foregrounds the themes its lord actually drives — the "
+                 "Saturn period brings forward what Saturn governs, not every house it touches — "
+                 "split into what newly emerges and what continues from the chapter before. A "
+                 "re-read of the life-narrative, no new timing math:_")
+        L.append("")
+        L.append("| chapter | span | lean | newly emphasized | continuing |")
+        L.append("|---|---|---|---|---|")
+        for ch in ts.dasha_evolution:
+            now = " (now)" if ch.is_current else ""
+            via = getattr(ch, "acts_through", ()) or ()
+            through = f" (acting through {', '.join(via)})" if via else ""
+            cond = f" — lord {_md_cell(ch.lord_condition)}" if getattr(ch, "lord_condition", "") else ""
+            cond += f"; {_md_cell(ch.av_seat)}" if getattr(ch, "av_seat", "") else ""
+            L.append(f"| {_md_cell(ch.maha)} MD{now}{through}{cond} | {_md_cell(ch.span)} | "
+                     f"{_md_cell(ch.lean)} | {_md_cell(', '.join(ch.emerging) or '-')} | "
+                     f"{_md_cell(', '.join(ch.continuing) or '-')} |")
+        L.append("")
+        if any(getattr(ch, "acts_through", ()) for ch in ts.dasha_evolution):
+            L.append("_Rahu and Ketu own no sign, so a nodal chapter is read through the lord of "
+                     "the sign the node occupies and any planet joined with it — the routing is "
+                     "named above rather than assumed._")
+            L.append("")
+
+    # varga confirmation matrix — each theme's divisional relation to its natal indication
+    L.append("### Varga confirmation matrix")
+    L.append("")
+    L.append("_Does the relevant division confirm, qualify or stay neutral on each theme's "
+             "natal indication? (D9 is the only division that modulates a D1 verdict in this "
+             "engine; the rest are read for their own domain in the divisional deep-reads.)_")
+    L.append("")
+    L.append("| theme | natal verdict | D9 relation |")
+    L.append("|---|---|---|")
+    for t in ts.themes:
+        L.append(f"| {_md_cell(t.name)} | {_md_cell(t.headline_verdict)} | "
+                 f"{_md_cell(t.varga_relation)} |")
+    L.append("")
+    return L
 
 
 class _SectionedLines:
@@ -2765,6 +5293,7 @@ def _plain_section(section_id: str, r: "DetailedReport") -> str:
         from app.raman_saab.plainspoken import plain_for_section
         return plain_for_section(r, section_id)
     except Exception:  # noqa: BLE001
+        logger.info("report section skipped (unexpected error)", exc_info=True)
         return ""
 
 
@@ -2776,14 +5305,16 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     is the one thing a same-order render can never prove.
     """
     s, b = r.synthesis, r.birth
-    y, mo, d = r.longevity_ymd
+    # deliberately un-shadowable names: a bare `y`/`mo`/`d` here was silently re-bound by a
+    # later loop variable and leaked a dataclass repr into the Longevity sentence (2026-08-17).
+    lon_y, lon_mo, lon_d = r.longevity_ymd
     L = _SectionedLines()
     L.start("title")
     L.append(f"# Detailed reading — {b.name}")
     L.append("")
     L.append(f"**Born** {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d} "
              f"(tz {b.tz_offset:+g}) at lat {b.latitude:.4f}, lon {b.longitude:.4f}  |  "
-             f"ayanamsa Lahiri sidereal")
+             f"ayanamsa {ayanamsa_label(r.chart.ayanamsa)}")
     L.append("")
 
     # ── the two-voice preamble ────────────────────────────────────────────────
@@ -2796,6 +5327,34 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
 
     # ── your reading: the one genuinely plain-English section, read FIRST ──────
     pr = r.plain_reading
+    # ── the plain-words summary (v37) — its reading position is set by the arc ─
+    L.start("simple_summary")
+    try:
+        from app.raman_saab.report_json import simple_summary_for
+        _ss = simple_summary_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        logger.info("report section skipped (a sparse chart must not lose the whole reading)", exc_info=True)
+        _ss = None
+    if _ss:
+        L.append("")
+        L.append("## In simple words")
+        L.append("")
+        L.append(_md_cell(_ss["opening_en"]))
+        for prose, items in (("you", ()), ("good", "good_items_en"),
+                             ("hard", "hard_items_en"), ("mixed", "mixed_items_en"),
+                             ("now", "now_items_en"), ("unusual", ()), ("common", ()),
+                             ("how_to_read", ()), ("caveat", ())):
+            text = _ss.get(prose + "_en") or ""
+            if not text:
+                continue
+            L.append("")
+            L.append(_md_cell(text))
+            for it in (_ss.get(items) or () if items else ()):
+                L.append(f"- {_md_cell(it)}")
+        L.append("")
+        L.append("_Hindi for this section is generated too and renders on the interactive "
+                 "page and the standalone HTML; this markdown surface is ASCII-only._")
+
     L.start("plain_reading")
     L.append("## Your Reading")
     L.append("")
@@ -2854,6 +5413,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  ", ".join(f"{k} {v}" for k, v in sorted(_by_rel.items())) + ".")
         L.append("")
     except Exception:  # noqa: BLE001 — sparse/Track-B chart; the graph is a re-read, not a verdict
+        logger.info("report section skipped (sparse/Track-B chart)", exc_info=True)
         L.append("_Graph unavailable for this chart (sparse data) — the readings above stand "
                  "on their own evidence regardless._")
         L.append("")
@@ -2864,6 +5424,20 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("## Information content of this reading")
     L.append("")
     L.append(r.info.sentence)
+    L.append("")
+    # Wave-2 (2026-08-17): the sentence's arithmetic, checkable at a glance (each row is a
+    # field of the same InfoContent aggregate — classes overlap by construction, so the
+    # rows are a breakdown of the sentence, not a partition of the total).
+    L.append("| class | count |")
+    L.append("|---|---:|")
+    L.append(f"| total readings | {r.info.total} |")
+    L.append(f"| most common verdict ({r.info.modal_verdict}) | {r.info.modal_count} |")
+    L.append(f"| near-universal (held by half the population or more) | "
+             f"{r.info.near_universal} |")
+    L.append(f"| proven inverted channels | {r.info.inverted} |")
+    L.append(f"| genuinely distinctive | {r.info.distinctive} |")
+    L.append("")
+    L.append(f"_{POPULATION_NOTE}_")
     L.append("")
 
     # ── how to read this report (v18, chart-independent interpretation guide) ─
@@ -2902,6 +5476,11 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  f"{ax['citation']} |")
     L.append("")
 
+    # ── the integrated reading (v34) — the theme synthesis, above the technical sections ──
+    # (merged 2026-10-14) tagged so the arc in `report_movements` places it.
+    L.start("themes")
+    L.extend(_integrated_reading_lines(r))
+
     # ── what actually distinguishes this chart ────────────────────────────────
     if r.distinctive:
         L.start("stands_out")
@@ -2912,14 +5491,15 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"_{_lead}_")
         L.append("")
         L.append("_The readings furthest from the population midpoint — where this chart is least "
-                 "like everyone else's. Rare readings first._")
+                 "like everyone else's. Rare readings first, then notable, then common; within "
+                 "each band, furthest from the midpoint first._")
         L.append("")
-        L.append("| house | matter | verdict | percentile | share |")
-        L.append("|---|---|---|---:|---:|")
+        L.append("| house | matter | verdict | percentile | share | in plain terms |")
+        L.append("|---|---|---|---:|---:|---|")
         for house, e in r.distinctive:
             L.append(f"| H{house} {_HOUSE_NAME[house]} | {e.signification} | "
                      f"{e.verdict} ({e.degree}) | {e.favourability_percentile:.0%} | "
-                     f"{e.band_share:.0%} ({e.rarity}) |")
+                     f"{e.band_share:.0%} ({e.rarity}) | {distinctive_gloss(e)} |")
         L.append("")
 
     # ── what matters most (v19, the engine's own ranked digest) ───────────────
@@ -2943,7 +5523,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         for it in r.digest.items:
             bridges = ", ".join(it.sections) if it.sections else "-"
             cites = ", ".join(it.cites) if it.cites else "-"
-            L.append(f"| {it.priority} | {it.kind} | **{it.title}** — {it.detail} | "
+            # 1-based rank for humans (Wave-2, 2026-08-17); `priority` stays 0-based in
+            # the JSON/structured surfaces (the engine's own index, contract-stable).
+            L.append(f"| {it.priority + 1} | {it.kind} | **{it.title}** — {it.detail} | "
                      f"{it.lean} | {bridges} | {cites} |")
         L.append("")
 
@@ -2993,7 +5575,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- **Birth nakshatra** (Moon) — {sig.name} pada {moon.pada}, "
                      f"devata {sig.devata}, gana {sig.gana} — _{sig.soul_keyword}_")
     L.append(f"- **Stronger frame** — {r.overview.stronger_frame.upper()} "
-             f"(Raman: begin from the ascendant or the Moon, whichever is stronger; HTJAH-I:645-646)")
+             f"(Raman: begin from the ascendant or the Moon, whichever is stronger; "
+             f"HTJAH-I:645-646 — measured here by the two sign-lords' total Shadbala, "
+             f"a named operationalization, never a silent one)")
     L.append(f"- **Jaimini** — Karakamsa {s.karakamsa}  |  Upapada {s.upapada}  |  "
              f"spouse-lord (7th-from-D9) {s.spouse_significator}")
     L.append(f"- **Running periods** — Vimshottari {s.running_md} MD / {s.running_ad} AD  |  "
@@ -3003,6 +5587,12 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if r.overview.functional_natures:
         nat = "; ".join(f"{p} {n}" for p, n in r.overview.functional_natures)
         L.append(f"- **Functional nature for this Lagna** — {nat}")
+    # Raman's first glance (2026-08-18 report-critique): balance of dasha at birth, the
+    # exact Lagna/Moon degrees, the Moon's paksha vs its Shadbala, the luminaries' own
+    # strength flags, the Lagna lord's disposition and the day-lord observation — every
+    # row a computed re-read (see `signature_first_glance`); append-only.
+    for _fg_label, _fg_value in signature_first_glance(r):
+        L.append(f"- **{_fg_label}** — {_fg_value}")
     L.append("")
 
     # ── the Sitting (v35) — the reading as one continuous piece ──────────────
@@ -3044,10 +5634,48 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
              "impression. The classical temperament lines are shorthand for tendencies, never "
              "medical statements.")
     L.append("")
+    if ru.takeaway:
+        L.append(f"**{ru.takeaway}**")
+        L.append("")
     ll_bit = f"{ru.lagna_lord}, lord of the {_SIGN_NAME[r.chart.asc_sign]} Lagna"
     if ru.lagna_lord_house is not None:
         ll_bit += f", in house {ru.lagna_lord_house}"
     L.append(f"- **Ruler of the nativity (Lagna lord)** — {ll_bit}")
+    # the ruler's OWN condition block (2026-08-18 report-critique — the chapter's
+    # namesake gets the same full read the strongest planet already had)
+    ll_cond: list[str] = []
+    if ru.lagna_lord_sign is not None:
+        ll_cond.append(f"in {_SIGN_NAME[ru.lagna_lord_sign]}"
+                       + (f" ({ru.ll_dignity} sign)" if ru.ll_dignity else ""))
+    if ru.ll_avastha is not None:
+        ll_cond.append(f"{ru.ll_avastha} avastha (HPA Ch.7)")
+    if ru.ll_rupas is not None and ru.ll_required is not None:
+        ll_cond.append(
+            f"{ru.ll_rupas:.2f} rupas against its required {ru.ll_required:.1f} "
+            f"(GBB-8:303) — {'meets' if ru.ll_powerful else 'below'} the minimum"
+            + (", the only planet in this chart below its own"
+               if ru.ll_only_failing else ""))
+    if ru.ll_functional_nature is not None:
+        ll_cond.append(f"functional {ru.ll_functional_nature} for this Lagna")
+    if ru.lagna_lord_house is not None:
+        ll_cond.append("aspected by "
+                       + (", ".join(ru.ll_aspects_received)
+                          if ru.ll_aspects_received else "no planet"))
+    if ru.ll_dispositor is not None:
+        ll_cond.append(f"dispositor {ru.ll_dispositor}"
+                       + (f" in house {ru.ll_dispositor_house}"
+                          if ru.ll_dispositor_house is not None else ""))
+    if ll_cond:
+        L.append(f"- **The ruler's own condition** — {'; '.join(ll_cond)}")
+    if ru.foundation_line:
+        L.append(f"- **Foundation** — {ru.foundation_line}")
+    if ru.chandra_lagna_lord is not None:
+        ch_bit = (f"the signature reads the MOON as the stronger frame (HTJAH-I:645-646), "
+                  f"so the Chandra-lagna lord ({ru.chandra_lagna_lord}) is the third "
+                  f"classical candidate")
+        if ru.chandra_ll_condition:
+            ch_bit += f" — it stands {ru.chandra_ll_condition}"
+        L.append(f"- **Third classical candidate (Chandra Lagna)** — {ch_bit}")
     if ru.strongest is not None and ru.strongest_rupas is not None:
         s_bit = f"{ru.strongest} ({ru.strongest_rupas:.1f} rupas)"
         if ru.coincide:
@@ -3130,9 +5758,25 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "new judgment.")
         L.append("")
         for b in r.planet_bios:
-            L.append(f"### {b.planet} — {b.census_count} graph appearances "
-                     f"({', '.join(f'{k} {v}' for k, v in b.census_by_relation)})")
+            # role-first opener (2026-08-18 report-critique): the census is demoted to
+            # a trailing receipts line; the chapter opens on the planet's computed roles
+            L.append(f"### {b.planet}"
+                     + (f" — {b.role_line}" if b.role_line else ""))
             L.append("")
+            hdr_bits: list[str] = []
+            if b.rupas is not None:
+                hdr_bits.append(f"{b.rupas:.2f} rupas — "
+                                + ("meets" if b.powerful else "below")
+                                + " Raman's minimum (GBB-8:303)")
+            elif b.planet in ("Rahu", "Ketu"):
+                hdr_bits.append("no Shadbala (chayagraha — the measure is defined for "
+                                "the seven visible planets)")
+            if b.functional_nature:
+                hdr_bits.append(f"functional {b.functional_nature} for "
+                                f"{_SIGN_NAME[r.chart.asc_sign]} (HTJAH-I:523-604)")
+            if hdr_bits:
+                L.append(f"_{'; '.join(hdr_bits)}_")
+                L.append("")
             L.append(b.prose)
             L.append("")
             # the graha-chapter subsections — Raman's OWN paragraphs, verbatim by range
@@ -3145,8 +5789,20 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             if b.house_text:
                 L.append(f"- **In its house (HPA-21)** — \"{b.house_text[0]}\" "
                          f"({b.house_text[1]})")
-            if b.family_role:
-                L.append(f"- **Family/karaka duties** — {b.family_role}")
+            if b.casts_drishti:
+                L.append(f"- **Casts drishti on** — {', '.join(b.casts_drishti)} "
+                         f"(whole-sign)")
+            if b.receives_drishti:
+                L.append(f"- **Receives drishti from** — "
+                         f"{', '.join(b.receives_drishti)}")
+            elif b.rupas is not None or b.planet in ("Rahu", "Ketu"):
+                L.append("- **Receives drishti from** — no planet aspects it")
+            if b.avastha and b.avastha_result:
+                L.append(f"- **Avastha consequence (HPA Ch.7)** — {b.avastha}: "
+                         f"{b.avastha_result}")
+            if b.family_role_named or b.family_role:
+                L.append(f"- **Family/karaka duties** — "
+                         f"{b.family_role_named or b.family_role}")
             if b.disease_text:
                 L.append(f"- **Disease indications** — {b.disease_text[0]} "
                          f"({b.disease_text[1]})")
@@ -3169,6 +5825,8 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             if b.themes_modern:
                 L.append(f"- **Modern keywords** [{MODERN_BANNER}] — "
                          f"{', '.join(b.themes_modern)}")
+            L.append(f"- **Receipts** — {b.census_count} graph appearances "
+                     f"({', '.join(f'{k} {v}' for k, v in b.census_by_relation)})")
             L.append("")
 
     # ── psychological profile (v27 — the mind stack woven) ────────────────────
@@ -3188,6 +5846,18 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  f"\"{ps.lagna_quote[0]}\" ({ps.lagna_quote[1]})")
         if ps.moon_state:
             L.append(f"- **The mind's significator** — {ps.moon_state}")
+        for _mm_id, _mm_text, _mm_cite in ps.moon_mind:
+            L.append(f"- **The Moon's sign (mental disposition)** [{_mm_id}] — "
+                     f"{_mm_text} ({_mm_cite})")
+        if ps.mercury_line:
+            L.append(f"- **Mercury (buddhi)** — {ps.mercury_line}")
+        if ps.deeptadi_moon:
+            L.append(f"- **The Moon's avastha (cross-reference)** — {ps.deeptadi_moon}")
+        # v36: Raman's affliction-to-the-mind screen — present-or-absent, never a diagnosis
+        for _mn, _mf, _mc in getattr(ps, "mind_screen", ()):
+            L.append(f"- **{_md_cell(_mn)}** — {_md_cell(_mf)} ({_md_cell(_mc)})")
+        if getattr(ps, "mind_caution", ""):
+            L.append(f"- _{_md_cell(ps.mind_caution)}_")
         if ps.temperament:
             L.append(f"- **Temperament of the strongest planet** — {ps.temperament} "
                      f"(HTJAH-I:6248-6268)")
@@ -3202,8 +5872,18 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.start("positions")
     L.append("## Planetary positions")
     L.append("")
-    L.append("| graha | sign | house | nakshatra (pada) | navamsa | notes |")
-    L.append("|---|---|---:|---|---|---|")
+    L.append("_Longitudes are exact sidereal (Lahiri) degrees in sign-degree form "
+             "(deg Sign min'sec\"), so every row — Ascendant included — can be checked "
+             "against Jagannatha Hora or drikpanchang. The nakshatra lord is each star's "
+             "Vimshottari lord: the Moon's row explains the birth Mahadasha._")
+    L.append("")
+    L.append("| graha | longitude | sign | house | nakshatra (pada) | nak lord | navamsa | notes |")
+    L.append("|---|---|---|---:|---|---|---|---|")
+    asc_lon_s, asc_nak, asc_pada, asc_nav, asc_sign = ascendant_position(r.chart)
+    asc_nk = nakshatra_signature.signature_for(asc_nak)
+    L.append(f"| Ascendant | {asc_lon_s} | {_SIGN_NAME[asc_sign]} | 1 | "
+             f"{asc_nk.name if asc_nk else '?'} ({asc_pada}) | {nakshatra_lord(asc_nak)} | "
+             f"{_SIGN_NAME[asc_nav]} | - |")
     for name, p in planet_rows(r.chart):
         nk = nakshatra_signature.signature_for(p.nakshatra)
         notes = []
@@ -3213,8 +5893,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             notes.append("vargottama")
         if getattr(p, "combust_fraction", 0) >= 0.5:
             notes.append("combust")
-        L.append(f"| {name} | {_SIGN_NAME[p.sign]} | {p.rasi_house} | "
-                 f"{nk.name if nk else '?'} ({p.pada}) | {_SIGN_NAME[p.navamsa_sign]} | "
+        L.append(f"| {name} | {format_longitude(p.lon)} | {_SIGN_NAME[p.sign]} | {p.rasi_house} | "
+                 f"{nk.name if nk else '?'} ({p.pada}) | {nakshatra_lord(p.nakshatra)} | "
+                 f"{_SIGN_NAME[p.navamsa_sign]} | "
                  f"{', '.join(notes) or '-'} |")
     L.append("")
 
@@ -3268,21 +5949,57 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "built-in inclination to deliver pleasant or difficult results._")
         L.append("")
         L.append("| graha | sthana | dig | kala | cheshta | naisargika | drik | **total** | "
-                 "powerful? | ishta/kashta | in plain terms |")
-        L.append("|---|---:|---:|---:|---:|---:|---:|---:|---|---|---|")
+                 "ratio | powerful? | ishta/kashta | in plain terms |")
+        L.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|")
+        from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED as _SB_MIN
+        _sb_notes: list[str] = []
+        _comp_names = ("sthana", "dig", "kala", "cheshta", "naisargika", "drik")
         for name, p in sb_rows:
             sb = p.shadbala_rupas
             strong = is_powerful(name, sb.total / 60.0)
             ik = (f"{p.ishta:.1f}/{p.kashta:.1f}"
                   if p.ishta is not None and p.kashta is not None else "-")
-            cells = " | ".join(f"{v / 60.0:.2f}" for v in
-                               (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik))
-            L.append(f"| {name} | {cells} | **{sb.total / 60.0:.2f}** | "
+            comps = (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik)
+            cells = " | ".join(f"{v / 60.0:.2f}" for v in comps)
+            _req = _SB_MIN.get(name)
+            ratio = f"{(sb.total / 60.0) / _req:.2f}" if _req else "-"
+            L.append(f"| {name} | {cells} | **{sb.total / 60.0:.2f}** | {ratio} | "
                      f"{'yes' if strong else 'no'} | {ik} | "
                      f"{band_rupas(name, sb.total / 60.0)} |")
+            if not strong:
+                # weakest-component pointer for a failing planet: arithmetic on the six
+                # values the table already shows — NO per-component minimum is asserted
+                # (Raman's component-wise requirements are not encoded here)
+                _wk_name, _wk_val = min(zip(_comp_names, comps), key=lambda kv: kv[1])
+                _sb_notes.append(
+                    f"{name} falls below its minimum; of the six components shown, its "
+                    f"smallest is {_wk_name} ({_wk_val / 60.0:.2f} rupas) — an arithmetic "
+                    f"pointer to where the deficit sits, not a per-component judgment "
+                    f"(no per-component minima are encoded)")
+        L.append("")
+        # scale + definitional notes (2026-08-18 report-critique, append-only)
+        L.append("_Scale notes: **ratio** = total / Raman's required minimum (GBB-8:303) — "
+                 "1.00 is exactly the bar. The Sun and Moon show **cheshta 0.00 by "
+                 "definition** — they receive no Cheshta Bala in the Shadbala total "
+                 "(GBB-6:23-28); that cell is not missing data. **Ishta/Kashta** are each "
+                 "on a 0-60 scale (GBB-10:134); this chart's leans, in the same good/hard "
+                 "vocabulary the period readings use: "
+                 + "; ".join(f"{n} {_ishta_kashta_lean(r.chart, n)}" for n, _p in sb_rows
+                             if _ishta_kashta_lean(r.chart, n) is not None)
+                 + "._")
+        for _note in _sb_notes:
+            L.append("")
+            L.append(f"_{_note}._")
         L.append("")
 
     # ── fired yogas ───────────────────────────────────────────────────────────
+    from app.raman_saab.doctrine.yogas import YOGAS as _YOGA_RECORDS
+    from app.raman_saab.doctrine.yogas import (MAHAPURUSHA_IDS as _MAHAPURUSHA_IDS,
+                                               family_breakdown as _family_breakdown,
+                                               yoga_family as _yoga_family)
+    from app.raman_saab.yoga_deep_read import (
+        kemadruma_cancellation_branch as _kem_branch)
+    from app.raman_saab.primitives.bhangas import kemadruma as _kem_geometry
     L.start("yogas")
     L.append("## Yogas present in this chart")
     _lead = _plain_section("yogas", r)
@@ -3294,11 +6011,56 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("_Each carries its citation. A yoga's effect depends on the strength of the "
                  "planets causing it (HTJAH-I:611)._")
         L.append("")
-        for yg in r.yogas:
-            L.append(f"- **{yg.name}** ({yg.kind}) — {yg.effect}  "
+        # Wave-2 A5 (2026-08-18): bullets ordered by the deep-read's measured comparison
+        # rank (strongest participants first) so list order = importance; yogas the
+        # deep-read could not rank keep their detection order after the ranked ones.
+        _rank_of = {yd.id: yd.comparison_rank for yd in r.yoga_deep}
+        _ordered = sorted(enumerate(r.yogas),
+                          key=lambda iy: (_rank_of.get(iy[1].id, 10_000), iy[0]))
+        for _i, yg in _ordered:
+            # Wave-2 A4: family name where the bare "other" kind tag says nothing.
+            _fam = _yoga_family(yg.id)
+            _tag = _fam if (yg.kind == "other" and _fam) else yg.kind
+            L.append(f"- **{yg.name}** ({_tag}) — {yg.effect}  "
                      f"`{yg.source.work}:{yg.source.line}`")
+        if r.yoga_deep:
+            L.append("")
+            L.append("_Ordered by the deep-read's measured comparison rank (strongest "
+                     "participants first); the full study of each is in the Yoga "
+                     "deep-read below._")
     else:
         L.append("_No encoded yoga fires on this chart._")
+    # Wave-2 A2 (2026-08-18): cancelled-Kemadruma surfacing — the bhanga primitives
+    # compute both halves; the record `Y.KEMADRUMA` fires only while uncancelled, so a
+    # geometry-plus-bhanga chart would otherwise show NOTHING here although 3HC's own
+    # remarks treat the cancelled state as significant. Same three-state read the
+    # Arishta chapter already narrates — re-read, not re-judged.
+    if _kem_geometry(r.chart):
+        _kb = _kem_branch(r.chart)
+        if _kb is not None:
+            L.append("")
+            L.append(f"_Kemadruma geometry is present but cancelled by {_kb} - the yoga "
+                     f"does not fire (bhanga per 3HC:2182-2185; the Arishta chapter "
+                     f"reports the same three-state read)._")
+    # Wave-2 A3: notable absences Raman himself checks in worked charts — computed
+    # trivially from the same detection pass; disclosure, not judgment.
+    _absent_bits = []
+    if not any(y.id in _MAHAPURUSHA_IDS for y in r.yogas):
+        _absent_bits.append("no Pancha Mahapurusha yoga fires")
+    if not any(y.kind == "arishta" for y in r.yogas):
+        _absent_bits.append("no encoded arishta yoga fires")
+    if _absent_bits:
+        L.append("")
+        L.append(f"_Notable absences (computed from the same detection pass): "
+                 f"{'; '.join(_absent_bits)}._")
+    # Wave-2 A1: coverage honesty — what this list actually checks, so a reader can
+    # distinguish "chart lacks Lakshmi Yoga" from "engine never checks Lakshmi Yoga".
+    _fams = "; ".join(f"{fam} {n}" for fam, n in _family_breakdown())
+    L.append("")
+    L.append(f"_Coverage disclosure: {len(_YOGA_RECORDS)} named combinations are encoded "
+             f"and checked against every chart, of the ~300 in Raman's Three Hundred "
+             f"Important Combinations and allied chapters - by family: {_fams}. A yoga "
+             f"absent from this list is unchecked, not absent._")
     L.append("")
 
     # ── yoga x dasha timing: when does a fired yoga's own lord actually run? ──
@@ -3323,13 +6085,39 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "definition and simply have no row here. That is a genuine coverage gap, not a "
                  "judgment that they lack timing._")
         L.append("")
-        L.append("| Yoga | Period | Planet | Window | Delivery |")
-        L.append("|---|---|---|---|---|")
-        for t in r.yoga_timing:
-            L.append(f"| {t.yoga_name} | {t.role} | {t.planet} | "
-                     f"{_outlook_window_label(t.period_start_jd, t.period_end_jd)} | "
-                     f"{t.quality.tag} |")
+        # Wave-2 C (2026-08-18, add-only): one-line-per-yoga "next ripening" summary
+        # ABOVE the retained full table (REPORT COMPLETENESS: the table stays).
+        _ripening = yoga_next_ripening(r)
+        if _ripening:
+            L.append("_Next ripening, per yoga (the full table below is retained):_")
+            L.append("")
+            for _yn, _sent in _ripening:
+                L.append(f"- **{_yn}** — {_sent}")
+            L.append("")
+        # Wave-3 (2026-08-18): the full table, GROUPED BY YOGA rather than interleaved
+        # by date — every row is retained (nothing is de-duplicated away), the yoga name
+        # is the group's own label, and the columns are unchanged.
+        L.append("_Every window below is retained; the rows are grouped by yoga (they "
+                 "were previously interleaved by date, which printed one Mahadasha as "
+                 "three verbatim-identical rows under three yogas)._")
         L.append("")
+        for _yname, _rows in yoga_timing_grouped(r):
+            L.append(f"**{_yname}** - {len(_rows)} constituent-lord window"
+                     f"{'s' if len(_rows) != 1 else ''}")
+            L.append("")
+            L.append("| Yoga | Period | Planet | Window | Delivery | Now |")
+            L.append("|---|---|---|---|---|---|")
+            for t in _rows:
+                # Wave-2 C: AD rows carry their MD context (Raman's bhukti doctrine is
+                # MD-lord-relative) and the row containing the reference date is marked.
+                _role_cell = (f"AD (under {t.maha} MD)" if t.role == "AD" and t.maha
+                              else t.role)
+                _now_cell = ("NOW" if t.period_start_jd <= r.ref_jd < t.period_end_jd
+                             else "")
+                L.append(f"| {t.yoga_name} | {_role_cell} | {t.planet} | "
+                         f"{_outlook_window_label(t.period_start_jd, t.period_end_jd)} | "
+                         f"{t.quality.tag} | {_now_cell} |")
+            L.append("")
 
     # ── yoga deep-read (v21 — every fired yoga as a full study) ───────────────
     if r.yoga_deep:
@@ -3347,29 +6135,39 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "cancellation, the periods in which it ripens, and where the same yoga "
                  "appears in Notable Horoscopes.")
         L.append("")
-        for y in r.yoga_deep:
-            L.append(f"### {y.comparison_rank}. {y.name} ({y.kind}) — {y.cite}")
+        for yd in r.yoga_deep:            # NOT `y` — it shadowed the longevity unpack above
+            L.append(f"### {yd.comparison_rank}. {yd.name} ({yd.kind}) — {yd.cite}")
             L.append("")
-            L.append(f"- **Definition (verbatim)** — \"{y.definition_quote}\" ({y.cite})")
-            L.append(f"- **Computation** — `{y.computation}`")
-            if y.participants:
+            L.append(f"- **Definition (verbatim)** — \"{yd.definition_quote}\" ({yd.cite})")
+            L.append(f"- **Computation** — `{yd.computation}`")
+            if yd.participants:
+                # Wave-2 B (2026-08-18): each participant also carries its
+                # kendra/trikona/dusthana placement class (3HC remarks' standard
+                # strength qualifier) and its functional nature for THIS Lagna
+                # (HTJAH-I:523-604) — labels on values already computed.
                 pf = "; ".join(
-                    f"{f.planet}: house {f.house}, {_SIGN_NAME[f.sign]}, {f.dignity}"
+                    f"{f.planet}: house {f.house}"
+                    + (f" ({f.placement})" if f.placement else "")
+                    + f", {_SIGN_NAME[f.sign]}, {f.dignity}"
                     + (f" (effective: {f.effective_dignity})"
                        if f.effective_dignity != f.dignity else "")
                     + (f", {f.rupas} rupas" if f.rupas is not None else "")
-                    for f in y.participants)
+                    + (f", functional {f.functional} for this Lagna"
+                       if f.functional else "")
+                    for f in yd.participants)
                 L.append(f"- **Why it qualifies** — {pf}")
-            L.append(f"- **Strength (measured)** — {y.strength_note}")
-            L.append(f"- **Cancellation** — {y.cancellation_note}")
-            if y.modifiers:
+            L.append(f"- **Strength (measured)** — {yd.strength_note}")
+            if yd.syn_r1_line:
+                L.append(f"- **Stronger-participant delivery** — {yd.syn_r1_line}")
+            L.append(f"- **Cancellation** — {yd.cancellation_note}")
+            if yd.modifiers:
                 L.append(f"- **Modifying planets** (aspecting the participants' houses) "
-                         f"— {', '.join(y.modifiers)}")
-            if y.periods:
-                L.append(f"- **Operating periods** — {'; '.join(y.periods)}")
-            if y.nh_examples:
-                L.append(f"- **In Notable Horoscopes** — {', '.join(y.nh_examples)}")
-            L.append(f"- **Effect (Raman)** — {y.effect}")
+                         f"— {', '.join(yd.modifiers)}")
+            if yd.periods:
+                L.append(f"- **Operating periods** — {'; '.join(yd.periods)}")
+            if yd.nh_examples:
+                L.append(f"- **In Notable Horoscopes** — {', '.join(yd.nh_examples)}")
+            L.append(f"- **Effect (Raman)** — {yd.effect}")
             L.append("")
 
     # ── Ashtakavarga strength row ─────────────────────────────────────────────
@@ -3384,10 +6182,97 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("| " + " | ".join(_SIGN_NAME[i][:3] for i in range(1, 13)) + " |")
         L.append("|" + "---:|" * 12)
         L.append("| " + " | ".join(str(r.sav.get(i, 0)) for i in range(1, 13)) + " |")
+        # AV completeness (2026-08-17, append-only): a plain deviation row vs the 337/12
+        # average, then the Lagna and Moon-sign columns marked — Gochara is graded FROM the
+        # Moon sign, so these two columns are the reader's anchors into the grid.
+        L.append("| " + " | ".join(f"{r.sav.get(i, 0) - 28:+d}" for i in range(1, 13)) + " |")
+        _moon_p = r.chart.planets.get("Moon")
+        _moon_sign = _moon_p.sign if _moon_p is not None else None
+        _col_marks = []
+        for i in range(1, 13):
+            m = [lbl for lbl, hit in (("Lagna", i == r.chart.asc_sign),
+                                      ("Moon", i == _moon_sign)) if hit]
+            _col_marks.append("+".join(m) if m else " ")
+        L.append("| " + " | ".join(_col_marks) + " |")
         L.append("")
         L.append("_Average is 28 per sign (total 337). Raman rates Ashtakavarga corroborative, "
                  "not decisive: \"it does not seem to be quite reliable\" (HTJAH-II:4453-4456)._")
         L.append("")
+        L.append("_Second row: deviation vs the 28-bindu average. Third row: the Lagna column "
+                 "(house 1; count houses from it) and the Moon-sign column (transits in the "
+                 "Gochara section are judged from the Moon)._")
+        L.append("")
+        # ── the 7x12 Bhinnashtakavarga matrix (AV completeness, 2026-08-17) ──
+        if r.bav_matrix:
+            L.append("### Bhinnashtakavarga (BAV) - each planet's own bindu row")
+            L.append("")
+            L.append("_The per-planet tables the SAV row above sums (canonical Parashari "
+                     "benefic-places tables; each planet's total is a fixed checksum and the "
+                     "seven rows always sum to 337). The Gochara table's 'AV bindus' and "
+                     "Kakshya columns, and the AV dasha-seat outlook, all read from these "
+                     "rows. A planet's **bold** cell is its own natal sign - its seat, shown "
+                     "again in the last column._")
+            L.append("")
+            L.append("| Planet | " + " | ".join(_SIGN_NAME[i][:3] for i in range(1, 13))
+                     + " | Total | Natal seat |")
+            L.append("|---|" + "---:|" * 12 + "---:|---|")
+            for bm in r.bav_matrix:
+                cells = [f"**{v}**" if bm.seat_sign == i else str(v)
+                         for i, v in enumerate(bm.bindus, start=1)]
+                seat = (f"{_SIGN_NAME[bm.seat_sign][:3]} ({bm.seat_bindus})"
+                        if bm.seat_sign is not None else "n/a")
+                L.append(f"| {bm.planet} | " + " | ".join(cells)
+                         + f" | {bm.total} | {seat} |")
+            L.append("")
+        # ── HPA-26 reductions (Trikona + Ekadhipathya Sodhana) ──
+        if r.bav_reduced:
+            L.append("### HPA-26 reductions (Trikona + Ekadhipathya Sodhana)")
+            L.append("")
+            L.append("_HPA-26 reductions - used classically for special calculations; shown "
+                     "for completeness; ASP transit application deferred pending corpus. "
+                     "Raman: the bindu tables \"must be subjected to two reductions, viz., "
+                     "Thrikona reduction and Ekadhipathya reduction\" (HPA-26:390-393), in "
+                     "that order - \"After the Thrikona reduction, the Ekadhipathya reduction "
+                     "must be applied\" (HPA-26:466-467). Trikona follows Raman's own stated "
+                     "SUBTRACT reading (HPA-26:423-431), regression-pinned to his worked Sun "
+                     "table (HPA-26:432-462)._")
+            L.append("")
+            L.append("**After Trikona Sodhana** (HPA-26:403-421):")
+            L.append("")
+            L.append("| Planet | " + " | ".join(_SIGN_NAME[i][:3] for i in range(1, 13)) + " |")
+            L.append("|---|" + "---:|" * 12)
+            for br in r.bav_reduced:
+                L.append(f"| {br.planet} | " + " | ".join(str(v) for v in br.trikona) + " |")
+            L.append("")
+            L.append("**After both reductions** (Ekadhipathya applied, HPA-26:464-497):")
+            L.append("")
+            L.append("| Planet | " + " | ".join(_SIGN_NAME[i][:3] for i in range(1, 13)) + " |")
+            L.append("|---|" + "---:|" * 12)
+            for br in r.bav_reduced:
+                L.append(f"| {br.planet} | " + " | ".join(str(v) for v in br.reduced) + " |")
+            L.append("")
+        # ── Sodya Pinda (Rasi + Graha Gunakara) ──
+        if r.sodya_pinda:
+            L.append("### Sodya Pinda (Rasi + Graha Gunakara)")
+            L.append("")
+            L.append("| Planet | Rasi Gunakara | Graha Gunakara | Sodya Pinda |")
+            L.append("|---|---:|---:|---:|")
+            for sp in r.sodya_pinda:
+                L.append(f"| {sp.planet} | {sp.rasi} | {sp.graha} | {sp.total} |")
+            L.append("")
+            L.append("_Computed from the reduced tables above: each sign's reduced bindus x "
+                     "its fixed zodiacal factor (Rasi Gunakara, HPA-26:1149-1153), plus the "
+                     "reduced bindus in each graha's occupied sign x its fixed planetary "
+                     "factor (Graha Gunakara, HPA-26:1311-1315). The sum is Raman's Sodya "
+                     "Pinda by his own naming (ASP-14:196-198); HPA-26 applies it to "
+                     "LONGEVITY (the x7/27 Ayurdaya use, HPA-26:1400-1404 / ASP-14:199-201). "
+                     "Honesty note, recorded not fudged: on ASP-14's worked Standard "
+                     "Horoscope Raman prints Sun 96/86/182 where this pipeline gives "
+                     "103/88/191 on his own stated longitudes - the divergence is in HIS "
+                     "printed reduced tables (the 1962 book carries known misprints), so the "
+                     "engine pins the RULES, anchored on HPA-26's own worked reduction, and "
+                     "records this delta._")
+            L.append("")
 
     # ── house-by-house, with pillars + calibration ────────────────────────────
     L.start("houses")
@@ -3396,11 +6281,36 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append(f"_{ROLLUP_RULE} Where the majority of a house's significations disagree with that "
              f"headline, a **Split status** note says so — and where the headline is driven by "
              f"an atlas-proven inverted channel, a **WARNING** is shown inline. Each house "
-             f"closes with a **Conclusion** line — Raman's own closing device (essentially "
+             f"leads with a **Conclusion** line — Raman's own closing device (essentially "
              f"every worked analysis in HTJAH ends with a \"Conclusion.—\" summation weighing "
              f"house, lord and karaka in free prose, e.g. HTJAH-I:4485, 8513, 8870) — a "
-             f"summation of rows already shown above and in the strength/preponderance "
-             f"sections below; nothing new is judged in it._")
+             f"summation of rows shown in full beneath it and in the strength/preponderance "
+             f"sections below; nothing new is judged in it. The machine-composed evidence "
+             f"chain that used to sit above it is unchanged, and now carries a **Working** "
+             f"label where it stands._")
+    # Wave-3 (2026-08-18): the verdict-first strip — a 12-row scanning index ABOVE the
+    # twelve deep blocks (which follow unchanged, in full). Every cell restates the block
+    # it points at; the strip judges nothing.
+    _strip = house_strip_rows(r)
+    if _strip:
+        L.append("")
+        L.append("**The twelve houses at a glance** — a scanning index; each row's full "
+                 "judgment, evidence and population context follows below, unabridged.")
+        L.append("")
+        L.append("| # | House | Verdict | Driver | Split status | Running period |")
+        L.append("|---|---|---|---|---|---|")
+        for _row in _strip:
+            _v = f"**{_row.verdict}**" + (" [INVERTED]" if _row.inverted else "")
+            _d = f"_{_row.driver}_" if _row.driver else "-"
+            _sp = _row.split or "consistent"
+            _ti = _row.tier if _row.tier else "not lit"
+            L.append(f"| H{_row.house} | {_row.name} | {_v} | {_d} | {_sp} | {_ti} |")
+        L.append("")
+        L.append("_\"Running period\" is this house's four-tier fructification grade in the "
+                 "bhukti running at the reference date (par excellence / ordinary / limited "
+                 "/ feeble, HTJAH-I:1592-1596); \"not lit\" means neither period-lord "
+                 "influences the house. \"Split status\" repeats the block's own split note; "
+                 "\"consistent\" means the majority tenor agrees with the headline._")
     for mr in s.matters:
         pf = r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None
         cal_reading = r.calibration[mr.house]
@@ -3410,6 +6320,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         head = f"### House {mr.house} — {mr.name}: {mr.verdict.upper()}"
         if driver:
             head += f" (driven by _{driver}_)"
+        if pf is not None:
+            from app.raman_saab.judges.house_template import matter_breakdown
+            head += f" · matters: {matter_breakdown(pf)}"
         L.append(head)
         # v35 — say it to the person first, then the pillars. Adds; the technical rows below
         # are untouched.
@@ -3417,6 +6330,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             from app.raman_saab.plainspoken import plain_for_house
             _hp = plain_for_house(r, mr.house)
         except Exception:  # noqa: BLE001
+            logger.info("report section skipped (unexpected error)", exc_info=True)
             _hp = ""
         if _hp:
             L.append("")
@@ -3426,11 +6340,33 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         if note:
             L.append("")
             L.append(f"> **Split status**: {note}")
+            # Wave-3 cross-reference: the precedence rules live 400 lines up; point at
+            # them AT the moment of confusion, only when a split note actually fired.
+            L.append(f"> _{SPLIT_POINTER}_")
         if drv_entry is not None and drv_entry.inverted_warning:
             L.append("")
             L.append(f"> **WARNING**: the driver, _{driver}_, is an atlas-proven INVERTED "
                      f"channel — real cases ran opposite to this reading; treat this house's "
                      f"headline with maximal skepticism.")
+            L.append(f"> _{INVERTED_POINTER}_")
+        # Wave-3: the PREC-1 pointer, composed from the dashboard's own verdicts — it
+        # appears only on the houses whose matter reader and bhava rollup actually differ.
+        for _xr in house_dashboard_conflicts(r, mr.house):
+            L.append("")
+            L.append(f"> _{_xr}_")
+        # Wave-3: the H8-style deferral pointer, conditional on the deferred metadata
+        # (death_window / decanate_cause) having actually been computed for this house.
+        _lp = house_longevity_pointer(r, mr.house)
+        if _lp:
+            L.append("")
+            L.append(f"> _{_lp}_")
+        # Wave-3: the Conclusion — the block's best prose — promoted from below the
+        # machine-composed evidence chain to the top of the block. MOVE ONLY: the same
+        # `house_conclusion` text, rendered once.
+        conclusion = house_conclusion(r, mr.house)
+        if conclusion:
+            L.append("")
+            L.append(f"> **Conclusion** — {conclusion}")
         L.append("")
         if pf is not None:
             led = pf.significations[0].ledger
@@ -3449,29 +6385,106 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             bb = f"  |  **Bhava Bala** {led.bhava_bala:.1f}" if led.bhava_bala is not None else ""
             L.append(f"{lord_bits}  |  {kar_bits}{bb}  |  **Navamsa** {lagna_led.navamsa_status}")
             L.append("")
+            # Wave-2 D2 (2026-08-18): the deciding frame, named — the pillar line above
+            # always shows LAGNA-frame figures while the reading below may be judged
+            # from the Moon frame; naming both reconciles them (HTJAH-I:645-646).
+            _frame_ln = house_frame_line(r, mr.house)
+            if _frame_ln:
+                L.append(f"_**Frame** — {_frame_ln}_")
+                L.append("")
+            # Wave-2 D4: the running period's four-tier grade for THIS house — the same
+            # vimshottari.bhukti_tier vocabulary the Life-narrative computes, re-read
+            # where the reader is asking about the house.
+            _tier_ln = house_current_tier_line(r, mr.house)
+            if _tier_ln:
+                L.append(f"_**Current period** — {_tier_ln}_")
+                L.append("")
             # computation badges (2026-08-04): REAL counts — evidence, fired rules,
             # distinct sources, and the testimony-support band; never a probability.
             _ht = next((h for h in r.preponderance.houses if h.house == mr.house), None)
-            _fired_ct = 0
+            # Rules is deduped by rule id, matching Sources' dedup — counting every fired
+            # INSTANCE across significations x frames inflated it under the same visual
+            # grammar (H3 read "Rules 38" for ~9 distinct rules; 2026-08-17 fix).
+            _rule_ids: set[str] = set()
             _cites: set[str] = set()
             for _sv in pf.significations:
                 for _led in (_sv.ledger, *_sv.alt_ledgers):
                     for _fr in (*_led.fired_benefic, *_led.fired_malefic,
                                 *_led.fired_neutral):
-                        _fired_ct += 1
+                        _rule_ids.add(_fr.rule.id)
                         _cites.add(f"{_fr.rule.source.work}:{_fr.rule.source.line}")
             if _ht is not None:
                 _band = ("High" if "corrobor" in _ht.status else
                          "Low" if "contest" in _ht.status else "Medium")
-                L.append(f"`Evidence {len(_ht.testimonies)}` · `Rules {_fired_ct}` · "
+                L.append(f"`Evidence {len(_ht.testimonies)}` · `Rules {len(_rule_ids)}` · "
                          f"`Sources {len(_cites)}` · `Support {_band} "
                          f"({_ht.favourable}F/{_ht.adverse}A)`")
                 L.append("")
-        L.append(mr.reading)
-        conclusion = house_conclusion(r, mr.house)
-        if conclusion:
+        # Wave-3: the machine-composed evidence chain, unchanged in every character —
+        # now LABELLED for what it is, with the Conclusion it used to sit above promoted
+        # to the head of the block.
+        L.append(f"**Working** — {mr.reading}")
+        # Wave-2 D1 (2026-08-18): the chief fired combinations, in Raman's own effect
+        # prose with citations — exactly how HTJAH's chapters argue a bhava; previously
+        # this chapter rendered only counts (`Rules N`) while the matter monographs
+        # printed their rule prose. Selection only (house_chief_combinations); the
+        # evidence was always computed, now it is shown.
+        _chief = house_chief_combinations(r, mr.house)
+        if _chief:
             L.append("")
-            L.append(f"> **Conclusion** — {conclusion}")
+            L.append("**Chief combinations** (the fired rules that decided, in Raman's "
+                     "own words):")
+            L.append("")
+            for _csig, _cid, _ctext, _ccite in _chief:
+                L.append(f"- _{_csig}_: `{_cid}` — \"{_ctext}\" ({_ccite})")
+            # Wave-3: encoding-scope artifacts routed out of the client sentences into
+            # ONE trailing fine-print line (the marriage monograph's own device, reusing
+            # `monographs.split_maintainer_notes`). Routed, never dropped.
+            _mnotes = house_maintainer_notes(r, mr.house)
+            if _mnotes:
+                L.append(f"  - _Encoding-scope notes (maintainer fine print, not "
+                         f"readings): {_mnotes}_")
+        # The non-verdict lane: what Raman's doctrine says about this house that a
+        # favourable/afflicted grade cannot carry (cause-of-end decanate, source of gains,
+        # organ/tridosha, confinement mode, the divisional readings). Computed by the judge
+        # as verdict-INVARIANT metadata and, until now, shown to no one.
+        _inds = house_indications(r, mr.house)
+        if _inds:
+            L.append("")
+            L.append("**What the doctrine indicates** (not a grade — the kind, cause or "
+                     "channel Raman's rules name for this house):")
+            L.append("")
+            for _isig, _ilabel, _ival in _inds:
+                L.append(f"- _{_isig}_: {_ilabel} — {_ival}")
+        # Raman's unconditioned reading, which is neither the fortified nor the afflicted
+        # branch — it holds either way, and had no slot to live in until 2026-09-01.
+        _gen = house_general_readings(r, mr.house)
+        if _gen:
+            L.append("")
+            L.append("**Raman's general reading** (what the placement gives regardless of "
+                     "the lord's strength — his own \"of general application\", "
+                     "HTJAH-I:1003-1007):")
+            L.append("")
+            for _gsig, _gid, _gtext, _gcite in _gen:
+                L.append(f"- _{_gsig}_ (`{_gid}`): \"{_gtext}\" ({_gcite})")
+        # The rules that DID fire but the chief-combination cap could not show.
+        _further = house_further_combinations(r, mr.house)
+        if _further:
+            L.append("")
+            L.append("**Further fired combinations** (beyond the chief three per matter):")
+            L.append("")
+            for _fsig, _fid, _ftext, _fcite in _further:
+                L.append(f"- _{_fsig}_ (`{_fid}`): \"{_ftext}\" ({_fcite})")
+        # Doctrine on record but NOT evaluated — stated as such, never as a reading.
+        _onrec = descriptive_house_rules(mr.house)
+        if _onrec:
+            L.append("")
+            L.append("**Doctrine on record for this house, not yet computed** — Raman "
+                     "states these combinations; the engine cannot yet evaluate them, so "
+                     "they are listed, not applied to this chart:")
+            L.append("")
+            for _osig, _oid, _otext, _ocite in _onrec:
+                L.append(f"- _{_osig}_ (`{_oid}`): \"{_otext}\" ({_ocite})")
         # item 14 (2026-08-04 content amendment): "Raman writes..." — the driver
         # signification's own cited source, quoted verbatim before the computation.
         if pf is not None:
@@ -3492,6 +6505,11 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         if cal:
             L.append("")
             L.append("_Population context:_")
+            # Wave-3: ONE rollup line above the rows when they repeat — and then every
+            # individual row, unchanged (add-only; the rows are never collapsed).
+            _rollup = calibration_rollup_line(cal_reading)
+            if _rollup:
+                L.append(f"  - _{_rollup}_")
             L.extend(cal)
 
     # ── house strength cross-check: is each verdict on strong or shaky ground? ──
@@ -3524,13 +6542,16 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "certainty, and a weak-but-favourable house tends to deliver real good "
                  "results only mildly or partly enjoyed — a tendency, not an absolute rule._")
         L.append("")
-        L.append("| House | Matter | Verdict | Bhava Bala rank | SAV bindus |")
-        L.append("|---|---|---|---|---|")
+        L.append("| House | Matter | Verdict | Bhava Bala rank | Bhava Bala (rupas) | SAV bindus |")
+        L.append("|---|---|---|---|---:|---|")
         for row in r.house_strength:
             bb_rank = f"{row.bhava_bala_rank} of 12" if row.bhava_bala_rank else "n/a"
+            # the rank's own underlying magnitude (Shashtiamsas/60 = rupas) — already in the
+            # JSON and the interactive page, previously dropped from this table (2026-08-17).
+            bb_rupas = f"{row.bhava_bala / 60.0:.2f}" if row.bhava_bala is not None else "n/a"
             sav_cell = f"{row.sav_bindus} ({row.sav_band})" if row.sav_bindus is not None else "n/a"
             L.append(f"| H{row.house} | {_HOUSE_NAME.get(row.house, '')} | {row.verdict} | "
-                     f"{bb_rank} | {sav_cell} |")
+                     f"{bb_rank} | {bb_rupas} | {sav_cell} |")
         L.append("")
 
     # ── preponderance of testimonies (v14, the full per-house ledger) ─────────
@@ -3554,48 +6575,22 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "Raman's own conclusion word: \"there is a preponderance of benefic "
                  "influences...\" (HTJAH-I:8870).")
         L.append("")
-        L.append("_Three honesty rules govern this table. (1) The Verdict column is the "
-                 "authoritative House-by-house verdict, unchanged — and it is deliberately "
-                 "NOT counted among its own witnesses (a headline cannot corroborate itself). "
-                 "(2) Raman states NO numeric rule for how many testimonies decide a matter "
-                 "(HTJAH-I:495 says only that all must be properly weighed — and his own "
-                 "worked conclusion weighs witnesses unequally, HTJAH-I:8870-8876); the "
-                 "Preponderance column here is a simple equal-weight majority of leaning "
-                 "witnesses — a presentation convention borrowing his vocabulary, not his "
-                 "weighing — it never alters a verdict, and a 'contested' row means the "
-                 "witnesses split, not that the verdict is wrong. (3) The witnesses are NOT "
-                 "independent votes: lord, karaka and navamsa are the verdict's own inputs "
-                 "restated by name, and the majority tenor derives from the same "
-                 "significations as the headline. Yogas bearing on a house (Raman's Primary "
-                 "Considerations, e.g. HTJAH-I:4135-4139) ARE now tallied, mapped on his "
-                 "worked-chart principle — the houses each yoga's constituent planets own, "
-                 "occupy or aspect (\"the nature of ownership of the planets causing the "
-                 "yoga,\" HTJAH-I:2879-2890 — the principle, not an exact derivation; his own "
-                 "example there names one house this mapping cannot produce) — with disclosed "
-                 "limits: whole-chart pattern yogas carry no constituent identity and are "
-                 "unmapped, and formation-strength modifiers are not graded — dusthana "
-                 "formation can nullify Gajakesari (HTJAH-I:2948-2956) and can bring "
-                 "Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not absolutely, 15531), so a "
-                 "dusthana-formed raja yoga may lean favourable here despite a possible "
-                 "bhanga. A yoga row leans by its encoded kind (raja/dhana favourable, arishta "
-                 "adverse) and, for the specific yogas whose classical printed effect is "
-                 "unambiguous, by that effect — the Pancha Mahapurusha, Budha-Aditya, "
-                 "Vasumathi and Jaya favourable; Daridra and Asatyavadi adverse (each with its "
-                 "own citation in the Yogas section). Lunar and the remaining other-kind yogas "
-                 "stay neutral (a conditionally-benefic lunar yoga can be nullified in dusthana "
-                 "formation). Bhava-Bala rank is shown as a magnitude and carries no "
-                 "direction._")
+        L.append("_The honesty rules that govern this table - read them before the counts._")
+        L.append("")
+        for _n, (_head, _body) in enumerate(PREPONDERANCE_RULES, 1):
+            L.append(f"{_n}. **{_head}.** {_body}")
         L.append("")
         L.append("| House | Matter | Verdict | For | Against | Neutral | Absent | "
-                 "Preponderance | Status |")
-        L.append("|---|---|---|---|---|---|---|---|---|")
+                 "Core (For/Against) | Preponderance | Status |")
+        L.append("|---|---|---|---|---|---|---|---|---|---|")
         for ht_ in r.preponderance.houses:
             L.append(f"| H{ht_.house} | {_HOUSE_NAME.get(ht_.house, '')} | {ht_.verdict} | "
                      f"{ht_.favourable} | {ht_.adverse} | {ht_.neutral} | {ht_.absent} | "
+                     f"core: {ht_.core_favourable} for / {ht_.core_adverse} against | "
                      f"{ht_.preponderance} | {ht_.status} |")
         L.append("")
         for ht_ in r.preponderance.houses:
-            detail = "; ".join(f"{t.name} {t.value}" for t in ht_.testimonies
+            detail = "; ".join(f"{t.name} [{t.klass}] {t.value}" for t in ht_.testimonies
                                if t.lean != "absent")
             L.append(f"- **H{ht_.house}** — {detail if detail else 'no decided testimony'}")
         pr = r.preponderance
@@ -3631,13 +6626,26 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                else "cancelled" if r.balarishta.cancelled else "does not apply")
         L.append(f"1. **Balarishta** (early-childhood danger): {bal}"
                  + (f" — {'; '.join(r.balarishta.reasons)}" if r.balarishta.reasons else ""))
+        # Wave-2 (2026-08-18, item 5a): the clear case discloses WHAT was screened —
+        # a re-read of the primitive's own checked conditions, so the reader can see
+        # the method worked rather than take "does not apply" on faith.
+        if not r.balarishta.applies:
+            from app.raman_saab.primitives.balarishta import screened_conditions
+            screened = "; ".join(f"{label} ({cite})"
+                                 for label, cite in screened_conditions())
+            L.append(f"   - screened: {screened} - none present")
     if s.longevity_combos:
         L.append("2. **Band by combination** (HTJAH-II):")
         for lcx in s.longevity_combos:
             L.append(f"   - {lcx}")
+    # class label harmonised (Wave-2 item 5b): "Purnayu (purna band)", the combos'
+    # own Sanskrit form beside the class word — one reading, one vocabulary; and the
+    # old developer-speak coda ("the engine's own health layer defers lifespan")
+    # replaced with reader language (item 5c).
     L.append(f"3. **Numeric cross-check (Ayurdaya)**: about **{round(r.longevity_years)} years** "
-             f"({y}y {mo}m {d}d) — class **{r.longevity_class}**. Treat as a band, not a date; the "
-             f"engine's own health layer defers lifespan.")
+             f"({lon_y}y {lon_mo}m {lon_d}d) — class **{longevity_band_label(r.longevity_class)}"
+             f"**. Treat as a band, not a date: this report never converts the band into a "
+             f"date.")
     L.append("")
 
     # ── the maraka scheme (Raman's step 2, after the band) ────────────────────
@@ -3657,14 +6665,24 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "signal (REAL_OUTCOME_GENERALIZATION.md)._")
         L.append("")
         for tier in ("primary", "secondary", "tertiary"):
-            names = [u.graha for u in mp.units if u.tier == tier]
+            # each graha now names WHY it qualified (the clause recorded at assignment —
+            # 2026-08-17 report-critique fix; previously computed and discarded).
+            names = []
+            for u in mp.units:
+                if u.tier != tier:
+                    continue
+                why = format_maraka_reasons(u.reasons)
+                names.append(f"{u.graha} ({why})" if why else u.graha)
             if names:
                 L.append(f"- **{tier}**: {', '.join(names)}")
         L.append(f"- **22nd drekkana lord**: {mp.drekkana22_lord}  |  "
                  f"**64th navamsa lord**: {mp.navamsa64_lord}")
+        _dc = longevity_decanate_cause(r)
+        if _dc:
+            L.append(f"- **22nd drekkana class (the cause Raman reads the manner from)**: "
+                     f"{_dc}")
         L.append(f"- **Running period ({s.running_md} MD / {s.running_ad} AD)**: "
-                 + ("carries a maraka-tier lord" if r.maraka_period_now
-                    else "carries no maraka-tier lord")
+                 + maraka_running_phrase(r.maraka_period_now)
                  + " (broad, low-discrimination flag by design)")
         L.append("")
 
@@ -3677,9 +6695,9 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "period — Ayushkaraka Saturn transiting back over the sign it occupied at your "
                  "birth, or its trines, during a maraka-tier Dasha/Bhukti (HTJAH-II:4846-4849). "
                  "The windows below are where BOTH conditions the classical method asks for line "
-                 "up. This shows only the RASI half of that signature — the Navamsa half is not "
-                 "computed here. \"Maraka tier\" is how strong a death-signal the Bhukti's own "
-                 "lords carry (primary=3, secondary=2, tertiary=1 per lord, summed) — a higher "
+                 "up, with the Navamsa half checked in its own column. \"Maraka tier\" is how "
+                 "strong a death-signal the Bhukti's own "
+                 "lords carry (primary=5/4/3, secondary=2, tertiary=1 per lord, summed) — a higher "
                  "number means both the MD and AD lord are more central to the classical maraka "
                  "set, not a stronger prediction.")
         L.append("")
@@ -3688,13 +6706,30 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "(REAL_OUTCOME_GENERALIZATION.md). This section exists to show what Raman's "
                  "textbook method says, faithfully — never as a strengthened death signal._")
         L.append("")
-        L.append("| Maraka Bhukti | Bhukti window | Confluence window | Sign | Maraka tier |")
-        L.append("|---|---|---|---|---|")
+        L.append("_Amsa half (added 2026-10-24): \"Death occurs when Saturn in his transit "
+                 "passes through the Rashi and Amsa occupied by him at birth or its trines\" "
+                 "(HTJAH-I:11226-11228). The last two columns name the stretches in which "
+                 "transiting Saturn's Navamsa sign is ALSO natal Saturn's Navamsa sign or a "
+                 "trine (sampled every 5 days), and which half of the signature holds. "
+                 "Maraka tier weights since 2026-10-24: a planet conjunct a 2nd/7th lord 5, an "
+                 "occupant of the 2nd/7th or a planet aspecting their lord 4, the lord itself 3 "
+                 "(\"planets in conjunction with lords of 2nd and 7th are the most powerful "
+                 "... while the lords themselves are least powerful\", HTJAH-I:783-784); a "
+                 "node holding a late maraka's delegated power carries that maraka's weight "
+                 "(HTJAH-I:11194-11203)._")
+        L.append("")
+        L.append("| Maraka Bhukti | Bhukti window | Confluence window | Sign | Maraka tier "
+                 "| Amsa half (Saturn's Navamsa trines) | Signature |")
+        L.append("|---|---|---|---|---|---|---|")
         for c in r.maraka_saturn:
+            # tier addends spelled out (2026-08-17): "6 = Saturn 3 + Venus 3" — the same
+            # per-lord weights the death-window summed, so the number is checkable.
+            tier_cell = f"{c.score} = {c.score_parts}" if c.score_parts else str(c.score)
             L.append(f"| {c.maha}/{c.antar} | "
                      f"{_outlook_window_label(c.window_start_jd, c.window_end_jd)} | "
                      f"{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)} | "
-                     f"{_SIGN_NAME[c.sign]} | {c.score} |")
+                     f"{_SIGN_NAME[c.sign]} | {tier_cell} | {c.amsa_spans or '-'} | "
+                     f"{c.signature} |")
         L.append("")
 
     # ── health & vulnerability read-out (v17, pure re-read of existing verdicts) ─────
@@ -3726,8 +6761,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- **22nd drekkana lord**: {h.drekkana22_lord}  |  "
                      f"**64th navamsa lord**: {h.navamsa64_lord}")
         L.append(f"- **Running period**: "
-                 + ("carries a maraka-tier lord" if h.maraka_period_now
-                    else "carries no maraka-tier lord")
+                 + maraka_running_phrase(h.maraka_period_now)
                  + " (broad, low-discrimination flag by design)")
         L.append(f"- **Longevity band** (re-read from Longevity): {h.longevity_band}")
         L.append("")
@@ -3751,14 +6785,28 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append(f"- **Balarishta (HPA-14)** — {bal}"
                  + (f" — {'; '.join(a.balarishta_reasons)}" if a.balarishta_reasons
                     else ""))
-        L.append(f"- **Raman's antidotes (verbatim)** — \"{a.antidote_quote}\" "
-                 f"({a.antidote_cite})")
+        # Wave-2 (item 5a, shared with Longevity): disclose the screen on the clear case.
+        if not a.balarishta_applies:
+            from app.raman_saab.primitives.balarishta import screened_conditions
+            _screened = "; ".join(f"{label} ({cite})"
+                                  for label, cite in screened_conditions())
+            L.append(f"  - screened: {_screened} - none present")
+        L.append(f"- **Raman's antidotes (verbatim)** — "
+                 f"{_quote_or_absent(a.antidote_quote, a.antidote_cite)}")
         if a.bhangas:
             for p, dig, eff in a.bhangas:
                 L.append(f"- **Bhanga** — {p}: {dig} cancelled to effective {eff} "
                          f"(neecha bhanga)")
-        else:
-            L.append("- **Bhanga** — no debilitation-cancellation operates in this chart")
+        # Wave-2 (item 5d): the two no-bhanga cases distinguished — an uncancelled
+        # debility is a standing affliction; no debility at all raises no question.
+        uncx = getattr(a, "uncancelled_debilities", ())
+        if uncx:
+            for p in uncx:
+                L.append(f"- **Bhanga** — {p} is debilitated and NO cancellation "
+                         f"operates: the debility stands (no neecha bhanga)")
+        if not a.bhangas and not uncx:
+            L.append("- **Bhanga** — no planet is debilitated in this chart, so no "
+                     "cancellation question arises")
         L.append(f"- **Kemadruma** — {a.kemadruma_note}")
         if a.protections:
             for pr_line in a.protections:
@@ -3782,15 +6830,71 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     from app.raman_saab.primitives import vimshottari as vd
     L.append(f"_Mahadasha -> Antardasha across the near term ({r.window_back} years back, "
              f"{r.window_forward} years ahead). A planet influences a house by owning, occupying or "
-             f"aspecting the house OR its lord (HTJAH-I:1586-1629). Grades (uniform for every house, "
+             f"aspecting the house OR its lord (HTJAH-I:1586-1629), each house on its OWN printed "
+             f"factor list. Grades (uniform for every house, "
              f"HTJAH-I:1592-1640, 2588-2599): both lords influence + AD associated with MD = PAR "
-             f"EXCELLENCE, both but not associated = ORDINARY, bhukti lord only = LIMITED, MD lord "
+             f"EXCELLENCE, both but not associated = ORDINARY, the MD lord's own bhukti = SAME "
+             f"LORD (the association test is for 'the sub-period of another', HTJAH-I:1635), "
+             f"bhukti lord only = LIMITED, MD lord "
              f"only = FEEBLE. Verdicts are the UNCHANGED natal readings above._")
     L.append("")
     L.append("**What the grades mean:** " + "; ".join(
         f"_{k}_ = {v}" for k, v in _TIER_MEANING.items()) + ".")
     _TIER_LABEL = {"par excellence": "par excellence", "ordinary": "ordinary",
+                   "same lord": "same lord (own bhukti)",
                    "limited": "limited (bhukti lord only)", "feeble": "feeble (MD lord only)"}
+    # Wave-1 (2026-08-17): the lord_quality delivery tags were computed for every activation
+    # row but dropped by this renderer — now shown per row (HTJAH-II:10004-10008: the activated
+    # house's result is good/bad per the lord's strength; the licensed antidote to a wall of
+    # par-excellence rows all reading alike).
+    L.append("")
+    L.append("**Delivery tags** (per lit house): how well each activating period-lord delivers "
+             "what it lights - the same strength/dignity read the snapshot voice uses "
+             "(HTJAH-II:10004-10008): well / mixed / poorly / unknown. 'MD well, AD mixed' "
+             "means the Mahadasha lord delivers well and the bhukti lord mixed; a limited row "
+             "carries only its AD tag, a feeble row only its MD tag.")
+    L.append("")
+    L.append("Each bhukti below opens with its span and its association, then a plain-terms "
+             "line, then ONE ROW PER LIT HOUSE: the house, the matter it carries, the grade "
+             "that period gives it, the unchanged natal reading, the delivery tags and the "
+             "factors the influence rests on.")
+
+    # Wave-2 (2026-08-18): the influence BASIS — derive the tier, don't assert it. Raman
+    # names the factor ("Saturn, as lord of the 2nd, aspecting its lord..."); the engine
+    # knew it inside timer_set but flattened it away. `timer_roles` (role-preserving, pinned
+    # equal to timer_set by test) restores the derivation per lit house.
+    L.append("")
+    L.append("**Influence basis** (per lit house, the table's last column): BY WHICH of Raman's "
+             "enumerated factors (HTJAH-I:1586-1596) each period-lord influences the house - "
+             "owns / karaka / occupies / aspects house / conjoins lord / aspects lord / lord "
+             "from Moon (from the 2nd house on) / conjoins or aspects karaka (3rd house) / "
+             "and a node by its sign lord, the planet it joins, its star lord, or Sanivad "
+             "Rahu / Kujavad Ketu (HTJAH-I:4478-4479, 8566-8567, 11740-11741, 12762-12763). "
+             "A karaka counts only where Raman prints one (3rd, 4th, 5th, 6th, 7th, the Sun "
+             "for the 9th, 12th). 'allied via H11' (and 2/9/12 likewise) notes a lord that "
+             "ALSO reaches the house through its allied event house (gains 2/11, travel "
+             "9/12); that note has no Raman citation and never enters the grade.")
+    _basis_table = influence_basis_table(r.chart)
+
+    def _delivery(a) -> str:
+        bits: list[str] = []
+        if a.md_activates:
+            bits.append(f"MD {a.md_quality.tag}")
+        if a.antar_activates and a.antar_quality is not None:
+            bits.append(f"AD {a.antar_quality.tag}")
+        return ", ".join(bits) or "n/a"
+
+    def _basis(a) -> str:
+        bits: list[str] = []
+        if a.md_activates:
+            bits.append(f"MD {influence_basis(_basis_table, a.house, a.md_lord)}".rstrip())
+        if a.antar_activates and a.antar_lord is not None:
+            bits.append(f"AD {influence_basis(_basis_table, a.house, a.antar_lord)}".rstrip())
+        allied = getattr(a, "allied_via", ())
+        if allied:
+            bits.append("allied via " + ", ".join(f"H{h}" for h in allied))
+        return f" [{'; '.join(bits)}]" if bits else ""
+
     cur_md: Optional[str] = None
     for tp in r.timeline.periods:
         rows, maha, antar = tp.activated, tp.period.maha, tp.period.antar
@@ -3799,18 +6903,80 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append("")
             L.append(f"### {cur_md} Mahadasha")
         associated, raw = graded_buckets(tp, r.chart)     # ONE grading implementation
-        buckets = {k: [f"H{a.house} {a.natal_verdict}" for a in v] for k, v in raw.items()}
         assoc = "own bhukti" if antar == maha else \
             ("AD associated with MD" if associated else "AD not associated with MD")
         now = "  **<- now**" if tp.period.start_jd <= r.ref_jd < tp.period.end_jd else ""
         ad = antar or maha
-        seg = [f"{'**' if k in ('par excellence', 'ordinary') else ''}{_TIER_LABEL[k]}: "
-               f"{', '.join(buckets[k])}{'**' if k in ('par excellence', 'ordinary') else ''}"
-               for k in _TIER_LABEL if buckets[k]]
-        L.append(f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
-                 f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}; "
-                 f"{'; '.join(seg) or '(no house influenced)'}")
-        L.append(f"  - _{plain_bhukti_summary(rows, associated)}_")
+        L.append("")
+        L.append(f"**{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
+                 f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}")
+        L.append("")
+        L.append(f"_{plain_bhukti_summary(rows, associated)}_")
+        L.append("")
+        # ONE LIT HOUSE PER ROW. These four buckets used to be joined into a single bullet:
+        # every house, its verdict, its two delivery tags and its bracketed influence basis
+        # run together with commas and semicolons — 214 words on the canonical chart, and the
+        # reader has to count brackets to find where one house ends and the next begins. The
+        # table carries exactly the same six facts per house; only the shape changed.
+        lit = [(k, a) for k in _TIER_LABEL for a in raw[k]]
+        if not lit:
+            L.append("_(no house influenced)_")
+            L.append("")
+            continue
+        L.append("| house | matter | grade | reading | delivery | why it is lit |")
+        L.append("|---|---|---|---|---|---|")
+        for k, a in lit:
+            L.append(f"| H{a.house} | {_PLAIN_AREA[a.house]} | {_TIER_LABEL[k]} | "
+                     f"{a.natal_verdict} | {_delivery(a)} | "
+                     f"{_basis(a).strip().strip('[]') or '-'} |")
+        L.append("")
+
+    # ── Wave-1: pratyantar drill-down for the CURRENT bhukti (third Vimshottari level) ──
+    if r.pratyantar_now:
+        L.append("")
+        L.append("### Pratyantardasha drill-down (current bhukti)")
+        L.append("")
+        L.append("_The third level of the Vimshottari hierarchy, for the bhukti running now "
+                 "only - the same proportional lord-years/120 split, one level down, in JD "
+                 "space. Raman names all three levels as carriers of a house's results: \"as "
+                 "lords of the Dasas (main-periods), as lords of Bhuktis (Sub-periods) or as "
+                 "lords of the Antaras\" (HTJAH-II:668-702). The running pratyantar is "
+                 "marked; each span reads in the same indication idiom as the bhukti rows "
+                 "above._")
+        L.append("")
+        for pr_ in r.pratyantar_now:
+            now = "  **<- now**" if pr_.start_jd <= r.ref_jd < pr_.end_jd else ""
+            L.append(f"- {pr_.maha} MD / {pr_.antar} AD / **{pr_.pratyantar} PD** "
+                     f"({_jd_to_date(pr_.start_jd)} .. {_jd_to_date(pr_.end_jd)}){now}")
+        L.append("")
+
+    # ── Wave-1: the Chara dasha sequence, dated (was undated prose in the Soul reading) ──
+    if r.chara_sequence:
+        L.append("")
+        L.append("### Chara dasha (Jaimini) - dated sequence")
+        L.append("")
+        L.append("_The parallel sign-based dasha the Chart signature chip names (see "
+                 "glossary). Dates are plain JD arithmetic from birth (period years x "
+                 "365.2425 days) over the KN Rao sequence already encoded in "
+                 "`primitives/chara_dasha`; the 12-sign cycle repeats. The running sign is "
+                 "marked. No result judgment attaches here - matters are read from "
+                 "Vimshottari above._")
+        L.append("")
+        for cs in r.chara_sequence:
+            now = "  **<- now**" if cs.current else ""
+            L.append(f"- {_SIGN_NAME[cs.sign]} - {cs.years}y "
+                     f"({_jd_to_date(cs.start_jd)} .. {_jd_to_date(cs.end_jd)}){now}")
+        L.append("")
+
+    # ── 2026-10-24 (timing gap check): Raman's own period checks ──
+    if r.raman_period_checks:
+        L.append("")
+        L.append("_Raman's period checks (added 2026-10-24, timing gap check): the lifespan "
+                 "gate, star lords, bhukti relations, antaras, yoga lords and maraka order, "
+                 "each row with its citation. Report-only — no verdict reads them._")
+        L.append("")
+        for line in _timing_tables_md(r.raman_period_checks):
+            L.append(line)
 
     # ── ishta/kashta outlook: the SAME windowed timeline, painted good/hard ────
     if r.ishta_kashta:
@@ -3983,15 +7149,32 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                 continue
             L.append(f"- **Running Mahadashas** — {', '.join(d.md_lords) or '-'}"
                      + (f" (leans: {', '.join(d.leans)})" if d.leans else ""))
-            if d.areas_favourable:
-                L.append(f"- **Areas the method reads favourably here** — "
-                         f"{'; '.join(d.areas_favourable)}")
-            if d.areas_challenged:
-                L.append(f"- **Areas the method reads as challenged here** — "
-                         f"{'; '.join(d.areas_challenged)}")
+            # One area per ROW and one Mahadasha per COLUMN. The chip lists carry the
+            # same facts as a single semicolon-run; read aloud they are unusable, so
+            # the grid is what is rendered and the chips stay in the JSON.
+            for title, grid in (("Areas the method reads favourably here",
+                                 d.favourable_grid),
+                                ("Areas the method reads as challenged here",
+                                 d.challenged_grid)):
+                if not grid:
+                    continue
+                L.append("")
+                L.append(f"**{title}**")
+                L.append("")
+                L.append("| life area | house | "
+                         + " | ".join(f"{m} MD" for m in d.md_lords) + " |")
+                L.append("|---|---|" + "---|" * len(d.md_lords))
+                for row in grid:
+                    L.append(f"| {row.area} | H{row.house} | "
+                             + " | ".join(g or "-" for g in row.grades) + " |")
+                L.append("")
             if d.yogas_ripening:
-                L.append(f"- **Yogas ripening** — {'; '.join(d.yogas_ripening)}")
-            L.append(f"- _{d.note}_")
+                L.append("**Yogas ripening**")
+                L.append("")
+                for y in d.yogas_ripening:
+                    L.append(f"- {y}")
+                L.append("")
+            L.append(f"_{d.note}_")
             L.append("")
 
     # ── current transits with Vedha (the honest gochara table) ────────────────
@@ -4009,8 +7192,14 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "applies Vedha (obstruction): a favourable transit obstructed by a planet in its "
                  "Vedha position does not deliver._")
         L.append("")
-        L.append("| planet | sign | from Moon | classical | AV bindus | proportion | Kakshya | Vedha by | **net** |")
-        L.append("|---|---|---:|---|---|---|---|---|---|")
+        L.append("_Reverse Vedha (added 2026-10-24): an adverse station on a Vedha point is "
+                 "relieved when another planet holds the paired good house (HPA-34:161-164). "
+                 "Mercury's 10th is obstructed from the 7th, as Raman's table prints it "
+                 "(HPA-34:203, 207); the nodes have no row in that table, so their own Vedha "
+                 "point is unspecified by Raman._")
+        L.append("")
+        L.append("| planet | sign | from Moon | classical | AV bindus | proportion | Kakshya | Vedha by | **net** | reverse Vedha |")
+        L.append("|---|---|---:|---|---|---|---|---|---|---|")
         for g in r.gochara:
             av = str(g.bav_bindus) if g.bav_bindus is not None else "-"
             vedha = ", ".join(g.vedha_by) if g.vedha_by else "-"
@@ -4022,7 +7211,17 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                    f"{g.kakshya_lord} ({'donated' if g.kakshya_favourable else 'no bindu'})")
             L.append(f"| {g.planet} | {_SIGN_NAME[g.sign]} | {g.house_from_moon} | "
                      f"{'favourable' if g.gochara_good else 'adverse'} | {av} | {prop} | {kak} | "
-                     f"{vedha} | **{'favourable' if g.net_good else 'obstructed/adverse'}** |")
+                     f"{vedha} | **{'favourable' if g.net_good else 'obstructed/adverse'}** | "
+                     f"{_reverse_vedha_cell(g)} |")
+        L.append("")
+        # Wave-2 (2026-08-18): the synthesis sentences Raman's own transit paragraphs speak —
+        # one per row, a deterministic join of the columns above (the table stays in full).
+        L.append("**Read as sentences** - the same rows joined the way Raman narrates a "
+                 "transit (station + support + vedha in one breath); every clause restates "
+                 "a column above, no new judgment:")
+        L.append("")
+        for g in r.gochara:
+            L.append(f"- {gochara_synthesis_sentence(g)}")
         L.append("")
 
     # ── the same Gochara scheme, over time: which windows in the past/future are favourable ──
@@ -4065,6 +7264,80 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                      "across a sign boundary) are dropped as sampling noise, not real transits._")
             L.append("")
 
+        # ── Wave-1: the ADVERSE windows the same computation always produced (previously
+        # only the favourable half was rendered — REPORT COMPLETENESS repair, add-only) ──
+        bad = adverse_transit_windows(r)
+        if bad:
+            lo_y2 = _jd_month_year(r.ref_jd - r.window_back * 365.2425)[-4:]
+            hi_y2 = _jd_month_year(r.ref_jd + r.window_forward * 365.2425)[-4:]
+            L.append(f"### Adverse transit windows ({lo_y2} to {hi_y2})")
+            L.append("")
+            L.append("**In simple terms:** the mirror of the favourable table above - the "
+                     "stretches when Jupiter, Saturn, Rahu or Ketu sits in a house from your "
+                     "Moon that the classical Gochara scheme does NOT count as supportive for "
+                     "that planet. The same computation always produced these windows; only "
+                     "the favourable half was shown before. Honest labels: 'what it concerns' "
+                     "is the same life-area that planet governs, here classically unsupported "
+                     "rather than supported; 'mitigation' applies Raman's own proportion law - "
+                     "the planet's bindus in the transited sign neutralise the evil to that "
+                     "extent (\"neutralises the evil to the extent of 75%\" at 6 of 8 bindus, "
+                     "ASP-13:416); Vedha (interference) obstructs favourable transits, so that "
+                     "column reads '-' here; the 'relief' column applies Raman's REVERSE Vedha "
+                     "(added 2026-10-24) - an adverse station on a Vedha point is relieved when "
+                     "another planet holds the paired good house (\"conversely, if the Sun is in "
+                     "the 5th ... no evil will be produced provided the 11th is being transitted "
+                     "at the same time by any other planet, excepting Saturn\", HPA-34:161-164); "
+                     "the nodes have no row in his table. Per Raman "
+                     "a transit stays secondary to the Dasha (HTJAH-II:4679): read an adverse "
+                     "window as reduced transit support during whatever the running period "
+                     "already indicates, never a stand-alone prediction.")
+            L.append("")
+            L.append("| Planet | Window | What it concerns | Mitigation (own AV bindus) | "
+                     "Interference | Relief (reverse Vedha) |")
+            L.append("|---|---|---|---|---|---|")
+            for planet_b, seg_b, bav_b in bad:
+                mit = (f"{bav_b}/8 of the evil neutralised" if bav_b is not None
+                       else "- (node: no classical Ashtakavarga)")
+                rel = relief_word(planet_b, seg_b.house_from_moon,
+                                  seg_b.reverse_vedha_sample_fraction)
+                L.append(f"| {planet_b} | "
+                         f"{_outlook_window_label(seg_b.start_jd, seg_b.end_jd)} | "
+                         f"{_PLANET_THEME[planet_b]} | {mit} | - | {rel} |")
+            L.append("")
+
+    # ── Wave-1: Sade-Sati phase windows, dated (method-only; no result doctrine) ──
+    if r.sade_sati_phases:
+        L.append("### Sade-Sati phase windows (Saturn from the natal Moon)")
+        L.append("")
+        L.append("**In simple terms:** Sade-Sati is Saturn's roughly 7.5-year passage across "
+                 "the 12th, 1st and 2nd signs from the natal Moon (see glossary). Below are "
+                 "the dated phase spans of the episode nearest the reference date, with the "
+                 "current position marked. The dates are plain gochara arithmetic "
+                 "(transiting Saturn's sign against the natal Moon sign), at the outlook's "
+                 "~week sampling resolution; a retrograde re-entry shows as its own dated "
+                 "row. **Raman's result doctrine (corrected 2026-10-24):** this section once "
+                 "said no Sade-Sati result doctrine was on record; Raman gives one - the "
+                 "round since birth, the ruling period's strength and the Sarvashtakavarga "
+                 "of the three signs (AFB-12:161, 169-174; HPA-33:294-298; ASP-13:613-616). "
+                 "The 'Sade-Sati rounds' table below reads each round by it.")
+        L.append("")
+        for ph in r.sade_sati_phases:
+            now = "  **<- now**" if ph.current else ""
+            L.append(f"- **{ph.phase}** - Saturn in {_SIGN_NAME[ph.sign]}: "
+                     f"{_outlook_window_label(ph.start_jd, ph.end_jd)}{now}")
+        L.append("")
+
+    # ── 2026-10-24 (timing gap check): Raman's own transit checks ──
+    if r.raman_transit_checks:
+        L.append("_Raman's transit checks (added 2026-10-24, timing gap check): Sade-Sati "
+                 "rounds, each transit window gated by the Dasa, Saturn and Rahu over natal "
+                 "points, malefic meetings on the Moon's signs, Saturn over the 8th/12th "
+                 "lords' signs, the marriage points and the sign parts. Transits stay "
+                 "subordinate to the Dasa (ASP-13:62-74)._")
+        L.append("")
+        for line in _timing_tables_md(r.raman_transit_checks):
+            L.append(line)
+
     # ── dasha x transit confluence: where the running period's own lord is well-transited ──
     if r.dasha_transit:
         L.start("dasha_transit")
@@ -4091,6 +7364,57 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                      f"{_PLANET_THEME[c.planet]} | {_outlook_strength_word(c.bav_bindus)} | "
                      f"{_vedha_word(c.vedha_sample_fraction).split(' ')[0]} |")
         L.append("")
+
+    # ── Wave-2 (2026-08-18): the ADVERSE half of the same cross-check — the favourable
+    # builder filtered `if not seg.gochara_good: continue` by construction, a one-sided
+    # table; Raman's blending doctrine reads obstruction too (HPA-34:369-381). The
+    # favourable table above is untouched; this mirrors it, method-only.
+    if r.dasha_transit_adverse:
+        L.append("### Adverse dasha x transit confluence")
+        L.append("")
+        L.append("**In simple terms:** the mirror of the table above - the stretches where a "
+                 "running MD or AD lord is, at the same time, transiting a station from your "
+                 "Moon that the classical Gochara scheme counts AGAINST that planet. Raman's "
+                 "blending doctrine weighs obstruction as well as reinforcement (\"the "
+                 "influences of birth chart are blended with those of Gochara and "
+                 "Ashtakavarga, together with Vedha or obstructing forces\", HPA-34:369-381) "
+                 "- so the two tables are the two halves of one method statement: reduced "
+                 "transit support during what the period already indicates, never a "
+                 "stand-alone prediction. 'Mitigation' applies Raman's own proportion law "
+                 "(the planet's bindus in the transited sign neutralise the evil to that "
+                 "extent, ASP-13:416); Vedha (interference) obstructs favourable transits, "
+                 "so that column reads '-' here; the 'relief' column applies Raman's reverse "
+                 "Vedha (HPA-34:161-164, added 2026-10-24).")
+        L.append("")
+        L.append("_Same coverage and sampling honesty as above: only Jupiter, Saturn, Rahu "
+                 "and Ketu are tracked long-range, so a period led by a fast planet has no "
+                 "row here by construction; window edges carry the outlook's coarse ~week "
+                 "sampling - method windows, not exact dates._")
+        L.append("")
+        L.append("| Period | Planet | Overlap | What it concerns | "
+                 "Mitigation (own AV bindus) | Interference | Relief (reverse Vedha) |")
+        L.append("|---|---|---|---|---|---|---|")
+        for c in r.dasha_transit_adverse:
+            mit = (f"{c.bav_bindus}/8 of the evil neutralised" if c.bav_bindus is not None
+                   else "- (node: no classical Ashtakavarga)"
+                   if c.planet in ("Rahu", "Ketu") else "- (not computed)")
+            rel = relief_word(c.planet, c.house_from_moon, c.reverse_vedha_sample_fraction)
+            L.append(f"| {c.role} | {c.planet} | "
+                     f"{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)} | "
+                     f"{_PLANET_THEME[c.planet]} | {mit} | - | {rel} |")
+        L.append("")
+
+    # ── muhurtha pointer (2026-08-17, report-critique item: the one interactive-only surface).
+    # Wording deliberately avoids the walled subsystem's module name (the PRASNA/MUHURTHA
+    # firewall test scans this module's SOURCE TEXT for it) — this is a prose pointer to the
+    # interactive page, not an import, and must never read as one.
+    L.append("_Live companion not reproducible here: the interactive report page carries an "
+             "on-demand \"Today for you (Muhurtha)\" panel — Raman's Muhurtha rules judging "
+             "the CURRENT day (tarabala/chandrabala, Rahu Kalam, Durmuhurtha) against this "
+             "native's own janma nakshatra and rasi, computed live at view time. A static "
+             "report is cast once; that panel is recast every day — open the interactive "
+             "page for it._")
+    L.append("")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:
@@ -4141,6 +7465,11 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         for src in pf.sources:
             note = f" _{src.note}_" if src.note else ""
             L.append(f"| {src.source} | {src.key} | {src.trades}{note} | {src.cite} |")
+        # Wave-2 (item 3a): the D-10 row the preamble promises — the computed Dasamsa
+        # reading re-read as corroboration (deliberately NOT a convergence vote).
+        d10 = getattr(pf, "dasamsa_row", ())
+        if d10:
+            L.append(f"| {d10[0]} | {d10[1]} | {d10[2]} | {d10[3]} |")
         if pf.mode_split:
             L.append("")
             L.append("- **H10 mode split** — "
@@ -4148,6 +7477,47 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         if pf.convergent:
             L.append("- **Convergent trades** (named by 2+ derivations) — "
                      + ", ".join(f"{w} ({n})" for w, n in pf.convergent))
+        # Wave-2 (item 3c): same-graha disclosure — several "votes" that are one
+        # planet under several hats are not independent confirmations.
+        if getattr(pf, "convergence_note", ""):
+            L.append(f"- **One planet, several hats** — {pf.convergence_note}")
+        # Wave-2 (item 3b): H10 activations — the same timeline lens the marriage
+        # monograph shows for H7 (a timing lens, never a promise).
+        if getattr(pf, "h10_windows", ()):
+            L.append("- **H10 activations in the window** (a timing lens, never a "
+                     "promise) — " + "; ".join(pf.h10_windows))
+        # v36 (2026-08-19): the 10th from all THREE of Raman's centres. Every derivation
+        # above reckons from the Lagna alone — one frame of the three he names.
+        _cf = getattr(pf, "career_frames", None)
+        if _cf is not None:
+            L.append("")
+            L.append("### The 10th reckoned from all three centres")
+            L.append("")
+            L.append(f"_\"{_md_cell(_cf.rule)}\" ({_md_cell(_cf.citation)})_")
+            L.append("")
+            L.append("| Centre | Its 10th | 10th lord | Navamsa dispositor | "
+                     "Raman's vocation words | Strength | Measure |")
+            L.append("|---|---|---|---|---|---|---|")
+            for _f in _cf.frames:
+                _star = " **(strongest)**" if _f.is_strongest else ""
+                L.append(f"| {_md_cell(_f.centre)}{_star} "
+                         f"| {_md_cell(_f.tenth_sign_name)} "
+                         f"| {_md_cell(_f.tenth_lord)}"
+                         + (f" (h{_f.tenth_lord_house})" if _f.tenth_lord_house else "")
+                         + f" | {_md_cell(_f.navamsa_dispositor) or '-'} "
+                         f"| {_md_cell(_f.trade) or _md_cell(_f.note) or '-'} "
+                         f"| {_f.strength_rupas} rupas "
+                         f"| {_md_cell(_f.strength_basis)} |")
+            L.append("")
+            L.append(f"- **Strongest centre** — {_md_cell(_cf.strongest_why)}")
+            L.append(f"- **Reckoning from it** — {_md_cell(_cf.leading_indication)}")
+            if _cf.blended:
+                L.append(f"- **Blended** — {_md_cell(_cf.blended_note)}")
+            if _cf.convergent:
+                L.append("- **Convergent across centres** — "
+                         + ", ".join(f"{w} ({n})" for w, n in _cf.convergent))
+            L.append(f"- **On convergence** — {_md_cell(_cf.convergence_note)}")
+            L.append(f"- _{_md_cell(_cf.caution)}_")
         L.append("")
 
     # ── wealth chapter (v24 — the channels, not a single verdict) ─────────────
@@ -4166,15 +7536,30 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "expansion periods fall. Every row re-reads a judged signification or a "
                  "cited source-of-gains table.")
         L.append("")
-        L.append("| Channel | Reading | Cite |")
-        L.append("|---|---|---|")
+        # Wave-2 (item 4d): the population-context column the signification rows
+        # already carry in the House-by-house section — re-read per row ("-" where
+        # a row is a source-of-gains lookup, not a calibrated signification).
+        L.append("| Channel | Reading | Cite | Population context |")
+        L.append("|---|---|---|---|")
         for row in w.rows:
-            L.append(f"| {row.channel} | {row.reading} | {row.cite} |")
+            ctx = getattr(row, "context", "") or "-"
+            L.append(f"| {row.channel} | {row.reading} | {row.cite} | {ctx} |")
         L.append("")
+        # Wave-2 (item 4a): the classical first question — Dhana yogas and Daridra,
+        # fired or absent, stated explicitly against the chart's own fired set.
+        if getattr(w, "dhana_row", ""):
+            L.append(f"- **Dhana / Daridra yogas** — {w.dhana_row}")
+        # Wave-2 (item 4b): the wealth lords' computed conditions.
+        for lc in getattr(w, "lord_conditions", ()):
+            L.append(f"- **Lord condition** — {lc}")
         if w.expansion_periods:
             L.append("- **Periods of expansion** (H2/H11 activated at ordinary tier or "
                      "better — a timing lens, never a promise): "
                      + "; ".join(w.expansion_periods))
+            # Wave-2 (item 4c): the chapter applies its own calibration standard to
+            # itself when the expansion lens separates nothing.
+            if getattr(w, "expansion_note", ""):
+                L.append(f"  - _Self-disclosure: {w.expansion_note}._")
             L.append("")
 
     # ── marriage monograph (v25) ──────────────────────────────────────────────
@@ -4189,10 +7574,18 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"_{_lead}_")
         L.append("")
         L.extend(_method_preamble("marriage"))
-        L.append(f"**The 7th house's scope (Raman verbatim):** \"{m.seventh_covers}\" "
-                 f"(HTJAH-II:{_MI[0]})")
+        L.append(f"**The 7th house's scope (Raman verbatim):** "
+                 f"{_quote_or_absent(m.seventh_covers, f'HTJAH-II:{_MI[0]}')}")
         L.append("")
         L.append(f"- **Headline (unchanged H7 verdict)** — {m.verdict}")
+        # Wave-2 (item 1a): the shipped B3 distinction surfaced where the client
+        # looks — happiness of the union vs the partner's own longevity are separate
+        # H7 significations and are shown apart.
+        if getattr(m, "marital_happiness", None) or getattr(m, "coverture", None):
+            L.append(f"- **Marital happiness: {m.marital_happiness or 'not judged'}; "
+                     f"the partner's own longevity (coverture): "
+                     f"{m.coverture or 'not judged'}** — two separate 7th-house "
+                     f"significations, judged separately (re-read from House 7)")
         if m.lord_period_text:
             L.append(f"- **The 7th lord in house {m.lord_placement_house} (Raman "
                      f"verbatim, his periods)** — \"{m.lord_period_text}\" "
@@ -4202,22 +7595,94 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                      f"\"{m.spouse_sign_text[0]}\" ({m.spouse_sign_text[1]})")
         if m.upapada:
             L.append(f"- **Upapada** — {m.upapada}")
+        # Wave-2 (item 1b): the Kuja-dosha narration — the rule's own per-frame
+        # evaluation (HTJAH-II:2579-2622), disclosed step by step.
+        if getattr(m, "kuja_narration", ()):
+            L.append("- **Kuja (Mangal) dosha, checked frame by frame "
+                     "(HTJAH-II:2579-2622)** — the rule's own evaluation, disclosed:")
+            for kn in m.kuja_narration:
+                L.append(f"  - {kn}")
         if m.fired_kalatra:
-            L.append("- **Kalatra rules firing in THIS chart** (of the 50 encoded):")
-            for branch, text, cite in m.fired_kalatra:
-                L.append(f"  - ({branch}) {text} ({cite})")
-        L.append(f"- **Timing doctrine (Raman verbatim)** — \"{m.timing_navamsa}\" "
-                 f"(HTJAH-II:853)")
+            # Wave-2 (items 1d/1e): fortified-first grouping with a one-line tally,
+            # and maintainer notes routed to trailing fine print (still rendered —
+            # ADD-ONLY routing, and the raw text is unchanged in the data/JSON).
+            from app.raman_saab.monographs import split_maintainer_notes
+            _fort = [x for x in m.fired_kalatra if x[0] == "fortified"]
+            _affl = [x for x in m.fired_kalatra if x[0] == "afflicted"]
+            _rest = [x for x in m.fired_kalatra
+                     if x[0] not in ("fortified", "afflicted")]
+            # The encoded count is COMPUTED: it was a hardcoded "50", stale long before the
+            # 2026-10-13 House-7 sweep split it to 84 evaluable rules. `_rest` is the `general`
+            # branch -- Raman's unconditioned readings -- so it is named, not "other".
+            from app.raman_saab.doctrine.rule_sets import ALL_RULES as _ALL
+            _n7 = sum(1 for _r in _ALL if _r.house == 7 and _r.kind == "evaluable")
+            L.append(f"- **Kalatra rules firing in THIS chart** (of the {_n7} encoded; "
+                     f"{len(_fort)} fortified, {len(_affl)} afflicted"
+                     + (f", {len(_rest)} general" if _rest else "") + "):")
+            _fine: list[str] = []
+            for branch, text, cite in (*_fort, *_affl, *_rest):
+                clean, mnote = split_maintainer_notes(text)
+                L.append(f"  - ({branch}) {clean} ({cite})")
+                if mnote:
+                    _fine.append(f"{cite}: {mnote}")
+            if _fine:
+                L.append("  - _Encoding-scope notes (maintainer fine print, not "
+                         "readings): " + " | ".join(_fine) + "_")
+        L.append(f"- **Timing doctrine (Raman verbatim)** — "
+                 f"{_quote_or_absent(m.timing_navamsa, 'HTJAH-II:853')}")
         if m.timing_windows:
             L.append(f"- **H7 activations in the window** — {'; '.join(m.timing_windows)}")
+        # Wave-2 (item 1c): the method's own favourable Jupiter windows touching the
+        # 7th (from the Moon) — a pure filter of the Gochara outlook already computed
+        # above; no new doctrine claim, a timing lens in the classical idiom.
+        if getattr(m, "jupiter_h7_windows", ()):
+            L.append("- **Jupiter transits touching the 7th (from the Moon)** — the "
+                     "method's own favourable-transit windows (the Gochara outlook "
+                     "above) in which Jupiter occupies the 7th from the Moon: "
+                     + "; ".join(m.jupiter_h7_windows))
         if m.children_after:
             L.append(f"- **Children (H5)** — {m.children_after}")
+        # v36: the COMPUTED timing layer — `timing_navamsa` above prints Raman's timing
+        # paragraph verbatim and computes none of it.
+        _mt = getattr(m, "timing", None)
+        if _mt is not None:
+            L.append("")
+            L.append("### Marriage timing — the giving lords and the delay screens")
+            L.append("")
+            L.append(f"_{_md_cell(_mt.caveat)}_")
+            L.append("")
+            L.append("| Planet | Nominated by | Strength | In the ranking? |")
+            L.append("|---|---|---|---|")
+            for _g in _mt.givers:
+                _rk = "yes" if _g.ranked else "no — " + _md_cell(_g.condition)
+                L.append(f"| {_md_cell(_g.planet)}"
+                         + (" **(strongest)**" if _g.planet == _mt.strongest else "")
+                         + f" | {_md_cell('; '.join(_g.clauses))} "
+                         f"| {_g.strength_rupas} rupas | {_rk} |")
+            L.append("")
+            L.append(f"- **{_md_cell(_mt.strongest_rule)}** Here that is "
+                     f"{_md_cell(_mt.strongest) or 'not resolvable'} "
+                     f"({_md_cell(_mt.citation)}).")
+            for _d in _mt.delays:
+                _state = "FIRES" if _d.fired else "silent"
+                L.append(f"- **{_md_cell(_d.name)}** — {_state}. \"{_md_cell(_d.rule)}\" "
+                         f"({_md_cell(_d.citation)})"
+                         + ("" if not _d.because else
+                            " Found here: " + _md_cell("; ".join(_d.because)) + ".")
+                         + f" {_md_cell(_d.condition)}")
+            L.append(f"- **The lean** — {_md_cell(_mt.lean)}")
+            for _lbl, _sgn, _tri in _mt.jupiter_sphutas:
+                L.append(f"- **Jupiter-transit resultant ({_md_cell(_lbl)})** — "
+                         f"{_md_cell(_sgn)}; trines {_md_cell(_tri)}. Jupiter transiting "
+                         f"the resultant rasi or its trines is classically favourable for "
+                         f"marriage (HTJAH-II:869-873).")
+            L.append(f"- _{_md_cell(_mt.subordination)} (HTJAH-II:881-883)_")
         L.append("")
         L.append("_On separation and loss of the partner, the method's own statements — "
-                 "quoted, not composed; A STATEMENT OF THE METHOD, NOT A PREDICTION "
-                 "(this project's validation measured no real-outcome signal):_")
+                 "quoted, not composed (this project's validation measured no real-outcome "
+                 "signal):_")
         L.append("")
-        L.append(f"> \"{m.separation_quote}\" (HTJAH-II:887)")
+        L.append(f"> {_quote_or_absent(m.separation_quote, 'HTJAH-II:887')}")
         L.append("")
 
     # ── children chapter (v26) ────────────────────────────────────────────────
@@ -4234,6 +7699,18 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append(f"- **Headline (unchanged H5 verdict)** — {c.verdict}")
         for key, v in c.significations:
             L.append(f"- **{key}** — {v}")
+        # Wave-2 (item 2b): Jupiter (putrakaraka) condition — computed facts only.
+        if getattr(c, "putrakaraka_line", ""):
+            L.append(f"- **{c.putrakaraka_line}**")
+        # Wave-2 (item 2a): the D-7 corroboration the preamble promises — a re-read
+        # of the Saptamsa section's own computed structures.
+        if getattr(c, "d7_corroboration", ""):
+            L.append(f"- **Saptamsa (D-7) corroboration** — {c.d7_corroboration}")
+        # Wave-2 (item 2c): the doctrine-reviewed classical-shorthand reframe note,
+        # copied VERBATIM from the D-7 section and placed BEFORE the fired rules —
+        # "loses a number of children" must never be the first thing a parent reads.
+        if getattr(c, "reframe_note", ""):
+            L.append(f"- _{c.reframe_note}_")
         if c.fired_rules:
             L.append("- **Putra rules firing in THIS chart:**")
             for branch, text, cite in c.fired_rules:
@@ -4245,7 +7722,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "delay, loss — the classical spectrum, quoted whole so nothing is "
                  "cherry-picked):_")
         L.append("")
-        L.append(f"> \"{c.combos_quote}\" (HTJAH-I:5179)")
+        L.append(f"> {_quote_or_absent(c.combos_quote, 'HTJAH-I:5179')}")
         L.append("")
     if s.deeptadi:
         from app.raman_saab.plain_terms import TERM_GLOSS as _TG
@@ -4268,6 +7745,50 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         for st in _states:
             t = _TG[st]
             L.append(f"- **{st}** — {t.plain}. {t.analogy}. _{t.why_it_matters}._")
+        # per-planet testimony table (2026-08-18 report-critique: from trivia to
+        # testimony) — Raman's own stated result per state (HPA Ch.7:46-83, already
+        # encoded in deeptadi.RESULTS), the houses each planet rules/occupies, and
+        # every SECONDARY state disclosed (deeptadi.states_all; state() untouched).
+        _dt_rows = deeptadi_table(r)
+        if _dt_rows:
+            L.append("")
+            L.append("_Each state read as testimony — Raman's stated result beside the "
+                     "houses the planet answers for. Where a planet matches more than "
+                     "one state, EVERY state it matches is disclosed: Raman asks for "
+                     "exactly that - the avasthas are 'ten in number. Each Avastha "
+                     "produces its own results. In the judgment of a horoscope all these "
+                     "details have to be fully considered' (HPA-7:39-44). He states no "
+                     "precedence among them, so the dignity-first order that names one as "
+                     "'dominant' is this engine's own convention for picking a single "
+                     "label, not a ranking of his. Rahu/Ketu "
+                     "are always retrograde, hence perpetually Sakta — definitional, "
+                     "not a strength claim._")
+            L.append("")
+            L.append("| graha | state | Raman's stated result (HPA Ch.7:46-83) | "
+                     "rules / occupies |")
+            L.append("|---|---|---|---|")
+            for _dt_name, _dt_state, _dt_result, _dt_role in _dt_rows:
+                L.append(f"| {_dt_name} | {_dt_state} | {_dt_result} | {_dt_role} |")
+        # Baladi/Jagradadi (2026-08-17 report-critique fix): the judge computes these per
+        # planet and uses them to modulate verdict INTENSITY (house_template: a Mrita/
+        # Sushupti deliverer demotes the degree one step) — computed and used, previously
+        # never shown. Read-only re-read via the judge's own accessor; no verdict touched.
+        from app.raman_saab.judges.house_template import baladi_jagradadi_states
+        _bj = baladi_jagradadi_states(r.chart)
+        if _bj:
+            L.append("")
+            L.append("_Baladi (ageing, by degree-in-sign) and Jagradadi (consciousness, by "
+                     "incoming drishti) states — the judge's intensity dial: a house whose "
+                     "deliverers sit in Mrita/Sushupti has its verdict DEGREE demoted one "
+                     "step (never the verdict itself). Provenance: CLASSICAL_NONCITABLE "
+                     "(Phaladeepika Ch.3 Sl.3/Sl.10/Sl.20; BPHS Ch.1 Sl.14-16) — outside "
+                     "Raman's own canon, shown because the judge consumes it._")
+            L.append("")
+            L.append("| graha | Baladi (ageing) | Jagradadi (consciousness) |")
+            L.append("|---|---|---|")
+            for _n, _p in planet_rows(r.chart):
+                if _n in _bj:
+                    L.append(f"| {_n} | {_bj[_n]['baladi']} | {_bj[_n]['jagradadi']} |")
     if s.karakamsa_reading:
         L.append("")
         L.start("karakamsa")
@@ -4277,8 +7798,25 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append("")
             L.append(f"_{_lead}_")
         L.append("")
+        # Wave-2 (2026-08-18): header context BEFORE the sutra fragments — the reader meets
+        # whose navamsa seat this is (the computed AK + Karakamsa sign, re-read from the
+        # chart signature) before Jaimini's indication lines. Pure re-read, no new judgment.
+        L.append(f"_Context: the Atmakaraka (soul-planet) of this chart is **{s.atmakaraka}**; "
+                 f"its navamsa seat - the Karakamsa - is **{s.karakamsa}**. The lines below "
+                 f"are Jaimini's inclination indications for the grahas associated with that "
+                 f"seat (JS 1.2 Su.14-22)._")
+        L.append("")
         for line in s.karakamsa_reading:
             L.append(f"- {line}")
+        L.append("")
+        # Navigation only (Wave-2): the dated Chara sequence and this Karakamsa reading are
+        # two halves the reader may hold together; the Studies-in-Jaimini passage that READS
+        # karakamsa indications through the running chara period is corpus-gated and is NOT
+        # composed here — this line points, it does not pair doctrinally.
+        L.append("_See also: the dated Chara dasha (Jaimini) sequence under the "
+                 "Life-narrative section above, and the full Karakamsa reading in Soul & "
+                 "destiny below - cross-references only; the classical passage pairing the "
+                 "two is corpus-gated and not composed here._")
 
     # ── soul & destiny (the full Jaimini reading behind the stub above) ───────
     L.append("")
@@ -4309,10 +7847,15 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
             L.append(f"- **Upapada** — {kv.upapada}")
         L.append(f"- **Raman's Jaimini doctrine (verbatim)** — \"{kv.doctrine_quote}\" "
                  f"({kv.doctrine_cite})")
+        # Wave-2 (2026-08-18): one-sentence domain RE-READS, not the embedded full ASCII
+        # blocks the chapter previously duplicated. REPORT COMPLETENESS holds by
+        # construction: the full D-20/D-60 blocks still render, untrimmed, at their own
+        # home in the Divisional deep-reads section above — nothing is hidden, this
+        # chapter now points instead of pasting.
         if kv.d20_core:
-            L.append(f"- **D-20 Vimsamsa (spiritual) core** — {kv.d20_core}")
+            L.append(f"- **D-20 Vimsamsa (spiritual) - domain re-read** — {kv.d20_core}")
         if kv.d60_core:
-            L.append(f"- **D-60 Shashtiamsa (totality) core** — {kv.d60_core}")
+            L.append(f"- **D-60 Shashtiamsa (totality) - domain re-read** — {kv.d60_core}")
         L.append("")
 
     # ── pitru dosha screen (non-Raman provenance, clearly bannered) ───────────
@@ -4395,8 +7938,11 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("_Excluded by project locks (recorded, not encoded): BPHS rasi-dasha Argala "
              "grading; the KP sub-lord chain (non-Lahiri); nodal Vedha. Absence findings "
              "honoured: Raman states no direct Shadbala x Ashtakavarga rule, no numeric "
-             "requisite-Shadbala minima, no Bhava Bala cutoff, no Sade-Sati x Moon doctrine "
-             "— none were invented._")
+             "requisite-Shadbala minima, no Bhava Bala cutoff — none were invented. "
+             "(Corrected 2026-10-24: Raman does give a Sade-Sati doctrine — the rounds since "
+             "birth, AFB-12:169-174 — now read in the Sade-Sati rounds table; Vedha for the "
+             "nodes' own transits stays unencoded because Raman's table has no node row, "
+             "HPA-34:185-226.)_")
 
     # ── glossary ──────────────────────────────────────────────────────────────
     L.append("")
@@ -4474,6 +8020,198 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("- **Turning points** (where the period lean changes — a timing lens, "
                  "not an event): "
                  + "; ".join(f"{when}: {what}" for when, what in n.turning_points))
+    if n.forward_horizon:
+        L.append(f"- **Forward horizon** (a period indication, not an event): "
+                 f"{n.forward_horizon}")
+
+    # ── aptitude, intelligence & work style (v36, was v33 — pure re-read) ─────
+    # (merged 2026-10-14) tagged so the arc in `report_movements` places it.
+    L.start("aptitude")
+    if r.aptitude is not None:
+        ap = r.aptitude
+        L.append("")
+        L.append("## Aptitude, intelligence & work style")
+        L.append("")
+        L.extend(_method_preamble("aptitude"))
+        L.append(f"_{ap.woven}_")
+        L.append("")
+        if ap.intellect_verdict:
+            L.append(f"- **Intellect (H5, Jupiter karaka)** — {ap.intellect_verdict} "
+                     f"(HTJAH-I:5012)")
+        for rid, text, cite in ap.intellect_fired:
+            L.append(f"- **Fired intellect combo** [{rid}] — {text} ({cite})")
+        L.append(f"- **Mercury (buddhi)** — {ap.mercury_state}")
+        if ap.mercury_house_text:
+            L.append(f"- **Mercury in its house (Raman verbatim)** — "
+                     f"\"{ap.mercury_house_text[0]}\" ({ap.mercury_house_text[1]})")
+        if ap.mercury_sign_text:
+            L.append(f"- **Mercury in its sign (Raman verbatim)** — "
+                     f"\"{ap.mercury_sign_text[0]}\" ({ap.mercury_sign_text[1]})")
+        for rid, text, cite in ap.moon_mind_fired:
+            L.append(f"- **The Moon's mental disposition** [{rid}] — {text} ({cite})")
+        if ap.jupiter_state:
+            L.append(f"- **Jupiter (intellect karaka)** — {ap.jupiter_state}")
+        if ap.courage_verdict:
+            L.append(f"- **Courage / initiative (H3)** — {ap.courage_verdict} "
+                     f"(HTJAH-I:3324)")
+        if ap.trade_indication:
+            lord, disp, trade = ap.trade_indication
+            L.append(f"- **Navamsa-dispositor trade** — 10th lord {lord}, dispositor "
+                     f"{disp}: {trade} (HTJAH-II:10249)")
+        if ap.tenth_sign_profile:
+            L.append(f"- **10th-sign profile** — sign {ap.tenth_sign_profile[0]}: "
+                     f"{ap.tenth_sign_profile[1]} (HTJAH-II:10340)")
+        if ap.strongest_affinity:
+            L.append(f"- **Strongest planet's field** — {ap.strongest_affinity[0]}: "
+                     f"{ap.strongest_affinity[1]} (HTJAH-II:10249)")
+        for key, verdict in ap.mode_split:
+            L.append(f"- **H10 mode: {key}** — {verdict}")
+        if ap.tenth_lord_state:
+            L.append(f"- **10th lord's condition** — {ap.tenth_lord_state}")
+        if ap.saturn_state:
+            L.append(f"- **Saturn's condition** — {ap.saturn_state}")
+        if ap.mars_state:
+            L.append(f"- **Mars's condition** — {ap.mars_state}")
+        if ap.style_modern:
+            from app.raman_saab.planet_biographies import MODERN_BANNER
+            L.append(f"- **Modern keywords** [{MODERN_BANNER}] — "
+                     f"{'; '.join(ap.style_modern)}")
+
+    # ── the medical read (v38, was v35 — HPA-29 tables through Raman's own 6th-house rule) ──
+    # (merged 2026-10-14) tagged so the arc in `report_movements` places it.
+    L.start("medical")
+    med = getattr(r, "medical", None)
+    if med is not None:
+        L.append("")
+        L.append("## Medical read (classical correspondence)")
+        L.append("")
+        L.append(f"_{_md_cell(med.caveat)}_")
+        L.append("")
+        L.append(f"Raman's own procedure, quoted: \"{_md_cell(APPLICATION)}\" "
+                 f"(HPA-29:433-440). The SIGN supplies the body part; the PLANET supplies "
+                 f"the complaint.")
+        L.append("")
+        L.append(f"- **The 6th from lagna** — {_md_cell(med.sixth_sign_name)}, "
+                 f"lord {_md_cell(med.sixth_lord)}"
+                 + (f" in house {med.sixth_lord_house}" if med.sixth_lord_house else "")
+                 + (f", navamsa {_md_cell(_MED_SIGNS[med.sixth_lord_navamsa_sign - 1])}"
+                    if 1 <= med.sixth_lord_navamsa_sign <= 12 else ""))
+        if med.occupants:
+            L.append(f"- **In the 6th** — {_md_cell(', '.join(med.occupants))}")
+        if med.aspecting:
+            L.append(f"- **Aspecting the 6th** — {_md_cell(', '.join(med.aspecting))}")
+        if med.unlisted_bodies:
+            L.append(f"- **Present but not tabled** — "
+                     f"{_md_cell(', '.join(med.unlisted_bodies))}: Raman's tables cover "
+                     f"the seven visible grahas, so the nodes contribute nothing here. "
+                     f"Shown rather than skipped, so the silence is visible.")
+        L.append("")
+        L.append("| Testimony | Speaks through | Body regions | Complaints indicated | Cite |")
+        L.append("|---|---|---|---|---|")
+        for t in med.testimonies:
+            L.append(f"| {_md_cell(t.clause)} | {_md_cell(t.actor)} "
+                     f"| {_md_cell(', '.join(t.regions)) or '-'} "
+                     f"| {_md_cell(', '.join(t.complaints)) or '-'} "
+                     f"| {_md_cell(t.citation)} |")
+        L.append("")
+        if med.regions_marked:
+            L.append(f"- **Body regions this chart marks** (union of the testimonies "
+                     f"above, de-duplicated) — {_md_cell(', '.join(med.regions_marked))}")
+        if med.complaints_indicated:
+            L.append(f"- **Complaints the tables associate** — "
+                     f"{_md_cell(', '.join(med.complaints_indicated))}")
+        L.append("")
+        L.append(f"_{_md_cell(med.provenance)}_")
+
+    # ── the feedback instrument (v39, was v36) ─────────────────────────────────
+    # (merged 2026-10-14) tagged so the arc in `report_movements` places it.
+    L.start("feedback")
+    # Built from the report's own calibration and timeline. Rendered in full — every part,
+    # every question, both languages — per the completeness law. The one thing NOT rendered is
+    # the answer key, which is not a reading and would destroy the instrument if printed beside
+    # it; `feedback_instrument.instrument_key` recomputes it server-side for scoring.
+    try:
+        from app.raman_saab.report_json import feedback_instrument_for
+        inst = feedback_instrument_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        logger.info("report section skipped (a sparse chart must not lose the whole reading)", exc_info=True)
+        inst = None
+    if inst:
+        L.append("")
+        L.append("## Your feedback")
+        L.append("")
+        L.append(f"_{_md_cell(inst['caveat_en'])}_")
+        L.append("")
+        # This surface is ASCII by construction (`_fold_ascii` runs over the whole document, so
+        # the varga renderers' IAST folds to base letters instead of mangling). Devanagari has
+        # no ASCII fold and would come out as a row of question marks, which is worse than not
+        # printing it — so the markdown carries the English and says plainly where the Hindi is,
+        # rather than dropping it silently.
+        L.append("_Hindi is generated for every question below and renders on the interactive "
+                 "page and the standalone HTML; this markdown surface is ASCII-only, so it "
+                 "carries the English alone._")
+        for part in inst["parts"]:
+            L.append("")
+            L.append(f"### Part {part['part']} — {_md_cell(part['title_en'])}")
+            L.append("")
+            L.append(_md_cell(part["note_en"]))
+            L.append("")
+            for q in part["questions"]:
+                # A printed form has to say HOW to answer, or a multi-select reads as a
+                # single choice and an events grid reads as a list of examples.
+                how = {"choice": " _(choose one)_", "multi": " _(choose any that apply)_",
+                       "scale": " _(choose one)_", "year": " _(write the year)_",
+                       "events": " _(one row per event: year, month, kind)_"}.get(q["kind"], "")
+                L.append(f"**{_md_cell(q['qid'])}** — {_md_cell(q['text_en'])}{how}")
+                if q["hint_en"]:
+                    L.append("")
+                    L.append(f"> {_md_cell(q['hint_en'])}")
+                for o in q["options"]:
+                    L.append("")
+                    L.append(f"- ( ) **{_md_cell(o['value'])}** {_md_cell(o['text_en'])}")
+                if q["confidence"]:
+                    L.append("")
+                    L.append(f"- How sure? {' / '.join(inst['confidence_scale'])}")
+                L.append("")
+        if inst["boundaries"]:
+            L.append("")
+            L.append("| Period changes on | Mahadasha begins |")
+            L.append("|---|---|")
+            for row in inst["boundaries"]:
+                L.append(f"| {_md_cell(row['date'])} | {_md_cell(row['maha'])} |")
+        rect = inst.get("rectification")
+        if rect:
+            L.append("")
+            L.append(f"- **Ascendant against its own cusp** — {rect['degrees_into_sign']}"
+                     f"\u00b0 into {_md_cell(rect['asc_sign_name_en'])}, about "
+                     f"{rect['approx_gap_minutes']} minutes of clock time from the "
+                     f"{_md_cell(rect['neighbour_sign_name_en'])} cusp"
+                     + (" — **tight**, so the birth time needs settling before any of this "
+                        "reading is scored" if rect["tight"] else ""))
+
+    # ── what Raman's rules indicate (v41, was v38 — pure re-read, computes nothing) ───
+    # (merged 2026-10-14) tagged so the arc in `report_movements` places it.
+    L.start("indications")
+    _groups = collected_indications(r)
+    if _groups:
+        L.append("")
+        L.append("## What Raman's rules indicate")
+        L.append("")
+        L.extend(_method_preamble("indications"))
+        L.append("_Every line below is a KIND, cause, channel, count or circumstance rather "
+                 "than a favourable/afflicted grade - the part of Raman's doctrine a verdict "
+                 "cannot carry. Each row states whether it was **computed** for this chart, "
+                 "**fired** on it, holds in **general** regardless of the lord's strength, or "
+                 "is merely **on record** and was never evaluated. Nothing here is new: every "
+                 "line also appears in its own house block above._")
+        L.append("")
+        for _label, _rows in _groups:
+            L.append(f"### {_label} ({len(_rows)})")
+            L.append("")
+            for _h, _kind, _sig, _text, _cite in _rows:
+                _c = f" ({_cite})" if _cite else ""
+                L.append(f"- **H{_h}** _{_sig}_ [{_kind}] - {_text}{_c}")
+            L.append("")
 
     # ── v34 intuition layer — dominance, restraint, analogy ───────────────────
     # Written here at the end of the function; the arc in `report_movements` decides where the
@@ -4599,7 +8337,112 @@ def to_markdown(r: DetailedReport) -> str:
                 out.extend(rendered[sid])
 
     out.extend(acc.lines_for(_SectionedLines.FOOTER))
-    return _fold_ascii("\n".join(out))
+    return _fold_ascii(_gloss_first_use("\n".join(_inject_plain_layer(out))))
+
+
+def _gloss_first_use(md: str) -> str:
+    """Name each technical term in plain words the FIRST time the document uses it.
+
+    The standalone HTML and the interactive page both already mark first occurrences —
+    `report_html._apply_glossary_abbrs` and the page's `glossWalk` — and a hover shows the
+    gloss. Markdown has no hover, so a reader of the markdown (or of a PDF printed from it)
+    met every term cold: the same words, with the plain-terms chapter a thousand lines away.
+    This closes that gap with the one device markdown has, a parenthesis.
+
+    Deliberately narrow, because a substitution over a finished document is easy to get
+    wrong: prose lines only (never a heading, a table row, a citation line or a quotation),
+    never inside the plain-terms chapter that defines these words in the first place, and
+    never where the term is already followed by its own parenthetical.
+    """
+    import re
+
+    from app.raman_saab.plain_terms import TERM_GLOSS
+    terms = sorted(TERM_GLOSS, key=len, reverse=True)
+    # not inside a hyphenated compound ("Kashta-dominant" must not become
+    # "Kashta (hard-yield potential)-dominant"), and not where a parenthetical follows
+    pattern = re.compile(r"(?<![\w-])(" + "|".join(re.escape(t) for t in terms)
+                         + r")(?![\w-])(?! ?\()")
+    seen: set[str] = set()
+    out: list[str] = []
+    in_glossary = False
+    for line in md.split("\n"):
+        stripped = line.lstrip()
+        if stripped.startswith("#"):
+            # the plain-terms chapter defines these words; glossing them there is noise
+            in_glossary = stripped.startswith(("## Glossary", "### In plain terms"))
+            out.append(line)
+            continue
+        if (in_glossary or not stripped or stripped.startswith(("|", ">", "_Citation"))
+                or '"' in line):
+            out.append(line)
+            continue
+
+        def _sub(m: "re.Match[str]") -> str:
+            term = m.group(1)
+            if term in seen:
+                return term
+            # never nest a gloss inside another parenthetical — "(Kashta 11 over Ishta
+            # (good-yield potential) 7)" reads worse than the jargon it replaces
+            head = line[:m.start()]
+            if head.count("(") > head.count(")"):
+                return term
+            # never inside a **bold** span: those are the structural row labels
+            # ("**Karaka**"), and a gloss there is a renamed field, not an explanation
+            if head.count("**") % 2:
+                return term
+            # some plain names carry their own parenthetical ("the soul significator
+            # (highest-degree planet)"); nested parens read worse than the term did
+            plain = re.sub(r"\s*\([^)]*\)", "", TERM_GLOSS[term].plain).strip(" ,-")
+            if not plain:
+                return term
+            seen.add(term)
+            return f"{term} ({plain})"
+
+        out.append(pattern.sub(_sub, line))
+    return "\n".join(out)
+
+
+#: The ten SECTION_METHOD chapters added 2026-08-17 whose preambles are injected
+#: generically here (the original eight are emitted at their own call sites and
+#: must NOT be duplicated by this pass).
+_INJECTED_PREAMBLE_IDS: frozenset[str] = frozenset(
+    {"yogas", "timeline", "shadbala", "ashtakavarga", "gochara",
+     "divisional", "soul", "ruler", "maraka", "karmic"})
+
+
+def _inject_plain_layer(lines: list[str]) -> list[str]:
+    """Reframe part 2 (2026-08-17): under each section heading, add the section_meta
+    plain-language subtitle + the reader's question, and (for the ten chapters whose
+    SECTION_METHOD entries postdate the per-site wiring) the method preamble.
+
+    Add-only by construction: the pass inserts prose AFTER the first line carrying each
+    contract md_marker — it emits no ``## `` lines, so the frozen markers, the
+    first-occurrence order test, and the guard-slice cuts are all untouched. Subtitle
+    wording is _FORBIDDEN_RE-guarded by tests/raman_saab/test_section_meta.py."""
+    from app.raman_saab.section_meta import SECTION_META
+    blocks: list[tuple[str, list[str]]] = []
+    for spec in SECTION_CONTRACT:
+        if not spec.md_marker or not spec.md_marker.startswith("## "):
+            continue
+        m = SECTION_META.get(spec.section_id)
+        if m is None:
+            continue
+        block = [f"*{m.subtitle_en}* — **Answers:** {m.answers_en}", ""]
+        if spec.section_id in _INJECTED_PREAMBLE_IDS:
+            block += _method_preamble(spec.section_id)
+        blocks.append((spec.md_marker, block))
+    blocks.sort(key=lambda t: -len(t[0]))     # longest marker first: no prefix mis-match
+    seen: set[str] = set()
+    out: list[str] = []
+    for line in lines:
+        out.append(line)
+        for marker, block in blocks:
+            if marker not in seen and line.startswith(marker):
+                seen.add(marker)
+                out.append("")
+                out.extend(block)
+                break
+    return out
 
 
 def _fold_ascii(s: str) -> str:

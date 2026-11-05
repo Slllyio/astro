@@ -1,0 +1,154 @@
+{
+ "answers": {
+  "Bill_Clinton": {
+   "sha256": "1f07c815593b2d3cf4a082b2b9f312e8bfa113e1258ad01abd47c90145d15ea5",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "David_Bowie": {
+   "sha256": "6e3bcb6e42f0c90d459c3d07edad8a973aa5c43b9c251199b9bfab3bed2e8f1a",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Emmanuel_Macron": {
+   "sha256": "7a678ca6136b3d4ddfb464c7658db8083ad07b3c4db080ddced17212161422d6",
+   "answers": 78,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Jacinda_Ardern": {
+   "sha256": "89eec3e9bd16b0f201acc9c4bf93a65c84d3a45065c90edd0db36798ec83f162",
+   "answers": 79,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "John_Lennon": {
+   "sha256": "8168af89c96bd61aa2426d04d9cfa4fd2f39ebf9fd9649591a07fbb82c882a60",
+   "answers": 82,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Justin_Trudeau": {
+   "sha256": "3fe86a260de56059ec02d8cd85375aaac3aad6dad3d56ffe39f09d14e7d5f74f",
+   "answers": 80,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Madonna": {
+   "sha256": "9f6d75c9faebfb87c1fa9fc2a781e5ce2c18dc12471ee0f67859847c946781d1",
+   "answers": 85,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Margaret_Thatcher": {
+   "sha256": "8cda8234a05e86e022658e7ff49129317d76c7dd9715ad32ad226272e4b6d8fe",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Michael_Jackson": {
+   "sha256": "6965584181191ed16e48d3c5a5af474a38fd94ebd46dd6d851d6e8b39622b4a0",
+   "answers": 91,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Mother_Teresa": {
+   "sha256": "5343852549a32f370f2f98f393e219245200ca8d627e3812430be07ae9e3ddfd",
+   "answers": 79,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Muhammad_Ali": {
+   "sha256": "321819706c5ed4f72203aa2223915861f3e0446e1139cec4d3579ed0c4166011",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  },
+  "Steve_Jobs": {
+   "sha256": "633d16ff8838d536eae3fca75fe65ec7bbb2e126c9a46b52f2b4569a33eaeeab",
+   "answers": 81,
+   "free_text": 0,
+   "off_vocabulary": {}
+  }
+ },
+ "answers_contaminated": {
+  "Bill_Clinton": {
+   "sha256": "97d298e35516e70fffbcb644f452d78e05a5045596d520a85d4836c299405e80",
+   "answers": 97,
+   "free_text": 1,
+   "off_vocabulary": {
+    "inst.v2.A16": [
+     "writing_media"
+    ]
+   }
+  },
+  "David_Bowie": {
+   "sha256": "d9adf56ea96c1d61ec12d5e08915c8b149edee0524567837e22d48be15c2075d",
+   "answers": 92,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Emmanuel_Macron": {
+   "sha256": "b100e34fd4cfdd82391acbce1f36b25f44f0cbe5117ca8f8607bda0d8bc02924",
+   "answers": 86,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Jacinda_Ardern": {
+   "sha256": "51a1d67bc1b7e20406672f37f670f6d8bcdd28652091194b5aa60a3c071d0384",
+   "answers": 87,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "John_Lennon": {
+   "sha256": "3dac945a9d98ab4c8a5ecf16cac2b6d1ffd62d2b0e86319d9b80e414e1fce2fc",
+   "answers": 94,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Justin_Trudeau": {
+   "sha256": "ad11b220bc57dbad89cddd24753a7e8d8804abb3d55194b15c86a97a484fff17",
+   "answers": 92,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Madonna": {
+   "sha256": "b5b6367033c4f9adabaeaed6b4c163850ae666472ec9de8fb79102dc960484c8",
+   "answers": 92,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Margaret_Thatcher": {
+   "sha256": "a384dd93fe69b0f01a7b9d068b035369a14dfe12b73e592a8b6581656b61cb5b",
+   "answers": 92,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Michael_Jackson": {
+   "sha256": "3f11327f9ec5cd1becce3533595a9a59af264f8eb5406a91cdb44db762685f1b",
+   "answers": 101,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Mother_Teresa": {
+   "sha256": "90e3d669b67a2225a57644dcae5c164048879235697fb9aa0aea013ea3118384",
+   "answers": 88,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Muhammad_Ali": {
+   "sha256": "7129d8484938d61f31210c18a565020c3267056c178437fc99bf3aaf729e0dd4",
+   "answers": 102,
+   "free_text": 1,
+   "off_vocabulary": {}
+  },
+  "Steve_Jobs": {
+   "sha256": "ac1570104f5ec118eb7a1b1056272baa8e4e345551b2d905f87f044bdf7e02f8",
+   "answers": 97,
+   "free_text": 1,
+   "off_vocabulary": {}
+  }
+ }
+}

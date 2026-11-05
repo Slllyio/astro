@@ -38,6 +38,8 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.dignity import compound_relation
+from app.raman_saab.primitives.effective_strength import effective_strength
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
 
@@ -200,6 +202,97 @@ def _lord_in_own_house(house: int) -> C.Condition:
     return C.LordIn(house, house)
 
 
+class _FortifiedPlanetIn11(C.Condition):
+    """Some planet in the 11th is FORTIFIED — Shadbala band 'strong' (total >= its own
+    MIN_REQUIRED bar, GBB-8:303) with no hard placement affliction (B1 effective_strength).
+    Per-planet-vs-its-own-bar is exactly the context that measure was tuned for. Rahu/Ketu
+    carry no Shadbala (band 'unknown') and Track-B stated-position charts have none at all —
+    on those this rule simply cannot fire, which is honest: 'fortified' is a strength claim
+    the chart cannot substantiate without Shadbala."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return any(
+            p.rasi_house == 11
+            and (es := effective_strength(name, ctx.chart)).band == "strong"
+            and not es.decisively_weak
+            for name, p in ctx.chart.planets.items())
+
+
+class _WeakPlanetIn11(C.Condition):
+    """Some planet in the 11th is decisively WEAK — Shadbala below its bar, combust
+    ('eclipsed'), or debilitated-uncancelled ('depressed') per B1 effective_strength.
+    Raman's other two legs are partially covered rather than separately gated: defeat in
+    planetary war already depresses the Shadbala total through Yuddha Bala (kala.py), and
+    'inimical vargas' is NOT modelled — noted, not faked. The combust/debilitation legs are
+    positional, so this rule CAN fire on Track-B charts without Shadbala."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return any(
+            p.rasi_house == 11 and effective_strength(name, ctx.chart).decisively_weak
+            for name, p in ctx.chart.planets.items()
+            if name not in ("Rahu", "Ketu"))     # nodes have no bar; 'weak node' is not a claim
+                                                 # this citation makes
+
+
+# NOTE (2026-08-22, resolved 2026-08-23): C.6/C.7 were briefly encoded on NAISARGIKA
+# lord-relationships and reverted the same day — bphs-doctrine-reviewer proved the predicates
+# UNSATISFIABLE by enumerating all 12 lagnas (lordship is fixed per lagna, naisargika fixed
+# per planet pair; no lagna yields three mutually-friendly 1/2/11 lords, nor both 2nd+11th
+# lords natural enemies of the lagna lord — even one-directionally). Raman wrote those
+# sentences about real nativities, so "friendly"/"inimical" there MUST mean the chart-
+# dependent COMPOUND relation (naisargika x tatkalika). dignity.compound_relation is now
+# public and both rules are re-encoded on it below. The compound relation is satisfiable in
+# both directions: its temporal side is symmetric by construction (whole-sign distance d and
+# 14-d are in the friendly set together), so mutual friendship needs only a friendly mutual
+# placement plus no natural enmity. Record: DOCTRINE_BACKLOG "H11 dead-rule sweep" + the
+# 2026-08-23 audit-ticket entry.
+
+
+class _LordsMutuallyCompoundFriendly(C.Condition):
+    """Every pair of lords among `houses` is MUTUALLY compound-friendly (each direction
+    "friend"). A pair sharing one planet (e.g. Capricorn lagna: Saturn owns 1 and 2) is
+    vacuously friendly — a planet is not its own enemy. All-lords-present required."""
+    def __init__(self, houses: tuple[int, ...]) -> None:
+        self.houses = houses
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lords = [_lord_of(h, ctx.chart) for h in self.houses]
+        if any(l not in ctx.chart.planets for l in lords):
+            return False
+        for i in range(len(lords)):
+            for j in range(i + 1, len(lords)):
+                a, b = lords[i], lords[j]
+                if a == b:
+                    continue
+                if (compound_relation(a, b, ctx.chart) != "friend"
+                        or compound_relation(b, a, ctx.chart) != "friend"):
+                    return False
+        return True
+
+
+class _LordAfflictedAndInimicalToLagnaLord(C.Condition):
+    """The lord of `house` is (a) afflicted — conjunct with or aspected by a natural malefic
+    other than itself — AND (b) compound-inimical TOWARDS the Lagna lord (directional, as
+    Raman writes it: "the 2nd and 11th lords ... inimical to the Lagna lord"). A lord that
+    IS the Lagna lord cannot be its own enemy → False."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(self.house, ctx.chart)
+        lagna_lord = _lord_of(1, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None or lord == lagna_lord or lagna_lord not in ctx.chart.planets:
+            return False
+        if compound_relation(lord, lagna_lord, ctx.chart) != "enemy":
+            return False
+        for m in NATURAL_MALEFICS:
+            if m == lord or ctx.chart.planets.get(m) is None:
+                continue
+            q = ctx.chart.planets[m]
+            if q.rasi_house == p.rasi_house or drishti.aspects_planet(m, lord, ctx.chart):
+                return True
+        return False
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -211,8 +304,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14357)),
     RuleRecord(
-        id="H11.C.2", house=11, signification="gains", group="combination", kind="evaluable",
-        condition=C.CountInHouse(11, 1, "malefic"),
+        # R2 RE-SCOPE (2026-10-24, engine-blind citation review): the sentence is about HOW the
+        # native earns ("resorts to unfair and unscrupulous methods of earning", HTJAH-II:14358),
+        # not how much he gains, so it votes on its own matter. The mixed case (benefic AND
+        # malefic in the 11th) has its own result in the next clause (:14360), so it is excluded.
+        id="H11.C.2", house=11, signification="means_of_gain", group="combination", kind="evaluable",
+        condition=C.And(C.CountInHouse(11, 1, "malefic"),
+                        C.Not(C.CountInHouse(11, 1, "benefic"))),
         fortified=None,
         afflicted="malefics in the 11th Bhava → resorts to unfair and unscrupulous methods of "
                   "earning",
@@ -224,36 +322,44 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "of earning",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 14360)),
+    # #4/#5/#6/#7 — were DESCRIPTIVE with stale TODOs; the blocking primitives now exist
+    # (B1 effective_strength for the strength gates, primitives.relationships.naisargika for
+    # the friendship/enmity gates). Encoded 2026-08-22; bphs-doctrine-reviewer + ratchet
+    # sign-off recorded in DOCTRINE_BACKLOG "H11 dead-rule sweep".
     RuleRecord(
-        id="H11.C.4", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
+        id="H11.C.4", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=_FortifiedPlanetIn11(),
         fortified="fortified planets in the 11th → fortunate conveyances, bungalows and all "
-                  "comforts; a noble beautiful wife; fond of clothes, food and enjoyments. "
-                  "TODO(predicate: planet strength gate)",
+                  "comforts; a noble beautiful wife; fond of clothes, food and enjoyments",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14362)),
     RuleRecord(
-        id="H11.C.5", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
+        id="H11.C.5", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=_WeakPlanetIn11(),
         fortified=None,
         afflicted="the 11th occupied by a weak planet — eclipsed, depressed, defeated in planetary "
                   "war, or in inimical vargas → even one born affluent loses everything and wanders "
-                  "without self-respect. TODO(predicate: weakness/eclipse/planetary-war gate)",
+                  "without self-respect (war-defeat covered via Yuddha Bala inside the Shadbala "
+                  "total; the inimical-vargas leg is NOT modelled)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14367)),
+    # #6/#7 — re-encoded 2026-08-23 on the COMPOUND lord-relation (see the resolved note
+    #         above the predicates): the naisargika reading was proven unsatisfiable, the
+    #         compound (naisargika x tatkalika) reading is the one Raman's real-nativity
+    #         sentences can mean.
     RuleRecord(
-        id="H11.C.6", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
-        fortified="the Lagna, 2nd and 11th lords mutually friendly → earnings used for honourable "
-                  "ends (legitimate expenses and charity). TODO(predicate: functional-friendship "
-                  "between three lords)",
+        id="H11.C.6", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=_LordsMutuallyCompoundFriendly((1, 2, 11)),
+        fortified="the Lagna, 2nd and 11th lords friendly (compound relation, mutual) → "
+                  "earnings used for honourable ends (legitimate expenses and charity)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14388)),
     RuleRecord(
-        id="H11.C.7", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
+        id="H11.C.7", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=C.And(_LordAfflictedAndInimicalToLagnaLord(2),
+                        _LordAfflictedAndInimicalToLagnaLord(11)),
         fortified=None,
-        afflicted="the 2nd and 11th lords afflicted and inimical to the Lagna lord → money "
-                  "squandered on wine and women. TODO(predicate: affliction + lord-enmity gate)",
+        afflicted="the 2nd and 11th lords afflicted and inimical to the Lagna lord "
+                  "(compound relation) → money squandered on wine and women",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14390)),
     RuleRecord(
         id="H11.C.8", house=11, signification="gains", group="combination", kind="evaluable",
@@ -640,4 +746,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "loss. The 11th lord in the 6/8/12 from Navamsa Lagna → runs into debts. "
                   "TODO(predicate: Navamsa 6/8/12 overlay for the debt qualifier)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14731)),
+    # RS1 (prereg Addendum 36, 2026-10-31): moved from H3.C.14. Printed in the 3rd-house
+    # chapter, but Raman's next sentence routes it here: "The elder brother, his prosperity and
+    # his adversity should be judged by a consideration of the 11th house" (HTJAH-I:3444-3445).
+    RuleRecord(
+        id="H11.C.RS1", house=11, signification="elder_siblings", group="combination",
+        kind="evaluable",
+        condition=C.InRashiHouse("Jupiter", 11),
+        fortified=None,
+        afflicted="Jupiter in the 11th -> the person suffers worry on account of his elder "
+                  "brother",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 3444)),
 )

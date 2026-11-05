@@ -7,13 +7,15 @@
       "HTJAH-II:16262",
       "HTJAH-II:16328",
       "HTJAH-II:16410",
-      "HTJAH-II:16454"
+      "HTJAH-II:16454",
+      "HTJAH-II:16491"
     ],
     "fired_rule_ids": [
       "H12.C.A16",
       "H12.C.A2",
       "H12.C.A4",
       "H12.C.C5",
+      "H12.C.F1",
       "H12.C.H2",
       "H12.C.J4",
       "H12.L.2"
@@ -56,19 +58,21 @@
     "citations": [
       "HTJAH-I:4165",
       "HTJAH-I:4206",
+      "HTJAH-I:4551",
       "HTJAH-I:4919"
     ],
     "fired_rule_ids": [
       "H4.C.1",
       "H4.C.40",
+      "H4.C.48",
       "H4.L.6"
     ],
     "rollup": "afflicted",
     "significations": {
       "education": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "happiness": {
         "degree": "moderate",
@@ -99,19 +103,17 @@
   },
   "H8": {
     "citations": [
-      "HTJAH-II:2916",
       "HTJAH-II:3902"
     ],
     "fired_rule_ids": [
-      "H8.C.25",
-      "H8.L.2"
+      "H8.C.25"
     ],
-    "rollup": "afflicted",
+    "rollup": "favourable",
     "significations": {
       "death": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "insufficient-evidence"
       },
       "legacies": {
         "degree": "mild",
@@ -133,6 +135,7 @@
   "H9": {
     "citations": [
       "HTJAH-II:7310",
+      "HTJAH-II:7312",
       "HTJAH-II:7429",
       "HTJAH-II:7443",
       "HTJAH-II:7460",
@@ -159,7 +162,8 @@
       "H9.D.41",
       "H9.D.42",
       "H9.D.49",
-      "H9.L.2",
+      "H9.L.2a",
+      "H9.L.2b",
       "H9.P.Ketu",
       "H9.P.Moon"
     ],
@@ -168,7 +172,7 @@
       "dharma": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "father": {
         "degree": "mild",
@@ -178,17 +182,17 @@
       "fortune": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "higher_learning": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "long_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

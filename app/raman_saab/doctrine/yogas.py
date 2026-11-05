@@ -108,6 +108,41 @@ class _KendraTrikonaLordsConjoined(C.Condition):
         return False
 
 
+#: HTJAH-I:641-645 — "wherever Raja yoga is noticed, the extent to which it will be realised
+#: depends upon the inherent strength it has gained ... The Yoga can really be of some
+#: substantial effect provided the planets causing the yoga are within 12° of each other."
+RAJA_VITALITY_ORB_DEG: Final[float] = 12.0
+
+
+def raja_yoga_vital(chart: RamanChart, yoga_id: str) -> bool:
+    """True when a fired raja yoga passes Raman's vitality test (HTJAH-I:643-644): its two
+    causing planets are within 12° of each other.
+
+    Only the association yoga (Y.RAJA.KT — a kendra lord conjoined with a distinct trikona
+    lord) names a causing PAIR the engine can measure. Every other raja yoga (exchange,
+    mutual aspect, the positional yogas, the completed 3HC 245-263) has no measurable pair
+    under this test and returns False: it is detected, cited and reported, but does not move a
+    verdict. This is the one rule for old and new raja yogas alike — the 3HC Remarks
+    (3HCC:8580-8584) ask for "inherent vitality" and HTJAH-I:641-645 is where Raman states the
+    test (audit 2026-10-23)."""
+    if yoga_id != "Y.RAJA.KT":
+        return False
+    kendra_lords = {_house_lord(h, chart) for h in _KENDRAS}
+    trikona_lords = {_house_lord(h, chart) for h in _TRIKONAS}
+    for k in kendra_lords:
+        pk = chart.planets.get(k)
+        if pk is None:
+            continue
+        for tl in trikona_lords:
+            pt = chart.planets.get(tl)
+            if tl == k or pt is None or pt.rasi_house != pk.rasi_house:
+                continue
+            diff = abs(pk.lon - pt.lon) % 360.0
+            if min(diff, 360.0 - diff) <= RAJA_VITALITY_ORB_DEG:
+                return True
+    return False
+
+
 class _LordsMutualAspect(C.Condition):
     """The lords of houses `h1` and `h2` (distinct planets) fully aspect each
     other (HTJAH-I:634 for the 9th/10th lords)."""
@@ -1853,16 +1888,26 @@ class _Bhagya(C.Condition):
     """Bhagya 241 (3HCC:7989): a STRONG benefic in Lagna, the 3rd or the 5th,
     simultaneously aspecting the 9th. The whole-sign drishti table carries Raman's own
     observation naturally (only Jupiter reaches the 9th from Lagna or the 5th; any
-    benefic reaches it from the 3rd); strength rides B1."""
+    benefic reaches it from the 3rd); strength rides B1.
+
+    OWNERSHIP (encoded 2026-10-21): "due consideration must be given to the nature of the
+    ownership of the benefic concerned before actually evaluating the yoga. Cancer Lagna with
+    Jupiter there constitutes a powerful Bhagya Yoga … The same yoga forming from Mithuna
+    becomes almost ineffective because of Kendradhipatya dosha for Jupiter" (3HCC:8003-8010).
+    A benefic carrying Kendradhipati dosha (HTJAH-I:583, `functional_nature`) does not form
+    it — Raman's "almost ineffective" read as not formed, the conservative variant."""
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
         from app.raman_saab.doctrine import drishti
+        from app.raman_saab.primitives.functional_nature import kendradhipati_dosha
         chart = ctx.chart
         for b in _T5_BENEFICS:
             bp = chart.planets.get(b)
             if bp is None or bp.rasi_house not in {1, 3, 5}:
                 continue
             if not drishti.aspects_house(b, 9, chart):
+                continue
+            if kendradhipati_dosha(b, chart.asc_sign):
                 continue
             if _t6_b1_strong(chart, b):
                 return True
@@ -3191,16 +3236,16 @@ YOGAS: tuple[YogaRecord, ...] = (
                source=Citation("3HC", 6732)),
     YogaRecord(id="Y.KEDARA", name="Kedara Yoga", kind="other", condition=_SankhyaSignCount(4),
                effect="An agriculturist, useful to many, truthful and happy.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6888)),
     YogaRecord(id="Y.SULA", name="Sula Yoga", kind="other", condition=_SankhyaSignCount(3),
                effect="Sharp/aggressive, valorous but indigent; cruel-natured.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6912)),
     YogaRecord(id="Y.YUGA", name="Yuga Yoga", kind="other", condition=_SankhyaSignCount(2),
                effect="A heretic or outcaste; poor and devoid of wealth.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6914)),
     YogaRecord(id="Y.GOLA", name="Gola Yoga", kind="other", condition=_SankhyaSignCount(1),
                effect="Poor, dirty, devoid of learning, strength and comfort.",
-               source=Citation("3HC", 6868)),
+               source=Citation("3HC", 6916)),
     # — Nabhasa: Akriti (the 4 contiguous-house forms; the 16 other Akriti shapes are a backlog) —
     YogaRecord(id="Y.YUPA", name="Yupa Yoga", kind="other", condition=_AllSevenInHouses((1, 2, 3, 4)),
                effect="Liberal, self-possessed, noted for charitable and sacrificial deeds.",
@@ -3371,8 +3416,13 @@ YOGAS: tuple[YogaRecord, ...] = (
         # No planets on either side of the Moon (3HC:2172-2174); the record
         # fires only while UNCANCELLED. Bhanga per 3HC:2182-2185 verbatim:
         # "if planets are [in] a kendra from birth or from the Moon or if the
-        # Moon is in conjunction with a planet there is no Kemadruma". The
-        # benefic-drishti-on-Moon branch inside kemadruma_bhanga is EXTENDED
+        # Moon is in conjunction with a planet there is no Kemadruma".
+        # Raman REPORTS that line as "some authors", but he then applies the
+        # two kendra branches himself on worked charts (3HC:2263-2268, and the
+        # converse at :2255-2261), so his "not generally acceptable" at :2188
+        # dismisses the OTHER reported opinion, not these. See
+        # bhangas.kemadruma_bhanga for the full reading (Track 4b, 2026-08-20).
+        # The benefic-drishti-on-Moon branch inside kemadruma_bhanga is EXTENDED
         # doctrine (Phase-2 backfill), NOT from that line.
         condition=C.And(_Kemadruma(), C.Not(_KemadrumaBhanga())),
         effect=("Dirty, sorrowful, doing unrighteous deeds, poor, dependent, "
@@ -4421,6 +4471,146 @@ YOGAS: tuple[YogaRecord, ...] = (
 #     dignity AND placement, conjunctive, unambiguous. What remains before encoding is only
 #     the fire-rate measurement on the golden corpus with the lagna-lord strength gate — the
 #     same measurement discipline the SHANKHA/KAHALA/BHERI re-attempt used.
+
+
+# ── family taxonomy (ADDITIVE metadata, 2026-08-18 — Wave-2 coverage honesty) ─
+# Rendering metadata ONLY: which of Raman's own family groupings each encoded record
+# belongs to (Pancha Mahapurusha, the solar/lunar flank sets, the four Nabhasa classes,
+# raja/dhana/arishta, and the named sets mined from 3HC / HPA Ch.20). Conditions, kinds
+# and detection above are untouched — this exists so report surfaces can (a) disclose
+# encoded coverage with a family breakdown and (b) show a family name where the bare
+# `kind="other"` tag says nothing to a reader. Family names are Raman's own taxonomy
+# vocabulary, not new doctrine.
+
+#: Canonical display order for the family breakdown (report surfaces iterate this).
+YOGA_FAMILY_ORDER: Final[tuple[str, ...]] = (
+    "Pancha Mahapurusha", "solar (Ravi-flank)", "lunar (Chandra)",
+    "Nabhasa-Asraya", "Nabhasa-Dala", "Nabhasa-Sankhya", "Nabhasa-Akriti",
+    "raja", "dhana", "arishta", "named (3HC)", "named (HPA-20)")
+
+#: Record id -> family. Every id in `YOGAS` appears exactly once (paired test).
+YOGA_FAMILIES: Final[dict[str, str]] = {
+    # Pancha Mahapurusha (3HC:3434-3435 form)
+    "Y.RUCHAKA": "Pancha Mahapurusha", "Y.BHADRA": "Pancha Mahapurusha",
+    "Y.HAMSA": "Pancha Mahapurusha", "Y.MALAVYA": "Pancha Mahapurusha",
+    "Y.SASA": "Pancha Mahapurusha",
+    # solar flank (planets about the Sun)
+    "Y.VESI": "solar (Ravi-flank)", "Y.VASI": "solar (Ravi-flank)",
+    "Y.UBHAYACHARI": "solar (Ravi-flank)",
+    # lunar (formed on/about the Moon)
+    "Y.GAJAKESARI": "lunar (Chandra)", "Y.SUNAPHA": "lunar (Chandra)",
+    "Y.ANAPHA": "lunar (Chandra)", "Y.DURUDHARA": "lunar (Chandra)",
+    "Y.CHANDRAMANGALA": "lunar (Chandra)", "Y.ADHI": "lunar (Chandra)",
+    "Y.AMALA": "lunar (Chandra)",
+    # Nabhasa — Asraya (modality shapes)
+    "Y.RAJJU": "Nabhasa-Asraya", "Y.MUSALA": "Nabhasa-Asraya",
+    "Y.NALA": "Nabhasa-Asraya",
+    # Nabhasa — Dala (benefic/malefic kendra garlands)
+    "Y.MALA": "Nabhasa-Dala", "Y.SARPA": "Nabhasa-Dala",
+    # Nabhasa — Sankhya (sign-count shapes)
+    "Y.VEENA": "Nabhasa-Sankhya", "Y.DAMINI": "Nabhasa-Sankhya",
+    "Y.PASA": "Nabhasa-Sankhya", "Y.KEDARA": "Nabhasa-Sankhya",
+    "Y.SULA": "Nabhasa-Sankhya", "Y.YUGA": "Nabhasa-Sankhya",
+    "Y.GOLA": "Nabhasa-Sankhya",
+    # Nabhasa — Akriti (figure shapes)
+    "Y.YUPA": "Nabhasa-Akriti", "Y.ISHU": "Nabhasa-Akriti",
+    "Y.SAKTI": "Nabhasa-Akriti", "Y.DANDA": "Nabhasa-Akriti",
+    "Y.NAVA": "Nabhasa-Akriti", "Y.KUTA": "Nabhasa-Akriti",
+    "Y.CHATRA": "Nabhasa-Akriti", "Y.CHAPA": "Nabhasa-Akriti",
+    "Y.ARDHACHANDRA": "Nabhasa-Akriti", "Y.CHAKRA": "Nabhasa-Akriti",
+    "Y.SAMUDRA": "Nabhasa-Akriti", "Y.GADA": "Nabhasa-Akriti",
+    "Y.SAKATA_AKRITI": "Nabhasa-Akriti", "Y.VIHAGA": "Nabhasa-Akriti",
+    "Y.VAJRA": "Nabhasa-Akriti", "Y.YAVA": "Nabhasa-Akriti",
+    "Y.SRINGHATAKA": "Nabhasa-Akriti", "Y.HALA": "Nabhasa-Akriti",
+    "Y.KAMALA": "Nabhasa-Akriti", "Y.VAPEE": "Nabhasa-Akriti",
+    # raja (lordship combinations, HTJAH-I)
+    "Y.RAJA.KT": "raja", "Y.RAJA.910X": "raja", "Y.RAJA.910A": "raja",
+    "Y.VIPAREETA": "raja",
+    # dhana (wealth lordship combinations)
+    "Y.DHANA.EXCH": "dhana", "Y.DHANA.59": "dhana", "Y.DHANA.CHAIN": "dhana",
+    "Y.DHANA.BAHU": "dhana", "Y.DHANA.122": "dhana", "Y.DHANA.125": "dhana",
+    # arishta (affliction yogas)
+    "Y.KEMADRUMA": "arishta", "Y.SAKATA": "arishta",
+    # named 3HC set (reported kind='other'; each with its own printed effect)
+    "Y.BUDHA_ADITYA": "named (3HC)", "Y.CHATUSSAGARA": "named (3HC)",
+    "Y.VASUMATHI": "named (3HC)", "Y.PARVATA": "named (3HC)",
+    "Y.JAYA": "named (3HC)", "Y.DARIDRA": "named (3HC)",
+    # named HPA Ch.20 set (incl. its bad yogas)
+    "Y.CHAMARA": "named (HPA-20)", "Y.SREENATHA": "named (HPA-20)",
+    "Y.KHADGA": "named (HPA-20)", "Y.SARADA": "named (HPA-20)",
+    "Y.KUSUMA": "named (HPA-20)", "Y.BRIHADBIJA": "named (HPA-20)",
+    "Y.ASATYAVADI": "named (HPA-20)",
+    # ── the completed 3HC (merged from main, 2026-10-14). Placed by each record's own
+    #    `kind`, as the entries above are: raja/dhana/arishta to those families, every
+    #    `kind="other"` record to the named 3HC set. No new family is introduced.
+    # named (3HC): 60 records
+    "Y.MATSYA": "named (3HC)", "Y.RAVI": "named (3HC)", "Y.GAURI": "named (3HC)",
+    "Y.BRAHMA": "named (3HC)", "Y.NISHTURABHASHI": "named (3HC)", "Y.MOOKA": "named (3HC)",
+    "Y.NETRANASA": "named (3HC)", "Y.SUMUKHA": "named (3HC)", "Y.DURMUKHA": "named (3HC)",
+    "Y.SRADDHANNABHUKTHA": "named (3HC)", "Y.ANDHA": "named (3HC)",
+    "Y.TRILOCHANA": "named (3HC)", "Y.KULAVARDHANA": "named (3HC)", "Y.GO": "named (3HC)",
+    "Y.VAKCHALANA": "named (3HC)", "Y.VISHAPRAYOGA": "named (3HC)",
+    "Y.EKABHAGINI": "named (3HC)", "Y.DWADASA_SAHODARA": "named (3HC)",
+    "Y.PARAKRAMA": "named (3HC)", "Y.SATKATHADISRAVANA": "named (3HC)",
+    "Y.UTTAMA_GRIHA": "named (3HC)", "Y.VICHITRA_SAUDHA": "named (3HC)",
+    "Y.AYATNA_GRIHA": "named (3HC)", "Y.GRIHANASA": "named (3HC)",
+    "Y.BANDHU_PUJYA_193": "named (3HC)", "Y.BANDHU_PUJYA_194": "named (3HC)",
+    "Y.MATRUGAMI": "named (3HC)", "Y.KAPATA": "named (3HC)", "Y.MATRU_SATRUTWA": "named (3HC)",
+    "Y.VAHANA": "named (3HC)", "Y.MATRUDEERGHAYUR": "named (3HC)", "Y.MATRUNASA": "named (3HC)",
+    "Y.NISHKAPATA": "named (3HC)", "Y.MATRU_SNEHA": "named (3HC)", "Y.ANAPATHYA": "named (3HC)",
+    "Y.BAHUPUTRA": "named (3HC)", "Y.DATTAPUTRA": "named (3HC)", "Y.APUTRA": "named (3HC)",
+    "Y.EKAPUTRA": "named (3HC)", "Y.KALANIRDESAT_PUTRA": "named (3HC)",
+    "Y.BUDDHIMATURYA": "named (3HC)", "Y.THEEVRABUDDHI": "named (3HC)",
+    "Y.BUDDHI_JADA": "named (3HC)", "Y.PUTRA_SUKHA": "named (3HC)", "Y.JARA": "named (3HC)",
+    "Y.JARAJAPUTRA": "named (3HC)", "Y.BAHU_STREE": "named (3HC)",
+    "Y.SATKALATRA": "named (3HC)", "Y.BHAGA_CHUMBANA": "named (3HC)",
+    "Y.JANANATPURVAM_PITRU_MARANA": "named (3HC)", "Y.DHATRUTWA": "named (3HC)",
+    "Y.APAKEERTI": "named (3HC)", "Y.BHARYASAHAVYABHICHARA": "named (3HC)",
+    "Y.KHALWATA": "named (3HC)", "Y.RAJABHRASHTA": "named (3HC)",
+    "Y.RAJA_YOGA_BHANGA": "named (3HC)", "Y.GOHANTA": "named (3HC)",
+    "Y.THRIKALAGNANA": "named (3HC)", "Y.BANDHUBHISTHYAKTHA": "named (3HC)",
+    "Y.SAHODAREESANGAMA": "named (3HC)",
+    # dhana: 3 records
+    "Y.LAKSHMI": "dhana", "Y.VISHNU": "dhana", "Y.BHAGYA": "dhana",
+    # raja: 20 records
+    "Y.INDRA": "raja", "Y.RAJA_245": "raja", "Y.RAJA_246": "raja", "Y.RAJA_247": "raja",
+    "Y.RAJA_248": "raja", "Y.RAJA_249": "raja", "Y.RAJA_250": "raja", "Y.RAJA_251": "raja",
+    "Y.RAJA_252": "raja", "Y.RAJA_253": "raja", "Y.RAJA_254": "raja", "Y.RAJA_255": "raja",
+    "Y.RAJA_256": "raja", "Y.RAJA_257": "raja", "Y.RAJA_258": "raja", "Y.RAJA_259": "raja",
+    "Y.RAJA_260": "raja", "Y.RAJA_261": "raja", "Y.RAJA_262": "raja", "Y.RAJA_263": "raja",
+    # arishta: 30 records
+    "Y.SARPASAPA": "arishta", "Y.PITRUSAPA_SUTAKSHAYA": "arishta",
+    "Y.MATRUSAPA_SUTAKSHAYA": "arishta", "Y.BHRATRUSAPA_SUTAKSHAYA": "arishta",
+    "Y.PRETASAPA": "arishta", "Y.KALANIRDESAT_PUTRANASA": "arishta", "Y.VRANA": "arishta",
+    "Y.SISNAVYADHI": "arishta", "Y.KALATRASHANDA": "arishta", "Y.KUSHTAROGA": "arishta",
+    "Y.BANDHANA": "arishta", "Y.DURMARANA": "arishta", "Y.PEENASAROGA": "arishta",
+    "Y.PITTAROGA": "arishta", "Y.VIKALANGAPATNI": "arishta", "Y.PUTRAKALATRAHEENA": "arishta",
+    "Y.VAMSACHEDA": "arishta", "Y.GUHYAROGA": "arishta", "Y.ANGAHEENA": "arishta",
+    "Y.SWETAKUSHTA": "arishta", "Y.PISACHA_GRASTHA": "arishta", "Y.VATHAROGA": "arishta",
+    "Y.MATIBHRAMANA": "arishta", "Y.GALAKARNA": "arishta", "Y.SARPAGANDA": "arishta",
+    "Y.KSHAYAROGA": "arishta", "Y.KARASCHEDA": "arishta", "Y.SIRACHCHHEDA": "arishta",
+    "Y.YUDDHE_MARANA": "arishta", "Y.SANGHATAKA_MARANA": "arishta",
+}
+
+#: The five Pancha Mahapurusha record ids (notable-absence checks read this).
+MAHAPURUSHA_IDS: Final[frozenset[str]] = frozenset(
+    yid for yid, fam in YOGA_FAMILIES.items() if fam == "Pancha Mahapurusha")
+
+
+def yoga_family(yoga_id: str) -> str | None:
+    """The Raman-taxonomy family of an encoded record id, or None if unmapped."""
+    return YOGA_FAMILIES.get(yoga_id)
+
+
+def family_breakdown() -> tuple[tuple[str, int], ...]:
+    """(family, encoded-record count) in canonical order — the coverage-disclosure
+    breakdown; counts only families that actually have encoded records."""
+    counts = {fam: 0 for fam in YOGA_FAMILY_ORDER}
+    for rec in YOGAS:
+        fam = YOGA_FAMILIES.get(rec.id)
+        if fam is not None:
+            counts[fam] = counts.get(fam, 0) + 1
+    return tuple((fam, n) for fam, n in counts.items() if n)
 
 
 # ── detection API ────────────────────────────────────────────────────────────

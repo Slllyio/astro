@@ -1210,6 +1210,29 @@ def _philosophy_section(r: DetailedReport) -> str:
             f'<p><b>How each house is weighed:</b></p><ul>{rows}</ul>')
 
 
+def _for_against_section(r: DetailedReport) -> str:
+    """v43 — for and against, matter by matter (app/raman_saab/for_against.py). Pure re-read."""
+    fa = getattr(r, "for_against", None)
+    if fa is None:
+        return ""
+    out = ['<h2 class="section" id="for_against">For and against, matter by matter</h2>',
+           f'<p class="section-sub">{_esc(fa.notice)}</p>']
+    cur = None
+    for m in fa.matters:
+        if m.house != cur:
+            cur = m.house
+            out.append(f'<h3>House {m.house}</h3>')
+        agree = ((m.lean == "leans favourable" and m.judge_verdict == "favourable")
+                 or (m.lean == "leans afflicted" and m.judge_verdict == "afflicted"))
+        judge = "" if agree else f' <i>(the clause judge reads it {_esc(m.judge_verdict)})</i>'
+        items = "".join(f'<li><b>{tag}:</b> {_esc(x.reading)} ({_esc(x.cite)}, {_esc(x.rule_id)})</li>'
+                        for tag, rs in (("For", m.reasons_for), ("Against", m.reasons_against))
+                        for x in rs)
+        out.append(f'<p><b>{_esc(m.matter.capitalize())}</b> &mdash; {_esc(m.count_line)}{judge}</p>'
+                   + (f'<ul>{items}</ul>' if items else ''))
+    return "".join(out)
+
+
 def _interpretation_guide_section(r: DetailedReport) -> str:  # noqa: ARG001 — chart-independent
     """v18 — how to read this report: the collected precedence rules, reading order,
     parallel lenses and axes. Pure doctrine metadata (interpretation_guide module)."""
@@ -4309,6 +4332,7 @@ def to_html(r: DetailedReport) -> str:
         "info_content": _info_box(r),
         "interpretation_guide": _interpretation_guide_section(r),
         "philosophy": _philosophy_section(r),
+        "for_against": _for_against_section(r),
         "stands_out": _distinctive(r),
         "digest": _digest_section(r),
         "dashboard": _dashboard(r),

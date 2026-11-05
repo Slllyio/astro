@@ -1,0 +1,261 @@
+{
+ "pool_majority": "favourable",
+ "class_split": {
+  "pool": {
+   "afflicted": 168,
+   "mixed": 38,
+   "favourable": 183
+  },
+  "H1": {
+   "favourable": 23,
+   "afflicted": 13
+  },
+  "H2": {
+   "favourable": 94,
+   "afflicted": 33,
+   "mixed": 7
+  },
+  "H3": {
+   "afflicted": 19,
+   "favourable": 9
+  },
+  "H1-3": {
+   "favourable": 126,
+   "afflicted": 65,
+   "mixed": 7
+  }
+ },
+ "metrics": {
+  "pool": {
+   "E": {
+    "n": 389,
+    "exact": 263,
+    "within1": 354,
+    "real": 35,
+    "macro_recall": 0.595
+   },
+   "B0": {
+    "n": 389,
+    "exact": 183,
+    "within1": 221,
+    "real": 168,
+    "macro_recall": 0.333
+   },
+   "B1": {
+    "n": 389,
+    "exact": 183,
+    "within1": 221,
+    "real": 168,
+    "macro_recall": 0.333
+   },
+   "B2": {
+    "n": 389,
+    "exact": 240,
+    "within1": 312,
+    "real": 77,
+    "macro_recall": 0.524
+   },
+   "B3": {
+    "n": 389,
+    "exact": 253,
+    "within1": 291,
+    "real": 98,
+    "macro_recall": 0.478
+   }
+  },
+  "H1": {
+   "E": {
+    "n": 36,
+    "exact": 23,
+    "within1": 31,
+    "real": 5,
+    "macro_recall": 0.651
+   },
+   "B0": {
+    "n": 36,
+    "exact": 23,
+    "within1": 23,
+    "real": 13,
+    "macro_recall": 0.5
+   },
+   "B1": {
+    "n": 36,
+    "exact": 23,
+    "within1": 23,
+    "real": 13,
+    "macro_recall": 0.5
+   },
+   "B2": {
+    "n": 36,
+    "exact": 24,
+    "within1": 27,
+    "real": 9,
+    "macro_recall": 0.672
+   },
+   "B3": {
+    "n": 36,
+    "exact": 26,
+    "within1": 26,
+    "real": 10,
+    "macro_recall": 0.716
+   }
+  },
+  "H2": {
+   "E": {
+    "n": 134,
+    "exact": 55,
+    "within1": 100,
+    "real": 34,
+    "macro_recall": 0.351
+   },
+   "B0": {
+    "n": 134,
+    "exact": 94,
+    "within1": 101,
+    "real": 33,
+    "macro_recall": 0.333
+   },
+   "B1": {
+    "n": 134,
+    "exact": 94,
+    "within1": 101,
+    "real": 33,
+    "macro_recall": 0.333
+   },
+   "B2": {
+    "n": 134,
+    "exact": 85,
+    "within1": 96,
+    "real": 38,
+    "macro_recall": 0.457
+   },
+   "B3": {
+    "n": 134,
+    "exact": 88,
+    "within1": 95,
+    "real": 39,
+    "macro_recall": 0.423
+   }
+  },
+  "H3": {
+   "E": {
+    "n": 28,
+    "exact": 9,
+    "within1": 19,
+    "real": 9,
+    "macro_recall": 0.412
+   },
+   "B0": {
+    "n": 28,
+    "exact": 9,
+    "within1": 9,
+    "real": 19,
+    "macro_recall": 0.5
+   },
+   "B1": {
+    "n": 28,
+    "exact": 9,
+    "within1": 9,
+    "real": 19,
+    "macro_recall": 0.5
+   },
+   "B2": {
+    "n": 28,
+    "exact": 17,
+    "within1": 19,
+    "real": 9,
+    "macro_recall": 0.681
+   },
+   "B3": {
+    "n": 28,
+    "exact": 17,
+    "within1": 17,
+    "real": 11,
+    "macro_recall": 0.681
+   }
+  },
+  "H1-3": {
+   "E": {
+    "n": 198,
+    "exact": 87,
+    "within1": 150,
+    "real": 48,
+    "macro_recall": 0.347
+   },
+   "B0": {
+    "n": 198,
+    "exact": 126,
+    "within1": 133,
+    "real": 65,
+    "macro_recall": 0.333
+   },
+   "B1": {
+    "n": 198,
+    "exact": 126,
+    "within1": 133,
+    "real": 65,
+    "macro_recall": 0.333
+   },
+   "B2": {
+    "n": 198,
+    "exact": 126,
+    "within1": 142,
+    "real": 56,
+    "macro_recall": 0.465
+   },
+   "B3": {
+    "n": 198,
+    "exact": 131,
+    "within1": 138,
+    "real": 60,
+    "macro_recall": 0.433
+   }
+  }
+ },
+ "decision": {
+  "best_baseline": "B3",
+  "D_exact": -44,
+  "ci95": [
+   -61,
+   -28
+  ],
+  "D_real": -12,
+  "ci95_real": [
+   -23,
+   -1
+  ],
+  "verdict": "engine below baseline out of sample"
+ },
+ "self_consistency": [
+  {
+   "matter": "H7/spouse",
+   "judgements": [
+    [
+     "pool",
+     "HTJAH-II.h7_15",
+     "afflicted"
+    ],
+    [
+     "pool",
+     "NH.chart_55",
+     "afflicted"
+    ]
+   ]
+  },
+  {
+   "matter": "H10/career",
+   "judgements": [
+    [
+     "H1",
+     "3HC.chart_59",
+     "favourable"
+    ],
+    [
+     "H1",
+     "3HC.chart_17",
+     "favourable"
+    ]
+   ]
+  }
+ ]
+}

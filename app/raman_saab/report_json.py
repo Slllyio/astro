@@ -468,6 +468,10 @@ def to_report_dict(r: DetailedReport) -> dict:
             {"heading": h, "quote": q, "cite": c, "means": m} for h, q, c, m in _PH_FRAME],
             foundation_quote=_PH_FOUNDATION_QUOTE)
             if getattr(r, "philosophy", None) is not None else None),
+        # v43 — for and against, matter by matter (for_against.py), with each matter's count line.
+        "for_against": ({"notice": r.for_against.notice, "matters": [
+            dict(_ad(m), count_line=m.count_line) for m in r.for_against.matters]}
+            if getattr(r, "for_against", None) is not None else None),
         # v35 — the Sitting: the continuous reading, for the interactive page's folio.
         "sitting": ({
             "grip": r.sitting.grip,

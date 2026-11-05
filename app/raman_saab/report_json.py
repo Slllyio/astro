@@ -34,6 +34,7 @@ from app.raman_saab.detailed_report import POPULATION_NOTE as _POPULATION_NOTE
 from app.raman_saab.detailed_report import deeptadi_table as _deeptadi_table
 from app.raman_saab.detailed_report import signature_first_glance as _signature_first_glance
 from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE
+from app.raman_saab.philosophy import FOUNDATION_QUOTE as _PH_FOUNDATION_QUOTE, FRAME as _PH_FRAME
 from app.raman_saab.plain_terms import SECTION_METHOD as _SECTION_METHOD
 from app.raman_saab.plain_terms import gloss_dict as _gloss
 from app.raman_saab.section_meta import section_meta_json as _section_meta
@@ -462,6 +463,11 @@ def to_report_dict(r: DetailedReport) -> dict:
         "dominance": [_ad(d) for _h, d in sorted((r.dominance or {}).items())],
         "restraint": [_ad(x) for _h, x in sorted((r.restraint or {}).items())],
         "analogy": [_ad(m) for m in (r.analogy or ())],
+        # v42 — how Raman would weigh this chart (philosophy.py), plus its chart-independent frame.
+        "philosophy": (dict(_ad(r.philosophy), frame=[
+            {"heading": h, "quote": q, "cite": c, "means": m} for h, q, c, m in _PH_FRAME],
+            foundation_quote=_PH_FOUNDATION_QUOTE)
+            if getattr(r, "philosophy", None) is not None else None),
         # v35 — the Sitting: the continuous reading, for the interactive page's folio.
         "sitting": ({
             "grip": r.sitting.grip,

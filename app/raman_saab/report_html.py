@@ -1187,6 +1187,29 @@ def _themes_section(r: DetailedReport) -> str:
     return "".join(out)
 
 
+def _philosophy_section(r: DetailedReport) -> str:
+    """v42 — how Raman would weigh this chart (app/raman_saab/philosophy.py). Pure re-read."""
+    ph = getattr(r, "philosophy", None)
+    if ph is None:
+        return ""
+    from app.raman_saab.philosophy import FRAME, FOUNDATION_QUOTE
+    frame = "".join(
+        f'<li><b>{_esc(h)}.</b> <i>&ldquo;{_esc(q)}&rdquo;</i> ({_esc(c)}) {_esc(m)}</li>'
+        for h, q, c, m in FRAME)
+    rows = "".join(
+        f'<li><b>{_esc(w.title)}</b> &mdash; {_esc(w.where)}: {_esc(w.how)} '
+        f'<i>&ldquo;{_esc(w.quote)}&rdquo;</i> ({_esc(w.cite)})</li>'
+        for w in ph.houses) or '<li><i>No house on this chart turns on one of these weighing principles.</i></li>'
+    return ('<h2 class="section" id="philosophy">How Raman would weigh this chart</h2>'
+            '<p class="section-sub">Raman&rsquo;s own reasons for how a verdict should be held, '
+            'in his words, then applied to this chart. Nothing here changes a verdict.</p>'
+            f'<ul>{frame}</ul>'
+            f'<p><b>The foundation.</b> <i>&ldquo;{_esc(FOUNDATION_QUOTE)}&rdquo;</i> '
+            f'(HTJAH-I:3871-3878) {_esc(ph.foundation)}</p>'
+            f'<p><b>Telling it.</b> {_esc(ph.telling)}</p>'
+            f'<p><b>How each house is weighed:</b></p><ul>{rows}</ul>')
+
+
 def _interpretation_guide_section(r: DetailedReport) -> str:  # noqa: ARG001 — chart-independent
     """v18 — how to read this report: the collected precedence rules, reading order,
     parallel lenses and axes. Pure doctrine metadata (interpretation_guide module)."""
@@ -4285,6 +4308,7 @@ def to_html(r: DetailedReport) -> str:
         "now_box": _now_box(r),
         "info_content": _info_box(r),
         "interpretation_guide": _interpretation_guide_section(r),
+        "philosophy": _philosophy_section(r),
         "stands_out": _distinctive(r),
         "digest": _digest_section(r),
         "dashboard": _dashboard(r),

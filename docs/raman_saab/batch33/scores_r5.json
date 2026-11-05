@@ -1,0 +1,198 @@
+{
+ "r5_patch_applied": true,
+ "sealed_v0_ok": {
+  "H4": true,
+  "H5": true
+ },
+ "holdout": {
+  "R5+V0": {
+   "H4": {
+    "got": {
+     "n": 28,
+     "exact": 12,
+     "within1": 20,
+     "real": 8,
+     "macro_recall": 0.283,
+     "real_by_book": {
+      "3HC": 8
+     }
+    },
+    "B3": {
+     "n": 28,
+     "exact": 18,
+     "within1": 19,
+     "real": 9,
+     "macro_recall": 0.388,
+     "real_by_book": {
+      "3HC": 9
+     }
+    },
+    "AF": {
+     "n": 28,
+     "exact": 19,
+     "within1": 20,
+     "real": 8,
+     "macro_recall": 0.333,
+     "real_by_book": {
+      "3HC": 8
+     }
+    }
+   },
+   "H5": {
+    "got": {
+     "n": 36,
+     "exact": 17,
+     "within1": 31,
+     "real": 5,
+     "macro_recall": 0.405,
+     "real_by_book": {
+      "HTJAH-I": 5,
+      "HTJAH-II": 0
+     }
+    },
+    "B3": {
+     "n": 36,
+     "exact": 22,
+     "within1": 26,
+     "real": 10,
+     "macro_recall": 0.426,
+     "real_by_book": {
+      "HTJAH-I": 9,
+      "HTJAH-II": 1
+     }
+    },
+    "AF": {
+     "n": 36,
+     "exact": 19,
+     "within1": 23,
+     "real": 13,
+     "macro_recall": 0.333,
+     "real_by_book": {
+      "HTJAH-I": 8,
+      "HTJAH-II": 5
+     }
+    }
+   },
+   "H4+H5": {
+    "got": {
+     "n": 64,
+     "exact": 29,
+     "within1": 51,
+     "real": 13,
+     "macro_recall": 0.369,
+     "real_by_book": {
+      "3HC": 8,
+      "HTJAH-I": 5,
+      "HTJAH-II": 0
+     }
+    },
+    "B3": {
+     "n": 64,
+     "exact": 40,
+     "within1": 45,
+     "real": 19,
+     "macro_recall": 0.408,
+     "real_by_book": {
+      "3HC": 9,
+      "HTJAH-I": 9,
+      "HTJAH-II": 1
+     }
+    },
+    "AF": {
+     "n": 64,
+     "exact": 38,
+     "within1": 43,
+     "real": 21,
+     "macro_recall": 0.333,
+     "real_by_book": {
+      "3HC": 8,
+      "HTJAH-I": 8,
+      "HTJAH-II": 5
+     }
+    }
+   }
+  }
+ },
+ "pool": {
+  "R5+V0": {
+   "n": 389,
+   "exact": 255,
+   "within1": 354,
+   "real": 35,
+   "macro_recall": 0.581,
+   "real_by_book": {
+    "HTJAH-I": 12,
+    "HTJAH-II": 6,
+    "NH": 17
+   }
+  }
+ },
+ "rows": {
+  "R5+V0": {
+   "3HC.chart_104 H10/career": "favourable",
+   "3HC.chart_104 H5/intellect": "insufficient-evidence",
+   "3HC.chart_107 H5/intellect": "favourable",
+   "3HC.chart_124 H10/status_honour": "mixed",
+   "3HC.chart_128 H10/status_honour": "mixed",
+   "3HC.chart_128 H2/wealth": "favourable",
+   "3HC.chart_13 H1/self": "mixed",
+   "3HC.chart_13 H10/career": "favourable",
+   "3HC.chart_13 H5/intellect": "insufficient-evidence",
+   "3HC.chart_134 H6/disease_chronic": "afflicted",
+   "3HC.chart_135 H8/death": "insufficient-evidence",
+   "3HC.chart_141 H2/vision": "mixed",
+   "3HC.chart_141 H6/disease_chronic": "afflicted",
+   "3HC.chart_19 H10/status_honour": "mixed",
+   "3HC.chart_19 H1/self": "favourable",
+   "3HC.chart_24 H5/intellect": "insufficient-evidence",
+   "3HC.chart_24 H4/education": "favourable",
+   "3HC.chart_24 H2/wealth": "favourable",
+   "3HC.chart_32 H10/career": "favourable",
+   "3HC.chart_46 H10/status_honour": "mixed",
+   "3HC.chart_46 H2/speech": "afflicted",
+   "3HC.chart_60 H10/career": "insufficient-evidence",
+   "3HC.chart_60 H2/wealth": "mixed",
+   "3HC.chart_66 H9/father": "favourable",
+   "3HC.chart_78 H2/vision": "favourable",
+   "3HC.chart_80 H3/siblings": "afflicted",
+   "3HC.chart_85 H4/property": "favourable",
+   "3HC.chart_99 H5/children": "afflicted",
+   "HTJAH-I.chart_21 H1/self": "mixed",
+   "HTJAH-I.chart_25 H1/body": "mixed",
+   "HTJAH-I.chart_25 H2/wealth": "mixed",
+   "HTJAH-I.chart_25 H10/career": "afflicted",
+   "HTJAH-I.chart_25#2 H1/health": "mixed",
+   "HTJAH-I.chart_27 H2/wealth": "favourable",
+   "HTJAH-I.chart_27 H1/self": "favourable",
+   "HTJAH-I.chart_27#2 H1/body": "favourable",
+   "HTJAH-I.chart_34 H1/body": "afflicted",
+   "HTJAH-I.chart_36 H1/self": "mixed",
+   "HTJAH-I.chart_70 H4/mother": "mixed",
+   "HTJAH-I.chart_74 H4/mother": "favourable",
+   "HTJAH-I.chart_87 H4/property": "favourable",
+   "HTJAH-I.chart_87#2 H4/vehicles": "favourable",
+   "HTJAH-I.chart_90 H5/children": "afflicted",
+   "HTJAH-I.chart_90 H1/health": "mixed",
+   "HTJAH-I.chart_119 H6/disease_chronic": "mixed",
+   "HTJAH-I.chart_124 H4/mother": "favourable",
+   "HTJAH-I.chart_124#2 H4/education": "mixed",
+   "HTJAH-I.chart_124#3 H4/vehicles": "favourable",
+   "HTJAH-I.chart_124#4 H4/property": "favourable",
+   "HTJAH-I.chart_125 H5/children": "afflicted",
+   "HTJAH-I.chart_126 H6/enemies_disease": "afflicted",
+   "HTJAH-I.chart_126#2 H6/debts": "afflicted",
+   "HTJAH-II.chart_65 H8/death": "afflicted",
+   "HTJAH-II.chart_70 H8/death": "mixed",
+   "HTJAH-II.chart_76 H8/death": "afflicted",
+   "HTJAH-II.chart_79 H8/death": "mixed",
+   "HTJAH-II.chart_81 H8/death": "afflicted",
+   "HTJAH-II.chart_106 H9/long_journeys": "favourable",
+   "HTJAH-II.chart_107 H9/long_journeys": "favourable",
+   "HTJAH-II.chart_109 H9/long_journeys": "favourable",
+   "HTJAH-II.chart_149 H10/career": "favourable",
+   "HTJAH-II.chart_149#2 H10/status_honour": "favourable",
+   "HTJAH-II.chart_185 H10/career": "mixed",
+   "HTJAH-II.chart_245 H12/expenditure": "favourable"
+  }
+ }
+}

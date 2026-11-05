@@ -182,6 +182,9 @@ _FROZEN = (
     # is a kind, cause, channel, count or circumstance rather than a grade. A pure re-read of
     # the house-block composers. Appended at the END; _FROZEN grown in the same commit.
     ("indications", "## What Raman's rules indicate", 'id="indications"'),
+    # v42 (2026-10-30, user-requested): how Raman would weigh this chart — a pure re-read of the
+    # judged ledgers (app/raman_saab/philosophy.py). Appended at the END; _FROZEN grown here.
+    ("philosophy", "## How Raman would weigh this chart", 'id="philosophy"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -199,7 +202,8 @@ _ORDER_V41: tuple[str, ...] = (
     "title", "plain_reading", "chart_signature", "simple_summary", "sitting", "now_box",
     "ruler", "planet_bios", "psych",
     # II. How to read it honestly
-    "info_content", "interpretation_guide", "judgment_graph", "themes", "stands_out",
+    "info_content", "interpretation_guide", "philosophy", "judgment_graph", "themes",
+    "stands_out",
     "digest", "dashboard",
     # III. The instrument
     "chart_grids", "positions", "rect_confidence", "shadbala", "ashtakavarga", "divisional",
@@ -349,6 +353,8 @@ class TestTemplateContract:
             # words", v41 the collected non-graded lane — "What Raman's rules indicate",
             # grouped by category, a pure re-read of the house-block composers.
             "v36", "v37", "v38", "v39", "v40", "v41",
+            # v42 (2026-10-30): "How Raman would weigh this chart" (philosophy.py).
+            "v42",
         }
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6

@@ -115,3 +115,26 @@ Standard library only, bound to 127.0.0.1. Pages: `/` (search box, birth form), 
   causal test, and a few charts share only one feature.
 - Raman's verdicts on famous lives drew on what he knew of them; the engine's reading of a
   chart is his rules applied faithfully, which on real lives has not predicted outcomes.
+
+## How sure the books are: the spread of indications (added 2026-11-05)
+
+Requested after `HOW_ASTROLOGERS_PREDICT_2026-11-05.md` (section 2.1, too many indications).
+Code: `cited/spread.py`. No verdict changes; it re-reads the same ledgers the count uses.
+
+For every matter the reading and the study view now say, in a plain sentence, whether Raman's
+rules point for it, against it, both ways, or not at all, with the number of descriptive rules
+beside them. Each sentence is set against a fixed baseline: the same count on 2,000 seeded
+random charts (date 1920-2010, any time, latitude -40 to 60), stored in
+`cited/spread_baseline.json` and rebuilt with
+`python -m app.raman_saab.cited spread-baseline` (about 80 s).
+
+The top of each reading carries one line for the whole chart. On Roosevelt's chart: 26 of 57
+matters have rules both ways; on the random charts a matter has rules both ways 41% of the
+time. Some matters show "both ways" on most charts (self 82%, speech 86%, father 73%), and a
+few can never show it because the engine holds rules for only one side (ear and throat:
+against only; wealth through marriage: no rule fires on any random chart). The line also says
+that a one-sided count is not certainty: the engine holds about 29% of the reasons Raman states
+(REASON_CODING_RESULTS_2026-10-31.md).
+
+Rebuild the baseline whenever a rule or the judge changes, since the shares come from the
+engine's own rules.

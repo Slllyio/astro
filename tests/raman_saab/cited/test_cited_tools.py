@@ -264,9 +264,11 @@ _JP = """Some front matter of the scan, with no chapter yet and nothing numbered
 
 ADHYAYA VII
 
-1. Raja yogas are now described by the author in their order and in full detail.
+Sloka 1. Raja yogas are now described by the author in their order and in full detail.
 
-2. When three or more planets are exalted the native becomes a king, or equal to one.
+38. A bare number like this is a page or list number in this scan, not a verse.
+
+Siokos 2-3. When three or more planets are exalted the native becomes a king, or equal to one.
 """
 
 
@@ -299,9 +301,10 @@ class TestClassicalShelf:
         fs = {f.prefix: f for f in classics.shelf_files(shelf_sources)}
         rows = list(classics.passages(list(fs.values()), corpus.lines_of, library.chunk_lines))
         labels = {(r[0].prefix, r[4]) for r in rows}
-        assert any(p == "SARAV-12" and lab.startswith("ch. 12, vv. 1-3") for p, lab in labels)
+        assert ("SARAV-12", "ch. 12, vv. 1-3") in labels
         assert ("SARAV-12", "ch. 12, v. 4") in labels
-        assert any(p == "JP-3" and lab.startswith("adhyaya 7, vv. 1-2") for p, lab in labels)
+        assert any(p == "JP-3" and lab.startswith("adhyaya 7, v") for p, lab in labels)
+        assert not any("38" in lab for p, lab in labels if p == "JP-3")     # bare number ignored
         for f, lo, hi, text, _ in rows:                         # tokens read back verbatim
             assert text == "\n".join(corpus.lines_of(f.path)[lo - 1:hi]).strip()
 
@@ -322,6 +325,51 @@ class TestClassicalShelf:
         """'CHAPTER XII' is a heading; a sentence mentioning a chapter is not."""
         from app.raman_saab.cited import classics
         assert classics.chapter_heading("CHAPTER XII") == 12
-        assert classics.chapter_heading("Adhyaya 3") == 3
+        assert classics.chapter_heading("Adhyaya 3", "adhyaya") == 3
         assert classics.chapter_heading("chapter of the book is long") is None
-        assert classics.verse_at("1995") is None and classics.verse_at("12-14. Saturn in") == (12, 14)
+        assert classics.chapter_heading("Adh. XVII.", "adhyaya") == 17
+        assert classics.chapter_heading("chapter 1 supra") is None
+        assert classics.chapter_heading("ch. 1 as well.") is None
+        assert classics.chapter_heading("Hora Ratnam / Chapter 5", "hora-ratnam") == 5
+        assert classics.verse_at("1995") is None and classics.verse_at("12-14. Saturn in") == (12, 14, False)
+        assert classics.verse_at("12. If the", "sloka") is None
+        assert classics.verse_at("Siokos 61-63. During", "sloka") == (61, 63, True)
+
+    def test_merged_chapter_takes_its_running_head(self, tmp_path: Path) -> None:
+        """A BPHS file holding two chapters labels the second by its own 'Chapter N' head."""
+        from app.raman_saab.cited import classics
+        d = tmp_path / "sources" / "bphs_santhanam_full"
+        d.mkdir(parents=True)
+        (d / "chapter_053_x.md").write_text(
+            "1. The first verse of chapter fifty three is here in full.\n\n"
+            "Chapter 54\n\n1. The first verse of chapter fifty four is here in full.\n",
+            encoding="utf-8")
+        fs = classics.shelf_files(tmp_path / "sources")
+        rows = list(classics.passages(fs, corpus.lines_of, library.chunk_lines))
+        assert rows[-1][4].endswith("54")       # "ch. 54" or, merged with 53, "ch. 53-54"
+
+    def test_colophon_chapters_and_switched_off_labels(self, tmp_path: Path) -> None:
+        """Hora Sara takes its chapter from 'Thus ends'; Laghu Parashari gets no verse label;
+        Phaladeepika's index file is left out."""
+        from app.raman_saab.cited import classics
+        src = tmp_path / "sources"
+        for slug, name, text in (
+                ("hora_sara_santhanam", "chapter_013_x.md",
+                 "Should Mars be in the 8th house there will be misconceptions with one's enemies.\n"
+                 "Thus ends the 11th Chapter entitled Effects of Mars Dasa.\n"),
+                ("laghu_parashari_verma_v2", "chapter_001_full-text-unsplit.md",
+                 "77. Vimsottari Dasa is one such scientific method to time good and bad periods.\n"),
+                ("phaladeepika", "chapter_33_english-index.md",
+                 "KUHU YOGA. VI-57, 61. KUJA and many more index words to fill the line here.\n")):
+            (src / slug).mkdir(parents=True)
+            (src / slug / name).write_text(text, encoding="utf-8")
+        fs = classics.shelf_files(src)
+        assert {f.book for f in fs} == {"HSARA", "LP"}
+        labels = {r[0].book: r[4] for r in classics.passages(fs, corpus.lines_of, library.chunk_lines)}
+        assert labels == {"HSARA": "ch. 11", "LP": ""}
+
+    def test_house_word_dropped_beside_an_ordinal(self) -> None:
+        """'seventh lord in the eighth house' must find a verse that omits 'house'."""
+        assert library.expand("seventh lord in the eighth house") == [
+            ("seventh", "7th"), ("lord",), ("eighth", "8th")]
+        assert library.expand("house") == [("house",)]

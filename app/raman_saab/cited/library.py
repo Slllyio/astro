@@ -82,6 +82,8 @@ what which who whom when where how why does do did can could should would will s
 than then there their his her he she they them was were has have had not no if any all some
 say says said raman tell me give show""".split())
 
+_HOUSE_WORDS = frozenset({"house", "houses", "bhava", "bhavas"})
+
 _TOKEN = re.compile(r'"[^"]+"|[A-Za-z0-9]+')
 
 
@@ -268,6 +270,10 @@ def expand(query: str) -> list[tuple[str, ...]]:
         if w in _ORD:
             g.append(_ORD[w])
         groups.append(tuple(dict.fromkeys(g)))
+    # "house" adds nothing once an ordinal names the house, and requiring it hides verses that
+    # omit it ("If the 7th lord is in the 8th ..."), so it is dropped when an ordinal is present
+    if any(g[0] in _ORD for g in groups):
+        groups = [g for g in groups if g[0] not in _HOUSE_WORDS] or groups
     return groups
 
 

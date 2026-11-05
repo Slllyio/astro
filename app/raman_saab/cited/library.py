@@ -5,7 +5,9 @@ What is indexed (one SQLite FTS5 file, ``data/library/library.sqlite``, gitignor
 
 * **passages**  every book file ``corpus.book_files`` finds, cut into paragraph-sized pieces,
   each carrying the citation token of its exact lines (``HTJAH-I:1586-1597``), its book title
-  and scope (``Raman, natal``, ``horary``, ``KP, a separate system`` ...).
+  and scope (``Raman, natal``, ``horary``, ``KP, a separate system`` ...). Books on the
+  classical shelf (``classics.py``, scope ``classical, not Raman``) also carry their chapter and
+  verse as printed (``Saravali ... ch. 12, vv. 4-9``).
 * **rules**     every RuleRecord in the engine's rule store, with its reading and citation.
 * **examples**  every CONFIRMED conclusion Raman reached on one of his worked charts (the golden
   fixture), with the line where he wrote it when that can be found verbatim.
@@ -20,6 +22,7 @@ and every search reports which words it actually searched for.
 """
 from __future__ import annotations
 
+import itertools
 import re
 import sqlite3
 import time
@@ -27,7 +30,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Iterator, Optional
 
-from app.raman_saab.cited import corpus
+from app.raman_saab.cited import classics, corpus
 
 INDEX: Path = corpus.ROOT / "data" / "library" / "library.sqlite"
 KINDS = ("passage", "rule", "example")
@@ -78,6 +81,8 @@ _STOP = frozenset("""a an the of in on at to for and or is are be by with from a
 what which who whom when where how why does do did can could should would will shall about into
 than then there their his her he she they them was were has have had not no if any all some
 say says said raman tell me give show""".split())
+
+_HOUSE_WORDS = frozenset({"house", "houses", "bhava", "bhavas"})
 
 _TOKEN = re.compile(r'"[^"]+"|[A-Za-z0-9]+')
 
@@ -147,11 +152,24 @@ def _schema(db: sqlite3.Connection) -> None:
     """)
 
 
+def _cite(prefix: str, lo: int, hi: int) -> str:
+    return f"{prefix}:{lo}" if lo == hi else f"{prefix}:{lo}-{hi}"
+
+
 def _passage_rows(files: Iterable[corpus.BookFile]) -> Iterator[tuple]:
     for f in files:
         for lo, hi, text in chunk_lines(corpus.lines_of(f.path)):
-            cite = f"{f.prefix}:{lo}" if lo == hi else f"{f.prefix}:{lo}-{hi}"
-            yield ("passage", cite, f.book, f.scope, None, f.title, text, "")
+            yield ("passage", _cite(f.prefix, lo, hi), f.book, f.scope, None, f.title, text, "")
+
+
+def _shelf_rows(sources: Path) -> Iterator[tuple]:
+    """Classical-shelf passages. The title carries the printed chapter/verse; detail says
+    which copy and translator, so a hit always names its source."""
+    files = classics.shelf_files(sources)
+    for f, lo, hi, text, where in classics.passages(files, corpus.lines_of, chunk_lines):
+        title = f"{f.title}, {where}" if where else f.title
+        detail = f"{where or 'location not printed'}; {classics.SCOPE}"
+        yield ("passage", _cite(f.prefix, lo, hi), f.book, f.scope, None, title, text, detail)
 
 
 def _rule_rows() -> Iterator[tuple]:
@@ -188,19 +206,24 @@ def build(path: Path = INDEX, *, sources: Path = corpus.SOURCES) -> dict[str, in
     db = sqlite3.connect(tmp)
     try:
         _schema(db)
-        files = corpus.book_files(sources)
-        counts = {}
-        for kind, rows in (("passage", _passage_rows(files)), ("rule", _rule_rows()),
-                           ("example", _example_rows())):
+        files = [f for f in corpus.book_files(sources) if f.book not in classics.REPLACES]
+        shelf = classics.shelf_files(sources)
+        counts: dict[str, int] = {}
+        per_book: dict[str, int] = {}
+        for kind, rows in (("passage", itertools.chain(_passage_rows(files), _shelf_rows(sources))),
+                           ("rule", _rule_rows()), ("example", _example_rows())):
             n = 0
             for row in rows:
                 db.execute("INSERT INTO docs VALUES (?,?,?,?,?,?,?,?)", row)
                 n += 1
+                if kind == "passage":
+                    per_book[row[2]] = per_book.get(row[2], 0) + 1
             counts[kind] = n
         db.executemany("INSERT INTO meta VALUES (?,?)", [
             ("built_at", time.strftime("%Y-%m-%d %H:%M:%S")),
-            ("books", ", ".join(sorted({f.book for f in files}))),
-            *((f"count_{k}", str(v)) for k, v in counts.items())])
+            ("books", ", ".join(sorted({f.book for f in files} | {f.book for f in shelf}))),
+            *((f"count_{k}", str(v)) for k, v in counts.items()),
+            *((f"passages_{b}", str(v)) for b, v in sorted(per_book.items()))])
         db.commit()
     finally:
         db.close()
@@ -247,6 +270,10 @@ def expand(query: str) -> list[tuple[str, ...]]:
         if w in _ORD:
             g.append(_ORD[w])
         groups.append(tuple(dict.fromkeys(g)))
+    # "house" adds nothing once an ordinal names the house, and requiring it hides verses that
+    # omit it ("If the 7th lord is in the 8th ..."), so it is dropped when an ordinal is present
+    if any(g[0] in _ORD for g in groups):
+        groups = [g for g in groups if g[0] not in _HOUSE_WORDS] or groups
     return groups
 
 

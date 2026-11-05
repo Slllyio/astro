@@ -39,6 +39,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     ls.add_argument("--house", type=int)
     ls.add_argument("--limit", type=int, default=8)
     ls.add_argument("--full", action="store_true", help="print each passage in full")
+    lsub.add_parser("shelf", help="classical shelf: files, passages and chapter/verse coverage per book")
     lp = lsub.add_parser("passage", help="read a citation token back, e.g. HTJAH-I:1586")
     lp.add_argument("cite")
     lp.add_argument("--context", type=int, default=5)
@@ -78,10 +79,13 @@ def main(argv: Optional[list[str]] = None) -> int:
         return 0
 
     if a.cmd == "library":
-        from app.raman_saab.cited import corpus, library as L
+        from app.raman_saab.cited import classics as C, corpus, library as L
         if a.lcmd == "build":
             counts = L.build()
             print(f"built {L.INDEX}: " + ", ".join(f"{v} {k}s" for k, v in counts.items()))
+            return 0
+        if a.lcmd == "shelf":
+            print(C.shelf_report())
             return 0
         if a.lcmd == "search":
             kinds = (a.kind,) if a.kind else L.KINDS

@@ -20,7 +20,7 @@ One chart, all twelve houses, each read the way a verdict is defended:
 - Raman's conclusions on comparable charts of his, each with the line where he wrote it;
 - the house re-judged at -20, -10, -5, +5, +10 and +20 minutes.
 
-The page opens with a fixed honesty notice carrying the measured figures: 238 of 365 in-sample (after the 2026-10-31 full-pool label re-review),
+The page opens with a fixed honesty notice carrying the measured figures: 240 of 365 in-sample (after the 2026-10-31 label re-review and the 2026-11-05 F2/F5 fixes),
 23/36, 55/134 and 29/64 on the sealed hold-outs, 131/198 for the plain count, and the null on
 real lives.
 
@@ -82,8 +82,8 @@ Each of Raman's 235 worked charts that carry a confirmed conclusion, with:
 - whether the two agree, are one step apart, or are opposite.
 
 The index page totals are the scored in-sample figure, and a test pins them to the golden
-harness: 238 agree, 94 one step apart, 33 opposite, on 365 conclusions (re-based 2026-10-31
-after the full-pool label re-review; it was 263/91/35 on 389 when the tool was built). The page
+harness: 240 agree, 94 one step apart, 31 opposite, on 365 conclusions (2026-11-05, after
+the 2026-10-31 label re-review and the F2/F5 fixes; it was 263/91/35 on 389 when the tool was built). The page
 says plainly that these are the charts the engine was built against.
 
 209 of the 365 conclusions are verbatim quotes that the tool finds at their exact lines (within

@@ -57,21 +57,21 @@ def _write(log: Path, rec: dict) -> dict:
     return rec
 
 
-def judge(a) -> dict:
+def judge(a, number: int | None = None) -> dict:
     from app.kp.chart import Birth
     from app.kp.horary.judge import judge_horary
     from app.kp.horary.questions import answer
     t = datetime.strptime(a.when, "%Y-%m-%d %H:%M")
     b = Birth(t.year, t.month, t.day, t.hour, t.minute, a.tz, a.lat, a.lon)
     if a.question:
-        ans = answer(a.number, b, a.question)
+        ans = answer(number or a.number, b, a.question)
         out = {"rule": "question", **ans.to_dict()}
         from app.kp.chart import cast
         from app.kp.ruling import ruling_planets
         rp = ruling_planets(cast(b))
         out["ruling_planets_at_question"] = list(rp.planets) + list(rp.node_agents)
         return out
-    hv = judge_horary(a.number, b, a.matter, body=a.timing_body)
+    hv = judge_horary(number or a.number, b, a.matter, body=a.timing_body)
     return {"rule": "horary_matter", **hv.to_dict()}
 
 
@@ -111,6 +111,36 @@ def natal(a, w0: str, w1: str) -> dict:
             "quarter": _quarter(_iso(first)) if first is not None else None}
 
 
+N_DECOYS = 20     # addendum 5: swapped-chart control
+
+
+def as_decided(verdict: str | None) -> bool | None:
+    """True = yes, False = no, None = undecided (MIXED, NOT_SIGNIFIED, ...)."""
+    v = (verdict or "").upper()
+    return True if v in ("YES", "PROMISED") else False if v in ("NO", "DENIED") else None
+
+
+def horary_decoys(a, real: int) -> dict:
+    """KP's answer from N_DECOYS other horary numbers, same question, moment and place."""
+    import random
+    nums = random.SystemRandom().sample([n for n in range(1, 250) if n != real], N_DECOYS)
+    return {"numbers": nums, "verdicts": [judge(a, n)["verdict"] for n in nums]}
+
+
+def natal_decoys(a, w0: str, w1: str) -> list[dict]:
+    """KP's natal answer from N_DECOYS charts with the same birth date and place, random clock time."""
+    import copy
+    import random
+    rng = random.SystemRandom()
+    out = []
+    for _ in range(N_DECOYS):
+        b = copy.copy(a)
+        b.birth = f"{a.birth[:10]} {rng.randrange(24):02d}:{rng.randrange(60):02d}"
+        n = natal(b, w0, w1)
+        out.append({"birth_local": b.birth, "verdict": n["verdict"], "windows": n["windows"]})
+    return out
+
+
 def cmd_ask(a) -> None:
     if a.area not in AREAS:
         raise SystemExit(f"--area must be one of {AREAS}")
@@ -122,12 +152,14 @@ def cmd_ask(a) -> None:
            "text": a.text, "area": a.area, "when_local": a.when, "tz": a.tz, "lat": a.lat, "lon": a.lon,
            "number": a.number, "asker_prior_yes": a.prior, "asker_quarter": a.quarter,
            "window": [w0, w1], "judgment": judge(a)}
+    rec["decoys"] = horary_decoys(a, a.number)
     if a.birth:
         if not a.consent_birth:
             raise SystemExit("natal KP stores the birth data in the log: pass --consent-birth only with the asker's consent")
         if not a.birth_matter or a.birth_tz is None or a.birth_lat is None or a.birth_lon is None:
             raise SystemExit("--birth needs --birth-tz, --birth-lat, --birth-lon and --birth-matter")
         rec["natal"] = natal(a, w0, w1)
+        rec["natal"]["decoys"] = natal_decoys(a, w0, w1)
     rec = _write(a.log, rec)
     j = rec["judgment"]
     extra = ""
@@ -135,6 +167,52 @@ def cmd_ask(a) -> None:
         n = rec["natal"]
         extra = f"; natal KP says {n['verdict']}" + (f" ({n['quarter']})" if n["quarter"] else "")
     print(f"locked #{rec['id']}: KP says {j['verdict']}{extra}; head {rec['hash']}")
+
+
+def cmd_add_decoys(a) -> None:
+    """Append the swapped-chart answers for a question locked before addendum 5 (not yet resolved)."""
+    entries = read(a.log)
+    asks = {e["id"]: e for e in entries if e["type"] == "ask"}
+    if a.id not in asks:
+        raise SystemExit(f"no question #{a.id}")
+    q = asks[a.id]
+    if "decoys" in q or any(e["type"] == "decoys" and e["id"] == a.id for e in entries):
+        raise SystemExit(f"question #{a.id} already has its swapped answers")
+    if any(e["type"] == "resolve" and e["id"] == a.id for e in entries):
+        raise SystemExit(f"question #{a.id} is already resolved: swapped answers must be locked before")
+    import types
+    j = q["judgment"]
+    b = types.SimpleNamespace(when=q["when_local"], tz=q["tz"], lat=q["lat"], lon=q["lon"], number=q["number"],
+                              question=j.get("question") if j["rule"] == "question" else None,
+                              matter=j.get("matter") if j["rule"] == "horary_matter" else None,
+                              timing_body=a.timing_body)
+    if b.question is None and b.matter is None:
+        raise SystemExit("cannot rebuild the question from the entry")
+    if judge(b)["verdict"] != j["verdict"]:
+        raise SystemExit("rebuilt question does not reproduce the locked answer; not adding swaps")
+    rec = _write(a.log, {"type": "decoys", "id": a.id, "decoys": horary_decoys(b, q["number"]),
+                         "added_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(timespec="seconds") + "Z"})
+    print(f"swapped answers locked for #{a.id}; head {rec['hash']}")
+
+
+def control(rows: list[dict], draws: int = 100_000, seed: int = 20261105) -> dict:
+    """Addendum 5: real chart vs its swapped charts. rows: {'yes': bool, 'real': bool, 'swaps': [bool]}."""
+    import numpy as np
+    rows = [r for r in rows if r["swaps"]]
+    if not rows:
+        return {"questions": 0}
+    rng = np.random.default_rng(seed)
+    real_right = sum(r["real"] == r["yes"] for r in rows)
+    pools = [np.array([r["real"] == r["yes"]] + [s == r["yes"] for s in r["swaps"]], float) for r in rows]
+    swap_acc = np.array([p[1:].mean() for p in pools])
+    null = sum(p[rng.integers(0, len(p), draws)] for p in pools)
+    diff = np.array([p[0] for p in pools]) - swap_acc
+    boot = [diff[rng.integers(0, len(diff), len(diff))].mean() for _ in range(2000)]
+    return {"questions": len(rows), "real_accuracy": real_right / len(rows),
+            "swapped_mean_accuracy": float(swap_acc.mean()),
+            "difference": float(diff.mean()), "difference_ci95": [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))],
+            "p": float((np.sum(null >= real_right) + 1) / (draws + 1)),
+            "bar": "judged once at 85 decided questions per arm: p < 0.025 and difference >= 0.10"}
 
 
 def cmd_resolve(a) -> None:
@@ -213,6 +291,22 @@ def score(entries: list[dict]) -> dict:
                                  / sum(1 for q in asks.values() if q.get("natal"))) if nat else None,
         "note": "descriptive; the window hit rate must be read against the share of the question window the KP windows cover",
     }
+    swaps = {e["id"]: e["decoys"] for e in entries if e["type"] == "decoys"}
+    crow, nrow = [], []
+    for i, q in asks.items():
+        if i not in res:
+            continue
+        yes = res[i]["outcome"] == "yes"
+        real = as_decided(q["judgment"]["verdict"])
+        d = q.get("decoys") or swaps.get(i)
+        if real is not None and d:
+            crow.append({"yes": yes, "real": real,
+                         "swaps": [x for x in map(as_decided, d["verdicts"]) if x is not None]})
+        n = q.get("natal")
+        if n and n.get("decoys"):
+            nrow.append({"yes": yes, "real": n["verdict"] == "YES", "swaps": [x["verdict"] == "YES" for x in n["decoys"]]})
+    out["control_horary"] = control(crow)
+    out["control_natal"] = control(nrow)
     if len(decided) >= 85:
         from scipy.stats import binomtest
         b, c = out["kp_right_asker_wrong"], out["kp_wrong_asker_right"]
@@ -245,6 +339,10 @@ def main(argv=None) -> int:
     s.add_argument("--birth-lon", type=float)
     s.add_argument("--birth-matter", help="KP matter for the natal reading, e.g. marriage, service, children")
     s.add_argument("--consent-birth", action="store_true", help="the asker agreed to their birth data being stored")
+    d = sub.add_parser("add-decoys")
+    d.add_argument("--log", type=Path, required=True)
+    d.add_argument("--id", type=int, required=True)
+    d.add_argument("--timing-body", default="Sun")
     r = sub.add_parser("resolve")
     r.add_argument("--log", type=Path, required=True)
     r.add_argument("--id", type=int, required=True)
@@ -259,6 +357,8 @@ def main(argv=None) -> int:
         if bool(a.question) == bool(a.matter):
             raise SystemExit("give exactly one of --question or --matter")
         cmd_ask(a)
+    elif a.cmd == "add-decoys":
+        cmd_add_decoys(a)
     elif a.cmd == "resolve":
         cmd_resolve(a)
     elif a.cmd == "verify":

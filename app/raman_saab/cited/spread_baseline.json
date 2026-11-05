@@ -3,7 +3,7 @@
  "seed": 20261105,
  "ayanamsa": "raman",
  "sampling": "date 1920-2010 uniform, time uniform, latitude -40..60, longitude -125..150",
- "mean_both_share": 0.4077,
+ "mean_both_share": 0.4088,
  "matters": {
   "1:body": {
    "charts": 2000,
@@ -63,8 +63,8 @@
   },
   "3:courage": {
    "charts": 2000,
-   "both_share": 0.954,
-   "only_for_share": 0.0445,
+   "both_share": 0.9485,
+   "only_for_share": 0.05,
    "only_against_share": 0.0015,
    "median_for": 4.0,
    "median_against": 3.0
@@ -79,16 +79,16 @@
   },
   "3:short_journeys": {
    "charts": 2000,
-   "both_share": 0.94,
-   "only_for_share": 0.0585,
+   "both_share": 0.931,
+   "only_for_share": 0.0675,
    "only_against_share": 0.0015,
    "median_for": 4.0,
    "median_against": 3.0
   },
   "3:siblings": {
    "charts": 2000,
-   "both_share": 0.94,
-   "only_for_share": 0.0585,
+   "both_share": 0.931,
+   "only_for_share": 0.0675,
    "only_against_share": 0.0015,
    "median_for": 4.0,
    "median_against": 3.0
@@ -383,8 +383,8 @@
   },
   "11:elder_siblings": {
    "charts": 2000,
-   "both_share": 0.7025,
-   "only_for_share": 0.257,
+   "both_share": 0.724,
+   "only_for_share": 0.2355,
    "only_against_share": 0.027,
    "median_for": 4.0,
    "median_against": 1.0
@@ -455,9 +455,9 @@
   },
   "12:moksha": {
    "charts": 2000,
-   "both_share": 0.424,
-   "only_for_share": 0.004,
-   "only_against_share": 0.567,
+   "both_share": 0.4885,
+   "only_for_share": 0.005,
+   "only_against_share": 0.5025,
    "median_for": 0.0,
    "median_against": 3.0
   }

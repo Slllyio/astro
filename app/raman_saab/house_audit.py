@@ -240,7 +240,9 @@ def decide_clause(L: ht.FrameLedger) -> tuple[str, str]:
         pressure = ("a malefic rule" if L.fired_malefic else
                     "a weak Bhava Bala" if L.bhava_bala_strong is False else "an active maraka")
         head = f"clause 6: a weak pillar under {pressure} ({pil})"
-        if not L.lord_strong and L.fired_benefic and L.bhava_bala_strong is True:
+        rescue_bhava = L.bhava_bala_strong is True or (
+            ht.F5_BHAVA_RESCUE_UNVOTED and L.bhava_bala_strong is None)
+        if not L.lord_strong and L.fired_benefic and rescue_bhava:
             head += "; the Bhava rescues it to mixed (HTJAH-I:503-505)"
         elif L.karaka_strong and not L.lord_strong and L.fired_malefic and not L.fired_benefic:
             head += "; the strong karaka salvages it to mixed"

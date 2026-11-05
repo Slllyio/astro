@@ -416,7 +416,7 @@ class TestClassicalShelf:
         assert hr and all(x.startswith("ch. 5") for x in hr)
         bj = [f for f in classics.shelf_files(src) if f.book == "BJ"][0]
         lines = corpus.lines_of(bj.path)
-        chs = [c for c, _ in classics.line_locations(bj, lines)]
+        chs = [c for c, _, _ in classics.line_locations(bj, lines)]
         assert chs[0] == 3 and chs[3] == 5 and chs[-1] is None       # appendix left unlabelled
 
     def test_inline_sloka_counts_in_sloka_books(self) -> None:
@@ -425,3 +425,22 @@ class TestClassicalShelf:
         assert classics.verse_at("asameva ... || Sloka 15.", "sloka")[:2] == (15, 15)
         assert classics.verse_at("Slokfi 23. When the", "sloka")[:2] == (23, 23)
         assert classics.verse_at("text then Sloka 15. here", "numbered") is None
+        assert classics.verse_at("|| Sloka 20-Whenever the", "sloka")[:2] == (20, 20)
+        assert classics.verse_at("Sloka 31- When", "sloka")[:2] == (31, 31)
+        assert classics.chapter_heading("Hora Ratnara / Chapter 1", "hora-ratnam") == 1
+        assert classics.chapter_heading("/ Chapter 4", "hora-ratnam") == 4
+        assert classics.chapter_heading("t Chapter 81") == 81
+
+    def test_notes_item_repeating_a_verse_number_is_not_a_verse(self, tmp_path: Path) -> None:
+        """BPHS ch. 19: '3. The 10th lord' in the Notes after verse 3 is a list item."""
+        from app.raman_saab.cited import classics
+        d = tmp_path / "sources" / "bphs_santhanam_full"
+        d.mkdir(parents=True)
+        (d / "chapter_019_x.md").write_text(
+            "3. If the 10th lord is strong the native will be famous and of good deeds.\n\n"
+            "Notes : the reader should keep these in mind while reading this verse.\n\n"
+            "3. The 10th lord in the 10th itself is a list item of the notes, not a verse.\n",
+            encoding="utf-8")
+        f = classics.shelf_files(tmp_path / "sources")[0]
+        opened = [i for i, (_, _, o) in enumerate(classics.line_locations(f, corpus.lines_of(f.path))) if o]
+        assert opened == [0]

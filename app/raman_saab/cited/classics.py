@@ -182,14 +182,16 @@ def _number(raw: str) -> Optional[int]:
 
 
 _GENERIC = (
-    re.compile(r"^\W*(?:chapter|ch\.?)\s*[.:]?\s*(?P<n>\d{1,3}|[ivxlc]{1,8}|[a-z]+)\b(?P<rest>.*)$", re.I),
+    re.compile(r"^\W*(?:[a-z]\s+)?(?:chapter|ch\.?)\s*[.:]?\s*(?P<n>\d{1,3}|[ivxlc]{1,8}|[a-z]+)\b(?P<rest>.*)$", re.I),
     re.compile(r"[—–-]\s*chapter\s+(?P<n>\d{1,3})\s*$(?P<rest>)", re.I),   # file headers
 )
 _ADHYAYA = (
     re.compile(r"^\W*(?:adh[a-z\-]{0,8}|chapter)\s*[.:]?\s*(?P<n>[ivxl1]{1,6}|\d{1,2})\b\.?(?P<rest>.*)$", re.I),
 )
 _ADH_END = re.compile(r"\b(?:end of the|thus ends the)\s+(?P<n>[0-9lI]{1,2})(?:st|nd|rd|th)\s+adhy", re.I)
-_HRAT = (re.compile(r"hora\s*ratnam\W{0,6}chapter\s+(?P<n>\d{1,2})\b(?P<rest>)", re.I),)
+# footers as OCR'd: "Hora Ratnam / Chapter 5", "Hora Ratnara / ...", "flora Ratnam / ...", "/ Chapter 4"
+_HRAT = (re.compile(r"/\s*chapter\s+(?P<n>\d{1,2})\s*$(?P<rest>)", re.I),
+         re.compile(r"r\w{2,4}n\w{0,2}m\W{0,6}chapter\s+(?P<n>\d{1,2})\b(?P<rest>)", re.I))
 _HEADS = {"generic": _GENERIC, "adhyaya": _ADHYAYA, "hora-ratnam": _HRAT}
 _ENDS = re.compile(r"thus ends\s+(?:the\s+)?(?P<n>\d{1,2}(?:st|nd|rd|th)?|twenty[\s-][a-z]+|[a-z]+)\s+chapter",
                    re.I)
@@ -219,7 +221,7 @@ def chapter_heading(line: str, kind: str = "generic") -> Optional[int]:
 _VERSE = re.compile(r"^\s*(?P<sl>sloka|s[il1!]okas?|sl\.|verse|st\.|stanza)?\s*(\d{1,3})"
                     r"(?:\s*[-–&,]\s*(\d{1,3}))?\s*[.)]\s*(?:[-—:]\s*)?(?=[A-Za-z\"'(])", re.I)
 _SLOKA = re.compile(r"(?:^|[\s|*'\"])(?:s[il1!]ok\S{0,2}|sl\.)\s*(\d{1,3})(?:\s*[-–&,]\s*(\d{1,3}))?"
-                    r"\s*[.:)]", re.I)
+                    r"\s*[.:)\-\u2013]", re.I)
 
 
 def verse_at(line: str, mode: str = "numbered") -> Optional[tuple[int, int, bool]]:
@@ -285,7 +287,7 @@ def _ends_chapters(lines: tuple[str, ...], max_ch: int) -> list[Optional[int]]:
     return out
 
 
-Loc = tuple[Optional[int], Optional[int]]
+Loc = tuple[Optional[int], Optional[int], bool]   # chapter, verse in force, verse opened here
 
 
 def line_locations(f: ShelfFile, lines: tuple[str, ...], start_ch: Optional[int] = None) -> list[Loc]:
@@ -324,15 +326,16 @@ def line_locations(f: ShelfFile, lines: tuple[str, ...], start_ch: Optional[int]
             if ok:
                 ch, last_v = h, None
         v = verse_at(line, c.verse)
+        opened = False
         if v is not None:
             a, b, explicit = v
             if explicit or last_v is None or last_v < a <= last_v + 40:
-                last_v, pending = b, None
+                last_v, pending, opened = b, None, True
             elif a > last_v + 40 and pending is not None and pending < a <= pending + 5:
-                last_v, pending = b, None          # a stuck counter re-anchors on a rising pair
+                last_v, pending, opened = b, None, True   # a stuck counter re-anchors
             elif a > last_v:
                 pending = b
-        out.append((ch, last_v))
+        out.append((ch, last_v, opened))
     return out
 
 
@@ -340,8 +343,7 @@ def label(f: ShelfFile, locs: list[Loc], lo: int, hi: int, lines: tuple[str, ...
     """The human location of lines ``lo..hi`` (1-based): "ch. 12, vv. 4-9", "ch. 12, from
     before v. 4", "ch. 12", "ch. 12-13" (crosses a boundary) or ""."""
     mode = f.classic.verse
-    opened_at = [i for i in range(lo - 1, hi) if (v := verse_at(lines[i], mode)) is not None
-                 and locs[i][1] == v[1]]
+    opened_at = [i for i in range(lo - 1, hi) if locs[i][2]]
     opened = [verse_at(lines[i], mode) for i in opened_at]
     # the chapter of the first verse the passage opens (a passage can start just before a
     # chapter heading), else the chapter in force at its first line
@@ -358,7 +360,7 @@ def label(f: ShelfFile, locs: list[Loc], lo: int, hi: int, lines: tuple[str, ...
     else:
         vtxt = ""
     ctxt = f"{f.classic.unit} {ch}" if ch is not None else ""
-    spanned = list(dict.fromkeys(c for c, _ in locs[lo - 1:hi] if c is not None))
+    spanned = list(dict.fromkeys(c for c, _, _ in locs[lo - 1:hi] if c is not None))
     if len(spanned) > 1:                  # the passage crosses a chapter boundary
         ctxt, vtxt = f"{f.classic.unit} {spanned[0]}-{spanned[-1]}", ""
     return ", ".join(x for x in (ctxt, vtxt) if x)

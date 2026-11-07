@@ -112,3 +112,19 @@ Secondary, reported only: real errors R1 − E, B3 against E, and the birth-data
 - No change to R1, the script, the exclusions or the decision rule after this commit. Any
   deviation goes in a dated addendum before the run.
 - No book text enters the repo.
+
+## Addendum 1 (2026-11-07, before any engine run on the sealed set)
+
+The conversion found that only 11 rows have printed coordinates. All 17 memoir rows and six
+others lack both birth data and a Lagna with all nine positions, so they are excluded under
+rule 1.
+
+Four natives print a date, a time and a city, but no coordinates or zone: Emerson (Boston,
+1803), Bulwer-Lytton (London, 1803), and two from Astrology for Beginners (Patna 1938,
+Ahmedabad 1914). They are **included**. Each uses its city-centre coordinates and the zone in
+civil use at that date and place: LMT for 1803, IST for Patna 1938, and Bombay Time (UTC+4:51)
+for Ahmedabad 1914. That brings the scored set to about 16 rows. Each is flagged in the sigmap,
+and the birth-data-only figures are reported both with and without these four.
+
+With about 16 rows, R1 is BETTER only if it gains 2 or more exact and its interval excludes 0.
+Anything short of that is reported as UNDERPOWERED, as the decision rule already says.
